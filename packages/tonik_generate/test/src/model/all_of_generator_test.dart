@@ -2863,19 +2863,33 @@ void main() {
       final combinedClass = immutableGenerator.generateClass(model);
 
       final listField = combinedClass.fields.first;
-      final fieldType = listField.type?.accept(emitter).toString();
-      expect(fieldType, contains('IList'));
-
-      // Equality should NOT use DeepCollectionEquality for immutable
-      // collections because IList has built-in value equality.
-      // Check the operator== method body directly.
-      final equalsMethod = combinedClass.methods.firstWhere(
-        (m) => m.name == 'operator ==',
+      final typeRef = listField.type! as TypeReference;
+      expect(typeRef.symbol, 'IList');
+      expect(
+        typeRef.url,
+        'package:fast_immutable_collections/'
+        'fast_immutable_collections.dart',
       );
-      final equalsBody = equalsMethod.body?.accept(emitter).toString() ?? '';
-      expect(equalsBody, isNot(contains('DeepCollectionEquality')));
-      // Verify it uses direct == comparison
-      expect(equalsBody, contains('other.iList == this.iList'));
+      expect(typeRef.types.length, 1);
+      expect(
+        (typeRef.types.first as TypeReference).symbol,
+        'String',
+      );
+
+      // Equality should use direct == (IList has built-in value equality)
+      final generated = format(
+        combinedClass.accept(emitter).toString(),
+      );
+      const expectedEquals = '''
+bool operator ==(Object other) {
+  if (identical(this, other)) return true;
+  return other is WithList && other.iList == this.iList;
+}
+''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedEquals)),
+      );
     });
 
     test(
@@ -2914,8 +2928,15 @@ void main() {
         final apField = combinedClass.fields.firstWhere(
           (f) => f.name == 'additionalProperties',
         );
-        final apType = apField.type?.accept(emitter).toString();
-        expect(apType, contains('IMap'));
+        final apTypeRef = apField.type! as TypeReference;
+        expect(apTypeRef.symbol, 'IMap');
+        expect(
+          apTypeRef.url,
+          'package:fast_immutable_collections/'
+          'fast_immutable_collections.dart',
+        );
+        expect(apTypeRef.types.length, 2);
+        expect(apTypeRef.types.first.symbol, 'String');
 
         // Constructor default should be IMapConst
         final defaultCtor = combinedClass.constructors.firstWhere(
@@ -2924,24 +2945,51 @@ void main() {
         final apParam = defaultCtor.optionalParameters.firstWhere(
           (p) => p.name == 'additionalProperties',
         );
-        final defaultValue = apParam.defaultTo?.accept(emitter).toString();
-        expect(defaultValue, contains('IMapConst'));
-        expect(defaultValue, contains('const'));
+        expect(
+          apParam.defaultTo?.accept(emitter).toString(),
+          'const IMapConst({})',
+        );
 
         // fromJson should use .lock on _$additional
-        const expectedFromJsonLock =
-            r'additionalProperties: _$additional.lock,';
+        const expectedFromJson = r'''
+factory ExtendedImmutable.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'ExtendedImmutable');
+  const _$knownKeys = {r'id'};
+  final _$additional = <String, Object?>{};
+  for (final _$entry in _$map.entries) {
+    if (!_$knownKeys.contains(_$entry.key)) {
+      _$additional[_$entry.key] = _$entry.value;
+    }
+  }
+  return ExtendedImmutable(
+    $base: Base.fromJson(json),
+    additionalProperties: _$additional.lock,
+  );
+}
+''';
         expect(
           collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromJsonLock)),
+          contains(collapseWhitespace(expectedFromJson)),
         );
 
         // toJson should use .unlock on AP
-        const expectedToJsonUnlock =
-            r'_$map.addAll(additionalProperties.unlock);';
+        const expectedToJson = r'''
+Object? toJson() {
+  final _$map = <String, Object?>{};
+  final _$$baseJson = $base.toJson();
+  if (_$$baseJson is! Map<String, Object?>) {
+    throw EncodingException(
+      'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
+    );
+  }
+  _$map.addAll(_$$baseJson);
+  _$map.addAll(additionalProperties.unlock);
+  return _$map;
+}
+''';
         expect(
           collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedToJsonUnlock)),
+          contains(collapseWhitespace(expectedToJson)),
         );
       },
     );

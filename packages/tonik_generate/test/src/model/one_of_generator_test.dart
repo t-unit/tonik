@@ -2741,35 +2741,41 @@ void main() {
 
       final classes = immutableGenerator.generateClasses(model);
 
-      // Find the list variant subclass
+      // Find the list variant subclass by name
       final listSubclass = classes.firstWhere(
-        (c) => c.fields.any(
-          (f) =>
-              f.type?.accept(emitter).toString().contains('IList') ?? false,
-        ),
+        (c) => c.name == 'ValueList',
       );
 
       // Verify the value field is IList<String>
       final valueField = listSubclass.fields.firstWhere(
         (f) => f.name == 'value',
       );
+      final typeRef = valueField.type! as TypeReference;
+      expect(typeRef.symbol, 'IList');
       expect(
-        valueField.type?.accept(emitter).toString(),
-        contains('IList'),
+        typeRef.url,
+        'package:fast_immutable_collections/'
+        'fast_immutable_collections.dart',
+      );
+      expect(typeRef.types.length, 1);
+      expect(
+        (typeRef.types.first as TypeReference).symbol,
+        'String',
       );
 
-      // Equality should NOT use DeepCollectionEquality
-      final equalsMethod = listSubclass.methods.firstWhere(
-        (m) => m.name == 'operator ==',
-      );
+      // Equality should use direct == (IList has built-in value equality)
       final generated = format(
         listSubclass.accept(emitter).toString(),
       );
-      expect(generated, isNot(contains('DeepCollectionEquality')));
-      // Instead, it should use direct == comparison
+      const expectedEquals = '''
+bool operator ==(Object other) {
+  if (identical(this, other)) return true;
+  return other is ValueList && other.value == this.value;
+}
+''';
       expect(
-        equalsMethod.body?.accept(emitter).toString(),
-        contains('other.value == this.value'),
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedEquals)),
       );
     });
   });

@@ -70,10 +70,14 @@ void main() {
       test('generates IList field type', () {
         final result = generator.generateClass(model);
         final field = result.fields.firstWhere((f) => f.name == 'tags');
-        final typeStr = field.type!.accept(emitter).toString();
-
-        expect(typeStr, contains('IList'));
-        expect(typeStr, contains('String'));
+        final typeRef = field.type! as TypeReference;
+        expect(typeRef.symbol, 'IList');
+        expect(
+          typeRef.url,
+          'package:fast_immutable_collections/fast_immutable_collections.dart',
+        );
+        expect(typeRef.types.length, 1);
+        expect((typeRef.types.first as TypeReference).symbol, 'String');
       });
 
       test('fromJson uses .lock to convert decoded list', () {
@@ -173,10 +177,15 @@ int get hashCode => tags.hashCode;
         final field = result.fields.firstWhere(
           (f) => f.name == 'settings',
         );
-        final typeStr = field.type!.accept(emitter).toString();
-
-        expect(typeStr, contains('IMap'));
-        expect(typeStr, contains('String'));
+        final typeRef = field.type! as TypeReference;
+        expect(typeRef.symbol, 'IMap');
+        expect(
+          typeRef.url,
+          'package:fast_immutable_collections/fast_immutable_collections.dart',
+        );
+        expect(typeRef.types.length, 2);
+        expect(typeRef.types.first.symbol, 'String');
+        expect((typeRef.types.last as TypeReference).symbol, 'String');
       });
 
       test('fromJson uses .lock to convert decoded map', () {
@@ -285,9 +294,17 @@ Object? toJson() => {r'rows': rows.unlock.map((e) => e.unlock).toList()};
       test('generates correct nested IList type', () {
         final result = generator.generateClass(model);
         final field = result.fields.firstWhere((f) => f.name == 'rows');
-        final typeStr = field.type!.accept(emitter).toString();
-
-        expect(typeStr, contains('IList'));
+        final typeRef = field.type! as TypeReference;
+        expect(typeRef.symbol, 'IList');
+        expect(
+          typeRef.url,
+          'package:fast_immutable_collections/fast_immutable_collections.dart',
+        );
+        expect(typeRef.types.length, 1);
+        final innerRef = typeRef.types.first as TypeReference;
+        expect(innerRef.symbol, 'IList');
+        expect(innerRef.types.length, 1);
+        expect((innerRef.types.first as TypeReference).symbol, 'String');
       });
     });
 
@@ -400,10 +417,11 @@ Object? toJson() => {
 
         final result = disabledGenerator.generateClass(model);
         final field = result.fields.firstWhere((f) => f.name == 'tags');
-        final typeStr = field.type!.accept(emitter).toString();
-
-        expect(typeStr, contains('List'));
-        expect(typeStr, isNot(contains('IList')));
+        final typeRef = field.type! as TypeReference;
+        expect(typeRef.symbol, 'List');
+        expect(typeRef.url, 'dart:core');
+        expect(typeRef.types.length, 1);
+        expect((typeRef.types.first as TypeReference).symbol, 'String');
       });
 
       test('disabled fromJson does not use .lock', () {
@@ -535,38 +553,64 @@ Object? toJson() => {r'tags': tags};
         final apField = result.fields.firstWhere(
           (f) => f.name == 'additionalProperties',
         );
-        final typeStr = apField.type!.accept(emitter).toString();
-        expect(typeStr, contains('IMap'));
+        final typeRef = apField.type! as TypeReference;
+        expect(typeRef.symbol, 'IMap');
+        expect(
+          typeRef.url,
+          'package:fast_immutable_collections/fast_immutable_collections.dart',
+        );
+        expect(typeRef.types.length, 2);
+        expect(typeRef.types.first.symbol, 'String');
       });
 
       test('constructor default uses IMapConst', () {
         final generatedClass = generator.generateClass(model);
-        final code = _formatClass(generatedClass);
+        final ctor = generatedClass.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final apParam = ctor.optionalParameters.firstWhere(
+          (p) => p.name == 'additionalProperties',
+        );
         expect(
-          collapseWhitespace(code),
-          contains(collapseWhitespace('IMapConst')),
+          apParam.defaultTo?.accept(emitter).toString(),
+          'const IMapConst({})',
         );
       });
 
       test('fromJson uses .lock on additional properties', () {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
+        const expectedBody = r'''
+factory Flexible.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'Flexible');
+  const _$knownKeys = {r'name'};
+  final _$additional = <String, Object?>{};
+  for (final _$entry in _$map.entries) {
+    if (!_$knownKeys.contains(_$entry.key)) {
+      _$additional[_$entry.key] = _$entry.value;
+    }
+  }
+  return Flexible(
+    name: _$map[r'name'].decodeJsonString(context: r'Flexible.name'),
+    additionalProperties: _$additional.lock,
+  );
+}
+''';
         expect(
           collapseWhitespace(code),
-          contains(
-            collapseWhitespace(r'additionalProperties: _$additional.lock'),
-          ),
+          contains(collapseWhitespace(expectedBody)),
         );
       });
 
       test('toJson uses .unlock on additional properties', () {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
+        const expectedBody = '''
+Object? toJson() => {r'name': name, ...additionalProperties.unlock};
+''';
         expect(
           collapseWhitespace(code),
-          contains(
-            collapseWhitespace('additionalProperties.unlock'),
-          ),
+          contains(collapseWhitespace(expectedBody)),
         );
       });
     });
@@ -602,10 +646,25 @@ Object? toJson() => {r'tags': tags};
 
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
-        // fromSimple should contain .lock for the list field
+        const expectedBody = r'''
+factory Tags.fromSimple(String? value, {required bool explode}) {
+  final _$values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: ',',
+    expectedKeys: {r'items'},
+    listKeys: {r'items'},
+    context: r'Tags',
+  );
+  return Tags(
+    items: _$values[r'items']
+        .decodeSimpleStringList(context: r'Tags.items')
+        .lock,
+  );
+}
+''';
         expect(
           collapseWhitespace(code),
-          contains(collapseWhitespace('.lock')),
+          contains(collapseWhitespace(expectedBody)),
         );
       });
     });
@@ -641,13 +700,25 @@ Object? toJson() => {r'tags': tags};
 
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
-        // fromForm should contain .lock
-        final fromFormSection = code.substring(
-          code.indexOf('factory Tags.fromForm'),
-        );
+        const expectedBody = r'''
+factory Tags.fromForm(String? value, {required bool explode}) {
+  final _$values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: '&',
+    expectedKeys: {r'items'},
+    listKeys: {r'items'},
+    context: r'Tags',
+  );
+  return Tags(
+    items: _$values[r'items']
+        .decodeFormStringList(context: r'Tags.items')
+        .lock,
+  );
+}
+''';
         expect(
-          collapseWhitespace(fromFormSection),
-          contains(collapseWhitespace('.lock')),
+          collapseWhitespace(code),
+          contains(collapseWhitespace(expectedBody)),
         );
       });
     });

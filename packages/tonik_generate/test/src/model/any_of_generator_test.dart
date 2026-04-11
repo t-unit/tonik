@@ -2656,19 +2656,37 @@ Object? toJson() {
 
       final klass = immutableGenerator.generateClass(model);
 
-      // Verify the list field type is IList
+      // Verify the list field type is IList via object introspection
       final listField = klass.fields.firstWhere(
-        (f) =>
-            f.type?.accept(emitter).toString().contains('IList') ?? false,
+        (f) => f.name == 'iList',
       );
+      final typeRef = listField.type! as TypeReference;
+      expect(typeRef.symbol, 'IList');
       expect(
-        listField.type?.accept(emitter).toString(),
-        contains('IList'),
+        typeRef.url,
+        'package:fast_immutable_collections/'
+        'fast_immutable_collections.dart',
+      );
+      expect(typeRef.types.length, 1);
+      expect(
+        (typeRef.types.first as TypeReference).symbol,
+        'String',
       );
 
-      // Equality should NOT use DeepCollectionEquality
+      // Equality should use direct == (IList has built-in value equality)
       final generated = format(klass.accept(emitter).toString());
-      expect(generated, isNot(contains('DeepCollectionEquality')));
+      const expectedEquals = '''
+bool operator ==(Object other) {
+  if (identical(this, other)) return true;
+  return other is FlexibleModel &&
+      other.int == this.int &&
+      other.iList == this.iList;
+}
+''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedEquals)),
+      );
     });
   });
 }
