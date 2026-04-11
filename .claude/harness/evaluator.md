@@ -56,7 +56,7 @@ When in doubt, classify higher.
 - Tests using bare `contains()` without `collapseWhitespace()` for generated code
 - Tests using string matching where object introspection should be used (e.g., `contains('IList')` on emitted type instead of `field.type.symbol == 'IList'`)
 
-**Important (does not block PASS if <= 3):**
+**Important (blocks PASS):**
 - Incomplete test coverage within a category
 - Confusing design that doesn't cause bugs
 - Analysis warnings
@@ -68,5 +68,5 @@ When in doubt, classify higher.
 - ALL sprint contract criteria must PASS
 - ALL analysis and tests must PASS
 - ZERO critical findings
-- Important findings acceptable if <= 3
+- ZERO important findings
 - Patch coverage must be >= 90% (run `bash scripts/coverage.sh --diff main`)

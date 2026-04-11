@@ -28,7 +28,9 @@ Generate type-safe API client packages for Dart and Flutter. Tonik produces idio
 
 ### Type-Safe Response Handling by Status Code and Content Type
 
-Tonik generates distinct types for each response defined in your spec. When an endpoint returns different schemas for 200, 400, and 404 - you get separate, strongly-typed classes for each:
+Most OpenAPI generators pick a single "success" type and a single "error" type per operation, silently discarding the response schemas for all other status codes. If your endpoint returns a `Pet` for 200, a `ValidationError` for 400, and a `NotFoundError` for 404, you only get the 200 type — the rest are lost or reduced to untyped error strings.
+
+Tonik generates a distinct type for every response defined in your spec. Each status code and content type combination becomes its own strongly-typed class, and the compiler enforces exhaustive handling:
 
 ```dart
 final response = await petApi.updatePet(body: pet);
@@ -38,17 +40,17 @@ switch (response) {
     switch (value) {
       case UpdatePetResponse200(:final body):
         print('Updated: ${body.name}');
-      case UpdatePetResponse400():
-        print('Invalid input');
-      case UpdatePetResponse404():
-        print('Pet not found');
+      case UpdatePetResponse400(:final body):
+        print('Validation: ${body.message}');
+      case UpdatePetResponse404(:final body):
+        print('Not found: ${body.detail}');
     }
   case TonikError(:final error):
     print('Network error: $error');
 }
 ```
 
-Different content types (JSON, url encode, plain text) on the same status code? Each gets its own typed accessor.
+Every response body is deserialized into the correct type for its status code — no casting, no type checks, no lost information. Add a new response to your spec, regenerate, and the compiler tells you every call site that needs updating.
 
 ### Composition with Sealed Classes
 
