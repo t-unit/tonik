@@ -2834,4 +2834,116 @@ void main() {
       );
     });
   });
+
+  group('with useImmutableCollections', () {
+    late AllOfGenerator immutableGenerator;
+
+    setUp(() {
+      immutableGenerator = AllOfGenerator(
+        nameManager: nameManager,
+        package: 'package:example',
+        stableModelSorter: StableModelSorter(),
+        useImmutableCollections: true,
+      );
+    });
+
+    test('allOf with ListModel component uses IList field type', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'WithList',
+        models: {
+          ListModel(
+            content: StringModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = immutableGenerator.generateClass(model);
+
+      final listField = combinedClass.fields.first;
+      final fieldType = listField.type?.accept(emitter).toString();
+      expect(fieldType, contains('IList'));
+
+      // Equality should NOT use DeepCollectionEquality for immutable
+      // collections because IList has built-in value equality.
+      // Check the operator== method body directly.
+      final equalsMethod = combinedClass.methods.firstWhere(
+        (m) => m.name == 'operator ==',
+      );
+      final equalsBody = equalsMethod.body?.accept(emitter).toString() ?? '';
+      expect(equalsBody, isNot(contains('DeepCollectionEquality')));
+      // Verify it uses direct == comparison
+      expect(equalsBody, contains('other.iList == this.iList'));
+    });
+
+    test(
+      'allOf with additional properties and useImmutableCollections',
+      () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ExtendedImmutable',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties:
+              const UnrestrictedAdditionalProperties(),
+        );
+
+        final combinedClass = immutableGenerator.generateClass(model);
+        final generated = format(
+          combinedClass.accept(emitter).toString(),
+        );
+
+        // AP field type should be IMap
+        final apField = combinedClass.fields.firstWhere(
+          (f) => f.name == 'additionalProperties',
+        );
+        final apType = apField.type?.accept(emitter).toString();
+        expect(apType, contains('IMap'));
+
+        // Constructor default should be IMapConst
+        final defaultCtor = combinedClass.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final apParam = defaultCtor.optionalParameters.firstWhere(
+          (p) => p.name == 'additionalProperties',
+        );
+        final defaultValue = apParam.defaultTo?.accept(emitter).toString();
+        expect(defaultValue, contains('IMapConst'));
+        expect(defaultValue, contains('const'));
+
+        // fromJson should use .lock on _$additional
+        const expectedFromJsonLock =
+            r'additionalProperties: _$additional.lock,';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromJsonLock)),
+        );
+
+        // toJson should use .unlock on AP
+        const expectedToJsonUnlock =
+            r'_$map.addAll(additionalProperties.unlock);';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedToJsonUnlock)),
+        );
+      },
+    );
+  });
 }

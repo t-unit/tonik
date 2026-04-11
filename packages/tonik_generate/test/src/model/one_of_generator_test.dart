@@ -2706,4 +2706,71 @@ void main() {
       );
     });
   });
+
+  group('with useImmutableCollections', () {
+    late OneOfGenerator immutableGenerator;
+
+    setUp(() {
+      immutableGenerator = OneOfGenerator(
+        nameManager: nameManager,
+        package: 'package:example',
+        stableModelSorter: StableModelSorter(),
+        useImmutableCollections: true,
+      );
+    });
+
+    test('variant with ListModel uses IList and no DeepCollectionEquality', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: IntegerModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = immutableGenerator.generateClasses(model);
+
+      // Find the list variant subclass
+      final listSubclass = classes.firstWhere(
+        (c) => c.fields.any(
+          (f) =>
+              f.type?.accept(emitter).toString().contains('IList') ?? false,
+        ),
+      );
+
+      // Verify the value field is IList<String>
+      final valueField = listSubclass.fields.firstWhere(
+        (f) => f.name == 'value',
+      );
+      expect(
+        valueField.type?.accept(emitter).toString(),
+        contains('IList'),
+      );
+
+      // Equality should NOT use DeepCollectionEquality
+      final equalsMethod = listSubclass.methods.firstWhere(
+        (m) => m.name == 'operator ==',
+      );
+      final generated = format(
+        listSubclass.accept(emitter).toString(),
+      );
+      expect(generated, isNot(contains('DeepCollectionEquality')));
+      // Instead, it should use direct == comparison
+      expect(
+        equalsMethod.body?.accept(emitter).toString(),
+        contains('other.value == this.value'),
+      );
+    });
+  });
 }

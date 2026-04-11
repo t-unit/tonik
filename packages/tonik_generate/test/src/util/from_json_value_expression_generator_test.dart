@@ -1275,4 +1275,140 @@ void main() {
       );
     });
   });
+
+  group('with useImmutableCollections', () {
+    test('simple list produces .lock', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonList<String>().lock',
+      );
+    });
+
+    test('nullable list produces ?.lock', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          isNullable: true,
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonNullableList<String>()?.lock',
+      );
+    });
+
+    test('simple map produces .lock', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonMap((v) => v.decodeJsonString()).lock',
+      );
+    });
+
+    test('nullable map produces ?.lock', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        isNullable: true,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonNullableMap((v) => v.decodeJsonString())?.lock',
+      );
+    });
+
+    test('nested list produces .lock at both levels', () {
+      final innerList = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      final outerList = ListModel(
+        content: innerList,
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: outerList,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        equals(
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e.decodeJsonList<String>().lock)'
+          '.toList().lock',
+        ),
+      );
+    });
+
+    test('map with list values produces .lock at both levels', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      final mapModel = MapModel(
+        valueModel: listModel,
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        equals(
+          'value.decodeJsonMap((v) => v.decodeJsonList<String>().lock).lock',
+        ),
+      );
+    });
+
+    test('disabled by default does not add .lock', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'value.decodeJsonList<String>()',
+      );
+    });
+  });
 }

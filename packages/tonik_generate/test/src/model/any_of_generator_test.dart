@@ -2621,4 +2621,54 @@ Object? toJson() {
       },
     );
   });
+
+  group('with useImmutableCollections', () {
+    late AnyOfGenerator immutableGenerator;
+
+    setUp(() {
+      immutableGenerator = AnyOfGenerator(
+        nameManager: nameManager,
+        package: 'package:example',
+        stableModelSorter: StableModelSorter(),
+        useImmutableCollections: true,
+      );
+    });
+
+    test('variant with ListModel uses IList and no DeepCollectionEquality', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexibleModel',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: IntegerModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = immutableGenerator.generateClass(model);
+
+      // Verify the list field type is IList
+      final listField = klass.fields.firstWhere(
+        (f) =>
+            f.type?.accept(emitter).toString().contains('IList') ?? false,
+      );
+      expect(
+        listField.type?.accept(emitter).toString(),
+        contains('IList'),
+      );
+
+      // Equality should NOT use DeepCollectionEquality
+      final generated = format(klass.accept(emitter).toString());
+      expect(generated, isNot(contains('DeepCollectionEquality')));
+    });
+  });
 }
