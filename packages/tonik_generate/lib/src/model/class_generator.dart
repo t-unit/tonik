@@ -1279,6 +1279,7 @@ if ($name != null) {
           fieldModel,
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
+          useImmutableCollections: useImmutableCollections,
         );
 
         final assignmentExpr = refer(
@@ -1654,6 +1655,7 @@ if ($name != null) {
         contextClass: className,
         contextProperty: propertyName,
         explode: refer('explode'),
+        useImmutableCollections: useImmutableCollections,
       );
     }
 
@@ -1718,6 +1720,7 @@ if ($name != null) {
           contextClass: className,
           contextProperty: 'additionalProperties',
           explode: refer('explode'),
+          useImmutableCollections: useImmutableCollections,
         );
         codes.addAll([
           const Code(r'_$additional[_$entry.key] = '),

@@ -999,6 +999,7 @@ class AllOfGenerator {
               contextClass: className,
               contextProperty: name,
               explode: refer('explode'),
+              useImmutableCollections: useImmutableCollections,
             )
           : buildSimpleValueExpression(
               refer('value'),

@@ -1,0 +1,232 @@
+openapi: 3.0.4
+info:
+  title: Immutable Collections Test API
+  description: >-
+    OpenAPI specification for testing immutableCollections: true code generation.
+    Covers list properties, map properties, nested collections, and composition.
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: items
+    description: Operations for items with collection fields
+
+paths:
+  /items/{id}:
+    get:
+      operationId: getItem
+      tags:
+        - items
+      summary: Get a single item by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A single item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+              example:
+                id: 1
+                name: Widget
+                tags:
+                  - cool
+                  - useful
+                children:
+                  - childName: bolt
+                    value: 10
+                metadata:
+                  color: red
+                  size: large
+        '404':
+          description: Item not found
+
+  /items:
+    post:
+      operationId: createItem
+      tags:
+        - items
+      summary: Create a new item
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '201':
+          description: Created item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Item'
+              example:
+                id: 1
+                name: Widget
+                tags:
+                  - cool
+                  - useful
+                children:
+                  - childName: bolt
+                    value: 10
+                metadata:
+                  color: red
+                  size: large
+
+  /nested:
+    post:
+      operationId: createNested
+      tags:
+        - items
+      summary: Create a nested list structure
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NestedList'
+      responses:
+        '200':
+          description: Echo nested list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NestedList'
+              example:
+                matrix:
+                  - - a
+                    - b
+                  - - c
+                    - d
+
+components:
+  schemas:
+    # Simple list property + map property + list of objects
+    Item:
+      type: object
+      required:
+        - id
+        - name
+        - tags
+        - children
+        - metadata
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChildModel'
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+
+    # Child model used in list of objects
+    ChildModel:
+      type: object
+      required:
+        - childName
+        - value
+      properties:
+        childName:
+          type: string
+        value:
+          type: integer
+
+    # Simple map with string values (pure map typedef)
+    StringMetadata:
+      type: object
+      additionalProperties:
+        type: string
+
+    # Map with list values
+    TagGroups:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: string
+
+    # Optional list field — tests nullable IList deserialization/encoding
+    ItemSummary:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        categories:
+          type: array
+          items:
+            type: string
+
+    # Optional map field — tests nullable IMap
+    Config:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        settings:
+          type: object
+          additionalProperties:
+            type: string
+
+    # Mix of required and optional collection fields
+    MixedItem:
+      type: object
+      required:
+        - requiredTags
+      properties:
+        requiredTags:
+          type: array
+          items:
+            type: string
+        optionalTags:
+          type: array
+          items:
+            type: string
+        requiredMeta:
+          type: object
+          additionalProperties:
+            type: integer
+        optionalMeta:
+          type: object
+          additionalProperties:
+            type: integer
+
+    # Nested list (list of list of strings)
+    NestedList:
+      type: object
+      required:
+        - matrix
+      properties:
+        matrix:
+          type: array
+          items:
+            type: array
+            items:
+              type: string
+

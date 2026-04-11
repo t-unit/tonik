@@ -300,6 +300,7 @@ class ParseGenerator {
       nameManager: nameManager,
       package: package,
       explode: literalTrue,
+      useImmutableCollections: useImmutableCollections,
     );
     statements.add(declareFinal(bodyVar).assign(bodyExpr).statement);
 

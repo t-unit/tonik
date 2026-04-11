@@ -7,6 +7,7 @@ Expression buildUriEncodeExpression(
   Model model, {
   required Expression allowEmpty,
   Expression? useQueryComponent,
+  bool useImmutableCollections = false,
 }) {
   return switch (model) {
     StringModel() ||
@@ -46,12 +47,14 @@ Expression buildUriEncodeExpression(
       content,
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      useImmutableCollections: useImmutableCollections,
     ),
     AliasModel() => buildUriEncodeExpression(
       valueExpression,
       model.model,
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      useImmutableCollections: useImmutableCollections,
     ),
     _ => throw UnimplementedError(
       'Unsupported model type for URI encoding: $model',
@@ -64,9 +67,17 @@ Expression _buildListUriEncodeExpression(
   Model contentModel, {
   required Expression allowEmpty,
   Expression? useQueryComponent,
+  bool useImmutableCollections = false,
 }) {
+  // When using immutable collections, the value is an IList which does not
+  // have .uriEncode() or .map(). Unlock it first to get a regular List.
+  final listExpr =
+      useImmutableCollections
+          ? valueExpression.property('unlock')
+          : valueExpression;
+
   return switch (contentModel) {
-    StringModel() => valueExpression.property('uriEncode').call(
+    StringModel() => listExpr.property('uriEncode').call(
       [],
       {
         'allowEmpty': allowEmpty,
@@ -84,7 +95,7 @@ Expression _buildListUriEncodeExpression(
     BinaryModel() ||
     Base64Model() ||
     EnumModel() =>
-      valueExpression
+      listExpr
           .property('map')
           .call([
             Method(
@@ -111,7 +122,7 @@ Expression _buildListUriEncodeExpression(
             },
           ),
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
-      valueExpression
+      listExpr
           .property('map')
           .call([
             Method(
@@ -149,6 +160,7 @@ Expression _buildListUriEncodeExpression(
       contentModel.model,
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      useImmutableCollections: useImmutableCollections,
     ),
     _ => throw UnimplementedError(
       'Unsupported list content type for URI encoding: $contentModel',

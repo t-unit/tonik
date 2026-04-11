@@ -6,6 +6,9 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Creates a Dart expression that correctly deserializes a form-encoded value
 /// to its Dart representation.
+///
+/// When [useImmutableCollections] is `true`, decoded lists are wrapped with
+/// `.lock` so the result is `IList` throughout.
 Expression buildFromFormValueExpression(
   Expression value, {
   required Model model,
@@ -15,6 +18,7 @@ Expression buildFromFormValueExpression(
   String? contextClass,
   String? contextProperty,
   Expression? explode,
+  bool useImmutableCollections = false,
 }) {
   final contextParam = _buildContextParam(contextClass, contextProperty);
 
@@ -105,6 +109,7 @@ Expression buildFromFormValueExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
       explode: explode,
+      useImmutableCollections: useImmutableCollections,
     ),
 
     EnumModel() ||
@@ -131,6 +136,7 @@ Expression buildFromFormValueExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
       explode: explode,
+      useImmutableCollections: useImmutableCollections,
     ),
 
     NeverModel() => _buildNeverModelExpression(value, isRequired),
@@ -203,6 +209,7 @@ Expression _buildListFromFormExpression(
   String? contextClass,
   String? contextProperty,
   Expression? explode,
+  bool useImmutableCollections = false,
 }) {
   final content = model.content;
   final contextParam = _buildContextParam(contextClass, contextProperty);
@@ -213,7 +220,7 @@ Expression _buildListFromFormExpression(
       )
       .call([], contextParam);
 
-  return switch (content) {
+  var result = switch (content) {
     StringModel() => listDecode,
     IntegerModel() => _buildPrimitiveList(
       listDecode,
@@ -303,6 +310,7 @@ Expression _buildListFromFormExpression(
       contextClass: contextClass,
       contextProperty: contextProperty,
       explode: explode,
+      useImmutableCollections: useImmutableCollections,
     ),
     NeverModel() => generateFormDecodingExceptionExpression(
       'Cannot decode List<NeverModel> - this type does not permit any value.',
@@ -311,6 +319,15 @@ Expression _buildListFromFormExpression(
     NamedModel() ||
     CompositeModel() => throw UnimplementedError('$content is not supported'),
   };
+
+  // When using immutable collections, wrap with .lock to convert to IList.
+  if (useImmutableCollections) {
+    result = isRequired
+        ? result.property('lock')
+        : result.nullSafeProperty('lock');
+  }
+
+  return result;
 }
 
 Expression _buildPrimitiveList(

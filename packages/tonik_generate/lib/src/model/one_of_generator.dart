@@ -597,6 +597,7 @@ class OneOfGenerator {
                 package: package,
                 contextClass: className,
                 explode: refer('explode'),
+                useImmutableCollections: useImmutableCollections,
               )
             : buildSimpleValueExpression(
                 refer('value'),
@@ -618,6 +619,7 @@ class OneOfGenerator {
                 package: package,
                 contextClass: className,
                 explode: refer('explode'),
+                useImmutableCollections: useImmutableCollections,
               )
             : buildSimpleValueExpression(
                 refer('value'),
