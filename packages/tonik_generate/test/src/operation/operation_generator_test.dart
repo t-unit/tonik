@@ -53,7 +53,7 @@ void main() {
         );
 
         const expectedMethod = r'''
-Future<TonikResult<void>> call() async {
+Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -80,6 +80,22 @@ Future<TonikResult<void>> call() async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -114,7 +130,15 @@ Future<TonikResult<void>> call() async {
         expect(method.modifier, MethodModifier.async);
         expect(method.name, 'call');
         expect(method.requiredParameters, isEmpty);
-        expect(method.optionalParameters, isEmpty);
+        expect(method.optionalParameters, hasLength(1));
+        final cancelParam = method.optionalParameters.first;
+        expect(cancelParam.name, 'cancelToken');
+        expect(
+          cancelParam.type?.accept(emitter).toString(),
+          'CancelToken?',
+        );
+        expect(cancelParam.named, isTrue);
+        expect(cancelParam.required, isFalse);
 
         final methodString = format(method.accept(emitter).toString());
         expect(
@@ -155,7 +179,10 @@ Future<TonikResult<void>> call() async {
         );
 
         const expectedMethod = r'''
-Future<TonikResult<void>> call({required String myHeader}) async {
+Future<TonikResult<void>> call({
+  required String myHeader,
+  CancelToken? cancelToken,
+}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -182,6 +209,22 @@ Future<TonikResult<void>> call({required String myHeader}) async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -216,7 +259,7 @@ Future<TonikResult<void>> call({required String myHeader}) async {
         expect(method.modifier, MethodModifier.async);
         expect(method.name, 'call');
 
-        expect(method.optionalParameters, hasLength(1));
+        expect(method.optionalParameters, hasLength(2));
         final param = method.optionalParameters.first;
         expect(param.name, 'myHeader');
         expect(param.type?.accept(emitter).toString(), 'String');
@@ -262,7 +305,10 @@ Future<TonikResult<void>> call({required String myHeader}) async {
         );
 
         const expectedMethod = r'''
-Future<TonikResult<void>> call({required int petId}) async {
+Future<TonikResult<void>> call({
+  required int petId,
+  CancelToken? cancelToken,
+}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -287,6 +333,22 @@ Future<TonikResult<void>> call({required int petId}) async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -337,7 +399,7 @@ Future<TonikResult<void>> call({required int petId}) async {
         expect(method.modifier, MethodModifier.async);
 
         // Check parameters
-        expect(method.optionalParameters, hasLength(1));
+        expect(method.optionalParameters, hasLength(2));
         final param = method.optionalParameters.first;
         expect(param.name, 'petId');
         expect(param.type?.accept(emitter).toString(), 'int');
@@ -370,7 +432,7 @@ Future<TonikResult<void>> call({required int petId}) async {
         );
 
         const expectedMethod = r'''
-Future<TonikResult<void>> call() async {
+Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -397,6 +459,22 @@ Future<TonikResult<void>> call() async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -431,7 +509,7 @@ Future<TonikResult<void>> call() async {
         expect(method.name, 'call');
         expect(method.modifier, MethodModifier.async);
         expect(method.requiredParameters, isEmpty);
-        expect(method.optionalParameters, isEmpty);
+        expect(method.optionalParameters, hasLength(1));
 
         final methodString = format(method.accept(emitter).toString());
         expect(
@@ -487,7 +565,11 @@ Future<TonikResult<void>> call() async {
         );
 
         const expectedMethod = r'''
-Future<TonikResult<void>> call({required String filter, String? sort}) async {
+Future<TonikResult<void>> call({
+  required String filter,
+  String? sort,
+  CancelToken? cancelToken,
+}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -516,6 +598,22 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -553,9 +651,9 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
         expect(method.modifier, MethodModifier.async);
 
         // Check parameters
-        expect(method.optionalParameters, hasLength(2));
+        expect(method.optionalParameters, hasLength(3));
         final param1 = method.optionalParameters.first;
-        final param2 = method.optionalParameters.last;
+        final param2 = method.optionalParameters.toList()[1];
         expect(param1.name, 'filter');
         expect(param1.type?.accept(emitter).toString(), 'String');
         expect(param1.named, isTrue);
@@ -604,7 +702,8 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             normalizedParams,
           );
 
-          expect(method.optionalParameters, isEmpty);
+          expect(method.optionalParameters, hasLength(1));
+          expect(method.optionalParameters.first.name, 'cancelToken');
           expect(method.requiredParameters, isEmpty);
         },
       );
@@ -656,7 +755,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             normalizedParams,
           );
 
-          expect(method.optionalParameters, hasLength(1));
+          expect(method.optionalParameters, hasLength(2));
           final param = method.optionalParameters.first;
           expect(param.type?.accept(emitter).toString(), 'String');
           expect(param.required, isTrue);
@@ -716,7 +815,7 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
             normalizedParams,
           );
 
-          expect(method.optionalParameters, hasLength(1));
+          expect(method.optionalParameters, hasLength(2));
           final param = method.optionalParameters.first;
           expect(param.type?.accept(emitter).toString(), 'MultiBody');
           expect(param.required, isTrue);
@@ -796,7 +895,10 @@ Future<TonikResult<void>> call({required String filter, String? sort}) async {
           );
 
           const expectedMethod = r'''
-Future<TonikResult<void>> call({required UploadForm body}) async {
+Future<TonikResult<void>> call({
+  required UploadForm body,
+  CancelToken? cancelToken,
+}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -823,6 +925,22 @@ Future<TonikResult<void>> call({required UploadForm body}) async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -1006,7 +1124,7 @@ Future<TonikResult<void>> call({required UploadForm body}) async {
         );
 
         const expectedMethod = r'''
-Future<TonikResult<String>> call() async {
+Future<TonikResult<String>> call({CancelToken? cancelToken}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -1033,6 +1151,22 @@ Future<TonikResult<String>> call() async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -1102,7 +1236,7 @@ Future<TonikResult<String>> call() async {
           normalizedParams,
         );
         const expectedMethod = r'''
-Future<TonikResult<void>> call() async {
+Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -1129,6 +1263,22 @@ Future<TonikResult<void>> call() async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -1215,7 +1365,7 @@ Future<TonikResult<void>> call() async {
           );
 
           const expectedMethod = r'''
-Future<TonikResult<List<ActivePet>>> call() async {
+Future<TonikResult<List<ActivePet>>> call({CancelToken? cancelToken}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -1242,6 +1392,22 @@ Future<TonikResult<List<ActivePet>>> call() async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -1309,7 +1475,7 @@ Future<TonikResult<List<ActivePet>>> call() async {
         );
 
         const expectedMethod = r'''
-Future<TonikResult<void>> call() async {
+Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
   late final Uri _$uri;
   late final Object? _$data;
   late final Options _$options;
@@ -1336,6 +1502,214 @@ Future<TonikResult<void>> call() async {
       _$uri,
       data: _$data,
       options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  return TonikSuccess(null, _$response);
+}
+''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(expectedMethod),
+        );
+      });
+
+      test('generates cancelToken parameter with correct type and optionality',
+          () {
+        final operation = Operation(
+          operationId: 'cancelTest',
+          context: context,
+          summary: 'Cancel test',
+          description: 'Tests cancelToken generation',
+          tags: const {},
+          isDeprecated: false,
+          path: '/cancel',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          cookieParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
+
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
+
+        // cancelToken should be the last optional parameter
+        final cancelParam = method.optionalParameters.last;
+        expect(cancelParam.name, 'cancelToken');
+        expect(
+          cancelParam.type?.accept(emitter).toString(),
+          'CancelToken?',
+        );
+        expect(cancelParam.named, isTrue);
+        expect(cancelParam.required, isFalse);
+      });
+
+      test(
+        'generates cancelToken as last parameter when other params exist',
+        () {
+          final pathParam = PathParameterObject(
+            name: 'id',
+            rawName: 'id',
+            description: 'ID',
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            encoding: PathParameterEncoding.simple,
+            model: IntegerModel(context: context),
+            context: context,
+          );
+
+          final operation = Operation(
+            operationId: 'cancelWithParams',
+            context: context,
+            summary: 'Cancel with params',
+            description: 'Tests cancelToken ordering',
+            tags: const {},
+            isDeprecated: false,
+            path: '/cancel/{id}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: {pathParam},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final normalizedParams = NormalizedRequestParameters(
+            pathParameters: [
+              (normalizedName: 'id', parameter: pathParam),
+            ],
+            queryParameters: const [],
+            headers: const [],
+            cookieParameters: const [],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          // Should have id + cancelToken
+          expect(method.optionalParameters, hasLength(2));
+          expect(method.optionalParameters.first.name, 'id');
+          expect(method.optionalParameters.last.name, 'cancelToken');
+        },
+      );
+
+      test('generates cancel-specific error handling in network catch block',
+          () {
+        final operation = Operation(
+          operationId: 'cancelErrorHandling',
+          context: context,
+          summary: 'Cancel error handling',
+          description: 'Tests cancel error handling generation',
+          tags: const {},
+          isDeprecated: false,
+          path: '/cancel-error',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          cookieParameters: [],
+          queryParameters: [],
+          headers: [],
+        );
+
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
+
+        const expectedMethod = r'''
+Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
     );
   } on Object catch (exception, stackTrace) {
     return TonikError(
@@ -1452,6 +1826,7 @@ Future<TonikResult<void>> call() async {
             '    required _i2.String body,\n'
             '    required _i2.String id,\n'
             '    _i2.int? limit,\n'
+            '    _i1.CancelToken? cancelToken,\n'
             '  }) async',
           ),
         );
@@ -1538,6 +1913,7 @@ Future<TonikResult<void>> call() async {
             '    required _i2.String userId,\n'
             '    _i2.int? pageSize,\n'
             '    required _i2.String authToken,\n'
+            '    _i1.CancelToken? cancelToken,\n'
             '  }) async',
           ),
         );

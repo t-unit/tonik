@@ -55,6 +55,9 @@ enum TonikErrorType {
   /// An error occurred while sending the request.
   network,
 
+  /// The request was cancelled via a [CancelToken].
+  cancelled,
+
   /// Any other error occurred.
   other,
 }
