@@ -168,7 +168,8 @@ Expression _handleListExpression(
   ).closure;
 
   if (useImmutableCollections) {
-    // Unlock the outer IList first so .map() returns an Iterable, not IList.
+    // Unlock the outer IList to a regular List before mapping, so the
+    // result is a standard List for JSON serialization.
     if (forceNonNullReceiver) {
       return receiver.nullChecked
           .property('unlock')
@@ -338,7 +339,7 @@ bool _needsTransformation(
       useImmutableCollections: useImmutableCollections,
     ),
     // When using immutable collections, lists and maps always need
-    // transformation to unlock inner immutable collections.
+    // transformation to convert IList/IMap back to List/Map for JSON serialization.
     ListModel() when useImmutableCollections => true,
     MapModel() when useImmutableCollections => true,
     // Lists delegate to their content model

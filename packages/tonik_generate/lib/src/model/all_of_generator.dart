@@ -329,6 +329,7 @@ class AllOfGenerator {
               model.additionalProperties,
               nameManager,
               package,
+              useImmutableCollections: useImmutableCollections,
             ),
         ),
       );
@@ -395,7 +396,13 @@ class AllOfGenerator {
                 ..name = apFieldName
                 ..named = true
                 ..required = false
-                ..defaultTo = const Code('const {}')
+                ..defaultTo = useImmutableCollections
+                    ? refer(
+                        'IMapConst',
+                        'package:fast_immutable_collections/'
+                            'fast_immutable_collections.dart',
+                      ).constInstance([literalConstMap({})]).code
+                    : const Code('const {}')
                 ..toThis = true,
             ),
           );
@@ -525,7 +532,9 @@ class AllOfGenerator {
         (i) => MapEntry(fieldNames[i], fromJsonParams[i]),
       ),
     );
-    constructorArgs[apFieldName] = refer(r'_$additional');
+    constructorArgs[apFieldName] = useImmutableCollections
+        ? refer(r'_$additional').property('lock')
+        : refer(r'_$additional');
 
     codes.add(
       refer(className).call([], constructorArgs).returned.statement,
@@ -793,11 +802,14 @@ class AllOfGenerator {
           normalizedProperties,
         );
         final ap = model.additionalProperties;
+        final apAccess = useImmutableCollections
+            ? '$apFieldName.unlock'
+            : apFieldName;
         if (ap is TypedAdditionalProperties &&
             ap.valueModel.encodingShape == EncodingShape.complex) {
           bodyCode.add(
             Code(
-              'for (final _\$e in $apFieldName.entries) '
+              'for (final _\$e in $apAccess.entries) '
               r'{ _$map[_$e.key] = _$e.value.toJson(); }',
             ),
           );
@@ -805,7 +817,7 @@ class AllOfGenerator {
           bodyCode.add(
             Code(
               r'_$map.addAll('
-              '$apFieldName);',
+              '$apAccess);',
             ),
           );
         }
@@ -908,11 +920,14 @@ class AllOfGenerator {
             normalizedProperties,
           );
           final ap = model.additionalProperties;
+          final apAccess = useImmutableCollections
+              ? '$apFieldName.unlock'
+              : apFieldName;
           if (ap is TypedAdditionalProperties &&
               ap.valueModel.encodingShape == EncodingShape.complex) {
             mapParts.addAll([
               Code(
-                'for (final _\$e in $apFieldName.entries) '
+                'for (final _\$e in $apAccess.entries) '
                 r'{ _$map[_$e.key] = _$e.value.toJson(); }',
               ),
             ]);
@@ -920,7 +935,7 @@ class AllOfGenerator {
             mapParts.add(
               Code(
                 r'_$map.addAll('
-                '$apFieldName);',
+                '$apAccess);',
               ),
             );
           }
@@ -1065,7 +1080,9 @@ class AllOfGenerator {
       const Code('}'),
     ];
 
-    constructorArgs[apFieldName] = refer(r'_$additional');
+    constructorArgs[apFieldName] = useImmutableCollections
+        ? refer(r'_$additional').property('lock')
+        : refer(r'_$additional');
 
     codes.add(
       refer(className, package).call([], constructorArgs).returned.statement,
@@ -2724,6 +2741,7 @@ for (final _\$e in $apFieldName.entries) {
             model.additionalProperties,
             nameManager,
             package,
+            useImmutableCollections: useImmutableCollections,
           ),
           skipCast: false,
         ),
