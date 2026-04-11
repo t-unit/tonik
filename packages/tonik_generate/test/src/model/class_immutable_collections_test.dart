@@ -499,5 +499,157 @@ Object? toJson() => {r'tags': tags};
         );
       });
     });
+
+    group('additional properties', () {
+      late ClassModel model;
+
+      setUp(() {
+        model = ClassModel(
+          isDeprecated: false,
+          name: 'Flexible',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          additionalProperties: const UnrestrictedAdditionalProperties(),
+          context: context,
+        );
+
+        nameManager.prime(
+          models: {model},
+          responses: const {},
+          requestBodies: const {},
+          operations: const {},
+          tags: const [],
+          servers: const {},
+        );
+      });
+
+      test('AP field type is IMap', () {
+        final result = generator.generateClass(model);
+        final apField = result.fields.firstWhere(
+          (f) => f.name == 'additionalProperties',
+        );
+        final typeStr = apField.type!.accept(emitter).toString();
+        expect(typeStr, contains('IMap'));
+      });
+
+      test('constructor default uses IMapConst', () {
+        final generatedClass = generator.generateClass(model);
+        final code = _formatClass(generatedClass);
+        expect(
+          collapseWhitespace(code),
+          contains(collapseWhitespace('IMapConst')),
+        );
+      });
+
+      test('fromJson uses .lock on additional properties', () {
+        final generatedClass = generator.generateClass(model);
+        final code = _formatClass(generatedClass);
+        expect(
+          collapseWhitespace(code),
+          contains(
+            collapseWhitespace(r'additionalProperties: _$additional.lock'),
+          ),
+        );
+      });
+
+      test('toJson uses .unlock on additional properties', () {
+        final generatedClass = generator.generateClass(model);
+        final code = _formatClass(generatedClass);
+        expect(
+          collapseWhitespace(code),
+          contains(
+            collapseWhitespace('additionalProperties.unlock'),
+          ),
+        );
+      });
+    });
+
+    group('fromSimple with collection', () {
+      test('fromSimple adds .lock for list property', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Tags',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        nameManager.prime(
+          models: {model},
+          responses: const {},
+          requestBodies: const {},
+          operations: const {},
+          tags: const [],
+          servers: const {},
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final code = _formatClass(generatedClass);
+        // fromSimple should contain .lock for the list field
+        expect(
+          collapseWhitespace(code),
+          contains(collapseWhitespace('.lock')),
+        );
+      });
+    });
+
+    group('fromForm with collection', () {
+      test('fromForm adds .lock for list property', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Tags',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        nameManager.prime(
+          models: {model},
+          responses: const {},
+          requestBodies: const {},
+          operations: const {},
+          tags: const [],
+          servers: const {},
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final code = _formatClass(generatedClass);
+        // fromForm should contain .lock
+        final fromFormSection = code.substring(
+          code.indexOf('factory Tags.fromForm'),
+        );
+        expect(
+          collapseWhitespace(fromFormSection),
+          contains(collapseWhitespace('.lock')),
+        );
+      });
+    });
   });
 }

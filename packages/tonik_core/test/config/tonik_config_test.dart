@@ -63,6 +63,17 @@ void main() {
       expect(config1, equals(config2));
       expect(config1, isNot(equals(config3)));
     });
+
+    test('hashCode includes useImmutableCollections', () {
+      const a = TonikConfig(useImmutableCollections: true);
+      const b = TonikConfig();
+      expect(a.hashCode, isNot(b.hashCode));
+    });
+
+    test('toString includes useImmutableCollections', () {
+      const config = TonikConfig(useImmutableCollections: true);
+      expect(config.toString(), contains('useImmutableCollections: true'));
+    });
   });
 
   group('SchemaContentType', () {

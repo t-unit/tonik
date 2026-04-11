@@ -37,9 +37,10 @@ melos:
         melos run test-integration-all
 
     coverage:
-      exec: dart test --coverage=coverage
-      packageFilters:
-        dirExists: test
+      run: ./scripts/coverage.sh
+
+    coverage-diff:
+      run: ./scripts/coverage.sh --diff main
         
     generate:
       run: flutter pub run build_runner build --delete-conflicting-outputs

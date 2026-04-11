@@ -698,6 +698,26 @@ nameOverrides:
       });
     });
 
+    group('CliConfig toString, equality, hashCode', () {
+      test('toString includes useImmutableCollections', () {
+        const config = CliConfig(useImmutableCollections: true);
+        expect(config.toString(), contains('useImmutableCollections: true'));
+      });
+
+      test('equality differs when useImmutableCollections differs', () {
+        const a = CliConfig(useImmutableCollections: true);
+        const b = CliConfig();
+        expect(a == b, isFalse);
+      });
+
+      test('equal when all fields match including useImmutableCollections', () {
+        const a = CliConfig(useImmutableCollections: true);
+        const b = CliConfig(useImmutableCollections: true);
+        expect(a == b, isTrue);
+        expect(a.hashCode, b.hashCode);
+      });
+    });
+
     group('type validation for string fields', () {
       test('throws meaningful error when spec is not a string', () {
         File('${tempDir.path}/tonik.yaml').writeAsStringSync('''

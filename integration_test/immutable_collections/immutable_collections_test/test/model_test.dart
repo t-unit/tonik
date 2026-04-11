@@ -1,5 +1,3 @@
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:immutable_collections_api/immutable_collections_api.dart';
 import 'package:test/test.dart';
@@ -43,7 +41,7 @@ void main() {
         name: 'Widget',
         tags: <String>[].lock,
         children: <ChildModel>[].lock,
-        metadata: IMap({'color': 'red', 'size': 'large'}),
+        metadata: IMap(const {'color': 'red', 'size': 'large'}),
       );
       expect(item.metadata, isA<IMap<String, String>>());
       expect(item.metadata['color'], 'red');
@@ -75,7 +73,7 @@ void main() {
 
   group('StringMetadata type check', () {
     test('is IMap<String, String>', () {
-      final meta = IMap(<String, String>{'key': 'value'});
+      final meta = IMap(const <String, String>{'key': 'value'});
       expect(meta, isA<StringMetadata>());
     });
   });
@@ -93,7 +91,7 @@ void main() {
         children: <ChildModel>[
           const ChildModel(childName: 'bolt', value: 10),
         ].lock,
-        metadata: IMap({'color': 'red'}),
+        metadata: IMap(const {'color': 'red'}),
       );
 
       final json = original.toJson();
@@ -148,14 +146,14 @@ void main() {
         name: 'W',
         tags: <String>['x'].lock,
         children: <ChildModel>[].lock,
-        metadata: IMap(<String, String>{'k': 'v'}),
+        metadata: IMap(const <String, String>{'k': 'v'}),
       );
       final b = Item(
         id: 1,
         name: 'W',
         tags: <String>['x'].lock,
         children: <ChildModel>[].lock,
-        metadata: IMap(<String, String>{'k': 'v'}),
+        metadata: IMap(const <String, String>{'k': 'v'}),
       );
       expect(a, b);
       expect(a.hashCode, b.hashCode);
