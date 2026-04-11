@@ -70,7 +70,8 @@ Expression _buildListUriEncodeExpression(
   bool useImmutableCollections = false,
 }) {
   // When using immutable collections, the value is an IList which does not
-  // have .uriEncode() or .map(). Unlock it first to get a regular List.
+  // The .uriEncode() extension is defined on List, not IList.
+  // Unlock first to get a regular List that has the extension method.
   final listExpr =
       useImmutableCollections
           ? valueExpression.property('unlock')

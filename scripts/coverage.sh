@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
 # Collect test coverage for all workspace packages and produce an lcov report.
 #
@@ -51,7 +51,12 @@ for pkg in "${PACKAGES[@]}"; do
     continue
   fi
   echo "  $pkg..."
-  (cd "$PKG_DIR" && fvm dart test --coverage-path=coverage/lcov.info --coverage-package="$pkg" 2>&1 | tail -1)
+  TEST_OUTPUT=$(cd "$PKG_DIR" && fvm dart test --coverage-path=coverage/lcov.info --coverage-package="$pkg" 2>&1) || {
+    echo "$TEST_OUTPUT"
+    echo "ERROR: Tests failed for $pkg"
+    exit 1
+  }
+  echo "$TEST_OUTPUT" | tail -1
   if [ -f "$PKG_DIR/coverage/lcov.info" ]; then
     cat "$PKG_DIR/coverage/lcov.info" >> "$COMBINED_LCOV"
   fi
