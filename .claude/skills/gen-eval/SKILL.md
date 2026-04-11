@@ -84,6 +84,7 @@ Based on the task's acceptance criteria, write a numbered list of **concrete, te
 - [ ] Test criteria are specific about coverage scope (which cases, which error conditions, which scenarios)
 - [ ] There is a criterion for analysis passing (`fvm dart analyze`)
 - [ ] If generator changes are involved, there is a criterion for integration tests passing
+- [ ] There is a criterion for patch coverage >= 90% (`bash scripts/coverage.sh --diff main`)
 
 Present the sprint contract to the user for approval before proceeding.
 
@@ -187,3 +188,30 @@ On PASS from Step 4:
 - **Show the user the sprint contract** before starting the loop — they may want to adjust criteria
 - **Generator gets fresh context** — this is intentional (context reset avoids stale implementation assumptions)
 - The generator prompt is large (includes all skill content) — this is the tradeoff for giving it full project knowledge
+
+## Quality Over Speed — Hard Rules
+
+**NEVER trade quality for speed.** The harness exists to produce production-quality code, not to ship fast. Every shortcut taken during the gen-eval loop (accepting fragment tests, skipping review steps, glossing over conventions) creates debt the user has to fix manually.
+
+### Test Quality Is a Hard Gate
+
+During your code review (Step 4c), you MUST verify every test file against the testing skill (`testing/SKILL.md`). Test convention violations are **critical findings that block PASS** — not minor suggestions. Specifically:
+
+1. **Read every new/modified test file in full.** Do not skim.
+2. **For each test assertion on generated code, verify:**
+   - Does it test a **full method/function body** or just a fragment? Fragments → FAIL.
+   - Does it use **object introspection** where possible (`.symbol`, `.type`, `.fields`)? String testing where introspection works → FAIL.
+   - Does it use `collapseWhitespace()` for string comparisons? Bare `contains()` → FAIL.
+   - Are both expected and actual formatted with `DartFormatter`? Unformatted comparison → FAIL.
+   - Does it use `isTrue`/`isFalse`? Bare `true`/`false` → FAIL.
+3. **A test that passes but violates conventions is worse than a failing test** — it gives false confidence and hides the convention violation behind a green checkmark.
+
+If the generator produces tests with fragment assertions (`contains('.lock')`, `contains('IList')`), that is a **critical finding**. Do NOT accept it as "good enough." FAIL the iteration and demand full method body comparisons or object introspection.
+
+### Integration Tests Find Bugs, Not Hide Them
+
+When an integration test reveals a bug (compile error, type mismatch, runtime failure):
+- **KEEP the failing test** — it is the most valuable test in the suite
+- **ADD more adversarial cases** that probe similar weak spots
+- **FIX the underlying generator bug** that causes the failure
+- **NEVER remove a test case or simplify a schema to avoid a failure**
