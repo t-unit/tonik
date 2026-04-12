@@ -1206,8 +1206,7 @@ void main() {
       ).accept(emitter).toString();
       expect(
         result,
-        'throw  _i1.JsonDecodingException('
-        "'Cannot decode NeverModel - this type does not permit any value.')",
+        '''throw  _i1.JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
       );
     });
 
@@ -1221,8 +1220,7 @@ void main() {
       ).accept(emitter).toString();
       expect(
         result,
-        'value == null ? null : throw  _i1.JsonDecodingException('
-        "'Cannot decode NeverModel - this type does not permit any value.')",
+        '''value == null ? null : throw  _i1.JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
       );
     });
 
