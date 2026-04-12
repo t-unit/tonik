@@ -16,6 +16,7 @@ class ModelImporter {
   final Map<String, SchemaContentType> _contentMediaTypes;
   final Map<String, Schema> _defs = {};
   final Set<String> _resolving = {};
+  final Map<String, AliasModel> _placeholders = {};
 
   late Set<Model> models;
   final log = Logger('ModelImporter');
@@ -25,6 +26,7 @@ class ModelImporter {
 
   void import() {
     models = <Model>{};
+    _placeholders.clear();
     _collectAllDefs();
 
     final context = rootContext;
@@ -202,19 +204,18 @@ class ModelImporter {
         return existing;
       }
 
-      // No early-registered model found (e.g. bare $ref alias cycles in
-      // $defs). Create and register a placeholder so the other side of the
-      // cycle can resolve to it when it unwinds.
-      log.warning(
-        'Circular reference to $ref detected but no '
-        'early-registered model found. Registering AliasModel placeholder.',
+      // Create placeholder but do NOT add to models -- this prevents
+      // shadowing the real model that will be built when resolution unwinds.
+      log.fine(
+        'Circular reference to $ref detected. '
+        'Using placeholder until resolution completes.',
       );
       final placeholder = AliasModel(
         name: defName,
         model: AnyModel(context: _contextFromDefsPath(ref)),
         context: _contextFromDefsPath(ref),
       );
-      models.add(placeholder);
+      _placeholders[ref] = placeholder;
       return placeholder;
     }
 
@@ -223,6 +224,18 @@ class ModelImporter {
     try {
       final defsContext = _contextFromDefsPath(ref);
       refModel = _resolveSchemaRef(defName, defSchema, defsContext);
+
+      // If a placeholder was created during resolution, update it to
+      // point to the real model so back-edge references resolve correctly.
+      // Skip AliasModel results to avoid infinite loops in resolved getter.
+      final placeholder = _placeholders.remove(ref);
+      if (placeholder != null) {
+        if (refModel is! AliasModel) {
+          placeholder.model = refModel;
+        } else {
+          models.add(placeholder);
+        }
+      }
     } finally {
       _resolving.remove(ref);
     }
@@ -269,8 +282,9 @@ class ModelImporter {
   /// Tracks all named schema resolutions to detect circular references.
   /// When a cycle is detected the method first checks for an
   /// early-registered model (structural schemas register before resolving
-  /// members). If none is found it creates and registers an [AliasModel]
-  /// placeholder wrapping [AnyModel] so that resolution can unwind safely.
+  /// members). If none is found it creates an [AliasModel] placeholder
+  /// wrapping [AnyModel] (tracked in [_placeholders], NOT added to [models])
+  /// so that resolution can unwind safely without shadowing the real model.
   Model _resolveWithCycleCheck(String refName, Schema refSchema) {
     if (_resolving.contains(refName)) {
       // Look up a partially-constructed model that was registered early
@@ -282,25 +296,41 @@ class ModelImporter {
         return existing;
       }
 
-      // No early-registered model found (e.g. bare $ref alias cycles).
-      // Create and register a placeholder so the other side of the cycle
-      // can resolve to it when it unwinds.
-      log.warning(
-        'Circular reference to $refName detected but no '
-        'early-registered model found. Registering AliasModel placeholder.',
+      // Create placeholder but do NOT add to models -- this prevents
+      // shadowing the real model that will be built when resolution unwinds.
+      log.fine(
+        'Circular reference to $refName detected. '
+        'Using placeholder until resolution completes.',
       );
       final placeholder = AliasModel(
         name: refName,
         model: AnyModel(context: rootContext),
         context: rootContext,
       );
-      models.add(placeholder);
+      _placeholders[refName] = placeholder;
       return placeholder;
     }
 
     _resolving.add(refName);
     try {
-      return _resolveSchemaRef(refName, refSchema, rootContext);
+      final result = _resolveSchemaRef(refName, refSchema, rootContext);
+
+      // If a placeholder was created during resolution, update it to
+      // point to the real model so back-edge references resolve correctly.
+      // Skip AliasModel results to avoid infinite loops in resolved getter
+      // for bare $ref cycles (A->B->A).
+      final placeholder = _placeholders.remove(refName);
+      if (placeholder != null) {
+        if (result is! AliasModel) {
+          placeholder.model = result;
+        } else {
+          // Bare ref cycle -- add placeholder to models as the final model.
+          // AnyModel terminal is correct since there's no concrete type.
+          models.add(placeholder);
+        }
+      }
+
+      return result;
     } finally {
       _resolving.remove(refName);
     }

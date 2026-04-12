@@ -1174,6 +1174,18 @@ void main() {
       expect(modelA, isA<AliasModel>());
       expect(modelB, isA<AliasModel>());
       expect(modelC, isA<AliasModel>());
+
+      // Verify the alias chain is wired (not all AnyModel terminals).
+      // At least one alias should wrap another alias (not AnyModel).
+      final aliasModels = [modelA, modelB, modelC].cast<AliasModel>();
+      final wrapsAlias =
+          aliasModels.where((a) => a.model is AliasModel).toList();
+      expect(
+        wrapsAlias,
+        isNotEmpty,
+        reason: 'At least one alias should wrap another alias, '
+            'not all terminate at AnyModel',
+      );
     });
 
     test('indirect circular reference (A -> B -> A) produces models', () {
@@ -1200,6 +1212,17 @@ void main() {
 
       expect(modelA, isA<AliasModel>());
       expect(modelB, isA<AliasModel>());
+
+      // One alias wraps the other, and the chain terminates at AnyModel
+      // (bare ref cycles have no concrete type).
+      final aliasA = modelA as AliasModel;
+      final aliasB = modelB as AliasModel;
+      expect(aliasB.model, isA<AliasModel>());
+      expect((aliasB.model as AliasModel).name, 'A');
+
+      // A wraps a placeholder whose inner model is AnyModel.
+      expect(aliasA.model, isA<AliasModel>());
+      expect((aliasA.model as AliasModel).model, isA<AnyModel>());
     });
   });
 }

@@ -440,9 +440,26 @@ void main() {
 
         final api = Importer().import(spec);
 
-        // Both schemas should be parsed as ListModel (wrapped in AliasModel)
-        // without causing a stack overflow.
-        expect(api.models.length, greaterThanOrEqualTo(2));
+        // Both schemas should be present and parsed as ListModel without
+        // causing a stack overflow.
+        final schemaA = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaA',
+        );
+        final schemaB = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SchemaB',
+        );
+
+        // Top-level array schemas become ListModel instances.
+        expect(schemaA, isA<ListModel>());
+        expect(schemaB, isA<ListModel>());
+
+        // Each list's content should reference the other list model.
+        final listA = schemaA as ListModel;
+        final listB = schemaB as ListModel;
+        expect(listA.content, isA<ListModel>());
+        expect(listB.content, isA<ListModel>());
+        expect((listA.content as ListModel).name, 'SchemaB');
+        expect((listB.content as ListModel).name, 'SchemaA');
       },
     );
 
@@ -672,6 +689,20 @@ void main() {
 
       expect(aliasA, isA<AliasModel>());
       expect(aliasB, isA<AliasModel>());
+
+      // For bare ref cycles, one alias wraps the other and the chain
+      // terminates at AnyModel (since bare ref cycles have no concrete type).
+      final aliasAModel = aliasA as AliasModel;
+      final aliasBModel = aliasB as AliasModel;
+
+      // AliasB wraps AliasA.
+      expect(aliasBModel.model, isA<AliasModel>());
+      expect((aliasBModel.model as AliasModel).name, 'AliasA');
+
+      // AliasA wraps a placeholder whose inner model is AnyModel,
+      // confirming the cycle terminates rather than looping infinitely.
+      expect(aliasAModel.model, isA<AliasModel>());
+      expect((aliasAModel.model as AliasModel).model, isA<AnyModel>());
     });
   });
 }
