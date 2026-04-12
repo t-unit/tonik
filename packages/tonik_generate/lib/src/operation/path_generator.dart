@@ -28,12 +28,21 @@ class PathGenerator {
     List<({String normalizedName, PathParameterObject parameter})>
     pathParameters,
   ) {
+    final hasTrailingSlash =
+        operation.path.endsWith('/') && operation.path.length > 1;
+
     if (pathParameters.isEmpty) {
-      final pathSegments = operation.path
+      final segments = operation.path
           .split('/')
           .where((s) => s.isNotEmpty)
           .map(specLiteralStringCode)
-          .join(', ');
+          .toList();
+
+      if (hasTrailingSlash) {
+        segments.add(specLiteralStringCode(''));
+      }
+
+      final pathSegments = segments.join(', ');
 
       return Method(
         (b) => b
@@ -153,6 +162,10 @@ class PathGenerator {
         );
         pathPartExpressions.add(matrixExpression);
       }
+    }
+
+    if (hasTrailingSlash) {
+      pathPartExpressions.add(specLiteralString(''));
     }
 
     final listExpr = literalList(pathPartExpressions);

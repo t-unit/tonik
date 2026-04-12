@@ -1393,4 +1393,180 @@ void main() {
       collapseWhitespace(expectedMethod),
     );
   });
+
+  group('trailing slash preservation', () {
+    test(
+        'preserves trailing slash for path without parameters '
+        'by adding empty segment', () {
+      final operation = Operation(
+        operationId: 'listSpaces',
+        context: context,
+        summary: 'List spaces',
+        description: 'Lists all spaces',
+        tags: const {},
+        isDeprecated: false,
+        path: '/api/mobile/protected/spaces/',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+          List<String> _path() {
+            return [r'api', r'mobile', r'protected', r'spaces', r''];
+          }
+        ''';
+
+      final method = generator.generatePathMethod(operation, []);
+
+      expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(method.accept(emitter).toString()),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test(
+        'preserves trailing slash for path with parameters '
+        'by adding empty segment after parameter', () {
+      final pathParam = PathParameterObject(
+        name: 'slug',
+        rawName: 'slug',
+        description: 'Keeper slug',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getKeeperBySlug',
+        context: context,
+        summary: 'Get keeper by slug',
+        description: 'Gets a keeper by slug',
+        tags: const {},
+        isDeprecated: false,
+        path: '/api/mobile/protected/spaces/keeper/{slug}/',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+          List<String> _path({required String slug}) {
+            return [r'api', r'mobile', r'protected', r'spaces', r'keeper', slug.toSimple(explode: false, allowEmpty: false, ), r'', ];
+          }
+        ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'slug', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(method.accept(emitter).toString()),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('does not add trailing segment for path without trailing slash '
+        'and no parameters', () {
+      final operation = Operation(
+        operationId: 'getUsers',
+        context: context,
+        summary: 'Get users',
+        description: 'Gets a list of users',
+        tags: const {},
+        isDeprecated: false,
+        path: '/users',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+          List<String> _path() {
+            return [r'users'];
+          }
+        ''';
+
+      final method = generator.generatePathMethod(operation, []);
+
+      expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(method.accept(emitter).toString()),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
+    test('does not add trailing segment for path without trailing slash '
+        'and with parameters', () {
+      final pathParam = PathParameterObject(
+        name: 'userId',
+        rawName: 'userId',
+        description: 'User ID',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getUser',
+        context: context,
+        summary: 'Get user',
+        description: 'Gets a user by ID',
+        tags: const {},
+        isDeprecated: false,
+        path: '/users/{userId}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+          List<String> _path({required String userId}) {
+            return [r'users', userId.toSimple(explode: false, allowEmpty: false, ), ];
+          }
+        ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'userId', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(method.accept(emitter).toString()),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+  });
 }
