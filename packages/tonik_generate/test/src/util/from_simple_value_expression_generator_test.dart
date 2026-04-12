@@ -714,6 +714,66 @@ void main() {
       });
     });
 
+    group('List<ClassModel>', () {
+      test(
+        'generates SimpleDecodingException throw for required '
+        'List<ClassModel>',
+        () {
+          final value = refer('value');
+          final classModel = ClassModel(
+            isDeprecated: false,
+            context: context,
+            name: 'User',
+            properties: const [],
+          );
+          final listModel = ListModel(
+            content: classModel,
+            context: context,
+          );
+          expect(
+            buildSimpleValueExpression(
+              value,
+              model: listModel,
+              isRequired: true,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              explode: literalBool(false),
+            ).accept(scopedEmitter).toString(),
+            """throw  _i1.SimpleDecodingException('Lists of objects are not supported in simple encoding.')""",
+          );
+        },
+      );
+
+      test(
+        'generates SimpleDecodingException throw for nullable '
+        'List<ClassModel>',
+        () {
+          final value = refer('value');
+          final classModel = ClassModel(
+            isDeprecated: false,
+            context: context,
+            name: 'User',
+            properties: const [],
+          );
+          final listModel = ListModel(
+            content: classModel,
+            context: context,
+          );
+          expect(
+            buildSimpleValueExpression(
+              value,
+              model: listModel,
+              isRequired: false,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              explode: literalBool(false),
+            ).accept(scopedEmitter).toString(),
+            """throw  _i1.SimpleDecodingException('Lists of objects are not supported in simple encoding.')""",
+          );
+        },
+      );
+    });
+
     group('NeverModel', () {
       test('generates throw for required NeverModel', () {
         final value = refer('value');

@@ -314,8 +314,8 @@ Expression _buildListFromSimpleExpression(
       isRequired,
       contextParam: contextParam,
     ),
-    ClassModel() => throw UnimplementedError(
-      'ClassModel is not supported in lists for simple encoding',
+    ClassModel() => generateSimpleDecodingExceptionExpression(
+      'Lists of objects are not supported in simple encoding.',
     ),
     EnumModel() ||
     OneOfModel() ||
