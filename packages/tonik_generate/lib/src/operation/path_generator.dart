@@ -39,7 +39,7 @@ class PathGenerator {
           .toList();
 
       if (hasTrailingSlash) {
-        segments.add("r''");
+        segments.add(specLiteralStringCode(''));
       }
 
       final pathSegments = segments.join(', ');
