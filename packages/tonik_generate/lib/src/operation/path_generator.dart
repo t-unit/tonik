@@ -86,82 +86,109 @@ class PathGenerator {
 
     final pathPartExpressions = <Expression>[];
 
-    for (final pathComponent
-        in operation.path
-            .splitAndKeep(RegExp(r'\{[^}]+\}'))
-            .where((pathComponent) => pathComponent.isNotEmpty)) {
-      if (!pathComponent.startsWith('{') || !pathComponent.endsWith('}')) {
-        final segments = pathComponent
-            .split('/')
-            .where((s) => s.isNotEmpty)
-            .map(specLiteralString);
-        pathPartExpressions.addAll(segments);
+    // Split by '/' first to get proper URL segments, then handle parameters
+    // within each segment. This ensures that suffixes like '.json' after a
+    // parameter (e.g. '{Sid}.json') stay in the same segment rather than
+    // becoming a separate path entry.
+    final segments = operation.path.split('/').where((s) => s.isNotEmpty);
+
+    for (final segment in segments) {
+      final parts = segment.splitAndKeep(RegExp(r'\{[^}]+\}'));
+
+      // Pure literal segment — no parameters at all.
+      if (!parts.any((p) => p.startsWith('{') && p.endsWith('}'))) {
+        pathPartExpressions.add(specLiteralString(segment));
         continue;
       }
 
-      final paramName = pathComponent.substring(1, pathComponent.length - 1);
-      final param = pathParameters.firstWhereOrNull(
-        (p) => p.parameter.rawName == paramName,
-      );
+      // Process parts within the segment. Simple-encoded parameters and
+      // adjacent literals are concatenated into a single list entry. Label
+      // and matrix parameters always become their own list entries because
+      // they produce their own prefix (. or ;).
+      final currentConcatParts = <Expression>[];
 
-      if (param == null) {
-        final segments = pathComponent
-            .split('/')
-            .where((s) => s.isNotEmpty)
-            .map(specLiteralString);
-        pathPartExpressions.addAll(segments);
-        continue;
-      }
-
-      if (param.parameter.encoding == PathParameterEncoding.simple) {
-        final model = param.parameter.model;
-        if (model is ListModel &&
-            model.content.encodingShape != EncodingShape.simple) {
-          body.add(
-            generateEncodingExceptionExpression(
-              'Simple encoding does not support list with complex elements for '
-              'path parameter ${param.parameter.rawName}',
-            ).statement,
-          );
-
+      for (final part in parts.where((p) => p.isNotEmpty)) {
+        if (!part.startsWith('{') || !part.endsWith('}')) {
+          // Literal text within the segment — accumulate for concatenation.
+          currentConcatParts.add(specLiteralString(part));
           continue;
         }
 
-        final valueExpression = buildToSimplePathParameterExpression(
-          param.normalizedName,
-          param.parameter,
-          explode: param.parameter.explode,
-          allowEmpty: param.parameter.allowEmptyValue,
+        final paramName = part.substring(1, part.length - 1);
+        final param = pathParameters.firstWhereOrNull(
+          (p) => p.parameter.rawName == paramName,
         );
-        pathPartExpressions.add(valueExpression);
-      } else if (param.parameter.encoding == PathParameterEncoding.label) {
-        final valueExpression = buildToLabelPathParameterExpression(
-          param.normalizedName,
-          param.parameter,
-        );
-        pathPartExpressions.add(valueExpression);
-      } else if (param.parameter.encoding == PathParameterEncoding.matrix) {
-        final model = param.parameter.model;
-        if (model is ListModel && model.content is ListModel) {
-          body.add(
-            generateEncodingExceptionExpression(
-              'Matrix encoding does not support arrays of objects or '
-              'nested arrays',
-            ).statement,
-          );
 
+        if (param == null) {
+          // Unknown parameter reference — treat as literal.
+          currentConcatParts.add(specLiteralString(part));
           continue;
         }
 
-        final matrixExpression = buildMatrixParameterExpression(
-          refer(param.normalizedName),
-          param.parameter.model,
-          paramName: specLiteralString(param.parameter.rawName),
-          explode: literalBool(param.parameter.explode),
-          allowEmpty: literalBool(param.parameter.allowEmptyValue),
-        );
-        pathPartExpressions.add(matrixExpression);
+        switch (param.parameter.encoding) {
+          case PathParameterEncoding.simple:
+            final model = param.parameter.model;
+            if (model is ListModel &&
+                model.content.encodingShape != EncodingShape.simple) {
+              currentConcatParts.clear();
+              body.add(
+                generateEncodingExceptionExpression(
+                  'Simple encoding does not support list with complex elements '
+                  'for path parameter ${param.parameter.rawName}',
+                ).statement,
+              );
+
+              continue;
+            }
+
+            final valueExpression = buildToSimplePathParameterExpression(
+              param.normalizedName,
+              param.parameter,
+              explode: param.parameter.explode,
+              allowEmpty: param.parameter.allowEmptyValue,
+            );
+            // Simple parameters concatenate with adjacent literals.
+            currentConcatParts.add(valueExpression);
+          case PathParameterEncoding.label:
+            // Flush any accumulated concat parts before the label parameter.
+            _flushConcatParts(currentConcatParts, pathPartExpressions);
+
+            final valueExpression = buildToLabelPathParameterExpression(
+              param.normalizedName,
+              param.parameter,
+            );
+            pathPartExpressions.add(valueExpression);
+          case PathParameterEncoding.matrix:
+            // Flush any accumulated concat parts before the matrix parameter.
+            _flushConcatParts(currentConcatParts, pathPartExpressions);
+
+            final model = param.parameter.model;
+            if (model is ListModel && model.content is ListModel) {
+              currentConcatParts.clear();
+              body.add(
+                generateEncodingExceptionExpression(
+                  'Matrix encoding does not support arrays of objects or '
+                  'nested arrays',
+                ).statement,
+              );
+
+              continue;
+            }
+
+            final matrixExpression = buildMatrixParameterExpression(
+              refer(param.normalizedName),
+              param.parameter.model,
+              paramName: specLiteralString(param.parameter.rawName),
+              explode: literalBool(param.parameter.explode),
+              allowEmpty: literalBool(param.parameter.allowEmptyValue),
+            );
+            pathPartExpressions.add(matrixExpression);
+        }
       }
+
+      // Flush any remaining concat parts after the last parameter in the
+      // segment.
+      _flushConcatParts(currentConcatParts, pathPartExpressions);
     }
 
     if (hasTrailingSlash) {
@@ -184,6 +211,29 @@ class PathGenerator {
         ..lambda = false
         ..body = Block.of(body),
     );
+  }
+
+  /// Flushes accumulated concatenation parts into a single expression and
+  /// adds it to [target]. If there is exactly one part, it is added directly.
+  /// If there are multiple parts, they are joined with '+' to form a single
+  /// concatenated expression. After flushing, [parts] is cleared.
+  void _flushConcatParts(List<Expression> parts, List<Expression> target) {
+    if (parts.isEmpty) return;
+
+    if (parts.length == 1) {
+      target.add(parts.first);
+    } else {
+      final codes = <Code>[];
+      for (var i = 0; i < parts.length; i++) {
+        if (i > 0) {
+          codes.add(const Code(' + '));
+        }
+        codes.add(parts[i].code);
+      }
+      target.add(CodeExpression(Block.of(codes)));
+    }
+
+    parts.clear();
   }
 }
 

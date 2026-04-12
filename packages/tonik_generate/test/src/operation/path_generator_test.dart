@@ -1360,8 +1360,7 @@ void main() {
     );
   });
 
-  test(
-      'generates valid code when path segment contains single quote '
+  test('generates valid code when path segment contains single quote '
       'and no path parameters exist', () {
     final operation = Operation(
       operationId: 'getQuoted',
@@ -1394,9 +1393,485 @@ void main() {
     );
   });
 
+  test('concatenates literal suffix with simple parameter in same segment', () {
+    final sidParam = PathParameterObject(
+      name: 'Sid',
+      rawName: 'Sid',
+      description: 'Account SID',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.simple,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'fetchAccount',
+      context: context,
+      summary: 'Fetch account',
+      description: 'Fetches an account by SID',
+      tags: const {},
+      isDeprecated: false,
+      path: '/2010-04-01/Accounts/{Sid}.json',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {sidParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String sid}) {
+          return [r'2010-04-01', r'Accounts', sid.toSimple(explode: false, allowEmpty: false, ) + r'.json', ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'sid', parameter: sidParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('concatenates literal prefix with simple parameter in same segment', () {
+    final idParam = PathParameterObject(
+      name: 'id',
+      rawName: 'id',
+      description: 'Resource ID',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.simple,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getResource',
+      context: context,
+      summary: 'Get resource',
+      description: 'Gets a resource by prefixed ID',
+      tags: const {},
+      isDeprecated: false,
+      path: '/resources/v1{id}',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {idParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String id}) {
+          return [r'resources', r'v1' + id.toSimple(explode: false, allowEmpty: false, ), ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'id', parameter: idParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('concatenates literal prefix and suffix with simple parameter in same '
+      'segment', () {
+    final idParam = PathParameterObject(
+      name: 'id',
+      rawName: 'id',
+      description: 'Resource ID',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.simple,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getResource',
+      context: context,
+      summary: 'Get resource',
+      description: 'Gets a resource with prefix and suffix',
+      tags: const {},
+      isDeprecated: false,
+      path: '/resources/pre{id}suf',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {idParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String id}) {
+          return [r'resources', r'pre' + id.toSimple(explode: false, allowEmpty: false, ) + r'suf', ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'id', parameter: idParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test(
+    'concatenates multiple simple parameters and literals in same segment',
+    () {
+      final aParam = PathParameterObject(
+        name: 'a',
+        rawName: 'a',
+        description: 'First part',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final bParam = PathParameterObject(
+        name: 'b',
+        rawName: 'b',
+        description: 'Second part',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getComposite',
+        context: context,
+        summary: 'Get composite',
+        description: 'Gets a resource with multi-param mixed segment',
+        tags: const {},
+        isDeprecated: false,
+        path: '/resources/{a}-{b}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {aParam, bParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required String a, required String b, }) {
+          return [r'resources', a.toSimple(explode: false, allowEmpty: false, ) + r'-' + b.toSimple(explode: false, allowEmpty: false, ) + r'.json', ];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'a', parameter: aParam),
+            (normalizedName: 'b', parameter: bParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expect(method, isA<Method>());
+      expect(
+        collapseWhitespace(method.accept(emitter).toString()),
+        collapseWhitespace(expectedMethod),
+      );
+    },
+  );
+
+  test('Twilio example: /2010-04-01/Accounts/{Sid}.json', () {
+    final sidParam = PathParameterObject(
+      name: 'Sid',
+      rawName: 'Sid',
+      description: 'Account SID',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.simple,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'fetchAccount',
+      context: context,
+      summary: 'Fetch account',
+      description: 'Fetches an account by SID',
+      tags: const {},
+      isDeprecated: false,
+      path: '/2010-04-01/Accounts/{Sid}.json',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {sidParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String sid}) {
+          return [r'2010-04-01', r'Accounts', sid.toSimple(explode: false, allowEmpty: false, ) + r'.json', ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'sid', parameter: sidParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('Shopify example: /admin/api/2020-10/products/{product_id}.json', () {
+    final productIdParam = PathParameterObject(
+      name: 'product_id',
+      rawName: 'product_id',
+      description: 'Product ID',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.simple,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'deleteProduct',
+      context: context,
+      summary: 'Delete product',
+      description: 'Deletes a product by ID',
+      tags: const {},
+      isDeprecated: false,
+      path: '/admin/api/2020-10/products/{product_id}.json',
+      method: HttpMethod.delete,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {productIdParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String productId}) {
+          return [r'admin', r'api', r'2020-10', r'products', productId.toSimple(explode: false, allowEmpty: false, ) + r'.json', ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'productId', parameter: productIdParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('label parameter with literal suffix emits separate list entries', () {
+    final typeParam = PathParameterObject(
+      name: 'type',
+      rawName: 'type',
+      description: 'Resource type',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.label,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getResource',
+      context: context,
+      summary: 'Get resource',
+      description: 'Gets a resource by type',
+      tags: const {},
+      isDeprecated: false,
+      path: '/resources/{type}.json',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {typeParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String type}) {
+          return [r'resources', type.toLabel(explode: false, allowEmpty: false, ), r'.json', ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'type', parameter: typeParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('matrix parameter with literal suffix emits separate list entries', () {
+    final rolesParam = PathParameterObject(
+      name: 'roles',
+      rawName: 'roles',
+      description: 'User roles',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.matrix,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getResource',
+      context: context,
+      summary: 'Get resource',
+      description: 'Gets a resource by roles',
+      tags: const {},
+      isDeprecated: false,
+      path: '/resources/{roles}.json',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {rolesParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String roles}) {
+          return [r'resources', roles.toMatrix(r'roles', explode: false, allowEmpty: false, ), r'.json', ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'roles', parameter: rolesParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('pure literal segments are unchanged with parameters present', () {
+    final idParam = PathParameterObject(
+      name: 'id',
+      rawName: 'id',
+      description: 'User ID',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.simple,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getUser',
+      context: context,
+      summary: 'Get user',
+      description: 'Gets a user',
+      tags: const {},
+      isDeprecated: false,
+      path: '/Accounts.json/users/{id}',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {idParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String id}) {
+          return [r'Accounts.json', r'users', id.toSimple(explode: false, allowEmpty: false, ), ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'id', parameter: idParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
   group('trailing slash preservation', () {
-    test(
-        'preserves trailing slash for path without parameters '
+    test('preserves trailing slash for path without parameters '
         'by adding empty segment', () {
       final operation = Operation(
         operationId: 'listSpaces',
@@ -1430,8 +1905,7 @@ void main() {
       );
     });
 
-    test(
-        'preserves trailing slash for path with parameters '
+    test('preserves trailing slash for path with parameters '
         'by adding empty segment after parameter', () {
       final pathParam = PathParameterObject(
         name: 'slug',
