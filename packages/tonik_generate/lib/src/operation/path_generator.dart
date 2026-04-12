@@ -116,61 +116,64 @@ class PathGenerator {
           continue;
         }
 
-        if (param.parameter.encoding == PathParameterEncoding.simple) {
-          final model = param.parameter.model;
-          if (model is ListModel &&
-              model.content.encodingShape != EncodingShape.simple) {
-            body.add(
-              generateEncodingExceptionExpression(
-                'Simple encoding does not support list with complex elements '
-                'for path parameter ${param.parameter.rawName}',
-              ).statement,
+        switch (param.parameter.encoding) {
+          case PathParameterEncoding.simple:
+            final model = param.parameter.model;
+            if (model is ListModel &&
+                model.content.encodingShape != EncodingShape.simple) {
+              currentConcatParts.clear();
+              body.add(
+                generateEncodingExceptionExpression(
+                  'Simple encoding does not support list with complex elements '
+                  'for path parameter ${param.parameter.rawName}',
+                ).statement,
+              );
+
+              continue;
+            }
+
+            final valueExpression = buildToSimplePathParameterExpression(
+              param.normalizedName,
+              param.parameter,
+              explode: param.parameter.explode,
+              allowEmpty: param.parameter.allowEmptyValue,
             );
+            // Simple parameters concatenate with adjacent literals.
+            currentConcatParts.add(valueExpression);
+          case PathParameterEncoding.label:
+            // Flush any accumulated concat parts before the label parameter.
+            _flushConcatParts(currentConcatParts, pathPartExpressions);
 
-            continue;
-          }
-
-          final valueExpression = buildToSimplePathParameterExpression(
-            param.normalizedName,
-            param.parameter,
-            explode: param.parameter.explode,
-            allowEmpty: param.parameter.allowEmptyValue,
-          );
-          // Simple parameters concatenate with adjacent literals.
-          currentConcatParts.add(valueExpression);
-        } else if (param.parameter.encoding == PathParameterEncoding.label) {
-          // Flush any accumulated concat parts before the label parameter.
-          _flushConcatParts(currentConcatParts, pathPartExpressions);
-
-          final valueExpression = buildToLabelPathParameterExpression(
-            param.normalizedName,
-            param.parameter,
-          );
-          pathPartExpressions.add(valueExpression);
-        } else if (param.parameter.encoding == PathParameterEncoding.matrix) {
-          // Flush any accumulated concat parts before the matrix parameter.
-          _flushConcatParts(currentConcatParts, pathPartExpressions);
-
-          final model = param.parameter.model;
-          if (model is ListModel && model.content is ListModel) {
-            body.add(
-              generateEncodingExceptionExpression(
-                'Matrix encoding does not support arrays of objects or '
-                'nested arrays',
-              ).statement,
+            final valueExpression = buildToLabelPathParameterExpression(
+              param.normalizedName,
+              param.parameter,
             );
+            pathPartExpressions.add(valueExpression);
+          case PathParameterEncoding.matrix:
+            // Flush any accumulated concat parts before the matrix parameter.
+            _flushConcatParts(currentConcatParts, pathPartExpressions);
 
-            continue;
-          }
+            final model = param.parameter.model;
+            if (model is ListModel && model.content is ListModel) {
+              currentConcatParts.clear();
+              body.add(
+                generateEncodingExceptionExpression(
+                  'Matrix encoding does not support arrays of objects or '
+                  'nested arrays',
+                ).statement,
+              );
 
-          final matrixExpression = buildMatrixParameterExpression(
-            refer(param.normalizedName),
-            param.parameter.model,
-            paramName: specLiteralString(param.parameter.rawName),
-            explode: literalBool(param.parameter.explode),
-            allowEmpty: literalBool(param.parameter.allowEmptyValue),
-          );
-          pathPartExpressions.add(matrixExpression);
+              continue;
+            }
+
+            final matrixExpression = buildMatrixParameterExpression(
+              refer(param.normalizedName),
+              param.parameter.model,
+              paramName: specLiteralString(param.parameter.rawName),
+              explode: literalBool(param.parameter.explode),
+              allowEmpty: literalBool(param.parameter.allowEmptyValue),
+            );
+            pathPartExpressions.add(matrixExpression);
         }
       }
 

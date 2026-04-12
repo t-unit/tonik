@@ -1720,6 +1720,108 @@ void main() {
     );
   });
 
+  test('label parameter with literal suffix emits separate list entries', () {
+    final typeParam = PathParameterObject(
+      name: 'type',
+      rawName: 'type',
+      description: 'Resource type',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.label,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getResource',
+      context: context,
+      summary: 'Get resource',
+      description: 'Gets a resource by type',
+      tags: const {},
+      isDeprecated: false,
+      path: '/resources/{type}.json',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {typeParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String type}) {
+          return [r'resources', type.toLabel(explode: false, allowEmpty: false, ), r'.json', ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'type', parameter: typeParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
+  test('matrix parameter with literal suffix emits separate list entries', () {
+    final rolesParam = PathParameterObject(
+      name: 'roles',
+      rawName: 'roles',
+      description: 'User roles',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: StringModel(context: context),
+      encoding: PathParameterEncoding.matrix,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getResource',
+      context: context,
+      summary: 'Get resource',
+      description: 'Gets a resource by roles',
+      tags: const {},
+      isDeprecated: false,
+      path: '/resources/{roles}.json',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {rolesParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required String roles}) {
+          return [r'resources', roles.toMatrix(r'roles', explode: false, allowEmpty: false, ), r'.json', ];
+        }
+      ''';
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'roles', parameter: rolesParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(method, isA<Method>());
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  });
+
   test('pure literal segments are unchanged with parameters present', () {
     final idParam = PathParameterObject(
       name: 'id',
