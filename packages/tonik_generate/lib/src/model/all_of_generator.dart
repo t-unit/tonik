@@ -31,11 +31,13 @@ class AllOfGenerator {
     required this.nameManager,
     required this.package,
     required this.stableModelSorter,
+    this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
   final StableModelSorter stableModelSorter;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generate(AllOfModel model) {
     return generateCompositeLibrary(
@@ -54,7 +56,12 @@ class AllOfGenerator {
     final models = stableModelSorter.sortModels(model.models);
 
     final pseudoProperties = models.map((m) {
-      final typeRef = typeReference(m, nameManager, package);
+      final typeRef = typeReference(
+        m,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
       final isNullable = m.isEffectivelyNullable;
       return Property(
         name: typeRef.symbol,
@@ -106,7 +113,12 @@ class AllOfGenerator {
     final models = stableModelSorter.sortModels(model.models);
 
     final pseudoProperties = models.map((m) {
-      final typeRef = typeReference(m, nameManager, package);
+      final typeRef = typeReference(
+        m,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
       final isNullable = m.isEffectivelyNullable;
       return Property(
         name: typeRef.symbol,
@@ -294,6 +306,7 @@ class AllOfGenerator {
         nameManager,
         package,
         isNullableOverride: model.isReadOnly,
+        useImmutableCollections: useImmutableCollections,
       );
       return Field(
         (b) => b
@@ -316,6 +329,7 @@ class AllOfGenerator {
               model.additionalProperties,
               nameManager,
               package,
+              useImmutableCollections: useImmutableCollections,
             ),
         ),
       );
@@ -332,7 +346,8 @@ class AllOfGenerator {
     final props = normalizedProperties.map((normalized) {
       return (
         normalizedName: normalized.normalizedName,
-        hasCollectionValue: isCollectionModel(normalized.property.model),
+        hasCollectionValue: !useImmutableCollections &&
+            isCollectionModel(normalized.property.model),
       );
     }).toList();
 
@@ -342,7 +357,10 @@ class AllOfGenerator {
         normalizedProperties,
       );
       props.add(
-        (normalizedName: apFieldName, hasCollectionValue: true),
+        (
+          normalizedName: apFieldName,
+          hasCollectionValue: !useImmutableCollections,
+        ),
       );
     }
 
@@ -378,7 +396,13 @@ class AllOfGenerator {
                 ..name = apFieldName
                 ..named = true
                 ..required = false
-                ..defaultTo = const Code('const {}')
+                ..defaultTo = useImmutableCollections
+                    ? refer(
+                        'IMapConst',
+                        'package:fast_immutable_collections/'
+                            'fast_immutable_collections.dart',
+                      ).constInstance([literalConstMap({})]).code
+                    : const Code('const {}')
                 ..toThis = true,
             ),
           );
@@ -396,15 +420,15 @@ class AllOfGenerator {
     final fieldNames = <String>[];
     for (final normalized in normalizedProperties) {
       fieldNames.add(normalized.normalizedName);
-      fromJsonParams.add(
-        buildFromJsonValueExpression(
-          'json',
-          model: normalized.property.model,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-        ),
+      final expr = buildFromJsonValueExpression(
+        'json',
+        model: normalized.property.model,
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+        useImmutableCollections: useImmutableCollections,
       );
+      fromJsonParams.add(expr);
     }
 
     final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
@@ -481,6 +505,7 @@ class AllOfGenerator {
         package: package,
         contextClass: className,
         contextProperty: 'additionalProperties',
+        useImmutableCollections: useImmutableCollections,
       );
       codes.addAll([
         const Code(r'for (final _$entry in _$map.entries) {'),
@@ -507,7 +532,9 @@ class AllOfGenerator {
         (i) => MapEntry(fieldNames[i], fromJsonParams[i]),
       ),
     );
-    constructorArgs[apFieldName] = refer(r'_$additional');
+    constructorArgs[apFieldName] = useImmutableCollections
+        ? refer(r'_$additional').property('lock')
+        : refer(r'_$additional');
 
     codes.add(
       refer(className).call([], constructorArgs).returned.statement,
@@ -663,6 +690,7 @@ class AllOfGenerator {
           buildToJsonPropertyExpression(
             fieldName,
             normalized.property,
+            useImmutableCollections: useImmutableCollections,
           ).code,
           const Code(';'),
           refer(
@@ -774,11 +802,14 @@ class AllOfGenerator {
           normalizedProperties,
         );
         final ap = model.additionalProperties;
+        final apAccess = useImmutableCollections
+            ? '$apFieldName.unlock'
+            : apFieldName;
         if (ap is TypedAdditionalProperties &&
             ap.valueModel.encodingShape == EncodingShape.complex) {
           bodyCode.add(
             Code(
-              'for (final _\$e in $apFieldName.entries) '
+              'for (final _\$e in $apAccess.entries) '
               r'{ _$map[_$e.key] = _$e.value.toJson(); }',
             ),
           );
@@ -786,7 +817,7 @@ class AllOfGenerator {
           bodyCode.add(
             Code(
               r'_$map.addAll('
-              '$apFieldName);',
+              '$apAccess);',
             ),
           );
         }
@@ -837,6 +868,7 @@ class AllOfGenerator {
                 isNullable: false,
                 isDeprecated: false,
               ),
+              useImmutableCollections: useImmutableCollections,
             ).code,
         );
 
@@ -888,11 +920,14 @@ class AllOfGenerator {
             normalizedProperties,
           );
           final ap = model.additionalProperties;
+          final apAccess = useImmutableCollections
+              ? '$apFieldName.unlock'
+              : apFieldName;
           if (ap is TypedAdditionalProperties &&
               ap.valueModel.encodingShape == EncodingShape.complex) {
             mapParts.addAll([
               Code(
-                'for (final _\$e in $apFieldName.entries) '
+                'for (final _\$e in $apAccess.entries) '
                 r'{ _$map[_$e.key] = _$e.value.toJson(); }',
               ),
             ]);
@@ -900,7 +935,7 @@ class AllOfGenerator {
             mapParts.add(
               Code(
                 r'_$map.addAll('
-                '$apFieldName);',
+                '$apAccess);',
               ),
             );
           }
@@ -964,6 +999,7 @@ class AllOfGenerator {
               contextClass: className,
               contextProperty: name,
               explode: refer('explode'),
+              useImmutableCollections: useImmutableCollections,
             )
           : buildSimpleValueExpression(
               refer('value'),
@@ -1045,7 +1081,9 @@ class AllOfGenerator {
       const Code('}'),
     ];
 
-    constructorArgs[apFieldName] = refer(r'_$additional');
+    constructorArgs[apFieldName] = useImmutableCollections
+        ? refer(r'_$additional').property('lock')
+        : refer(r'_$additional');
 
     codes.add(
       refer(className, package).call([], constructorArgs).returned.statement,
@@ -2679,6 +2717,7 @@ for (final _\$e in $apFieldName.entries) {
             normalized.property.isNullable ||
             !normalized.property.isRequired ||
             model.isReadOnly,
+        useImmutableCollections: useImmutableCollections,
       );
       final propModel = normalized.property.model;
       final resolvedModel = propModel is AliasModel
@@ -2703,6 +2742,7 @@ for (final _\$e in $apFieldName.entries) {
             model.additionalProperties,
             nameManager,
             package,
+            useImmutableCollections: useImmutableCollections,
           ),
           skipCast: false,
         ),

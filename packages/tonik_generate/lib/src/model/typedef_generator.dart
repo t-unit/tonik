@@ -13,10 +13,15 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// alias and list model definitions.
 @immutable
 class TypedefGenerator {
-  const TypedefGenerator({required this.nameManager, required this.package});
+  const TypedefGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generateAlias(AliasModel model) =>
       _generateFile(generateAliasTypedef(model));
@@ -36,6 +41,7 @@ class TypedefGenerator {
       nameManager,
       package,
       isNullableOverride: isNullable,
+      useImmutableCollections: useImmutableCollections,
     );
 
     return TypeDef(
@@ -65,6 +71,7 @@ class TypedefGenerator {
       nameManager,
       package,
       isNullableOverride: isNullable,
+      useImmutableCollections: useImmutableCollections,
     );
 
     return TypeDef(
@@ -78,13 +85,20 @@ class TypedefGenerator {
   TypeDef generateMapTypedef(MapModel model) {
     final isNullable = model.isNullable;
 
+    const ficUrl =
+        'package:fast_immutable_collections/fast_immutable_collections.dart';
     final baseType = TypeReference(
       (b) => b
-        ..symbol = 'Map'
-        ..url = 'dart:core'
+        ..symbol = useImmutableCollections ? 'IMap' : 'Map'
+        ..url = useImmutableCollections ? ficUrl : 'dart:core'
         ..types.addAll([
           refer('String', 'dart:core'),
-          typeReference(model.valueModel, nameManager, package),
+          typeReference(
+            model.valueModel,
+            nameManager,
+            package,
+            useImmutableCollections: useImmutableCollections,
+          ),
         ])
         ..isNullable = isNullable,
     );

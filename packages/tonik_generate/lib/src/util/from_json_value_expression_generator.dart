@@ -7,6 +7,10 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Creates a Dart expression that correctly deserializes a JSON value
 /// to its Dart representation.
+///
+/// When [useImmutableCollections] is `true`, decoded lists and maps are
+/// wrapped with `.lock` at every nesting level so the result is
+/// `IList` / `IMap` throughout.
 Expression buildFromJsonValueExpression(
   String value, {
   required Model model,
@@ -15,6 +19,7 @@ Expression buildFromJsonValueExpression(
   String? contextClass,
   String? contextProperty,
   bool isNullable = false,
+  bool useImmutableCollections = false,
 }) {
   final contextParam = _buildContextParam(contextClass, contextProperty);
   final nullable = isNullable || model.isEffectivelyNullable;
@@ -107,6 +112,7 @@ Expression buildFromJsonValueExpression(
         contextClass: contextClass,
         contextProperty: contextProperty,
         isNullable: isNullable,
+        useImmutableCollections: useImmutableCollections,
       );
     case MapModel():
       return _buildMapFromJsonExpression(
@@ -117,6 +123,7 @@ Expression buildFromJsonValueExpression(
         contextClass: contextClass,
         contextProperty: contextProperty,
         isNullable: nullable,
+        useImmutableCollections: useImmutableCollections,
       );
     case ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel():
       final className = nameManager.modelName(model);
@@ -145,6 +152,7 @@ Expression buildFromJsonValueExpression(
         contextClass: contextClass,
         contextProperty: contextProperty,
         isNullable: nullable,
+        useImmutableCollections: useImmutableCollections,
       );
     case NeverModel():
       final throwExpr = generateJsonDecodingExceptionExpression(
@@ -170,6 +178,7 @@ Expression _buildListFromJsonExpression(
   String? contextClass,
   String? contextProperty,
   bool isNullable = false,
+  bool useImmutableCollections = false,
 }) {
   final content = model.content;
   final contextParam = _buildContextParam(contextClass, contextProperty);
@@ -180,6 +189,8 @@ Expression _buildListFromJsonExpression(
 
   // Unwrap alias to get the underlying model
   final unwrappedContent = content is AliasModel ? content.model : content;
+
+  Expression result;
 
   switch (unwrappedContent) {
     case final ListModel nestedList:
@@ -193,6 +204,7 @@ Expression _buildListFromJsonExpression(
             package: package,
             contextClass: contextClass,
             contextProperty: contextProperty,
+            useImmutableCollections: useImmutableCollections,
           ).code,
       ).closure;
       final listExpr = refer(value).property(listDecoder).call(
@@ -200,7 +212,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('Object?', 'dart:core')],
       );
-      return isNullable
+      result = isNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -225,7 +237,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('Object?', 'dart:core')],
       );
-      return isNullable
+      result = isNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -252,7 +264,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer(jsonType, 'dart:core')],
       );
-      return isNullable
+      result = isNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -281,7 +293,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('String', 'dart:core')],
       );
-      return isNullable
+      result = isNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -310,7 +322,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('String', 'dart:core')],
       );
-      return isNullable
+      result = isNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -329,10 +341,19 @@ Expression _buildListFromJsonExpression(
 
     default:
       final typeArg = typeReference(content, nameManager, package ?? '');
-      return refer(
+      result = refer(
         value,
       ).property(listDecoder).call([], contextParam, [typeArg]);
   }
+
+  // When using immutable collections, wrap with .lock to convert to IList.
+  if (useImmutableCollections) {
+    result = isNullable
+        ? result.nullSafeProperty('lock')
+        : result.property('lock');
+  }
+
+  return result;
 }
 
 Expression _buildMapFromJsonExpression(
@@ -343,6 +364,7 @@ Expression _buildMapFromJsonExpression(
   String? contextClass,
   String? contextProperty,
   bool isNullable = false,
+  bool useImmutableCollections = false,
 }) {
   final contextParam = _buildContextParam(contextClass, contextProperty);
   final valueModel = model.valueModel;
@@ -358,15 +380,25 @@ Expression _buildMapFromJsonExpression(
         package: package ?? '',
         contextClass: contextClass,
         contextProperty: contextProperty,
+        useImmutableCollections: useImmutableCollections,
       ).code,
   ).closure;
 
   final mapDecoder = isNullable ? 'decodeJsonNullableMap' : 'decodeJsonMap';
 
-  return refer(value).property(mapDecoder).call(
+  var result = refer(value).property(mapDecoder).call(
     [decoderClosure],
     contextParam,
   );
+
+  // When using immutable collections, wrap with .lock to convert to IMap.
+  if (useImmutableCollections) {
+    result = isNullable
+        ? result.nullSafeProperty('lock')
+        : result.property('lock');
+  }
+
+  return result;
 }
 
 String? _decodeMethodForPrimitive(Model model) {

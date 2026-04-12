@@ -1,0 +1,25 @@
+name: immutable_collections_test
+description: Integration tests for immutableCollections feature.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  dio: ^5.8.0
+  fast_immutable_collections: ^11.0.0
+  immutable_collections_api:
+    path: ../immutable_collections_api
+  path: ^1.9.1
+  tonik_util: ^0.4.1
+
+dev_dependencies:
+  test: ^1.25.15
+  test_helpers:
+    path: ../../test_helpers
+  very_good_analysis: ^10.2.0
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

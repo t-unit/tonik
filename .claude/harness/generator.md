@@ -50,11 +50,15 @@ Before declaring done, re-read every file you changed and verify:
 - All `refer()` calls include package URLs (even `dart:core` types)
 - No `DartEmitter` usage inside generator methods
 - No string interpolation mixed with `refer()` calls
-- Tests use full method body comparison (not fragments)
+- Tests use full method body comparison (not fragments) — NEVER `contains('.lock')` or `contains('IList')`
+- Tests use object introspection where possible (`.symbol`, `.type`, `.fields`) instead of string matching
 - Tests use `isTrue`/`isFalse` matchers (not bare `true`/`false`)
 - Tests use `collapseWhitespace()` for generated code comparison
+- Both expected and actual formatted with `DartFormatter` before comparison
+- When testing an Expression, wrap it in a Method to produce a formattable body
 - Analysis passes with zero issues: `fvm dart analyze`
 - All tests pass: `melos run test`
+- Patch coverage >= 90%: `bash scripts/coverage.sh --diff main`
 
 **Comment accuracy:** Every comment accurately describes the code it refers to. No misleading terminology, no stale references.
 

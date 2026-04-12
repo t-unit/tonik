@@ -1,6 +1,3 @@
-// Generated code won't have whitespace in long lines, so we ignore this.
-// ignore_for_file: missing_whitespace_between_adjacent_strings
-
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
@@ -489,9 +486,7 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<Object?>()'
-          '.map((e) => e.decodeJsonList<Object?>()'
-          '.map(User.fromJson).toList()).toList()',
+          '''value.decodeJsonList<Object?>().map((e) => e.decodeJsonList<Object?>().map(User.fromJson).toList()).toList()''',
         ),
       );
     });
@@ -520,11 +515,7 @@ void main() {
           package: 'package:my_package/my_package.dart',
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonList<Object?>()'
-          '.map((e) => e.decodeJsonList<Object?>()'
-          '.map((e) => e.decodeJsonList<Object?>()'
-          '.map(User.fromJson).toList()'
-          ').toList()).toList()',
+          '''value.decodeJsonList<Object?>().map((e) => e.decodeJsonList<Object?>().map((e) => e.decodeJsonList<Object?>().map(User.fromJson).toList()).toList()).toList()''',
         ),
       );
     });
@@ -621,9 +612,7 @@ void main() {
 
         expect(
           expression,
-          "value.decodeJsonList<Object?>(context: r'Order.items')"
-          ".map((e) => e.decodeJsonList<int>(context: r'Order.items'))"
-          '.toList()',
+          '''value.decodeJsonList<Object?>(context: r'Order.items').map((e) => e.decodeJsonList<int>(context: r'Order.items')).toList()''',
         );
       });
     });
@@ -1251,8 +1240,7 @@ void main() {
       ).accept(emitter).toString();
       expect(
         result,
-        'throw  _i1.JsonDecodingException('
-        "'Cannot decode NeverModel - this type does not permit any value.')",
+        '''throw  _i1.JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
       );
     });
 
@@ -1269,9 +1257,141 @@ void main() {
       ).accept(emitter).toString();
       expect(
         result,
-        'throw  _i1.JsonDecodingException('
-        "'Cannot decode List<NeverModel> - "
-        "this type does not permit any value.')",
+        '''throw  _i1.JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')''',
+      );
+    });
+  });
+
+  group('with useImmutableCollections', () {
+    test('simple list produces .lock', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonList<String>().lock',
+      );
+    });
+
+    test('nullable list produces ?.lock', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          isNullable: true,
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonNullableList<String>()?.lock',
+      );
+    });
+
+    test('simple map produces .lock', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonMap((v) => v.decodeJsonString()).lock',
+      );
+    });
+
+    test('nullable map produces ?.lock', () {
+      final mapModel = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        isNullable: true,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        'value.decodeJsonNullableMap((v) => v.decodeJsonString())?.lock',
+      );
+    });
+
+    test('nested list produces .lock at both levels', () {
+      final innerList = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      final outerList = ListModel(
+        content: innerList,
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: outerList,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        equals(
+          '''value.decodeJsonList<Object?>().map((e) => e.decodeJsonList<String>().lock).toList().lock''',
+        ),
+      );
+    });
+
+    test('map with list values produces .lock at both levels', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      final mapModel = MapModel(
+        valueModel: listModel,
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: mapModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+          useImmutableCollections: true,
+        ).accept(emitter).toString(),
+        equals(
+          'value.decodeJsonMap((v) => v.decodeJsonList<String>().lock).lock',
+        ),
+      );
+    });
+
+    test('disabled by default does not add .lock', () {
+      final listModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'package:my_package/my_package.dart',
+        ).accept(emitter).toString(),
+        'value.decodeJsonList<String>()',
       );
     });
   });

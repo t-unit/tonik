@@ -1,0 +1,5 @@
+spec: immutable_collections/openapi.yaml
+packageName: immutable_collections_api
+outputDir: immutable_collections
+
+immutableCollections: true

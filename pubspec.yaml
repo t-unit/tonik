@@ -37,9 +37,10 @@ melos:
         melos run test-integration-all
 
     coverage:
-      exec: dart test --coverage=coverage
-      packageFilters:
-        dirExists: test
+      run: bash scripts/coverage.sh
+
+    coverage-diff:
+      run: bash scripts/coverage.sh --diff main
         
     generate:
       run: flutter pub run build_runner build --delete-conflicting-outputs
@@ -184,6 +185,11 @@ melos:
         cd integration_test/asana/asana_test
         dart test
 
+    test-integration-immutable-collections:
+      run: |
+        cd integration_test/immutable_collections/immutable_collections_test
+        dart test
+
     test-integration-all:
       run: |
         set -e
@@ -214,3 +220,4 @@ melos:
         melos run test-integration-github
         melos run test-integration-openai
         melos run test-integration-asana
+        melos run test-integration-immutable-collections

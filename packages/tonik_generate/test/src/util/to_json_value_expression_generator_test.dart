@@ -1444,4 +1444,388 @@ void main() {
       );
     });
   });
+
+  group('with useImmutableCollections', () {
+    test('simple list produces .unlock', () {
+      final property = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'tags',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'tags.unlock',
+      );
+    });
+
+    test('nullable simple list produces ?.unlock', () {
+      final property = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'tags',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'tags?.unlock',
+      );
+    });
+
+    test('list with complex content produces .unlock.map(...).toList()', () {
+      final property = Property(
+        name: 'meetingTimes',
+        model: ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'meetingTimes',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'meetingTimes.unlock.map((e) => e.toTimeZonedIso8601String()).toList()',
+      );
+    });
+
+    test('simple map produces .unlock', () {
+      final property = Property(
+        name: 'metadata',
+        model: MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'metadata',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'metadata.unlock',
+      );
+    });
+
+    test('nullable simple map produces ?.unlock', () {
+      final property = Property(
+        name: 'metadata',
+        model: MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'metadata',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'metadata?.unlock',
+      );
+    });
+
+    test('map with complex content produces .unlock.map(...)', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Address',
+        properties: const [],
+        context: context,
+      );
+      final property = Property(
+        name: 'addresses',
+        model: MapModel(
+          valueModel: classModel,
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'addresses',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'addresses.unlock.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+      );
+    });
+
+    test('nested list produces inner .unlock via transformation', () {
+      final innerList = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      final property = Property(
+        name: 'matrix',
+        model: ListModel(
+          content: innerList,
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'matrix',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'matrix.unlock.map((e) => e.unlock).toList()',
+      );
+    });
+
+    test('disabled by default does not add .unlock', () {
+      final property = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(buildToJsonPropertyExpression('tags', property)),
+        'tags',
+      );
+    });
+
+    test('forceNonNullReceiver simple list produces !.unlock', () {
+      final property = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        isWriteOnly: true,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'tags',
+            property,
+            forceNonNullReceiver: true,
+            useImmutableCollections: true,
+          ),
+        ),
+        'tags!.unlock',
+      );
+    });
+
+    test(
+      'forceNonNullReceiver list with complex content '
+      'produces !.unlock.map(...).toList()',
+      () {
+        final property = Property(
+          name: 'times',
+          model: ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+          ),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          isWriteOnly: true,
+        );
+        expect(
+          emit(
+            buildToJsonPropertyExpression(
+              'times',
+              property,
+              forceNonNullReceiver: true,
+              useImmutableCollections: true,
+            ),
+          ),
+          'times!.unlock.map((e) => e.toTimeZonedIso8601String()).toList()',
+        );
+      },
+    );
+
+    test('nullable list with complex content produces ?.unlock.map', () {
+      final property = Property(
+        name: 'times',
+        model: ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
+        ),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'times',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'times?.unlock.map((e) => e.toTimeZonedIso8601String()).toList()',
+      );
+    });
+
+    test('forceNonNullReceiver simple map produces !.unlock', () {
+      final property = Property(
+        name: 'meta',
+        model: MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        isWriteOnly: true,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'meta',
+            property,
+            forceNonNullReceiver: true,
+            useImmutableCollections: true,
+          ),
+        ),
+        'meta!.unlock',
+      );
+    });
+
+    test(
+      'forceNonNullReceiver map with complex content '
+      'produces !.unlock.map(...)',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Addr',
+          properties: const [],
+          context: context,
+        );
+        final property = Property(
+          name: 'addrs',
+          model: MapModel(
+            valueModel: classModel,
+            context: context,
+          ),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          isWriteOnly: true,
+        );
+        expect(
+          emit(
+            buildToJsonPropertyExpression(
+              'addrs',
+              property,
+              forceNonNullReceiver: true,
+              useImmutableCollections: true,
+            ),
+          ),
+          'addrs!.unlock.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+        );
+      },
+    );
+
+    test('nullable map with complex content produces ?.unlock.map', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'Addr',
+        properties: const [],
+        context: context,
+      );
+      final property = Property(
+        name: 'addrs',
+        model: MapModel(
+          valueModel: classModel,
+          context: context,
+        ),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'addrs',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'addrs?.unlock.map((k, v, ) => MapEntry(k, v.toJson(), ))',
+      );
+    });
+
+    test('alias wrapping list uses immutable transformation', () {
+      final alias = AliasModel(
+        name: 'TagList',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        context: context,
+      );
+      final property = Property(
+        name: 'tags',
+        model: alias,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'tags',
+            property,
+            useImmutableCollections: true,
+          ),
+        ),
+        'tags.unlock',
+      );
+    });
+  });
 }

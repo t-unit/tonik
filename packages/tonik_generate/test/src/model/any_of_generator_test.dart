@@ -2621,4 +2621,72 @@ Object? toJson() {
       },
     );
   });
+
+  group('with useImmutableCollections', () {
+    late AnyOfGenerator immutableGenerator;
+
+    setUp(() {
+      immutableGenerator = AnyOfGenerator(
+        nameManager: nameManager,
+        package: 'package:example',
+        stableModelSorter: StableModelSorter(),
+        useImmutableCollections: true,
+      );
+    });
+
+    test('variant with ListModel uses IList and no DeepCollectionEquality', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexibleModel',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: IntegerModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final klass = immutableGenerator.generateClass(model);
+
+      // Verify the list field type is IList via object introspection
+      final listField = klass.fields.firstWhere(
+        (f) => f.name == 'iList',
+      );
+      final typeRef = listField.type! as TypeReference;
+      expect(typeRef.symbol, 'IList');
+      expect(
+        typeRef.url,
+        'package:fast_immutable_collections/'
+        'fast_immutable_collections.dart',
+      );
+      expect(typeRef.types.length, 1);
+      expect(
+        (typeRef.types.first as TypeReference).symbol,
+        'String',
+      );
+
+      // Equality should use direct == (IList has built-in value equality)
+      final generated = format(klass.accept(emitter).toString());
+      const expectedEquals = '''
+bool operator ==(Object other) {
+  if (identical(this, other)) return true;
+  return other is FlexibleModel &&
+      other.int == this.int &&
+      other.iList == this.iList;
+}
+''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedEquals)),
+      );
+    });
+  });
 }

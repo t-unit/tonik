@@ -20,6 +20,7 @@ class CliConfig {
     this.filter = const FilterConfig(),
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
+    this.useImmutableCollections = false,
   });
 
   /// Path to the OpenAPI specification file.
@@ -47,6 +48,11 @@ class CliConfig {
 
   final EnumConfig enums;
 
+  /// When `true`, generated code uses `IList<T>` and `IMap<String, V>` from
+  /// `package:fast_immutable_collections` instead of `List<T>` and
+  /// `Map<String, V>` for public-facing model types.
+  final bool useImmutableCollections;
+
   TonikConfig toTonikConfig() => TonikConfig(
     nameOverrides: nameOverrides,
     contentTypes: contentTypes,
@@ -54,6 +60,7 @@ class CliConfig {
     filter: filter,
     deprecated: deprecated,
     enums: enums,
+    useImmutableCollections: useImmutableCollections,
   );
 
   static const _contentTypeEquality = MapEquality<String, ContentType>();
@@ -66,7 +73,8 @@ class CliConfig {
       'packageName: $packageName, logLevel: $logLevel, '
       'nameOverrides: $nameOverrides, contentTypes: $contentTypes, '
       'contentMediaTypes: $contentMediaTypes, filter: $filter, '
-      'deprecated: $deprecated, enums: $enums}';
+      'deprecated: $deprecated, enums: $enums, '
+      'useImmutableCollections: $useImmutableCollections}';
 
   @override
   bool operator ==(Object other) =>
@@ -85,7 +93,8 @@ class CliConfig {
           ) &&
           filter == other.filter &&
           deprecated == other.deprecated &&
-          enums == other.enums;
+          enums == other.enums &&
+          useImmutableCollections == other.useImmutableCollections;
 
   @override
   int get hashCode => Object.hash(
@@ -99,5 +108,6 @@ class CliConfig {
     filter,
     deprecated,
     enums,
+    useImmutableCollections,
   );
 }

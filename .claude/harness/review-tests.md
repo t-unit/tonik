@@ -42,7 +42,17 @@ melos run test
 
 If the changes only touch the CLI (`tonik`) or documentation, skip this step and report "SKIPPED — no generator/parser/model/util changes."
 
-## Step 4: Report Results
+## Step 4: Patch Coverage
+
+Run patch coverage to verify new code is adequately tested:
+
+```sh
+bash scripts/coverage.sh --diff main
+```
+
+Report the patch coverage percentage and any files below 90%.
+
+## Step 5: Report Results
 
 ```
 ## Test Results
@@ -62,6 +72,10 @@ If the changes only touch the CLI (`tonik`) or documentation, skip this step and
 - Setup: PASS/FAIL/SKIPPED
 - Tests: PASS/FAIL/SKIPPED (N passed, M failed)
 
+### Patch Coverage
+- Overall: N% (X/Y executable lines covered)
+- Files below 90%: [list each with percentage and missed line count]
+
 ### Summary
 - Total tests: N
 - Passed: X
@@ -69,7 +83,7 @@ If the changes only touch the CLI (`tonik`) or documentation, skip this step and
 - Failures: [list each failure with details]
 ```
 
-If ANY analysis error or test fails, your overall result is FAIL.
+If ANY analysis error or test fails, or patch coverage is below 90%, your overall result is FAIL.
 
 ---
 

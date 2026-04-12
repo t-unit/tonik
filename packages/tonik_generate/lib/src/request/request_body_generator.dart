@@ -17,10 +17,12 @@ class RequestBodyGenerator {
   const RequestBodyGenerator({
     required this.nameManager,
     required this.package,
+    this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generate(RequestBody requestBody) {
     if (requestBody.contentCount <= 1) {
@@ -94,8 +96,14 @@ class RequestBodyGenerator {
     final (_, subclassNames) = nameManager.requestBodyNames(requestBody);
     return requestBody.resolvedContent.map((content) {
       final className = subclassNames[content.rawContentType]!;
-      final typeRef = typeReference(content.model, nameManager, package);
-      final hasCollectionValue = content.model is ListModel;
+      final typeRef = typeReference(
+        content.model,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
+      final hasCollectionValue =
+          !useImmutableCollections && content.model is ListModel;
 
       return Class(
         (b) => b

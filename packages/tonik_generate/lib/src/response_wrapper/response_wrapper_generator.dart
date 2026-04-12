@@ -15,10 +15,12 @@ class ResponseWrapperGenerator {
   const ResponseWrapperGenerator({
     required this.nameManager,
     required this.package,
+    this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generate(Operation operation) {
     final emitter = DartEmitter(
@@ -74,7 +76,12 @@ class ResponseWrapperGenerator {
           (b) => b
             ..name = 'body'
             ..modifier = FieldModifier.final$
-            ..type = typeReference(body.model, nameManager, package),
+            ..type = typeReference(
+              body.model,
+              nameManager,
+              package,
+              useImmutableCollections: useImmutableCollections,
+            ),
         );
       } else if (response != null &&
           (response.bodyCount > 1 || response.hasHeaders)) {

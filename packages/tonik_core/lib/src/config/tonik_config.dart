@@ -17,6 +17,7 @@ class TonikConfig {
     this.filter = const FilterConfig(),
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
+    this.useImmutableCollections = false,
   });
 
   final NameOverridesConfig nameOverrides;
@@ -29,11 +30,17 @@ class TonikConfig {
 
   final EnumConfig enums;
 
+  /// When `true`, generated code uses `IList<T>` and `IMap<String, V>` from
+  /// `package:fast_immutable_collections` instead of `List<T>` and
+  /// `Map<String, V>` for public-facing model types.
+  final bool useImmutableCollections;
+
   @override
   String toString() =>
       'TonikConfig{nameOverrides: $nameOverrides, contentTypes: $contentTypes, '
       'contentMediaTypes: $contentMediaTypes, filter: $filter, '
-      'deprecated: $deprecated, enums: $enums}';
+      'deprecated: $deprecated, enums: $enums, '
+      'useImmutableCollections: $useImmutableCollections}';
 
   @override
   bool operator ==(Object other) {
@@ -50,7 +57,8 @@ class TonikConfig {
             ) &&
             filter == other.filter &&
             deprecated == other.deprecated &&
-            enums == other.enums;
+            enums == other.enums &&
+            useImmutableCollections == other.useImmutableCollections;
   }
 
   @override
@@ -64,6 +72,7 @@ class TonikConfig {
       filter,
       deprecated,
       enums,
+      useImmutableCollections,
     );
   }
 }

@@ -2834,4 +2834,164 @@ void main() {
       );
     });
   });
+
+  group('with useImmutableCollections', () {
+    late AllOfGenerator immutableGenerator;
+
+    setUp(() {
+      immutableGenerator = AllOfGenerator(
+        nameManager: nameManager,
+        package: 'package:example',
+        stableModelSorter: StableModelSorter(),
+        useImmutableCollections: true,
+      );
+    });
+
+    test('allOf with ListModel component uses IList field type', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'WithList',
+        models: {
+          ListModel(
+            content: StringModel(context: context),
+            context: context,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = immutableGenerator.generateClass(model);
+
+      final listField = combinedClass.fields.first;
+      final typeRef = listField.type! as TypeReference;
+      expect(typeRef.symbol, 'IList');
+      expect(
+        typeRef.url,
+        'package:fast_immutable_collections/'
+        'fast_immutable_collections.dart',
+      );
+      expect(typeRef.types.length, 1);
+      expect(
+        (typeRef.types.first as TypeReference).symbol,
+        'String',
+      );
+
+      // Equality should use direct == (IList has built-in value equality)
+      final generated = format(
+        combinedClass.accept(emitter).toString(),
+      );
+      const expectedEquals = '''
+bool operator ==(Object other) {
+  if (identical(this, other)) return true;
+  return other is WithList && other.iList == this.iList;
+}
+''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedEquals)),
+      );
+    });
+
+    test(
+      'allOf with additional properties and useImmutableCollections',
+      () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ExtendedImmutable',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties:
+              const UnrestrictedAdditionalProperties(),
+        );
+
+        final combinedClass = immutableGenerator.generateClass(model);
+        final generated = format(
+          combinedClass.accept(emitter).toString(),
+        );
+
+        // AP field type should be IMap
+        final apField = combinedClass.fields.firstWhere(
+          (f) => f.name == 'additionalProperties',
+        );
+        final apTypeRef = apField.type! as TypeReference;
+        expect(apTypeRef.symbol, 'IMap');
+        expect(
+          apTypeRef.url,
+          'package:fast_immutable_collections/'
+          'fast_immutable_collections.dart',
+        );
+        expect(apTypeRef.types.length, 2);
+        expect(apTypeRef.types.first.symbol, 'String');
+
+        // Constructor default should be IMapConst
+        final defaultCtor = combinedClass.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final apParam = defaultCtor.optionalParameters.firstWhere(
+          (p) => p.name == 'additionalProperties',
+        );
+        expect(
+          apParam.defaultTo?.accept(emitter).toString(),
+          'const IMapConst({})',
+        );
+
+        // fromJson should use .lock on _$additional
+        const expectedFromJson = r'''
+factory ExtendedImmutable.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'ExtendedImmutable');
+  const _$knownKeys = {r'id'};
+  final _$additional = <String, Object?>{};
+  for (final _$entry in _$map.entries) {
+    if (!_$knownKeys.contains(_$entry.key)) {
+      _$additional[_$entry.key] = _$entry.value;
+    }
+  }
+  return ExtendedImmutable(
+    $base: Base.fromJson(json),
+    additionalProperties: _$additional.lock,
+  );
+}
+''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromJson)),
+        );
+
+        // toJson should use .unlock on AP
+        const expectedToJson = r'''
+Object? toJson() {
+  final _$map = <String, Object?>{};
+  final _$$baseJson = $base.toJson();
+  if (_$$baseJson is! Map<String, Object?>) {
+    throw EncodingException(
+      'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
+    );
+  }
+  _$map.addAll(_$$baseJson);
+  _$map.addAll(additionalProperties.unlock);
+  return _$map;
+}
+''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedToJson)),
+        );
+      },
+    );
+  });
 }

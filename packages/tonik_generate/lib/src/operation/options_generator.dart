@@ -9,10 +9,15 @@ import 'package:tonik_util/tonik_util.dart';
 
 /// Generator for creating options method for operations.
 class OptionsGenerator {
-  const OptionsGenerator({required this.nameManager, required this.package});
+  const OptionsGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   /// Generates the options method for the operation.
   Method generateOptionsMethod(
@@ -333,6 +338,7 @@ class OptionsGenerator {
         nameManager,
         package,
         isNullableOverride: !cookie.parameter.isRequired,
+        useImmutableCollections: useImmutableCollections,
       );
 
       parameters.add(
@@ -469,6 +475,7 @@ class OptionsGenerator {
       nameManager,
       package,
       isNullableOverride: !resolvedParam.isRequired,
+      useImmutableCollections: useImmutableCollections,
     );
 
     return Parameter(

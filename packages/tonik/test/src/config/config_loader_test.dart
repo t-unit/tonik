@@ -506,6 +506,56 @@ nameOverrides:
         );
       });
 
+      test('loads config with immutableCollections enabled', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+immutableCollections: true
+''');
+
+        final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+        expect(config.useImmutableCollections, isTrue);
+      });
+
+      test('loads config with immutableCollections disabled', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+immutableCollections: false
+''');
+
+        final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+        expect(config.useImmutableCollections, isFalse);
+      });
+
+      test('defaults useImmutableCollections to false when not specified', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+spec: ./api.yaml
+''');
+
+        final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+        expect(config.useImmutableCollections, isFalse);
+      });
+
+      test(
+        'throws meaningful error when immutableCollections is not a bool',
+        () {
+          File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+immutableCollections: not_a_bool
+''');
+
+          expect(
+            () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+            throwsA(
+              isA<ConfigLoaderException>().having(
+                (e) => e.message,
+                'message',
+                contains('"immutableCollections" must be a boolean'),
+              ),
+            ),
+          );
+        },
+      );
+
       test('loads empty config file as default config', () {
         File('${tempDir.path}/tonik.yaml').writeAsStringSync('');
 
@@ -587,6 +637,22 @@ nameOverrides:
         expect(merged.logLevel, LogLevel.verbose);
       });
 
+      test('CLI useImmutableCollections overrides config value', () {
+        const config = CliConfig();
+
+        final merged = config.merge(useImmutableCollections: true);
+
+        expect(merged.useImmutableCollections, isTrue);
+      });
+
+      test('null useImmutableCollections preserves config value', () {
+        const config = CliConfig(useImmutableCollections: true);
+
+        final merged = config.merge();
+
+        expect(merged.useImmutableCollections, isTrue);
+      });
+
       test('merge preserves non-CLI config properties', () {
         const config = CliConfig(
           spec: './config-spec.yaml',
@@ -611,6 +677,44 @@ nameOverrides:
         expect(merged.filter.includeTags, ['Api']);
         expect(merged.deprecated.operations, DeprecatedHandling.exclude);
         expect(merged.enums.generateUnknownCase, isTrue);
+      });
+    });
+
+    group('toTonikConfig', () {
+      test('passes useImmutableCollections to TonikConfig', () {
+        const config = CliConfig(useImmutableCollections: true);
+
+        final tonikConfig = config.toTonikConfig();
+
+        expect(tonikConfig.useImmutableCollections, isTrue);
+      });
+
+      test('passes false useImmutableCollections by default', () {
+        const config = CliConfig();
+
+        final tonikConfig = config.toTonikConfig();
+
+        expect(tonikConfig.useImmutableCollections, isFalse);
+      });
+    });
+
+    group('CliConfig toString, equality, hashCode', () {
+      test('toString includes useImmutableCollections', () {
+        const config = CliConfig(useImmutableCollections: true);
+        expect(config.toString(), contains('useImmutableCollections: true'));
+      });
+
+      test('equality differs when useImmutableCollections differs', () {
+        const a = CliConfig(useImmutableCollections: true);
+        const b = CliConfig();
+        expect(a == b, isFalse);
+      });
+
+      test('equal when all fields match including useImmutableCollections', () {
+        const a = CliConfig(useImmutableCollections: true);
+        const b = CliConfig(useImmutableCollections: true);
+        expect(a == b, isTrue);
+        expect(a.hashCode, b.hashCode);
       });
     });
 

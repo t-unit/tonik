@@ -2706,4 +2706,77 @@ void main() {
       );
     });
   });
+
+  group('with useImmutableCollections', () {
+    late OneOfGenerator immutableGenerator;
+
+    setUp(() {
+      immutableGenerator = OneOfGenerator(
+        nameManager: nameManager,
+        package: 'package:example',
+        stableModelSorter: StableModelSorter(),
+        useImmutableCollections: true,
+      );
+    });
+
+    test('variant with ListModel uses IList and no DeepCollectionEquality', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (
+            discriminatorValue: null,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: IntegerModel(context: context),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = immutableGenerator.generateClasses(model);
+
+      // Find the list variant subclass by name
+      final listSubclass = classes.firstWhere(
+        (c) => c.name == 'ValueList',
+      );
+
+      // Verify the value field is IList<String>
+      final valueField = listSubclass.fields.firstWhere(
+        (f) => f.name == 'value',
+      );
+      final typeRef = valueField.type! as TypeReference;
+      expect(typeRef.symbol, 'IList');
+      expect(
+        typeRef.url,
+        'package:fast_immutable_collections/'
+        'fast_immutable_collections.dart',
+      );
+      expect(typeRef.types.length, 1);
+      expect(
+        (typeRef.types.first as TypeReference).symbol,
+        'String',
+      );
+
+      // Equality should use direct == (IList has built-in value equality)
+      final generated = format(
+        listSubclass.accept(emitter).toString(),
+      );
+      const expectedEquals = '''
+bool operator ==(Object other) {
+  if (identical(this, other)) return true;
+  return other is ValueList && other.value == this.value;
+}
+''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedEquals)),
+      );
+    });
+  });
 }

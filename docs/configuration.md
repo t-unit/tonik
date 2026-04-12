@@ -88,6 +88,9 @@ enums:
   # Generate an unknown case for forward compatibility
   generateUnknownCase: true
   unknownCaseName: unknown
+
+# Use immutable collections (IList/IMap) instead of List/Map
+immutableCollections: true
 ```
 
 ## CLI Options
@@ -111,6 +114,7 @@ tonik --output-dir ./other-location
 | `--output-dir`, `-o` | `outputDir` | Directory for generated code (defaults to `.`) |
 | `--package-name`, `-p` | `packageName` | Name of the generated package (required) |
 | `--log-level` | `logLevel` | Logging verbosity: `verbose`, `info`, `warn`, `silent` (defaults to `warn`) |
+| `--immutable-collections` | `immutableCollections` | Use `IList`/`IMap` instead of `List`/`Map` (defaults to `false`) |
 
 ## Name Overrides
 
@@ -375,6 +379,73 @@ enum Status {
 ```
 
 When deserializing, any unrecognized value will map to `unknown` instead of throwing an error.
+
+## Immutable Collections
+
+When enabled, generated model classes use `IList<T>` and `IMap<String, V>` from [fast_immutable_collections](https://pub.dev/packages/fast_immutable_collections) instead of `List<T>` and `Map<String, V>`.
+
+```yaml
+immutableCollections: true
+```
+
+Or via CLI:
+
+```bash
+tonik --immutable-collections --spec ./openapi.yaml --package-name my_api
+```
+
+**What changes:**
+
+| Without | With `immutableCollections: true` |
+|---------|----------------------------------|
+| `List<String>` | `IList<String>` |
+| `Map<String, int>` | `IMap<String, int>` |
+| `List<List<String>>` | `IList<IList<String>>` |
+| `Map<String, List<Pet>>` | `IMap<String, IList<Pet>>` |
+
+This applies to all public model types: class properties, typedefs, response bodies, and additional properties fields. Internal plumbing (raw JSON maps, parameter encoding) remains as regular Dart collections.
+
+**Generated `pubspec.yaml`** automatically includes the dependency:
+
+```yaml
+dependencies:
+  fast_immutable_collections: ^11.0.0
+```
+
+**Serialization** is handled automatically. `fromJson` converts decoded lists and maps to immutable at every nesting level (via `.lock`). `toJson` converts back to mutable (via `.unlock`).
+
+**Equality** uses the native deep equality of `IList`/`IMap` - no `DeepCollectionEquality` wrapper needed.
+
+**Example:**
+
+```dart
+// Generated model
+class Pet {
+  const Pet({required this.name, required this.tags});
+
+  factory Pet.fromJson(Object? json) {
+    // Decoded list is locked to IList automatically
+    final map = json.decodeMap(context: r'Pet');
+    return Pet(
+      name: map[r'name'].decodeJsonString(context: r'Pet.name'),
+      tags: map[r'tags'].decodeJsonList<String>(context: r'Pet.tags').lock,
+    );
+  }
+
+  final String name;
+  final IList<String> tags; // IList instead of List
+
+  Object? toJson() => {
+    r'name': name,
+    r'tags': tags.unlock, // unlocked back to List for JSON
+  };
+}
+
+// Usage
+final pet = Pet(name: 'Fido', tags: ['friendly', 'cute'].lock);
+pet.tags[0]; // 'friendly' — read access works
+// pet.tags.add('new'); // Compile error — IList is immutable
+```
 
 ## Vendor Extensions (Alternative)
 

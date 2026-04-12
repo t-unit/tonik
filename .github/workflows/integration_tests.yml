@@ -196,3 +196,8 @@ jobs:
         run: |
           cd integration_test/asana/asana_test
           dart test --concurrency=2
+
+      - name: Run immutable collections integration tests
+        run: |
+          cd integration_test/immutable_collections/immutable_collections_test
+          dart test --concurrency=2

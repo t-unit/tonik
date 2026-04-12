@@ -31,13 +31,14 @@ Review the git diff and changed files. Focus only on changed/added code.
 - Required vs optional fields handled correctly
 - `$ref` resolution follows spec rules
 
-**Testing Conventions:**
-- Tests use full method body comparison, not fragments
-- Tests use `collapseWhitespace()` for generated code strings
-- Tests use `isTrue`/`isFalse`, not bare `true`/`false`
+**Testing Conventions (violations are CRITICAL — block PASS):**
+- Tests MUST use full method body comparison, NEVER fragments (e.g., `contains('.lock')` or `contains('IList')` is a fragment — always compare the complete fromJson/toJson/equals method body)
+- Tests MUST use `collapseWhitespace()` for generated code strings
+- Tests MUST use `isTrue`/`isFalse`, not bare `true`/`false`
 - No bare `contains()` without `collapseWhitespace()` for generated code
-- Object introspection preferred over string testing where possible
-- Both expected and actual formatted with `DartFormatter` before comparison
+- Object introspection MUST be preferred over string testing where possible (e.g., check `field.type.symbol == 'IList'` instead of `contains('IList')` on an emitted string)
+- Both expected and actual MUST be formatted with `DartFormatter` before comparison
+- When a generator returns an Expression, it MUST be wrapped in a Method to produce a formattable body before comparing
 
 ## Confidence Scoring
 

@@ -884,5 +884,133 @@ void main() {
         );
       });
     });
+
+    group('useImmutableCollections', () {
+      late TypedefGenerator immutableGenerator;
+
+      setUp(() {
+        immutableGenerator = TypedefGenerator(
+          nameManager: nameManager,
+          package: package,
+          useImmutableCollections: true,
+        );
+      });
+
+      test('generates IList typedef for list type', () {
+        final model = AliasModel(
+          name: 'UserIds',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        );
+
+        final typedef = immutableGenerator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef UserIds = IList<String>;',
+        );
+      });
+
+      test('generates IList typedef via generateListTypedef', () {
+        final model = ListModel(
+          name: 'StringList',
+          content: StringModel(context: context),
+          context: context,
+        );
+
+        final typedef = immutableGenerator.generateListTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef StringList = IList<String>;',
+        );
+      });
+
+      test('generates IMap typedef via generateMapTypedef', () {
+        final model = MapModel(
+          name: 'StringMap',
+          valueModel: StringModel(context: context),
+          context: context,
+        );
+
+        final typedef = immutableGenerator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef StringMap = IMap<String,String>;',
+        );
+      });
+
+      test('generates nested IList<IList<int>> for nested lists', () {
+        final model = AliasModel(
+          name: 'Matrix',
+          model: ListModel(
+            content: ListModel(
+              content: IntegerModel(context: context),
+              context: context,
+            ),
+            context: context,
+          ),
+          context: context,
+        );
+
+        final typedef = immutableGenerator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef Matrix = IList<IList<int>>;',
+        );
+      });
+
+      test('does not affect primitive alias typedefs', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final typedef = immutableGenerator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef UserId = String;',
+        );
+      });
+
+      test('generates nullable IList typedef', () {
+        final model = ListModel(
+          name: 'NullableList',
+          content: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final typedef = immutableGenerator.generateListTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef NullableList = IList<String>?;',
+        );
+      });
+
+      test('generates nullable IMap typedef', () {
+        final model = MapModel(
+          name: 'NullableMap',
+          valueModel: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final typedef = immutableGenerator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          'typedef NullableMap = IMap<String,String>?;',
+        );
+      });
+    });
   });
 }

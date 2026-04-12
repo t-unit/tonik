@@ -313,5 +313,203 @@ void main() {
         },
       );
     });
+
+    group('typeReference with useImmutableCollections', () {
+      late Context context;
+      late NameManager nameManager;
+      const package = 'package:test/test.dart';
+      const ficUrl =
+          'package:fast_immutable_collections/'
+          'fast_immutable_collections.dart';
+
+      setUp(() {
+        context = Context.initial();
+        nameManager = NameManager(
+          generator: NameGenerator(),
+          stableModelSorter: StableModelSorter(),
+        );
+      });
+
+      test('returns IList for ListModel when enabled', () {
+        final model = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+          useImmutableCollections: true,
+        );
+
+        expect(result.symbol, 'IList');
+        expect(result.url, ficUrl);
+        expect(result.isNullable, isFalse);
+        expect(result.types, hasLength(1));
+        expect(result.types[0].symbol, 'String');
+      });
+
+      test('returns nullable IList for nullable ListModel when enabled', () {
+        final model = ListModel(
+          content: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+          useImmutableCollections: true,
+        );
+
+        expect(result.symbol, 'IList');
+        expect(result.url, ficUrl);
+        expect(result.isNullable, isTrue);
+      });
+
+      test('returns IMap for MapModel when enabled', () {
+        final model = MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        );
+
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+          useImmutableCollections: true,
+        );
+
+        expect(result.symbol, 'IMap');
+        expect(result.url, ficUrl);
+        expect(result.isNullable, isFalse);
+        expect(result.types, hasLength(2));
+        expect(result.types[0].symbol, 'String');
+        expect(result.types[1].symbol, 'int');
+      });
+
+      test('returns nullable IMap for nullable MapModel when enabled', () {
+        final model = MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+          useImmutableCollections: true,
+        );
+
+        expect(result.symbol, 'IMap');
+        expect(result.url, ficUrl);
+        expect(result.isNullable, isTrue);
+      });
+
+      test('returns IList with nested IList when enabled', () {
+        final nestedList = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+        final model = ListModel(
+          content: nestedList,
+          context: context,
+        );
+
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+          useImmutableCollections: true,
+        );
+
+        expect(result.symbol, 'IList');
+        expect(result.url, ficUrl);
+        final innerType = result.types[0] as TypeReference;
+        expect(innerType.symbol, 'IList');
+        expect(innerType.url, ficUrl);
+      });
+
+      test('returns IMap with IList value type when enabled', () {
+        final listModel = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+        final model = MapModel(
+          valueModel: listModel,
+          context: context,
+        );
+
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+          useImmutableCollections: true,
+        );
+
+        expect(result.symbol, 'IMap');
+        expect(result.url, ficUrl);
+        final valueType = result.types[1] as TypeReference;
+        expect(valueType.symbol, 'IList');
+        expect(valueType.url, ficUrl);
+      });
+
+      test('returns regular List when disabled', () {
+        final model = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+
+        final result = typeReference(
+          model,
+          nameManager,
+          package,
+        );
+
+        expect(result.symbol, 'List');
+        expect(result.url, 'dart:core');
+      });
+
+      test('passes through alias to IList when enabled', () {
+        final listModel = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+        final alias = AliasModel(
+          model: listModel,
+          context: context,
+        );
+
+        final result = typeReference(
+          alias,
+          nameManager,
+          package,
+          useImmutableCollections: true,
+        );
+
+        expect(result.symbol, 'IList');
+        expect(result.url, ficUrl);
+      });
+
+      test(
+        'does not affect non-collection types when enabled',
+        () {
+          final stringModel = StringModel(context: context);
+
+          final result = typeReference(
+            stringModel,
+            nameManager,
+            package,
+            useImmutableCollections: true,
+          );
+
+          expect(result.symbol, 'String');
+          expect(result.url, 'dart:core');
+        },
+      );
+    });
   });
 }

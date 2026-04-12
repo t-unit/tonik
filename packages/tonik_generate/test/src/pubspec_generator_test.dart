@@ -145,5 +145,65 @@ void main() {
 
       expect(content, contains('version: 1.0.0'));
     });
+    test('includes fast_immutable_collections when enabled', () {
+      final apiDoc = ApiDocument(
+        title: 'Test API',
+        version: '1.0.0',
+        description: 'Test',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'test_pkg',
+        useImmutableCollections: true,
+      );
+
+      final content = File(
+        path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'),
+      ).readAsStringSync();
+
+      expect(content, contains('fast_immutable_collections: ^11.0.0'));
+    });
+
+    test('does not include fast_immutable_collections when disabled', () {
+      final apiDoc = ApiDocument(
+        title: 'Test API',
+        version: '1.0.0',
+        description: 'Test',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'test_pkg',
+      );
+
+      final content = File(
+        path.join(tempDir.path, 'test_pkg', 'pubspec.yaml'),
+      ).readAsStringSync();
+
+      expect(content, isNot(contains('fast_immutable_collections')));
+    });
   });
 }

@@ -52,11 +52,12 @@ When in doubt, classify higher.
 - Generated code produces invalid Dart
 - Missing entire test categories the issue requires
 - OpenAPI spec compliance violations in parser code
+- Tests using fragments instead of full method bodies (e.g., `contains('.lock')`, `contains('IList')`)
+- Tests using bare `contains()` without `collapseWhitespace()` for generated code
+- Tests using string matching where object introspection should be used (e.g., `contains('IList')` on emitted type instead of `field.type.symbol == 'IList'`)
 
 **Important (blocks PASS):**
 - Incomplete test coverage within a category
-- Tests using fragments instead of full method bodies
-- Tests using bare `contains()` without `collapseWhitespace()`
 - Confusing design that doesn't cause bugs
 - Analysis warnings
 
@@ -68,3 +69,4 @@ When in doubt, classify higher.
 - ALL analysis and tests must PASS
 - ZERO critical findings
 - ZERO important findings
+- Patch coverage must be >= 90% (run `bash scripts/coverage.sh --diff main`)

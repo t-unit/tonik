@@ -25,10 +25,15 @@ import 'package:tonik_util/tonik_util.dart';
 /// A generator for creating Dart class files from model definitions.
 @immutable
 class ClassGenerator {
-  const ClassGenerator({required this.nameManager, required this.package});
+  const ClassGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   static const deprecatedPropertyMessage = 'This property is deprecated.';
 
@@ -138,17 +143,23 @@ class ClassGenerator {
       });
 
     // Build equality/hashCode property tuples including additional properties.
+    // When useImmutableCollections is true, IList/IMap support native deep
+    // equality so we do not need DeepCollectionEquality for those fields.
     final equalityProps = normalizedProperties
         .map(
           (prop) => (
             normalizedName: prop.normalizedName,
-            hasCollectionValue: isCollectionModel(prop.property.model),
+            hasCollectionValue: !useImmutableCollections &&
+                isCollectionModel(prop.property.model),
           ),
         )
         .toList();
     if (hasAP) {
       equalityProps.add(
-        (normalizedName: apFieldName, hasCollectionValue: true),
+        (
+          normalizedName: apFieldName,
+          hasCollectionValue: !useImmutableCollections,
+        ),
       );
     }
 
@@ -196,7 +207,13 @@ class ClassGenerator {
                       ..name = apFieldName
                       ..named = true
                       ..required = false
-                      ..defaultTo = const Code('const {}')
+                      ..defaultTo = useImmutableCollections
+                          ? refer(
+                              'IMapConst',
+                              'package:fast_immutable_collections/'
+                                  'fast_immutable_collections.dart',
+                            ).constInstance([literalConstMap({})]).code
+                          : const Code('const {}')
                       ..toThis = true,
                   ),
                 );
@@ -248,6 +265,7 @@ class ClassGenerator {
                   model.additionalProperties,
                   nameManager,
                   package,
+                  useImmutableCollections: useImmutableCollections,
                 ),
             ),
           );
@@ -284,6 +302,7 @@ class ClassGenerator {
             model.additionalProperties,
             nameManager,
             package,
+            useImmutableCollections: useImmutableCollections,
           ),
           skipCast: false,
         ),
@@ -415,7 +434,7 @@ class ClassGenerator {
       final isNullable =
           prop.property.isNullable || modelType.isEffectivelyNullable;
 
-      constructorArgs[normalizedName] = buildSimpleValueExpression(
+      var expr = buildSimpleValueExpression(
         refer('_\$values[${specLiteralStringCode(propertyName)}]'),
         model: modelType,
         isRequired: isRequired && !isNullable,
@@ -425,6 +444,15 @@ class ClassGenerator {
         contextProperty: propertyName,
         explode: refer('explode'),
       );
+
+      if (useImmutableCollections && isCollectionModel(modelType)) {
+        final effectivelyNullable = isNullable || !isRequired;
+        expr = effectivelyNullable
+            ? expr.nullSafeProperty('lock')
+            : expr.property('lock');
+      }
+
+      constructorArgs[normalizedName] = expr;
     }
 
     for (final name in writeOnlyRequiredNames) {
@@ -512,7 +540,9 @@ class ClassGenerator {
         const Code('}'),
         const Code('}'),
       ]);
-      constructorArgs[apFieldName] = refer(r'_$additional');
+      constructorArgs[apFieldName] = useImmutableCollections
+          ? refer(r'_$additional').property('lock')
+          : refer(r'_$additional');
     }
 
     codes.add(
@@ -604,7 +634,7 @@ class ClassGenerator {
       final jsonKey = property.name;
       final requiredInResponse = property.isRequired && !property.isWriteOnly;
 
-      final valueExpr = buildFromJsonValueExpression(
+      final valueExpression = buildFromJsonValueExpression(
         '_\$map[${specLiteralStringCode(jsonKey)}]',
         model: property.model,
         nameManager: nameManager,
@@ -615,11 +645,12 @@ class ClassGenerator {
             property.isNullable ||
             !requiredInResponse ||
             property.model.isEffectivelyNullable,
-      ).code;
+        useImmutableCollections: useImmutableCollections,
+      );
 
       propertyAssignments
         ..add(Code('$normalizedName: '))
-        ..add(valueExpr)
+        ..add(valueExpression.code)
         ..add(const Code(','));
     }
 
@@ -670,6 +701,7 @@ class ClassGenerator {
           package: package,
           contextClass: className,
           contextProperty: 'additionalProperties',
+          useImmutableCollections: useImmutableCollections,
         );
         codes.addAll([
           const Code(r'_$additional[_$entry.key] = '),
@@ -688,9 +720,15 @@ class ClassGenerator {
         const Code('}'),
       ]);
 
-      propertyAssignments
-        ..add(Code('$apFieldName: '))
-        ..add(const Code(r'_$additional,'));
+      if (useImmutableCollections) {
+        propertyAssignments
+          ..add(Code('$apFieldName: '))
+          ..add(const Code(r'_$additional.lock,'));
+      } else {
+        propertyAssignments
+          ..add(Code('$apFieldName: '))
+          ..add(const Code(r'_$additional,'));
+      }
     }
 
     codes
@@ -740,10 +778,12 @@ class ClassGenerator {
       final requiredInRequest = property.isRequired && !property.isReadOnly;
       final forceNonNullReceiver =
           property.isWriteOnly && requiredInRequest && !property.isNullable;
+
       final valueExpr = buildToJsonPropertyExpression(
         name,
         property,
         forceNonNullReceiver: forceNonNullReceiver,
+        useImmutableCollections: useImmutableCollections,
       );
 
       final keyLiteral = specLiteralStringCode(property.name);
@@ -764,6 +804,10 @@ class ClassGenerator {
       final allNormalized = normalizeProperties(model.properties.toList());
       final apFieldName = pickAdditionalPropertiesFieldName(allNormalized);
       final ap = model.additionalProperties;
+      // When using immutable collections, unlock the IMap before spreading.
+      final apAccess = useImmutableCollections
+          ? '$apFieldName.unlock'
+          : apFieldName;
       if (ap is TypedAdditionalProperties) {
         final valueModel = ap.valueModel;
         // For complex types, encode each value via toJson.
@@ -772,17 +816,17 @@ class ClassGenerator {
           mapEntries.add(
             Code.scope(
               (a) =>
-                  '...$apFieldName.map('
+                  '...$apAccess.map('
                   '(k, v) => ${a(refer('MapEntry', 'dart:core'))}'
                   '(k, v.toJson())),',
             ),
           );
         } else {
-          mapEntries.add(Code('...$apFieldName,'));
+          mapEntries.add(Code('...$apAccess,'));
         }
       } else {
         // Unrestricted: values are already Object?
-        mapEntries.add(Code('...$apFieldName,'));
+        mapEntries.add(Code('...$apAccess,'));
       }
     }
 
@@ -863,6 +907,7 @@ class ClassGenerator {
           !property.isRequired ||
           property.isReadOnly ||
           property.isWriteOnly,
+      useImmutableCollections: useImmutableCollections,
     );
   }
 
@@ -881,6 +926,7 @@ class ClassGenerator {
           property.isReadOnly ||
           property.isWriteOnly ||
           model.isReadOnly,
+      useImmutableCollections: useImmutableCollections,
     );
   }
 
@@ -1233,6 +1279,7 @@ if ($name != null) {
           fieldModel,
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
+          useImmutableCollections: useImmutableCollections,
         );
 
         final assignmentExpr = refer(
@@ -1608,6 +1655,7 @@ if ($name != null) {
         contextClass: className,
         contextProperty: propertyName,
         explode: refer('explode'),
+        useImmutableCollections: useImmutableCollections,
       );
     }
 
@@ -1672,6 +1720,7 @@ if ($name != null) {
           contextClass: className,
           contextProperty: 'additionalProperties',
           explode: refer('explode'),
+          useImmutableCollections: useImmutableCollections,
         );
         codes.addAll([
           const Code(r'_$additional[_$entry.key] = '),
@@ -1697,7 +1746,9 @@ if ($name != null) {
         const Code('}'),
         const Code('}'),
       ]);
-      constructorArgs[apFieldName] = refer(r'_$additional');
+      constructorArgs[apFieldName] = useImmutableCollections
+          ? refer(r'_$additional').property('lock')
+          : refer(r'_$additional');
     }
 
     codes.add(

@@ -27,11 +27,13 @@ class OneOfGenerator {
     required this.nameManager,
     required this.package,
     required this.stableModelSorter,
+    this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
   final StableModelSorter stableModelSorter;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generate(OneOfModel model) {
     return generateCompositeLibrary(
@@ -208,11 +210,12 @@ class OneOfGenerator {
         nameManager,
         package,
         isNullableOverride: discriminatedModel.model.isEffectivelyNullable,
+        useImmutableCollections: useImmutableCollections,
       );
 
-      final hasCollectionValue =
-          discriminatedModel.model is ListModel ||
-          discriminatedModel.model is MapModel;
+      final hasCollectionValue = !useImmutableCollections &&
+          (discriminatedModel.model is ListModel ||
+              discriminatedModel.model is MapModel);
 
       classes.add(
         Class(
@@ -276,7 +279,11 @@ class OneOfGenerator {
         isNullable: false,
         isDeprecated: false,
       );
-      final jsonValueExpr = buildToJsonPropertyExpression('value', property);
+      final jsonValueExpr = buildToJsonPropertyExpression(
+        'value',
+        property,
+        useImmutableCollections: useImmutableCollections,
+      );
       final discriminatorValue = discriminatedModel.discriminatorValue != null
           ? specLiteralStringCode(discriminatedModel.discriminatorValue!)
           : 'null';
@@ -392,7 +399,12 @@ class OneOfGenerator {
         final variantName = variantNames[m]!;
 
         cases.addAll([
-          typeReference(m.model, nameManager, package).code,
+          typeReference(
+            m.model,
+            nameManager,
+            package,
+            useImmutableCollections: useImmutableCollections,
+          ).code,
           Code(' s => $variantName(s),'),
         ]);
       }
@@ -449,6 +461,7 @@ class OneOfGenerator {
           nameManager: nameManager,
           package: package,
           contextClass: className,
+          useImmutableCollections: useImmutableCollections,
         );
         blocks.addAll([
           const Code('try {'),
@@ -584,6 +597,7 @@ class OneOfGenerator {
                 package: package,
                 contextClass: className,
                 explode: refer('explode'),
+                useImmutableCollections: useImmutableCollections,
               )
             : buildSimpleValueExpression(
                 refer('value'),
@@ -605,6 +619,7 @@ class OneOfGenerator {
                 package: package,
                 contextClass: className,
                 explode: refer('explode'),
+                useImmutableCollections: useImmutableCollections,
               )
             : buildSimpleValueExpression(
                 refer('value'),
