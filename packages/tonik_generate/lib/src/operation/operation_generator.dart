@@ -290,6 +290,20 @@ class OperationGenerator {
       );
     }
 
+    // Add cancelToken as the last optional parameter
+    final cancelTokenParam = Parameter(
+      (b) => b
+        ..name = 'cancelToken'
+        ..type = TypeReference(
+          (b) => b
+            ..symbol = 'CancelToken'
+            ..url = 'package:dio/dio.dart'
+            ..isNullable = true,
+        )
+        ..named = true
+        ..required = false,
+    );
+
     return Method(
       (b) => b
         ..name = 'call'
@@ -299,7 +313,7 @@ class OperationGenerator {
             ..url = 'dart:core'
             ..types.add(resultType),
         )
-        ..optionalParameters.addAll(parameters)
+        ..optionalParameters.addAll([...parameters, cancelTokenParam])
         ..modifier = MethodModifier.async
         ..lambda = false
         ..body = Block((b) => b..statements.addAll(bodyStatements)),
@@ -438,7 +452,11 @@ class OperationGenerator {
             .assign(
               refer('_dio').property('requestUri').call(
                 [refer(r'_$uri')],
-                {'data': refer(r'_$data'), 'options': refer(r'_$options')},
+                {
+                  'data': refer(r'_$data'),
+                  'options': refer(r'_$options'),
+                  'cancelToken': refer('cancelToken'),
+                },
                 [
                   TypeReference(
                     (b) => b
@@ -449,6 +467,46 @@ class OperationGenerator {
                 ],
               ).awaited,
             )
+            .statement,
+        const Code('} on '),
+        refer('DioException', 'package:dio/dio.dart').code,
+        const Code(' catch (exception, stackTrace) {'),
+        Block.of([
+          const Code('if (exception.type == '),
+          refer(
+            'DioExceptionType.cancel',
+            'package:dio/dio.dart',
+          ).code,
+          const Code(') {'),
+          refer('TonikError', 'package:tonik_util/tonik_util.dart')
+              .call(
+                [refer('exception')],
+                {
+                  'stackTrace': refer('stackTrace'),
+                  'type': refer(
+                    'TonikErrorType.cancelled',
+                    'package:tonik_util/tonik_util.dart',
+                  ),
+                  'response': refer('exception').property('response'),
+                },
+              )
+              .returned
+              .statement,
+          const Code('}'),
+        ]),
+        refer('TonikError', 'package:tonik_util/tonik_util.dart')
+            .call(
+              [refer('exception')],
+              {
+                'stackTrace': refer('stackTrace'),
+                'type': refer(
+                  'TonikErrorType.network',
+                  'package:tonik_util/tonik_util.dart',
+                ),
+                'response': refer('exception').property('response'),
+              },
+            )
+            .returned
             .statement,
         const Code('} on '),
         refer('Object', 'dart:core').code,
