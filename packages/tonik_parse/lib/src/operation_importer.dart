@@ -130,7 +130,10 @@ class OperationImporter {
     }
 
     // Check for range pattern (e.g., '4XX', '5XX')
-    final rangeMatch = RegExp(r'^([1-5])XX$').firstMatch(status);
+    final rangeMatch = RegExp(
+      r'^([1-5])XX$',
+      caseSensitive: false,
+    ).firstMatch(status);
     if (rangeMatch != null) {
       final rangeStart = int.parse('${rangeMatch.group(1)}00');
       return core.RangeResponseStatus(min: rangeStart, max: rangeStart + 99);

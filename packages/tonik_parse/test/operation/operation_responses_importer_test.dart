@@ -53,6 +53,20 @@ void main() {
               },
             },
             '201': {r'$ref': '#/components/responses/CreatedResponse'},
+            '5xx': {
+              'description': 'Server error response range',
+              'content': {
+                'application/json': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'code': {'type': 'integer'},
+                      'message': {'type': 'string'},
+                    },
+                  },
+                },
+              },
+            },
           },
         },
         'delete': {
@@ -147,6 +161,24 @@ void main() {
 
     final rangeResponse =
         postOperation?.responses[const RangeResponseStatus(min: 400, max: 499)];
+    expect(rangeResponse, isNotNull);
+    expect(rangeResponse, isA<ResponseObject>());
+    expect(
+      (rangeResponse as ResponseObject?)?.bodies.first.model,
+      isA<ClassModel>(),
+    );
+  });
+
+  test('imports lower case response range correctly', () {
+    final api = Importer().import(fileContent);
+
+    final postOperation = api.operations.firstWhereOrNull(
+      (o) => o.operationId == 'postTest',
+    );
+    expect(postOperation, isNotNull);
+
+    final rangeResponse =
+        postOperation?.responses[const RangeResponseStatus(min: 500, max: 599)];
     expect(rangeResponse, isNotNull);
     expect(rangeResponse, isA<ResponseObject>());
     expect(
