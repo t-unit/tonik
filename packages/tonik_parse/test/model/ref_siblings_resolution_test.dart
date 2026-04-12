@@ -1145,7 +1145,7 @@ void main() {
       );
     });
 
-    test('indirect circular reference (A -> B -> C -> A) throws', () {
+    test('indirect circular reference (A -> B -> C -> A) produces models', () {
       const fileContent = {
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -1159,13 +1159,36 @@ void main() {
         },
       };
 
+      final api = Importer().import(fileContent);
+
+      final modelA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'A',
+      );
+      final modelB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'B',
+      );
+      final modelC = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'C',
+      );
+
+      expect(modelA, isA<AliasModel>());
+      expect(modelB, isA<AliasModel>());
+      expect(modelC, isA<AliasModel>());
+
+      // Verify the alias chain is wired (not all AnyModel terminals).
+      // At least one alias should wrap another alias (not AnyModel).
+      final aliasModels = [modelA, modelB, modelC].cast<AliasModel>();
+      final wrapsAlias =
+          aliasModels.where((a) => a.model is AliasModel).toList();
       expect(
-        () => Importer().import(fileContent),
-        throwsArgumentError,
+        wrapsAlias,
+        isNotEmpty,
+        reason: 'At least one alias should wrap another alias, '
+            'not all terminate at AnyModel',
       );
     });
 
-    test('indirect circular reference (A -> B -> A) throws', () {
+    test('indirect circular reference (A -> B -> A) produces models', () {
       const fileContent = {
         'openapi': '3.1.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -1178,10 +1201,28 @@ void main() {
         },
       };
 
-      expect(
-        () => Importer().import(fileContent),
-        throwsArgumentError,
+      final api = Importer().import(fileContent);
+
+      final modelA = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'A',
       );
+      final modelB = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'B',
+      );
+
+      expect(modelA, isA<AliasModel>());
+      expect(modelB, isA<AliasModel>());
+
+      // One alias wraps the other, and the chain terminates at AnyModel
+      // (bare ref cycles have no concrete type).
+      final aliasA = modelA as AliasModel;
+      final aliasB = modelB as AliasModel;
+      expect(aliasB.model, isA<AliasModel>());
+      expect((aliasB.model as AliasModel).name, 'A');
+
+      // A wraps a placeholder whose inner model is AnyModel.
+      expect(aliasA.model, isA<AliasModel>());
+      expect((aliasA.model as AliasModel).model, isA<AnyModel>());
     });
   });
 }
