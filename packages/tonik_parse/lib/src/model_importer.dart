@@ -112,7 +112,7 @@ class ModelImporter {
         models.firstWhereOrNull(
           (model) => model is NamedModel && model.name == refName,
         ) ??
-        _resolveSchemaRef(refName, refSchema, rootContext);
+        _resolveWithCycleCheck(refName, refSchema);
 
     final modelContext = context.push('allOf');
     final modelsToMerge = <Model>[refModel];
@@ -169,7 +169,7 @@ class ModelImporter {
     return models.firstWhereOrNull(
           (model) => model is NamedModel && model.name == refName,
         ) ??
-        _resolveSchemaRef(refName, refSchema, rootContext);
+        _resolveWithCycleCheck(refName, refSchema);
   }
 
   Model _resolveDefsReferenceForProperty(String ref, Context context) {
@@ -193,21 +193,38 @@ class ModelImporter {
     }
 
     final defName = ref.split('/').last;
-    final isBareRef = defSchema.ref != null;
 
-    if (isBareRef && _resolving.contains(ref)) {
-      throw ArgumentError(
-        'Circular reference detected: $ref is part of a reference cycle',
+    if (_resolving.contains(ref)) {
+      final existing = models.firstWhereOrNull(
+        (model) => model is NamedModel && model.name == defName,
       );
+      if (existing != null) {
+        return existing;
+      }
+
+      // No early-registered model found (e.g. bare $ref alias cycles in
+      // $defs). Create and register a placeholder so the other side of the
+      // cycle can resolve to it when it unwinds.
+      log.warning(
+        'Circular reference to $ref detected but no '
+        'early-registered model found. Registering AliasModel placeholder.',
+      );
+      final placeholder = AliasModel(
+        name: defName,
+        model: AnyModel(context: _contextFromDefsPath(ref)),
+        context: _contextFromDefsPath(ref),
+      );
+      models.add(placeholder);
+      return placeholder;
     }
 
-    if (isBareRef) _resolving.add(ref);
+    _resolving.add(ref);
     final Model refModel;
     try {
       final defsContext = _contextFromDefsPath(ref);
       refModel = _resolveSchemaRef(defName, defSchema, defsContext);
     } finally {
-      if (isBareRef) _resolving.remove(ref);
+      _resolving.remove(ref);
     }
 
     if (_hasStructuralSiblings(schema)) {
@@ -249,27 +266,43 @@ class ModelImporter {
 
   /// Resolves a schema ref with cycle detection.
   ///
-  /// Only tracks resolution for schemas whose definition is itself a `$ref`
-  /// (i.e. alias chains like A→B→C→A). Schemas with structural content
-  /// handle recursion via early model registration in [_parseClassModel].
+  /// Tracks all named schema resolutions to detect circular references.
+  /// When a cycle is detected the method first checks for an
+  /// early-registered model (structural schemas register before resolving
+  /// members). If none is found it creates and registers an [AliasModel]
+  /// placeholder wrapping [AnyModel] so that resolution can unwind safely.
   Model _resolveWithCycleCheck(String refName, Schema refSchema) {
-    // Only track cycles for schemas that are bare $ref aliases.
-    // Schemas with structural content handle recursion via early
-    // model registration in _parseClassModel.
-    final isBareRef = refSchema.ref != null;
-
-    if (isBareRef && _resolving.contains(refName)) {
-      throw ArgumentError(
-        'Circular reference detected: '
-        '$refName is part of a reference cycle',
+    if (_resolving.contains(refName)) {
+      // Look up a partially-constructed model that was registered early
+      // by one of the parse methods (_parseClassModel, _parseAllOf, etc.).
+      final existing = models.firstWhereOrNull(
+        (model) => model is NamedModel && model.name == refName,
       );
+      if (existing != null) {
+        return existing;
+      }
+
+      // No early-registered model found (e.g. bare $ref alias cycles).
+      // Create and register a placeholder so the other side of the cycle
+      // can resolve to it when it unwinds.
+      log.warning(
+        'Circular reference to $refName detected but no '
+        'early-registered model found. Registering AliasModel placeholder.',
+      );
+      final placeholder = AliasModel(
+        name: refName,
+        model: AnyModel(context: rootContext),
+        context: rootContext,
+      );
+      models.add(placeholder);
+      return placeholder;
     }
 
-    if (isBareRef) _resolving.add(refName);
+    _resolving.add(refName);
     try {
       return _resolveSchemaRef(refName, refSchema, rootContext);
     } finally {
-      if (isBareRef) _resolving.remove(refName);
+      _resolving.remove(refName);
     }
   }
 
@@ -628,15 +661,12 @@ class ModelImporter {
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
     final modelContext = context.push(name ?? 'allOf');
-    final models = schema.allOf!
-        .map(
-          (allOfSchema) => _resolveSchemaRef(null, allOfSchema, modelContext),
-        )
-        .toList();
 
+    // Register the model early (with an empty models set) so that
+    // circular references can find it during member resolution.
     final allOfModel = AllOfModel(
       isDeprecated: schema.isDeprecated ?? false,
-      models: models.toSet(),
+      models: <Model>{},
       context: modelContext,
       name: name,
       description: schema.description,
@@ -646,7 +676,20 @@ class ModelImporter {
       isWriteOnly: schema.isWriteOnly ?? false,
     );
 
-    _addModelToSet(allOfModel);
+    if (name == null ||
+        models.none((m) => m is NamedModel && m.name == name)) {
+      _logModelAdded(allOfModel);
+      models.add(allOfModel);
+    }
+
+    final resolvedModels = schema.allOf!
+        .map(
+          (allOfSchema) => _resolveSchemaRef(null, allOfSchema, modelContext),
+        )
+        .toSet();
+
+    allOfModel.models = resolvedModels;
+
     return allOfModel;
   }
 
@@ -670,19 +713,11 @@ class ModelImporter {
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 
-    final models = alternatives.map(
-      (oneOfSchema) => (
-        discriminatorValue: _getDiscriminatorValue(
-          discriminator: effectiveDiscriminator,
-          innerSchema: oneOfSchema,
-        ),
-        model: _resolveSchemaRef(null, oneOfSchema, modelContext),
-      ),
-    );
-
+    // Register the model early (with an empty models set) so that
+    // circular references can find it during member resolution.
     final oneOfModel = OneOfModel(
       isDeprecated: schema.isDeprecated ?? false,
-      models: models.toSet(),
+      models: <DiscriminatedModel>{},
       context: context,
       name: name,
       discriminator: effectiveDiscriminator?.propertyName,
@@ -692,7 +727,29 @@ class ModelImporter {
       isWriteOnly: schema.isWriteOnly ?? false,
     );
 
-    _addModelToSet(oneOfModel);
+    if (name == null ||
+        models.none((m) => m is NamedModel && m.name == name)) {
+      _logModelAdded(oneOfModel);
+      models.add(oneOfModel);
+    }
+
+    final resolvedModels = alternatives.map(
+      (oneOfSchema) => (
+        discriminatorValue: _getDiscriminatorValue(
+          discriminator: effectiveDiscriminator,
+          innerSchema: oneOfSchema,
+        ),
+        model: _resolveSchemaRef(null, oneOfSchema, modelContext),
+      ),
+    );
+
+    oneOfModel.models = resolvedModels.toSet();
+
+    // Add nested models to the model set now that members are resolved.
+    for (final nestedModel in oneOfModel.models) {
+      _addModelToSet(nestedModel.model);
+    }
+
     return oneOfModel;
   }
 
@@ -703,18 +760,11 @@ class ModelImporter {
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 
-    final models = alternatives.map(
-      (anyOfSchema) => (
-        discriminatorValue: _getDiscriminatorValue(
-          discriminator: effectiveDiscriminator,
-          innerSchema: anyOfSchema,
-        ),
-        model: _resolveSchemaRef(null, anyOfSchema, modelContext),
-      ),
-    );
+    // Register the model early (with an empty models set) so that
+    // circular references can find it during member resolution.
     final anyOfModel = AnyOfModel(
       isDeprecated: schema.isDeprecated ?? false,
-      models: models.toSet(),
+      models: <DiscriminatedModel>{},
       context: context,
       name: name,
       discriminator: effectiveDiscriminator?.propertyName,
@@ -724,7 +774,24 @@ class ModelImporter {
       isWriteOnly: schema.isWriteOnly ?? false,
     );
 
-    _addModelToSet(anyOfModel);
+    if (name == null ||
+        models.none((m) => m is NamedModel && m.name == name)) {
+      _logModelAdded(anyOfModel);
+      models.add(anyOfModel);
+    }
+
+    final resolvedModels = alternatives.map(
+      (anyOfSchema) => (
+        discriminatorValue: _getDiscriminatorValue(
+          discriminator: effectiveDiscriminator,
+          innerSchema: anyOfSchema,
+        ),
+        model: _resolveSchemaRef(null, anyOfSchema, modelContext),
+      ),
+    );
+
+    anyOfModel.models = resolvedModels.toSet();
+
     return anyOfModel;
   }
 
