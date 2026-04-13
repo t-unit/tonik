@@ -113,6 +113,13 @@ const generatedClassTokens = {
 
 const Set<String> allKeywords = {...dartKeywords, ...generatedClassTokens};
 
+/// Names that conflict with members inherited by all Dart enums.
+/// These are only reserved for enum values, not class properties.
+const reservedEnumMemberNames = {
+  'index', // Enum.index — ordinal position
+  'values', // Enum.values — static list of all values
+};
+
 /// Converts a number to its English word representation.
 /// Supports numbers up to trillions.
 String _numberToWords(int number) {
@@ -357,9 +364,11 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
   var processedName = name.replaceAll(RegExp('^_+'), '');
   if (processedName.isEmpty) return '';
 
-  // If preserving numbers and it's just a number, return as-is
-  if (preserveNumbers && RegExp(r'^\d+$').hasMatch(processedName)) {
-    return processedName;
+  // If it's just a number, spell it out (e.g. "600" -> "sixHundred")
+  if (RegExp(r'^\d+$').hasMatch(processedName)) {
+    final number = int.parse(processedName);
+    final words = _numberToWords(number);
+    return _normalizeText(words).toCamelCase();
   }
 
   processedName = _normalizeText(
@@ -420,6 +429,10 @@ String normalizeEnumValueName(String value) {
 
   // Safety net: if the result still starts with a digit, prefix with $
   if (RegExp(r'^\d').hasMatch(result)) {
+    return '\$$result';
+  }
+
+  if (reservedEnumMemberNames.contains(result)) {
     return '\$$result';
   }
 
