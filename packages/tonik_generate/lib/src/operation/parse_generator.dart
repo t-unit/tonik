@@ -196,7 +196,6 @@ class ParseGenerator {
       ContentType.text => _createTextBodyDecode(),
       ContentType.bytes => _createBytesBodyDecode(),
       ContentType.form => _createFormBodyDecode(responseBody),
-      // coverage:ignore-start
       ContentType.multipart => (
         statements: [
           generateResponseDecodingExceptionExpression(
@@ -205,7 +204,6 @@ class ParseGenerator {
         ],
         varName: r'_$body',
       ),
-      // coverage:ignore-end
     };
   }
 

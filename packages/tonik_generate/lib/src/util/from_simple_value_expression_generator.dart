@@ -171,12 +171,10 @@ Expression buildSimpleValueExpression(
     MapModel() => generateSimpleDecodingExceptionExpression(
       'Map types cannot be simple-decoded.',
     ),
-    // coverage:ignore-start
     NamedModel() ||
     CompositeModel() => generateSimpleDecodingExceptionExpression(
       'Unsupported model type for simple decoding.',
     ),
-    // coverage:ignore-end
   };
 }
 

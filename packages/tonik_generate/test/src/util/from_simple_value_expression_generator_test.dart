@@ -739,7 +739,7 @@ void main() {
               package: 'package:my_package/my_package.dart',
               explode: literalBool(false),
             ).accept(scopedEmitter).toString(),
-            """throw  _i1.SimpleDecodingException('Lists of objects are not supported in simple encoding.')""",
+            """throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')""",
           );
         },
       );
@@ -768,7 +768,7 @@ void main() {
               package: 'package:my_package/my_package.dart',
               explode: literalBool(false),
             ).accept(scopedEmitter).toString(),
-            """throw  _i1.SimpleDecodingException('Lists of objects are not supported in simple encoding.')""",
+            """throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')""",
           );
         },
       );

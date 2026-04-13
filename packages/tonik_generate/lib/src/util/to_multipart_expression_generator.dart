@@ -258,11 +258,9 @@ Code? _buildFieldCode(
       encoding: encoding,
     ),
 
-    // coverage:ignore-start
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for multipart encoding.',
     ).statement,
-    // coverage:ignore-end
   };
 
   if (fieldCode == null) return null;

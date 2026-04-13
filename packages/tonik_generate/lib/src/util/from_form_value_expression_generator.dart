@@ -147,11 +147,9 @@ Expression buildFromFormValueExpression(
       'Map types cannot be form-decoded.',
     ),
 
-    // coverage:ignore-start
     _ => generateFormDecodingExceptionExpression(
       'Unsupported model type for form decoding.',
     ),
-    // coverage:ignore-end
   };
 }
 

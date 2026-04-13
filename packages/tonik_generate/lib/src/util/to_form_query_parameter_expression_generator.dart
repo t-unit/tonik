@@ -134,7 +134,6 @@ List<Code> buildToFormQueryParameterCode(
       ];
     }
 
-    // coverage:ignore-start
     if (contentShape == EncodingShape.mixed) {
       final suffix = _getFormSerializationSuffix(
         model,
@@ -171,7 +170,6 @@ List<Code> buildToFormQueryParameterCode(
         ),
       ];
     }
-    // coverage:ignore-end
   }
 
   // For all other types, generate simple expression.

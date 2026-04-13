@@ -126,10 +126,8 @@ Expression _buildFormSerializationExpression(
 
     AnyModel() => receiver, // Pass through as-is
 
-    // coverage:ignore-start
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for form encoding.',
     ),
-    // coverage:ignore-end
   };
 }
