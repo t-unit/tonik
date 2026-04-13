@@ -79,15 +79,14 @@ class DataGenerator {
                   NeverModel() ||
                   NamedModel() ||
                   CompositeModel():
-                switchCases.add(
-                  Block.of([
-                    const Code(' value => '),
+                switchCases
+                  ..add(const Code(' value => '))
+                  ..add(
                     generateEncodingExceptionExpression(
                       'Unsupported model for bytes content type.',
                     ).code,
-                    const Code(','),
-                  ]),
-                );
+                  )
+                  ..add(const Code(','));
             }
           case .json:
             switchCases
