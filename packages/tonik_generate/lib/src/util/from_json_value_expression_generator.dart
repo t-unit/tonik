@@ -165,8 +165,12 @@ Expression buildFromJsonValueExpression(
           : throwExpr;
     case AnyModel():
       return refer(value);
+    // coverage:ignore-start
     case NamedModel() || CompositeModel():
-      throw UnimplementedError('$model is not supported');
+      return generateJsonDecodingExceptionExpression(
+        'Unsupported model type for JSON decoding.',
+      );
+    // coverage:ignore-end
   }
 }
 

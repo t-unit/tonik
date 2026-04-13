@@ -56,8 +56,8 @@ Expression buildUriEncodeExpression(
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
     ),
-    _ => throw UnimplementedError(
-      'Unsupported model type for URI encoding: $model',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for URI encoding.',
     ),
   };
 }
@@ -163,8 +163,8 @@ Expression _buildListUriEncodeExpression(
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
     ),
-    _ => throw UnimplementedError(
-      'Unsupported list content type for URI encoding: $contentModel',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported list content type for URI encoding.',
     ),
   };
 }

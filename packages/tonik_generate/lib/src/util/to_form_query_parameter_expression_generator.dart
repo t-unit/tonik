@@ -22,10 +22,10 @@ List<Code> buildToFormQueryParameterCode(
     ];
   }
 
-  if (model is BinaryModel) {
+  if (model is BinaryModel || model is Base64Model) {
     return [
       generateEncodingExceptionExpression(
-        'Binary data cannot be form-encoded',
+        'Binary data cannot be form-encoded.',
       ).statement,
     ];
   }
@@ -63,6 +63,25 @@ List<Code> buildToFormQueryParameterCode(
         ? (model.content as AliasModel).resolved
         : model.content;
     final contentShape = contentModel.encodingShape;
+
+    // Binary/Base64 content cannot be form-encoded.
+    if (contentModel is BinaryModel || contentModel is Base64Model) {
+      return [
+        generateEncodingExceptionExpression(
+          'Binary data cannot be form-encoded.',
+        ).statement,
+      ];
+    }
+
+    // NeverModel content cannot be form-encoded.
+    if (contentModel is NeverModel) {
+      return [
+        generateEncodingExceptionExpression(
+          'Cannot encode List<NeverModel> - '
+          'this type does not permit any value.',
+        ).statement,
+      ];
+    }
 
     if (explode) {
       return _buildExplodedListCode(
@@ -115,15 +134,23 @@ List<Code> buildToFormQueryParameterCode(
       ];
     }
 
+    // coverage:ignore-start
     if (contentShape == EncodingShape.mixed) {
       final suffix = _getFormSerializationSuffix(
         model,
         explode: explode,
         allowEmpty: allowEmpty,
       );
-      final valueExpression = suffix == null
-          ? parameterName
-          : '$parameterName$suffix';
+
+      if (suffix == null) {
+        return [
+          generateEncodingExceptionExpression(
+            'Unsupported list content type for form query encoding.',
+          ).statement,
+        ];
+      }
+
+      final valueExpression = '$parameterName$suffix';
 
       return [
         Code('for (final item in $parameterName) {'),
@@ -144,6 +171,7 @@ List<Code> buildToFormQueryParameterCode(
         ),
       ];
     }
+    // coverage:ignore-end
   }
 
   // For all other types, generate simple expression.
@@ -152,9 +180,16 @@ List<Code> buildToFormQueryParameterCode(
     explode: explode,
     allowEmpty: allowEmpty,
   );
-  final valueExpression = suffix == null
-      ? parameterName
-      : '$parameterName$suffix';
+
+  if (suffix == null) {
+    return [
+      generateEncodingExceptionExpression(
+        'Unsupported model type for form query encoding.',
+      ).statement,
+    ];
+  }
+
+  final valueExpression = '$parameterName$suffix';
 
   return [
     Code(
@@ -204,13 +239,9 @@ String? _getFormSerializationSuffix(
 
     AnyModel() => '?.toString() ?? ""',
     NeverModel() => null,
-    BinaryModel() => throw UnimplementedError(
-      'BinaryModel is not supported for form query parameter encoding',
-    ),
+    BinaryModel() => null,
 
-    _ => throw UnimplementedError(
-      'Unsupported model type for form encoding: $model',
-    ),
+    _ => null,
   };
 }
 
@@ -261,14 +292,9 @@ String? _handleListExpression(
       allowEmpty: allowEmpty,
     ),
 
-    BinaryModel() => throw UnimplementedError(
-      'BinaryModel is not supported as list content for form query '
-      'parameter encoding',
-    ),
+    BinaryModel() => null,
 
-    _ => throw UnimplementedError(
-      'Unsupported list content type for form encoding: $contentModel',
-    ),
+    _ => null,
   };
 }
 

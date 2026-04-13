@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
@@ -78,8 +79,14 @@ class DataGenerator {
                   NeverModel() ||
                   NamedModel() ||
                   CompositeModel():
-                throw StateError(
-                  'Unsupported model ${c.model} for bytes content type',
+                switchCases.add(
+                  Block.of([
+                    const Code(' value => '),
+                    generateEncodingExceptionExpression(
+                      'Unsupported model for bytes content type.',
+                    ).code,
+                    const Code(','),
+                  ]),
                 );
             }
           case .json:
@@ -226,9 +233,13 @@ class DataGenerator {
               NeverModel() ||
               NamedModel() ||
               CompositeModel():
-            throw StateError(
-              'Unsupported model $model for bytes content type',
-            );
+            bodyCode
+              ..add(
+                generateEncodingExceptionExpression(
+                  'Unsupported model for bytes content type.',
+                ).code,
+              )
+              ..add(const Code(';'));
         }
       case ContentType.json:
         bodyCode

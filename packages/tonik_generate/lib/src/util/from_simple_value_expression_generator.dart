@@ -171,8 +171,12 @@ Expression buildSimpleValueExpression(
     MapModel() => generateSimpleDecodingExceptionExpression(
       'Map types cannot be simple-decoded.',
     ),
+    // coverage:ignore-start
     NamedModel() ||
-    CompositeModel() => throw UnimplementedError('$model is not supported'),
+    CompositeModel() => generateSimpleDecodingExceptionExpression(
+      'Unsupported model type for simple decoding.',
+    ),
+    // coverage:ignore-end
   };
 }
 
@@ -315,7 +319,7 @@ Expression _buildListFromSimpleExpression(
       contextParam: contextParam,
     ),
     ClassModel() => generateSimpleDecodingExceptionExpression(
-      'Lists of objects are not supported in simple encoding.',
+      'ClassModel is not supported in lists for simple decoding.',
     ),
     EnumModel() ||
     OneOfModel() ||
@@ -330,8 +334,8 @@ Expression _buildListFromSimpleExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
-    ListModel() => throw UnimplementedError(
-      'Nested lists are not supported in simple encoding',
+    ListModel() => generateSimpleDecodingExceptionExpression(
+      'Nested lists are not supported in simple decoding.',
     ),
     AliasModel() => _buildListFromSimpleExpression(
       value,
@@ -348,7 +352,9 @@ Expression _buildListFromSimpleExpression(
     ),
     AnyModel() => listDecode,
     NamedModel() ||
-    CompositeModel() => throw UnimplementedError('$model is not supported'),
+    CompositeModel() => generateSimpleDecodingExceptionExpression(
+      'Unsupported model type for simple decoding.',
+    ),
   };
 }
 

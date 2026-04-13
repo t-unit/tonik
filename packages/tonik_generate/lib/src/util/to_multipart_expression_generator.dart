@@ -258,9 +258,11 @@ Code? _buildFieldCode(
       encoding: encoding,
     ),
 
-    _ => throw UnimplementedError(
-      'Unsupported model type for multipart encoding: ${model.runtimeType}',
-    ),
+    // coverage:ignore-start
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for multipart encoding.',
+    ).statement,
+    // coverage:ignore-end
   };
 
   if (fieldCode == null) return null;

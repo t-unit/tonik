@@ -147,7 +147,11 @@ Expression buildFromFormValueExpression(
       'Map types cannot be form-decoded.',
     ),
 
-    _ => throw UnimplementedError('Unsupported model type: $model'),
+    // coverage:ignore-start
+    _ => generateFormDecodingExceptionExpression(
+      'Unsupported model type for form decoding.',
+    ),
+    // coverage:ignore-end
   };
 }
 
@@ -282,8 +286,8 @@ Expression _buildListFromFormExpression(
       isRequired,
       contextParam: contextParam,
     ),
-    ClassModel() => throw UnimplementedError(
-      'ClassModel is not supported in lists for form encoding',
+    ClassModel() => generateFormDecodingExceptionExpression(
+      'ClassModel is not supported in lists for form decoding.',
     ),
     EnumModel() ||
     AllOfModel() ||
@@ -298,8 +302,8 @@ Expression _buildListFromFormExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
-    ListModel() => throw UnimplementedError(
-      'Nested lists are not supported in form encoding',
+    ListModel() => generateFormDecodingExceptionExpression(
+      'Nested lists are not supported in form decoding.',
     ),
     AliasModel() => _buildListFromFormExpression(
       value,
@@ -317,7 +321,9 @@ Expression _buildListFromFormExpression(
     ),
     AnyModel() => listDecode,
     NamedModel() ||
-    CompositeModel() => throw UnimplementedError('$content is not supported'),
+    CompositeModel() => generateFormDecodingExceptionExpression(
+      'Unsupported model type for form decoding.',
+    ),
   };
 
   // When using immutable collections, wrap with .lock to convert to IList.

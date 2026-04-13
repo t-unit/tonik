@@ -2,11 +2,13 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 
 void main() {
   late Context context;
   late DartEmitter emitter;
+  late DartEmitter scopedEmitter;
 
   final format = DartFormatter(
     languageVersion: DartFormatter.latestLanguageVersion,
@@ -15,6 +17,10 @@ void main() {
   setUp(() {
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
+    scopedEmitter = DartEmitter(
+      useNullSafetySyntax: true,
+      allocator: CorePrefixedAllocator(),
+    );
   });
 
   group('buildMatrixParameterExpression', () {
@@ -419,6 +425,43 @@ void main() {
       expect(
         collapseWhitespace(generated),
         collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates runtime throw for NeverModel', () {
+      final model = NeverModel(context: context);
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      expect(
+        expression.accept(scopedEmitter).toString(),
+        "throw  _i1.EncodingException("
+        "'Unsupported model type for matrix encoding.')",
+      );
+    });
+
+    test('generates runtime throw for List with NeverModel content', () {
+      final model = ListModel(
+        content: NeverModel(context: context),
+        context: context,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      expect(
+        expression.accept(scopedEmitter).toString(),
+        "throw  _i1.EncodingException("
+        "'Unsupported list content type for matrix encoding.')",
       );
     });
   });

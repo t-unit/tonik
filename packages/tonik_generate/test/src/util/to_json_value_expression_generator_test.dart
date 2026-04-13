@@ -1,18 +1,27 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 
 void main() {
   late Context context;
   late DartEmitter emitter;
+  late DartEmitter scopedEmitter;
 
   setUp(() {
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
+    scopedEmitter = DartEmitter(
+      useNullSafetySyntax: true,
+      allocator: CorePrefixedAllocator(),
+    );
   });
 
   String emit(Expression expr) => expr.accept(emitter).toString();
+
+  String scopedEmit(Expression expr) =>
+      expr.accept(scopedEmitter).toString();
 
   group('buildToJsonValueExpression', () {
     test('for String property', () {
@@ -1246,12 +1255,12 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('forbidden', property)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToJsonPropertyExpression('forbidden', property)),
-        contains('EncodingException'),
+        scopedEmit(
+          buildToJsonPropertyExpression('forbidden', property),
+        ),
+        "throw  _i1.EncodingException("
+        "'Cannot encode NeverModel"
+        " - this type does not permit any value.')",
       );
     });
 
@@ -1263,14 +1272,13 @@ void main() {
         isNullable: true,
         isDeprecated: false,
       );
-      // Even for nullable NeverModel, we throw because there's no valid value
       expect(
-        emit(buildToJsonPropertyExpression('forbidden', property)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToJsonPropertyExpression('forbidden', property)),
-        contains('EncodingException'),
+        scopedEmit(
+          buildToJsonPropertyExpression('forbidden', property),
+        ),
+        "throw  _i1.EncodingException("
+        "'Cannot encode NeverModel"
+        " - this type does not permit any value.')",
       );
     });
 
@@ -1287,12 +1295,12 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('forbiddenList', property)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToJsonPropertyExpression('forbiddenList', property)),
-        contains('EncodingException'),
+        scopedEmit(
+          buildToJsonPropertyExpression('forbiddenList', property),
+        ),
+        "forbiddenList.map((e) => throw  _i1.EncodingException("
+        "'Cannot encode NeverModel"
+        " - this type does not permit any value.')).toList()",
       );
     });
 
@@ -1310,12 +1318,12 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('forbiddenAlias', property)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToJsonPropertyExpression('forbiddenAlias', property)),
-        contains('EncodingException'),
+        scopedEmit(
+          buildToJsonPropertyExpression('forbiddenAlias', property),
+        ),
+        "throw  _i1.EncodingException("
+        "'Cannot encode NeverModel"
+        " - this type does not permit any value.')",
       );
     });
   });
@@ -1335,12 +1343,12 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPathParameterExpression('forbidden', parameter)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToJsonPathParameterExpression('forbidden', parameter)),
-        contains('EncodingException'),
+        scopedEmit(
+          buildToJsonPathParameterExpression('forbidden', parameter),
+        ),
+        "throw  _i1.EncodingException("
+        "'Cannot encode NeverModel"
+        " - this type does not permit any value.')",
       );
     });
   });
@@ -1361,12 +1369,12 @@ void main() {
         allowReserved: true,
       );
       expect(
-        emit(buildToJsonQueryParameterExpression('forbidden', parameter)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToJsonQueryParameterExpression('forbidden', parameter)),
-        contains('EncodingException'),
+        scopedEmit(
+          buildToJsonQueryParameterExpression('forbidden', parameter),
+        ),
+        "throw  _i1.EncodingException("
+        "'Cannot encode NeverModel"
+        " - this type does not permit any value.')",
       );
     });
   });
@@ -1828,4 +1836,5 @@ void main() {
       );
     });
   });
+
 }

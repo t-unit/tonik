@@ -55,8 +55,8 @@ Expression buildFormParameterExpression(
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be form-encoded',
     ),
-    _ => throw UnimplementedError(
-      'Unsupported model type for form encoding: $model',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for form encoding.',
     ),
   };
 }
@@ -130,8 +130,8 @@ Expression _buildListFormExpression(
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be form-encoded',
     ),
-    _ => throw UnimplementedError(
-      'Unsupported list content type for form encoding: $contentModel',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported list content type for form encoding.',
     ),
   };
 }

@@ -1,15 +1,21 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
 void main() {
   late Context context;
   late DartEmitter emitter;
+  late DartEmitter scopedEmitter;
 
   setUp(() {
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
+    scopedEmitter = DartEmitter(
+      useNullSafetySyntax: true,
+      allocator: CorePrefixedAllocator(),
+    );
   });
 
   String emit(Expression expr) => expr.accept(emitter).toString();
@@ -321,6 +327,63 @@ void main() {
         ),
         'myInt.toSimple(explode: false, allowEmpty: true, )',
       );
+    });
+
+    group('unsupported model types generate runtime throws', () {
+      test('nested ListModel generates runtime throw', () {
+        final model = ListModel(
+          content: ListModel(
+            content: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        );
+        expect(
+          buildSimpleValueExpression(
+            refer('value'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ).accept(scopedEmitter).toString(),
+          "throw  _i1.EncodingException("
+          "'Nested lists are not supported"
+          " for simple encoding.')",
+        );
+      });
+
+      test('generates runtime throw for BinaryModel', () {
+        expect(
+          buildSimpleValueExpression(
+            refer('value'),
+            BinaryModel(context: context),
+            explode: false,
+            allowEmpty: true,
+          ).accept(scopedEmitter).toString(),
+          "throw  _i1.EncodingException("
+          "'Unsupported model type for simple encoding.')",
+        );
+      });
+
+      test('generates runtime throw for List with MapModel content', () {
+        final model = ListModel(
+          content: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        );
+
+        expect(
+          buildSimpleValueExpression(
+            refer('value'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ).accept(scopedEmitter).toString(),
+          "throw  _i1.EncodingException("
+          "'Unsupported content model for simple encoding.')",
+        );
+      });
     });
   });
 }

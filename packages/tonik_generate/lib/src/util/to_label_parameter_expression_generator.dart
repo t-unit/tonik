@@ -52,8 +52,8 @@ Expression buildLabelParameterExpression(
     MapModel() => generateEncodingExceptionExpression(
       'Map types cannot be label-encoded.',
     ),
-    _ => throw UnimplementedError(
-      'Unsupported model type for label encoding: $model',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for label encoding.',
     ),
   };
 }
@@ -147,8 +147,8 @@ Expression _buildListLabelExpression(
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be label-encoded',
     ),
-    _ => throw UnimplementedError(
-      'Unsupported list content type for label encoding: $contentModel',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported list content type for label encoding.',
     ),
   };
 }
