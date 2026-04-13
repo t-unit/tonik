@@ -55,8 +55,8 @@ Expression buildSimpleParameterExpression(
     MapModel() => generateEncodingExceptionExpression(
       'Map types cannot be simple-encoded.',
     ),
-    _ => throw UnimplementedError(
-      'Unsupported model type for simple encoding: $model',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for simple encoding.',
     ),
   };
 }
@@ -153,8 +153,8 @@ Expression _buildListSimpleExpression(
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be simple-encoded',
     ),
-    _ => throw UnimplementedError(
-      'Unsupported list content type for simple encoding: $contentModel',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported list content type for simple encoding.',
     ),
   };
 }

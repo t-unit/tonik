@@ -739,7 +739,7 @@ void main() {
               package: 'package:my_package/my_package.dart',
               explode: literalBool(false),
             ).accept(scopedEmitter).toString(),
-            """throw  _i1.SimpleDecodingException('Lists of objects are not supported in simple encoding.')""",
+            """throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')""",
           );
         },
       );
@@ -768,7 +768,7 @@ void main() {
               package: 'package:my_package/my_package.dart',
               explode: literalBool(false),
             ).accept(scopedEmitter).toString(),
-            """throw  _i1.SimpleDecodingException('Lists of objects are not supported in simple encoding.')""",
+            """throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')""",
           );
         },
       );
@@ -804,6 +804,84 @@ void main() {
           """value == null ? null : throw  _i1.SimpleDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
         );
       });
+    });
+
+    group('unsupported model types generate runtime throws', () {
+      test('ClassModel in list generates runtime throw', () {
+        final value = refer('value');
+        final model = ListModel(
+          content: ClassModel(
+            name: 'TestClass',
+            properties: [],
+            context: context,
+            isDeprecated: false,
+          ),
+          context: context,
+        );
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: model,
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'package:my_package/my_package.dart',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          "throw  _i1.SimpleDecodingException("
+          "'ClassModel is not supported in lists"
+          " for simple decoding.')",
+        );
+      });
+
+      test('nested ListModel generates runtime throw', () {
+        final value = refer('value');
+        final model = ListModel(
+          content: ListModel(
+            content: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        );
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: model,
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'package:my_package/my_package.dart',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          "throw  _i1.SimpleDecodingException("
+          "'Nested lists are not supported"
+          " in simple decoding.')",
+        );
+      });
+
+      test(
+        'MapModel in list generates runtime throw',
+        () {
+          final value = refer('value');
+          final model = ListModel(
+            content: MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+            context: context,
+          );
+          expect(
+            buildSimpleValueExpression(
+              value,
+              model: model,
+              isRequired: true,
+              nameManager: nameManager,
+              package: 'package:my_package/my_package.dart',
+              explode: literalBool(false),
+            ).accept(scopedEmitter).toString(),
+            "throw  _i1.SimpleDecodingException("
+            "'Unsupported model type for simple decoding.')",
+          );
+        },
+      );
     });
   });
 }

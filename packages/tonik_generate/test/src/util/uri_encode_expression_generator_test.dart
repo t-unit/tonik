@@ -2,11 +2,13 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
 void main() {
   late Context context;
   late DartEmitter emitter;
+  late DartEmitter scopedEmitter;
 
   final format = DartFormatter(
     languageVersion: DartFormatter.latestLanguageVersion,
@@ -15,6 +17,10 @@ void main() {
   setUp(() {
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
+    scopedEmitter = DartEmitter(
+      useNullSafetySyntax: true,
+      allocator: CorePrefixedAllocator(),
+    );
   });
 
   group('buildUriEncodeExpression', () {
@@ -273,7 +279,7 @@ void main() {
       );
     });
 
-    test('throws UnimplementedError for ClassModel', () {
+    test('generates runtime throw for ClassModel', () {
       final model = ClassModel(
         name: 'TestClass',
         properties: [],
@@ -281,13 +287,16 @@ void main() {
         isDeprecated: false,
       );
 
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
       expect(
-        () => buildUriEncodeExpression(
-          refer('value'),
-          model,
-          allowEmpty: refer('allowEmpty'),
-        ),
-        throwsA(isA<UnimplementedError>()),
+        expression.accept(scopedEmitter).toString(),
+        "throw  _i1.EncodingException("
+        "'Unsupported model type for URI encoding.')",
       );
     });
   });
@@ -568,7 +577,7 @@ void main() {
       );
     });
 
-    test('throws UnimplementedError for List<ClassModel>', () {
+    test('generates runtime throw for List<ClassModel>', () {
       final model = ListModel(
         content: ClassModel(
           name: 'TestClass',
@@ -579,13 +588,16 @@ void main() {
         context: context,
       );
 
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
       expect(
-        () => buildUriEncodeExpression(
-          refer('value'),
-          model,
-          allowEmpty: refer('allowEmpty'),
-        ),
-        throwsA(isA<UnimplementedError>()),
+        expression.accept(scopedEmitter).toString(),
+        "throw  _i1.EncodingException("
+        "'Unsupported list content type for URI encoding.')",
       );
     });
   });

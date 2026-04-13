@@ -59,8 +59,8 @@ Expression buildMatrixParameterExpression(
     MapModel() => generateEncodingExceptionExpression(
       'Map types cannot be matrix-encoded.',
     ),
-    _ => throw UnimplementedError(
-      'Unsupported model type for matrix encoding: $model',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for matrix encoding.',
     ),
   };
 }
@@ -205,8 +205,8 @@ Expression _buildListMatrixExpression(
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be matrix-encoded',
     ),
-    _ => throw UnimplementedError(
-      'Unsupported list content type for matrix encoding: $contentModel',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported list content type for matrix encoding.',
     ),
   };
 }

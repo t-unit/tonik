@@ -2,12 +2,14 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_form_query_parameter_expression_generator.dart';
 
 void main() {
   group('buildToFormQueryParameterCode', () {
     late Context context;
     late DartEmitter emitter;
+    late DartEmitter scopedEmitter;
 
     final format = DartFormatter(
       languageVersion: DartFormatter.latestLanguageVersion,
@@ -16,6 +18,10 @@ void main() {
     setUp(() {
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
+      scopedEmitter = DartEmitter(
+        useNullSafetySyntax: true,
+        allocator: CorePrefixedAllocator(),
+      );
     });
 
     QueryParameterObject createParameter({
@@ -38,6 +44,15 @@ void main() {
         allowReserved: false,
         context: context,
       );
+    }
+
+    String emitCodes(List<Code> codes) {
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = Block.of(codes),
+      );
+      return format(method.accept(scopedEmitter).toString());
     }
 
     group('rawName with special characters', () {
@@ -66,7 +81,8 @@ void main() {
         expect(generated, contains("filter's"));
       });
 
-      test('generates valid code when rawName contains double quote', () {
+      test('generates valid code when rawName contains double quote',
+          () {
         final parameter = createParameter(
           name: 'filterParam',
           rawName: 'filter"s',
@@ -109,23 +125,274 @@ void main() {
           parameter,
         );
 
-        final method = Method(
-          (b) => b
-            ..name = 'test'
-            ..body = Block.of(codes),
-        );
-        final generated = format(method.accept(emitter).toString());
+        final generated = emitCodes(codes);
 
         expect(
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              "throw EncodingException('Map types cannot be"
-              " form query encoded.')",
+              "throw _i1.EncodingException("
+              "'Map types cannot be form query encoded.')",
             ),
           ),
         );
       });
+    });
+
+    group('unsupported model types generate runtime throws', () {
+      test('Base64Model generates encoding exception', () {
+        final parameter = createParameter(
+          name: 'base64Param',
+          rawName: 'base64Param',
+          model: Base64Model(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'base64Param',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              "throw _i1.EncodingException("
+              "'Binary data cannot be form-encoded.')",
+            ),
+          ),
+        );
+      });
+
+      test('BinaryModel generates encoding exception', () {
+        final parameter = createParameter(
+          name: 'binaryParam',
+          rawName: 'binaryParam',
+          model: BinaryModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'binaryParam',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              "throw _i1.EncodingException("
+              "'Binary data cannot be form-encoded.')",
+            ),
+          ),
+        );
+      });
+
+      test('NeverModel generates encoding exception', () {
+        final parameter = createParameter(
+          name: 'neverParam',
+          rawName: 'neverParam',
+          model: NeverModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'neverParam',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              "throw _i1.EncodingException( "
+              "'Cannot encode NeverModel"
+              " - this type does not permit any value.', );",
+            ),
+          ),
+        );
+      });
+
+      test(
+        'List with BinaryModel content generates encoding exception',
+        () {
+          final parameter = createParameter(
+            name: 'binaryListParam',
+            rawName: 'binaryListParam',
+            model: ListModel(
+              content: BinaryModel(context: context),
+              context: context,
+            ),
+            explode: false,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'binaryListParam',
+            parameter,
+          );
+
+          final generated = emitCodes(codes);
+
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                "throw _i1.EncodingException("
+                "'Binary data cannot be form-encoded.')",
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'List with Base64Model content generates encoding exception',
+        () {
+          final parameter = createParameter(
+            name: 'base64ListParam',
+            rawName: 'base64ListParam',
+            model: ListModel(
+              content: Base64Model(context: context),
+              context: context,
+            ),
+            explode: false,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'base64ListParam',
+            parameter,
+          );
+
+          final generated = emitCodes(codes);
+
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                "throw _i1.EncodingException("
+                "'Binary data cannot be form-encoded.')",
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'List with NeverModel content generates encoding exception',
+        () {
+          final parameter = createParameter(
+            name: 'neverListParam',
+            rawName: 'neverListParam',
+            model: ListModel(
+              content: NeverModel(context: context),
+              context: context,
+            ),
+            explode: false,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'neverListParam',
+            parameter,
+          );
+
+          final generated = emitCodes(codes);
+
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                "throw _i1.EncodingException( "
+                "'Cannot encode List<NeverModel>"
+                " - this type does not permit any value.', );",
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'AliasModel wrapping BinaryModel generates encoding exception',
+        () {
+          final parameter = createParameter(
+            name: 'aliasParam',
+            rawName: 'aliasParam',
+            model: AliasModel(
+              name: 'MyAlias',
+              model: BinaryModel(context: context),
+              context: context,
+            ),
+            explode: false,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'aliasParam',
+            parameter,
+          );
+
+          final generated = emitCodes(codes);
+
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                "throw _i1.EncodingException( "
+                "'Unsupported model type for form query encoding.', );",
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'AliasModel wrapping ListModel with BinaryModel content '
+        'generates encoding exception',
+        () {
+          final parameter = createParameter(
+            name: 'aliasListParam',
+            rawName: 'aliasListParam',
+            model: AliasModel(
+              name: 'MyAlias',
+              model: ListModel(
+                content: BinaryModel(context: context),
+                context: context,
+              ),
+              context: context,
+            ),
+            explode: false,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'aliasListParam',
+            parameter,
+          );
+
+          final generated = emitCodes(codes);
+
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                "throw _i1.EncodingException( "
+                "'Unsupported model type for form query encoding.', );",
+              ),
+            ),
+          );
+        },
+      );
     });
   });
 }

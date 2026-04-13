@@ -1,16 +1,25 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 
 void main() {
   late DartEmitter emitter;
+  late DartEmitter scopedEmitter;
 
   setUp(() {
     emitter = DartEmitter(useNullSafetySyntax: true);
+    scopedEmitter = DartEmitter(
+      useNullSafetySyntax: true,
+      allocator: CorePrefixedAllocator(),
+    );
   });
 
   String emit(Expression expr) => expr.accept(emitter).toString();
+
+  String scopedEmit(Expression expr) =>
+      expr.accept(scopedEmitter).toString();
 
   group('buildToFormPropertyExpression', () {
     late Context context;
@@ -738,6 +747,50 @@ void main() {
           emit(result),
           'userId.toForm(explode: explode, allowEmpty: allowEmpty, '
           'useQueryComponent: true, )',
+        );
+      });
+    });
+
+    group('unsupported model types generate runtime throws', () {
+      test('BinaryModel generates encoding exception', () {
+        final property = Property(
+          name: 'file',
+          model: BinaryModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression(
+          'file',
+          property,
+        );
+
+        expect(
+          scopedEmit(result),
+          "throw  _i1.EncodingException("
+          "'Form encoding not supported for binary types.')",
+        );
+      });
+
+      test('Base64Model generates encoding exception', () {
+        final property = Property(
+          name: 'file',
+          model: Base64Model(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression(
+          'file',
+          property,
+        );
+
+        expect(
+          scopedEmit(result),
+          "throw  _i1.EncodingException("
+          "'Form encoding not supported for binary types.')",
         );
       });
     });

@@ -2218,5 +2218,58 @@ String _parseResponse(Response<List<int>> response) {
         },
       );
     });
+
+    test(
+      'generates runtime throw for multipart response body',
+      () {
+        final operation = Operation(
+          operationId: 'multipartResponseOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/multipart-response',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ClassModel(
+                    name: 'TestModel',
+                    properties: const [],
+                    context: context,
+                    isDeprecated: false,
+                  ),
+                  rawContentType: 'multipart/form-data',
+                  contentType: ContentType.multipart,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        final generated = format(method.accept(emitter).toString());
+
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace(
+              "throw ResponseDecodingException( "
+              "'Multipart response body decoding is not supported.', );",
+            ),
+          ),
+        );
+      },
+    );
   });
 }

@@ -123,7 +123,9 @@ Expression _buildSerializationExpression(
       'encodeAnyToJson',
       'package:tonik_util/tonik_util.dart',
     ).call([directReceiver]),
-    _ => throw UnimplementedError('Unsupported model type: $model'),
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for JSON encoding.',
+    ),
   };
 }
 

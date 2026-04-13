@@ -128,7 +128,7 @@ if [ -n "$DIFF_BASE" ]; then
 
     for lineno in $NEW_LINES; do
       # Check if this line appears in coverage data
-      HIT=$(echo "$FILE_COVERAGE" | grep "^DA:${lineno}," | head -1 | cut -d, -f2)
+      HIT=$(echo "$FILE_COVERAGE" | grep "^DA:${lineno}," | head -1 | cut -d, -f2 || true)
       if [ -n "$HIT" ]; then
         FILE_NEW=$((FILE_NEW + 1))
         TOTAL_NEW=$((TOTAL_NEW + 1))

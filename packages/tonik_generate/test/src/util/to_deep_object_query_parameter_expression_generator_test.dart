@@ -1,16 +1,22 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_deep_object_query_parameter_expression_generator.dart';
 
 void main() {
   group('buildToDeepObjectQueryParameterCode', () {
     late Context context;
     late DartEmitter emitter;
+    late DartEmitter scopedEmitter;
 
     setUp(() {
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
+      scopedEmitter = DartEmitter(
+        useNullSafetySyntax: true,
+        allocator: CorePrefixedAllocator(),
+      );
     });
 
     QueryParameterObject createParameter({
@@ -248,20 +254,17 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode('count', parameter);
-      final code = result.accept(emitter).toString();
+      final result = buildToDeepObjectQueryParameterCode(
+        'count',
+        parameter,
+      );
+      final code = result.accept(scopedEmitter).toString();
 
       expect(
-        collapseWhitespace(code),
-        contains('throw EncodingException('),
-      );
-      expect(
-        collapseWhitespace(code),
-        contains('deepObject encoding only supports object types'),
-      );
-      expect(
-        collapseWhitespace(code),
-        contains('count'),
+        code,
+        "throw  _i1.EncodingException("
+        "r'deepObject encoding only supports object types."
+        ' Parameter "count" is not supported.\')',
       );
     });
 
@@ -277,20 +280,17 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode('items', parameter);
-      final code = result.accept(emitter).toString();
+      final result = buildToDeepObjectQueryParameterCode(
+        'items',
+        parameter,
+      );
+      final code = result.accept(scopedEmitter).toString();
 
       expect(
-        collapseWhitespace(code),
-        contains('throw EncodingException('),
-      );
-      expect(
-        collapseWhitespace(code),
-        contains('deepObject encoding only supports object types'),
-      );
-      expect(
-        collapseWhitespace(code),
-        contains('items'),
+        code,
+        "throw  _i1.EncodingException("
+        "r'deepObject encoding only supports object types."
+        ' Parameter "items" is not supported.\')',
       );
     });
 
@@ -312,20 +312,17 @@ void main() {
         allowEmpty: false,
       );
 
-      final result = buildToDeepObjectQueryParameterCode('status', parameter);
-      final code = result.accept(emitter).toString();
+      final result = buildToDeepObjectQueryParameterCode(
+        'status',
+        parameter,
+      );
+      final code = result.accept(scopedEmitter).toString();
 
       expect(
-        collapseWhitespace(code),
-        contains('throw EncodingException('),
-      );
-      expect(
-        collapseWhitespace(code),
-        contains('deepObject encoding only supports object types'),
-      );
-      expect(
-        collapseWhitespace(code),
-        contains('status'),
+        code,
+        "throw  _i1.EncodingException("
+        "r'deepObject encoding only supports object types."
+        ' Parameter "status" is not supported.\')',
       );
     });
 

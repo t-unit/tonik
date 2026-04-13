@@ -1496,5 +1496,110 @@ void main() {
         },
       );
     });
+
+    group('unsupported bytes content type generates runtime throws', () {
+      test(
+        'generates runtime throw for EnumModel with bytes content type',
+        () {
+          final operation = Operation(
+            operationId: 'testOp',
+            path: '/test',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'test',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: EnumModel<String>(
+                    name: 'Status',
+                    values: const {},
+                    context: testContext,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                  contentType: ContentType.bytes,
+                  rawContentType: 'application/octet-stream',
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            contains('EncodingException'),
+          );
+        },
+      );
+
+      test(
+        'generates runtime throw for EnumModel with bytes in '
+        'multi-content request body',
+        () {
+          final operation = Operation(
+            operationId: 'testOp',
+            path: '/test',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'test',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: ClassModel(
+                    isDeprecated: false,
+                    name: 'JsonModel',
+                    properties: const [],
+                    context: testContext,
+                  ),
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                ),
+                RequestContent(
+                  model: EnumModel<String>(
+                    name: 'Status',
+                    values: const {},
+                    context: testContext,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                  contentType: ContentType.bytes,
+                  rawContentType: 'application/octet-stream',
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            contains('EncodingException'),
+          );
+        },
+      );
+    });
   });
 }

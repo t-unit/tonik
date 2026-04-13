@@ -3,12 +3,14 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 
 void main() {
   group('buildFromFormValueExpression', () {
     late NameManager nameManager;
     late Context context;
+    late DartEmitter scopedEmitter;
 
     setUp(() {
       nameManager = NameManager(
@@ -16,6 +18,10 @@ void main() {
         stableModelSorter: StableModelSorter(),
       );
       context = Context.initial();
+      scopedEmitter = DartEmitter(
+        useNullSafetySyntax: true,
+        allocator: CorePrefixedAllocator(),
+      );
     });
 
     group('primitive types', () {
@@ -802,6 +808,79 @@ void main() {
           """values['neverField'] == null ? null : throw  FormDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
         );
       });
+    });
+
+    group('unsupported model types generate runtime throws', () {
+      test('ClassModel in list generates runtime throw', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['field']"),
+          model: ListModel(
+            content: ClassModel(
+              name: 'TestClass',
+              properties: [],
+              context: context,
+              isDeprecated: false,
+            ),
+            context: context,
+          ),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+        );
+
+        expect(
+          expression.accept(scopedEmitter).toString(),
+          "throw  _i1.FormDecodingException("
+          "'ClassModel is not supported in lists for form decoding.')",
+        );
+      });
+
+      test('nested ListModel generates runtime throw', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['field']"),
+          model: ListModel(
+            content: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+            context: context,
+          ),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+        );
+
+        expect(
+          expression.accept(scopedEmitter).toString(),
+          "throw  _i1.FormDecodingException("
+          "'Nested lists are not supported in form decoding.')",
+        );
+      });
+
+      test(
+        'generates runtime throw for List with MapModel content',
+        () {
+          final expression = buildFromFormValueExpression(
+            refer("values['field']"),
+            model: ListModel(
+              content: MapModel(
+                valueModel: StringModel(context: context),
+                context: context,
+              ),
+              context: context,
+            ),
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'test_package',
+          );
+
+          expect(
+            expression.accept(scopedEmitter).toString(),
+            "throw  _i1.FormDecodingException("
+            "'Unsupported model type for form decoding.')",
+          );
+        },
+      );
     });
   });
 }

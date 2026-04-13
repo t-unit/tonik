@@ -133,8 +133,8 @@ Expression _buildSimpleSerializationExpression(
           .call([])
           .ifNullThen(literalString('')),
 
-    _ => throw UnimplementedError(
-      'Unsupported model type for simple encoding: $model',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for simple encoding.',
     ),
   };
 }
@@ -165,7 +165,7 @@ Expression _handleListExpression(
       'Cannot encode List<NeverModel> - this type does not permit any value.',
     ),
 
-    ListModel() => throw UnimplementedError(
+    ListModel() => generateEncodingExceptionExpression(
       'Nested lists are not supported for simple encoding.',
     ),
 
@@ -245,8 +245,8 @@ Expression _handleListExpression(
 
     AnyModel() => callToSimpleOnList(receiver), // Pass through list as-is
 
-    _ => throw UnimplementedError(
-      'Unsupported content model for simple encoding: $contentModel',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported content model for simple encoding.',
     ),
   };
 }

@@ -120,14 +120,14 @@ Expression _buildFormSerializationExpression(
       allowEmptyLiteral: allowEmptyLiteral,
     ),
 
-    BinaryModel() || Base64Model() => throw UnsupportedError(
-      'Form encoding not supported for binary types',
+    BinaryModel() || Base64Model() => generateEncodingExceptionExpression(
+      'Form encoding not supported for binary types.',
     ),
 
     AnyModel() => receiver, // Pass through as-is
 
-    _ => throw UnimplementedError(
-      'Unsupported model type for form encoding: $model',
+    _ => generateEncodingExceptionExpression(
+      'Unsupported model type for form encoding.',
     ),
   };
 }
