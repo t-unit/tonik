@@ -32,7 +32,7 @@ Expression buildToLabelPathParameterExpression(
 
   if (model is ListModel) {
     final content = model.content;
-    final contentModel = content is AliasModel ? content.resolved : content;
+    final contentModel = content.resolved;
 
     if (contentModel is StringModel) {
       return valueRef.property('toLabel').call([], {

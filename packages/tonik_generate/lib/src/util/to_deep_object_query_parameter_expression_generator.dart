@@ -36,7 +36,7 @@ Code buildToDeepObjectQueryParameterCode(
   // Handle MapModel (including aliases to MapModel) before the general
   // object path, since maps are typedefs and don't implement
   // ParameterEncodable.
-  final resolvedModel = _resolveModel(model);
+  final resolvedModel = model.resolved;
   if (resolvedModel is MapModel) {
     return _buildMapDeepObjectCode(
       parameterName,
@@ -89,7 +89,7 @@ Code _buildMapDeepObjectCode(
   required bool allowEmpty,
 }) {
   final valueModel = model.valueModel;
-  final resolvedValueModel = _resolveModel(valueModel);
+  final resolvedValueModel = valueModel.resolved;
 
   // For Map<String, String>, the extension handles encoding directly.
   if (resolvedValueModel is StringModel) {
@@ -169,15 +169,9 @@ bool _isSimpleMapValueModel(Model model) {
     Base64Model() ||
     EnumModel() => true,
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() => true,
-    AliasModel() => _isSimpleMapValueModel(model.model),
+    AliasModel() => _isSimpleMapValueModel(model.resolved),
     _ => false,
   };
-}
-
-/// Unwraps [AliasModel] layers to find the underlying model.
-Model _resolveModel(Model model) {
-  if (model is AliasModel) return _resolveModel(model.model);
-  return model;
 }
 
 bool _isValidDeepObjectModel(Model model) {
@@ -186,7 +180,7 @@ bool _isValidDeepObjectModel(Model model) {
     AllOfModel() => true,
     OneOfModel() => true,
     AnyOfModel() => true,
-    AliasModel() => _isValidDeepObjectModel(model.model),
+    AliasModel() => _isValidDeepObjectModel(model.resolved),
     _ => false,
   };
 }

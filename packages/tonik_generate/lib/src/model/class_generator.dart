@@ -282,9 +282,7 @@ class ClassGenerator {
     final copyWithProps = properties.map(
       (prop) {
         final propModel = prop.property.model;
-        final resolvedModel = propModel is AliasModel
-            ? propModel.resolved
-            : propModel;
+        final resolvedModel = propModel.resolved;
         return (
           normalizedName: prop.normalizedName,
           typeRef: _getSchemaAwareTypeReference(prop.property, model),
@@ -1104,7 +1102,7 @@ for (final _\$e in $apFieldName.entries) {
           prop.property.isNullable || prop.property.model.isEffectivelyNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
       final model = prop.property.model;
-      final resolvedModel = model is AliasModel ? model.resolved : model;
+      final resolvedModel = model.resolved;
 
       if (resolvedModel is NeverModel) {
         propertyAssignments.addAll([
@@ -1369,7 +1367,7 @@ if ($name != null) {
           prop.property.isNullable || prop.property.model.isEffectivelyNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
       final model = prop.property.model;
-      final resolvedModel = model is AliasModel ? model.resolved : model;
+      final resolvedModel = model.resolved;
 
       if (resolvedModel is AnyModel) {
         propertyAssignments.add(
@@ -1870,9 +1868,7 @@ if ($name != null) {
     final ap = model.additionalProperties;
     if (ap is UnrestrictedAdditionalProperties) return true;
     if (ap is TypedAdditionalProperties) {
-      final resolved = ap.valueModel is AliasModel
-          ? (ap.valueModel as AliasModel).resolved
-          : ap.valueModel;
+      final resolved = ap.valueModel.resolved;
       return resolved is StringModel ||
           resolved is IntegerModel ||
           resolved is NumberModel ||

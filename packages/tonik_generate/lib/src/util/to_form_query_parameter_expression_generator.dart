@@ -59,9 +59,7 @@ List<Code> buildToFormQueryParameterCode(
   }
 
   if (model is ListModel) {
-    final contentModel = model.content is AliasModel
-        ? (model.content as AliasModel).resolved
-        : model.content;
+    final contentModel = model.content.resolved;
     final contentShape = contentModel.encodingShape;
 
     // Binary/Base64 content cannot be form-encoded.

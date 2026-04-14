@@ -215,10 +215,7 @@ void _addMultipartHeaderParameters({
     if (encoding == null) continue;
 
     // Resolve the model to get properties.
-    var model = content.model;
-    if (model is AliasModel) {
-      model = model.resolved;
-    }
+    final model = content.model.resolved;
     if (model is! ClassModel) continue;
 
     final writeProperties = model.properties

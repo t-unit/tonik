@@ -215,8 +215,8 @@ class OneOfGenerator {
       );
 
       final hasCollectionValue = !useImmutableCollections &&
-          (discriminatedModel.model is ListModel ||
-              discriminatedModel.model is MapModel);
+          (discriminatedModel.model.resolved is ListModel ||
+              discriminatedModel.model.resolved is MapModel);
 
       classes.add(
         Class(
@@ -351,9 +351,9 @@ class OneOfGenerator {
               .where(
                 (m) =>
                     m.discriminatorValue != null &&
-                    m.model is! PrimitiveModel &&
-                    m.model is! ListModel &&
-                    m.model is! MapModel &&
+                    m.model.resolved is! PrimitiveModel &&
+                    m.model.resolved is! ListModel &&
+                    m.model.resolved is! MapModel &&
                     model is! EnumModel,
               )) {
         final variantName = variantNames[m]!;
@@ -387,9 +387,11 @@ class OneOfGenerator {
       ]);
     }
 
-    final hasPrimitives = model.models.any((m) => m.model is PrimitiveModel);
+    final hasPrimitives = model.models.any(
+      (m) => m.model.resolved is PrimitiveModel,
+    );
     final hasOnlyPrimitives = !model.models.any(
-      (m) => m.model is! PrimitiveModel,
+      (m) => m.model.resolved is! PrimitiveModel,
     );
 
     if (hasPrimitives && hasOnlyPrimitives) {
@@ -399,13 +401,14 @@ class OneOfGenerator {
           in stableModelSorter
               .sortDiscriminatedModels(model.models)
               .where(
-                (m) => m.model is PrimitiveModel,
+                (m) =>
+                    m.model.resolved is PrimitiveModel,
               )) {
         final variantName = variantNames[m]!;
 
         cases.addAll([
           typeReference(
-            m.model,
+            m.model.resolved,
             nameManager,
             package,
             useImmutableCollections: useImmutableCollections,
@@ -434,9 +437,14 @@ class OneOfGenerator {
         in stableModelSorter
             .sortDiscriminatedModels(model.models)
             .where(
-              (m) => m.model is PrimitiveModel,
+              (m) =>
+                  m.model.resolved is PrimitiveModel,
             )) {
-      final typeRef = typeReference(m.model, nameManager, package);
+      final typeRef = typeReference(
+        m.model.resolved,
+        nameManager,
+        package,
+      );
       final variantName = variantNames[m]!;
 
       blocks.addAll([
@@ -453,13 +461,15 @@ class OneOfGenerator {
         in stableModelSorter
             .sortDiscriminatedModels(model.models)
             .where(
-              (m) => m.model is! PrimitiveModel,
+              (m) =>
+                  m.model.resolved is! PrimitiveModel,
             )) {
       final modelType = m.model;
+      final resolvedType = modelType.resolved;
       final modelName = nameManager.modelName(modelType);
       final variantName = variantNames[m]!;
 
-      if (modelType is ListModel || modelType is MapModel) {
+      if (resolvedType is ListModel || resolvedType is MapModel) {
         final decodeExpr = buildFromJsonValueExpression(
           'json',
           model: modelType,
@@ -519,9 +529,9 @@ class OneOfGenerator {
       final hasDiscriminatedComplexTypes = model.models.any(
         (m) =>
             m.discriminatorValue != null &&
-            m.model is! PrimitiveModel &&
-            m.model is! ListModel &&
-            m.model is! MapModel,
+            m.model.resolved is! PrimitiveModel &&
+            m.model.resolved is! ListModel &&
+            m.model.resolved is! MapModel,
       );
 
       if (hasDiscriminatedComplexTypes) {
@@ -554,9 +564,9 @@ class OneOfGenerator {
                 .where(
                   (m) =>
                       m.discriminatorValue != null &&
-                      m.model is! PrimitiveModel &&
-                      m.model is! ListModel &&
-                      m.model is! MapModel,
+                      m.model.resolved is! PrimitiveModel &&
+                      m.model.resolved is! ListModel &&
+                      m.model.resolved is! MapModel,
                 )) {
           final variantName = variantNames[m]!;
           final modelType = m.model;
@@ -596,11 +606,13 @@ class OneOfGenerator {
 
       final tryBody = <Code>[];
 
-      if (modelType is PrimitiveModel) {
+      final resolvedType = modelType.resolved;
+
+      if (resolvedType is PrimitiveModel) {
         final decodeExpr = isForm
             ? buildFromFormValueExpression(
                 refer('value'),
-                model: modelType,
+                model: resolvedType,
                 isRequired: true,
                 nameManager: nameManager,
                 package: package,
@@ -610,7 +622,7 @@ class OneOfGenerator {
               )
             : buildSimpleValueExpression(
                 refer('value'),
-                model: modelType,
+                model: resolvedType,
                 isRequired: true,
                 nameManager: nameManager,
                 package: package,
@@ -618,11 +630,11 @@ class OneOfGenerator {
                 explode: refer('explode'),
               );
         tryBody.add(refer(variantName).call([decodeExpr]).returned.statement);
-      } else if (modelType is ListModel && modelType.hasSimpleContent) {
+      } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
         final decodeExpr = isForm
             ? buildFromFormValueExpression(
                 refer('value'),
-                model: modelType,
+                model: resolvedType,
                 isRequired: true,
                 nameManager: nameManager,
                 package: package,
@@ -632,7 +644,7 @@ class OneOfGenerator {
               )
             : buildSimpleValueExpression(
                 refer('value'),
-                model: modelType,
+                model: resolvedType,
                 isRequired: true,
                 nameManager: nameManager,
                 package: package,
@@ -642,10 +654,10 @@ class OneOfGenerator {
         tryBody.add(
           refer(variantName).call([decodeExpr]).returned.statement,
         );
-      } else if (modelType is ListModel) {
+      } else if (resolvedType is ListModel) {
         // Add throw directly to bodyBlocks (not tryBody) so it is NOT
         // wrapped in the try/catch that swallows DecodingException.
-        final message = modelType.hasSimpleContent
+        final message = resolvedType.hasSimpleContent
             ? 'List decoding from $encodingStyleName encoding '
                 'is not supported in $className'
             : 'List types with complex content cannot be decoded '
@@ -657,7 +669,7 @@ class OneOfGenerator {
           ).statement,
         );
         continue;
-      } else if (modelType is MapModel) {
+      } else if (resolvedType is MapModel) {
         bodyBlocks.add(
           generateSimpleDecodingExceptionExpression(
             'Map types cannot be decoded from '
@@ -735,8 +747,8 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model is! ListModel &&
-          m.model is! MapModel) {
+          m.model.resolved is! ListModel &&
+          m.model.resolved is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -809,8 +821,8 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (m.model is ListModel &&
-          (m.model as ListModel).hasSimpleContent) {
+      } else if (m.model.resolved is ListModel &&
+          (m.model.resolved as ListModel).hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
@@ -821,13 +833,13 @@ class OneOfGenerator {
           if (isNullableList) const Code("value == null ? '' : "),
           buildSimpleParameterExpression(
             refer('value'),
-            m.model as ListModel,
+            m.model.resolved as ListModel,
             explode: refer('explode'),
             allowEmpty: refer('allowEmpty'),
           ).code,
           const Code(','),
         ]);
-      } else if (m.model is ListModel) {
+      } else if (m.model.resolved is ListModel) {
         // Lists with complex content cannot be encoded
         caseCodes.addAll([
           Code.scope(
@@ -843,7 +855,7 @@ class OneOfGenerator {
               .code,
           const Code(','),
         ]);
-      } else if (m.model is BinaryModel) {
+      } else if (m.model.resolved is BinaryModel) {
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}() => ',
@@ -853,7 +865,7 @@ class OneOfGenerator {
           ).code,
           const Code(','),
         ]);
-      } else if (m.model is MapModel) {
+      } else if (m.model.resolved is MapModel) {
         // Map types cannot be simple-encoded
         caseCodes.addAll([
           Code.scope(
@@ -922,8 +934,8 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model is! ListModel &&
-          m.model is! MapModel) {
+          m.model.resolved is! ListModel &&
+          m.model.resolved is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -998,8 +1010,8 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (m.model is ListModel &&
-          (m.model as ListModel).hasSimpleContent) {
+      } else if (m.model.resolved is ListModel &&
+          (m.model.resolved as ListModel).hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
@@ -1010,13 +1022,13 @@ class OneOfGenerator {
           if (isNullableList) const Code("value == null ? '' : "),
           buildFormParameterExpression(
             refer('value'),
-            m.model as ListModel,
+            m.model.resolved as ListModel,
             explode: refer('explode'),
             allowEmpty: refer('allowEmpty'),
           ).code,
           const Code(','),
         ]);
-      } else if (m.model is ListModel) {
+      } else if (m.model.resolved is ListModel) {
         // Lists with complex content cannot be encoded
         caseCodes.addAll([
           Code.scope(
@@ -1032,7 +1044,7 @@ class OneOfGenerator {
               .code,
           const Code(','),
         ]);
-      } else if (m.model is BinaryModel) {
+      } else if (m.model.resolved is BinaryModel) {
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}() => ',
@@ -1042,7 +1054,7 @@ class OneOfGenerator {
           ).code,
           const Code(','),
         ]);
-      } else if (m.model is MapModel) {
+      } else if (m.model.resolved is MapModel) {
         // Map types cannot be form-encoded
         caseCodes.addAll([
           Code.scope(
@@ -1113,8 +1125,8 @@ class OneOfGenerator {
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
-      final isList = m.model is ListModel;
-      final isMap = m.model is MapModel;
+      final isList = m.model.resolved is ListModel;
+      final isMap = m.model.resolved is MapModel;
 
       if (isSimple) {
         caseCodes.addAll([
@@ -1182,7 +1194,7 @@ class OneOfGenerator {
     Map<DiscriminatedModel, String> variantNames,
   ) {
     final hasOnlyPrimitives = !model.models.any(
-      (m) => m.model is! PrimitiveModel,
+      (m) => m.model.resolved is! PrimitiveModel,
     );
 
     if (hasOnlyPrimitives) {
@@ -1278,7 +1290,7 @@ class OneOfGenerator {
           ]);
         }
       } else {
-        if (m.model is ListModel) {
+        if (m.model.resolved is ListModel) {
           caseCodes
             ..add(Code('$variantName() => '))
             ..add(
@@ -1286,7 +1298,7 @@ class OneOfGenerator {
                 'Lists are not supported in parameterProperties',
               ).code,
             );
-        } else if (m.model is MapModel) {
+        } else if (m.model.resolved is MapModel) {
           caseCodes
             ..add(Code('$variantName() => '))
             ..add(
@@ -1370,8 +1382,8 @@ class OneOfGenerator {
       if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model is! ListModel &&
-          m.model is! MapModel) {
+          m.model.resolved is! ListModel &&
+          m.model.resolved is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -1443,8 +1455,8 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (m.model is ListModel &&
-          (m.model as ListModel).hasSimpleContent) {
+      } else if (m.model.resolved is ListModel &&
+          (m.model.resolved as ListModel).hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
@@ -1455,13 +1467,13 @@ class OneOfGenerator {
           if (isNullableList) const Code("value == null ? '' : "),
           buildLabelParameterExpression(
             refer('value'),
-            m.model as ListModel,
+            m.model.resolved as ListModel,
             explode: refer('explode'),
             allowEmpty: refer('allowEmpty'),
           ).code,
           const Code(','),
         ]);
-      } else if (m.model is ListModel) {
+      } else if (m.model.resolved is ListModel) {
         // Lists with complex content cannot be encoded
         caseCodes.addAll([
           Code.scope(
@@ -1477,7 +1489,7 @@ class OneOfGenerator {
               .code,
           const Code(','),
         ]);
-      } else if (m.model is BinaryModel) {
+      } else if (m.model.resolved is BinaryModel) {
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}() => ',
@@ -1487,7 +1499,7 @@ class OneOfGenerator {
           ).code,
           const Code(','),
         ]);
-      } else if (m.model is MapModel) {
+      } else if (m.model.resolved is MapModel) {
         // Map types cannot be label-encoded
         caseCodes.addAll([
           Code.scope(
@@ -1683,5 +1695,5 @@ class OneOfGenerator {
         ..body = body,
     );
   }
-
 }
+

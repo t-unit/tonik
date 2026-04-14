@@ -1056,5 +1056,103 @@ void main() {
         );
       },
     );
+
+    group('with alias-to-primitive types', () {
+      test('fromJson uses primitive switch for only alias-to-primitive types',
+          () {
+        final aliasModel = AliasModel(
+          name: 'ErrorCode',
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Result',
+          models: {
+            (discriminatorValue: null, model: aliasModel),
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Result');
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+          factory Result.fromJson(Object? json) {
+            return switch (json) {
+              String s => ResultErrorCode(s),
+              int s => ResultInt(s),
+              _ => throw JsonDecodingException(
+                r'Invalid JSON type for Result: ${json.runtimeType}',
+              ),
+            };
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('fromJson uses type check for alias-to-primitive mixed with class',
+          () {
+        final aliasModel = AliasModel(
+          name: 'ErrorCode',
+          model: StringModel(context: context),
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Result',
+          models: {
+            (discriminatorValue: null, model: aliasModel),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'TestClass',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+                context: context,
+              ),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Result');
+        final generatedCode = format(baseClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+          factory Result.fromJson(Object? json) {
+            if (json is String) {
+              return ResultErrorCode(json);
+            }
+
+            try {
+              return ResultTestClass(TestClass.fromJson(json));
+            } on Object catch (_) {}
+
+            throw JsonDecodingException(r'Invalid JSON for Result');
+          }''';
+
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
   });
 }

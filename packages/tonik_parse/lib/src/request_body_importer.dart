@@ -186,7 +186,7 @@ class RequestBodyImporter {
     required Map<String, core.MultipartPropertyEncoding>? explicitEncoding,
   }) {
     // Resolve through aliases to find the underlying model
-    final resolved = model is core.AliasModel ? model.resolved : model;
+    final resolved = model.resolved;
 
     // Only populate per-property defaults for ClassModel
     if (resolved is! core.ClassModel) {

@@ -743,6 +743,42 @@ void main() {
       );
     });
 
+    test('throws for alias-to-primitive-only oneOf', () {
+      final aliasModel = AliasModel(
+        name: 'ErrorCode',
+        model: StringModel(context: context),
+        context: context,
+      );
+
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: aliasModel),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      const expectedMethod = '''
+        Map<String, String> parameterProperties({
+          bool allowEmpty = true,
+          bool allowLists = true,
+        }) =>
+          throw EncodingException(
+            r'parameterProperties not supported for Value: only contains primitive types',
+          );
+      ''';
+
+      expect(
+        collapseWhitespace(format(baseClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
     test('delegates to value for complex variant without discriminator', () {
       final userModel = ClassModel(
         isDeprecated: false,

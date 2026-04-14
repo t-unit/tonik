@@ -28,6 +28,12 @@ sealed class Model {
   final Context context;
   EncodingShape get encodingShape;
 
+  /// The terminal model after resolving through any [AliasModel] chains.
+  ///
+  /// For non-alias models this returns `this`. For [AliasModel] it walks
+  /// the chain until a non-alias model is reached.
+  Model get resolved => this;
+
   /// Whether this model produces a nullable Dart type, including through
   /// typedef/alias chains.
   bool get isEffectivelyNullable => switch (this) {
@@ -170,6 +176,7 @@ class AliasModel extends Model with NamedModel {
   bool isReadOnly;
   bool isWriteOnly;
 
+  @override
   Model get resolved => switch (model) {
     final AliasModel alias => alias.resolved,
     _ => model,

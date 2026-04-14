@@ -619,4 +619,45 @@ void main() {
       );
     });
   });
+
+  group('with alias-to-primitive types', () {
+    test('fromForm uses decode extension for alias-to-primitive', () {
+      final aliasModel = AliasModel(
+        name: 'ErrorCode',
+        model: StringModel(context: context),
+        context: context,
+      );
+
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Result',
+        models: {
+          (discriminatorValue: null, model: aliasModel),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Result');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const expectedMethod = '''
+        factory Result.fromForm(String? value, {required bool explode}) {
+          try {
+            return ResultErrorCode(value.decodeFormString(context: r'Result'));
+          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          try {
+            return ResultInt(value.decodeFormInt(context: r'Result'));
+          } on DecodingException catch (_) { } on FormatException catch (_) {}
+          throw SimpleDecodingException(r'Invalid form value for Result');
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+  });
 }
