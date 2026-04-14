@@ -34,7 +34,7 @@ void main() {
           'value',
           model: StringModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonString()',
       );
@@ -43,7 +43,7 @@ void main() {
           'value',
           model: IntegerModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonInt()',
       );
@@ -52,7 +52,7 @@ void main() {
           'value',
           model: NumberModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonNum()',
       );
@@ -61,7 +61,7 @@ void main() {
           'value',
           model: DoubleModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonDouble()',
       );
@@ -70,7 +70,7 @@ void main() {
           'value',
           model: DecimalModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonBigDecimal()',
       );
@@ -79,7 +79,7 @@ void main() {
           'value',
           model: BooleanModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonBool()',
       );
@@ -88,7 +88,7 @@ void main() {
           'value',
           model: DateTimeModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonDateTime()',
       );
@@ -97,7 +97,7 @@ void main() {
           'value',
           model: BinaryModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'TonikFileBytes(value.decodeJsonBinary())',
       );
@@ -106,7 +106,7 @@ void main() {
           'value',
           model: Base64Model(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'TonikFileBytes(value.decodeJsonBase64())',
       );
@@ -118,7 +118,7 @@ void main() {
           'value',
           model: BinaryModel(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           isNullable: true,
         ).accept(emitter).toString(),
         'value == null ? null : TonikFileBytes(value.decodeJsonBinary())',
@@ -128,7 +128,7 @@ void main() {
           'value',
           model: Base64Model(context: context),
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           isNullable: true,
         ).accept(emitter).toString(),
         'value == null ? null : TonikFileBytes(value.decodeJsonBase64())',
@@ -147,7 +147,7 @@ void main() {
             'value',
             model: stringAlias,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
           ).accept(emitter).toString(),
           'value.decodeJsonString()',
         );
@@ -170,7 +170,7 @@ void main() {
             'value',
             model: userAlias,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
           ).accept(emitter).toString(),
           'User.fromJson(value)',
         );
@@ -191,7 +191,7 @@ void main() {
             'value',
             model: listAlias,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
           ).accept(emitter).toString(),
           'value.decodeJsonList<String>()',
         );
@@ -219,7 +219,7 @@ void main() {
             'value',
             model: nestedAlias,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
           ).accept(emitter).toString(),
           'User.fromJson(value)',
         );
@@ -243,7 +243,7 @@ void main() {
             'value',
             model: userListAlias,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
           ).accept(emitter).toString(),
           equals(
             'value.decodeJsonList<Object?>()'
@@ -273,7 +273,7 @@ void main() {
             'value',
             model: userAliasListModel,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
           ).accept(emitter).toString(),
           equals(
             'value.decodeJsonList<Object?>()'
@@ -299,7 +299,7 @@ void main() {
           'value',
           model: enumModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'UserRole.fromJson(value)',
       );
@@ -317,7 +317,7 @@ void main() {
           'value',
           model: classModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'User.fromJson(value)',
       );
@@ -333,7 +333,7 @@ void main() {
           'value',
           model: listModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonList<String>()',
       );
@@ -348,7 +348,7 @@ void main() {
           'value',
           model: boolListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonList<bool>()',
       );
@@ -363,7 +363,7 @@ void main() {
           'value',
           model: dateListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           'value.decodeJsonList<String>()'
@@ -381,7 +381,7 @@ void main() {
           'value',
           model: dateTimeListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           'value.decodeJsonList<String>()'
@@ -399,7 +399,7 @@ void main() {
           'value',
           model: decimalListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           'value.decodeJsonList<String>()'
@@ -417,7 +417,7 @@ void main() {
           'value',
           model: binaryListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           'value.decodeJsonList<String>()'
@@ -435,7 +435,7 @@ void main() {
           'value',
           model: base64ListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           'value.decodeJsonList<String>()'
@@ -457,7 +457,7 @@ void main() {
           'value',
           model: listModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           'value.decodeJsonList<Object?>()'
@@ -483,7 +483,7 @@ void main() {
           'value',
           model: outerListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           '''value.decodeJsonList<Object?>().map((e) => e.decodeJsonList<Object?>().map(User.fromJson).toList()).toList()''',
@@ -512,7 +512,7 @@ void main() {
           'value',
           model: outerListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           '''value.decodeJsonList<Object?>().map((e) => e.decodeJsonList<Object?>().map((e) => e.decodeJsonList<Object?>().map(User.fromJson).toList()).toList()).toList()''',
@@ -537,7 +537,7 @@ void main() {
           'value',
           model: enumListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         equals(
           'value.decodeJsonList<Object?>()'
@@ -553,7 +553,7 @@ void main() {
             'value',
             model: StringModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             contextProperty: 'name',
           ).accept(emitter).toString(),
           "value.decodeJsonString(context: r'name')",
@@ -566,7 +566,7 @@ void main() {
             'value',
             model: IntegerModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             contextClass: 'Product',
           ).accept(emitter).toString(),
           "value.decodeJsonInt(context: r'Product')",
@@ -583,7 +583,7 @@ void main() {
             'value',
             model: intListModel,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             contextClass: 'Order',
             contextProperty: 'quantities',
           ).accept(emitter).toString(),
@@ -605,7 +605,7 @@ void main() {
           'value',
           model: nestedListModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           contextClass: 'Order',
           contextProperty: 'items',
         ).accept(emitter).toString();
@@ -634,7 +634,7 @@ void main() {
             'value',
             model: enumModel,
             nameManager: nameManager,
-            package: 'package:my_package/models.dart',
+            package: 'my_package',
           ).accept(scopedEmitter).toString(),
           '_i1.UserRole.fromJson(value)',
         );
@@ -660,7 +660,7 @@ void main() {
             'value',
             model: enumListModel,
             nameManager: nameManager,
-            package: 'package:my_package/models.dart',
+            package: 'my_package',
           ).accept(scopedEmitter).toString(),
           equals(
             'value.decodeJsonList<_i1.Object?>()'
@@ -677,7 +677,7 @@ void main() {
             'value',
             model: StringModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value.decodeJsonNullableString()',
@@ -687,7 +687,7 @@ void main() {
             'value',
             model: IntegerModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value.decodeJsonNullableInt()',
@@ -697,7 +697,7 @@ void main() {
             'value',
             model: NumberModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value.decodeJsonNullableNum()',
@@ -707,7 +707,7 @@ void main() {
             'value',
             model: DoubleModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value.decodeJsonNullableDouble()',
@@ -717,7 +717,7 @@ void main() {
             'value',
             model: DecimalModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value.decodeJsonNullableBigDecimal()',
@@ -727,7 +727,7 @@ void main() {
             'value',
             model: BooleanModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value.decodeJsonNullableBool()',
@@ -737,7 +737,7 @@ void main() {
             'value',
             model: DateTimeModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value.decodeJsonNullableDateTime()',
@@ -747,7 +747,7 @@ void main() {
             'value',
             model: DateModel(context: context),
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value.decodeJsonNullableDate()',
@@ -766,7 +766,7 @@ void main() {
             'value',
             model: classModel,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value == null ? null : User.fromJson(value)',
@@ -789,7 +789,7 @@ void main() {
             'value',
             model: enumModel,
             nameManager: nameManager,
-            package: 'package:my_package/my_package.dart',
+            package: 'my_package',
             isNullable: true,
           ).accept(emitter).toString(),
           'value == null ? null : UserRole.fromJson(value)',
@@ -807,7 +807,7 @@ void main() {
               'value',
               model: stringListModel,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
               isNullable: true,
             ).accept(emitter).toString(),
             'value.decodeJsonNullableList<String>()',
@@ -830,7 +830,7 @@ void main() {
               'value',
               model: classListModel,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
               isNullable: true,
             ).accept(emitter).toString(),
             equals(
@@ -850,7 +850,7 @@ void main() {
               'value',
               model: binaryListModel,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
               isNullable: true,
             ).accept(emitter).toString(),
             equals(
@@ -870,7 +870,7 @@ void main() {
               'value',
               model: base64ListModel,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
               isNullable: true,
             ).accept(emitter).toString(),
             equals(
@@ -900,7 +900,7 @@ void main() {
               'value',
               model: enumListModel,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
               isNullable: true,
             ).accept(emitter).toString(),
             equals(
@@ -933,7 +933,7 @@ void main() {
               'value',
               model: nullableAlias,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
             ).accept(emitter).toString(),
             'value == null ? null : License.fromJson(value)',
           );
@@ -965,7 +965,7 @@ void main() {
               'value',
               model: outerAlias,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
             ).accept(emitter).toString(),
             'value == null ? null : License.fromJson(value)',
           );
@@ -986,7 +986,7 @@ void main() {
               'value',
               model: nullableStringAlias,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
             ).accept(emitter).toString(),
             'value.decodeJsonNullableString()',
           );
@@ -1008,7 +1008,7 @@ void main() {
               'value',
               model: nullableClass,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
             ).accept(emitter).toString(),
             'value == null ? null : License.fromJson(value)',
           );
@@ -1033,7 +1033,7 @@ void main() {
               'value',
               model: nullableEnum,
               nameManager: nameManager,
-              package: 'package:my_package/my_package.dart',
+              package: 'my_package',
             ).accept(emitter).toString(),
             'value == null ? null : Status.fromJson(value)',
           );
@@ -1053,7 +1053,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonMap((v) => v.decodeJsonString())',
       );
@@ -1070,7 +1070,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonNullableMap((v) => v.decodeJsonString())',
       );
@@ -1086,7 +1086,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           isNullable: true,
         ).accept(emitter).toString(),
         'value.decodeJsonNullableMap((v) => v.decodeJsonString())',
@@ -1109,7 +1109,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonMap((v) => User.fromJson(v))',
       );
@@ -1125,7 +1125,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonMap((v) => v.decodeJsonInt())',
       );
@@ -1140,7 +1140,7 @@ void main() {
         'value',
         model: mapModel,
         nameManager: nameManager,
-        package: 'package:my_package/my_package.dart',
+        package: 'my_package',
         contextClass: 'Config',
         contextProperty: 'settings',
       ).accept(emitter).toString();
@@ -1173,7 +1173,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonMap((v) => Status.fromJson(v))',
       );
@@ -1202,7 +1202,7 @@ void main() {
         'value',
         model: NeverModel(context: context),
         nameManager: nameManager,
-        package: 'package:my_package/my_package.dart',
+        package: 'my_package',
       ).accept(emitter).toString();
       expect(
         result,
@@ -1215,7 +1215,7 @@ void main() {
         'value',
         model: NeverModel(context: context),
         nameManager: nameManager,
-        package: 'package:my_package/my_package.dart',
+        package: 'my_package',
         isNullable: true,
       ).accept(emitter).toString();
       expect(
@@ -1234,7 +1234,7 @@ void main() {
         'value',
         model: aliasModel,
         nameManager: nameManager,
-        package: 'package:my_package/my_package.dart',
+        package: 'my_package',
       ).accept(emitter).toString();
       expect(
         result,
@@ -1251,7 +1251,7 @@ void main() {
         'value',
         model: listModel,
         nameManager: nameManager,
-        package: 'package:my_package/my_package.dart',
+        package: 'my_package',
       ).accept(emitter).toString();
       expect(
         result,
@@ -1271,7 +1271,7 @@ void main() {
           'value',
           model: listModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
         'value.decodeJsonList<String>().lock',
@@ -1288,7 +1288,7 @@ void main() {
           'value',
           model: listModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           isNullable: true,
           useImmutableCollections: true,
         ).accept(emitter).toString(),
@@ -1306,7 +1306,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
         'value.decodeJsonMap((v) => v.decodeJsonString()).lock',
@@ -1324,7 +1324,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
         'value.decodeJsonNullableMap((v) => v.decodeJsonString())?.lock',
@@ -1345,7 +1345,7 @@ void main() {
           'value',
           model: outerList,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
         equals(
@@ -1368,7 +1368,7 @@ void main() {
           'value',
           model: mapModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
         equals(
@@ -1387,7 +1387,7 @@ void main() {
           'value',
           model: listModel,
           nameManager: nameManager,
-          package: 'package:my_package/my_package.dart',
+          package: 'my_package',
         ).accept(emitter).toString(),
         'value.decodeJsonList<String>()',
       );

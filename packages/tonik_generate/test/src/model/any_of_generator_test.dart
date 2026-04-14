@@ -26,7 +26,7 @@ void main() {
     );
     generator = AnyOfGenerator(
       nameManager: nameManager,
-      package: 'package:example',
+      package: 'example',
       stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
@@ -2628,7 +2628,7 @@ Object? toJson() {
     setUp(() {
       immutableGenerator = AnyOfGenerator(
         nameManager: nameManager,
-        package: 'package:example',
+        package: 'example',
         stableModelSorter: StableModelSorter(),
         useImmutableCollections: true,
       );

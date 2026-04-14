@@ -10,6 +10,7 @@ import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/response_property_normalizer.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart sealed classes and typedefs
@@ -68,7 +69,10 @@ class ResponseGenerator {
     return TypeDef(
       (b) => b
         ..name = name
-        ..definition = refer(targetName, package),
+        ..definition = refer(
+          targetName,
+          sourceFileUrl(package, 'response', targetName),
+        ),
     );
   }
 

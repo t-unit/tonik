@@ -25,7 +25,7 @@ void main() {
     );
     generator = AllOfGenerator(
       nameManager: nameManager,
-      package: 'package:example',
+      package: 'example',
       stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();
@@ -2841,7 +2841,7 @@ void main() {
     setUp(() {
       immutableGenerator = AllOfGenerator(
         nameManager: nameManager,
-        package: 'package:example',
+        package: 'example',
         stableModelSorter: StableModelSorter(),
         useImmutableCollections: true,
       );

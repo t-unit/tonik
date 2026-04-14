@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -99,6 +100,8 @@ class OptionsGenerator {
     }
 
     final (baseName, subclassNames) = nameManager.requestBodyNames(requestBody);
+    final requestBodyUrl =
+        sourceFileUrl(package, 'request_body', baseName);
     parameters.add(
       Parameter(
         (b) => b
@@ -106,7 +109,7 @@ class OptionsGenerator {
           ..type = TypeReference(
             (b) => b
               ..symbol = baseName
-              ..url = package
+              ..url = requestBodyUrl
               ..isNullable = !requestBody.isRequired,
           )
           ..named = true
@@ -118,7 +121,7 @@ class OptionsGenerator {
     for (final content in requestBody.resolvedContent) {
       final className = subclassNames[content.rawContentType]!;
       final caseCode = [
-        refer(className, package).code,
+        refer(className, requestBodyUrl).code,
         const Code(' _ => '),
         if (content.contentType == ContentType.multipart)
           literalNull.code

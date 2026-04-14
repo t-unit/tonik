@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
@@ -129,7 +130,7 @@ Expression buildFromJsonValueExpression(
       final className = nameManager.modelName(model);
       final expr = refer(
         className,
-        package,
+        sourceFileUrl(package, 'model', className),
       ).property('fromJson').call([refer(value)]);
       return nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, expr)
@@ -138,7 +139,7 @@ Expression buildFromJsonValueExpression(
       final className = nameManager.modelName(model);
       final expr = refer(
         className,
-        package,
+        sourceFileUrl(package, 'model', className),
       ).property('fromJson').call([refer(value)]);
       return nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, expr)
@@ -233,7 +234,12 @@ Expression _buildListFromJsonExpression(
         EnumModel():
       final className = nameManager.modelName(unwrappedContent);
       // Use tear-off for fromJson
-      final mapFunction = refer(className, package).property('fromJson');
+      final mapFunction = refer(
+        className,
+        package != null
+            ? sourceFileUrl(package, 'model', className)
+            : null,
+      ).property('fromJson');
       final listExpr = refer(value).property(listDecoder).call(
         [],
         contextParam,

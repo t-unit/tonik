@@ -24,7 +24,7 @@ void main() {
     );
     generator = ApiClientGenerator(
       nameManager: nameManager,
-      package: 'package:test_package/test_package.dart',
+      package: 'test_package',
     );
     testContext = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -1258,7 +1258,7 @@ void main() {
       expect(result.code, contains('class UsersApi'));
       expect(
         result.code,
-        contains('_i2.Future<_i3.TonikResult<void>> getUser()'),
+        contains('_i3.Future<_i4.TonikResult<void>> getUser()'),
       );
     });
   });

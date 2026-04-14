@@ -28,7 +28,7 @@ void main() {
       );
       generator = ClassGenerator(
         nameManager: nameManager,
-        package: 'package:example',
+        package: 'example',
         useImmutableCollections: true,
       );
       context = Context.initial();
@@ -385,7 +385,7 @@ Object? toJson() => {
       test('disabled generates regular List and Map fields', () {
         final disabledGenerator = ClassGenerator(
           nameManager: nameManager,
-          package: 'package:example',
+          package: 'example',
         );
 
         final model = ClassModel(
@@ -427,7 +427,7 @@ Object? toJson() => {
       test('disabled fromJson does not use .lock', () {
         final disabledGenerator = ClassGenerator(
           nameManager: nameManager,
-          package: 'package:example',
+          package: 'example',
         );
 
         final model = ClassModel(
@@ -476,7 +476,7 @@ factory User.fromJson(Object? json) {
       test('disabled toJson returns list directly', () {
         final disabledGenerator = ClassGenerator(
           nameManager: nameManager,
-          package: 'package:example',
+          package: 'example',
         );
 
         final model = ClassModel(

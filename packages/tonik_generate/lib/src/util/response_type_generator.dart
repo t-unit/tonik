@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:collection/collection.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generates the appropriate return type for an operation
@@ -23,7 +24,14 @@ TypeReference resultTypeForOperation(
         ..symbol = 'TonikResult'
         ..url = 'package:tonik_util/tonik_util.dart'
         ..types.add(
-          refer(nameManager.responseWrapperNames(operation).$1, package),
+          refer(
+            nameManager.responseWrapperNames(operation).$1,
+            sourceFileUrl(
+              package,
+              'response_wrapper',
+              nameManager.responseWrapperNames(operation).$1,
+            ),
+          ),
         ),
     ),
 
@@ -54,7 +62,11 @@ TypeReference resultTypeForOperation(
         ..types.add(
           refer(
             nameManager.responseNames(response!.resolved).baseName,
-            package,
+            sourceFileUrl(
+              package,
+              'response',
+              nameManager.responseNames(response.resolved).baseName,
+            ),
           ),
         ),
     ),

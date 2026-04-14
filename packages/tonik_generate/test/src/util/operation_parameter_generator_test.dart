@@ -53,7 +53,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 1);
@@ -97,7 +97,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 1);
@@ -140,7 +140,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 1);
@@ -187,7 +187,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       // Name should be normalized from 'session_id' to 'sessionId'.
@@ -225,7 +225,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 1);
@@ -267,7 +267,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 1);
@@ -322,7 +322,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 2);
@@ -403,7 +403,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 4);
@@ -482,7 +482,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       // body + one header param
@@ -570,7 +570,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       // body + two header params
@@ -656,7 +656,7 @@ void main() {
         final parameters = generateParameters(
           operation: operation,
           nameManager: nameManager,
-          package: 'package:api/api.dart',
+          package: 'api',
         );
 
         final headerParam = parameters.firstWhere(
@@ -743,7 +743,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       // body + Content-Type + X-Custom (Content-Type is not filtered)
@@ -807,7 +807,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       // Only body parameter, no extra header params.
@@ -898,7 +898,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       // body + query param + multipart header param = 3 parameters.
@@ -978,7 +978,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       final headerParam = parameters.firstWhere((p) => p.name != 'body');
@@ -1062,7 +1062,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       // body + 1 resolved header = 2 parameters.

@@ -20,7 +20,7 @@ void main() {
     );
     generator = PathGenerator(
       nameManager: nameManager,
-      package: 'package:api/api.dart',
+      package: 'api',
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);

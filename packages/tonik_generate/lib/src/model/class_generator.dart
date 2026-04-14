@@ -546,7 +546,7 @@ class ClassGenerator {
     }
 
     codes.add(
-      refer(className, package).call([], constructorArgs).returned.statement,
+      refer(className).call([], constructorArgs).returned.statement,
     );
 
     return Block.of(codes);
@@ -1752,7 +1752,7 @@ if ($name != null) {
     }
 
     codes.add(
-      refer(className, package).call([], constructorArgs).returned.statement,
+      refer(className).call([], constructorArgs).returned.statement,
     );
 
     return Block.of(codes);

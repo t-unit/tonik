@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Returns the reason why simple decoding is not supported for the given model,
@@ -200,15 +201,19 @@ Expression _buildFromSimpleExpression(
   final name = nameManager.modelName(model);
   final explodeParam = {'explode': explode};
 
+  final url = package != null
+      ? sourceFileUrl(package, 'model', name)
+      : null;
+
   return isRequired
-      ? refer(name, package).property('fromSimple').call([value], explodeParam)
+      ? refer(name, url).property('fromSimple').call([value], explodeParam)
       : value
             .equalTo(literalNull)
             .conditional(
               literalNull,
               refer(
                 name,
-                package,
+                url,
               ).property('fromSimple').call([value], explodeParam),
             );
 }
@@ -397,13 +402,16 @@ Expression _buildClassList(
   final className = nameManager.modelName(content);
   final explodeParam = {'explode': explode};
 
+  final url = package != null
+      ? sourceFileUrl(package, 'model', className)
+      : null;
   final mapFunction = Method(
     (b) => b
       ..requiredParameters.add(Parameter((b) => b..name = 'e'))
       ..body =
           refer(
             className,
-            package,
+            url,
           ).property('fromSimple').call([
             refer('e'),
           ], explodeParam).code,

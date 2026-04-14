@@ -3,6 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generates parameters for an operation
@@ -28,7 +29,11 @@ List<Parameter> generateParameters({
         : TypeReference(
             (b) => b
               ..symbol = nameManager.requestBodyNames(requestBody).$1
-              ..url = package
+              ..url = sourceFileUrl(
+                package,
+                'request_body',
+                nameManager.requestBodyNames(requestBody).$1,
+              )
               ..isNullable = !requestBody.isRequired,
           );
 
