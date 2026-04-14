@@ -2264,8 +2264,7 @@ String _parseResponse(Response<List<int>> response) {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              "throw ResponseDecodingException( "
-              "'Multipart response body decoding is not supported.', );",
+              '''throw ResponseDecodingException( 'Multipart response body decoding is not supported.', );''',
             ),
           ),
         );

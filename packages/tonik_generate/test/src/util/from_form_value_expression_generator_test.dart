@@ -830,8 +830,7 @@ void main() {
 
         expect(
           expression.accept(scopedEmitter).toString(),
-          "throw  _i1.FormDecodingException("
-          "'ClassModel is not supported in lists for form decoding.')",
+          '''throw  _i1.FormDecodingException('ClassModel is not supported in lists for form decoding.')''',
         );
       });
 
@@ -852,8 +851,7 @@ void main() {
 
         expect(
           expression.accept(scopedEmitter).toString(),
-          "throw  _i1.FormDecodingException("
-          "'Nested lists are not supported in form decoding.')",
+          '''throw  _i1.FormDecodingException('Nested lists are not supported in form decoding.')''',
         );
       });
 
@@ -876,8 +874,7 @@ void main() {
 
           expect(
             expression.accept(scopedEmitter).toString(),
-            "throw  _i1.FormDecodingException("
-            "'Unsupported model type for form decoding.')",
+            '''throw  _i1.FormDecodingException('Unsupported model type for form decoding.')''',
           );
         },
       );

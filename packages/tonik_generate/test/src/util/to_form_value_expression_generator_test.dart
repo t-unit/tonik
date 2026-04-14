@@ -768,8 +768,7 @@ void main() {
 
         expect(
           scopedEmit(result),
-          "throw  _i1.EncodingException("
-          "'Form encoding not supported for binary types.')",
+          '''throw  _i1.EncodingException('Form encoding not supported for binary types.')''',
         );
       });
 
@@ -789,8 +788,7 @@ void main() {
 
         expect(
           scopedEmit(result),
-          "throw  _i1.EncodingException("
-          "'Form encoding not supported for binary types.')",
+          '''throw  _i1.EncodingException('Form encoding not supported for binary types.')''',
         );
       });
     });

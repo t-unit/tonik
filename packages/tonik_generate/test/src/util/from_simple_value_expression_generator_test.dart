@@ -827,9 +827,7 @@ void main() {
             package: 'my_package',
             explode: literalBool(false),
           ).accept(scopedEmitter).toString(),
-          "throw  _i1.SimpleDecodingException("
-          "'ClassModel is not supported in lists"
-          " for simple decoding.')",
+          '''throw  _i1.SimpleDecodingException('ClassModel is not supported in lists for simple decoding.')''',
         );
       });
 
@@ -851,9 +849,7 @@ void main() {
             package: 'my_package',
             explode: literalBool(false),
           ).accept(scopedEmitter).toString(),
-          "throw  _i1.SimpleDecodingException("
-          "'Nested lists are not supported"
-          " in simple decoding.')",
+          '''throw  _i1.SimpleDecodingException('Nested lists are not supported in simple decoding.')''',
         );
       });
 
@@ -877,8 +873,7 @@ void main() {
               package: 'my_package',
               explode: literalBool(false),
             ).accept(scopedEmitter).toString(),
-            "throw  _i1.SimpleDecodingException("
-            "'Unsupported model type for simple decoding.')",
+            '''throw  _i1.SimpleDecodingException('Unsupported model type for simple decoding.')''',
           );
         },
       );
