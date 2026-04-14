@@ -34,7 +34,7 @@ void main() {
     setUp(() {
       generator = ApiClientGenerator(
         nameManager: nameManager,
-        package: 'package:test_package/test_package.dart',
+        package: 'test_package',
       );
     });
 
@@ -122,7 +122,7 @@ void main() {
     setUp(() {
       generator = OperationGenerator(
         nameManager: nameManager,
-        package: 'package:test_package/test_package.dart',
+        package: 'test_package',
       );
     });
 
@@ -202,7 +202,7 @@ void main() {
     setUp(() {
       generator = ApiClientGenerator(
         nameManager: nameManager,
-        package: 'package:test_package/test_package.dart',
+        package: 'test_package',
       );
       emitter = DartEmitter(useNullSafetySyntax: true);
     });

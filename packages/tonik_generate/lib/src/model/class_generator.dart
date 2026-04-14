@@ -406,10 +406,7 @@ class ClassGenerator {
         };
 
         return Block.of([
-          refer(
-            className,
-            package,
-          ).call([], constructorArgs).returned.statement,
+          refer(className).call([], constructorArgs).returned.statement,
         ]);
       }
       return Block.of([Code('return $className();')]);
@@ -546,7 +543,7 @@ class ClassGenerator {
     }
 
     codes.add(
-      refer(className, package).call([], constructorArgs).returned.statement,
+      refer(className).call([], constructorArgs).returned.statement,
     );
 
     return Block.of(codes);
@@ -610,10 +607,7 @@ class ClassGenerator {
         };
 
         return Block.of([
-          refer(
-            className,
-            package,
-          ).call([], constructorArgs).returned.statement,
+          refer(className).call([], constructorArgs).returned.statement,
         ]);
       }
       return Block.of([Code('return $className();')]);
@@ -1619,10 +1613,7 @@ if ($name != null) {
         };
 
         return Block.of([
-          refer(
-            className,
-            package,
-          ).call([], constructorArgs).returned.statement,
+          refer(className).call([], constructorArgs).returned.statement,
         ]);
       }
       return Block.of([Code('return $className();')]);
@@ -1752,7 +1743,7 @@ if ($name != null) {
     }
 
     codes.add(
-      refer(className, package).call([], constructorArgs).returned.statement,
+      refer(className).call([], constructorArgs).returned.statement,
     );
 
     return Block.of(codes);

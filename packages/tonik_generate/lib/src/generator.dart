@@ -34,7 +34,6 @@ class Generator {
     TonikConfig config = const TonikConfig(),
   }) {
     final useImmutableCollections = config.useImmutableCollections;
-    final fullPackage = 'package:$package/$package.dart';
 
     final nameGenerator = NameGenerator();
     final stableModelSorter = StableModelSorter();
@@ -45,30 +44,30 @@ class Generator {
 
     final classGenerator = ClassGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       useImmutableCollections: useImmutableCollections,
     );
     final enumGenerator = EnumGenerator(nameManager: nameManager);
     final oneOfGenerator = OneOfGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       stableModelSorter: stableModelSorter,
       useImmutableCollections: useImmutableCollections,
     );
     final anyOfGenerator = AnyOfGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       stableModelSorter: stableModelSorter,
       useImmutableCollections: useImmutableCollections,
     );
     final typedefGenerator = TypedefGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       useImmutableCollections: useImmutableCollections,
     );
     final allOfGenerator = AllOfGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       stableModelSorter: stableModelSorter,
       useImmutableCollections: useImmutableCollections,
     );
@@ -84,7 +83,7 @@ class Generator {
 
     final operationGenerator = OperationGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -94,7 +93,7 @@ class Generator {
 
     final requestBodyGenerator = RequestBodyGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -104,7 +103,7 @@ class Generator {
 
     final responseGenerator = ResponseGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -114,7 +113,7 @@ class Generator {
 
     final responseWrapperGenerator = ResponseWrapperGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -124,7 +123,7 @@ class Generator {
 
     final apiClientGenerator = ApiClientGenerator(
       nameManager: nameManager,
-      package: fullPackage,
+      package: package,
     );
 
     final apiClientFileGenerator = ApiClientFileGenerator(

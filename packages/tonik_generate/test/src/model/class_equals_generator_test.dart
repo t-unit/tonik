@@ -25,7 +25,7 @@ void main() {
     );
     generator = ClassGenerator(
       nameManager: nameManager,
-      package: 'package:example',
+      package: 'example',
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);

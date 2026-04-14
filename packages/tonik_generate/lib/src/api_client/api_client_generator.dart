@@ -10,6 +10,7 @@ import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 
 /// Generator for creating API client classes from Operation definitions.
 class ApiClientGenerator {
@@ -61,12 +62,14 @@ class ApiClientGenerator {
     final operationFields = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
+      final operationUrl =
+          sourceFileUrl(package, 'operation', operationName);
 
       return Field(
         (b) => b
           ..name = fieldName
           ..modifier = FieldModifier.final$
-          ..type = refer(operationName, package),
+          ..type = refer(operationName, operationUrl),
       );
     }).toList();
 
@@ -74,10 +77,15 @@ class ApiClientGenerator {
     final constructorInitializers = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
+      final operationUrl =
+          sourceFileUrl(package, 'operation', operationName);
 
-      return refer(
-        fieldName,
-      ).assign(refer(operationName, package).call([refer('server.dio')])).code;
+      return refer(fieldName)
+          .assign(
+            refer(operationName, operationUrl)
+                .call([refer('server.dio')]),
+          )
+          .code;
     }).toList();
 
     return Class(
@@ -92,7 +100,10 @@ class ApiClientGenerator {
                 Parameter(
                   (b) => b
                     ..name = 'server'
-                    ..type = refer(serverBaseClassName, package),
+                    ..type = refer(
+                      serverBaseClassName,
+                      sourceFileUrl(package, 'server', serverBaseClassName),
+                    ),
                 ),
               )
               ..initializers.addAll(constructorInitializers),

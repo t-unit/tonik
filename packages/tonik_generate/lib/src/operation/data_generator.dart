@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
@@ -41,10 +42,12 @@ class DataGenerator {
         (c) => c.contentType == ContentType.multipart,
       );
 
+      final requestBodyBaseName =
+          nameManager.requestBodyNames(requestBody).$1;
       final parameterType = TypeReference(
         (b) => b
-          ..symbol = nameManager.requestBodyNames(requestBody).$1
-          ..url = package
+          ..symbol = requestBodyBaseName
+          ..url = sourceFileUrl(package, 'request_body', requestBodyBaseName)
           ..isNullable = !isRequired,
       );
 
@@ -55,9 +58,14 @@ class DataGenerator {
             .requestBodyNames(requestBody)
             .$2[c.rawContentType]!;
 
+        final requestBodyUrl = sourceFileUrl(
+          package,
+          'request_body',
+          nameManager.requestBodyNames(requestBody).$1,
+        );
         switchCases
           ..add(const Code('final '))
-          ..add(refer(variantName, package).code);
+          ..add(refer(variantName, requestBodyUrl).code);
 
         switch (c.contentType) {
           case .text:

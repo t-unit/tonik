@@ -27,7 +27,7 @@ void main() {
     );
     optionsGenerator = OptionsGenerator(
       nameManager: nameManager,
-      package: 'package:api/api.dart',
+      package: 'api',
     );
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -170,7 +170,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 2);
@@ -219,7 +219,7 @@ void main() {
       final parameters = generateParameters(
         operation: operation,
         nameManager: nameManager,
-        package: 'package:api/api.dart',
+        package: 'api',
       );
 
       expect(parameters.length, 1);

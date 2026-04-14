@@ -11,6 +11,7 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -362,7 +363,11 @@ class OneOfGenerator {
           refer(variantName).call([
             refer(
               nameManager.modelName(m.model),
-              package,
+              sourceFileUrl(
+                package,
+                'model',
+                nameManager.modelName(m.model),
+              ),
             ).property('fromJson').call([refer('json')]),
           ]).code,
           const Code(','),
@@ -477,7 +482,7 @@ class OneOfGenerator {
               .call([
                 refer(
                   modelName,
-                  package,
+                  sourceFileUrl(package, 'model', modelName),
                 ).property('fromJson').call([refer('json')]),
               ])
               .returned
@@ -565,7 +570,11 @@ class OneOfGenerator {
             refer(variantName).call([
               refer(
                     nameManager.modelName(modelType),
-                    package,
+                    sourceFileUrl(
+                      package,
+                      'model',
+                      nameManager.modelName(modelType),
+                    ),
                   )
                   .property(constructorName)
                   .call(
@@ -661,7 +670,11 @@ class OneOfGenerator {
         final innerDecode =
             refer(
                   nameManager.modelName(modelType),
-                  package,
+                  sourceFileUrl(
+                    package,
+                    'model',
+                    nameManager.modelName(modelType),
+                  ),
                 )
                 .property(constructorName)
                 .call([refer('value')], {'explode': refer('explode')});

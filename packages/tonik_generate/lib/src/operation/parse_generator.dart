@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/util/from_json_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/response_property_normalizer.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 class ParseGenerator {
@@ -319,19 +320,27 @@ class ParseGenerator {
     String? contentType,
   ) {
     final wrapperName = nameManager.responseWrapperNames(operation).$2[status]!;
+    final wrapperBaseName = nameManager.responseWrapperNames(operation).$1;
+    final wrapperUrl =
+        sourceFileUrl(package, 'response_wrapper', wrapperBaseName);
     final bodyDecode = _createBodyDecode(response, contentType);
 
     if (response.hasHeaders || response.bodyCount > 1) {
       return _generateMultiResponseWithHeaders(
         wrapperName,
+        wrapperUrl,
         response,
         contentType,
         bodyDecode,
       );
     } else if (bodyDecode != null) {
-      return _generateMultiResponseWithBody(wrapperName, bodyDecode);
+      return _generateMultiResponseWithBody(
+        wrapperName,
+        wrapperUrl,
+        bodyDecode,
+      );
     } else {
-      return refer(wrapperName, package).call([]).returned.statement;
+      return refer(wrapperName, wrapperUrl).call([]).returned.statement;
     }
   }
 
@@ -359,6 +368,7 @@ class ParseGenerator {
 
   Code _generateMultiResponseWithHeaders(
     String wrapperName,
+    String wrapperUrl,
     ResponseObject response,
     String? contentType,
     ({List<Code> statements, String varName})? bodyDecode,
@@ -378,33 +388,36 @@ class ParseGenerator {
     }
     responseArgs.addAll(headerResult.supported);
 
+    final responseBaseName = nameManager.responseNames(response).baseName;
+    final responseUrl = sourceFileUrl(package, 'response', responseBaseName);
     final wrapperArgs = <String, Expression>{
       'body': refer(
         contentType != null && response.bodyCount > 1
             ? nameManager
                   .responseNames(response)
                   .implementationNames[contentType]!
-            : nameManager.responseNames(response).baseName,
-        package,
+            : responseBaseName,
+        responseUrl,
       ).call([], responseArgs),
     };
 
     return Block.of([
       ..._generateNeverHeaderChecks(headerResult.neverHeaders),
       if (bodyDecode != null) ...bodyDecode.statements,
-      refer(wrapperName, package).call([], wrapperArgs).returned.statement,
+      refer(wrapperName, wrapperUrl).call([], wrapperArgs).returned.statement,
     ]);
   }
 
   Code _generateMultiResponseWithBody(
     String wrapperName,
+    String wrapperUrl,
     ({List<Code> statements, String varName}) bodyDecode,
   ) {
     return Block.of([
       ...bodyDecode.statements,
       refer(
         wrapperName,
-        package,
+        wrapperUrl,
       ).call([], {'body': refer(bodyDecode.varName)}).returned.statement,
     ]);
   }
@@ -429,6 +442,8 @@ class ParseGenerator {
     }
     args.addAll(headerResult.supported);
 
+    final responseBaseName = nameManager.responseNames(response).baseName;
+    final responseUrl = sourceFileUrl(package, 'response', responseBaseName);
     return Block.of([
       ..._generateNeverHeaderChecks(headerResult.neverHeaders),
       if (bodyDecode != null) ...bodyDecode.statements,
@@ -437,8 +452,8 @@ class ParseGenerator {
             ? nameManager
                   .responseNames(response)
                   .implementationNames[contentType]!
-            : nameManager.responseNames(response).baseName,
-        package,
+            : responseBaseName,
+        responseUrl,
       ).call([], args).returned.statement,
     ]);
   }

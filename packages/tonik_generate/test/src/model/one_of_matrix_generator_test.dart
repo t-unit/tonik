@@ -25,7 +25,7 @@ void main() {
     );
     generator = OneOfGenerator(
       nameManager: nameManager,
-      package: 'package:example',
+      package: 'example',
       stableModelSorter: StableModelSorter(),
     );
     context = Context.initial();

@@ -1032,7 +1032,7 @@ class AllOfGenerator {
           ..optionalParameters.add(
             buildBoolParameter('explode', required: true),
           )
-          ..body = refer(className, package)
+          ..body = refer(className)
               .call([], constructorArgs)
               .returned
               .statement,
@@ -1086,7 +1086,7 @@ class AllOfGenerator {
         : refer(r'_$additional');
 
     codes.add(
-      refer(className, package).call([], constructorArgs).returned.statement,
+      refer(className).call([], constructorArgs).returned.statement,
     );
 
     return Constructor(

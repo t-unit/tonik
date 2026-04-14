@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Creates a Dart expression that correctly deserializes a form-encoded value
@@ -174,16 +175,19 @@ Expression _buildFromFormExpression(
 }) {
   final name = nameManager.modelName(model);
   final explodeParam = {'explode': explode ?? literalBool(true)};
+  final url = package != null
+      ? sourceFileUrl(package, 'model', name)
+      : null;
 
   return isRequired
-      ? refer(name, package).property('fromForm').call([value], explodeParam)
+      ? refer(name, url).property('fromForm').call([value], explodeParam)
       : value
             .equalTo(literalNull)
             .conditional(
               literalNull,
               refer(
                 name,
-                package,
+                url,
               ).property('fromForm').call([value], explodeParam),
             );
 }
@@ -375,11 +379,14 @@ Expression _buildClassList(
 }) {
   final name = nameManager.modelName(content);
   final explodeParam = {'explode': explode ?? literalBool(true)};
+  final url = package != null
+      ? sourceFileUrl(package, 'model', name)
+      : null;
 
   final mapFunction = Method(
     (b) => b
       ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-      ..body = refer(name, package).property('fromForm').call([
+      ..body = refer(name, url).property('fromForm').call([
         refer('e'),
       ], explodeParam).code,
   ).closure;

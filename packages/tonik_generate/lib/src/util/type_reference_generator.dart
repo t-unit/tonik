@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 const _ficUrl =
@@ -54,7 +55,7 @@ TypeReference typeReference(
     final NamedModel m => TypeReference(
       (b) => b
         ..symbol = nameManager.modelName(m)
-        ..url = package
+        ..url = sourceFileUrl(package, 'model', nameManager.modelName(m))
         ..isNullable = isNullableOverride || ((m is EnumModel) && m.isNullable),
     ),
     StringModel _ => TypeReference(
@@ -132,7 +133,7 @@ TypeReference typeReference(
     final CompositeModel m => TypeReference(
       (b) => b
         ..symbol = nameManager.modelName(m)
-        ..url = package
+        ..url = sourceFileUrl(package, 'model', nameManager.modelName(m))
         ..isNullable = isNullableOverride,
     ),
   };

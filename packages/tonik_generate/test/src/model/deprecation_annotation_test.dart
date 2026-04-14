@@ -31,7 +31,7 @@ void main() {
     setUp(() {
       generator = ClassGenerator(
         nameManager: nameManager,
-        package: 'package:example',
+        package: 'example',
       );
     });
 
@@ -140,7 +140,7 @@ void main() {
     setUp(() {
       generator = OneOfGenerator(
         nameManager: nameManager,
-        package: 'package:example',
+        package: 'example',
         stableModelSorter: StableModelSorter(),
       );
     });
@@ -201,7 +201,7 @@ void main() {
     setUp(() {
       generator = AnyOfGenerator(
         nameManager: nameManager,
-        package: 'package:example',
+        package: 'example',
         stableModelSorter: StableModelSorter(),
       );
     });
@@ -260,7 +260,7 @@ void main() {
     setUp(() {
       generator = AllOfGenerator(
         nameManager: nameManager,
-        package: 'package:example',
+        package: 'example',
         stableModelSorter: StableModelSorter(),
       );
     });
@@ -313,7 +313,7 @@ void main() {
     setUp(() {
       generator = ClassGenerator(
         nameManager: nameManager,
-        package: 'package:example',
+        package: 'example',
       );
     });
 

@@ -13,6 +13,7 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -670,7 +671,7 @@ class AnyOfGenerator {
         ..body = Block.of([
           ...localDecls,
           validationCheck,
-          refer(className, package).call([], ctorArgs).returned.statement,
+          refer(className).call([], ctorArgs).returned.statement,
         ]),
     );
   }
@@ -1043,7 +1044,11 @@ class AnyOfGenerator {
           AnyOfModel() =>
             refer(
                   nameManager.modelName(modelType),
-                  package,
+                  sourceFileUrl(
+                    package,
+                    'model',
+                    nameManager.modelName(modelType),
+                  ),
                 )
                 .property(constructorName)
                 .call(
@@ -1120,7 +1125,7 @@ class AnyOfGenerator {
         ..body = Block.of([
           ...localDecls,
           validationCheck,
-          refer(className, package).call([], ctorArgs).returned.statement,
+          refer(className).call([], ctorArgs).returned.statement,
         ]),
     );
   }
