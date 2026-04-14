@@ -102,7 +102,7 @@ class ResponseGenerator {
       properties: properties.map(
         (prop) {
           final model = prop.property.model;
-          final resolvedModel = model is AliasModel ? model.resolved : model;
+          final resolvedModel = model.resolved;
           return (
             normalizedName: prop.normalizedName,
             typeRef: typeReference(

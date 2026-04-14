@@ -40,10 +40,7 @@ Expression buildMultipartBodyExpression(
   // Only add `return formData;` when the model resolved to a ClassModel
   // (i.e., formData was actually declared). For non-ClassModel bodies,
   // the statements contain only a throw.
-  var model = content.model;
-  if (model is AliasModel) {
-    model = model.resolved;
-  }
+  final model = content.model.resolved;
   final bodyStatements = [
     ...statements,
     if (model is ClassModel) refer(r'_$formData').returned.statement,
@@ -66,10 +63,7 @@ List<Code> _buildMultipartFields(
   final statements = <Code>[];
 
   // Resolve through alias chains.
-  var model = content.model;
-  if (model is AliasModel) {
-    model = model.resolved;
-  }
+  final model = content.model.resolved;
 
   // Non-ClassModel: generate runtime UnsupportedError.
   if (model is! ClassModel) {
@@ -1261,10 +1255,7 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   final encoding = content.encoding;
   if (encoding == null) return const [];
 
-  var model = content.model;
-  if (model is AliasModel) {
-    model = model.resolved;
-  }
+  final model = content.model.resolved;
   if (model is! ClassModel) return const [];
 
   final writeProperties = model.properties.where((p) => !p.isReadOnly).toList();

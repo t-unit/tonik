@@ -1116,9 +1116,7 @@ class AllOfGenerator {
     final ap = model.additionalProperties;
     if (ap is UnrestrictedAdditionalProperties) return true;
     if (ap is TypedAdditionalProperties) {
-      final resolved = ap.valueModel is AliasModel
-          ? (ap.valueModel as AliasModel).resolved
-          : ap.valueModel;
+      final resolved = ap.valueModel.resolved;
       return resolved is StringModel;
     }
     return false;

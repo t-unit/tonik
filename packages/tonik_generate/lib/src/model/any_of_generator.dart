@@ -92,7 +92,7 @@ class AnyOfGenerator {
       properties: normalized.map(
         (n) {
           final model = n.property.model;
-          final resolvedModel = model is AliasModel ? model.resolved : model;
+          final resolvedModel = model.resolved;
           return (
             normalizedName: n.normalizedName,
             typeRef: typeReference(

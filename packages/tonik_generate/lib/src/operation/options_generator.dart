@@ -408,9 +408,7 @@ class OptionsGenerator {
     final explode = cookie.parameter.explode;
 
     if (model is ListModel) {
-      final contentModel = model.content is AliasModel
-          ? (model.content as AliasModel).resolved
-          : model.content;
+      final contentModel = model.content.resolved;
 
       if (contentModel is StringModel) {
         final encodedValue = refer(paramName).property('toForm').call([], {

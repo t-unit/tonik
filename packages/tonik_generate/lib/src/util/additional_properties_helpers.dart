@@ -5,9 +5,8 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Whether the given [model] resolves to a collection type (list or map).
 bool isCollectionModel(Model model) {
-  if (model is ListModel || model is MapModel) return true;
-  if (model is AliasModel) return isCollectionModel(model.resolved);
-  return false;
+  final resolved = model.resolved;
+  return resolved is ListModel || resolved is MapModel;
 }
 
 /// Whether the given [additionalProperties] specification is active, meaning
