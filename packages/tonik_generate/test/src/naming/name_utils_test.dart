@@ -195,6 +195,53 @@ void main() {
         expect(normalizeEnumValueName('123_456'), r'$123456');
       });
     });
+
+    group('reserved enum member names', () {
+      test('escapes index which conflicts with Enum.index', () {
+        expect(normalizeEnumValueName('index'), r'$index');
+        expect(normalizeEnumValueName('INDEX'), r'$index');
+        expect(normalizeEnumValueName('Index'), r'$index');
+      });
+
+      test('escapes values which conflicts with Enum.values', () {
+        expect(normalizeEnumValueName('values'), r'$values');
+        expect(normalizeEnumValueName('VALUES'), r'$values');
+      });
+
+      test('does not escape words that contain reserved names', () {
+        expect(normalizeEnumValueName('reindex'), 'reindex');
+        expect(normalizeEnumValueName('indexing'), 'indexing');
+        expect(normalizeEnumValueName('INDEX_TYPE'), 'indexType');
+      });
+    });
+  });
+
+  group('normalizeSingle with purely numeric names', () {
+    test('spells out pure numbers when preserveNumbers is true', () {
+      expect(normalizeSingle('1', preserveNumbers: true), 'one');
+      expect(normalizeSingle('42', preserveNumbers: true), 'fortyTwo');
+      expect(normalizeSingle('100', preserveNumbers: true), 'oneHundred');
+      expect(normalizeSingle('600', preserveNumbers: true), 'sixHundred');
+      expect(normalizeSingle('1000', preserveNumbers: true), 'oneThousand');
+    });
+
+    test('spells out pure numbers when preserveNumbers is false', () {
+      expect(normalizeSingle('1'), 'one');
+      expect(normalizeSingle('600'), 'sixHundred');
+      expect(normalizeSingle('1000'), 'oneThousand');
+    });
+  });
+
+  group('normalizeSingle does not escape enum-specific reserved names', () {
+    test('allows index as a class property name', () {
+      expect(normalizeSingle('index'), 'index');
+      expect(normalizeSingle('INDEX'), 'index');
+    });
+
+    test('allows values as a class property name', () {
+      expect(normalizeSingle('values'), 'values');
+      expect(normalizeSingle('VALUES'), 'values');
+    });
   });
 
   group('normalizeSingle with special character property names', () {

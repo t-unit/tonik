@@ -266,6 +266,52 @@ void main() {
     });
   });
 
+  group('purely numeric property names', () {
+    test('spells out single-digit numeric property names', () {
+      final result = normalizeProperties([
+        createProperty('1'),
+        createProperty('2'),
+        createProperty('3'),
+      ]);
+
+      expect(result.map((r) => r.normalizedName).toList(), [
+        'one',
+        'two',
+        'three',
+      ]);
+    });
+
+    test('spells out multi-digit numeric property names', () {
+      final result = normalizeProperties([
+        createProperty('600'),
+        createProperty('700'),
+        createProperty('800'),
+        createProperty('900'),
+        createProperty('1000'),
+      ]);
+
+      expect(result.map((r) => r.normalizedName).toList(), [
+        'sixHundred',
+        'sevenHundred',
+        'eightHundred',
+        'nineHundred',
+        'oneThousand',
+      ]);
+    });
+
+    test('makes duplicate spelled-out numeric names unique', () {
+      final result = normalizeProperties([
+        createProperty('1'),
+        createProperty('one'),
+      ]);
+
+      expect(result.map((r) => r.normalizedName).toList(), [
+        'one',
+        'one2',
+      ]);
+    });
+  });
+
   group('special character property names', () {
     test('replaces special characters with word equivalents', () {
       final result = normalizeProperties([
