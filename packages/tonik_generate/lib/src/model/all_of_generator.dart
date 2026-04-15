@@ -1148,12 +1148,12 @@ class AllOfGenerator {
 
     // Check if we have any list properties FIRST (before simple types check)
     final hasListProperties = normalizedProperties.any(
-      (prop) => prop.property.model is ListModel,
+      (prop) => prop.property.model.resolved is ListModel,
     );
     final allListProperties =
         hasListProperties &&
         normalizedProperties.every(
-          (prop) => prop.property.model is ListModel,
+          (prop) => prop.property.model.resolved is ListModel,
         );
 
     // If we have lists (either all or mixed), throw exception
@@ -1174,6 +1174,29 @@ class AllOfGenerator {
           ])
           ..lambda = true
           ..body = generateEncodingExceptionExpression(message, raw: true).code,
+      );
+    }
+
+    // Check if we have any map properties
+    final hasMapProperties = normalizedProperties.any(
+      (prop) => prop.property.model.resolved is MapModel,
+    );
+
+    if (hasMapProperties) {
+      return Method(
+        (b) => b
+          ..name = 'parameterProperties'
+          ..returns = buildMapStringStringType()
+          ..optionalParameters.addAll([
+            buildBoolParameter('allowEmpty', defaultValue: true),
+            buildBoolParameter('allowLists', defaultValue: true),
+          ])
+          ..lambda = true
+          ..body = generateEncodingExceptionExpression(
+            'parameterProperties not supported for $className: '
+            'contains map types',
+            raw: true,
+          ).code,
       );
     }
 
@@ -1626,7 +1649,7 @@ for (final _\$e in $apFieldName.entries) {
       }
 
       // No direct primitives, only dynamic models that could be mixed at
-      // runtime. Generate runtime check.
+      // runtime. Generate runtime check and delegate to parameterProperties.
       final encodingShapeType = refer(
         'EncodingShape',
         'package:tonik_util/tonik_util.dart',
@@ -1641,39 +1664,17 @@ for (final _\$e in $apFieldName.entries) {
           raw: true,
         ).statement,
         const Code('}'),
-        const Code(r'final _$map = <'),
-        refer('String', 'dart:core').code,
-        const Code(', '),
-        refer('String', 'dart:core').code,
-        const Code('>{};'),
+        refer('parameterProperties')
+            .call([], {'allowEmpty': refer('allowEmpty')})
+            .property('toForm')
+            .call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+              'alreadyEncoded': literalBool(true),
+            })
+            .returned
+            .statement,
       ];
-
-      for (final prop in normalizedProperties) {
-        if (prop.property.model.isEffectivelyNullable) {
-          bodyCode.addAll([
-            Code('if (${prop.normalizedName} != null) {'),
-            Code(
-              '  _\$map.addAll(${prop.normalizedName}! '
-              '.parameterProperties(allowEmpty: allowEmpty));',
-            ),
-            const Code('}'),
-          ]);
-        } else {
-          bodyCode.add(
-            Code(
-              '_\$map.addAll(${prop.normalizedName} '
-              '.parameterProperties(allowEmpty: allowEmpty));',
-            ),
-          );
-        }
-      }
-
-      bodyCode.addAll([
-        const Code(
-          r'return _$map.toForm( '
-          'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
-        ),
-      ]);
 
       return Method(
         (b) => b
@@ -1855,7 +1856,8 @@ for (final _\$e in $apFieldName.entries) {
         );
       }
 
-      // If we have dynamic models, we need to validate and manually merge.
+      // If we have dynamic models, validate and delegate to
+      // parameterProperties.
       final bodyCode = <Code>[];
 
       // Validate that all dynamic models (anyOf/oneOf) are in complex state.
@@ -1877,41 +1879,18 @@ for (final _\$e in $apFieldName.entries) {
         ]);
       }
 
-      // Manually merge all parameterProperties.
-      bodyCode.addAll([
-        const Code(r'final _$map = <'),
-        refer('String', 'dart:core').code,
-        const Code(', '),
-        refer('String', 'dart:core').code,
-        const Code('>{};'),
-      ]);
-
-      for (final prop in normalizedProperties) {
-        if (prop.property.model.isEffectivelyNullable) {
-          bodyCode.addAll([
-            Code('if (${prop.normalizedName} != null) {'),
-            Code(
-              '  _\$map.addAll(${prop.normalizedName}! '
-              '.parameterProperties(allowEmpty: allowEmpty));',
-            ),
-            const Code('}'),
-          ]);
-        } else {
-          bodyCode.add(
-            Code(
-              '_\$map.addAll(${prop.normalizedName} '
-              '.parameterProperties(allowEmpty: allowEmpty));',
-            ),
-          );
-        }
-      }
-
-      bodyCode.addAll([
-        const Code(
-          r'return _$map.toForm( '
-          'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
-        ),
-      ]);
+      bodyCode.add(
+        refer('parameterProperties')
+            .call([], {'allowEmpty': refer('allowEmpty')})
+            .property('toForm')
+            .call([], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+              'alreadyEncoded': literalBool(true),
+            })
+            .returned
+            .statement,
+      );
 
       return Method(
         (b) => b
@@ -2216,45 +2195,17 @@ for (final _\$e in $apFieldName.entries) {
           'Simple encoding not supported: contains complex types',
         ).statement,
         const Code('}'),
-        const Code(r'final _$mergedProperties = '),
-        buildEmptyMapStringString().statement,
+        refer('parameterProperties')
+            .call([], {'allowEmpty': refer('allowEmpty')})
+            .property('toMatrix')
+            .call([refer('paramName')], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+              'alreadyEncoded': literalBool(true),
+            })
+            .returned
+            .statement,
       ];
-
-      for (final prop in normalizedProperties) {
-        final isNullable = prop.property.model.isEffectivelyNullable;
-        if (isNullable) {
-          bodyCode.addAll([
-            Code('if (${prop.normalizedName} != null) {'),
-            refer(r'_$mergedProperties').property('addAll').call([
-              refer(prop.normalizedName).nullChecked
-                  .property(
-                    'parameterProperties',
-                  )
-                  .call([], {'allowEmpty': refer('allowEmpty')}),
-            ]).statement,
-            const Code('}'),
-          ]);
-        } else {
-          bodyCode.add(
-            refer(r'_$mergedProperties').property('addAll').call([
-              refer(prop.normalizedName).property('parameterProperties').call(
-                [],
-                {
-                  'allowEmpty': refer('allowEmpty'),
-                },
-              ),
-            ]).statement,
-          );
-        }
-      }
-
-      bodyCode.addAll([
-        const Code(
-          r'return _$mergedProperties.toMatrix( '
-          'paramName, explode: explode, allowEmpty: allowEmpty, '
-          'alreadyEncoded: true);',
-        ),
-      ]);
 
       return Method(
         (b) => b
@@ -2361,48 +2312,7 @@ for (final _\$e in $apFieldName.entries) {
         );
       }
 
-      // For non-list complex types, use parameterProperties
-      final propertyMergingLines = [
-        declareFinal(
-          r'_$mergedProperties',
-        ).assign(buildEmptyMapStringString()).statement,
-      ];
-
-      for (final normalized in normalizedProperties) {
-        final isNullable = normalized.property.model.isEffectivelyNullable;
-        if (isNullable) {
-          propertyMergingLines.addAll([
-            Code('if (${normalized.normalizedName} != null) {'),
-            refer(r'_$mergedProperties').property('addAll').call([
-              refer(normalized.normalizedName).nullChecked
-                  .property(
-                    'parameterProperties',
-                  )
-                  .call([], {'allowEmpty': refer('allowEmpty')}),
-            ]).statement,
-            const Code('}'),
-          ]);
-        } else {
-          propertyMergingLines.add(
-            refer(r'_$mergedProperties').property('addAll').call([
-              refer(
-                normalized.normalizedName,
-              ).property('parameterProperties').call([], {
-                'allowEmpty': refer('allowEmpty'),
-              }),
-            ]).statement,
-          );
-        }
-      }
-
-      propertyMergingLines.add(
-        const Code(
-          r'return _$mergedProperties.toMatrix( '
-          'paramName, explode: explode, allowEmpty: allowEmpty, '
-          'alreadyEncoded: true);',
-        ),
-      );
-
+      // For non-list complex types, delegate to parameterProperties
       return Method(
         (b) => b
           ..annotations.add(refer('override', 'dart:core'))
@@ -2417,7 +2327,16 @@ for (final _\$e in $apFieldName.entries) {
           )
           ..optionalParameters.addAll(buildEncodingParameters())
           ..lambda = false
-          ..body = Block.of(propertyMergingLines),
+          ..body = refer('parameterProperties')
+              .call([], {'allowEmpty': refer('allowEmpty')})
+              .property('toMatrix')
+              .call([refer('paramName')], {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'alreadyEncoded': literalBool(true),
+              })
+              .returned
+              .statement,
       );
     }
 

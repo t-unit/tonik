@@ -105,20 +105,13 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = r'''
+      const expectedMethod = '''
         String toMatrix(
           String paramName, {
           required bool explode,
           required bool allowEmpty,
         }) {
-          final _$mergedProperties = <String, String>{};
-          _$mergedProperties.addAll(
-            class1.parameterProperties(allowEmpty: allowEmpty),
-          );
-          _$mergedProperties.addAll(
-            class2.parameterProperties(allowEmpty: allowEmpty),
-          );
-          return _$mergedProperties.toMatrix(
+          return parameterProperties(allowEmpty: allowEmpty).toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -234,7 +227,7 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = r'''
+      const expectedMethod = '''
         String toMatrix(
           String paramName, {
           required bool explode,
@@ -245,10 +238,7 @@ void main() {
               'Simple encoding not supported: contains complex types',
             );
           }
-          final _$mergedProperties = <String, String>{};
-          _$mergedProperties.addAll(anyOfModel.parameterProperties(allowEmpty: allowEmpty));
-          _$mergedProperties.addAll(classModel.parameterProperties(allowEmpty: allowEmpty));
-          return _$mergedProperties.toMatrix(
+          return parameterProperties(allowEmpty: allowEmpty).toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -442,15 +432,13 @@ void main() {
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
 
-      const expectedMethod = r'''
+      const expectedMethod = '''
         String toMatrix(
           String paramName, {
           required bool explode,
           required bool allowEmpty,
         }) {
-          final _$mergedProperties = <String, String>{};
-          _$mergedProperties.addAll(classModel.parameterProperties(allowEmpty: allowEmpty));
-          return _$mergedProperties.toMatrix(
+          return parameterProperties(allowEmpty: allowEmpty).toMatrix(
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
@@ -555,6 +543,98 @@ void main() {
           contains(collapseWhitespace(expectedMethod)),
         );
       });
+
+      test(
+        'generates toMatrix delegating to parameterProperties for '
+        'ListModel with complex content',
+        () {
+          final complexListModel = ListModel(
+            content: ClassModel(
+              isDeprecated: false,
+              name: 'ComplexItem',
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+            ),
+            context: context,
+          );
+
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'AllOfComplexList',
+            models: {complexListModel},
+            context: context,
+          );
+
+          final generatedClass = generator.generateClass(model);
+          final classCode = format(generatedClass.accept(emitter).toString());
+
+          const expectedMethod = '''
+            String toMatrix(
+              String paramName, {
+              required bool explode,
+              required bool allowEmpty,
+            }) {
+              return parameterProperties(allowEmpty: allowEmpty).toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+            }
+          ''';
+          expect(
+            collapseWhitespace(classCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates toMatrix delegating to parameterProperties for MapModel',
+        () {
+          final mapModel = MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+          );
+
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'AllOfMap',
+            models: {mapModel},
+            context: context,
+          );
+
+          final generatedClass = generator.generateClass(model);
+          final classCode = format(generatedClass.accept(emitter).toString());
+
+          const expectedMethod = '''
+            String toMatrix(
+              String paramName, {
+              required bool explode,
+              required bool allowEmpty,
+            }) {
+              return parameterProperties(allowEmpty: allowEmpty).toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+            }
+          ''';
+          expect(
+            collapseWhitespace(classCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
 
       test('generates toMatrix for AllOf with multiple list models', () {
         final listStringModel = ListModel(
