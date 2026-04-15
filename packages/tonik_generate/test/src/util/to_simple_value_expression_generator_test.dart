@@ -345,9 +345,7 @@ void main() {
             explode: false,
             allowEmpty: true,
           ).accept(scopedEmitter).toString(),
-          "throw  _i1.EncodingException("
-          "'Nested lists are not supported"
-          " for simple encoding.')",
+          '''throw  _i1.EncodingException('Nested lists are not supported for simple encoding.')''',
         );
       });
 
@@ -359,8 +357,7 @@ void main() {
             explode: false,
             allowEmpty: true,
           ).accept(scopedEmitter).toString(),
-          "throw  _i1.EncodingException("
-          "'Unsupported model type for simple encoding.')",
+          '''throw  _i1.EncodingException('Unsupported model type for simple encoding.')''',
         );
       });
 
@@ -380,8 +377,7 @@ void main() {
             explode: false,
             allowEmpty: true,
           ).accept(scopedEmitter).toString(),
-          "throw  _i1.EncodingException("
-          "'Unsupported content model for simple encoding.')",
+          '''throw  _i1.EncodingException('Unsupported content model for simple encoding.')''',
         );
       });
     });

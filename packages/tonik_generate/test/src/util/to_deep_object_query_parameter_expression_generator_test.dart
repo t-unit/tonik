@@ -262,9 +262,7 @@ void main() {
 
       expect(
         code,
-        "throw  _i1.EncodingException("
-        "r'deepObject encoding only supports object types."
-        ' Parameter "count" is not supported.\')',
+        '''throw  _i1.EncodingException(r'deepObject encoding only supports object types. Parameter "count" is not supported.')''',
       );
     });
 
@@ -288,9 +286,7 @@ void main() {
 
       expect(
         code,
-        "throw  _i1.EncodingException("
-        "r'deepObject encoding only supports object types."
-        ' Parameter "items" is not supported.\')',
+        '''throw  _i1.EncodingException(r'deepObject encoding only supports object types. Parameter "items" is not supported.')''',
       );
     });
 
@@ -320,9 +316,7 @@ void main() {
 
       expect(
         code,
-        "throw  _i1.EncodingException("
-        "r'deepObject encoding only supports object types."
-        ' Parameter "status" is not supported.\')',
+        '''throw  _i1.EncodingException(r'deepObject encoding only supports object types. Parameter "status" is not supported.')''',
       );
     });
 

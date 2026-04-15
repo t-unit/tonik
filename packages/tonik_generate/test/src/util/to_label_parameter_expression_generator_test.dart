@@ -424,8 +424,7 @@ void main() {
 
       expect(
         expression.accept(scopedEmitter).toString(),
-        "throw  _i1.EncodingException("
-        "'Unsupported model type for label encoding.')",
+        '''throw  _i1.EncodingException('Unsupported model type for label encoding.')''',
       );
     });
 
@@ -443,8 +442,7 @@ void main() {
 
       expect(
         expression.accept(scopedEmitter).toString(),
-        "throw  _i1.EncodingException("
-        "'Unsupported list content type for label encoding.')",
+        '''throw  _i1.EncodingException('Unsupported list content type for label encoding.')''',
       );
     });
   });

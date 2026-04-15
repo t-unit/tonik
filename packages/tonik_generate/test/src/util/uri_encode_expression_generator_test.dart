@@ -295,8 +295,7 @@ void main() {
 
       expect(
         expression.accept(scopedEmitter).toString(),
-        "throw  _i1.EncodingException("
-        "'Unsupported model type for URI encoding.')",
+        '''throw  _i1.EncodingException('Unsupported model type for URI encoding.')''',
       );
     });
   });
@@ -596,8 +595,7 @@ void main() {
 
       expect(
         expression.accept(scopedEmitter).toString(),
-        "throw  _i1.EncodingException("
-        "'Unsupported list content type for URI encoding.')",
+        '''throw  _i1.EncodingException('Unsupported list content type for URI encoding.')''',
       );
     });
   });

@@ -131,8 +131,7 @@ void main() {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              "throw _i1.EncodingException("
-              "'Map types cannot be form query encoded.')",
+              '''throw _i1.EncodingException('Map types cannot be form query encoded.')''',
             ),
           ),
         );
@@ -160,8 +159,7 @@ void main() {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              "throw _i1.EncodingException("
-              "'Binary data cannot be form-encoded.')",
+              '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
             ),
           ),
         );
@@ -187,8 +185,7 @@ void main() {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              "throw _i1.EncodingException("
-              "'Binary data cannot be form-encoded.')",
+              '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
             ),
           ),
         );
@@ -214,9 +211,7 @@ void main() {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              "throw _i1.EncodingException( "
-              "'Cannot encode NeverModel"
-              " - this type does not permit any value.', );",
+              '''throw _i1.EncodingException( 'Cannot encode NeverModel - this type does not permit any value.', );''',
             ),
           ),
         );
@@ -247,8 +242,7 @@ void main() {
             collapseWhitespace(generated),
             contains(
               collapseWhitespace(
-                "throw _i1.EncodingException("
-                "'Binary data cannot be form-encoded.')",
+                '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
               ),
             ),
           );
@@ -280,8 +274,7 @@ void main() {
             collapseWhitespace(generated),
             contains(
               collapseWhitespace(
-                "throw _i1.EncodingException("
-                "'Binary data cannot be form-encoded.')",
+                '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
               ),
             ),
           );
@@ -313,9 +306,7 @@ void main() {
             collapseWhitespace(generated),
             contains(
               collapseWhitespace(
-                "throw _i1.EncodingException( "
-                "'Cannot encode List<NeverModel>"
-                " - this type does not permit any value.', );",
+                '''throw _i1.EncodingException( 'Cannot encode List<NeverModel> - this type does not permit any value.', );''',
               ),
             ),
           );
@@ -348,8 +339,7 @@ void main() {
             collapseWhitespace(generated),
             contains(
               collapseWhitespace(
-                "throw _i1.EncodingException( "
-                "'Unsupported model type for form query encoding.', );",
+                '''throw _i1.EncodingException( 'Unsupported model type for form query encoding.', );''',
               ),
             ),
           );
@@ -386,8 +376,7 @@ void main() {
             collapseWhitespace(generated),
             contains(
               collapseWhitespace(
-                "throw _i1.EncodingException( "
-                "'Unsupported model type for form query encoding.', );",
+                '''throw _i1.EncodingException( 'Unsupported model type for form query encoding.', );''',
               ),
             ),
           );

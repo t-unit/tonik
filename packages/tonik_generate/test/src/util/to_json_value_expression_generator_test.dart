@@ -20,8 +20,7 @@ void main() {
 
   String emit(Expression expr) => expr.accept(emitter).toString();
 
-  String scopedEmit(Expression expr) =>
-      expr.accept(scopedEmitter).toString();
+  String scopedEmit(Expression expr) => expr.accept(scopedEmitter).toString();
 
   group('buildToJsonValueExpression', () {
     test('for String property', () {
@@ -1258,9 +1257,7 @@ void main() {
         scopedEmit(
           buildToJsonPropertyExpression('forbidden', property),
         ),
-        "throw  _i1.EncodingException("
-        "'Cannot encode NeverModel"
-        " - this type does not permit any value.')",
+        '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
     });
 
@@ -1276,9 +1273,7 @@ void main() {
         scopedEmit(
           buildToJsonPropertyExpression('forbidden', property),
         ),
-        "throw  _i1.EncodingException("
-        "'Cannot encode NeverModel"
-        " - this type does not permit any value.')",
+        '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
     });
 
@@ -1298,9 +1293,7 @@ void main() {
         scopedEmit(
           buildToJsonPropertyExpression('forbiddenList', property),
         ),
-        "forbiddenList.map((e) => throw  _i1.EncodingException("
-        "'Cannot encode NeverModel"
-        " - this type does not permit any value.')).toList()",
+        '''forbiddenList.map((e) => throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')).toList()''',
       );
     });
 
@@ -1321,9 +1314,7 @@ void main() {
         scopedEmit(
           buildToJsonPropertyExpression('forbiddenAlias', property),
         ),
-        "throw  _i1.EncodingException("
-        "'Cannot encode NeverModel"
-        " - this type does not permit any value.')",
+        '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
     });
   });
@@ -1346,9 +1337,7 @@ void main() {
         scopedEmit(
           buildToJsonPathParameterExpression('forbidden', parameter),
         ),
-        "throw  _i1.EncodingException("
-        "'Cannot encode NeverModel"
-        " - this type does not permit any value.')",
+        '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
     });
   });
@@ -1372,9 +1361,7 @@ void main() {
         scopedEmit(
           buildToJsonQueryParameterExpression('forbidden', parameter),
         ),
-        "throw  _i1.EncodingException("
-        "'Cannot encode NeverModel"
-        " - this type does not permit any value.')",
+        '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
     });
   });
@@ -1836,5 +1823,4 @@ void main() {
       );
     });
   });
-
 }

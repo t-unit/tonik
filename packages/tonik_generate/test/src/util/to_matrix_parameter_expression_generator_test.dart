@@ -440,8 +440,7 @@ void main() {
 
       expect(
         expression.accept(scopedEmitter).toString(),
-        "throw  _i1.EncodingException("
-        "'Unsupported model type for matrix encoding.')",
+        '''throw  _i1.EncodingException('Unsupported model type for matrix encoding.')''',
       );
     });
 
@@ -460,8 +459,7 @@ void main() {
 
       expect(
         expression.accept(scopedEmitter).toString(),
-        "throw  _i1.EncodingException("
-        "'Unsupported list content type for matrix encoding.')",
+        '''throw  _i1.EncodingException('Unsupported list content type for matrix encoding.')''',
       );
     });
   });
