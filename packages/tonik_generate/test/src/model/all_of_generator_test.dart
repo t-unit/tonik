@@ -2247,9 +2247,7 @@ void main() {
       );
     }
     _$map.addAll(_$$baseJson);
-    for (final _$e in additionalProperties.entries) {
-      _$map[_$e.key] = _$e.value.toJson();
-    }
+    _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
     return _$map;
   }''';
 

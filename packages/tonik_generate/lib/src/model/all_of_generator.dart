@@ -805,14 +805,17 @@ class AllOfGenerator {
         final apAccess = useImmutableCollections
             ? '$apFieldName.unlock'
             : apFieldName;
-        if (ap is TypedAdditionalProperties &&
-            ap.valueModel.encodingShape == EncodingShape.complex) {
-          bodyCode.add(
-            Code(
-              'for (final _\$e in $apAccess.entries) '
-              r'{ _$map[_$e.key] = _$e.value.toJson(); }',
-            ),
+        if (ap is TypedAdditionalProperties) {
+          final apExpr = buildToJsonAdditionalPropertiesExpression(
+            apFieldName,
+            ap.valueModel,
+            useImmutableCollections: useImmutableCollections,
           );
+          bodyCode.addAll([
+            const Code(r'_$map.addAll('),
+            apExpr.code,
+            const Code(');'),
+          ]);
         } else {
           bodyCode.add(
             Code(
@@ -923,13 +926,16 @@ class AllOfGenerator {
           final apAccess = useImmutableCollections
               ? '$apFieldName.unlock'
               : apFieldName;
-          if (ap is TypedAdditionalProperties &&
-              ap.valueModel.encodingShape == EncodingShape.complex) {
+          if (ap is TypedAdditionalProperties) {
+            final apExpr = buildToJsonAdditionalPropertiesExpression(
+              apFieldName,
+              ap.valueModel,
+              useImmutableCollections: useImmutableCollections,
+            );
             mapParts.addAll([
-              Code(
-                'for (final _\$e in $apAccess.entries) '
-                r'{ _$map[_$e.key] = _$e.value.toJson(); }',
-              ),
+              const Code(r'_$map.addAll('),
+              apExpr.code,
+              const Code(');'),
             ]);
           } else {
             mapParts.add(

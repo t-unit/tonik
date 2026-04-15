@@ -801,21 +801,16 @@ class ClassGenerator {
           ? '$apFieldName.unlock'
           : apFieldName;
       if (ap is TypedAdditionalProperties) {
-        final valueModel = ap.valueModel;
-        // For complex types, encode each value via toJson.
-        // For simple/primitive types, pass through.
-        if (valueModel.encodingShape == EncodingShape.complex) {
-          mapEntries.add(
-            Code.scope(
-              (a) =>
-                  '...$apAccess.map('
-                  '(k, v) => ${a(refer('MapEntry', 'dart:core'))}'
-                  '(k, v.toJson())),',
-            ),
-          );
-        } else {
-          mapEntries.add(Code('...$apAccess,'));
-        }
+        final apExpr = buildToJsonAdditionalPropertiesExpression(
+          apFieldName,
+          ap.valueModel,
+          useImmutableCollections: useImmutableCollections,
+        );
+        mapEntries.addAll([
+          const Code('...'),
+          apExpr.code,
+          const Code(','),
+        ]);
       } else {
         // Unrestricted: values are already Object?
         mapEntries.add(Code('...$apAccess,'));
