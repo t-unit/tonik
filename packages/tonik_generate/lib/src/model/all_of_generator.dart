@@ -644,12 +644,12 @@ class AllOfGenerator {
   ) {
     // Check for list properties first (before any other logic)
     final hasListProperties = normalizedProperties.any(
-      (prop) => prop.property.model is ListModel,
+      (prop) => prop.property.model.resolved is ListModel,
     );
     final allListProperties =
         hasListProperties &&
         normalizedProperties.every(
-          (prop) => prop.property.model is ListModel,
+          (prop) => prop.property.model.resolved is ListModel,
         );
 
     // If we have lists mixed with other types, throw exception
@@ -1449,8 +1449,8 @@ for (final _\$e in $apFieldName.entries) {
           .where((p) => p.property.model.encodingShape == EncodingShape.complex)
           .every(
             (p) =>
-                p.property.model is ListModel &&
-                (p.property.model as ListModel).hasSimpleContent,
+                p.property.model.resolved is ListModel &&
+                (p.property.model.resolved as ListModel).hasSimpleContent,
           );
 
       if (allComplexAreSimpleLists) {
@@ -1783,8 +1783,8 @@ for (final _\$e in $apFieldName.entries) {
             )
             .every(
               (p) =>
-                  p.property.model is ListModel &&
-                  (p.property.model as ListModel).hasSimpleContent,
+                  p.property.model.resolved is ListModel &&
+                  (p.property.model.resolved as ListModel).hasSimpleContent,
             );
 
         if (allComplexAreSimpleLists) {
@@ -2064,8 +2064,8 @@ for (final _\$e in $apFieldName.entries) {
           .where((p) => p.property.model.encodingShape == EncodingShape.complex)
           .every(
             (p) =>
-                p.property.model is ListModel &&
-                (p.property.model as ListModel).hasSimpleContent,
+                p.property.model.resolved is ListModel &&
+                (p.property.model.resolved as ListModel).hasSimpleContent,
           );
 
       if (allComplexAreSimpleLists) {
@@ -2252,8 +2252,8 @@ for (final _\$e in $apFieldName.entries) {
           .where((p) => p.property.model.encodingShape == EncodingShape.complex)
           .every(
             (p) =>
-                p.property.model is ListModel &&
-                (p.property.model as ListModel).hasSimpleContent,
+                p.property.model.resolved is ListModel &&
+                (p.property.model.resolved as ListModel).hasSimpleContent,
           );
 
       if (allComplexAreSimpleLists) {
