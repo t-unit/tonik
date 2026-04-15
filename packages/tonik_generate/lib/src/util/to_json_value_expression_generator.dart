@@ -49,6 +49,48 @@ Expression buildToJsonQueryParameterExpression(
   );
 }
 
+/// Builds the serialization expression for typed additional properties.
+///
+/// Returns an expression suitable for spreading into a map literal
+/// (class generator) or passing to `addAll` (allOf generator).
+/// Handles unlock for immutable collections internally.
+Expression buildToJsonAdditionalPropertiesExpression(
+  String fieldName,
+  Model valueModel, {
+  bool useImmutableCollections = false,
+}) {
+  final receiver = useImmutableCollections
+      ? refer(fieldName).property('unlock')
+      : refer(fieldName);
+
+  if (!_needsTransformation(
+    valueModel,
+    useImmutableCollections: useImmutableCollections,
+  )) {
+    return receiver;
+  }
+
+  final innerExpr = _buildSerializationExpression(
+    refer('v'),
+    valueModel,
+    false,
+    useImmutableCollections: useImmutableCollections,
+  );
+
+  final mapClosure = Method(
+    (b) => b
+      ..requiredParameters.addAll([
+        Parameter((p) => p..name = 'k'),
+        Parameter((p) => p..name = 'v'),
+      ])
+      ..body = refer('MapEntry', 'dart:core')
+          .call([refer('k'), innerExpr])
+          .code,
+  ).closure;
+
+  return receiver.property('map').call([mapClosure]);
+}
+
 Expression _buildSerializationExpression(
   Expression receiver,
   Model model,

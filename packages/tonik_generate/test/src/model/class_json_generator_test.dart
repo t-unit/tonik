@@ -1339,6 +1339,102 @@ void main() {
       });
     });
 
+    group('typed additionalProperties with list-of-string values', () {
+      late ClassModel model;
+
+      setUp(() {
+        model = ClassModel(
+          isDeprecated: false,
+          name: 'Serie0',
+          properties: [
+            Property(
+              name: 'timestamps',
+              model: ListModel(
+                content: DateTimeModel(context: context),
+                context: context,
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+        );
+      });
+
+      test('generates toJson spreading list-of-string AP directly', () {
+        const expectedMethod = '''
+  Object? toJson() => {
+    r'timestamps': timestamps.map((e) => e.toTimeZonedIso8601String()).toList(),
+    ...additionalProperties,
+  };''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
+    group('typed additionalProperties with list-of-complex values', () {
+      late ClassModel model;
+
+      setUp(() {
+        model = ClassModel(
+          isDeprecated: false,
+          name: 'WidgetGroups',
+          properties: [
+            Property(
+              name: 'version',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: ListModel(
+              content: ClassModel(
+                isDeprecated: false,
+                name: 'Widget',
+                properties: const [],
+                context: context,
+              ),
+              context: context,
+            ),
+          ),
+        );
+      });
+
+      test('generates toJson mapping list-of-complex AP values', () {
+        const expectedMethod = '''
+  Object? toJson() => {
+    r'version': version,
+    ...additionalProperties.map(
+      (k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()),
+    ),
+  };''';
+
+        final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+    });
+
     group('NoAdditionalProperties', () {
       test('generates fromJson without AP logic', () {
         final model = ClassModel(
