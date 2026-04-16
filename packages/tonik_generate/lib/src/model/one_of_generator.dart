@@ -353,8 +353,7 @@ class OneOfGenerator {
                     m.discriminatorValue != null &&
                     m.model.resolved is! PrimitiveModel &&
                     m.model.resolved is! ListModel &&
-                    m.model.resolved is! MapModel &&
-                    model is! EnumModel,
+                    m.model.resolved is! MapModel,
               )) {
         final variantName = variantNames[m]!;
 

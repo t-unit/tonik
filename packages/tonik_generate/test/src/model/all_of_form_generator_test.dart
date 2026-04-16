@@ -195,21 +195,16 @@ void main() {
     final combinedClass = generator.generateClass(model);
     final generated = format(combinedClass.accept(emitter).toString());
 
-    const expectedToFormMethod = r'''
+    const expectedToFormMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          final _$map = <String, String>{};
-          _$map.addAll($base.parameterProperties(allowEmpty: allowEmpty));
-          _$map.addAll(choice.parameterProperties(allowEmpty: allowEmpty));
-          return _$map.toForm(
-            explode: explode,
+          return parameterProperties(
             allowEmpty: allowEmpty,
-            alreadyEncoded: true,
-          );
+          ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
         }
       ''';
 

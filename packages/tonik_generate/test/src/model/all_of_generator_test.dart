@@ -1627,6 +1627,92 @@ void main() {
         );
       },
     );
+
+    test(
+      'generates parameterProperties that throws when contains maps',
+      () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'AllOfWithMap',
+          models: {
+            MapModel(
+              valueModel: StringModel(context: context),
+              context: context,
+            ),
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedParameterProperties = '''
+          Map<String, String> parameterProperties({
+            bool allowEmpty = true,
+            bool allowLists = true,
+          }) =>
+            throw EncodingException(
+              r'parameterProperties not supported for AllOfWithMap: contains map types',
+            );
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedParameterProperties)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties that throws for allOf mixing map and class',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'TestClass',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'AllOfMixedMapClass',
+          models: {
+            MapModel(
+              valueModel: IntegerModel(context: context),
+              context: context,
+            ),
+            classModel,
+          },
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedParameterProperties = '''
+          Map<String, String> parameterProperties({
+            bool allowEmpty = true,
+            bool allowLists = true,
+          }) =>
+            throw EncodingException(
+              r'parameterProperties not supported for AllOfMixedMapClass: contains map types',
+            );
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedParameterProperties)),
+        );
+      },
+    );
   });
 
   group('nullable allOf', () {
