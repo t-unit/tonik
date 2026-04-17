@@ -89,8 +89,12 @@ class Date {
   /// Converts this [Date] to a form-encoded string.
   ///
   /// Returns the date in ISO 8601 format (YYYY-MM-DD) with proper URL encoding.
-  String toForm({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty, useQueryComponent: true);
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) =>
+      uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 
   /// Converts this [Date] to a label-encoded string.
   ///

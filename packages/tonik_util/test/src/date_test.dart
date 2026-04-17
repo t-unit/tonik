@@ -312,6 +312,33 @@ void main() {
           expect(decoded.day, testDate.day);
         }
       });
+
+      test(
+        'toForm uses encodeComponent by default '
+        'when useQueryComponent is false',
+        () {
+          final date = Date(2024, 3, 15);
+          final encoded = date.toForm(
+            explode: false,
+            allowEmpty: true,
+          );
+          expect(encoded, Uri.encodeComponent('2024-03-15'));
+        },
+      );
+
+      test(
+        'toForm uses encodeQueryComponent '
+        'when useQueryComponent is true',
+        () {
+          final date = Date(2024, 3, 15);
+          final encoded = date.toForm(
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          );
+          expect(encoded, Uri.encodeQueryComponent('2024-03-15'));
+        },
+      );
     });
   });
 
