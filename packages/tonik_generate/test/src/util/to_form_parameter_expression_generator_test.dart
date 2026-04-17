@@ -446,4 +446,138 @@ void main() {
       );
     });
   });
+
+  group('nullable receiver support', () {
+    test('generates null-safe toForm for StringModel when isNullable', () {
+      final model = StringModel(context: context);
+      final expression = buildFormParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value?.toForm(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates null-safe toForm for ClassModel when isNullable', () {
+      final model = ClassModel(
+        name: 'MyClass',
+        properties: [],
+        isDeprecated: false,
+        context: context,
+      );
+      final expression = buildFormParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value?.toForm(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates null-safe toForm for ListModel when isNullable', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      final expression = buildFormParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value?.toForm(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('uses null-safe access for AliasModel when isNullable', () {
+      final model = AliasModel(
+        name: 'MyAlias',
+        model: StringModel(context: context),
+        context: context,
+        isNullable: true,
+      );
+      final expression = buildFormParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value?.toForm(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('does not use null-safe when isNullable is false', () {
+      final model = StringModel(context: context);
+      final expression = buildFormParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value.toForm(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+  });
 }

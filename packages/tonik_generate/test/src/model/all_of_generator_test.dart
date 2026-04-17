@@ -1239,6 +1239,203 @@ void main() {
       );
     });
 
+    test('generates toSimple with null guard for nullable list', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfNullableList',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            isNullable: true,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToSimple = r'''
+        @override
+        String toSimple({required bool explode, required bool allowEmpty}) {
+          final _$values = <String>{};
+          if (list != null) {
+            final _$listSimple = list!
+                .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
+                .toList()
+                .toSimple(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
+            _$values.add(_$listSimple);
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf simple encoding: all values must encode to the same result',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToSimple)),
+      );
+    });
+
+    test('generates toForm with null guard for nullable list', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfNullableList',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            isNullable: true,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToForm = r'''
+        @override
+        String toForm({
+          required bool explode,
+          required bool allowEmpty,
+          bool useQueryComponent = false,
+        }) {
+          final _$values = <String>{};
+          if (list != null) {
+            final _$listForm = list!
+                .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
+                .toList()
+                .toForm(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
+            _$values.add(_$listForm);
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Inconsistent allOf form encoding: all values must encode to the same result',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToForm)),
+      );
+    });
+
+    test('generates toLabel with null guard for nullable list', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfNullableList',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            isNullable: true,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToLabel = r'''
+        @override
+        String toLabel({required bool explode, required bool allowEmpty}) {
+          final _$values = <String>{};
+          if (list != null) {
+            final _$listLabel = list!
+                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+                .toList()
+                .toLabel(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
+            _$values.add(_$listLabel);
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              'Inconsistent allOf label encoding: all values must encode to the same result',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToLabel)),
+      );
+    });
+
+    test('generates toMatrix with null guard for nullable list', () {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfNullableList',
+        models: {
+          ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            isNullable: true,
+          ),
+        },
+        context: context,
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToMatrix = r'''
+        @override
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          final _$values = <String>{};
+          if (list != null) {
+            final _$listMatrix = list!
+                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
+                .toList()
+                .toMatrix(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
+            _$values.add(_$listMatrix);
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Inconsistent allOf matrix encoding for AllOfNullableList: all values must encode to the same result',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToMatrix)),
+      );
+    });
+
     test('generates toJson for allOf with list of DateTime', () {
       final model = AllOfModel(
         isDeprecated: false,
@@ -1713,6 +1910,66 @@ void main() {
         );
       },
     );
+  });
+
+  group('allOf with nullable primitive via alias', () {
+    test('generates toMatrix with null guard for nullable alias to int', () {
+      final nullableAlias = AliasModel(
+        name: 'NullableInt',
+        model: IntegerModel(context: context),
+        context: context,
+        isNullable: true,
+      );
+
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfNullablePrimitive',
+        models: {nullableAlias},
+        context: context,
+      );
+
+      nameManager.prime(
+        models: {model, nullableAlias},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      final combinedClass = generator.generateClass(model);
+      final generated = format(combinedClass.accept(emitter).toString());
+
+      const expectedToMatrix = r'''
+        @override
+        String toMatrix(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+        }) {
+          final _$values = <String>{};
+          if (nullableInt != null) {
+            final _$nullableIntMatrix = nullableInt!.toMatrix(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+            );
+            _$values.add(_$nullableIntMatrix);
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Inconsistent allOf matrix encoding for AllOfNullablePrimitive: all values must encode to the same result',
+            );
+          }
+          return _$values.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedToMatrix)),
+      );
+    });
   });
 
   group('nullable allOf', () {

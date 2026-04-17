@@ -7,7 +7,12 @@ Expression buildSimpleParameterExpression(
   Model model, {
   required Expression explode,
   required Expression allowEmpty,
+  bool isNullable = false,
 }) {
+  final propertyAccess = isNullable
+      ? valueExpression.nullSafeProperty('toSimple')
+      : valueExpression.property('toSimple');
+
   return switch (model) {
     StringModel() ||
     BooleanModel() ||
@@ -22,7 +27,7 @@ Expression buildSimpleParameterExpression(
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression.property('toSimple').call(
+    AnyOfModel() => propertyAccess.call(
       [],
       {
         'explode': explode,
@@ -34,12 +39,14 @@ Expression buildSimpleParameterExpression(
       content,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AliasModel() => buildSimpleParameterExpression(
       valueExpression,
       model.model,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AnyModel() =>
       refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
@@ -66,9 +73,18 @@ Expression _buildListSimpleExpression(
   Model contentModel, {
   required Expression explode,
   required Expression allowEmpty,
+  bool isNullable = false,
 }) {
+  final listPropertyAccess = isNullable
+      ? valueExpression.nullSafeProperty('toSimple')
+      : valueExpression.property('toSimple');
+
+  final listMapAccess = isNullable
+      ? valueExpression.nullSafeProperty('map')
+      : valueExpression.property('map');
+
   return switch (contentModel) {
-    StringModel() => valueExpression.property('toSimple').call(
+    StringModel() => listPropertyAccess.call(
       [],
       {
         'explode': explode,
@@ -84,8 +100,7 @@ Expression _buildListSimpleExpression(
     UriModel() ||
     DateModel() ||
     EnumModel() =>
-      valueExpression
-          .property('map')
+      listMapAccess
           .call([
             Method(
               (b) => b
@@ -116,10 +131,10 @@ Expression _buildListSimpleExpression(
       contentModel.model,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
-      valueExpression
-          .property('map')
+      listMapAccess
           .call([
             Method(
               (b) => b
@@ -143,7 +158,7 @@ Expression _buildListSimpleExpression(
               'alreadyEncoded': literalBool(true),
             },
           ),
-    ClassModel() || ListModel() => valueExpression.property('toSimple').call(
+    ClassModel() || ListModel() => listPropertyAccess.call(
       [],
       {
         'explode': explode,

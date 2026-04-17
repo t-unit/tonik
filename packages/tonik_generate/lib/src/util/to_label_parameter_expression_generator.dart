@@ -7,7 +7,12 @@ Expression buildLabelParameterExpression(
   Model model, {
   required Expression explode,
   required Expression allowEmpty,
+  bool isNullable = false,
 }) {
+  final propertyAccess = isNullable
+      ? valueExpression.nullSafeProperty('toLabel')
+      : valueExpression.property('toLabel');
+
   return switch (model) {
     StringModel() ||
     BooleanModel() ||
@@ -22,7 +27,7 @@ Expression buildLabelParameterExpression(
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression.property('toLabel').call(
+    AnyOfModel() => propertyAccess.call(
       [],
       {
         'explode': explode,
@@ -34,12 +39,14 @@ Expression buildLabelParameterExpression(
       content,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AliasModel() => buildLabelParameterExpression(
       valueExpression,
       model.model,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AnyModel() => _buildAnyModelLabelExpression(
       valueExpression,
@@ -63,9 +70,18 @@ Expression _buildListLabelExpression(
   Model contentModel, {
   required Expression explode,
   required Expression allowEmpty,
+  bool isNullable = false,
 }) {
+  final listPropertyAccess = isNullable
+      ? valueExpression.nullSafeProperty('toLabel')
+      : valueExpression.property('toLabel');
+
+  final listMapAccess = isNullable
+      ? valueExpression.nullSafeProperty('map')
+      : valueExpression.property('map');
+
   return switch (contentModel) {
-    StringModel() => valueExpression.property('toLabel').call(
+    StringModel() => listPropertyAccess.call(
       [],
       {
         'explode': explode,
@@ -81,8 +97,7 @@ Expression _buildListLabelExpression(
     UriModel() ||
     DateModel() ||
     EnumModel() =>
-      valueExpression
-          .property('map')
+      listMapAccess
           .call([
             Method(
               (b) => b
@@ -110,10 +125,10 @@ Expression _buildListLabelExpression(
       contentModel.model,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
-      valueExpression
-          .property('map')
+      listMapAccess
           .call([
             Method(
               (b) => b
@@ -137,7 +152,7 @@ Expression _buildListLabelExpression(
               'alreadyEncoded': literalTrue,
             },
           ),
-    ClassModel() || ListModel() => valueExpression.property('toLabel').call(
+    ClassModel() || ListModel() => listPropertyAccess.call(
       [],
       {
         'explode': explode,

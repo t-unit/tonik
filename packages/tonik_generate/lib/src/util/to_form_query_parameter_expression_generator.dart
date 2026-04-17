@@ -88,6 +88,7 @@ List<Code> buildToFormQueryParameterCode(
         contentModel,
         contentShape,
         allowEmpty: allowEmpty,
+        isContentNullable: model.content.isEffectivelyNullable,
       );
     }
 
@@ -225,6 +226,7 @@ String? _getFormSerializationSuffix(
       model.content,
       explode: explode,
       allowEmpty: allowEmpty,
+      isContentNullable: model.content.isEffectivelyNullable,
     ),
 
     AliasModel() => _getFormSerializationSuffix(
@@ -245,6 +247,7 @@ String? _handleListExpression(
   Model contentModel, {
   required bool explode,
   required bool allowEmpty,
+  bool isContentNullable = false,
 }) {
   final paramString = 'explode: $explode, allowEmpty: $allowEmpty';
 
@@ -268,7 +271,8 @@ String? _handleListExpression(
         explode: explode,
         allowEmpty: allowEmpty,
       );
-      final elementMapBody = '(e) => e$suffix';
+      final nullAware = isContentNullable ? '?' : '';
+      final elementMapBody = '(e) => e$nullAware$suffix';
       return '.map($elementMapBody).toList().toForm($paramString)';
     }(),
 
@@ -286,6 +290,7 @@ String? _handleListExpression(
       contentModel.model,
       explode: explode,
       allowEmpty: allowEmpty,
+      isContentNullable: isContentNullable || contentModel.isNullable,
     ),
 
     BinaryModel() => null,
@@ -301,8 +306,12 @@ List<Code> _buildExplodedListCode(
   Model contentModel,
   EncodingShape contentShape, {
   required bool allowEmpty,
+  bool isContentNullable = false,
 }) {
   final nameCode = specLiteralStringCode(parameter.rawName);
+  final toFormCall = isContentNullable
+      ? "e?.toForm(explode: true, allowEmpty: $allowEmpty) ?? ''"
+      : 'e.toForm(explode: true, allowEmpty: $allowEmpty)';
 
   if (contentShape == EncodingShape.complex) {
     return [
@@ -334,9 +343,12 @@ List<Code> _buildExplodedListCode(
   }
 
   if (contentShape == EncodingShape.mixed) {
+    final itemAccessor = isContentNullable
+        ? 'item?.currentEncodingShape'
+        : 'item.currentEncodingShape';
     return [
       Code('for (final item in $parameterName) {'),
-      const Code('if (item.currentEncodingShape != '),
+      Code('if ($itemAccessor != '),
       refer('EncodingShape', 'package:tonik_util/tonik_util.dart').code,
       const Code('.simple) {'),
       generateEncodingExceptionExpression(
@@ -349,9 +361,7 @@ List<Code> _buildExplodedListCode(
         '.addAll($parameterName.map((e) => (',
       ),
       Code('name: $nameCode, '),
-      Code(
-        'value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);',
-      ),
+      Code('value: $toFormCall,),),);'),
     ];
   }
 
@@ -361,6 +371,6 @@ List<Code> _buildExplodedListCode(
       '.addAll($parameterName.map((e) => (',
     ),
     Code('name: $nameCode, '),
-    Code('value: e.toForm(explode: true, allowEmpty: $allowEmpty),),),);'),
+    Code('value: $toFormCall,),),);'),
   ];
 }

@@ -7,7 +7,12 @@ Expression buildFormParameterExpression(
   Model model, {
   required Expression explode,
   required Expression allowEmpty,
+  bool isNullable = false,
 }) {
+  final propertyAccess = isNullable
+      ? valueExpression.nullSafeProperty('toForm')
+      : valueExpression.property('toForm');
+
   return switch (model) {
     StringModel() ||
     BooleanModel() ||
@@ -22,7 +27,7 @@ Expression buildFormParameterExpression(
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => valueExpression.property('toForm').call(
+    AnyOfModel() => propertyAccess.call(
       [],
       {
         'explode': explode,
@@ -37,12 +42,14 @@ Expression buildFormParameterExpression(
       content,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AliasModel() => buildFormParameterExpression(
       valueExpression,
       model.model,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AnyModel() =>
       refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart').call(
@@ -66,9 +73,18 @@ Expression _buildListFormExpression(
   Model contentModel, {
   required Expression explode,
   required Expression allowEmpty,
+  bool isNullable = false,
 }) {
+  final listPropertyAccess = isNullable
+      ? valueExpression.nullSafeProperty('toForm')
+      : valueExpression.property('toForm');
+
+  final listMapAccess = isNullable
+      ? valueExpression.nullSafeProperty('map')
+      : valueExpression.property('map');
+
   return switch (contentModel) {
-    StringModel() => valueExpression.property('toForm').call(
+    StringModel() => listPropertyAccess.call(
       [],
       {
         'explode': explode,
@@ -87,8 +103,7 @@ Expression _buildListFormExpression(
     AllOfModel() ||
     OneOfModel() ||
     AnyOfModel() =>
-      valueExpression
-          .property('map')
+      listMapAccess
           .call([
             Method(
               (b) => b
@@ -119,8 +134,9 @@ Expression _buildListFormExpression(
       contentModel.model,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
-    ClassModel() || ListModel() => valueExpression.property('toForm').call(
+    ClassModel() || ListModel() => listPropertyAccess.call(
       [],
       {
         'explode': explode,

@@ -383,5 +383,136 @@ void main() {
         },
       );
     });
+
+    group('nullable list content', () {
+      test(
+        'generates e?.toForm for exploded list '
+        'with nullable content model',
+        () {
+          final parameter = createParameter(
+            name: 'queryType',
+            rawName: 'queryType',
+            model: ListModel(
+              content: AliasModel(
+                name: 'NullableType',
+                model: EnumModel<String>(
+                  name: 'MyEnum',
+                  values: {const EnumEntry(value: 'a')},
+                  isNullable: false,
+                  isDeprecated: false,
+                  context: context,
+                ),
+                context: context,
+                isNullable: true,
+              ),
+              context: context,
+            ),
+            explode: true,
+            allowEmpty: false,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'queryType',
+            parameter,
+            explode: true,
+            allowEmpty: false,
+          );
+
+          final generated = emitCodes(codes);
+
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                "e?.toForm(explode: true, allowEmpty: false) ?? ''",
+              ),
+            ),
+          );
+        },
+      );
+
+      test(
+        'generates e.toForm for exploded list '
+        'with non-nullable content model',
+        () {
+          final parameter = createParameter(
+            name: 'values',
+            rawName: 'values',
+            model: ListModel(
+              content: IntegerModel(context: context),
+              context: context,
+            ),
+            explode: true,
+            allowEmpty: false,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'values',
+            parameter,
+            explode: true,
+            allowEmpty: false,
+          );
+
+          final generated = emitCodes(codes);
+
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                'e.toForm(explode: true, allowEmpty: false)',
+              ),
+            ),
+          );
+        },
+      );
+    });
+
+    group('non-exploded list with nullable alias content', () {
+      test(
+        'generates nullable map expression for list with nullable alias '
+        'wrapping IntegerModel',
+        () {
+          final parameter = createParameter(
+            name: 'ids',
+            rawName: 'ids',
+            model: ListModel(
+              content: AliasModel(
+                name: 'NullableInt',
+                model: IntegerModel(context: context),
+                context: context,
+                isNullable: true,
+              ),
+              context: context,
+            ),
+            explode: false,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'ids',
+            parameter,
+          );
+
+          final generated = emitCodes(codes);
+
+          const expectedBody = r'''
+            test() {
+              _$entries.add((
+                name: r'ids',
+                value: ids
+                    .map((e) => e?.toForm(explode: false, allowEmpty: true))
+                    .toList()
+                    .toForm(explode: false, allowEmpty: true),
+              ));
+            }
+          ''';
+
+          expect(
+            collapseWhitespace(generated),
+            collapseWhitespace(expectedBody),
+          );
+        },
+      );
+    });
   });
 }

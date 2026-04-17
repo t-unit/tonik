@@ -446,4 +446,186 @@ void main() {
       );
     });
   });
+
+  group('nullable receiver support', () {
+    test('generates null-safe toSimple for StringModel when isNullable', () {
+      final model = StringModel(context: context);
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value?.toSimple(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates null-safe toSimple for ClassModel when isNullable', () {
+      final model = ClassModel(
+        name: 'MyClass',
+        properties: [],
+        isDeprecated: false,
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value?.toSimple(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates null-safe toSimple for ListModel when isNullable', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value?.toSimple(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test(
+      'generates null-safe map for ListModel with IntegerModel content '
+      'when isNullable',
+      () {
+        final model = ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        );
+        final expression = buildSimpleParameterExpression(
+          refer('value'),
+          model,
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+          isNullable: true,
+        );
+
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal('result')
+                .assign(expression)
+                .statement,
+        );
+
+        final generated = format(method.accept(emitter).toString());
+        const expected = '''
+          test() {
+            final result = value
+                ?.map(
+                  (e) =>
+                      e.toSimple(explode: explode, allowEmpty: allowEmpty),
+                )
+                .toList()
+                .toSimple(
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  alreadyEncoded: true,
+                );
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test('uses null-safe access for AliasModel when isNullable', () {
+      final model = AliasModel(
+        name: 'MyAlias',
+        model: StringModel(context: context),
+        context: context,
+        isNullable: true,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value?.toSimple(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('does not use null-safe when isNullable is false', () {
+      final model = StringModel(context: context);
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result =
+            value.toSimple(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+  });
 }

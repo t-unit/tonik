@@ -4,6 +4,10 @@ import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 /// Creates a Dart expression that correctly serializes a path parameter
 /// to its simple parameter encoding representation.
+///
+/// Path parameters are always required, so even if the underlying model type
+/// is nullable (e.g., `typedef X = String?`), we assert non-null via `!`
+/// rather than using `?.` which would produce `String?` output.
 Expression buildToSimplePathParameterExpression(
   String parameterName,
   PathParameterObject parameter, {
@@ -11,8 +15,11 @@ Expression buildToSimplePathParameterExpression(
   bool allowEmpty = true,
 }) {
   final model = parameter.model;
+  final isNullable = model.isEffectivelyNullable;
+  final receiver =
+      isNullable ? refer(parameterName).nullChecked : refer(parameterName);
   return _buildSimpleSerializationExpression(
-    refer(parameterName),
+    receiver,
     model,
     isNullable: false,
     explode: explode,
@@ -22,6 +29,9 @@ Expression buildToSimplePathParameterExpression(
 
 /// Creates a Dart expression that correctly serializes a
 /// header parameter to its simple parameter encoding representation.
+///
+/// Header parameters use `?.` when the model is nullable, as they can be
+/// optional.
 Expression buildToSimpleHeaderParameterExpression(
   String parameterName,
   RequestHeaderObject parameter, {
@@ -32,7 +42,7 @@ Expression buildToSimpleHeaderParameterExpression(
   return _buildSimpleSerializationExpression(
     refer(parameterName),
     model,
-    isNullable: false,
+    isNullable: model.isEffectivelyNullable,
     explode: explode,
     allowEmpty: allowEmpty,
   );
@@ -66,7 +76,7 @@ Expression _buildSimpleSerializationExpression(
   required bool explode,
   required bool allowEmpty,
 }) {
-  final useNullAware = isNullable || (model is EnumModel && model.isNullable);
+  final useNullAware = isNullable;
 
   Expression callToSimple(Expression target) {
     const methodName = 'toSimple';

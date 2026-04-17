@@ -126,6 +126,7 @@ rm -rf openai/openai_full_api
 rm -rf asana/asana_api
 rm -rf twilio/twilio_api
 rm -rf immutable_collections/immutable_collections_api
+rm -rf cloudflare/cloudflare_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 # Using compiled binary for much faster generation
@@ -244,6 +245,11 @@ fi
 $TONIK_BINARY --config immutable_collections/tonik.yaml
 add_dependency_overrides_recursive "immutable_collections/immutable_collections_api"
 
+$TONIK_BINARY --config cloudflare/tonik.yaml || echo "WARNING: Cloudflare generation failed."
+if [ -d "cloudflare/cloudflare_api" ]; then
+    add_dependency_overrides_recursive "cloudflare/cloudflare_api"
+fi
+
 # Run dart pub get for all generated packages in parallel
 echo "Running dart pub get for all generated packages in parallel..."
 (
@@ -281,6 +287,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   ([ -d "asana/asana_api" ] && cd asana/asana_api && dart pub get) &
   ([ -d "twilio/twilio_api" ] && cd twilio/twilio_api && dart pub get) &
   cd immutable_collections/immutable_collections_api && dart pub get &
+  ([ -d "cloudflare/cloudflare_api" ] && cd cloudflare/cloudflare_api && dart pub get) &
   wait
 )
 echo "All dart pub get operations completed"
@@ -334,6 +341,7 @@ restore_test_package_overrides "github/github_test/pubspec.yaml" "../../../packa
 restore_test_package_overrides "openai/openai_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "asana/asana_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "immutable_collections/immutable_collections_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "cloudflare/cloudflare_test/pubspec.yaml" "../../../packages/tonik_util"
 
 # Run dart pub get for all test packages in parallel
 echo "Running dart pub get for all test packages in parallel..."
@@ -367,6 +375,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd openai/openai_test && dart pub get &
   cd asana/asana_test && dart pub get &
   cd immutable_collections/immutable_collections_test && dart pub get &
+  cd cloudflare/cloudflare_test && dart pub get &
   wait
 )
 echo "All test package dependencies resolved"
