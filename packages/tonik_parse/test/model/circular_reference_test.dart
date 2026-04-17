@@ -660,6 +660,59 @@ void main() {
       },
     );
 
+    test(
+      r'top-level array whose items $ref back to the array via a property '
+      'produces exactly one ListModel (no duplicate)',
+      () {
+        // Reproduces the Cloudflare `request-tracer_trace` bug: a top-level
+        // array schema with inline items that self-reference via a property.
+        const spec = {
+          'openapi': '3.0.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'TracerTrace': {
+                'type': 'array',
+                'items': {
+                  'type': 'object',
+                  'properties': {
+                    'trace': {r'$ref': '#/components/schemas/TracerTrace'},
+                  },
+                },
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(spec);
+
+        // Exactly ONE ListModel named 'TracerTrace' exists.
+        final tracerTraceModels = api.models
+            .whereType<ListModel>()
+            .where((m) => m.name == 'TracerTrace')
+            .toList();
+        expect(tracerTraceModels.length, 1);
+
+        final tracerTrace = tracerTraceModels.single;
+
+        // The items ClassModel is present in api.models.
+        final itemsModels = api.models.whereType<ClassModel>().toList();
+        expect(itemsModels.length, 1);
+        final itemsModel = itemsModels.single;
+
+        // ListModel.content points to the items ClassModel.
+        expect(identical(tracerTrace.content, itemsModel), isTrue);
+
+        // The items ClassModel has a property 'trace' whose model is
+        // identical to the registered TracerTrace ListModel.
+        final traceProp = itemsModel.properties.firstWhere(
+          (p) => p.name == 'trace',
+        );
+        expect(identical(traceProp.model, tracerTrace), isTrue);
+      },
+    );
+
     test('bare ref cycle produces valid AliasModels', () {
       const spec = {
         'openapi': '3.0.0',

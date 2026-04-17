@@ -676,17 +676,31 @@ class ModelImporter {
     final items = schema.items;
 
     final modelContext = context.push('array');
-    final content = items == null
-        ? AnyModel(context: modelContext)
-        : _resolveSchemaRef(null, items, modelContext);
-    return ListModel(
-      content: content,
+
+    // Register the model early (with an AnyModel placeholder content) so
+    // that circular references to a named array schema resolve to this
+    // same ListModel instead of triggering a duplicate parse via
+    // _resolveWithCycleCheck.
+    final listModel = ListModel(
+      content: AnyModel(context: modelContext),
       context: context,
       name: name,
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
     );
+
+    if (name != null &&
+        models.none((m) => m is NamedModel && m.name == name)) {
+      _logModelAdded(listModel);
+      models.add(listModel);
+    }
+
+    listModel.content = items == null
+        ? AnyModel(context: modelContext)
+        : _resolveSchemaRef(null, items, modelContext);
+
+    return listModel;
   }
 
   AllOfModel _parseAllOf(String? name, Schema schema, Context context) {
