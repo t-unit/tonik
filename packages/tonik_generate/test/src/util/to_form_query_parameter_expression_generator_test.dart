@@ -420,13 +420,22 @@ void main() {
 
           final generated = emitCodes(codes);
 
+          const expectedBody = r'''
+            test() {
+              _$entries.addAll(
+                queryType.map(
+                  (e) => (
+                    name: r'queryType',
+                    value: e?.toForm(explode: true, allowEmpty: false) ?? '',
+                  ),
+                ),
+              );
+            }
+          ''';
+
           expect(
             collapseWhitespace(generated),
-            contains(
-              collapseWhitespace(
-                "e?.toForm(explode: true, allowEmpty: false) ?? ''",
-              ),
-            ),
+            collapseWhitespace(expectedBody),
           );
         },
       );
@@ -455,13 +464,20 @@ void main() {
 
           final generated = emitCodes(codes);
 
+          const expectedBody = r'''
+            test() {
+              _$entries.addAll(
+                values.map(
+                  (e) => (name: r'values',
+                    value: e.toForm(explode: true, allowEmpty: false)),
+                ),
+              );
+            }
+          ''';
+
           expect(
             collapseWhitespace(generated),
-            contains(
-              collapseWhitespace(
-                'e.toForm(explode: true, allowEmpty: false)',
-              ),
-            ),
+            collapseWhitespace(expectedBody),
           );
         },
       );
