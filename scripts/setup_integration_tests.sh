@@ -241,6 +241,14 @@ if [ -d "twilio/twilio_api" ]; then
     add_dependency_overrides_recursive "twilio/twilio_api"
 fi
 
+if [ -f "cloudflare/tonik.yaml" ]; then
+    rm -rf cloudflare/cloudflare_api
+    $TONIK_BINARY --config cloudflare/tonik.yaml || echo "WARNING: Cloudflare generation failed."
+    if [ -d "cloudflare/cloudflare_api" ]; then
+        add_dependency_overrides_recursive "cloudflare/cloudflare_api"
+    fi
+fi
+
 $TONIK_BINARY --config immutable_collections/tonik.yaml
 add_dependency_overrides_recursive "immutable_collections/immutable_collections_api"
 
@@ -280,6 +288,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   ([ -d "openai/openai_full_api" ] && cd openai/openai_full_api && dart pub get) &
   ([ -d "asana/asana_api" ] && cd asana/asana_api && dart pub get) &
   ([ -d "twilio/twilio_api" ] && cd twilio/twilio_api && dart pub get) &
+  ([ -d "cloudflare/cloudflare_api" ] && cd cloudflare/cloudflare_api && dart pub get) &
   cd immutable_collections/immutable_collections_api && dart pub get &
   wait
 )

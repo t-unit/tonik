@@ -120,4 +120,26 @@ void main() {
 
     expect(api.models, contains(oneOf.models.last.model));
   });
+
+  test('imports array schema without items as ListModel of AnyModel', () {
+    const spec = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'OpenList': {'type': 'array'},
+        },
+      },
+    };
+
+    final api = Importer().import(spec);
+
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'OpenList',
+    );
+
+    expect(model, isA<ListModel>());
+    expect(model.content, isA<AnyModel>());
+  });
 }
