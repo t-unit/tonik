@@ -1276,6 +1276,11 @@ void main() {
               'Inconsistent allOf simple encoding: all values must encode to the same result',
             );
           }
+          if (_$values.isEmpty) {
+            throw EncodingException(
+              'Cannot encode to simple: all properties are null',
+            );
+          }
           return _$values.first;
         }
       ''';
@@ -1327,6 +1332,11 @@ void main() {
               r'Inconsistent allOf form encoding: all values must encode to the same result',
             );
           }
+          if (_$values.isEmpty) {
+            throw EncodingException(
+              r'Cannot encode AllOfNullableList to encoding: all properties are null',
+            );
+          }
           return _$values.first;
         }
       ''';
@@ -1372,6 +1382,11 @@ void main() {
           if (_$values.length > 1) {
             throw EncodingException(
               'Inconsistent allOf label encoding: all values must encode to the same result',
+            );
+          }
+          if (_$values.isEmpty) {
+            throw EncodingException(
+              r'Cannot encode AllOfNullableList to encoding: all properties are null',
             );
           }
           return _$values.first;
@@ -1424,6 +1439,11 @@ void main() {
           if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf matrix encoding for AllOfNullableList: all values must encode to the same result',
+            );
+          }
+          if (_$values.isEmpty) {
+            throw EncodingException(
+              r'Cannot encode AllOfNullableList to encoding: all properties are null',
             );
           }
           return _$values.first;
@@ -1961,6 +1981,11 @@ void main() {
               r'Inconsistent allOf matrix encoding for AllOfNullablePrimitive: all values must encode to the same result',
             );
           }
+          if (_$values.isEmpty) {
+            throw EncodingException(
+              r'Cannot encode AllOfNullablePrimitive to encoding: all properties are null',
+            );
+          }
           return _$values.first;
         }
       ''';
@@ -2199,6 +2224,67 @@ void main() {
         'false',
       );
     });
+
+    test(
+      'generates uriEncode with null guard for nullable property',
+      () {
+        final nullableAlias = AliasModel(
+          name: 'NullableInt',
+          model: IntegerModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'AllOfNullablePrimitive',
+          models: {nullableAlias},
+          context: context,
+        );
+
+        nameManager.prime(
+          models: {model, nullableAlias},
+          requestBodies: const <RequestBody>[],
+          responses: const <Response>[],
+          operations: const <Operation>[],
+          tags: const <Tag>[],
+          servers: const <Server>[],
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedUriEncode = r'''
+          @override
+          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+            final _$values = <String>{};
+            if (nullableInt != null) {
+              final _$nullableIntEncoded = nullableInt!.uriEncode(
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
+              _$values.add(_$nullableIntEncoded);
+            }
+            if (_$values.length > 1) {
+              throw EncodingException(
+                r'Inconsistent allOf encoding for AllOfNullablePrimitive: all values must encode to the same result',
+              );
+            }
+            if (_$values.isEmpty) {
+              throw EncodingException(
+                r'Cannot encode AllOfNullablePrimitive to encoding: all properties are null',
+              );
+            }
+            return _$values.first;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedUriEncode)),
+        );
+      },
+    );
   });
 
   group('toForm', () {
@@ -2249,6 +2335,94 @@ void main() {
         'false',
       );
     });
+
+    test(
+      'generates toForm with null guard for nullable property in '
+      'direct primitives with dynamic models path',
+      () {
+        final statusOneOf = OneOfModel(
+          isDeprecated: false,
+          name: 'Status',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'State',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          },
+          context: context,
+          isNullable: true,
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'Combined',
+          models: {
+            StringModel(context: context),
+            statusOneOf,
+          },
+          context: context,
+        );
+
+        nameManager.prime(
+          models: {model, statusOneOf},
+          requestBodies: const <RequestBody>[],
+          responses: const <Response>[],
+          operations: const <Operation>[],
+          tags: const <Tag>[],
+          servers: const <Server>[],
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedToForm = r'''
+          @override
+          String toForm({
+            required bool explode,
+            required bool allowEmpty,
+            bool useQueryComponent = false,
+          }) {
+            if (currentEncodingShape == EncodingShape.mixed) {
+              throw EncodingException(
+                r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
+              );
+            }
+            final _$values = <String>{};
+            if (status != null) {
+              final _$statusForm = status!.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
+              _$values.add(_$statusForm);
+            }
+            final _$stringForm = string.toForm(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+            );
+            _$values.add(_$stringForm);
+            if (_$values.length > 1) {
+              throw EncodingException(
+                r'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
+              );
+            }
+            return _$values.first;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedToForm)),
+        );
+      },
+    );
   });
 
   group('allOf with nullable component models', () {

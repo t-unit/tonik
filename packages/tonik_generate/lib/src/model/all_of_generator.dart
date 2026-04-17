@@ -1467,6 +1467,11 @@ for (final _\$e in $apFieldName.entries) {
           ).assign(literalSet([], refer('String', 'dart:core'))).statement,
         ];
 
+        final allNullable = normalizedProperties.every((prop) {
+          return prop.property.isNullable ||
+              !prop.property.isRequired ||
+              prop.property.model.isEffectivelyNullable;
+        });
         for (final prop in normalizedProperties) {
           final isFieldNullable = prop.property.isNullable ||
               !prop.property.isRequired ||
@@ -1501,6 +1506,13 @@ for (final _\$e in $apFieldName.entries) {
             'all values must encode to the same result',
           ).statement,
           const Code('}'),
+          if (allNullable) ...[
+            const Code(r'if (_$values.isEmpty) {'),
+            generateEncodingExceptionExpression(
+              'Cannot encode to simple: all properties are null',
+            ).statement,
+            const Code('}'),
+          ],
           const Code(r'return _$values.first;'),
         ]);
 
@@ -1622,6 +1634,11 @@ for (final _\$e in $apFieldName.entries) {
         ];
 
         // Call toForm on each property and collect results.
+        final allNullableForm = normalizedProperties.every((prop) {
+          return prop.property.isNullable ||
+              !prop.property.isRequired ||
+              prop.property.model.isEffectivelyNullable;
+        });
         for (final prop in normalizedProperties) {
           final isNullable = prop.property.isNullable ||
               !prop.property.isRequired ||
@@ -1630,6 +1647,8 @@ for (final _\$e in $apFieldName.entries) {
               ? refer(prop.normalizedName).nullChecked
               : refer(prop.normalizedName);
           bodyCode.addAll([
+            if (isNullable)
+              Code('if (${prop.normalizedName} != null) {'),
             declareFinal('_\$${prop.normalizedName}Form')
                 .assign(
                   receiver.property('toForm').call([], {
@@ -1642,6 +1661,7 @@ for (final _\$e in $apFieldName.entries) {
             refer(r'_$values').property('add').call([
               refer('_\$${prop.normalizedName}Form'),
             ]).statement,
+            if (isNullable) const Code('}'),
           ]);
         }
 
@@ -1653,6 +1673,14 @@ for (final _\$e in $apFieldName.entries) {
             raw: true,
           ).statement,
           const Code('}'),
+          if (allNullableForm) ...[
+            const Code(r'if (_$values.isEmpty) {'),
+            generateEncodingExceptionExpression(
+              'Cannot encode $className to encoding: all properties are null',
+              raw: true,
+            ).statement,
+            const Code('}'),
+          ],
           const Code(r'return _$values.first;'),
         ]);
 
@@ -1816,6 +1844,11 @@ for (final _\$e in $apFieldName.entries) {
             ).assign(literalSet([], refer('String', 'dart:core'))).statement,
           ];
 
+          final allNullableFormList = normalizedProperties.every((prop) {
+            return prop.property.isNullable ||
+                !prop.property.isRequired ||
+                prop.property.model.isEffectivelyNullable;
+          });
           for (final prop in normalizedProperties) {
             final isFieldNullable = prop.property.isNullable ||
                 !prop.property.isRequired ||
@@ -1851,6 +1884,14 @@ for (final _\$e in $apFieldName.entries) {
               raw: true,
             ).statement,
             const Code('}'),
+            if (allNullableFormList) ...[
+              const Code(r'if (_$values.isEmpty) {'),
+              generateEncodingExceptionExpression(
+                'Cannot encode $className to encoding: all properties are null',
+                raw: true,
+              ).statement,
+              const Code('}'),
+            ],
             const Code(r'return _$values.first;'),
           ]);
 
@@ -2110,6 +2151,11 @@ for (final _\$e in $apFieldName.entries) {
           ).assign(literalSet([], refer('String', 'dart:core'))).statement,
         ];
 
+        final allNullableLabel = normalizedProperties.every((prop) {
+          return prop.property.isNullable ||
+              !prop.property.isRequired ||
+              prop.property.model.isEffectivelyNullable;
+        });
         for (final prop in normalizedProperties) {
           final isFieldNullable = prop.property.isNullable ||
               !prop.property.isRequired ||
@@ -2144,6 +2190,14 @@ for (final _\$e in $apFieldName.entries) {
             'all values must encode to the same result',
           ).statement,
           const Code('}'),
+          if (allNullableLabel) ...[
+            const Code(r'if (_$values.isEmpty) {'),
+            generateEncodingExceptionExpression(
+              'Cannot encode $className to encoding: all properties are null',
+              raw: true,
+            ).statement,
+            const Code('}'),
+          ],
           const Code(r'return _$values.first;'),
         ]);
 
@@ -2309,6 +2363,11 @@ for (final _\$e in $apFieldName.entries) {
           ).assign(literalSet([], refer('String', 'dart:core'))).statement,
         ];
 
+        final allNullableMatrix = normalizedProperties.every((prop) {
+          return prop.property.isNullable ||
+              !prop.property.isRequired ||
+              prop.property.model.isEffectivelyNullable;
+        });
         for (final prop in normalizedProperties) {
           final isFieldNullable = prop.property.isNullable ||
               !prop.property.isRequired ||
@@ -2345,6 +2404,14 @@ for (final _\$e in $apFieldName.entries) {
             raw: true,
           ).statement,
           const Code('}'),
+          if (allNullableMatrix) ...[
+            const Code(r'if (_$values.isEmpty) {'),
+            generateEncodingExceptionExpression(
+              'Cannot encode $className to encoding: all properties are null',
+              raw: true,
+            ).statement,
+            const Code('}'),
+          ],
           const Code(r'return _$values.first;'),
         ]);
 
@@ -2430,6 +2497,11 @@ for (final _\$e in $apFieldName.entries) {
       ).assign(literalSet([], refer('String', 'dart:core'))).statement,
     ];
 
+    final allNullableMatrixPrim = normalizedProperties.every((prop) {
+      return prop.property.isNullable ||
+          !prop.property.isRequired ||
+          prop.property.model.isEffectivelyNullable;
+    });
     for (final prop in normalizedProperties) {
       final isFieldNullable = prop.property.isNullable ||
           !prop.property.isRequired ||
@@ -2466,6 +2538,14 @@ for (final _\$e in $apFieldName.entries) {
         raw: true,
       ).statement,
       const Code('}'),
+      if (allNullableMatrixPrim) ...[
+        const Code(r'if (_$values.isEmpty) {'),
+        generateEncodingExceptionExpression(
+          'Cannot encode $className to encoding: all properties are null',
+          raw: true,
+        ).statement,
+        const Code('}'),
+      ],
       const Code(r'return _$values.first;'),
     ]);
 
@@ -2635,6 +2715,11 @@ for (final _\$e in $apFieldName.entries) {
       ).assign(literalSet([], refer('String', 'dart:core'))).statement,
     ];
 
+    final allNullableUri = normalizedProperties.every((prop) {
+      return prop.property.isNullable ||
+          !prop.property.isRequired ||
+          prop.property.model.isEffectivelyNullable;
+    });
     for (final prop in normalizedProperties) {
       final isNullable = prop.property.isNullable ||
           !prop.property.isRequired ||
@@ -2643,6 +2728,7 @@ for (final _\$e in $apFieldName.entries) {
           ? refer(prop.normalizedName).nullChecked
           : refer(prop.normalizedName);
       valueCollectionCode.addAll([
+        if (isNullable) Code('if (${prop.normalizedName} != null) {'),
         declareFinal('_\$${prop.normalizedName}Encoded')
             .assign(
               receiver.property('uriEncode').call([], {
@@ -2654,6 +2740,7 @@ for (final _\$e in $apFieldName.entries) {
         refer(r'_$values').property('add').call([
           refer('_\$${prop.normalizedName}Encoded'),
         ]).statement,
+        if (isNullable) const Code('}'),
       ]);
     }
 
@@ -2665,6 +2752,14 @@ for (final _\$e in $apFieldName.entries) {
         raw: true,
       ).statement,
       const Code('}'),
+      if (allNullableUri) ...[
+        const Code(r'if (_$values.isEmpty) {'),
+        generateEncodingExceptionExpression(
+          'Cannot encode $className to encoding: all properties are null',
+          raw: true,
+        ).statement,
+        const Code('}'),
+      ],
       const Code(r'return _$values.first;'),
     ]);
 
