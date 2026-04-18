@@ -421,6 +421,82 @@ void main() {
       );
     });
 
+    test(
+      'optional header with nullable model uses non-null access '
+      'inside null-check block',
+      () {
+        final optionalNullableHeader = RequestHeaderObject(
+          name: 'X-Nullable-Object',
+          rawName: 'X-Nullable-Object',
+          description: 'An optional header with a nullable model',
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: ClassModel(
+            name: 'NullableObj',
+            properties: const [],
+            context: context,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'operationWithNullableHeader',
+          context: context,
+          summary: 'Operation with nullable header',
+          description: 'An operation with an optional nullable header',
+          tags: const {},
+          isDeprecated: false,
+          path: '/with-nullable-header',
+          method: HttpMethod.get,
+          headers: {optionalNullableHeader},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final headers =
+            <({String normalizedName, RequestHeaderObject parameter})>[
+              (
+                normalizedName: 'xNullableObject',
+                parameter: optionalNullableHeader,
+              ),
+            ];
+
+        const expectedMethod = r'''
+            Options _options({NullableObj? xNullableObject}) {
+              final _$headers = <String, dynamic>{};
+              _$headers['Accept'] = r'*/*';
+              if (xNullableObject != null) {
+                _$headers[r'X-Nullable-Object'] =
+                    xNullableObject.toSimple(explode: false, allowEmpty: false);
+              }
+              return Options(
+                method: 'GET',
+                headers: _$headers,
+                responseType: ResponseType.bytes,
+                validateStatus: (_) => true,
+              );
+            }
+          ''';
+
+        final method =
+            generator.generateOptionsMethod(operation, headers, []);
+
+        expect(method, isA<Method>());
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
     test('encodes headers with allowEmpty and explode flags', () {
       final requestHeader = RequestHeaderObject(
         name: 'X-My-Header',

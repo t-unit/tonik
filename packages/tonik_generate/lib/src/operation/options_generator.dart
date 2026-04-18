@@ -230,6 +230,7 @@ class OptionsGenerator {
                   acceptHeader!.parameter,
                   explode: acceptHeader.parameter.explode,
                   allowEmpty: acceptHeader.parameter.allowEmptyValue,
+                  isNullChecked: true,
                 ),
               )
               .statement,
@@ -301,12 +302,13 @@ class OptionsGenerator {
       }
 
       parameters.add(_generateHeaderParameter(paramName, resolvedParam));
-      final headerAssignment = _generateHeaderAssignment(
-        paramName,
-        resolvedParam,
-      );
 
       if (!resolvedParam.isRequired) {
+        final headerAssignment = _generateHeaderAssignment(
+          paramName,
+          resolvedParam,
+          isNullChecked: true,
+        );
         bodyStatements.add(
           Block.of([
             Code('if ($paramName != null) {'),
@@ -315,6 +317,10 @@ class OptionsGenerator {
           ]),
         );
       } else {
+        final headerAssignment = _generateHeaderAssignment(
+          paramName,
+          resolvedParam,
+        );
         bodyStatements.add(headerAssignment);
       }
     }
@@ -490,13 +496,15 @@ class OptionsGenerator {
 
   Code _generateHeaderAssignment(
     String paramName,
-    RequestHeaderObject resolvedParam,
-  ) {
+    RequestHeaderObject resolvedParam, {
+    bool isNullChecked = false,
+  }) {
     final valueExpression = buildToSimpleHeaderParameterExpression(
       paramName,
       resolvedParam,
       explode: resolvedParam.explode,
       allowEmpty: resolvedParam.allowEmptyValue,
+      isNullChecked: isNullChecked,
     );
 
     return refer(r'_$headers')

@@ -462,5 +462,107 @@ void main() {
         'xCustomHeader?.toSimple(explode: false, allowEmpty: true, )',
       );
     });
+
+    test(
+      'uses non-null call for effectively nullable AliasModel '
+      'when isNullChecked is true',
+      () {
+        final parameter = RequestHeaderObject(
+          name: 'x-custom-header',
+          rawName: 'x-custom-header',
+          description: 'Custom header',
+          model: AliasModel(
+            name: 'HeaderAlias',
+            model: StringModel(context: context),
+            context: context,
+            isNullable: true,
+          ),
+          encoding: HeaderParameterEncoding.simple,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: false,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          emit(
+            buildToSimpleHeaderParameterExpression(
+              'xCustomHeader',
+              parameter,
+              isNullChecked: true,
+            ),
+          ),
+          'xCustomHeader.toSimple(explode: false, allowEmpty: true, )',
+        );
+      },
+    );
+
+    test(
+      'uses non-null call for nullable ClassModel '
+      'when isNullChecked is true',
+      () {
+        final parameter = RequestHeaderObject(
+          name: 'x-nullable-object',
+          rawName: 'X-Nullable-Object',
+          description: 'Nullable object header',
+          model: ClassModel(
+            name: 'NullableObj',
+            properties: const [],
+            context: context,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+          encoding: HeaderParameterEncoding.simple,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: false,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          emit(
+            buildToSimpleHeaderParameterExpression(
+              'xNullableObject',
+              parameter,
+              isNullChecked: true,
+            ),
+          ),
+          'xNullableObject.toSimple(explode: false, allowEmpty: true, )',
+        );
+      },
+    );
+
+    test(
+      'uses null-safe call for nullable model when isNullChecked is false',
+      () {
+        final parameter = RequestHeaderObject(
+          name: 'x-nullable-header',
+          rawName: 'X-Nullable-Header',
+          description: 'Nullable header',
+          model: ClassModel(
+            name: 'NullableObj',
+            properties: const [],
+            context: context,
+            isNullable: true,
+            isDeprecated: false,
+          ),
+          encoding: HeaderParameterEncoding.simple,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          emit(
+            buildToSimpleHeaderParameterExpression(
+              'xNullableHeader',
+              parameter,
+            ),
+          ),
+          'xNullableHeader?.toSimple(explode: false, allowEmpty: true, )',
+        );
+      },
+    );
   });
 }

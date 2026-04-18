@@ -30,19 +30,21 @@ Expression buildToSimplePathParameterExpression(
 /// Creates a Dart expression that correctly serializes a
 /// header parameter to its simple parameter encoding representation.
 ///
-/// Header parameters use `?.` when the model is nullable, as they can be
-/// optional.
+/// When [isNullChecked] is true, the expression is already inside a
+/// null-check block (`if (param != null)`), so null-aware access is
+/// unnecessary even for nullable models.
 Expression buildToSimpleHeaderParameterExpression(
   String parameterName,
   RequestHeaderObject parameter, {
   bool explode = false,
   bool allowEmpty = true,
+  bool isNullChecked = false,
 }) {
   final model = parameter.model;
   return _buildSimpleSerializationExpression(
     refer(parameterName),
     model,
-    isNullable: model.isEffectivelyNullable,
+    isNullable: !isNullChecked && model.isEffectivelyNullable,
     explode: explode,
     allowEmpty: allowEmpty,
   );
