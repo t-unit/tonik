@@ -1881,7 +1881,8 @@ void main() {
     );
 
     test(
-      'generates parameterProperties that throws for allOf mixing map and class',
+      'generates parameterProperties that throws for allOf '
+      'mixing map and class',
       () {
         final classModel = ClassModel(
           isDeprecated: false,
@@ -2575,8 +2576,7 @@ void main() {
             ),
           },
           context: context,
-          additionalProperties:
-              const UnrestrictedAdditionalProperties(),
+          additionalProperties: const UnrestrictedAdditionalProperties(),
         );
       });
 
@@ -2854,8 +2854,7 @@ void main() {
             ),
           },
           context: context,
-          additionalProperties:
-              const UnrestrictedAdditionalProperties(),
+          additionalProperties: const UnrestrictedAdditionalProperties(),
         );
 
         const expectedMethod = r'''
@@ -3430,8 +3429,7 @@ bool operator ==(Object other) {
             ),
           },
           context: context,
-          additionalProperties:
-              const UnrestrictedAdditionalProperties(),
+          additionalProperties: const UnrestrictedAdditionalProperties(),
         );
 
         final combinedClass = immutableGenerator.generateClass(model);

@@ -214,7 +214,8 @@ class OneOfGenerator {
         useImmutableCollections: useImmutableCollections,
       );
 
-      final hasCollectionValue = !useImmutableCollections &&
+      final hasCollectionValue =
+          !useImmutableCollections &&
           (discriminatedModel.model.resolved is ListModel ||
               discriminatedModel.model.resolved is MapModel);
 
@@ -400,8 +401,7 @@ class OneOfGenerator {
           in stableModelSorter
               .sortDiscriminatedModels(model.models)
               .where(
-                (m) =>
-                    m.model.resolved is PrimitiveModel,
+                (m) => m.model.resolved is PrimitiveModel,
               )) {
         final variantName = variantNames[m]!;
 
@@ -436,8 +436,7 @@ class OneOfGenerator {
         in stableModelSorter
             .sortDiscriminatedModels(model.models)
             .where(
-              (m) =>
-                  m.model.resolved is PrimitiveModel,
+              (m) => m.model.resolved is PrimitiveModel,
             )) {
       final typeRef = typeReference(
         m.model.resolved,
@@ -460,8 +459,7 @@ class OneOfGenerator {
         in stableModelSorter
             .sortDiscriminatedModels(model.models)
             .where(
-              (m) =>
-                  m.model.resolved is! PrimitiveModel,
+              (m) => m.model.resolved is! PrimitiveModel,
             )) {
       final modelType = m.model;
       final resolvedType = modelType.resolved;
@@ -658,9 +656,9 @@ class OneOfGenerator {
         // wrapped in the try/catch that swallows DecodingException.
         final message = resolvedType.hasSimpleContent
             ? 'List decoding from $encodingStyleName encoding '
-                'is not supported in $className'
+                  'is not supported in $className'
             : 'List types with complex content cannot be decoded '
-                'from $encodingStyleName encoding in $className';
+                  'from $encodingStyleName encoding in $className';
         bodyBlocks.add(
           generateSimpleDecodingExceptionExpression(
             message,
@@ -1328,9 +1326,9 @@ class OneOfGenerator {
               }).code,
               const Code(','),
               Code(
-              '${specLiteralStringCode(model.discriminator!)}: '
-              '${specLiteralStringCode(discriminatorValue)},',
-            ),
+                '${specLiteralStringCode(model.discriminator!)}: '
+                '${specLiteralStringCode(discriminatorValue)},',
+              ),
               const Code('}'),
             ]);
           } else {
@@ -1695,4 +1693,3 @@ class OneOfGenerator {
     );
   }
 }
-

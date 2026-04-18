@@ -32,7 +32,7 @@ sealed class Model {
   ///
   /// For non-alias models this returns `this`. For [AliasModel] it walks
   /// the chain until a non-alias model is reached.
-  Model get resolved => this;
+  Model get resolved => this; // ignore: avoid_returning_this
 
   /// Whether this model produces a nullable Dart type, including through
   /// typedef/alias chains.
