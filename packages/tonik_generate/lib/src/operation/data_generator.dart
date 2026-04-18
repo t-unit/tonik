@@ -88,7 +88,7 @@ class DataGenerator {
                   NamedModel() ||
                   CompositeModel():
                 switchCases
-                  ..add(const Code(' value => '))
+                  ..add(const Code(' _ => '))
                   ..add(
                     generateEncodingExceptionExpression(
                       'Unsupported model for bytes content type.',
@@ -126,8 +126,9 @@ class DataGenerator {
               )
               ..add(const Code(','));
           case .multipart:
+            final isClassModel = c.model.resolved is ClassModel;
             switchCases
-              ..add(const Code(' value => '))
+              ..add(Code(isClassModel ? ' value => ' : ' _ => '))
               ..add(
                 buildMultipartBodyExpression(
                   c,
