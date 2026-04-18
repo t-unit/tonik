@@ -276,8 +276,7 @@ class DataGenerator {
               nameManager,
               package,
             ),
-          ])
-          ..add(refer(r'_$formData').returned.statement);
+          ]);
     }
 
     // Collect multipart header params for single-content multipart bodies.
