@@ -3507,4 +3507,199 @@ Object? toJson() {
       },
     );
   });
+
+  group('allOf with MapModel components', () {
+    test(
+      'generates toJson without calling .toJson() on MapModel '
+      'in complex encoding shape',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Base',
+          properties: [
+            Property(
+              name: 'id',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final mapModel = MapModel(
+          valueModel: NumberModel(context: context),
+          context: context,
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'CombinedWithMap',
+          models: {classModel, mapModel},
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedToJson = r'''
+          Object? toJson() {
+            final _$map = <String, Object?>{};
+            final _$$baseJson = $base.toJson();
+            if (_$$baseJson is! Map<String, Object?>) {
+              throw EncodingException(
+                'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
+              );
+            }
+            _$map.addAll(_$$baseJson);
+            final _$mapJson = map;
+            _$map.addAll(_$mapJson);
+            return _$map;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedToJson)),
+        );
+      },
+    );
+
+    test(
+      'generates toJson with null guard for nullable MapModel '
+      'in complex encoding shape',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Base',
+          properties: [
+            Property(
+              name: 'id',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final mapModel = MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'CombinedWithNullableMap',
+          models: {classModel, mapModel},
+          context: context,
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedToJson = r'''
+          Object? toJson() {
+            final _$map = <String, Object?>{};
+            final _$$baseJson = $base.toJson();
+            if (_$$baseJson is! Map<String, Object?>) {
+              throw EncodingException(
+                'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
+              );
+            }
+            _$map.addAll(_$$baseJson);
+            if (map != null) {
+              final _$mapJson = map!;
+              _$map.addAll(_$mapJson);
+            }
+            return _$map;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedToJson)),
+        );
+      },
+    );
+
+    test(
+      'generates toJson without calling .toJson() on MapModel '
+      'in dynamic encoding shape path',
+      () {
+        // A OneOfModel with mixed encoding shapes (simple + complex)
+        // triggers the dynamic path in _buildToJsonMethod.
+        final statusOneOf = OneOfModel(
+          isDeprecated: false,
+          name: 'Status',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'State',
+                properties: const [],
+                context: context,
+              ),
+            ),
+          },
+          context: context,
+        );
+
+        final mapModel = MapModel(
+          valueModel: NumberModel(context: context),
+          context: context,
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'DynamicWithMap',
+          models: {statusOneOf, mapModel},
+          context: context,
+        );
+
+        nameManager.prime(
+          models: {model, statusOneOf},
+          requestBodies: const <RequestBody>[],
+          responses: const <Response>[],
+          operations: const <Operation>[],
+          tags: const <Tag>[],
+          servers: const <Server>[],
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedToJson = r'''
+          Object? toJson() {
+            if (currentEncodingShape == EncodingShape.mixed) {
+              throw EncodingException(
+                r'Cannot encode DynamicWithMap: mixing simple values (primitives/enums) and complex types is not supported',
+              );
+            }
+            final _$map = <String, Object?>{};
+            final _$mapJson = map;
+            _$map.addAll(_$mapJson);
+            final _$statusJson = status.toJson();
+            if (_$statusJson is! Map<String, Object?>) {
+              throw EncodingException(
+                'Expected status.toJson() to return Map<String, Object?>, got ${_$statusJson.runtimeType}',
+              );
+            }
+            _$map.addAll(_$statusJson);
+            return _$map;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedToJson)),
+        );
+      },
+    );
+  });
 }
