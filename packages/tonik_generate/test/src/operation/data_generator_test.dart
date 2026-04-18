@@ -1603,7 +1603,7 @@ void main() {
 
       test(
         'generates runtime throw for EnumModel with bytes in '
-        'multi-content request body',
+        'multi-content request body using wildcard pattern',
         () {
           final operation = Operation(
             operationId: 'testOp',
@@ -1649,14 +1649,100 @@ void main() {
             securitySchemes: const {},
           );
 
+          const expectedMethod = '''
+            Object? _data({required Test body}) {
+              return switch (body) {
+                final TestJson value => value.value.toJson(),
+                final TestOctetStream _ => throw EncodingException('Unsupported model for bytes content type.'),
+              };
+            }
+          ''';
+
           final method = generator.generateDataMethod(operation);
           final methodString = format(method.accept(emitter).toString());
           expect(
             collapseWhitespace(methodString),
-            contains('EncodingException'),
+            collapseWhitespace(format(expectedMethod)),
           );
         },
       );
     });
+
+    group(
+      'non-ClassModel multipart in multi-content uses wildcard pattern',
+      () {
+        test(
+          'generates throw with wildcard pattern for MapModel multipart in '
+          'multi-content request body',
+          () {
+            final jsonModel = ClassModel(
+              name: 'JsonPayload',
+              isDeprecated: false,
+              properties: const [],
+              context: testContext,
+            );
+
+            final mapModel = MapModel(
+              name: 'AssetMap',
+              valueModel: StringModel(context: testContext),
+              context: testContext,
+            );
+
+            final operation = Operation(
+              operationId: 'createItem',
+              path: '/items',
+              method: HttpMethod.post,
+              requestBody: RequestBodyObject(
+                name: 'createItem',
+                context: testContext,
+                description: null,
+                isRequired: true,
+                content: {
+                  RequestContent(
+                    model: jsonModel,
+                    contentType: ContentType.json,
+                    rawContentType: 'application/json',
+                  ),
+                  RequestContent(
+                    model: mapModel,
+                    contentType: ContentType.multipart,
+                    rawContentType: 'multipart/form-data',
+                  ),
+                },
+              ),
+              responses: const {},
+              pathParameters: const {},
+              cookieParameters: const {},
+              queryParameters: const {},
+              headers: const {},
+              context: testContext,
+              tags: const {},
+              isDeprecated: false,
+              securitySchemes: const {},
+            );
+
+            const expectedMethod = '''
+              Future<Object?> _data({required CreateItem body}) async {
+                return switch (body) {
+                  final CreateItemJson value => value.value.toJson(),
+                  final CreateItemFormData _ => await () async {
+                    throw UnsupportedError(
+                      'Multipart request bodies require an object schema (ClassModel). Got: MapModel.',
+                    );
+                  }(),
+                };
+              }
+            ''';
+
+            final method = generator.generateDataMethod(operation);
+            final methodString = format(method.accept(emitter).toString());
+            expect(
+              collapseWhitespace(methodString),
+              collapseWhitespace(format(expectedMethod)),
+            );
+          },
+        );
+      },
+    );
   });
 }
