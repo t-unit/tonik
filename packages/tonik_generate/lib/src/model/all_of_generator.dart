@@ -776,28 +776,47 @@ class AllOfGenerator {
         if (isNullable) {
           bodyCode.add(Code('if ($fieldName != null) {'));
         }
-        bodyCode.addAll([
-          Code('final $fieldNameJson = '),
-          if (isNullable)
-            Code('$fieldName!.toJson();')
-          else ...[
-            refer(fieldName).code,
-            const Code('.toJson();'),
-          ],
-          const Code('if ('),
-          refer(fieldNameJson).code,
-          const Code(' is! '),
-          mapType.code,
-          const Code(') {'),
-          generateEncodingExceptionExpression(
-            'Expected ${fieldName.replaceAll(r'$', r'\$')}.toJson() to '
-            'return Map<String, Object?>, got \${$fieldNameJson.runtimeType}',
-          ).statement,
-          const Code('}'),
-          const Code(r'_$map.addAll('),
-          refer(fieldNameJson).code,
-          const Code(');'),
-        ]);
+
+        final toJsonExpr = buildToJsonPropertyExpression(
+          fieldName,
+          normalized.property,
+          forceNonNullReceiver: isNullable,
+          useImmutableCollections: useImmutableCollections,
+        );
+
+        final isMapModel = normalized.property.model.resolved is MapModel;
+
+        if (isMapModel) {
+          // MapModel properties are already compile-time typed as Map,
+          // so no runtime type check is needed.
+          bodyCode.addAll([
+            Code('final $fieldNameJson = '),
+            toJsonExpr.code,
+            const Code(';'),
+            const Code(r'_$map.addAll('),
+            refer(fieldNameJson).code,
+            const Code(');'),
+          ]);
+        } else {
+          bodyCode.addAll([
+            Code('final $fieldNameJson = '),
+            toJsonExpr.code,
+            const Code(';'),
+            const Code('if ('),
+            refer(fieldNameJson).code,
+            const Code(' is! '),
+            mapType.code,
+            const Code(') {'),
+            generateEncodingExceptionExpression(
+              'Expected ${fieldName.replaceAll(r'$', r'\$')}.toJson() to '
+              'return Map<String, Object?>, got \${$fieldNameJson.runtimeType}',
+            ).statement,
+            const Code('}'),
+            const Code(r'_$map.addAll('),
+            refer(fieldNameJson).code,
+            const Code(');'),
+          ]);
+        }
         if (isNullable) {
           bodyCode.add(const Code('}'));
         }
@@ -897,28 +916,49 @@ class AllOfGenerator {
           if (isNullable) {
             mapParts.add(Code('if ($fieldName != null) {'));
           }
-          mapParts.addAll([
-            Code('final $fieldNameJson = '),
-            if (isNullable)
-              Code('$fieldName!.toJson();')
-            else ...[
-              refer(fieldName).code,
-              const Code('.toJson();'),
-            ],
-            const Code('if ('),
-            refer(fieldNameJson).code,
-            const Code(' is! '),
-            mapType.code,
-            const Code(') {'),
-            generateEncodingExceptionExpression(
-              'Expected ${fieldName.replaceAll(r'$', r'\$')}.toJson() to '
-              'return Map<String, Object?>, got \${$fieldNameJson.runtimeType}',
-            ).statement,
-            const Code('}'),
-            const Code(r'_$map.addAll('),
-            refer(fieldNameJson).code,
-            const Code(');'),
-          ]);
+
+          final toJsonExpr = buildToJsonPropertyExpression(
+            fieldName,
+            normalized.property,
+            forceNonNullReceiver: isNullable,
+            useImmutableCollections: useImmutableCollections,
+          );
+
+          final isMapModel = normalized.property.model.resolved is MapModel;
+
+          if (isMapModel) {
+            // MapModel properties are already compile-time typed as Map,
+            // so no runtime type check is needed.
+            mapParts.addAll([
+              Code('final $fieldNameJson = '),
+              toJsonExpr.code,
+              const Code(';'),
+              const Code(r'_$map.addAll('),
+              refer(fieldNameJson).code,
+              const Code(');'),
+            ]);
+          } else {
+            mapParts.addAll([
+              Code('final $fieldNameJson = '),
+              toJsonExpr.code,
+              const Code(';'),
+              const Code('if ('),
+              refer(fieldNameJson).code,
+              const Code(' is! '),
+              mapType.code,
+              const Code(') {'),
+              generateEncodingExceptionExpression(
+                'Expected '
+                '${fieldName.replaceAll(r'$', r'\$')}.toJson() to '
+                'return Map<String, Object?>, '
+                'got \${$fieldNameJson.runtimeType}',
+              ).statement,
+              const Code('}'),
+              const Code(r'_$map.addAll('),
+              refer(fieldNameJson).code,
+              const Code(');'),
+            ]);
+          }
           if (isNullable) {
             mapParts.add(const Code('}'));
           }
