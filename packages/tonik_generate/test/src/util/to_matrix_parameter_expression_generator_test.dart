@@ -463,4 +463,161 @@ void main() {
       );
     });
   });
+
+  group('nullable receiver support', () {
+    test('generates null-safe toMatrix for StringModel when isNullable', () {
+      final model = StringModel(context: context);
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result = value?.toMatrix(
+          paramName,
+          explode: explode,
+          allowEmpty: allowEmpty,
+        );
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates null-safe toMatrix for ClassModel when isNullable', () {
+      final model = ClassModel(
+        name: 'MyClass',
+        properties: [],
+        isDeprecated: false,
+        context: context,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result = value?.toMatrix(
+          paramName,
+          explode: explode,
+          allowEmpty: allowEmpty,
+        );
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test(
+      'generates null-safe toMatrix for ListModel<String> when isNullable',
+      () {
+        final model = ListModel(
+          content: StringModel(context: context),
+          context: context,
+        );
+        final expression = buildMatrixParameterExpression(
+          refer('value'),
+          model,
+          paramName: refer('paramName'),
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+          isNullable: true,
+        );
+
+        final generated = format(
+          'final result = ${expression.accept(emitter)};',
+        );
+        const expected = '''
+          final result = value?.toMatrix(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test('uses null-safe access for AliasModel when isNullable', () {
+      final model = AliasModel(
+        name: 'MyAlias',
+        model: StringModel(context: context),
+        context: context,
+        isNullable: true,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+        isNullable: true,
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result = value?.toMatrix(
+          paramName,
+          explode: explode,
+          allowEmpty: allowEmpty,
+        );
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('does not use null-safe when isNullable is false', () {
+      final model = StringModel(context: context);
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format(
+        'final result = ${expression.accept(emitter)};',
+      );
+      const expected = '''
+        final result = value.toMatrix(
+          paramName,
+          explode: explode,
+          allowEmpty: allowEmpty,
+        );
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+  });
 }

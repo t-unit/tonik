@@ -8,7 +8,12 @@ Expression buildMatrixParameterExpression(
   required Expression paramName,
   required Expression explode,
   required Expression allowEmpty,
+  bool isNullable = false,
 }) {
+  final propertyAccess = isNullable
+      ? valueExpression.nullSafeProperty('toMatrix')
+      : valueExpression.property('toMatrix');
+
   return switch (model) {
     StringModel() ||
     BooleanModel() ||
@@ -24,8 +29,7 @@ Expression buildMatrixParameterExpression(
     AllOfModel() ||
     OneOfModel() ||
     AnyOfModel() =>
-      valueExpression
-          .property('toMatrix')
+      propertyAccess
           .call(
             [paramName],
             {
@@ -39,6 +43,7 @@ Expression buildMatrixParameterExpression(
       paramName: paramName,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AliasModel() => buildMatrixParameterExpression(
       valueExpression,
@@ -46,6 +51,7 @@ Expression buildMatrixParameterExpression(
       paramName: paramName,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AnyModel() => _buildAnyModelMatrixExpression(
       valueExpression,
@@ -106,11 +112,19 @@ Expression _buildListMatrixExpression(
   required Expression paramName,
   required Expression explode,
   required Expression allowEmpty,
+  bool isNullable = false,
 }) {
+  final listPropertyAccess = isNullable
+      ? valueExpression.nullSafeProperty('toMatrix')
+      : valueExpression.property('toMatrix');
+
+  final listMapAccess = isNullable
+      ? valueExpression.nullSafeProperty('map')
+      : valueExpression.property('map');
+
   return switch (contentModel) {
     StringModel() =>
-      valueExpression
-          .property('toMatrix')
+      listPropertyAccess
           .call(
             [paramName],
             {
@@ -127,8 +141,7 @@ Expression _buildListMatrixExpression(
     UriModel() ||
     DateModel() ||
     EnumModel() =>
-      valueExpression
-          .property('map')
+      listMapAccess
           .call(
             [
               Method(
@@ -162,10 +175,10 @@ Expression _buildListMatrixExpression(
       paramName: paramName,
       explode: explode,
       allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
-      valueExpression
-          .property('map')
+      listMapAccess
           .call(
             [
               Method(

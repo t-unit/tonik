@@ -382,4 +382,85 @@ void main() {
       });
     });
   });
+
+  group('buildToSimplePathParameterExpression with nullable model', () {
+    test(
+      'uses null assertion for effectively nullable AliasModel '
+      'since path params are required',
+      () {
+        final parameter = PathParameterObject(
+          name: 'loaDocumentId',
+          rawName: 'loa_document_id',
+          description: 'LOA document ID',
+          model: AliasModel(
+            name: 'LoaDocumentIdentifier',
+            model: StringModel(context: context),
+            context: context,
+            isNullable: true,
+          ),
+          encoding: PathParameterEncoding.simple,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          emit(
+            buildToSimplePathParameterExpression('loaDocumentId', parameter),
+          ),
+          'loaDocumentId!.toSimple(explode: false, allowEmpty: true, )',
+        );
+      },
+    );
+
+    test('uses non-null call for non-nullable model', () {
+      final parameter = PathParameterObject(
+        name: 'userId',
+        rawName: 'userId',
+        description: 'User ID',
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(
+          buildToSimplePathParameterExpression('userId', parameter),
+        ),
+        'userId.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+  });
+
+  group('buildToSimpleHeaderParameterExpression with nullable model', () {
+    test('uses null-safe call for effectively nullable AliasModel', () {
+      final parameter = RequestHeaderObject(
+        name: 'x-custom-header',
+        rawName: 'x-custom-header',
+        description: 'Custom header',
+        model: AliasModel(
+          name: 'HeaderAlias',
+          model: StringModel(context: context),
+          context: context,
+          isNullable: true,
+        ),
+        encoding: HeaderParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(
+          buildToSimpleHeaderParameterExpression('xCustomHeader', parameter),
+        ),
+        'xCustomHeader?.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+  });
 }

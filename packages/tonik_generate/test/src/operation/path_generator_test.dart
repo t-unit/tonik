@@ -314,6 +314,73 @@ void main() {
     );
   });
 
+  test(
+    'encodes matrix path parameter with nullable model using null check',
+    () {
+    final pathParam = PathParameterObject(
+      name: 'status',
+      rawName: 'status',
+      description: 'Status filter',
+      isRequired: true,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      model: AliasModel(
+        name: 'NullableStatus',
+        model: StringModel(context: context),
+        context: context,
+        isNullable: true,
+      ),
+      encoding: PathParameterEncoding.matrix,
+      context: context,
+    );
+
+    final operation = Operation(
+      operationId: 'getByStatus',
+      context: context,
+      summary: 'Get by status',
+      description: 'Gets items by status',
+      tags: const {},
+      isDeprecated: false,
+      path: '/items{status}',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: const {},
+      pathParameters: {pathParam},
+      responses: const {},
+      securitySchemes: const {},
+      cookieParameters: const {},
+    );
+
+    const expectedMethod = '''
+        List<String> _path({required NullableStatus status}) {
+          return [r'items', status!.toMatrix(r'status', explode: false, allowEmpty: false, ), ];
+        }
+      ''';
+
+    nameManager.prime(
+      models: {pathParam.model},
+      requestBodies: const [],
+      responses: const [],
+      operations: const [],
+      tags: const [],
+      servers: const [],
+    );
+
+    final pathParameters =
+        <({String normalizedName, PathParameterObject parameter})>[
+          (normalizedName: 'status', parameter: pathParam),
+        ];
+
+    final method = generator.generatePathMethod(operation, pathParameters);
+
+    expect(
+      collapseWhitespace(method.accept(emitter).toString()),
+      collapseWhitespace(expectedMethod),
+    );
+  },
+  );
+
   test('encodes path parameters with explode=true', () {
     final pathParam = PathParameterObject(
       name: 'filter',

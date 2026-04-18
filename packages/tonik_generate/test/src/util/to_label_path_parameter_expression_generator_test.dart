@@ -585,4 +585,82 @@ void main() {
       },
     );
   });
+
+  group('nullable model support', () {
+    test(
+      'uses null assertion for nullable AliasModel '
+      'since path params are required',
+      () {
+        final parameter = PathParameterObject(
+          name: 'loaDocumentId',
+          rawName: 'loa_document_id',
+          description: 'LOA document ID',
+          model: AliasModel(
+            name: 'LoaDocumentIdentifier',
+            model: StringModel(context: context),
+            context: context,
+            isNullable: true,
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          emit(
+            buildToLabelPathParameterExpression('loaDocumentId', parameter),
+          ),
+          'loaDocumentId!.toLabel(explode: false, allowEmpty: false, )',
+        );
+      },
+    );
+
+    test('uses non-null toLabel for non-nullable model', () {
+      final parameter = PathParameterObject(
+        name: 'userId',
+        rawName: 'userId',
+        description: 'User ID',
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('userId', parameter)),
+        'userId.toLabel(explode: false, allowEmpty: false, )',
+      );
+    });
+
+    test(
+      'uses null assertion for nullable ListModel<String> '
+      'since path params are required',
+      () {
+        final parameter = PathParameterObject(
+          name: 'tags',
+          rawName: 'tags',
+          description: 'Tags parameter',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            isNullable: true,
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          emit(buildToLabelPathParameterExpression('tags', parameter)),
+          'tags!.toLabel(explode: false, allowEmpty: false, )',
+        );
+      },
+    );
+  });
 }
