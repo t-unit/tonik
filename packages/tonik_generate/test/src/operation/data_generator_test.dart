@@ -1495,6 +1495,63 @@ void main() {
           expect(method.modifier, MethodModifier.async);
         },
       );
+
+      test(
+        'generates _data method for non-ClassModel multipart body '
+        'without unreachable return',
+        () {
+          final mapModel = MapModel(
+            name: 'AssetMap',
+            valueModel: StringModel(context: testContext),
+            context: testContext,
+          );
+
+          final operation = Operation(
+            operationId: 'uploadAssets',
+            path: '/assets',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'uploadAssets',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: mapModel,
+                  contentType: ContentType.multipart,
+                  rawContentType: 'multipart/form-data',
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = '''
+            Future<Object?> _data({
+              required AssetMap body,
+            }) async {
+              throw UnsupportedError(
+                'Multipart request bodies require an object schema (ClassModel). Got: MapModel.',
+              );
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
     });
 
     group('unsupported bytes content type generates runtime throws', () {

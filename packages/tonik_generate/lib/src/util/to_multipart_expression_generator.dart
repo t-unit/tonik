@@ -37,20 +37,11 @@ Expression buildMultipartBodyExpression(
     package,
   );
 
-  // Only add `return formData;` when the model resolved to a ClassModel
-  // (i.e., formData was actually declared). For non-ClassModel bodies,
-  // the statements contain only a throw.
-  final model = content.model.resolved;
-  final bodyStatements = [
-    ...statements,
-    if (model is ClassModel) refer(r'_$formData').returned.statement,
-  ];
-
   return Method(
     (b) => b
       ..modifier = MethodModifier.async
       ..lambda = false
-      ..body = Block.of(bodyStatements),
+      ..body = Block.of(statements),
   ).closure.call([]).awaited;
 }
 
@@ -117,6 +108,8 @@ List<Code> _buildMultipartFields(
       statements.add(fieldCode);
     }
   }
+
+  statements.add(refer(r'_$formData').returned.statement);
 
   return statements;
 }

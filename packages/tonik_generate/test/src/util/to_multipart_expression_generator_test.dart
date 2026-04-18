@@ -96,6 +96,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -150,6 +151,7 @@ void main() {
             if (body.name != null) {
               _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name!, contentType: DioMediaType.parse(r'text/plain'))));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -204,6 +206,7 @@ void main() {
             if (body.nickname != null) {
               _$formData.files.add(MapEntry(r'nickname', MultipartFile.fromString(body.nickname!, contentType: DioMediaType.parse(r'text/plain'))));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -258,6 +261,7 @@ void main() {
             if (body.bio != null) {
               _$formData.files.add(MapEntry(r'bio', MultipartFile.fromString(body.bio!, contentType: DioMediaType.parse(r'text/plain'))));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -293,6 +297,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
+            return _$formData;
           }
         '''),
         ),
@@ -412,6 +417,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'title', MultipartFile.fromString(body.title, contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -472,6 +478,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -525,6 +532,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'password', MultipartFile.fromString(body.password, contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -577,6 +585,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'data', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -631,6 +640,7 @@ void main() {
             throw EncodingException(
               'Cannot encode NeverModel property \'impossible\' - this type does not permit any value.',
             );
+            return _$formData;
           }
         '''),
         ),
@@ -685,6 +695,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'age', MultipartFile.fromString(body.age.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -737,6 +748,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'score', MultipartFile.fromString(body.score.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -789,6 +801,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'value', MultipartFile.fromString(body.value.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -841,6 +854,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -893,6 +907,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'birth_date', MultipartFile.fromString(body.birthDate.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -945,6 +960,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'amount', MultipartFile.fromString(body.amount.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -997,6 +1013,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'website', MultipartFile.fromString(body.website.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
         ),
@@ -1051,6 +1068,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'created_at', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1108,6 +1126,7 @@ void main() {
             if (body.count != null) {
               _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count!.toString(), contentType: DioMediaType.parse(r'text/plain'))));
             }
+            return _$formData;
           }
         '''),
           ),
@@ -1162,6 +1181,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'age', MultipartFile.fromString(jsonEncode(body.age), contentType: DioMediaType.parse(r'application/json'))));
+            return _$formData;
           }
         '''),
         ),
@@ -1215,6 +1235,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'createdAt', MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'))));
+            return _$formData;
           }
         '''),
         ),
@@ -1268,6 +1289,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(jsonEncode(body.active), contentType: DioMediaType.parse(r'application/json'))));
+            return _$formData;
           }
         '''),
         ),
@@ -1323,6 +1345,7 @@ void main() {
             if (body.score != null) {
               _$formData.files.add(MapEntry(r'score', MultipartFile.fromString(jsonEncode(body.score!), contentType: DioMediaType.parse(r'application/json'))));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -1376,6 +1399,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1428,6 +1452,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1479,6 +1504,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'active', MultipartFile.fromString(body.active.toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1531,6 +1557,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'createdAt', MultipartFile.fromString(body.createdAt.toTimeZonedIso8601String(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1583,6 +1610,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'value', MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.value)), contentType: DioMediaType.parse(r'application/json'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1646,6 +1674,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1714,6 +1743,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1780,6 +1810,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'text/plain'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1846,6 +1877,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'application/json'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1912,6 +1944,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             _$formData.files.add(MapEntry(r'count', MultipartFile.fromString(body.count.toJson().toString(), contentType: DioMediaType.parse(r'application/json'))));
+            return _$formData;
           }
         '''),
           ),
@@ -1978,6 +2011,7 @@ void main() {
             if (body.status != null) {
               _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2043,6 +2077,7 @@ void main() {
             if (body.status != null) {
               _$formData.files.add(MapEntry(r'status', MultipartFile.fromString(body.status!.toJson(), contentType: DioMediaType.parse(r'text/plain'))));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2108,6 +2143,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'avatar'),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2173,6 +2209,7 @@ void main() {
                   ));
               }
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2238,6 +2275,7 @@ void main() {
                   ));
               }
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2309,6 +2347,7 @@ void main() {
                   ),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2372,6 +2411,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2434,6 +2474,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'avatar'),
                 ));
             }
+            return _$formData;
           }
         '''),
           ),
@@ -2504,6 +2545,7 @@ void main() {
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            return _$formData;
           }
         '''),
           ),
@@ -2572,6 +2614,7 @@ void main() {
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            return _$formData;
           }
         '''),
         ),
@@ -2639,6 +2682,7 @@ void main() {
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            return _$formData;
           }
         '''),
         ),
@@ -2706,6 +2750,7 @@ void main() {
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            return _$formData;
           }
         '''),
         ),
@@ -2773,6 +2818,7 @@ void main() {
                 ),
               ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2840,6 +2886,7 @@ void main() {
                 ),
               ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -2905,6 +2952,7 @@ void main() {
                 contentType: DioMediaType.parse(r'application/xml'),
               ),
             ));
+            return _$formData;
           }
         '''),
         ),
@@ -2969,6 +3017,7 @@ void main() {
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
                 _$formData.fields.add(MapEntry(entry.name, entry.value));
               }
+              return _$formData;
             }
           '''),
           ),
@@ -3036,6 +3085,7 @@ void main() {
                   _$formData.fields.add(MapEntry(entry.name, entry.value));
                 }
               }
+              return _$formData;
             }
           '''),
           ),
@@ -3103,6 +3153,7 @@ void main() {
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
                 _$formData.fields.add(MapEntry(entry.name, entry.value));
               }
+              return _$formData;
             }
           '''),
           ),
@@ -3173,6 +3224,7 @@ void main() {
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
                 _$formData.fields.add(MapEntry(entry.name, entry.value));
               }
+              return _$formData;
             }
           '''),
           ),
@@ -3243,6 +3295,7 @@ void main() {
                   .toDeepObject(r'address', explode: true, allowEmpty: true)) {
                 _$formData.fields.add(MapEntry(entry.name, entry.value));
               }
+              return _$formData;
             }
           '''),
           ),
@@ -3315,6 +3368,7 @@ void main() {
                 contentType: DioMediaType.parse(r'application/json'),
               ),
             ));
+            return _$formData;
           }
         '''),
         ),
@@ -3407,6 +3461,7 @@ void main() {
                     ),
                   ),
                 ));
+                return _$formData;
               }
             '''),
             ),
@@ -3498,6 +3553,7 @@ void main() {
                     ),
                   ),
                 ));
+                return _$formData;
               }
             '''),
             ),
@@ -3589,6 +3645,7 @@ void main() {
                   ),
                 ));
               }
+              return _$formData;
             }
           '''),
           ),
@@ -3659,6 +3716,7 @@ void main() {
                     ),
                   ),
                 ));
+                return _$formData;
               }
             '''),
             ),
@@ -3768,6 +3826,7 @@ void main() {
                     headers: _$addressHeaders,
                   ),
                 ));
+                return _$formData;
               }
             '''),
             ),
@@ -3831,6 +3890,7 @@ void main() {
             for (final item in body.tags) {
               _$formData.fields.add(MapEntry(r'tags', item));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -3888,6 +3948,7 @@ void main() {
             for (final item in body.tags) {
               _$formData.fields.add(MapEntry(r'tags', item));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -3945,6 +4006,7 @@ void main() {
             for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.fields.add(MapEntry(r'tags', item));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4002,6 +4064,7 @@ void main() {
             for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
               _$formData.fields.add(MapEntry(r'tags', item));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4059,6 +4122,7 @@ void main() {
             for (final item in body.tags.toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.fields.add(MapEntry(r'tags', item));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4117,6 +4181,7 @@ void main() {
             throw EncodingException(
               'deepObject style is not supported for array multipart properties (property: tags).',
             );
+            return _$formData;
           }
         '''),
         ),
@@ -4187,6 +4252,7 @@ void main() {
             for (final item in body.statuses) {
               _$formData.fields.add(MapEntry(r'statuses', item.uriEncode(allowEmpty: true)));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4255,6 +4321,7 @@ void main() {
             for (final item in body.codes.map((item) => item.uriEncode(allowEmpty: true)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.fields.add(MapEntry(r'codes', item));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4314,6 +4381,7 @@ void main() {
             for (final item in body.scores) {
               _$formData.fields.add(MapEntry(r'scores', item.toString()));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4371,6 +4439,7 @@ void main() {
             for (final item in body.scores) {
               _$formData.fields.add(MapEntry(r'scores', jsonEncode(item)));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4428,6 +4497,7 @@ void main() {
             for (final item in body.scores.map((item) => jsonEncode(item)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.fields.add(MapEntry(r'scores', item));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4485,6 +4555,7 @@ void main() {
             for (final item in body.dates) {
               _$formData.fields.add(MapEntry(r'dates', item.toTimeZonedIso8601String()));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4542,6 +4613,7 @@ void main() {
             for (final item in body.dates) {
               _$formData.fields.add(MapEntry(r'dates', jsonEncode(item)));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4606,6 +4678,7 @@ void main() {
                   _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
               }
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4668,6 +4741,7 @@ void main() {
                   _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
               }
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4734,6 +4808,7 @@ void main() {
             for (final item in body.addresses) {
               _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'))));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4798,6 +4873,7 @@ void main() {
             for (final item in body.addresses) {
               _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/xml'))));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4859,6 +4935,7 @@ void main() {
                 _$formData.fields.add(MapEntry(r'tags', item));
               }
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4918,6 +4995,7 @@ void main() {
                 _$formData.fields.add(MapEntry(r'tags', item));
               }
             }
+            return _$formData;
           }
         '''),
         ),
@@ -4971,6 +5049,7 @@ void main() {
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(jsonEncode(body.tags), contentType: DioMediaType.parse(r'application/json'))));
+              return _$formData;
             }
           '''),
           ),
@@ -5023,6 +5102,7 @@ void main() {
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(r'scores', MultipartFile.fromString(jsonEncode(body.scores), contentType: DioMediaType.parse(r'application/json'))));
+              return _$formData;
             }
           '''),
           ),
@@ -5073,6 +5153,7 @@ void main() {
               for (final item in body.tags) {
                 _$formData.fields.add(MapEntry(r'tags', item));
               }
+              return _$formData;
             }
           '''),
             ),
@@ -5133,6 +5214,7 @@ void main() {
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(body.addresses.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              return _$formData;
             }
           '''),
           ),
@@ -5185,6 +5267,7 @@ void main() {
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(jsonEncode(body.dates.map((e) => e.toTimeZonedIso8601String()).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              return _$formData;
             }
           '''),
           ),
@@ -5239,6 +5322,7 @@ void main() {
               if (body.tags != null) {
                 _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(jsonEncode(body.tags!), contentType: DioMediaType.parse(r'application/json'))));
               }
+              return _$formData;
             }
           '''),
           ),
@@ -5300,6 +5384,7 @@ void main() {
                 for (final item in body.tags) {
                   _$formData.fields.add(MapEntry(r'tags', item));
                 }
+                return _$formData;
               }
             '''),
             ),
@@ -5358,6 +5443,7 @@ void main() {
                 for (final item in body.scores) {
                   _$formData.fields.add(MapEntry(r'scores', item.toString()));
                 }
+                return _$formData;
               }
             '''),
             ),
@@ -5416,6 +5502,7 @@ void main() {
                 for (final item in body.dates) {
                   _$formData.fields.add(MapEntry(r'dates', item.toTimeZonedIso8601String()));
                 }
+                return _$formData;
               }
             '''),
             ),
@@ -5485,6 +5572,7 @@ void main() {
                 for (final item in body.priorities) {
                   _$formData.fields.add(MapEntry(r'priorities', item.uriEncode(allowEmpty: true)));
                 }
+                return _$formData;
               }
             '''),
             ),
@@ -5538,6 +5626,7 @@ void main() {
                     _$formData.fields.add(MapEntry(r'tags', item));
                   }
                 }
+                return _$formData;
               }
             '''),
             ),
@@ -5603,6 +5692,7 @@ void main() {
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(r'priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.uriEncode(allowEmpty: true)).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              return _$formData;
             }
           '''),
           ),
@@ -5669,6 +5759,7 @@ void main() {
                       _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files')));
                   }
                 }
+                return _$formData;
               }
             '''),
             ),
@@ -5731,6 +5822,7 @@ void main() {
                 throw EncodingException(
                   'Arrays of arrays are not supported for multipart encoding (property: matrix).',
                 );
+                return _$formData;
               }
             '''),
             ),
@@ -5790,6 +5882,7 @@ void main() {
                 throw EncodingException(
                   'Unsupported contentType "application/x-www-form-urlencoded" for array multipart property "items". Only application/json is supported for content-based array serialization.',
                 );
+                return _$formData;
               }
             '''),
             ),
@@ -5960,6 +6053,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6036,6 +6130,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6113,6 +6208,7 @@ void main() {
                 headers: _$addressHeaders,
               ),
             ));
+            return _$formData;
           }
         '''),
         ),
@@ -6179,6 +6275,7 @@ void main() {
               r'description',
               MultipartFile.fromString(body.description, contentType: DioMediaType.parse(r'text/plain'), headers: _$descriptionHeaders),
             ));
+            return _$formData;
           }
         '''),
         ),
@@ -6247,6 +6344,7 @@ void main() {
               r'count',
               MultipartFile.fromString(body.count.toString(), contentType: DioMediaType.parse(r'text/plain'), headers: _$countHeaders),
             ));
+            return _$formData;
           }
         '''),
           ),
@@ -6325,6 +6423,7 @@ void main() {
               r'status',
               MultipartFile.fromString(body.status.toJson(), contentType: DioMediaType.parse(r'text/plain'), headers: _$statusHeaders),
             ));
+            return _$formData;
           }
         '''),
         ),
@@ -6398,6 +6497,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6485,6 +6585,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'file', headers: _$fileHeaders),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6545,6 +6646,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'file'),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6616,6 +6718,7 @@ void main() {
             for (final item in body.tags) {
               _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6687,6 +6790,7 @@ void main() {
             for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6763,6 +6867,7 @@ void main() {
                   _$formData.files.add(MapEntry(r'files', await MultipartFile.fromFile(path, filename: fileName ?? r'files', headers: _$filesHeaders)));
               }
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6841,6 +6946,7 @@ void main() {
             for (final item in body.addresses) {
               _$formData.files.add(MapEntry(r'addresses', MultipartFile.fromString(jsonEncode(item.toJson()), contentType: DioMediaType.parse(r'application/json'), headers: _$addressesHeaders)));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6919,6 +7025,7 @@ void main() {
                   ));
               }
             }
+            return _$formData;
           }
         '''),
         ),
@@ -6997,6 +7104,7 @@ void main() {
                   ));
               }
             }
+            return _$formData;
           }
         '''),
           ),
@@ -7066,6 +7174,7 @@ void main() {
               r'data',
               MultipartFile.fromString(jsonEncode(encodeAnyToJson(body.data)), contentType: DioMediaType.parse(r'text/plain'), headers: _$dataHeaders),
             ));
+            return _$formData;
           }
         '''),
           ),
@@ -7136,6 +7245,7 @@ void main() {
               r'count',
               MultipartFile.fromString(jsonEncode(body.count), contentType: DioMediaType.parse(r'application/json'), headers: _$countHeaders),
             ));
+            return _$formData;
           }
         '''),
           ),
@@ -7206,6 +7316,7 @@ void main() {
               r'createdAt',
               MultipartFile.fromString(jsonEncode(body.createdAt), contentType: DioMediaType.parse(r'application/json'), headers: _$createdAtHeaders),
             ));
+            return _$formData;
           }
         '''),
           ),
@@ -7280,6 +7391,7 @@ void main() {
             for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
               _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(item, headers: _$datesHeaders)));
             }
+            return _$formData;
           }
         '''),
           ),
@@ -7363,6 +7475,7 @@ void main() {
                   await MultipartFile.fromFile(path, filename: fileName ?? r'document', headers: _$documentHeaders),
                 ));
             }
+            return _$formData;
           }
         '''),
         ),
@@ -7419,6 +7532,7 @@ void main() {
             void test() {
               final _$formData = FormData();
               _$formData.files.add(MapEntry(r'name', MultipartFile.fromString(body.name, contentType: DioMediaType.parse(r"text/it's-plain"))));
+              return _$formData;
             }
           '''),
           ),
@@ -7485,6 +7599,7 @@ void main() {
                     await MultipartFile.fromFile(path, filename: fileName ?? r"it's-field"),
                   ));
               }
+              return _$formData;
             }
           '''),
           ),
