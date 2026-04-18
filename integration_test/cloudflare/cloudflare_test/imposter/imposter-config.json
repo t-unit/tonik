@@ -1,0 +1,17 @@
+{
+  "plugin": "rest",
+  "resources": [
+    {
+      "path": "/client/v4/accounts",
+      "response": {
+        "scriptFile": "response.groovy"
+      }
+    },
+    {
+      "path": "/client/v4/zones",
+      "response": {
+        "scriptFile": "response.groovy"
+      }
+    }
+  ]
+}

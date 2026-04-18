@@ -125,6 +125,10 @@ rm -rf github/github_api
 rm -rf openai/openai_full_api
 rm -rf asana/asana_api
 rm -rf twilio/twilio_api
+rm -rf shopify/shopify_api
+rm -rf kubernetes/kubernetes_api
+rm -rf cloudflare/cloudflare_api
+rm -rf totem/totem_api
 rm -rf immutable_collections/immutable_collections_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
@@ -241,12 +245,24 @@ if [ -d "twilio/twilio_api" ]; then
     add_dependency_overrides_recursive "twilio/twilio_api"
 fi
 
-if [ -f "cloudflare/tonik.yaml" ]; then
-    rm -rf cloudflare/cloudflare_api
-    $TONIK_BINARY --config cloudflare/tonik.yaml || echo "WARNING: Cloudflare generation failed."
-    if [ -d "cloudflare/cloudflare_api" ]; then
-        add_dependency_overrides_recursive "cloudflare/cloudflare_api"
-    fi
+$TONIK_BINARY --config shopify/tonik.yaml || echo "WARNING: Shopify generation failed."
+if [ -d "shopify/shopify_api" ]; then
+    add_dependency_overrides_recursive "shopify/shopify_api"
+fi
+
+$TONIK_BINARY --config kubernetes/tonik.yaml || echo "WARNING: Kubernetes generation failed."
+if [ -d "kubernetes/kubernetes_api" ]; then
+    add_dependency_overrides_recursive "kubernetes/kubernetes_api"
+fi
+
+$TONIK_BINARY --config cloudflare/tonik.yaml || echo "WARNING: Cloudflare generation failed."
+if [ -d "cloudflare/cloudflare_api" ]; then
+    add_dependency_overrides_recursive "cloudflare/cloudflare_api"
+fi
+
+$TONIK_BINARY --config totem/tonik.yaml || echo "WARNING: Totem generation failed."
+if [ -d "totem/totem_api" ]; then
+    add_dependency_overrides_recursive "totem/totem_api"
 fi
 
 $TONIK_BINARY --config immutable_collections/tonik.yaml
@@ -288,7 +304,10 @@ echo "Running dart pub get for all generated packages in parallel..."
   ([ -d "openai/openai_full_api" ] && cd openai/openai_full_api && dart pub get) &
   ([ -d "asana/asana_api" ] && cd asana/asana_api && dart pub get) &
   ([ -d "twilio/twilio_api" ] && cd twilio/twilio_api && dart pub get) &
+  ([ -d "shopify/shopify_api" ] && cd shopify/shopify_api && dart pub get) &
+  ([ -d "kubernetes/kubernetes_api" ] && cd kubernetes/kubernetes_api && dart pub get) &
   ([ -d "cloudflare/cloudflare_api" ] && cd cloudflare/cloudflare_api && dart pub get) &
+  ([ -d "totem/totem_api" ] && cd totem/totem_api && dart pub get) &
   cd immutable_collections/immutable_collections_api && dart pub get &
   wait
 )
@@ -342,6 +361,11 @@ restore_test_package_overrides "stripe/stripe_test/pubspec.yaml" "../../../packa
 restore_test_package_overrides "github/github_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "openai/openai_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "asana/asana_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "twilio/twilio_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "shopify/shopify_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "kubernetes/kubernetes_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "cloudflare/cloudflare_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "totem/totem_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "immutable_collections/immutable_collections_test/pubspec.yaml" "../../../packages/tonik_util"
 
 # Run dart pub get for all test packages in parallel
@@ -375,6 +399,11 @@ echo "Running dart pub get for all test packages in parallel..."
   cd github/github_test && dart pub get &
   cd openai/openai_test && dart pub get &
   cd asana/asana_test && dart pub get &
+  cd twilio/twilio_test && dart pub get &
+  cd shopify/shopify_test && dart pub get &
+  cd kubernetes/kubernetes_test && dart pub get &
+  cd cloudflare/cloudflare_test && dart pub get &
+  cd totem/totem_test && dart pub get &
   cd immutable_collections/immutable_collections_test && dart pub get &
   wait
 )

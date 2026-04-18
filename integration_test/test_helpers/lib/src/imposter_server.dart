@@ -35,8 +35,15 @@ class ImposterServer {
   ///    initialize
   /// 5. Verifies the server is responding to HTTP requests
   ///
-  /// Throws an [Exception] if imposter.jar cannot be found.
-  Future<void> start() async {
+  /// Throws an [Exception] if imposter.jar cannot be found or if the
+  /// server does not become ready within [timeoutSec] seconds.
+  ///
+  /// [timeoutSec] controls how long to wait for the server to start.
+  /// [jvmArgs] are passed to the Java process before `-jar`.
+  Future<void> start({
+    int timeoutSec = 30,
+    List<String> jvmArgs = const [],
+  }) async {
     port = await _findAvailablePort();
 
     final imposterJar = path.join(
@@ -53,6 +60,7 @@ class ImposterServer {
     _process = await Process.start(
       'java',
       [
+        ...jvmArgs,
         '-jar',
         imposterJar,
         '--listenPort',
@@ -81,14 +89,21 @@ class ImposterServer {
       print(data);
     });
 
-    await _waitForImposterReady();
+    final ready = await _waitForImposterReady(timeoutSec: timeoutSec);
+    if (!ready) {
+      _process?.kill();
+      throw Exception(
+        'Imposter server failed to start within $timeoutSec seconds '
+        'on port $port. Check Java/Imposter logs above for details.',
+      );
+    }
   }
 
   /// Waits for the Imposter server to be fully ready.
   ///
-  /// This uses a two-phase approach to handle the race condition where
+  /// This uses a multi-step approach to handle the race condition where
   /// the server port is open but the OpenAPI plugin isn't fully initialized:
-  /// 1. Wait for the stdout "Mock engine up and running" message (up to 30s)
+  /// 1. Wait for the stdout "Mock engine up and running" message
   /// 2. Add a 500ms delay for OpenAPI plugin initialization
   /// 3. Verify the server responds to HTTP requests (up to 5s)
   ///
@@ -144,9 +159,12 @@ class ImposterServer {
 /// Finds an available port dynamically (safe for parallel execution).
 ///
 /// Returns the [ImposterServer] instance with the actual port assigned.
-Future<ImposterServer> setupImposterServer() async {
+Future<ImposterServer> setupImposterServer({
+  int timeoutSec = 30,
+  List<String> jvmArgs = const [],
+}) async {
   final server = ImposterServer();
-  await server.start();
+  await server.start(timeoutSec: timeoutSec, jvmArgs: jvmArgs);
   addTearDown(() => server.stop());
   return server;
 }

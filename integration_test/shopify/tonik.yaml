@@ -1,0 +1,3 @@
+spec: shopify/openapi.json
+packageName: shopify_api
+outputDir: shopify

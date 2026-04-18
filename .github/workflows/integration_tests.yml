@@ -197,6 +197,31 @@ jobs:
           cd integration_test/asana/asana_test
           dart test --concurrency=2
 
+      - name: Run twilio integration tests
+        run: |
+          cd integration_test/twilio/twilio_test
+          dart test --concurrency=2
+
+      - name: Run shopify integration tests
+        run: |
+          cd integration_test/shopify/shopify_test
+          dart test --concurrency=2
+
+      - name: Run kubernetes integration tests
+        run: |
+          cd integration_test/kubernetes/kubernetes_test
+          dart test --concurrency=2
+
+      - name: Run cloudflare integration tests
+        run: |
+          cd integration_test/cloudflare/cloudflare_test
+          dart test --concurrency=2
+
+      - name: Run totem integration tests
+        run: |
+          cd integration_test/totem/totem_test
+          dart test --concurrency=2
+
       - name: Run immutable collections integration tests
         run: |
           cd integration_test/immutable_collections/immutable_collections_test
