@@ -1,0 +1,24 @@
+name: totem_test
+description: Integration tests for totem API code generation
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  dio: ^5.8.0
+  path: ^1.9.1
+  tonik_util: ^0.1.0
+  totem_api:
+    path: ../totem_api
+
+dev_dependencies:
+  test: ^1.25.15
+  test_helpers:
+    path: ../../test_helpers
+  very_good_analysis: ^10.2.0
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

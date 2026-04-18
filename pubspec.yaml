@@ -190,6 +190,31 @@ melos:
         cd integration_test/immutable_collections/immutable_collections_test
         dart test
 
+    test-integration-twilio:
+      run: |
+        cd integration_test/twilio/twilio_test
+        dart test
+
+    test-integration-shopify:
+      run: |
+        cd integration_test/shopify/shopify_test
+        dart test
+
+    test-integration-kubernetes:
+      run: |
+        cd integration_test/kubernetes/kubernetes_test
+        dart test
+
+    test-integration-cloudflare:
+      run: |
+        cd integration_test/cloudflare/cloudflare_test
+        dart test
+
+    test-integration-totem:
+      run: |
+        cd integration_test/totem/totem_test
+        dart test
+
     test-integration-all:
       run: |
         set -e
@@ -220,4 +245,9 @@ melos:
         melos run test-integration-github
         melos run test-integration-openai
         melos run test-integration-asana
+        melos run test-integration-twilio
+        melos run test-integration-shopify
+        melos run test-integration-kubernetes
+        melos run test-integration-cloudflare
+        melos run test-integration-totem
         melos run test-integration-immutable-collections

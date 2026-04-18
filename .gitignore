@@ -37,6 +37,10 @@
 /integration_test/openai/openai_full_api
 /integration_test/asana/asana_api
 /integration_test/twilio/twilio_api
+/integration_test/shopify/shopify_api
+/integration_test/kubernetes/kubernetes_api
+/integration_test/cloudflare/cloudflare_api
+/integration_test/totem/totem_api
 /integration_test/additional_properties/additional_properties_api
 /integration_test/adversarial_strings/adversarial_strings_api
 /integration_test/immutable_collections/immutable_collections_api
