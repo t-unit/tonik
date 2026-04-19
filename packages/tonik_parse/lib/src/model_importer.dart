@@ -1778,11 +1778,18 @@ class ModelImporter {
       final description = propertySchema.description;
       final nameOverride = propertySchema.xDartName;
 
+      // Use a placeholder for empty or whitespace-only property names
+      // so the context path remains valid.
+      final contextPropertyName =
+          propertyName.trim().isEmpty ? 'property' : propertyName;
+
       final property = Property(
         name: propertyName,
         model: _resolveSchemaRefForProperty(
           propertySchema,
-          context.pushAll([name, propertyName].whereType<String>()),
+          context.pushAll(
+            [name, contextPropertyName].whereType<String>(),
+          ),
         ),
         isRequired: schema.required?.contains(propertyName) ?? false,
         isNullable: isNullable,

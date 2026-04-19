@@ -1,0 +1,1692 @@
+openapi: 3.0.4
+info:
+  title: Naming Nightmare API
+  version: 1.0.0
+
+servers:
+  - url: https://{class}.example.com/{default}
+    description: Server with keyword variable names
+    variables:
+      class:
+        default: prod
+        enum:
+          - prod
+          - staging
+      default:
+        default: v1
+
+paths:
+  /keyword/switch:
+    get:
+      operationId: switch
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/class:
+    get:
+      operationId: class
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/return:
+    get:
+      operationId: return
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/void:
+    get:
+      operationId: void
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/null:
+    get:
+      operationId: "null"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/true:
+    get:
+      operationId: "true"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/false:
+    get:
+      operationId: "false"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/new:
+    get:
+      operationId: new
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/abstract:
+    get:
+      operationId: abstract
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/enum:
+    get:
+      operationId: enum
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/is:
+    get:
+      operationId: is
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/in:
+    get:
+      operationId: in
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/extends:
+    get:
+      operationId: extends
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/with:
+    get:
+      operationId: with
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/try:
+    get:
+      operationId: try
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/throw:
+    get:
+      operationId: throw
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/super:
+    get:
+      operationId: super
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/this:
+    get:
+      operationId: this
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/async:
+    get:
+      operationId: async
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/await:
+    get:
+      operationId: await
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/yield:
+    get:
+      operationId: yield
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/import:
+    get:
+      operationId: import
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/export:
+    get:
+      operationId: export
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/factory:
+    get:
+      operationId: factory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/implements:
+    get:
+      operationId: implements
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/var:
+    get:
+      operationId: var
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/final:
+    get:
+      operationId: final
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/const:
+    get:
+      operationId: const
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/dynamic:
+    get:
+      operationId: dynamic
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/default:
+    get:
+      operationId: default
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/toString:
+    get:
+      operationId: toString
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/hashCode:
+    get:
+      operationId: hashCode
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/runtimeType:
+    get:
+      operationId: runtimeType
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/noSuchMethod:
+    get:
+      operationId: noSuchMethod
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/call:
+    get:
+      operationId: call
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /keyword/main:
+    get:
+      operationId: main
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /body-collision/query:
+    post:
+      operationId: createWithBodyQuery
+      parameters:
+        - name: body
+          in: query
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleResult'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /body-collision/header:
+    post:
+      operationId: createWithBodyHeader
+      parameters:
+        - name: body
+          in: header
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleResult'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /body-collision/cookie:
+    post:
+      operationId: createWithBodyCookie
+      parameters:
+        - name: body
+          in: cookie
+          required: false
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleResult'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /body-collision/all:
+    post:
+      operationId: createWithBodyEverywhere
+      parameters:
+        - name: body
+          in: query
+          schema:
+            type: string
+        - name: body
+          in: header
+          schema:
+            type: string
+        - name: body
+          in: cookie
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleResult'
+      responses:
+        '200':
+          description: OK
+
+  /param-keyword-collision/{class}:
+    post:
+      operationId: createWithKeywordParams
+      parameters:
+        - name: class
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: return
+          in: query
+          schema:
+            type: string
+        - name: void
+          in: query
+          schema:
+            type: string
+        - name: switch
+          in: header
+          schema:
+            type: string
+        - name: async
+          in: cookie
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleResult'
+      responses:
+        '200':
+          description: OK
+
+  /param-duplicates/{id}:
+    get:
+      operationId: getWithDuplicateParams
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: query
+          schema:
+            type: string
+        - name: id
+          in: header
+          schema:
+            type: string
+        - name: id
+          in: cookie
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /object-methods:
+    get:
+      operationId: getObjectMethodCollider
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ObjectMethodCollider'
+
+  /functions:
+    get:
+      operationId: listFunctions
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Function'
+
+  /functions/{id}:
+    get:
+      operationId: getFunction
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Function'
+
+  /types:
+    get:
+      operationId: getTypeContainer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TypeContainer'
+
+  /generated-methods:
+    get:
+      operationId: getGeneratedMethodCollider
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GeneratedMethodCollider'
+
+  /camel-collision:
+    get:
+      operationId: getCamelCaseCollider
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CamelCaseCollider'
+
+  /keyword-enum:
+    get:
+      operationId: getByKeywordEnum
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/KeywordEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /numeric-enum:
+    get:
+      operationId: getByNumericEnum
+      parameters:
+        - name: code
+          in: query
+          schema:
+            $ref: '#/components/schemas/NumericEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /weird-properties:
+    get:
+      operationId: getWeirdProperties
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WeirdPropertyNames'
+
+  /keyword-properties:
+    get:
+      operationId: getKeywordProperties
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeywordPropertyNames'
+
+  /lowercase-function:
+    get:
+      operationId: getLowercaseFunction
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/function'
+
+  /dart-core-errors:
+    get:
+      operationId: getDartCoreErrors
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DartCoreContainer'
+
+  /self-referencing:
+    get:
+      operationId: getSelfReferencing
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelfReferencer'
+
+  /discriminator-keywords:
+    get:
+      operationId: getDiscriminatorKeywords
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/KeywordDiscriminator'
+
+  /allof-property-clash:
+    get:
+      operationId: getAllOfPropertyClash
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AllOfPropertyClash'
+
+  /operationId-collision/camel:
+    get:
+      operationId: getItems
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /operationId-collision/snake:
+    get:
+      operationId: get_items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /operationId-collision/kebab:
+    get:
+      operationId: get-items
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /operationId-starts-with-number:
+    get:
+      operationId: 2faVerify
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /operationId-underscore:
+    get:
+      operationId: _
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /operationId-double-underscore:
+    get:
+      operationId: __private
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /enum-reserved:
+    get:
+      operationId: getEnumReserved
+      parameters:
+        - name: pick
+          in: query
+          schema:
+            $ref: '#/components/schemas/EnumReservedNames'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /enum-case-collision:
+    get:
+      operationId: getEnumCaseCollision
+      parameters:
+        - name: toggle
+          in: query
+          schema:
+            $ref: '#/components/schemas/CaseCollisionEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /enum-special:
+    get:
+      operationId: getEnumSpecial
+      parameters:
+        - name: value
+          in: query
+          schema:
+            $ref: '#/components/schemas/SpecialCharEnum'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
+  /naming-api:
+    get:
+      operationId: getNamingApi
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NamingApi'
+
+  /default-api:
+    get:
+      operationId: getDefaultApi
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DefaultApi'
+
+  /self-named-property:
+    get:
+      operationId: getSelfNamedProperty
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SelfNamedProperty'
+
+components:
+  schemas:
+    SimpleResult:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        message:
+          type: string
+
+    ObjectMethodCollider:
+      type: object
+      required:
+        - runtimeType
+        - hashCode
+      properties:
+        runtimeType:
+          type: string
+        hashCode:
+          type: integer
+        noSuchMethod:
+          type: string
+        toString:
+          type: string
+
+    Function:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        arn:
+          type: string
+        runtime:
+          type: string
+
+    function:
+      type: object
+      properties:
+        handler:
+          type: string
+        timeout:
+          type: integer
+
+    Type:
+      type: object
+      properties:
+        name:
+          type: string
+        kind:
+          type: string
+
+    Object:
+      type: object
+      properties:
+        key:
+          type: string
+        value:
+          type: string
+
+    String:
+      type: object
+      properties:
+        content:
+          type: string
+        encoding:
+          type: string
+
+    List:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            type: string
+        count:
+          type: integer
+
+    Map:
+      type: object
+      properties:
+        entries:
+          type: object
+          additionalProperties:
+            type: string
+
+    "Null":
+      type: object
+      properties:
+        reason:
+          type: string
+
+    Set:
+      type: object
+      properties:
+        elements:
+          type: array
+          items:
+            type: string
+
+    Future:
+      type: object
+      properties:
+        status:
+          type: string
+        completedAt:
+          type: string
+          format: date-time
+
+    Stream:
+      type: object
+      properties:
+        url:
+          type: string
+        protocol:
+          type: string
+
+    Error:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+        stackTrace:
+          type: string
+
+    Exception:
+      type: object
+      properties:
+        type:
+          type: string
+        cause:
+          type: string
+
+    Iterator:
+      type: object
+      properties:
+        current:
+          type: string
+        hasNext:
+          type: boolean
+
+    Iterable:
+      type: object
+      properties:
+        length:
+          type: integer
+        isEmpty:
+          type: boolean
+
+    Duration:
+      type: object
+      properties:
+        milliseconds:
+          type: integer
+
+    DateTime:
+      type: object
+      properties:
+        iso:
+          type: string
+        epoch:
+          type: integer
+
+    Uri:
+      type: object
+      properties:
+        scheme:
+          type: string
+        host:
+          type: string
+        path:
+          type: string
+
+    RegExp:
+      type: object
+      properties:
+        pattern:
+          type: string
+        flags:
+          type: string
+
+    Enum:
+      type: object
+      properties:
+        index:
+          type: integer
+        name:
+          type: string
+
+    Record:
+      type: object
+      properties:
+        fields:
+          type: array
+          items:
+            type: string
+
+    Symbol:
+      type: object
+      properties:
+        name:
+          type: string
+
+    StackTrace:
+      type: object
+      properties:
+        frames:
+          type: array
+          items:
+            type: string
+
+    Comparable:
+      type: object
+      properties:
+        rank:
+          type: integer
+
+    Pattern:
+      type: object
+      properties:
+        regex:
+          type: string
+
+    int:
+      type: object
+      properties:
+        value:
+          type: integer
+
+    double:
+      type: object
+      properties:
+        value:
+          type: number
+
+    bool:
+      type: object
+      properties:
+        value:
+          type: boolean
+
+    num:
+      type: object
+      properties:
+        value:
+          type: number
+
+    dynamic:
+      type: object
+      properties:
+        value:
+          type: string
+
+    TypeContainer:
+      type: object
+      properties:
+        type:
+          $ref: '#/components/schemas/Type'
+        object:
+          $ref: '#/components/schemas/Object'
+        string:
+          $ref: '#/components/schemas/String'
+        list:
+          $ref: '#/components/schemas/List'
+        map:
+          $ref: '#/components/schemas/Map'
+        nullValue:
+          $ref: '#/components/schemas/Null'
+        set:
+          $ref: '#/components/schemas/Set'
+        future:
+          $ref: '#/components/schemas/Future'
+        stream:
+          $ref: '#/components/schemas/Stream'
+
+    DartCoreContainer:
+      type: object
+      properties:
+        error:
+          $ref: '#/components/schemas/Error'
+        exception:
+          $ref: '#/components/schemas/Exception'
+        iterator:
+          $ref: '#/components/schemas/Iterator'
+        iterable:
+          $ref: '#/components/schemas/Iterable'
+        duration:
+          $ref: '#/components/schemas/Duration'
+        dateTime:
+          $ref: '#/components/schemas/DateTime'
+        uri:
+          $ref: '#/components/schemas/Uri'
+        regExp:
+          $ref: '#/components/schemas/RegExp'
+        enum:
+          $ref: '#/components/schemas/Enum'
+        record:
+          $ref: '#/components/schemas/Record'
+        symbol:
+          $ref: '#/components/schemas/Symbol'
+        stackTrace:
+          $ref: '#/components/schemas/StackTrace'
+        comparable:
+          $ref: '#/components/schemas/Comparable'
+        pattern:
+          $ref: '#/components/schemas/Pattern'
+        intValue:
+          $ref: '#/components/schemas/int'
+        doubleValue:
+          $ref: '#/components/schemas/double'
+        boolValue:
+          $ref: '#/components/schemas/bool'
+        numValue:
+          $ref: '#/components/schemas/num'
+        dynamicValue:
+          $ref: '#/components/schemas/dynamic'
+
+    GeneratedMethodCollider:
+      type: object
+      properties:
+        fromJson:
+          type: string
+        toJson:
+          type: string
+        copyWith:
+          type: string
+        fromSimple:
+          type: string
+        toSimple:
+          type: string
+        fromForm:
+          type: string
+        toForm:
+          type: string
+        toLabel:
+          type: string
+        toMatrix:
+          type: string
+        toDeepObject:
+          type: string
+        currentEncodingShape:
+          type: string
+        parameterProperties:
+          type: string
+        uriEncode:
+          type: string
+
+    CamelCaseCollider:
+      type: object
+      properties:
+        my_field:
+          type: string
+        myField:
+          type: string
+        my-field:
+          type: string
+        MY_FIELD:
+          type: string
+        myfield:
+          type: string
+        My_Field:
+          type: string
+
+    TripleCamelCollider:
+      type: object
+      properties:
+        status_code:
+          type: integer
+        statusCode:
+          type: integer
+        status-code:
+          type: integer
+        STATUS_CODE:
+          type: integer
+        status_Code:
+          type: integer
+        Status_Code:
+          type: integer
+
+    KeywordEnum:
+      type: string
+      enum:
+        - switch
+        - class
+        - return
+        - void
+        - "null"
+        - "true"
+        - "false"
+        - abstract
+        - enum
+        - super
+        - new
+        - this
+        - is
+        - in
+        - if
+        - for
+        - while
+        - do
+        - try
+        - catch
+        - throw
+        - final
+        - const
+        - var
+        - dynamic
+        - async
+        - await
+        - yield
+        - factory
+        - operator
+        - typedef
+        - mixin
+        - extends
+        - implements
+        - with
+        - late
+        - required
+        - sealed
+        - base
+        - interface
+
+    NumericEnum:
+      type: string
+      enum:
+        - "200"
+        - "404"
+        - "500"
+        - "0"
+        - "-1"
+        - "007"
+        - "1.0"
+        - "2.1.0"
+        - "100_000"
+
+    EnumReservedNames:
+      type: string
+      enum:
+        - index
+        - values
+        - name
+        - normal
+        - hashCode
+        - toString
+        - runtimeType
+        - noSuchMethod
+
+    CaseCollisionEnum:
+      type: string
+      enum:
+        - "ON"
+        - "on"
+        - "On"
+        - "oN"
+        - "OFF"
+        - "off"
+        - "Off"
+        - active
+        - ACTIVE
+        - Active
+
+    SpecialCharEnum:
+      type: string
+      enum:
+        - ""
+        - " "
+        - "  "
+        - "hello world"
+        - "with-dashes"
+        - "with.dots"
+        - "with/slash"
+        - "with:colon"
+        - "$dollar"
+        - "@at"
+        - "#hash"
+        - "+plus"
+        - "*star"
+        - "~tilde"
+        - "a"
+        - "1"
+
+    WeirdPropertyNames:
+      type: object
+      properties:
+        "123start":
+          type: string
+        "9lives":
+          type: string
+        "0":
+          type: string
+        "1":
+          type: string
+        "_leading":
+          type: string
+        "__double":
+          type: string
+        "___triple":
+          type: string
+        "_":
+          type: string
+        "__":
+          type: string
+        "$dollar":
+          type: string
+        "$$doubleDollar":
+          type: string
+        "with spaces":
+          type: string
+        "with.dots":
+          type: string
+        "with/slashes":
+          type: string
+        "with:colons":
+          type: string
+        "with@at":
+          type: string
+        "with#hash":
+          type: string
+        "with+plus":
+          type: string
+        "with*star":
+          type: string
+        "with~tilde":
+          type: string
+        "with<angle>brackets":
+          type: string
+        "with(parens)":
+          type: string
+        "with[brackets]":
+          type: string
+        "with{braces}":
+          type: string
+        "SCREAMING_CASE":
+          type: string
+        "a":
+          type: string
+        "x-custom-header":
+          type: string
+        "":
+          type: string
+        " ":
+          type: string
+        "kebab-case-name":
+          type: string
+        "snake_case_name":
+          type: string
+        "camelCaseName":
+          type: string
+        "PascalCaseName":
+          type: string
+
+    KeywordPropertyNames:
+      type: object
+      properties:
+        class:
+          type: string
+        factory:
+          type: string
+        operator:
+          type: string
+        is:
+          type: boolean
+        as:
+          type: string
+        in:
+          type: string
+        late:
+          type: string
+        required:
+          type: boolean
+        default:
+          type: string
+        switch:
+          type: string
+        return:
+          type: string
+        void:
+          type: string
+        yield:
+          type: string
+        async:
+          type: string
+        await:
+          type: string
+        import:
+          type: string
+        export:
+          type: string
+        extends:
+          type: string
+        implements:
+          type: string
+        with:
+          type: string
+        dynamic:
+          type: string
+        covariant:
+          type: string
+        static:
+          type: string
+        external:
+          type: string
+        typedef:
+          type: string
+        mixin:
+          type: string
+        enum:
+          type: string
+        abstract:
+          type: string
+        new:
+          type: string
+        super:
+          type: string
+        this:
+          type: string
+        throw:
+          type: string
+        try:
+          type: string
+        catch:
+          type: string
+        finally:
+          type: string
+        for:
+          type: string
+        while:
+          type: string
+        do:
+          type: string
+        if:
+          type: string
+        else:
+          type: string
+        break:
+          type: string
+        continue:
+          type: string
+        assert:
+          type: string
+        final:
+          type: string
+        const:
+          type: string
+        var:
+          type: string
+        "null":
+          type: string
+        "true":
+          type: string
+        "false":
+          type: string
+        rethrow:
+          type: string
+        sealed:
+          type: string
+        base:
+          type: string
+        interface:
+          type: string
+        when:
+          type: string
+        show:
+          type: string
+        hide:
+          type: string
+        of:
+          type: string
+        on:
+          type: string
+        part:
+          type: string
+        deferred:
+          type: string
+        library:
+          type: string
+        get:
+          type: string
+        set:
+          type: string
+        sync:
+          type: string
+        extension:
+          type: string
+
+    SelfReferencer:
+      type: object
+      properties:
+        name:
+          type: string
+        parent:
+          $ref: '#/components/schemas/SelfReferencer'
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/SelfReferencer'
+
+    KeywordDiscriminator:
+      oneOf:
+        - $ref: '#/components/schemas/DiscriminatorVariantA'
+        - $ref: '#/components/schemas/DiscriminatorVariantB'
+      discriminator:
+        propertyName: class
+        mapping:
+          switch: '#/components/schemas/DiscriminatorVariantA'
+          return: '#/components/schemas/DiscriminatorVariantB'
+
+    DiscriminatorVariantA:
+      type: object
+      required:
+        - class
+      properties:
+        class:
+          type: string
+        switch:
+          type: string
+
+    DiscriminatorVariantB:
+      type: object
+      required:
+        - class
+      properties:
+        class:
+          type: string
+        return:
+          type: string
+
+    AllOfPropertyClash:
+      allOf:
+        - $ref: '#/components/schemas/AllOfBase'
+        - $ref: '#/components/schemas/AllOfExtension'
+
+    AllOfBase:
+      type: object
+      required:
+        - type
+        - name
+      properties:
+        type:
+          type: string
+        name:
+          type: string
+        class:
+          type: string
+
+    AllOfExtension:
+      type: object
+      properties:
+        type:
+          type: integer
+        value:
+          type: string
+        class:
+          type: integer
+
+    NamingApi:
+      type: object
+      properties:
+        id:
+          type: string
+        endpoint:
+          type: string
+
+    DefaultApi:
+      type: object
+      properties:
+        id:
+          type: string
+        version:
+          type: string
+
+    SelfNamedProperty:
+      type: object
+      properties:
+        selfNamedProperty:
+          type: string
+        SelfNamedProperty:
+          type: string
+        self_named_property:
+          type: string

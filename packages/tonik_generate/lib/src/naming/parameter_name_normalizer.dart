@@ -42,6 +42,7 @@ NormalizedRequestParameters normalizeRequestParameters({
   required Set<QueryParameterObject> queryParameters,
   required Set<RequestHeaderObject> headers,
   Set<CookieParameterObject> cookieParameters = const {},
+  Set<String> reservedNames = const {},
 }) {
   final normalizedPathParams = _normalizePathParameters(pathParameters);
   final normalizedQueryParams = _normalizeQueryParameters(queryParameters);
@@ -50,6 +51,15 @@ NormalizedRequestParameters normalizeRequestParameters({
 
   // Track which parameter types contain each name.
   final nameInTypes = <String, Set<String>>{};
+
+  // Seed with reserved names so parameters that collide with them
+  // get a type suffix (e.g., a query param named 'body' becomes
+  // 'bodyQuery' when 'body' is reserved by the request body).
+  for (final reserved in reservedNames) {
+    nameInTypes
+        .putIfAbsent(reserved.toLowerCase(), () => <String>{})
+        .add('reserved');
+  }
 
   // Count occurrences per type.
   for (final item in normalizedPathParams) {

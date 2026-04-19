@@ -97,11 +97,15 @@ class OperationGenerator {
         .map((p) => p.resolve())
         .toSet();
 
+    final hasRequestBody =
+        operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+
     final normalizedParams = normalizeRequestParameters(
       pathParameters: pathParams,
       queryParameters: queryParams,
       headers: headerParams,
       cookieParameters: cookieParams,
+      reservedNames: hasRequestBody ? {'body'} : {},
     );
 
     return Class(

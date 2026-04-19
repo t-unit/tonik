@@ -151,7 +151,7 @@ class ApiClientGenerator {
     return Method(
       (b) {
         b
-          ..name = nameManager.operationName(operation).toCamelCase()
+          ..name = nameManager.operationMethodName(operation)
           ..returns = TypeReference(
             (b) => b
               ..symbol = 'Future'

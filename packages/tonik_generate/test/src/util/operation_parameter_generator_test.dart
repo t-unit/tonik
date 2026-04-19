@@ -1078,4 +1078,256 @@ void main() {
       expect(typeCode, contains('String'));
     });
   });
+
+  group('body parameter name collision', () {
+    test(
+      'adds Query suffix to query parameter named body when '
+      'request body is present',
+      () {
+        final queryParam = QueryParameterObject(
+          name: null,
+          rawName: 'body',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+        );
+
+        final requestBody = RequestBodyObject(
+          name: 'payload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'Payload',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'createWithBodyQuery',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
+
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+        );
+
+        final paramNames = parameters.map((p) => p.name).toList();
+        expect(paramNames, contains('body'));
+        expect(paramNames, contains('bodyQuery'));
+        expect(
+          paramNames.toSet().length,
+          paramNames.length,
+          reason: 'Parameter names must be unique: $paramNames',
+        );
+      },
+    );
+
+    test(
+      'adds Header suffix to header parameter named body when '
+      'request body is present',
+      () {
+        final headerParam = RequestHeaderObject(
+          name: null,
+          rawName: 'body',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+        );
+
+        final requestBody = RequestBodyObject(
+          name: 'payload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'Payload',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'createWithBodyHeader',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.post,
+          headers: {headerParam},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
+
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+        );
+
+        final paramNames = parameters.map((p) => p.name).toList();
+        expect(paramNames, contains('body'));
+        expect(paramNames, contains('bodyHeader'));
+        expect(
+          paramNames.toSet().length,
+          paramNames.length,
+          reason: 'Parameter names must be unique: $paramNames',
+        );
+      },
+    );
+
+    test(
+      'adds Cookie suffix to cookie parameter named body when '
+      'request body is present',
+      () {
+        final cookieParam = CookieParameterObject(
+          name: null,
+          rawName: 'body',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final requestBody = RequestBodyObject(
+          name: 'payload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'Payload',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'createWithBodyCookie',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
+
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+        );
+
+        final paramNames = parameters.map((p) => p.name).toList();
+        expect(paramNames, contains('body'));
+        expect(paramNames, contains('bodyCookie'));
+        expect(
+          paramNames.toSet().length,
+          paramNames.length,
+          reason: 'Parameter names must be unique: $paramNames',
+        );
+      },
+    );
+
+    test(
+      'does not add suffix when parameter named body has no request body',
+      () {
+        final queryParam = QueryParameterObject(
+          name: null,
+          rawName: 'body',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'getWithBody',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {queryParam},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+        );
+
+        expect(parameters.length, 1);
+        expect(parameters.first.name, 'body');
+      },
+    );
+  });
 }

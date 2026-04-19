@@ -1,7 +1,9 @@
+import 'package:change_case/change_case.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_utils.dart';
 
 /// Manages name generation and caches results for consistent naming.
 class NameManager {
@@ -165,11 +167,25 @@ class NameManager {
     });
   }
 
-  /// Gets a cached or generates a new unique operation name.
+  /// Gets a cached or generates a new unique operation name in PascalCase.
+  ///
+  /// Used for operation class names (e.g., `Switch`, `GetUser`).
+  /// For API client method names, use [operationMethodName] instead.
   String operationName(Operation operation) {
     return operationNames.putIfAbsent(operation, () {
       return generator.generateOperationName(operation);
     });
+  }
+
+  /// Gets a camelCase method name for an operation, suitable for use
+  /// in API client classes.
+  ///
+  /// Converts the PascalCase [operationName] to camelCase and applies
+  /// keyword escaping, since camelCase names like `switch` or `class`
+  /// collide with Dart reserved words.
+  String operationMethodName(Operation operation) {
+    final pascalName = operationName(operation);
+    return ensureNotKeyword(pascalName.toCamelCase());
   }
 
   /// Gets a cached or generates a new unique API class name for a tag.

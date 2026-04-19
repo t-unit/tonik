@@ -226,3 +226,8 @@ jobs:
         run: |
           cd integration_test/immutable_collections/immutable_collections_test
           dart test --concurrency=2
+
+      - name: Run naming integration tests
+        run: |
+          cd integration_test/naming/naming_test
+          dart test --concurrency=2
