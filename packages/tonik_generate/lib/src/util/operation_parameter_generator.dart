@@ -48,7 +48,8 @@ List<Parameter> generateParameters({
     );
   }
 
-  // Normalize all parameter names
+  // Normalize all parameter names, reserving 'body' when a request body
+  // exists so that any parameter named 'body' gets a type suffix.
   final normalizedParams = normalizeRequestParameters(
     pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
     queryParameters: operation.queryParameters.map((p) => p.resolve()).toSet(),
@@ -56,6 +57,7 @@ List<Parameter> generateParameters({
     cookieParameters: operation.cookieParameters
         .map((p) => p.resolve())
         .toSet(),
+    reservedNames: hasRequestBody ? {'body'} : {},
   );
 
   // Add path parameters
@@ -67,16 +69,11 @@ List<Parameter> generateParameters({
       isNullableOverride: !pathParam.parameter.isRequired,
     );
 
-    final paramName = hasRequestBody &&
-            pathParam.normalizedName.toLowerCase() == 'body'
-        ? '${pathParam.normalizedName}Path'
-        : pathParam.normalizedName;
-
     parameters.add(
       Parameter(
         (b) {
           b
-            ..name = paramName
+            ..name = pathParam.normalizedName
             ..type = parameterType
             ..named = true
             ..required = pathParam.parameter.isRequired;
@@ -102,16 +99,11 @@ List<Parameter> generateParameters({
       isNullableOverride: !queryParam.parameter.isRequired,
     );
 
-    final paramName = hasRequestBody &&
-            queryParam.normalizedName.toLowerCase() == 'body'
-        ? '${queryParam.normalizedName}Query'
-        : queryParam.normalizedName;
-
     parameters.add(
       Parameter(
         (b) {
           b
-            ..name = paramName
+            ..name = queryParam.normalizedName
             ..type = parameterType
             ..named = true
             ..required = queryParam.parameter.isRequired;
@@ -137,16 +129,11 @@ List<Parameter> generateParameters({
       isNullableOverride: !headerParam.parameter.isRequired,
     );
 
-    final paramName = hasRequestBody &&
-            headerParam.normalizedName.toLowerCase() == 'body'
-        ? '${headerParam.normalizedName}Header'
-        : headerParam.normalizedName;
-
     parameters.add(
       Parameter(
         (b) {
           b
-            ..name = paramName
+            ..name = headerParam.normalizedName
             ..type = parameterType
             ..named = true
             ..required = headerParam.parameter.isRequired;
@@ -172,16 +159,11 @@ List<Parameter> generateParameters({
       isNullableOverride: !cookieParam.parameter.isRequired,
     );
 
-    final paramName = hasRequestBody &&
-            cookieParam.normalizedName.toLowerCase() == 'body'
-        ? '${cookieParam.normalizedName}Cookie'
-        : cookieParam.normalizedName;
-
     parameters.add(
       Parameter(
         (b) {
           b
-            ..name = paramName
+            ..name = cookieParam.normalizedName
             ..type = parameterType
             ..named = true
             ..required = cookieParam.parameter.isRequired;

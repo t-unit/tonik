@@ -345,6 +345,40 @@ void main() {
     );
   });
 
+  group('reservedNames', () {
+    test('adds type suffix when parameter collides with reserved name', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('body')},
+        headers: {createHeader('body')},
+        cookieParameters: {createCookieParameter('body')},
+        reservedNames: {'body'},
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'bodyQuery',
+      ]);
+      expect(result.headers.map((r) => r.normalizedName).toList(), [
+        'bodyHeader',
+      ]);
+      expect(result.cookieParameters.map((r) => r.normalizedName).toList(), [
+        'bodyCookie',
+      ]);
+    });
+
+    test('does not add suffix when no reserved names are set', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('body')},
+        headers: {},
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'body',
+      ]);
+    });
+  });
+
   group('normalizeMultipartHeaderName', () {
     test('combines property name and header name', () {
       expect(

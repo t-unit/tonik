@@ -97,11 +97,15 @@ class OperationGenerator {
         .map((p) => p.resolve())
         .toSet();
 
+    final hasRequestBody =
+        operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+
     final normalizedParams = normalizeRequestParameters(
       pathParameters: pathParams,
       queryParameters: queryParams,
       headers: headerParams,
       cookieParameters: cookieParams,
+      reservedNames: hasRequestBody ? {'body'} : {},
     );
 
     return Class(
@@ -187,38 +191,23 @@ class OperationGenerator {
     }
 
     for (final pathParam in normalizedParams.pathParameters) {
-      // When the parameter name collides with the request body's hardcoded
-      // 'body' name, the external parameter gets a type suffix (e.g.,
-      // 'bodyPath'). The internal method still uses the original name.
-      final externalName = hasRequestBody &&
-              pathParam.normalizedName.toLowerCase() == 'body'
-          ? '${pathParam.normalizedName}Path'
-          : pathParam.normalizedName;
-      pathArgs[pathParam.normalizedName] = refer(externalName);
+      pathArgs[pathParam.normalizedName] = refer(pathParam.normalizedName);
     }
 
     for (final queryParam in normalizedParams.queryParameters) {
-      final externalName = hasRequestBody &&
-              queryParam.normalizedName.toLowerCase() == 'body'
-          ? '${queryParam.normalizedName}Query'
-          : queryParam.normalizedName;
-      queryArgs[queryParam.normalizedName] = refer(externalName);
+      queryArgs[queryParam.normalizedName] = refer(queryParam.normalizedName);
     }
 
     for (final headerParam in normalizedParams.headers) {
-      final externalName = hasRequestBody &&
-              headerParam.normalizedName.toLowerCase() == 'body'
-          ? '${headerParam.normalizedName}Header'
-          : headerParam.normalizedName;
-      headerArgs[headerParam.normalizedName] = refer(externalName);
+      headerArgs[headerParam.normalizedName] = refer(
+        headerParam.normalizedName,
+      );
     }
 
     for (final cookieParam in normalizedParams.cookieParameters) {
-      final externalName = hasRequestBody &&
-              cookieParam.normalizedName.toLowerCase() == 'body'
-          ? '${cookieParam.normalizedName}Cookie'
-          : cookieParam.normalizedName;
-      cookieArgs[cookieParam.normalizedName] = refer(externalName);
+      cookieArgs[cookieParam.normalizedName] = refer(
+        cookieParam.normalizedName,
+      );
     }
 
     final pathExpr = pathArgs.isEmpty
