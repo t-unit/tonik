@@ -67,11 +67,16 @@ List<Parameter> generateParameters({
       isNullableOverride: !pathParam.parameter.isRequired,
     );
 
+    final paramName = hasRequestBody &&
+            pathParam.normalizedName.toLowerCase() == 'body'
+        ? '${pathParam.normalizedName}Path'
+        : pathParam.normalizedName;
+
     parameters.add(
       Parameter(
         (b) {
           b
-            ..name = pathParam.normalizedName
+            ..name = paramName
             ..type = parameterType
             ..named = true
             ..required = pathParam.parameter.isRequired;
@@ -97,11 +102,16 @@ List<Parameter> generateParameters({
       isNullableOverride: !queryParam.parameter.isRequired,
     );
 
+    final paramName = hasRequestBody &&
+            queryParam.normalizedName.toLowerCase() == 'body'
+        ? '${queryParam.normalizedName}Query'
+        : queryParam.normalizedName;
+
     parameters.add(
       Parameter(
         (b) {
           b
-            ..name = queryParam.normalizedName
+            ..name = paramName
             ..type = parameterType
             ..named = true
             ..required = queryParam.parameter.isRequired;
@@ -127,11 +137,16 @@ List<Parameter> generateParameters({
       isNullableOverride: !headerParam.parameter.isRequired,
     );
 
+    final paramName = hasRequestBody &&
+            headerParam.normalizedName.toLowerCase() == 'body'
+        ? '${headerParam.normalizedName}Header'
+        : headerParam.normalizedName;
+
     parameters.add(
       Parameter(
         (b) {
           b
-            ..name = headerParam.normalizedName
+            ..name = paramName
             ..type = parameterType
             ..named = true
             ..required = headerParam.parameter.isRequired;
@@ -157,11 +172,16 @@ List<Parameter> generateParameters({
       isNullableOverride: !cookieParam.parameter.isRequired,
     );
 
+    final paramName = hasRequestBody &&
+            cookieParam.normalizedName.toLowerCase() == 'body'
+        ? '${cookieParam.normalizedName}Cookie'
+        : cookieParam.normalizedName;
+
     parameters.add(
       Parameter(
         (b) {
           b
-            ..name = cookieParam.normalizedName
+            ..name = paramName
             ..type = parameterType
             ..named = true
             ..required = cookieParam.parameter.isRequired;

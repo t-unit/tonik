@@ -1291,5 +1291,177 @@ void main() {
         expect(result.baseName, 'Server');
       });
     });
+
+    group('keyword schema names', () {
+      test('escapes Function schema name with dollar prefix', () {
+        final model = ClassModel(
+          name: 'Function',
+          isDeprecated: false,
+          properties: const [],
+          context: Context.initial().pushAll([
+            'components',
+            'schemas',
+            'Function',
+          ]),
+        );
+        expect(nameGenerator.generateModelName(model), r'$Function');
+      });
+
+      test('escapes lowercase function schema name with dollar prefix', () {
+        final model = ClassModel(
+          name: 'function',
+          isDeprecated: false,
+          properties: const [],
+          context: Context.initial().pushAll([
+            'components',
+            'schemas',
+            'function',
+          ]),
+        );
+        // _sanitizeName('function') → 'Function' (PascalCase)
+        // ensureValidClassName('Function') matches exactly → '$Function'
+        expect(nameGenerator.generateModelName(model), r'$Function');
+      });
+
+      test('does not escape PascalCase keyword class names', () {
+        // PascalCase versions of keywords are valid Dart class names
+        final model = ClassModel(
+          name: 'dynamic',
+          isDeprecated: false,
+          properties: const [],
+          context: Context.initial().pushAll([
+            'components',
+            'schemas',
+            'dynamic',
+          ]),
+        );
+        // _sanitizeName('dynamic') → 'Dynamic' (PascalCase)
+        // 'Dynamic' is not in allKeywords (only 'dynamic' is)
+        expect(nameGenerator.generateModelName(model), 'Dynamic');
+      });
+
+      test('does not escape non-keyword schema names', () {
+        final model = ClassModel(
+          name: 'User',
+          isDeprecated: false,
+          properties: const [],
+          context: Context.initial().pushAll([
+            'components',
+            'schemas',
+            'User',
+          ]),
+        );
+        expect(nameGenerator.generateModelName(model), 'User');
+      });
+
+      test('does not escape dart:core type names (prefixed imports)', () {
+        for (final name in ['Enum', 'Error', 'Object', 'String', 'List']) {
+          final model = ClassModel(
+            name: name,
+            isDeprecated: false,
+            properties: const [],
+            context: Context.initial().pushAll([
+              'components',
+              'schemas',
+              name,
+            ]),
+          );
+          expect(
+            nameGenerator.generateModelName(model),
+            name,
+            reason: '$name is valid because dart:core is imported with prefix',
+          );
+          // Reset the generator for each iteration to avoid uniqueness suffixes
+          nameGenerator = NameGenerator();
+        }
+      });
+    });
+
+    group('keyword operation names', () {
+      test('does not escape PascalCase switch operation name', () {
+        final operation = Operation(
+          operationId: 'switch',
+          context: Context.initial(),
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+        // PascalCase 'Switch' is a valid Dart class name
+        expect(
+          nameGenerator.generateOperationName(operation),
+          'Switch',
+        );
+      });
+
+      test('does not escape PascalCase return operation name', () {
+        final operation = Operation(
+          operationId: 'return',
+          context: Context.initial(),
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+        // PascalCase 'Return' is a valid Dart class name
+        expect(
+          nameGenerator.generateOperationName(operation),
+          'Return',
+        );
+      });
+
+      test('escapes function operationId with dollar prefix', () {
+        final operation = Operation(
+          operationId: 'function',
+          context: Context.initial(),
+          tags: const {},
+          isDeprecated: false,
+          path: '/test',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+        // 'Function' is a built-in identifier (stored with capital F)
+        expect(
+          nameGenerator.generateOperationName(operation),
+          r'$Function',
+        );
+      });
+    });
+
+    group('keyword tag names', () {
+      test('escapes Function tag name with dollar prefix', () {
+        final tag = Tag(name: 'Function');
+        expect(
+          nameGenerator.generateTagName(tag),
+          r'$FunctionApi',
+        );
+      });
+
+      test('does not escape PascalCase keyword tag names', () {
+        // 'Default' and 'Switch' are valid Dart class names
+        final defaultTag = Tag(name: 'default');
+        expect(
+          nameGenerator.generateTagName(defaultTag),
+          'DefaultApi',
+        );
+      });
+    });
   });
 }

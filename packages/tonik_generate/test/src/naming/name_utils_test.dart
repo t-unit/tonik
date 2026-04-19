@@ -274,4 +274,86 @@ void main() {
       expect(result, isNot(startsWith(RegExp(r'\d').pattern)));
     });
   });
+
+  group('ensureNotKeyword', () {
+    test('prefixes exact keyword matches with dollar sign', () {
+      expect(ensureNotKeyword('class'), r'$class');
+      expect(ensureNotKeyword('void'), r'$void');
+      expect(ensureNotKeyword('switch'), r'$switch');
+      expect(ensureNotKeyword('return'), r'$return');
+    });
+
+    test('prefixes Function with dollar sign via exact match', () {
+      expect(ensureNotKeyword('Function'), r'$Function');
+    });
+
+    test('prefixes generatedClassTokens with dollar sign', () {
+      expect(ensureNotKeyword('fromJson'), r'$fromJson');
+      expect(ensureNotKeyword('toJson'), r'$toJson');
+      expect(ensureNotKeyword('copyWith'), r'$copyWith');
+      expect(ensureNotKeyword('toString'), r'$toString');
+      expect(ensureNotKeyword('hashCode'), r'$hashCode');
+    });
+
+    test('prefixes runtimeType and noSuchMethod with dollar sign', () {
+      expect(ensureNotKeyword('runtimeType'), r'$runtimeType');
+      expect(ensureNotKeyword('noSuchMethod'), r'$noSuchMethod');
+    });
+
+    test('does not prefix non-keywords', () {
+      expect(ensureNotKeyword('myField'), 'myField');
+      expect(ensureNotKeyword('User'), 'User');
+      expect(ensureNotKeyword('getData'), 'getData');
+    });
+  });
+
+  group('ensureValidClassName', () {
+    test('prefixes Function with dollar sign', () {
+      expect(ensureValidClassName('Function'), r'$Function');
+    });
+
+    test('does not prefix PascalCase versions of keywords', () {
+      expect(ensureValidClassName('Switch'), 'Switch');
+      expect(ensureValidClassName('Return'), 'Return');
+      expect(ensureValidClassName('Default'), 'Default');
+      expect(ensureValidClassName('Dynamic'), 'Dynamic');
+      expect(ensureValidClassName('Class'), 'Class');
+    });
+
+    test('does not prefix dart:core types (prefixed imports)', () {
+      expect(ensureValidClassName('Object'), 'Object');
+      expect(ensureValidClassName('String'), 'String');
+      expect(ensureValidClassName('List'), 'List');
+      expect(ensureValidClassName('Map'), 'Map');
+      expect(ensureValidClassName('Set'), 'Set');
+      expect(ensureValidClassName('Future'), 'Future');
+      expect(ensureValidClassName('Stream'), 'Stream');
+      expect(ensureValidClassName('Error'), 'Error');
+      expect(ensureValidClassName('Enum'), 'Enum');
+      expect(ensureValidClassName('DateTime'), 'DateTime');
+    });
+
+    test('does not prefix non-keywords', () {
+      expect(ensureValidClassName('User'), 'User');
+      expect(ensureValidClassName('MyModel'), 'MyModel');
+    });
+  });
+
+  group('normalizeSingle escapes Object method names', () {
+    test('escapes runtimeType as a property name', () {
+      expect(normalizeSingle('runtimeType'), r'$runtimeType');
+    });
+
+    test('escapes noSuchMethod as a property name', () {
+      expect(normalizeSingle('noSuchMethod'), r'$noSuchMethod');
+    });
+
+    test('escapes toString as a property name', () {
+      expect(normalizeSingle('toString'), r'$toString');
+    });
+
+    test('escapes hashCode as a property name', () {
+      expect(normalizeSingle('hashCode'), r'$hashCode');
+    });
+  });
 }

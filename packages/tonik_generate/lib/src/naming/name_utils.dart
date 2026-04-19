@@ -111,7 +111,20 @@ const generatedClassTokens = {
   'uriEncode',
 };
 
-const Set<String> allKeywords = {...dartKeywords, ...generatedClassTokens};
+/// Members inherited from [Object] that conflict with field declarations.
+/// Unlike [generatedClassTokens] which are methods the generator adds,
+/// these are members every Dart class inherits. A field named `runtimeType`
+/// would illegally override `Object.runtimeType` with an incompatible type.
+const reservedObjectMembers = {
+  'runtimeType',
+  'noSuchMethod',
+};
+
+const Set<String> allKeywords = {
+  ...dartKeywords,
+  ...generatedClassTokens,
+  ...reservedObjectMembers,
+};
 
 /// Names that conflict with members inherited by all Dart enums.
 /// These are only reserved for enum values, not class properties.
@@ -213,8 +226,27 @@ String _numberToWords(int number) {
 
 /// Ensures a name is not a Dart keyword by adding a $ prefix if necessary.
 String ensureNotKeyword(String name) {
-  if (allKeywords.contains(name.toCamelCase()) ||
+  if (allKeywords.contains(name) ||
+      allKeywords.contains(name.toCamelCase()) ||
       allKeywords.contains(name.toLowerCase())) {
+    return '\$$name';
+  }
+  return name;
+}
+
+/// Ensures a PascalCase class name is not a Dart built-in identifier.
+///
+/// Only checks exact match against [allKeywords]. PascalCase forms of
+/// lowercase keywords like `Switch`, `Return`, `Default` are valid Dart
+/// class names. The only keyword stored with an uppercase letter is
+/// `Function`, making it the only realistic collision for schema names.
+///
+/// Note: `dart:core` types like `String`, `List`, `Object`, `Enum` are
+/// NOT blocked because Tonik imports `dart:core` with a prefix
+/// (via `CorePrefixedAllocator`), so user-defined classes with those
+/// names never shadow built-in types.
+String ensureValidClassName(String name) {
+  if (allKeywords.contains(name)) {
     return '\$$name';
   }
   return name;
