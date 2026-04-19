@@ -3,6 +3,18 @@ info:
   title: Naming Nightmare API
   version: 1.0.0
 
+servers:
+  - url: https://{class}.example.com/{default}
+    description: Server with keyword variable names
+    variables:
+      class:
+        default: prod
+        enum:
+          - prod
+          - staging
+      default:
+        default: v1
+
 paths:
   /keyword/switch:
     get:

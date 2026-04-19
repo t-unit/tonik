@@ -440,4 +440,53 @@ void main() {
       );
     });
   });
+
+  group('keyword variable names', () {
+    test('escapes keyword variable name in field and constructor', () {
+      final servers = [
+        const Server(
+          url: 'https://{class}.example.com',
+          description: 'Keyword server',
+          variables: [
+            ServerVariable(
+              name: 'class',
+              defaultValue: 'prod',
+              enumValues: ['prod', 'staging'],
+            ),
+          ],
+        ),
+      ];
+
+      final classes = generator.generateClasses(servers);
+      final serverClass = classes[1];
+      final code = format(serverClass.accept(emitter).toString());
+
+      expect(code, contains(r'this.$class'));
+      expect(code, contains(r'$class'));
+      expect(code, contains(r'${$class.value}'));
+    });
+
+    test('escapes default variable name without enum', () {
+      final servers = [
+        const Server(
+          url: 'https://api.example.com/{default}',
+          description: 'Default server',
+          variables: [
+            ServerVariable(
+              name: 'default',
+              defaultValue: 'v1',
+            ),
+          ],
+        ),
+      ];
+
+      final classes = generator.generateClasses(servers);
+      final serverClass = classes[1];
+      final code = format(serverClass.accept(emitter).toString());
+
+      expect(code, contains(r"this.$default = r'v1'"));
+      expect(code, contains(r'final String $default'));
+      expect(code, contains(r'${$default}'));
+    });
+  });
 }
