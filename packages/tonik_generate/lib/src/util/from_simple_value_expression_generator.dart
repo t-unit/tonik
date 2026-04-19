@@ -201,9 +201,7 @@ Expression _buildFromSimpleExpression(
   final name = nameManager.modelName(model);
   final explodeParam = {'explode': explode};
 
-  final url = package != null
-      ? sourceFileUrl(package, 'model', name)
-      : null;
+  final url = package != null ? sourceFileUrl(package, 'model', name) : null;
 
   return isRequired
       ? refer(name, url).property('fromSimple').call([value], explodeParam)

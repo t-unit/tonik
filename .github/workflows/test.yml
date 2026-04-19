@@ -44,56 +44,10 @@ jobs:
       - name: Install dependencies
         run: |
           dart pub global activate melos
-          dart pub global activate coverage
           melos bootstrap
 
       - name: Run tests with coverage
-        run: melos run coverage 
-
-      - name: Format and merge coverage reports
-        if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
-        run: |
-          # Ensure output directory exists before format_coverage writes files
-          mkdir -p coverage
-          
-          # Process each package separately to maintain correct source file paths (packages/*/lib)
-          dart pub global run coverage:format_coverage \
-            --lcov \
-            --in=packages/tonik/coverage \
-            --out=coverage/tonik.lcov.info \
-            --report-on=packages/tonik/lib \
-            --check-ignore || true
-          
-          dart pub global run coverage:format_coverage \
-            --lcov \
-            --in=packages/tonik_core/coverage \
-            --out=coverage/tonik_core.lcov.info \
-            --report-on=packages/tonik_core/lib \
-            --check-ignore || true
-          
-          dart pub global run coverage:format_coverage \
-            --lcov \
-            --in=packages/tonik_generate/coverage \
-            --out=coverage/tonik_generate.lcov.info \
-            --report-on=packages/tonik_generate/lib \
-            --check-ignore || true
-          
-          dart pub global run coverage:format_coverage \
-            --lcov \
-            --in=packages/tonik_parse/coverage \
-            --out=coverage/tonik_parse.lcov.info \
-            --report-on=packages/tonik_parse/lib \
-            --check-ignore || true
-          
-          dart pub global run coverage:format_coverage \
-            --lcov \
-            --in=packages/tonik_util/coverage \
-            --out=coverage/tonik_util.lcov.info \
-            --report-on=packages/tonik_util/lib \
-            --check-ignore || true
-          
-          # Combine per-package reports into single file for codecov upload
-          cat coverage/*.lcov.info > coverage/lcov.info 2>/dev/null || echo "No coverage files found"
+        run: melos run coverage-ci
 
       - name: Upload coverage to Codecov
         if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'

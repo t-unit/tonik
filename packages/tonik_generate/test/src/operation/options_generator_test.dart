@@ -486,8 +486,7 @@ void main() {
             }
           ''';
 
-        final method =
-            generator.generateOptionsMethod(operation, headers, []);
+        final method = generator.generateOptionsMethod(operation, headers, []);
 
         expect(method, isA<Method>());
         expect(

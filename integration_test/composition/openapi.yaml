@@ -27,6 +27,20 @@ paths:
         '2XX':
           description: Successful response
 
+  /shapes:
+    get:
+      operationId: getShapes
+      tags:
+        - composition
+      summary: Get shapes (discriminated polymorphism)
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Shape'
+
 components:
   schemas:
     Class1:
@@ -691,4 +705,60 @@ components:
       oneOf:
         - $ref: '#/components/schemas/Bike'
         - $ref: '#/components/schemas/Truck'
+
+    Shape:
+      oneOf:
+        - $ref: '#/components/schemas/Circle'
+        - $ref: '#/components/schemas/Rectangle'
+      discriminator:
+        propertyName: type
+
+    Circle:
+      allOf:
+        - $ref: '#/components/schemas/Shape'
+        - type: object
+          required:
+            - type
+            - radius
+          properties:
+            type:
+              type: string
+            radius:
+              type: number
+
+    Rectangle:
+      allOf:
+        - $ref: '#/components/schemas/Shape'
+        - type: object
+          required:
+            - type
+            - width
+            - height
+          properties:
+            type:
+              type: string
+            width:
+              type: number
+            height:
+              type: number
+
+    NodeA:
+      allOf:
+        - $ref: '#/components/schemas/NodeB'
+        - type: object
+          required:
+            - aField
+          properties:
+            aField:
+              type: string
+
+    NodeB:
+      allOf:
+        - $ref: '#/components/schemas/NodeA'
+        - type: object
+          required:
+            - bField
+          properties:
+            bField:
+              type: integer
              

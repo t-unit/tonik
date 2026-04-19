@@ -2355,8 +2355,8 @@ Map<String, String> parameterProperties({
       );
     });
 
-    test('generates encoding exception for MapModel in parameterProperties',
-        () {
+    test('generates encoding exception for MapModel '
+        'in parameterProperties', () {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'FlexValue',

@@ -791,8 +791,7 @@ void main() {
         expect(result['extra'], 'value');
       });
 
-      test(
-          'ignores additional keys in non-exploded when '
+      test('ignores additional keys in non-exploded when '
           'captureAdditionalKeys is false', () {
         final result = 'name,John,extra,value'.decodeObject(
           explode: false,

@@ -34,8 +34,7 @@ void main() {
       final result = await op();
 
       expect(result, isA<TonikSuccess<GetWorkspacesResponse>>());
-      final success =
-          result as TonikSuccess<GetWorkspacesResponse>;
+      final success = result as TonikSuccess<GetWorkspacesResponse>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -52,8 +51,7 @@ void main() {
       final result = await op();
 
       expect(result, isA<TonikSuccess<GetWorkspacesResponse>>());
-      final success =
-          result as TonikSuccess<GetWorkspacesResponse>;
+      final success = result as TonikSuccess<GetWorkspacesResponse>;
       expect(success.response.statusCode, 401);
       expect(
         success.value,
@@ -74,8 +72,7 @@ void main() {
         result,
         isA<TonikSuccess<GetWorkspaceResponse>>(),
       );
-      final success =
-          result as TonikSuccess<GetWorkspaceResponse>;
+      final success = result as TonikSuccess<GetWorkspaceResponse>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -96,8 +93,7 @@ void main() {
       final result = await op(workspace: 'ws-123');
 
       expect(result, isA<TonikSuccess<GetUsersResponse>>());
-      final success =
-          result as TonikSuccess<GetUsersResponse>;
+      final success = result as TonikSuccess<GetUsersResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetUsersResponse200>());
 
@@ -119,8 +115,7 @@ void main() {
       final result = await op(taskGid: '11111');
 
       expect(result, isA<TonikSuccess<GetTaskResponse>>());
-      final success =
-          result as TonikSuccess<GetTaskResponse>;
+      final success = result as TonikSuccess<GetTaskResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetTaskResponse200>());
 
@@ -134,8 +129,7 @@ void main() {
       final result = await op(taskGid: 'nonexistent');
 
       expect(result, isA<TonikSuccess<GetTaskResponse>>());
-      final success =
-          result as TonikSuccess<GetTaskResponse>;
+      final success = result as TonikSuccess<GetTaskResponse>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetTaskResponse404>());
     });
@@ -153,8 +147,7 @@ void main() {
         result,
         isA<TonikSuccess<GetProjectResponse>>(),
       );
-      final success =
-          result as TonikSuccess<GetProjectResponse>;
+      final success = result as TonikSuccess<GetProjectResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetProjectResponse200>());
 
@@ -180,8 +173,7 @@ void main() {
         result,
         isA<TonikSuccess<GetTasksForProjectResponse>>(),
       );
-      final success =
-          result as TonikSuccess<GetTasksForProjectResponse>;
+      final success = result as TonikSuccess<GetTasksForProjectResponse>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -218,8 +210,7 @@ void main() {
         result,
         isA<TonikSuccess<CreateTaskResponse>>(),
       );
-      final success =
-          result as TonikSuccess<CreateTaskResponse>;
+      final success = result as TonikSuccess<CreateTaskResponse>;
       expect(success.response.statusCode, 201);
       expect(
         success.value,
@@ -241,8 +232,7 @@ void main() {
 
       final result = await op(
         workspaceGid: '12345',
-        body:
-            const WorkspacesWorkspaceGidProjectsPostBodyBodyModel(
+        body: const WorkspacesWorkspaceGidProjectsPostBodyBodyModel(
           data: ProjectRequest(
             projectBase: ProjectBase(
               projectCompact: ProjectCompact(
@@ -257,12 +247,9 @@ void main() {
 
       expect(
         result,
-        isA<
-            TonikSuccess<
-                CreateProjectForWorkspaceResponse>>(),
+        isA<TonikSuccess<CreateProjectForWorkspaceResponse>>(),
       );
-      final success = result as TonikSuccess<
-          CreateProjectForWorkspaceResponse>;
+      final success = result as TonikSuccess<CreateProjectForWorkspaceResponse>;
       expect(success.response.statusCode, 201);
       expect(
         success.value,
@@ -302,8 +289,7 @@ void main() {
         result,
         isA<TonikSuccess<UpdateTaskResponse>>(),
       );
-      final success =
-          result as TonikSuccess<UpdateTaskResponse>;
+      final success = result as TonikSuccess<UpdateTaskResponse>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -331,8 +317,7 @@ void main() {
         result,
         isA<TonikSuccess<DeleteTaskResponse>>(),
       );
-      final success =
-          result as TonikSuccess<DeleteTaskResponse>;
+      final success = result as TonikSuccess<DeleteTaskResponse>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,

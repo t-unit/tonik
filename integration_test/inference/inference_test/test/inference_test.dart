@@ -1219,11 +1219,7 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success =
-            response
-                as TonikSuccess<
-                  List<Map<String, Object?>>
-                >;
+        final success = response as TonikSuccess<List<Map<String, Object?>>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/api/v1/infer/list_connectors',
@@ -1236,11 +1232,7 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success =
-            response
-                as TonikSuccess<
-                  List<Map<String, Object?>>
-                >;
+        final success = response as TonikSuccess<List<Map<String, Object?>>>;
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -1250,11 +1242,7 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success =
-            response
-                as TonikSuccess<
-                  List<Map<String, Object?>>
-                >;
+        final success = response as TonikSuccess<List<Map<String, Object?>>>;
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -1268,15 +1256,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<List<Map<String, Object?>>>
-          >(),
+          isA<TonikSuccess<List<Map<String, Object?>>>>(),
         );
-        final success =
-            response
-                as TonikSuccess<
-                  List<Map<String, Object?>>
-                >;
+        final success = response as TonikSuccess<List<Map<String, Object?>>>;
         expect(success.response.statusCode, 200);
         expect(
           success.value,

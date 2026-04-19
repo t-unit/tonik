@@ -100,8 +100,7 @@ class OptionsGenerator {
     }
 
     final (baseName, subclassNames) = nameManager.requestBodyNames(requestBody);
-    final requestBodyUrl =
-        sourceFileUrl(package, 'request_body', baseName);
+    final requestBodyUrl = sourceFileUrl(package, 'request_body', baseName);
     parameters.add(
       Parameter(
         (b) => b

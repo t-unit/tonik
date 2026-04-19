@@ -1539,47 +1539,49 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
         );
       });
 
-      test('generates cancelToken parameter with correct type and optionality',
-          () {
-        final operation = Operation(
-          operationId: 'cancelTest',
-          context: context,
-          summary: 'Cancel test',
-          description: 'Tests cancelToken generation',
-          tags: const {},
-          isDeprecated: false,
-          path: '/cancel',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      test(
+        'generates cancelToken parameter with correct type and optionality',
+        () {
+          final operation = Operation(
+            operationId: 'cancelTest',
+            context: context,
+            summary: 'Cancel test',
+            description: 'Tests cancelToken generation',
+            tags: const {},
+            isDeprecated: false,
+            path: '/cancel',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
 
-        const normalizedParams = NormalizedRequestParameters(
-          pathParameters: [],
-          cookieParameters: [],
-          queryParameters: [],
-          headers: [],
-        );
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            cookieParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
 
-        final method = generator.generateCallMethod(
-          operation,
-          normalizedParams,
-        );
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
 
-        // cancelToken should be the last optional parameter
-        final cancelParam = method.optionalParameters.last;
-        expect(cancelParam.name, 'cancelToken');
-        expect(
-          cancelParam.type?.accept(emitter).toString(),
-          'CancelToken?',
-        );
-        expect(cancelParam.named, isTrue);
-        expect(cancelParam.required, isFalse);
-      });
+          // cancelToken should be the last optional parameter
+          final cancelParam = method.optionalParameters.last;
+          expect(cancelParam.name, 'cancelToken');
+          expect(
+            cancelParam.type?.accept(emitter).toString(),
+            'CancelToken?',
+          );
+          expect(cancelParam.named, isTrue);
+          expect(cancelParam.required, isFalse);
+        },
+      );
 
       test(
         'generates cancelToken as last parameter when other params exist',
@@ -1635,38 +1637,39 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
         },
       );
 
-      test('generates cancel-specific error handling in network catch block',
-          () {
-        final operation = Operation(
-          operationId: 'cancelErrorHandling',
-          context: context,
-          summary: 'Cancel error handling',
-          description: 'Tests cancel error handling generation',
-          tags: const {},
-          isDeprecated: false,
-          path: '/cancel-error',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      test(
+        'generates cancel-specific error handling in network catch block',
+        () {
+          final operation = Operation(
+            operationId: 'cancelErrorHandling',
+            context: context,
+            summary: 'Cancel error handling',
+            description: 'Tests cancel error handling generation',
+            tags: const {},
+            isDeprecated: false,
+            path: '/cancel-error',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
 
-        const normalizedParams = NormalizedRequestParameters(
-          pathParameters: [],
-          cookieParameters: [],
-          queryParameters: [],
-          headers: [],
-        );
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            cookieParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
 
-        final method = generator.generateCallMethod(
-          operation,
-          normalizedParams,
-        );
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
 
-        const expectedMethod = r'''
+          const expectedMethod = r'''
 Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
   late final Uri _$uri;
   late final Object? _$data;
@@ -1724,12 +1727,13 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
 }
 ''';
 
-        final methodString = format(method.accept(emitter).toString());
-        expect(
-          collapseWhitespace(methodString),
-          collapseWhitespace(expectedMethod),
-        );
-      });
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(expectedMethod),
+          );
+        },
+      );
     });
 
     group('generateCallableOperation', () {

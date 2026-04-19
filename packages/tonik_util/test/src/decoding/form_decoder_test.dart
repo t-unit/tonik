@@ -148,15 +148,13 @@ void main() {
     });
 
     group('form decoding with e+ in value', () {
-      test(
-          'decodeFormDouble decodes properly form-encoded '
+      test('decodeFormDouble decodes properly form-encoded '
           'scientific notation', () {
         // Properly encoded 1.5e+10: the + is encoded as %2B
         expect('1.5e%2B10'.decodeFormDouble(), 1.5e+10);
       });
 
-      test(
-          'decodeFormDouble decodes properly percent-encoded '
+      test('decodeFormDouble decodes properly percent-encoded '
           'scientific notation', () {
         // Properly encoded: + is %2B in scientific notation
         expect('1e%2B100'.decodeFormDouble(), 1e+100);
@@ -164,8 +162,7 @@ void main() {
         expect('-2.5e%2B3'.decodeFormDouble(), -2.5e+3);
       });
 
-      test(
-          'decodeFormDouble treats + as space in '
+      test('decodeFormDouble treats + as space in '
           'non-numeric values containing e+', () {
         // 'e+notation' is not a valid numeric pattern,
         // so + should be decoded as space
@@ -180,8 +177,7 @@ void main() {
         );
       });
 
-      test(
-          'decodeFormDouble rejects ambiguous form-encoded value '
+      test('decodeFormDouble rejects ambiguous form-encoded value '
           'where + means space', () {
         // In form encoding, '5e+7' means '5e 7' (+ is space).
         // Without the fix, the code incorrectly parses this as 5e+7 = 50000000.

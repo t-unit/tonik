@@ -69,8 +69,8 @@ void main() {
         result,
         isA<TonikSuccess<ListCoreV1ConfigMapForAllNamespacesResponse>>(),
       );
-      final success = result
-          as TonikSuccess<ListCoreV1ConfigMapForAllNamespacesResponse>;
+      final success =
+          result as TonikSuccess<ListCoreV1ConfigMapForAllNamespacesResponse>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;

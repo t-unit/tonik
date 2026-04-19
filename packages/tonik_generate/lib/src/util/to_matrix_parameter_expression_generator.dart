@@ -28,15 +28,13 @@ Expression buildMatrixParameterExpression(
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() =>
-      propertyAccess
-          .call(
-            [paramName],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-            },
-          ),
+    AnyOfModel() => propertyAccess.call(
+      [paramName],
+      {
+        'explode': explode,
+        'allowEmpty': allowEmpty,
+      },
+    ),
     ListModel(:final content) => _buildListMatrixExpression(
       valueExpression,
       content,
@@ -123,15 +121,13 @@ Expression _buildListMatrixExpression(
       : valueExpression.property('map');
 
   return switch (contentModel) {
-    StringModel() =>
-      listPropertyAccess
-          .call(
-            [paramName],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-            },
-          ),
+    StringModel() => listPropertyAccess.call(
+      [paramName],
+      {
+        'explode': explode,
+        'allowEmpty': allowEmpty,
+      },
+    ),
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||

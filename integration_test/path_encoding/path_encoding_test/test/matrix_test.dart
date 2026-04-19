@@ -343,40 +343,44 @@ void main() {
   });
 
   group('Matrix style - Special character property names', () {
-    test('special keys (explode=false) encodes keys with URI encoding',
-        () async {
-      final api = buildMatrixApi();
-      final response = await api.testMatrixSpecialKeys(
-        value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
-      );
+    test(
+      'special keys (explode=false) encodes keys with URI encoding',
+      () async {
+        final api = buildMatrixApi();
+        final response = await api.testMatrixSpecialKeys(
+          value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
+        );
 
-      expect(response, isA<TonikSuccess<EchoResponse>>());
-      final success = response as TonikSuccess<EchoResponse>;
-      expect(success.response.statusCode, 200);
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
 
-      // explode=false: ;paramName=k1,v1,k2,v2
-      expect(
-        success.response.requestOptions.uri.path,
-        '/v1/matrix/special-keys/;value=my.field,hello,a%3Db,42',
-      );
-    });
+        // explode=false: ;paramName=k1,v1,k2,v2
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/matrix/special-keys/;value=my.field,hello,a%3Db,42',
+        );
+      },
+    );
 
-    test('special keys (explode=true) encodes keys with URI encoding',
-        () async {
-      final api = buildMatrixApi();
-      final response = await api.testMatrixSpecialKeysExplode(
-        value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
-      );
+    test(
+      'special keys (explode=true) encodes keys with URI encoding',
+      () async {
+        final api = buildMatrixApi();
+        final response = await api.testMatrixSpecialKeysExplode(
+          value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
+        );
 
-      expect(response, isA<TonikSuccess<EchoResponse>>());
-      final success = response as TonikSuccess<EchoResponse>;
-      expect(success.response.statusCode, 200);
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
 
-      // explode=true: ;k1=v1;k2=v2 — a=b must be encoded as a%3Db
-      expect(
-        success.response.requestOptions.uri.path,
-        '/v1/matrix/special-keys/explode/;my.field=hello;a%3Db=42',
-      );
-    });
+        // explode=true: ;k1=v1;k2=v2 — a=b must be encoded as a%3Db
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/matrix/special-keys/explode/;my.field=hello;a%3Db=42',
+        );
+      },
+    );
   });
 }

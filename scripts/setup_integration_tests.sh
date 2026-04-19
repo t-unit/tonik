@@ -216,63 +216,41 @@ add_dependency_overrides_recursive "multipart/multipart_3_1_api"
 $TONIK_BINARY -p adversarial_strings_api -s adversarial_strings/openapi.yaml -o adversarial_strings
 add_dependency_overrides_recursive "adversarial_strings/adversarial_strings_api"
 
-$TONIK_BINARY --config figma/tonik.yaml || echo "WARNING: Figma generation failed."
-if [ -d "figma/figma_api" ]; then
-    add_dependency_overrides_recursive "figma/figma_api"
-fi
+$TONIK_BINARY --config figma/tonik.yaml
+add_dependency_overrides_recursive "figma/figma_api"
 
-$TONIK_BINARY --config stripe/tonik.yaml || echo "WARNING: Stripe generation failed."
-if [ -d "stripe/stripe_api" ]; then
-    add_dependency_overrides_recursive "stripe/stripe_api"
-fi
+$TONIK_BINARY --config stripe/tonik.yaml
+add_dependency_overrides_recursive "stripe/stripe_api"
 
-$TONIK_BINARY --config github/tonik.yaml || echo "WARNING: GitHub generation failed."
-if [ -d "github/github_api" ]; then
-    add_dependency_overrides_recursive "github/github_api"
-fi
+$TONIK_BINARY --config github/tonik.yaml
+add_dependency_overrides_recursive "github/github_api"
 
-$TONIK_BINARY --config openai/tonik_full.yaml || echo "WARNING: OpenAI generation failed."
-if [ -d "openai/openai_full_api" ]; then
-    add_dependency_overrides_recursive "openai/openai_full_api"
-fi
+$TONIK_BINARY --config openai/tonik_full.yaml
+add_dependency_overrides_recursive "openai/openai_full_api"
 
-$TONIK_BINARY --config asana/tonik.yaml || echo "WARNING: Asana generation failed."
-if [ -d "asana/asana_api" ]; then
-    add_dependency_overrides_recursive "asana/asana_api"
-fi
+$TONIK_BINARY --config asana/tonik.yaml
+add_dependency_overrides_recursive "asana/asana_api"
 
-$TONIK_BINARY --config twilio/tonik.yaml || echo "WARNING: Twilio generation failed."
-if [ -d "twilio/twilio_api" ]; then
-    add_dependency_overrides_recursive "twilio/twilio_api"
-fi
+$TONIK_BINARY --config twilio/tonik.yaml
+add_dependency_overrides_recursive "twilio/twilio_api"
 
-$TONIK_BINARY --config shopify/tonik.yaml || echo "WARNING: Shopify generation failed."
-if [ -d "shopify/shopify_api" ]; then
-    add_dependency_overrides_recursive "shopify/shopify_api"
-fi
+$TONIK_BINARY --config shopify/tonik.yaml
+add_dependency_overrides_recursive "shopify/shopify_api"
 
-$TONIK_BINARY --config kubernetes/tonik.yaml || echo "WARNING: Kubernetes generation failed."
-if [ -d "kubernetes/kubernetes_api" ]; then
-    add_dependency_overrides_recursive "kubernetes/kubernetes_api"
-fi
+$TONIK_BINARY --config kubernetes/tonik.yaml
+add_dependency_overrides_recursive "kubernetes/kubernetes_api"
 
-$TONIK_BINARY --config cloudflare/tonik.yaml || echo "WARNING: Cloudflare generation failed."
-if [ -d "cloudflare/cloudflare_api" ]; then
-    add_dependency_overrides_recursive "cloudflare/cloudflare_api"
-fi
+$TONIK_BINARY --config cloudflare/tonik.yaml
+add_dependency_overrides_recursive "cloudflare/cloudflare_api"
 
-$TONIK_BINARY --config totem/tonik.yaml || echo "WARNING: Totem generation failed."
-if [ -d "totem/totem_api" ]; then
-    add_dependency_overrides_recursive "totem/totem_api"
-fi
+$TONIK_BINARY --config totem/tonik.yaml
+add_dependency_overrides_recursive "totem/totem_api"
 
 $TONIK_BINARY --config immutable_collections/tonik.yaml
 add_dependency_overrides_recursive "immutable_collections/immutable_collections_api"
 
-$TONIK_BINARY -p naming_api -s naming/openapi.yaml -o naming || echo "WARNING: Naming generation failed."
-if [ -d "naming/naming_api" ]; then
-    add_dependency_overrides_recursive "naming/naming_api"
-fi
+$TONIK_BINARY -p naming_api -s naming/openapi.yaml -o naming
+add_dependency_overrides_recursive "naming/naming_api"
 
 # Run dart pub get for all generated packages in parallel
 echo "Running dart pub get for all generated packages in parallel..."
@@ -304,18 +282,18 @@ echo "Running dart pub get for all generated packages in parallel..."
   cd multipart/multipart_api && dart pub get &
   cd multipart/multipart_3_1_api && dart pub get &
   cd adversarial_strings/adversarial_strings_api && dart pub get &
-  ([ -d "figma/figma_api" ] && cd figma/figma_api && dart pub get) &
-  ([ -d "stripe/stripe_api" ] && cd stripe/stripe_api && dart pub get) &
-  ([ -d "github/github_api" ] && cd github/github_api && dart pub get) &
-  ([ -d "openai/openai_full_api" ] && cd openai/openai_full_api && dart pub get) &
-  ([ -d "asana/asana_api" ] && cd asana/asana_api && dart pub get) &
-  ([ -d "twilio/twilio_api" ] && cd twilio/twilio_api && dart pub get) &
-  ([ -d "shopify/shopify_api" ] && cd shopify/shopify_api && dart pub get) &
-  ([ -d "kubernetes/kubernetes_api" ] && cd kubernetes/kubernetes_api && dart pub get) &
-  ([ -d "cloudflare/cloudflare_api" ] && cd cloudflare/cloudflare_api && dart pub get) &
-  ([ -d "totem/totem_api" ] && cd totem/totem_api && dart pub get) &
+  cd figma/figma_api && dart pub get &
+  cd stripe/stripe_api && dart pub get &
+  cd github/github_api && dart pub get &
+  cd openai/openai_full_api && dart pub get &
+  cd asana/asana_api && dart pub get &
+  cd twilio/twilio_api && dart pub get &
+  cd shopify/shopify_api && dart pub get &
+  cd kubernetes/kubernetes_api && dart pub get &
+  cd cloudflare/cloudflare_api && dart pub get &
+  cd totem/totem_api && dart pub get &
   cd immutable_collections/immutable_collections_api && dart pub get &
-  ([ -d "naming/naming_api" ] && cd naming/naming_api && dart pub get) &
+  cd naming/naming_api && dart pub get &
   wait
 )
 echo "All dart pub get operations completed"
@@ -413,7 +391,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd cloudflare/cloudflare_test && dart pub get &
   cd totem/totem_test && dart pub get &
   cd immutable_collections/immutable_collections_test && dart pub get &
-  ([ -d "naming/naming_test" ] && cd naming/naming_test && dart pub get) &
+  cd naming/naming_test && dart pub get &
   wait
 )
 echo "All test package dependencies resolved"

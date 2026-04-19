@@ -47,9 +47,7 @@ Expression buildFromJsonValueExpression(
     case DecimalModel():
       return refer(value)
           .property(
-            nullable
-                ? 'decodeJsonNullableBigDecimal'
-                : 'decodeJsonBigDecimal',
+            nullable ? 'decodeJsonNullableBigDecimal' : 'decodeJsonBigDecimal',
           )
           .call([], contextParam);
     case StringModel():
@@ -236,9 +234,7 @@ Expression _buildListFromJsonExpression(
       // Use tear-off for fromJson
       final mapFunction = refer(
         className,
-        package != null
-            ? sourceFileUrl(package, 'model', className)
-            : null,
+        package != null ? sourceFileUrl(package, 'model', className) : null,
       ).property('fromJson');
       final listExpr = refer(value).property(listDecoder).call(
         [],
