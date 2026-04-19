@@ -172,6 +172,9 @@ class ClassGenerator {
           ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
           ..implements.add(
             refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
+          )
+          ..implements.add(
+            refer('UriEncodable', 'package:tonik_util/tonik_util.dart'),
           );
 
         if (model.isDeprecated) {
@@ -244,6 +247,7 @@ class ClassGenerator {
           _buildToLabelMethod(),
           _buildToMatrixMethod(),
           _buildToDeepObjectMethod(),
+          _buildUriEncodeMethod(className),
         ]);
 
         b.fields.addAll(
@@ -1858,6 +1862,34 @@ if ($name != null) {
             .returned
             .statement,
       ]),
+  );
+
+  Method _buildUriEncodeMethod(String className) => Method(
+    (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
+      ..name = 'uriEncode'
+      ..returns = refer('String', 'dart:core')
+      ..optionalParameters.addAll([
+        Parameter(
+          (b) => b
+            ..name = 'allowEmpty'
+            ..type = refer('bool', 'dart:core')
+            ..named = true
+            ..required = true,
+        ),
+        Parameter(
+          (b) => b
+            ..name = 'useQueryComponent'
+            ..type = refer('bool', 'dart:core')
+            ..named = true
+            ..defaultTo = literalBool(false).code,
+        ),
+      ])
+      ..lambda = false
+      ..body = generateEncodingExceptionExpression(
+        'Cannot uriEncode $className: complex types cannot be URI-encoded',
+        raw: true,
+      ).statement,
   );
 
   bool _hasStringCapturableAP(ClassModel model) {

@@ -1306,7 +1306,8 @@ class AnyOfGenerator {
       ..addAll([
         const Code('explode: explode, '),
         const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true'),
+        const Code('alreadyEncoded: true, '),
+        const Code('useQueryComponent: useQueryComponent'),
         const Code(');'),
       ]);
 

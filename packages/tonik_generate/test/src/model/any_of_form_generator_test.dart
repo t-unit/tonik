@@ -618,6 +618,7 @@ void main() {
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
           );
         }
       ''';
@@ -699,6 +700,7 @@ void main() {
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
           );
         }
       ''';
@@ -780,6 +782,7 @@ void main() {
               explode: explode,
               allowEmpty: allowEmpty,
               alreadyEncoded: true,
+              useQueryComponent: useQueryComponent,
             );
           }
         }
@@ -952,6 +955,7 @@ void main() {
                 explode: explode,
                 allowEmpty: allowEmpty,
                 alreadyEncoded: true,
+                useQueryComponent: useQueryComponent,
               );
             }
           }
@@ -1114,6 +1118,7 @@ void main() {
                 explode: explode,
                 allowEmpty: allowEmpty,
                 alreadyEncoded: true,
+                useQueryComponent: useQueryComponent,
               );
             }
           }

@@ -59,7 +59,8 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
-    test('generates class implementing ParameterEncodable', () {
+    test('generates class implementing ParameterEncodable and UriEncodable',
+        () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'User',
@@ -69,11 +70,131 @@ void main() {
 
       final result = generator.generateClass(model);
 
-      expect(result.implements.length, 1);
-      expect(
-        result.implements.first.accept(emitter).toString(),
-        'ParameterEncodable',
-      );
+      expect(result.implements.length, 2);
+      final implementsNames =
+          result.implements.map((i) => i.accept(emitter).toString()).toList();
+      expect(implementsNames, contains('ParameterEncodable'));
+      expect(implementsNames, contains('UriEncodable'));
+    });
+
+    group('uriEncode', () {
+      test('generates uriEncode that throws for class with properties', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'age',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final generated = format(result.accept(emitter).toString());
+
+        const expectedUriEncode = '''
+          @override
+          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+            throw EncodingException(
+              r'Cannot uriEncode User: complex types cannot be URI-encoded',
+            );
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedUriEncode)),
+        );
+      });
+
+      test('generates uriEncode that throws for empty class', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Empty',
+          properties: const [],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final generated = format(result.accept(emitter).toString());
+
+        const expectedUriEncode = '''
+          @override
+          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+            throw EncodingException(
+              r'Cannot uriEncode Empty: complex types cannot be URI-encoded',
+            );
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedUriEncode)),
+        );
+      });
+
+      test('generates uriEncode with correct signature', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Item',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final result = generator.generateClass(model);
+        final uriEncodeMethod = result.methods.firstWhere(
+          (m) => m.name == 'uriEncode',
+        );
+
+        expect(uriEncodeMethod.returns?.accept(emitter).toString(), 'String');
+        expect(
+          uriEncodeMethod.annotations.first.accept(emitter).toString(),
+          'override',
+        );
+
+        final allowEmptyParam =
+            uriEncodeMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'allowEmpty',
+        );
+        expect(allowEmptyParam.type?.accept(emitter).toString(), 'bool');
+        expect(allowEmptyParam.named, isTrue);
+        expect(allowEmptyParam.required, isTrue);
+
+        final useQueryComponentParam =
+            uriEncodeMethod.optionalParameters.firstWhere(
+          (p) => p.name == 'useQueryComponent',
+        );
+        expect(
+          useQueryComponentParam.type?.accept(emitter).toString(),
+          'bool',
+        );
+        expect(useQueryComponentParam.named, isTrue);
+        expect(useQueryComponentParam.required, isFalse);
+        expect(
+          useQueryComponentParam.defaultTo?.accept(emitter).toString(),
+          'false',
+        );
+      });
     });
 
     group('doc comments', () {

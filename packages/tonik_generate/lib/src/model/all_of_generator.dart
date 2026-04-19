@@ -1759,6 +1759,7 @@ for (final _\$e in $apFieldName.entries) {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
               'alreadyEncoded': literalBool(true),
+              'useQueryComponent': refer('useQueryComponent'),
             })
             .returned
             .statement,
@@ -1822,6 +1823,7 @@ for (final _\$e in $apFieldName.entries) {
             .call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
+              'useQueryComponent': refer('useQueryComponent'),
             })
             .returned
             .statement,
@@ -1964,6 +1966,7 @@ for (final _\$e in $apFieldName.entries) {
                   'explode': refer('explode'),
                   'allowEmpty': refer('allowEmpty'),
                   'alreadyEncoded': literalBool(true),
+                  'useQueryComponent': refer('useQueryComponent'),
                 })
                 .returned
                 .statement,
@@ -2001,6 +2004,7 @@ for (final _\$e in $apFieldName.entries) {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
               'alreadyEncoded': literalBool(true),
+              'useQueryComponent': refer('useQueryComponent'),
             })
             .returned
             .statement,
@@ -2051,6 +2055,7 @@ for (final _\$e in $apFieldName.entries) {
               .call([], {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
               })
               .returned
               .statement,
