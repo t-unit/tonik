@@ -273,27 +273,49 @@ class OneOfGenerator {
     for (var i = 0; i < sortedModels.length; i++) {
       final discriminatedModel = sortedModels[i];
       final variantName = variantNames[discriminatedModel]!;
+      final resolvedType = discriminatedModel.model.resolved;
 
-      final property = Property(
-        name: 'value',
-        model: discriminatedModel.model,
-        isRequired: true,
-        isNullable: false,
-        isDeprecated: false,
-      );
-      final jsonValueExpr = buildToJsonPropertyExpression(
-        'value',
-        property,
-        useImmutableCollections: useImmutableCollections,
-      );
       final discriminatorValue = discriminatedModel.discriminatorValue != null
           ? specLiteralStringCode(discriminatedModel.discriminatorValue!)
           : 'null';
 
-      caseCodes
-        ..add(Code('$variantName(:final value) => ('))
-        ..add(jsonValueExpr.code)
-        ..add(Code(', $discriminatorValue)'));
+      if (resolvedType is NeverModel) {
+        caseCodes
+          ..add(Code('$variantName() => '))
+          ..add(
+            generateEncodingExceptionExpression(
+              'Cannot encode NeverModel variant to JSON.',
+            ).code,
+          );
+      } else if (resolvedType is AnyModel) {
+        caseCodes
+          ..add(Code('$variantName(:final value) => ('))
+          ..add(
+            refer(
+              'encodeAnyToJson',
+              'package:tonik_util/tonik_util.dart',
+            ).call([refer('value')]).code,
+          )
+          ..add(Code(', $discriminatorValue)'));
+      } else {
+        final property = Property(
+          name: 'value',
+          model: discriminatedModel.model,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+        final jsonValueExpr = buildToJsonPropertyExpression(
+          'value',
+          property,
+          useImmutableCollections: useImmutableCollections,
+        );
+
+        caseCodes
+          ..add(Code('$variantName(:final value) => ('))
+          ..add(jsonValueExpr.code)
+          ..add(Code(', $discriminatorValue)'));
+      }
       if (i < sortedModels.length - 1) {
         caseCodes.add(const Code(',\n'));
       }
@@ -354,7 +376,9 @@ class OneOfGenerator {
                     m.discriminatorValue != null &&
                     m.model.resolved is! PrimitiveModel &&
                     m.model.resolved is! ListModel &&
-                    m.model.resolved is! MapModel,
+                    m.model.resolved is! MapModel &&
+                    m.model.resolved is! AnyModel &&
+                    m.model.resolved is! NeverModel,
               )) {
         final variantName = variantNames[m]!;
 
@@ -391,10 +415,15 @@ class OneOfGenerator {
       (m) => m.model.resolved is PrimitiveModel,
     );
     final hasOnlyPrimitives = !model.models.any(
-      (m) => m.model.resolved is! PrimitiveModel,
+      (m) =>
+          m.model.resolved is! PrimitiveModel &&
+          m.model.resolved is! NeverModel,
+    );
+    final hasAnyModel = model.models.any(
+      (m) => m.model.resolved is AnyModel,
     );
 
-    if (hasPrimitives && hasOnlyPrimitives) {
+    if (hasPrimitives && hasOnlyPrimitives && !hasAnyModel) {
       final cases = <Code>[];
 
       for (final m
@@ -455,15 +484,18 @@ class OneOfGenerator {
     }
 
     // Fallback: try all non-primitive variants when discriminator doesn't match
+    // Skip AnyModel (handled as catch-all last) and NeverModel (not decodable)
     for (final m
         in stableModelSorter
             .sortDiscriminatedModels(model.models)
             .where(
-              (m) => m.model.resolved is! PrimitiveModel,
+              (m) =>
+                  m.model.resolved is! PrimitiveModel &&
+                  m.model.resolved is! AnyModel &&
+                  m.model.resolved is! NeverModel,
             )) {
       final modelType = m.model;
       final resolvedType = modelType.resolved;
-      final modelName = nameManager.modelName(modelType);
       final variantName = variantNames[m]!;
 
       if (resolvedType is ListModel || resolvedType is MapModel) {
@@ -483,6 +515,7 @@ class OneOfGenerator {
           const Code(' catch(_) {}'),
         ]);
       } else {
+        final modelName = nameManager.modelName(modelType);
         blocks.addAll([
           const Code('try {'),
           refer(variantName)
@@ -501,12 +534,24 @@ class OneOfGenerator {
       }
     }
 
-    blocks.add(
-      generateJsonDecodingExceptionExpression(
-        'Invalid JSON for $className',
-        raw: true,
-      ).statement,
-    );
+    // AnyModel is a catch-all: wraps the raw JSON value directly.
+    // Must be tried last since it accepts any value.
+    if (hasAnyModel) {
+      final anyModelVariant = stableModelSorter
+          .sortDiscriminatedModels(model.models)
+          .firstWhere((m) => m.model.resolved is AnyModel);
+      final variantName = variantNames[anyModelVariant]!;
+      blocks.add(
+        refer(variantName).call([refer('json')]).returned.statement,
+      );
+    } else {
+      blocks.add(
+        generateJsonDecodingExceptionExpression(
+          'Invalid JSON for $className',
+          raw: true,
+        ).statement,
+      );
+    }
 
     return Block.of(blocks);
   }
@@ -528,7 +573,9 @@ class OneOfGenerator {
             m.discriminatorValue != null &&
             m.model.resolved is! PrimitiveModel &&
             m.model.resolved is! ListModel &&
-            m.model.resolved is! MapModel,
+            m.model.resolved is! MapModel &&
+            m.model.resolved is! AnyModel &&
+            m.model.resolved is! NeverModel,
       );
 
       if (hasDiscriminatedComplexTypes) {
@@ -563,7 +610,9 @@ class OneOfGenerator {
                       m.discriminatorValue != null &&
                       m.model.resolved is! PrimitiveModel &&
                       m.model.resolved is! ListModel &&
-                      m.model.resolved is! MapModel,
+                      m.model.resolved is! MapModel &&
+                      m.model.resolved is! AnyModel &&
+                      m.model.resolved is! NeverModel,
                 )) {
           final variantName = variantNames[m]!;
           final modelType = m.model;
@@ -605,7 +654,11 @@ class OneOfGenerator {
 
       final resolvedType = modelType.resolved;
 
-      if (resolvedType is PrimitiveModel) {
+      if (resolvedType is AnyModel || resolvedType is NeverModel) {
+        // AnyModel/NeverModel cannot be meaningfully decoded from parameter
+        // encoding — skip so other variants remain reachable.
+        continue;
+      } else if (resolvedType is PrimitiveModel) {
         final decodeExpr = isForm
             ? buildFromFormValueExpression(
                 refer('value'),
@@ -737,15 +790,27 @@ class OneOfGenerator {
 
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
+      final resolvedType = m.model.resolved;
 
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
-      if (model.discriminator != null &&
+      if (resolvedType is AnyModel || resolvedType is NeverModel) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
+            ' variant cannot be simple-encoded',
+          ).code,
+          const Code(','),
+        ]);
+      } else if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model.resolved is! ListModel &&
-          m.model.resolved is! MapModel) {
+          resolvedType is! ListModel &&
+          resolvedType is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -818,8 +883,8 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (m.model.resolved is ListModel &&
-          (m.model.resolved as ListModel).hasSimpleContent) {
+      } else if (resolvedType is ListModel &&
+          resolvedType.hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
@@ -924,15 +989,27 @@ class OneOfGenerator {
 
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
+      final resolvedType = m.model.resolved;
 
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
-      if (model.discriminator != null &&
+      if (resolvedType is AnyModel || resolvedType is NeverModel) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
+            ' variant cannot be form-encoded',
+          ).code,
+          const Code(','),
+        ]);
+      } else if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model.resolved is! ListModel &&
-          m.model.resolved is! MapModel) {
+          resolvedType is! ListModel &&
+          resolvedType is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -1007,8 +1084,8 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (m.model.resolved is ListModel &&
-          (m.model.resolved as ListModel).hasSimpleContent) {
+      } else if (resolvedType is ListModel &&
+          resolvedType.hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
@@ -1121,11 +1198,24 @@ class OneOfGenerator {
 
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
+      final resolvedType = m.model.resolved;
       final isSimple = m.model.encodingShape == EncodingShape.simple;
-      final isList = m.model.resolved is ListModel;
-      final isMap = m.model.resolved is MapModel;
+      final isList = resolvedType is ListModel;
+      final isMap = resolvedType is MapModel;
 
-      if (isSimple) {
+      if (resolvedType is AnyModel || resolvedType is NeverModel) {
+        // AnyModel and NeverModel cannot determine encoding shape
+        caseCodes.addAll([
+          Code('$variantName() => '),
+          generateEncodingExceptionExpression(
+            'Cannot determine encoding shape for '
+            '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
+            ' variant in oneOf',
+            raw: true,
+          ).code,
+          const Code(','),
+        ]);
+      } else if (isSimple) {
         caseCodes.addAll([
           Code('$variantName() => '),
           refer(
@@ -1215,10 +1305,20 @@ class OneOfGenerator {
 
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
+      final resolvedType = m.model.resolved;
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
-      if (encodingShape == EncodingShape.simple) {
+      if (resolvedType is AnyModel || resolvedType is NeverModel) {
+        caseCodes
+          ..add(Code('$variantName() => '))
+          ..add(
+            generateEncodingExceptionExpression(
+              '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
+              ' variant cannot be parameter encoded',
+            ).code,
+          );
+      } else if (encodingShape == EncodingShape.simple) {
         caseCodes
           ..add(Code('$variantName() => '))
           ..add(
@@ -1372,15 +1472,27 @@ class OneOfGenerator {
 
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
+      final resolvedType = m.model.resolved;
 
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
 
-      if (model.discriminator != null &&
+      if (resolvedType is AnyModel || resolvedType is NeverModel) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
+            ' variant cannot be label-encoded',
+          ).code,
+          const Code(','),
+        ]);
+      } else if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
-          m.model.resolved is! ListModel &&
-          m.model.resolved is! MapModel) {
+          resolvedType is! ListModel &&
+          resolvedType is! MapModel) {
         final isNullable = m.model.isEffectivelyNullable;
 
         if (encodingShape == EncodingShape.mixed) {
@@ -1452,8 +1564,8 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (m.model.resolved is ListModel &&
-          (m.model.resolved as ListModel).hasSimpleContent) {
+      } else if (resolvedType is ListModel &&
+          resolvedType.hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
@@ -1558,33 +1670,48 @@ class OneOfGenerator {
 
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
-      final usesValue = matrixParameterExpressionUsesValue(m.model);
-      final isNullable = usesValue && m.model.isEffectivelyNullable;
+      final resolvedType = m.model.resolved;
 
-      caseCodes.add(
-        Code.scope(
-          (allocate) => usesValue
-              ? '${allocate(refer(variantName))}(:final value) => '
-              : '${allocate(refer(variantName))}() => ',
-        ),
-      );
-
-      if (isNullable) {
+      if (resolvedType is AnyModel || resolvedType is NeverModel) {
         caseCodes.addAll([
-          const Code("value == null ? '' : "),
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
+            ' variant cannot be matrix-encoded',
+          ).code,
+          const Code(','),
+        ]);
+      } else {
+        final usesValue = matrixParameterExpressionUsesValue(m.model);
+        final isNullable = usesValue && m.model.isEffectivelyNullable;
+
+        caseCodes.add(
+          Code.scope(
+            (allocate) => usesValue
+                ? '${allocate(refer(variantName))}(:final value) => '
+                : '${allocate(refer(variantName))}() => ',
+          ),
+        );
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code("value == null ? '' : "),
+          ]);
+        }
+
+        caseCodes.addAll([
+          buildMatrixParameterExpression(
+            refer('value'),
+            m.model,
+            paramName: refer('paramName'),
+            explode: refer('explode'),
+            allowEmpty: refer('allowEmpty'),
+          ).code,
+          const Code(','),
         ]);
       }
-
-      caseCodes.addAll([
-        buildMatrixParameterExpression(
-          refer('value'),
-          m.model,
-          paramName: refer('paramName'),
-          explode: refer('explode'),
-          allowEmpty: refer('allowEmpty'),
-        ).code,
-        const Code(','),
-      ]);
     }
 
     final body = Block.of([
@@ -1621,9 +1748,20 @@ class OneOfGenerator {
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final modelType = m.model;
+      final resolvedType = modelType.resolved;
 
-      // Check if this variant can be URI encoded
-      if (modelType.encodingShape == EncodingShape.complex) {
+      if (resolvedType is AnyModel || resolvedType is NeverModel) {
+        caseCodes.addAll([
+          Code.scope(
+            (allocate) => '${allocate(refer(variantName))}() => ',
+          ),
+          generateEncodingExceptionExpression(
+            '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
+            ' variant cannot be URI encoded',
+          ).code,
+          const Code(','),
+        ]);
+      } else if (modelType.encodingShape == EncodingShape.complex) {
         // Complex types cannot be URI encoded - don't destructure value
         caseCodes.addAll([
           Code.scope(

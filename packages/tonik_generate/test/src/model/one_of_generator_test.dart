@@ -2815,4 +2815,579 @@ bool operator ==(Object other) {
       );
     });
   });
+
+  group('AnyModel in OneOf', () {
+    test('subclass has Object? value field', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final anySubclass = classes.firstWhere(
+        (c) => c.name == 'ValueUnknown',
+      );
+      final valueField = anySubclass.fields.firstWhere(
+        (f) => f.name == 'value',
+      );
+      final fieldType = valueField.type!.accept(emitter).toString();
+
+      expect(fieldType, 'Object?');
+    });
+
+    test('currentEncodingShape throws EncodingException for AnyModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              r'Cannot determine encoding shape for AnyModel variant in oneOf',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('toSimple throws EncodingException for AnyModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              'AnyModel variant cannot be simple-encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('toForm throws EncodingException for AnyModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              'AnyModel variant cannot be form-encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('toLabel throws EncodingException for AnyModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              'AnyModel variant cannot be label-encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('toMatrix throws EncodingException for AnyModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              'AnyModel variant cannot be matrix-encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('uriEncode throws EncodingException for AnyModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              'AnyModel variant cannot be URI encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('parameterProperties throws EncodingException for AnyModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'Data',
+              properties: const [],
+              context: context,
+            ),
+          ),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              'AnyModel variant cannot be parameter encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('toJson uses encodeAnyToJson for AnyModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            'ValueUnknown(:final value) => (encodeAnyToJson(value), null)',
+          ),
+        ),
+      );
+    });
+
+    test('fromJson uses AnyModel as last-resort catch-all', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // AnyModel should be the final catch-all: wraps raw json directly
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is String) {
+                return ValueString(json);
+              }
+              return ValueUnknown(json);
+            }
+          '''),
+        ),
+      );
+    });
+
+    test(
+      'fromJson with AnyModel and complex type tries complex first',
+      () {
+        final classA = ClassModel(
+          isDeprecated: false,
+          name: 'A',
+          properties: const [],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: AnyModel(context: context)),
+            (discriminatorValue: null, model: classA),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
+
+        // Complex variant should be tried first, AnyModel should be the
+        // last-resort fallback
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
+              factory Value.fromJson(Object? json) {
+                try {
+                  return ValueA(A.fromJson(json));
+                } on Object catch (_) {}
+                return ValueUnknown(json);
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test('fromSimple skips AnyModel variant', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // AnyModel is skipped — no AnyModel-specific throw in fromSimple
+      expect(
+        collapseWhitespace(generated),
+        isNot(contains('AnyModel variant cannot be decoded')),
+      );
+
+      // The String variant is still tried
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace('return ValueString(')),
+      );
+
+      // Final fallback throw is present
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw SimpleDecodingException(r'Invalid simple value for Value')",
+          ),
+        ),
+      );
+    });
+
+    test('fromForm skips AnyModel variant', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // AnyModel is skipped — no AnyModel-specific throw in fromForm
+      expect(
+        collapseWhitespace(generated),
+        isNot(contains('AnyModel variant cannot be decoded')),
+      );
+
+      // The String variant is still tried
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace('return ValueString(')),
+      );
+
+      // Final fallback throw is present
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw SimpleDecodingException(r'Invalid form value for Value')",
+          ),
+        ),
+      );
+    });
+  });
+
+  group('NeverModel in OneOf', () {
+    test('subclass has Never value field', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: NeverModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final neverSubclass = classes.firstWhere(
+        (c) => c.name == 'ValueUnknown',
+      );
+      final valueField = neverSubclass.fields.firstWhere(
+        (f) => f.name == 'value',
+      );
+      final fieldType = valueField.type!.accept(emitter).toString();
+
+      expect(fieldType, 'Never');
+    });
+
+    test('currentEncodingShape throws EncodingException for NeverModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: NeverModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              r'Cannot determine encoding shape for NeverModel variant in oneOf',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('toJson throws EncodingException for NeverModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: NeverModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              'Cannot encode NeverModel variant to JSON.',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('fromJson skips NeverModel (not decodable)', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: NeverModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // NeverModel should not appear in fromJson - only primitives are tried
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(r"""
+            factory Value.fromJson(Object? json) {
+              return switch (json) {
+                int s => ValueInt(s),
+                String s => ValueString(s),
+                _ => throw JsonDecodingException(
+                  r'Invalid JSON type for Value: ${json.runtimeType}',
+                ),
+              };
+            }
+          """),
+        ),
+      );
+    });
+
+    test('toSimple throws EncodingException for NeverModel', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: NeverModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            ValueUnknown() => throw EncodingException(
+              'NeverModel variant cannot be simple-encoded',
+            ),
+          '''),
+        ),
+      );
+    });
+
+    test('fromSimple skips NeverModel variant', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: NeverModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      // NeverModel is skipped — no NeverModel-specific throw in fromSimple
+      expect(
+        collapseWhitespace(generated),
+        isNot(contains('NeverModel variant cannot be decoded')),
+      );
+
+      // The String variant is still tried
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace('return ValueString(')),
+      );
+
+      // Final fallback throw is present
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(
+            "throw SimpleDecodingException(r'Invalid simple value for Value')",
+          ),
+        ),
+      );
+    });
+  });
 }
