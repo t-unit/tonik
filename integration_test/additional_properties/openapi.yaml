@@ -259,6 +259,38 @@ components:
         $ref: '#/components/schemas/Address'
 
     # ---------------------------------------------------------------
+    # 9. Schemas that expose fromJson bugs for list types
+    # ---------------------------------------------------------------
+
+    # Bug: List<Uri> fromJson generates decodeJsonList<Uri>() which
+    # uses whereType<Uri>() on String elements → always throws.
+    UriListHolder:
+      type: object
+      required:
+        - links
+      properties:
+        links:
+          type: array
+          items:
+            type: string
+            format: uri
+
+    # Bug: List<Map<String, Address>> fromJson generates
+    # decodeJsonList<Map<String, Address>>() which fails because
+    # JSON-decoded maps are Map<String, dynamic>, not Map<String, Address>.
+    AddressMapListHolder:
+      type: object
+      required:
+        - departments
+      properties:
+        departments:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/Address'
+
+    # ---------------------------------------------------------------
     # Helper schemas (used by the above)
     # ---------------------------------------------------------------
 

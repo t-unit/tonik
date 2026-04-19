@@ -129,6 +129,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/ArrayResponse'
 
+  /multipart/category-arrays:
+    post:
+      operationId: postCategoryArrayFields
+      tags:
+        - multipart
+      summary: Post enum array with content-based encoding
+      description: >-
+        Tests that enum arrays are JSON-encoded correctly when using
+        content-based encoding. The Category enum has values with special
+        characters (spaces, ampersands) that expose the difference between
+        uriEncode (wrong — percent-encodes) and toJson (correct — preserves).
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CategoryArrayForm'
+            encoding:
+              categories:
+                contentType: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
   /multipart/mixed-required:
     post:
       operationId: postMixedRequired
@@ -523,6 +551,27 @@ components:
         - low
         - medium
         - high
+
+    # Bug: Multipart enum list encoding uses uriEncode instead of
+    # toJson for JSON-encoded arrays. The special characters in these
+    # values make the difference visible: uriEncode percent-encodes
+    # spaces/ampersands, toJson preserves them in the JSON string.
+    Category:
+      type: string
+      enum:
+        - science & tech
+        - arts & crafts
+        - health and wellness
+
+    CategoryArrayForm:
+      type: object
+      required:
+        - categories
+      properties:
+        categories:
+          type: array
+          items:
+            $ref: '#/components/schemas/Category'
 
     ArrayForm:
       type: object

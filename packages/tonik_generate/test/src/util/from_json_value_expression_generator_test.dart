@@ -444,6 +444,51 @@ void main() {
       );
     });
 
+    test('generates for list of URIs', () {
+      final uriListModel = ListModel(
+        content: UriModel(context: context),
+        context: context,
+      );
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: uriListModel,
+          nameManager: nameManager,
+          package: 'my_package',
+        ).accept(emitter).toString(),
+        equals(
+          'value.decodeJsonList<String>()'
+          '.map((e) => e.decodeJsonUri()).toList()',
+        ),
+      );
+    });
+
+    test('generates for list of maps with typed values', () {
+      final addressModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        name: 'Address',
+        properties: const [],
+      );
+      final mapModel = MapModel(
+        valueModel: addressModel,
+        context: context,
+      );
+      final listModel = ListModel(content: mapModel, context: context);
+      expect(
+        buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'my_package',
+        ).accept(emitter).toString(),
+        equals(
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e.decodeJsonMap((v) => Address.fromJson(v))).toList()',
+        ),
+      );
+    });
+
     test('generates for list of classes', () {
       final classModel = ClassModel(
         isDeprecated: false,

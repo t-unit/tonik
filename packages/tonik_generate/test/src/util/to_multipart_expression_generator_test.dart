@@ -6151,7 +6151,7 @@ void main() {
             format(r'''
             void test() {
               final _$formData = FormData();
-              _$formData.files.add(MapEntry(r'priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.uriEncode(allowEmpty: true)).toList()), contentType: DioMediaType.parse(r'application/json'))));
+              _$formData.files.add(MapEntry(r'priorities', MultipartFile.fromString(jsonEncode(body.priorities.map((e) => e.toJson()).toList()), contentType: DioMediaType.parse(r'application/json'))));
               return _$formData;
             }
           '''),

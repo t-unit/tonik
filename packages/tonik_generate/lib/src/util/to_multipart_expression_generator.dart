@@ -787,7 +787,7 @@ Code _buildContentBasedListAddition(
         .property('toList')
         .call([]);
   } else if (contentModel is EnumModel) {
-    // Enums: map each item to its URI-encoded string representation.
+    // Enums: map each item to its JSON representation for JSON-encoded arrays.
     jsonArg = refer(accessor)
         .property('map')
         .call([
@@ -795,9 +795,7 @@ Code _buildContentBasedListAddition(
             (b) => b
               ..lambda = true
               ..requiredParameters.add(Parameter((p) => p..name = 'e'))
-              ..body = refer('e').property('uriEncode').call([], {
-                'allowEmpty': literalTrue,
-              }).code,
+              ..body = refer('e').property('toJson').call([]).code,
           ).closure,
         ])
         .property('toList')
