@@ -304,6 +304,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart/map-field:
+    post:
+      operationId: postMapField
+      tags:
+        - multipart
+      summary: Post a multipart form with an additionalProperties map field
+      description: >-
+        Tests that Map<String, T> fields (from additionalProperties) are
+        JSON-encoded directly without calling .toJson(), which plain maps
+        don't have.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MapFieldForm'
+            encoding:
+              metadata:
+                contentType: application/json
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
   /multipart/kitchen-sink:
     post:
       operationId: postKitchenSink
@@ -668,6 +695,22 @@ components:
           description: Array of tag strings
         metadata:
           $ref: '#/components/schemas/Profile'
+
+    MapFieldForm:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: A label for the resource
+        metadata:
+          type: object
+          additionalProperties:
+            type: string
+          description: >-
+            Optional key-value metadata. This is a Map<String, String> in
+            generated code, NOT a model class, so .toJson() must not be called.
 
     GenericResponse:
       type: object

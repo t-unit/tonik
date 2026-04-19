@@ -456,6 +456,51 @@ void main() {
     });
   });
 
+  group('Map field (additionalProperties)', () {
+    test('sends map as JSON-encoded multipart part', () async {
+      const form = MapFieldForm(
+        name: 'test-resource',
+        metadata: {'env': 'production', 'version': '2.1'},
+      );
+
+      final response = await api.postMapField(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+      final formData = success.response.requestOptions.data as FormData;
+
+      // Name field present.
+      expect(formData.files.any((e) => e.key == 'name'), isTrue);
+      expect(success.response.headers['x-param-name']?.first, 'test-resource');
+
+      // Metadata map field is present as a JSON-encoded file part.
+      expect(formData.files.any((e) => e.key == 'metadata'), isTrue);
+
+      // Server confirms the metadata arrived as valid JSON.
+      expect(
+        success.response.headers['x-metadata-is-json']?.first,
+        'true',
+      );
+    });
+
+    test('omits optional map field when null', () async {
+      const form = MapFieldForm(name: 'no-metadata');
+
+      final response = await api.postMapField(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+
+      // Metadata field should be absent.
+      expect(
+        success.response.headers['x-has-metadata']?.first,
+        'false',
+      );
+    });
+  });
+
   group('Kitchen sink (all field types)', () {
     test(
       'sends binary + string + number + bool + enum + array + object',

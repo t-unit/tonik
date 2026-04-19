@@ -3429,35 +3429,26 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 final addressParts = <String>[];
-                for (final entry in (body.address.toJson() as Map).entries) {
+                for (final entry in ((body.address.toJson() as Map)).entries) {
                   final value = entry.value;
                   if (value == null) continue;
-                  if (value is Map) {
-                    for (final subEntry in value.entries) {
-                      final subValue = subEntry.value;
-                      if (subValue == null) continue;
-                      if (subValue is Map) {
-                        throw EncodingException(
-                          'URL-encoded part encoding does not support nesting deeper than '
-                          'one level (property: address, key: ${entry.key}).',
-                        );
-                      }
-                      addressParts.add(
-                        '${Uri.encodeQueryComponent(entry.key)}[${Uri.encodeQueryComponent(subEntry.key)}]=${Uri.encodeQueryComponent(subValue.toString())}',
-                      );
-                    }
-                  } else {
-                    addressParts.add(
-                      '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(value.toString())}',
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
+                  addressParts.add(
+                    Uri.encodeQueryComponent(entry.key.toString()) +
+                        '=' +
+                        Uri.encodeQueryComponent(value.toString()),
+                  );
                 }
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3521,35 +3512,26 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 final addressParts = <String>[];
-                for (final entry in (body.address.toJson() as Map).entries) {
+                for (final entry in ((body.address.toJson() as Map)).entries) {
                   final value = entry.value;
                   if (value == null) continue;
-                  if (value is Map) {
-                    for (final subEntry in value.entries) {
-                      final subValue = subEntry.value;
-                      if (subValue == null) continue;
-                      if (subValue is Map) {
-                        throw EncodingException(
-                          'URL-encoded part encoding does not support nesting deeper than '
-                          'one level (property: address, key: ${entry.key}).',
-                        );
-                      }
-                      addressParts.add(
-                        '${Uri.encodeQueryComponent(entry.key)}[${Uri.encodeQueryComponent(subEntry.key)}]=${Uri.encodeQueryComponent(subValue.toString())}',
-                      );
-                    }
-                  } else {
-                    addressParts.add(
-                      '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(value.toString())}',
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
+                  addressParts.add(
+                    Uri.encodeQueryComponent(entry.key.toString()) +
+                        '=' +
+                        Uri.encodeQueryComponent(value.toString()),
+                  );
                 }
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3612,35 +3594,26 @@ void main() {
               final _$formData = FormData();
               if (body.address != null) {
                 final addressParts = <String>[];
-                for (final entry in (body.address!.toJson() as Map).entries) {
+                for (final entry in ((body.address!.toJson() as Map)).entries) {
                   final value = entry.value;
                   if (value == null) continue;
-                  if (value is Map) {
-                    for (final subEntry in value.entries) {
-                      final subValue = subEntry.value;
-                      if (subValue == null) continue;
-                      if (subValue is Map) {
-                        throw EncodingException(
-                          'URL-encoded part encoding does not support nesting deeper than '
-                          'one level (property: address, key: ${entry.key}).',
-                        );
-                      }
-                      addressParts.add(
-                        '${Uri.encodeQueryComponent(entry.key)}[${Uri.encodeQueryComponent(subEntry.key)}]=${Uri.encodeQueryComponent(subValue.toString())}',
-                      );
-                    }
-                  } else {
-                    addressParts.add(
-                      '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(value.toString())}',
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
+                  addressParts.add(
+                    Uri.encodeQueryComponent(entry.key.toString()) +
+                        '=' +
+                        Uri.encodeQueryComponent(value.toString()),
+                  );
                 }
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded',
                     ),
                   ),
                 ));
@@ -3793,35 +3766,26 @@ void main() {
                   addressCustomHeader.toSimple(explode: false, allowEmpty: true),
                 ];
                 final addressParts = <String>[];
-                for (final entry in (body.address.toJson() as Map).entries) {
+                for (final entry in ((body.address.toJson() as Map)).entries) {
                   final value = entry.value;
                   if (value == null) continue;
-                  if (value is Map) {
-                    for (final subEntry in value.entries) {
-                      final subValue = subEntry.value;
-                      if (subValue == null) continue;
-                      if (subValue is Map) {
-                        throw EncodingException(
-                          'URL-encoded part encoding does not support nesting deeper than '
-                          'one level (property: address, key: ${entry.key}).',
-                        );
-                      }
-                      addressParts.add(
-                        '${Uri.encodeQueryComponent(entry.key)}[${Uri.encodeQueryComponent(subEntry.key)}]=${Uri.encodeQueryComponent(subValue.toString())}',
-                      );
-                    }
-                  } else {
-                    addressParts.add(
-                      '${Uri.encodeQueryComponent(entry.key)}=${Uri.encodeQueryComponent(value.toString())}',
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
+                  addressParts.add(
+                    Uri.encodeQueryComponent(entry.key.toString()) +
+                        '=' +
+                        Uri.encodeQueryComponent(value.toString()),
+                  );
                 }
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
                     contentType: DioMediaType.parse(
-                      'application/x-www-form-urlencoded',
+                      r'application/x-www-form-urlencoded',
                     ),
                     headers: _$addressHeaders,
                   ),
@@ -3834,6 +3798,502 @@ void main() {
         },
       );
     });
+  });
+
+  group('MapModel properties', () {
+    test(
+      'generates JSON-encoded file part for required MapModel property',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'metadata',
+              model: mapModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'metadata': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry(
+                r'metadata',
+                MultipartFile.fromString(
+                  jsonEncode(body.metadata),
+                  contentType: DioMediaType.parse(r'application/json'),
+                ),
+              ));
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates JSON-encoded file part for optional MapModel property',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'metadata',
+              model: mapModel,
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'metadata': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              if (body.metadata != null) {
+                _$formData.files.add(MapEntry(
+                  r'metadata',
+                  MultipartFile.fromString(
+                    jsonEncode(body.metadata!),
+                    contentType: DioMediaType.parse(r'application/json'),
+                  ),
+                ));
+              }
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates JSON-encoded file part for MapModel with default encoding',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'metadata',
+              model: mapModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry(
+                r'metadata',
+                MultipartFile.fromString(
+                  jsonEncode(body.metadata),
+                  contentType: DioMediaType.parse(r'application/json'),
+                ),
+              ));
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates deepObject error for MapModel property',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'metadata',
+              model: mapModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'metadata': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              throw EncodingException(
+                'deepObject style is not supported for map multipart properties (property: metadata). Maps do not implement ParameterEncodable.toDeepObject().',
+              );
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates URL-encoded file part for required MapModel property',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'metadata',
+              model: mapModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'metadata': const MultipartPropertyEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              final metadataParts = <String>[];
+              for (final entry in ((body.metadata as Map)).entries) {
+                final value = entry.value;
+                if (value == null) continue;
+                if (value is Map || value is List) {
+                  throw EncodingException(
+                    'Standard URL encoding does not support nested values (property: metadata, key: ${entry.key}). Only flat key=value pairs are allowed.',
+                  );
+                }
+                metadataParts.add(
+                  Uri.encodeQueryComponent(entry.key.toString()) +
+                      '=' +
+                      Uri.encodeQueryComponent(value.toString()),
+                );
+              }
+              _$formData.files.add(MapEntry(
+                r'metadata',
+                MultipartFile.fromString(
+                  metadataParts.join('&'),
+                  contentType: DioMediaType.parse(
+                    r'application/x-www-form-urlencoded',
+                  ),
+                ),
+              ));
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates URL-encoded file part for optional MapModel property',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'metadata',
+              model: mapModel,
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'metadata': const MultipartPropertyEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              if (body.metadata != null) {
+                final metadataParts = <String>[];
+                for (final entry in ((body.metadata! as Map)).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: metadata, key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    );
+                  }
+                  metadataParts.add(
+                    Uri.encodeQueryComponent(entry.key.toString()) +
+                        '=' +
+                        Uri.encodeQueryComponent(value.toString()),
+                  );
+                }
+                _$formData.files.add(MapEntry(
+                  r'metadata',
+                  MultipartFile.fromString(
+                    metadataParts.join('&'),
+                    contentType: DioMediaType.parse(
+                      r'application/x-www-form-urlencoded',
+                    ),
+                  ),
+                ));
+              }
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'generates JSON-encoded file part for MapModel through alias',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+        );
+
+        final aliasModel = AliasModel(
+          name: 'MetadataAlias',
+          model: mapModel,
+          context: testContext,
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'metadata',
+              model: aliasModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: testContext,
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            'metadata': const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              _$formData.files.add(MapEntry(
+                r'metadata',
+                MultipartFile.fromString(
+                  jsonEncode(body.metadata),
+                  contentType: DioMediaType.parse(r'application/json'),
+                ),
+              ));
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
   });
 
   group('array properties', () {
