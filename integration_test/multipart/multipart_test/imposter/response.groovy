@@ -328,6 +328,22 @@ switch (path) {
         }
         break
 
+    case '/multipart/map-field':
+        // The metadata field is a Map<String, String> encoded as JSON.
+        // It must arrive as a valid JSON string, not via .toJson().
+        def metadataValue = formParams['metadata'] ?: ''
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Name', formParams.containsKey('name').toString()
+            withHeader 'X-Param-Name', (formParams['name'] ?: '')
+            withHeader 'X-Has-Metadata', formParams.containsKey('metadata').toString()
+            withHeader 'X-Metadata-Value', metadataValue
+            withHeader 'X-Metadata-Is-Json', (metadataValue.startsWith('{') && metadataValue.endsWith('}')).toString()
+            withContent '{"success":true,"message":"map-field received"}'
+        }
+        break
+
     case '/multipart/kitchen-sink':
         respond {
             withStatusCode 200
