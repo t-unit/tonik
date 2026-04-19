@@ -741,4 +741,24 @@ components:
               type: number
             height:
               type: number
+
+    NodeA:
+      allOf:
+        - $ref: '#/components/schemas/NodeB'
+        - type: object
+          required:
+            - aField
+          properties:
+            aField:
+              type: string
+
+    NodeB:
+      allOf:
+        - $ref: '#/components/schemas/NodeA'
+        - type: object
+          required:
+            - bField
+          properties:
+            bField:
+              type: integer
              
