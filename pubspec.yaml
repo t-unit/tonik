@@ -39,6 +39,9 @@ melos:
     coverage:
       run: bash scripts/coverage.sh
 
+    coverage-ci:
+      run: bash scripts/coverage.sh --ci
+
     coverage-diff:
       run: bash scripts/coverage.sh --diff main
         

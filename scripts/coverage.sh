@@ -7,12 +7,14 @@ set -euo pipefail
 #   ./scripts/coverage.sh                  # full coverage report
 #   ./scripts/coverage.sh --diff main      # show only lines changed vs a branch
 #   ./scripts/coverage.sh --package tonik_generate  # single package
+#   ./scripts/coverage.sh --ci             # repo-relative paths for Codecov
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 DIFF_BASE=""
 SINGLE_PACKAGE=""
+CI_MODE=false
 
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -24,9 +26,13 @@ while [[ $# -gt 0 ]]; do
       SINGLE_PACKAGE="$2"
       shift 2
       ;;
+    --ci)
+      CI_MODE=true
+      shift
+      ;;
     *)
       echo "Unknown option: $1"
-      echo "Usage: $0 [--diff <branch>] [--package <name>]"
+      echo "Usage: $0 [--diff <branch>] [--package <name>] [--ci]"
       exit 1
       ;;
   esac
@@ -68,6 +74,12 @@ for pkg in "${PACKAGES[@]}"; do
     cat "$PKG_DIR/coverage/lcov.info" >> "$COMBINED_LCOV"
   fi
 done
+
+if [ "$CI_MODE" = true ]; then
+  # Convert absolute SF: paths to repo-relative for Codecov
+  sed -i.bak "s|SF:$REPO_ROOT/|SF:|g" "$COMBINED_LCOV"
+  rm -f "$COMBINED_LCOV.bak"
+fi
 
 echo ""
 echo "Combined lcov written to: $COMBINED_LCOV"
