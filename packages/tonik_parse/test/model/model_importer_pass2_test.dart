@@ -387,6 +387,68 @@ void main() {
       });
     });
 
+    group('_populateClassShell — empty property names', () {
+      test('handles empty string property name without throwing', () {
+        const spec = {
+          'openapi': '3.0.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'WeirdProps': {
+                'type': 'object',
+                'properties': {
+                  '': {'type': 'string'},
+                  'normal': {'type': 'integer'},
+                },
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(spec);
+
+        final model = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'WeirdProps',
+        );
+        expect(model, isA<ClassModel>());
+
+        final classModel = model as ClassModel;
+        expect(classModel.properties.length, 2);
+        expect(classModel.properties.map((p) => p.name), contains(''));
+        expect(classModel.properties.map((p) => p.name), contains('normal'));
+      });
+
+      test('handles whitespace-only property name without throwing', () {
+        const spec = {
+          'openapi': '3.0.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'SpaceProps': {
+                'type': 'object',
+                'properties': {
+                  ' ': {'type': 'boolean'},
+                },
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(spec);
+
+        final model = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'SpaceProps',
+        );
+        expect(model, isA<ClassModel>());
+
+        final classModel = model as ClassModel;
+        expect(classModel.properties.length, 1);
+        expect(classModel.properties.first.name, ' ');
+      });
+    });
+
     group(r'_populateAliasShell — $defs resolution', () {
       test(r'top-level $ref to $defs is resolved during pass 2', () {
         const spec = {
