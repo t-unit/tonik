@@ -242,9 +242,11 @@ Code _buildCallMethodBody(
     // we cast back to the original type to pass to the constructor.
     final originalType = prop.typeRef;
 
-    final isObjectNullable =
-        originalType.symbol == 'Object' && (originalType.isNullable ?? false);
-    final shouldSkipCast = prop.skipCast || isObjectNullable;
+    final isDartCoreObjectNullable =
+        originalType.symbol == 'Object' &&
+        originalType.url == 'dart:core' &&
+        (originalType.isNullable ?? false);
+    final shouldSkipCast = prop.skipCast || isDartCoreObjectNullable;
 
     final valueExpression = shouldSkipCast
         ? refer(name)
