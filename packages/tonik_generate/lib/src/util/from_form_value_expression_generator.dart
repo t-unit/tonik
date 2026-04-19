@@ -175,9 +175,7 @@ Expression _buildFromFormExpression(
 }) {
   final name = nameManager.modelName(model);
   final explodeParam = {'explode': explode ?? literalBool(true)};
-  final url = package != null
-      ? sourceFileUrl(package, 'model', name)
-      : null;
+  final url = package != null ? sourceFileUrl(package, 'model', name) : null;
 
   return isRequired
       ? refer(name, url).property('fromForm').call([value], explodeParam)
@@ -322,8 +320,7 @@ Expression _buildListFromFormExpression(
       'Cannot decode List<NeverModel> - this type does not permit any value.',
     ),
     AnyModel() => listDecode,
-    NamedModel() ||
-    CompositeModel() => generateFormDecodingExceptionExpression(
+    NamedModel() || CompositeModel() => generateFormDecodingExceptionExpression(
       'Unsupported model type for form decoding.',
     ),
   };
@@ -379,9 +376,7 @@ Expression _buildClassList(
 }) {
   final name = nameManager.modelName(content);
   final explodeParam = {'explode': explode ?? literalBool(true)};
-  final url = package != null
-      ? sourceFileUrl(package, 'model', name)
-      : null;
+  final url = package != null ? sourceFileUrl(package, 'model', name) : null;
 
   final mapFunction = Method(
     (b) => b

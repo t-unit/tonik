@@ -346,7 +346,8 @@ class AllOfGenerator {
     final props = normalizedProperties.map((normalized) {
       return (
         normalizedName: normalized.normalizedName,
-        hasCollectionValue: !useImmutableCollections &&
+        hasCollectionValue:
+            !useImmutableCollections &&
             isCollectionModel(normalized.property.model),
       );
     }).toList();
@@ -577,7 +578,8 @@ class AllOfGenerator {
       ];
 
       for (final prop in normalizedProperties) {
-        final isFieldNullable = prop.property.isNullable ||
+        final isFieldNullable =
+            prop.property.isNullable ||
             !prop.property.isRequired ||
             prop.property.model.isEffectivelyNullable;
         if (isFieldNullable) {
@@ -1084,10 +1086,9 @@ class AllOfGenerator {
           ..optionalParameters.add(
             buildBoolParameter('explode', required: true),
           )
-          ..body = refer(className)
-              .call([], constructorArgs)
-              .returned
-              .statement,
+          ..body = refer(
+            className,
+          ).call([], constructorArgs).returned.statement,
       );
     }
 
@@ -1099,8 +1100,7 @@ class AllOfGenerator {
     final separator = isForm ? '&' : ',';
 
     final knownKeysLiteral = knownKeys.map((k) => "r'$k'").join(', ');
-    final expectedKeysExpr =
-        literalSet(knownKeys.map(specLiteralString));
+    final expectedKeysExpr = literalSet(knownKeys.map(specLiteralString));
     final listKeysExpr = literalSet(listKeys.map(specLiteralString));
 
     final strRef = refer('String', 'dart:core');
@@ -1119,9 +1119,9 @@ class AllOfGenerator {
           )
           .statement,
       Code('const _\$knownKeys = {$knownKeysLiteral};'),
-      declareFinal(r'_$additional')
-          .assign(literalMap({}, strRef, strRef))
-          .statement,
+      declareFinal(
+        r'_$additional',
+      ).assign(literalMap({}, strRef, strRef)).statement,
       const Code(r'for (final _$entry in _$values.entries) {'),
       const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
       Code(
@@ -1513,15 +1513,15 @@ for (final _\$e in $apFieldName.entries) {
               prop.property.model.isEffectivelyNullable;
         });
         for (final prop in normalizedProperties) {
-          final isFieldNullable = prop.property.isNullable ||
+          final isFieldNullable =
+              prop.property.isNullable ||
               !prop.property.isRequired ||
               prop.property.model.isEffectivelyNullable;
           final receiver = isFieldNullable
               ? refer(prop.normalizedName).nullChecked
               : refer(prop.normalizedName);
           valueCollectionCode.addAll([
-            if (isFieldNullable)
-              Code('if (${prop.normalizedName} != null) {'),
+            if (isFieldNullable) Code('if (${prop.normalizedName} != null) {'),
             declareFinal('_\$${prop.normalizedName}Simple')
                 .assign(
                   buildSimpleParameterExpression(
@@ -1603,7 +1603,8 @@ for (final _\$e in $apFieldName.entries) {
     }
 
     final primaryField = normalizedProperties.first;
-    final isPrimaryFieldNullable = primaryField.property.isNullable ||
+    final isPrimaryFieldNullable =
+        primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
         primaryField.property.model.isEffectivelyNullable;
     final primarySimpleReceiver = isPrimaryFieldNullable
@@ -1680,15 +1681,15 @@ for (final _\$e in $apFieldName.entries) {
               prop.property.model.isEffectivelyNullable;
         });
         for (final prop in normalizedProperties) {
-          final isNullable = prop.property.isNullable ||
+          final isNullable =
+              prop.property.isNullable ||
               !prop.property.isRequired ||
               prop.property.model.isEffectivelyNullable;
           final receiver = isNullable
               ? refer(prop.normalizedName).nullChecked
               : refer(prop.normalizedName);
           bodyCode.addAll([
-            if (isNullable)
-              Code('if (${prop.normalizedName} != null) {'),
+            if (isNullable) Code('if (${prop.normalizedName} != null) {'),
             declareFinal('_\$${prop.normalizedName}Form')
                 .assign(
                   receiver.property('toForm').call([], {
@@ -1808,7 +1809,8 @@ for (final _\$e in $apFieldName.entries) {
       }
 
       final primaryField = normalizedProperties.first;
-      final isPrimaryFieldNullable = primaryField.property.isNullable ||
+      final isPrimaryFieldNullable =
+          primaryField.property.isNullable ||
           !primaryField.property.isRequired ||
           primaryField.property.model.isEffectivelyNullable;
       final primaryFormRtReceiver = isPrimaryFieldNullable
@@ -1890,7 +1892,8 @@ for (final _\$e in $apFieldName.entries) {
                 prop.property.model.isEffectivelyNullable;
           });
           for (final prop in normalizedProperties) {
-            final isFieldNullable = prop.property.isNullable ||
+            final isFieldNullable =
+                prop.property.isNullable ||
                 !prop.property.isRequired ||
                 prop.property.model.isEffectivelyNullable;
             final receiver = isFieldNullable
@@ -2027,7 +2030,8 @@ for (final _\$e in $apFieldName.entries) {
     }
 
     final primaryField = normalizedProperties.first;
-    final isPrimaryFieldNullable = primaryField.property.isNullable ||
+    final isPrimaryFieldNullable =
+        primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
         primaryField.property.model.isEffectivelyNullable;
     final primaryFormReceiver = isPrimaryFieldNullable
@@ -2131,7 +2135,8 @@ for (final _\$e in $apFieldName.entries) {
       }
 
       final primaryField = normalizedProperties.first;
-      final isPrimaryFieldNullable = primaryField.property.isNullable ||
+      final isPrimaryFieldNullable =
+          primaryField.property.isNullable ||
           !primaryField.property.isRequired ||
           primaryField.property.model.isEffectivelyNullable;
       final primaryLabelRtReceiver = isPrimaryFieldNullable
@@ -2197,15 +2202,15 @@ for (final _\$e in $apFieldName.entries) {
               prop.property.model.isEffectivelyNullable;
         });
         for (final prop in normalizedProperties) {
-          final isFieldNullable = prop.property.isNullable ||
+          final isFieldNullable =
+              prop.property.isNullable ||
               !prop.property.isRequired ||
               prop.property.model.isEffectivelyNullable;
           final receiver = isFieldNullable
               ? refer(prop.normalizedName).nullChecked
               : refer(prop.normalizedName);
           valueCollectionCode.addAll([
-            if (isFieldNullable)
-              Code('if (${prop.normalizedName} != null) {'),
+            if (isFieldNullable) Code('if (${prop.normalizedName} != null) {'),
             declareFinal('_\$${prop.normalizedName}Label')
                 .assign(
                   buildLabelParameterExpression(
@@ -2286,7 +2291,8 @@ for (final _\$e in $apFieldName.entries) {
     }
 
     final primaryField = normalizedProperties.first;
-    final isPrimaryFieldNullable = primaryField.property.isNullable ||
+    final isPrimaryFieldNullable =
+        primaryField.property.isNullable ||
         !primaryField.property.isRequired ||
         primaryField.property.model.isEffectivelyNullable;
     final primaryLabelReceiver = isPrimaryFieldNullable
@@ -2337,11 +2343,14 @@ for (final _\$e in $apFieldName.entries) {
         refer('parameterProperties')
             .call([], {'allowEmpty': refer('allowEmpty')})
             .property('toMatrix')
-            .call([refer('paramName')], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-              'alreadyEncoded': literalBool(true),
-            })
+            .call(
+              [refer('paramName')],
+              {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'alreadyEncoded': literalBool(true),
+              },
+            )
             .returned
             .statement,
       ];
@@ -2409,15 +2418,15 @@ for (final _\$e in $apFieldName.entries) {
               prop.property.model.isEffectivelyNullable;
         });
         for (final prop in normalizedProperties) {
-          final isFieldNullable = prop.property.isNullable ||
+          final isFieldNullable =
+              prop.property.isNullable ||
               !prop.property.isRequired ||
               prop.property.model.isEffectivelyNullable;
           final receiver = isFieldNullable
               ? refer(prop.normalizedName).nullChecked
               : refer(prop.normalizedName);
           valueCollectionCode.addAll([
-            if (isFieldNullable)
-              Code('if (${prop.normalizedName} != null) {'),
+            if (isFieldNullable) Code('if (${prop.normalizedName} != null) {'),
             declareFinal('_\$${prop.normalizedName}Matrix')
                 .assign(
                   buildMatrixParameterExpression(
@@ -2491,11 +2500,14 @@ for (final _\$e in $apFieldName.entries) {
           ..body = refer('parameterProperties')
               .call([], {'allowEmpty': refer('allowEmpty')})
               .property('toMatrix')
-              .call([refer('paramName')], {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-                'alreadyEncoded': literalBool(true),
-              })
+              .call(
+                [refer('paramName')],
+                {
+                  'explode': refer('explode'),
+                  'allowEmpty': refer('allowEmpty'),
+                  'alreadyEncoded': literalBool(true),
+                },
+              )
               .returned
               .statement,
       );
@@ -2543,15 +2555,15 @@ for (final _\$e in $apFieldName.entries) {
           prop.property.model.isEffectivelyNullable;
     });
     for (final prop in normalizedProperties) {
-      final isFieldNullable = prop.property.isNullable ||
+      final isFieldNullable =
+          prop.property.isNullable ||
           !prop.property.isRequired ||
           prop.property.model.isEffectivelyNullable;
       final receiver = isFieldNullable
           ? refer(prop.normalizedName).nullChecked
           : refer(prop.normalizedName);
       valueCollectionCode.addAll([
-        if (isFieldNullable)
-          Code('if (${prop.normalizedName} != null) {'),
+        if (isFieldNullable) Code('if (${prop.normalizedName} != null) {'),
         declareFinal('_\$${prop.normalizedName}Matrix')
             .assign(
               buildMatrixParameterExpression(
@@ -2640,7 +2652,8 @@ for (final _\$e in $apFieldName.entries) {
               prop.property.model.encodingShape == EncodingShape.mixed,
           orElse: () => normalizedProperties.first,
         );
-        final isSimplePropNullable = simpleProp.property.isNullable ||
+        final isSimplePropNullable =
+            simpleProp.property.isNullable ||
             !simpleProp.property.isRequired ||
             simpleProp.property.model.isEffectivelyNullable;
         final receiver = isSimplePropNullable
@@ -2761,7 +2774,8 @@ for (final _\$e in $apFieldName.entries) {
           prop.property.model.isEffectivelyNullable;
     });
     for (final prop in normalizedProperties) {
-      final isNullable = prop.property.isNullable ||
+      final isNullable =
+          prop.property.isNullable ||
           !prop.property.isRequired ||
           prop.property.model.isEffectivelyNullable;
       final receiver = isNullable

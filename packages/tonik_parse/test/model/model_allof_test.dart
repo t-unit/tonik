@@ -292,9 +292,11 @@ void main() {
       () {
         final api = Importer().import(specWithRefBeforeDeclaration);
 
-        final composite = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'Composite',
-        ) as AllOfModel;
+        final composite =
+            api.models.firstWhere(
+                  (m) => m is NamedModel && m.name == 'Composite',
+                )
+                as AllOfModel;
 
         // The first allOf member should be the Base alias
         final baseInAllOf = composite.models.firstWhere(
@@ -364,9 +366,11 @@ void main() {
 
         final api = Importer().import(specWithOverride);
 
-        final baseModel = api.models.firstWhere(
-          (m) => m is NamedModel && m.name == 'Base',
-        ) as NamedModel;
+        final baseModel =
+            api.models.firstWhere(
+                  (m) => m is NamedModel && m.name == 'Base',
+                )
+                as NamedModel;
 
         expect(baseModel.nameOverride, 'MyCustomBase');
       },

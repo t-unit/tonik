@@ -522,8 +522,8 @@ void main() {
     test('finds discriminator from grandparent allOf chain', () {
       final api = Importer().import(fileContent);
       final vehicleChoice = api.models.whereType<OneOfModel>().firstWhere(
-            (m) => m.name == 'VehicleChoice',
-          );
+        (m) => m.name == 'VehicleChoice',
+      );
 
       expect(vehicleChoice.discriminator, 'vehicleType');
     });

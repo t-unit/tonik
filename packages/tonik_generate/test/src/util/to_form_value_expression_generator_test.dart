@@ -18,8 +18,7 @@ void main() {
 
   String emit(Expression expr) => expr.accept(emitter).toString();
 
-  String scopedEmit(Expression expr) =>
-      expr.accept(scopedEmitter).toString();
+  String scopedEmit(Expression expr) => expr.accept(scopedEmitter).toString();
 
   group('buildToFormPropertyExpression', () {
     late Context context;

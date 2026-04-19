@@ -93,8 +93,7 @@ class Date {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
-  }) =>
-      uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 
   /// Converts this [Date] to a label-encoded string.
   ///

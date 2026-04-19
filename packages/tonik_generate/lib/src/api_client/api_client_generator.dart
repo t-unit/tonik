@@ -62,8 +62,7 @@ class ApiClientGenerator {
     final operationFields = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
-      final operationUrl =
-          sourceFileUrl(package, 'operation', operationName);
+      final operationUrl = sourceFileUrl(package, 'operation', operationName);
 
       return Field(
         (b) => b
@@ -77,13 +76,11 @@ class ApiClientGenerator {
     final constructorInitializers = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
-      final operationUrl =
-          sourceFileUrl(package, 'operation', operationName);
+      final operationUrl = sourceFileUrl(package, 'operation', operationName);
 
       return refer(fieldName)
           .assign(
-            refer(operationName, operationUrl)
-                .call([refer('server.dio')]),
+            refer(operationName, operationUrl).call([refer('server.dio')]),
           )
           .code;
     }).toList();

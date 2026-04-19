@@ -174,11 +174,14 @@ void main() {
       expect(
         result,
         isA<
-            TonikSuccess<
-                $20100401AccountsAccountSidMessagesJsonGet200Response>>(),
+          TonikSuccess<$20100401AccountsAccountSidMessagesJsonGet200Response>
+        >(),
       );
-      final success = result as TonikSuccess<
-          $20100401AccountsAccountSidMessagesJsonGet200Response>;
+      final success =
+          result
+              as TonikSuccess<
+                $20100401AccountsAccountSidMessagesJsonGet200Response
+              >;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -197,11 +200,14 @@ void main() {
       expect(
         result,
         isA<
-            TonikSuccess<
-                $20100401AccountsAccountSidMessagesJsonPost201Response>>(),
+          TonikSuccess<$20100401AccountsAccountSidMessagesJsonPost201Response>
+        >(),
       );
-      final success = result as TonikSuccess<
-          $20100401AccountsAccountSidMessagesJsonPost201Response>;
+      final success =
+          result
+              as TonikSuccess<
+                $20100401AccountsAccountSidMessagesJsonPost201Response
+              >;
       expect(success.response.statusCode, 201);
 
       expect(
@@ -222,12 +228,13 @@ void main() {
 
       expect(
         result,
-        isA<
-            TonikSuccess<
-                $20100401AccountsAccountSidCallsJsonGet200Response>>(),
+        isA<TonikSuccess<$20100401AccountsAccountSidCallsJsonGet200Response>>(),
       );
-      final success = result as TonikSuccess<
-          $20100401AccountsAccountSidCallsJsonGet200Response>;
+      final success =
+          result
+              as TonikSuccess<
+                $20100401AccountsAccountSidCallsJsonGet200Response
+              >;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -246,11 +253,14 @@ void main() {
       expect(
         result,
         isA<
-            TonikSuccess<
-                $20100401AccountsAccountSidBalanceJsonGet200Response>>(),
+          TonikSuccess<$20100401AccountsAccountSidBalanceJsonGet200Response>
+        >(),
       );
-      final success = result as TonikSuccess<
-          $20100401AccountsAccountSidBalanceJsonGet200Response>;
+      final success =
+          result
+              as TonikSuccess<
+                $20100401AccountsAccountSidBalanceJsonGet200Response
+              >;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;

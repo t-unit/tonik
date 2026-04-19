@@ -175,8 +175,7 @@ class PathGenerator {
               continue;
             }
 
-            final isModelNullable =
-                param.parameter.model.isEffectivelyNullable;
+            final isModelNullable = param.parameter.model.isEffectivelyNullable;
             // Path params are required; use ! assertion for nullable types.
             final matrixReceiver = isModelNullable
                 ? refer(param.normalizedName).nullChecked

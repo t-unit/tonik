@@ -45,6 +45,5 @@ void main() {
       final schema = Schema.fromJson(json);
       expect(schema.additionalProperties, isNull);
     });
-
   });
 }
