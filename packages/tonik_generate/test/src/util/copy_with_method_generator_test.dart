@@ -399,7 +399,7 @@ void main() {
       });
 
       test(
-        'call method skips cast for Object? type regardless of skipCast',
+        'call method skips cast for dart:core Object? type',
         () {
           final result = generateCopyWith(
             className: 'TestClass',
@@ -409,6 +409,7 @@ void main() {
                 typeRef: TypeReference(
                   (b) => b
                     ..symbol = 'Object'
+                    ..url = 'dart:core'
                     ..isNullable = true,
                 ),
                 skipCast: false,
@@ -423,6 +424,41 @@ void main() {
           @override
           $Res call({Object? value = _sentinel}) {
             return (TestClass(value: identical(value, _sentinel, ) ? this.value : value) as $Res);
+          }
+        ''';
+          expect(
+            collapseWhitespace(callMethod.accept(emitter).toString()),
+            collapseWhitespace(expectedCallMethod),
+          );
+        },
+      );
+
+      test(
+        'call method casts user-defined Object? type (not dart:core)',
+        () {
+          final result = generateCopyWith(
+            className: 'TestClass',
+            properties: [
+              (
+                normalizedName: 'object',
+                typeRef: TypeReference(
+                  (b) => b
+                    ..symbol = 'Object'
+                    ..url = 'package:my_api/src/model/object.dart'
+                    ..isNullable = true,
+                ),
+                skipCast: false,
+              ),
+            ],
+          );
+
+          final callMethod = result!.implClass.methods.firstWhere(
+            (m) => m.name == 'call',
+          );
+          const expectedCallMethod = r'''
+          @override
+          $Res call({Object? object = _sentinel}) {
+            return (TestClass(object: identical(object, _sentinel, ) ? this.object : (object as Object?)) as $Res);
           }
         ''';
           expect(

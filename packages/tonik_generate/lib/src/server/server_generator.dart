@@ -4,6 +4,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
@@ -273,9 +274,15 @@ class ServerGenerator {
     final variableParams = <Parameter>[];
     final variableFields = <Field>[];
 
+    // Map from original variable name to sanitized Dart identifier,
+    // used by _buildBaseUrlExpression for URL interpolation.
+    final variableNameMap = <String, String>{};
+
     for (final variable in server.variables) {
       final hasEnum =
           variable.enumValues != null && variable.enumValues!.isNotEmpty;
+      final fieldName = normalizeSingle(variable.name, preserveNumbers: true);
+      variableNameMap[variable.name] = fieldName;
 
       if (hasEnum) {
         final enumName = nameManager.serverVariableEnumName(
@@ -290,7 +297,7 @@ class ServerGenerator {
         variableParams.add(
           Parameter(
             (p) => p
-              ..name = variable.name
+              ..name = fieldName
               ..named = true
               ..toThis = true
               ..defaultTo = Code('$enumName.$defaultEnumValue'),
@@ -300,7 +307,7 @@ class ServerGenerator {
         variableFields.add(
           Field(
             (f) => f
-              ..name = variable.name
+              ..name = fieldName
               ..type = refer(enumName)
               ..modifier = FieldModifier.final$,
           ),
@@ -309,7 +316,7 @@ class ServerGenerator {
         variableParams.add(
           Parameter(
             (p) => p
-              ..name = variable.name
+              ..name = fieldName
               ..named = true
               ..toThis = true
               ..defaultTo = specLiteralString(variable.defaultValue).code,
@@ -319,7 +326,7 @@ class ServerGenerator {
         variableFields.add(
           Field(
             (f) => f
-              ..name = variable.name
+              ..name = fieldName
               ..type = refer('String', 'dart:core')
               ..modifier = FieldModifier.final$,
           ),
@@ -341,7 +348,11 @@ class ServerGenerator {
     );
 
     // Build URL expression with variable substitution.
-    final urlExpression = _buildUrlExpression(server.url, server.variables);
+    final urlExpression = _buildUrlExpression(
+      server.url,
+      server.variables,
+      variableNameMap,
+    );
 
     return Class(
       (b) => b
@@ -368,6 +379,7 @@ class ServerGenerator {
   String _buildUrlExpression(
     String urlTemplate,
     List<ServerVariable> variables,
+    Map<String, String> variableNameMap,
   ) {
     // Split the template at variable placeholders so each literal segment
     // can be escaped independently, preserving Dart interpolation expressions.
@@ -401,13 +413,12 @@ class ServerGenerator {
 
       // Append the Dart interpolation expression (unescaped).
       final placeholder = '{${earliestVariable.name}}';
+      final dartName = variableNameMap[earliestVariable.name]!;
       final hasEnum =
           earliestVariable.enumValues != null &&
           earliestVariable.enumValues!.isNotEmpty;
       parts.add(
-        hasEnum
-            ? '\${${earliestVariable.name}.value}'
-            : '\${${earliestVariable.name}}',
+        hasEnum ? '\${$dartName.value}' : '\${$dartName}',
       );
 
       remaining = remaining.substring(earliestIndex + placeholder.length);

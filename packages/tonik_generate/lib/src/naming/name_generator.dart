@@ -1,5 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_utils.dart';
 
 /// A manager for handling unique names in generated Dart code.
 class NameGenerator {
@@ -31,6 +32,8 @@ class NameGenerator {
     String? discriminatorValue,
   ) {
     if (model is NamedModel && model.name != null && model.name!.isNotEmpty) {
+      // No keyword check needed: variant names are always combined with
+      // a parent prefix (e.g., 'ResultError'), making them safe.
       final sanitizedName = _sanitizeName(model.name!);
       final variantName = '$parentClassName$sanitizedName';
       return _makeUnique(variantName, '');
@@ -56,7 +59,9 @@ class NameGenerator {
         baseName = _generateBaseName(name: name, context: model.context);
       }
     } else {
-      baseName = _generateBaseName(name: name, context: model.context);
+      baseName = ensureValidClassName(
+        _generateBaseName(name: name, context: model.context),
+      );
     }
 
     if (name == null || name.isEmpty) {
@@ -137,10 +142,16 @@ class NameGenerator {
   /// 2. Combined context path components
   /// 3. 'Anonymous' as fallback
   String generateResponseName(Response response) {
-    final baseName = _generateBaseName(
+    final rawBaseName = _generateBaseName(
       name: response.name,
       context: response.context,
     );
+
+    // Only apply keyword check when the response has an explicit name
+    final baseName =
+        response.name != null && response.name!.isNotEmpty
+            ? ensureValidClassName(rawBaseName)
+            : rawBaseName;
 
     // Only add Response suffix for anonymous responses
     if (response.name == null || (response.name?.isEmpty ?? false)) {
@@ -159,9 +170,11 @@ class NameGenerator {
   /// 4. 'Anonymous' as fallback
   String generateOperationName(Operation operation) {
     final name = operation.nameOverride ?? operation.operationId;
-    final baseName = _generateBaseName(
-      name: name,
-      context: operation.context,
+    final baseName = ensureValidClassName(
+      _generateBaseName(
+        name: name,
+        context: operation.context,
+      ),
     );
     return _makeUniqueWithTypeSuffix(baseName, _operationSuffix);
   }
@@ -169,7 +182,7 @@ class NameGenerator {
   /// Generates a unique API class name for a tag.
   String generateTagName(Tag tag) {
     final name = tag.nameOverride ?? tag.name;
-    final baseName = _sanitizeName(name);
+    final baseName = ensureValidClassName(_sanitizeName(name));
     final nameWithSuffix = '$baseName$_apiSuffix';
 
     if (!_usedNames.contains(nameWithSuffix)) {

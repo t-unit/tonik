@@ -1261,5 +1261,111 @@ void main() {
         contains('_i3.Future<_i4.TonikResult<void>> getUser()'),
       );
     });
+
+    group('keyword operationId method names', () {
+      test('escapes keyword operationId in method name with dollar prefix', () {
+        final operation = Operation(
+          operationId: 'switch',
+          context: testContext,
+          tags: {Tag(name: 'keywords')},
+          isDeprecated: false,
+          path: '/keyword/switch',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'keywords'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+        expect(method.name, r'$switch');
+      });
+
+      test('escapes return operationId in method name with dollar prefix', () {
+        final operation = Operation(
+          operationId: 'return',
+          context: testContext,
+          tags: {Tag(name: 'keywords')},
+          isDeprecated: false,
+          path: '/keyword/return',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'keywords'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+        expect(method.name, r'$return');
+      });
+
+      test('does not escape non-keyword operationId in method name', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+        expect(method.name, 'getUser');
+      });
+
+      test('uses escaped field name matching escaped method name', () {
+        final operation = Operation(
+          operationId: 'class',
+          context: testContext,
+          tags: {Tag(name: 'keywords')},
+          isDeprecated: false,
+          path: '/keyword/class',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = generator.generateClass(
+          {operation},
+          Tag(name: 'keywords'),
+          testServers,
+        );
+
+        final method = generatedClass.methods.first;
+        expect(method.name, r'$class');
+      });
+    });
   });
 }

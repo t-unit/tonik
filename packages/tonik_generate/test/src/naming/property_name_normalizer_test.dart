@@ -312,6 +312,36 @@ void main() {
     });
   });
 
+  group('Object method property names', () {
+    test('escapes runtimeType and noSuchMethod as property names', () {
+      final result = normalizeProperties([
+        createProperty('runtimeType'),
+        createProperty('noSuchMethod'),
+      ]);
+
+      expect(result.map((r) => r.normalizedName).toList(), [
+        r'$runtimeType',
+        r'$noSuchMethod',
+      ]);
+    });
+
+    test('escapes all Object method names as property names', () {
+      final result = normalizeProperties([
+        createProperty('runtimeType'),
+        createProperty('noSuchMethod'),
+        createProperty('toString'),
+        createProperty('hashCode'),
+      ]);
+
+      expect(result.map((r) => r.normalizedName).toList(), [
+        r'$runtimeType',
+        r'$noSuchMethod',
+        r'$toString',
+        r'$hashCode',
+      ]);
+    });
+  });
+
   group('special character property names', () {
     test('replaces special characters with word equivalents', () {
       final result = normalizeProperties([

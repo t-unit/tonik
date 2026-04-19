@@ -130,6 +130,7 @@ rm -rf kubernetes/kubernetes_api
 rm -rf cloudflare/cloudflare_api
 rm -rf totem/totem_api
 rm -rf immutable_collections/immutable_collections_api
+rm -rf naming/naming_api
 
 # Generate API code with automatic dependency overrides for local tonik_util
 # Using compiled binary for much faster generation
@@ -268,6 +269,11 @@ fi
 $TONIK_BINARY --config immutable_collections/tonik.yaml
 add_dependency_overrides_recursive "immutable_collections/immutable_collections_api"
 
+$TONIK_BINARY -p naming_api -s naming/openapi.yaml -o naming || echo "WARNING: Naming generation failed."
+if [ -d "naming/naming_api" ]; then
+    add_dependency_overrides_recursive "naming/naming_api"
+fi
+
 # Run dart pub get for all generated packages in parallel
 echo "Running dart pub get for all generated packages in parallel..."
 (
@@ -309,6 +315,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   ([ -d "cloudflare/cloudflare_api" ] && cd cloudflare/cloudflare_api && dart pub get) &
   ([ -d "totem/totem_api" ] && cd totem/totem_api && dart pub get) &
   cd immutable_collections/immutable_collections_api && dart pub get &
+  ([ -d "naming/naming_api" ] && cd naming/naming_api && dart pub get) &
   wait
 )
 echo "All dart pub get operations completed"
@@ -367,6 +374,7 @@ restore_test_package_overrides "kubernetes/kubernetes_test/pubspec.yaml" "../../
 restore_test_package_overrides "cloudflare/cloudflare_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "totem/totem_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "immutable_collections/immutable_collections_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "naming/naming_test/pubspec.yaml" "../../../packages/tonik_util"
 
 # Run dart pub get for all test packages in parallel
 echo "Running dart pub get for all test packages in parallel..."
@@ -405,6 +413,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd cloudflare/cloudflare_test && dart pub get &
   cd totem/totem_test && dart pub get &
   cd immutable_collections/immutable_collections_test && dart pub get &
+  ([ -d "naming/naming_test" ] && cd naming/naming_test && dart pub get) &
   wait
 )
 echo "All test package dependencies resolved"
