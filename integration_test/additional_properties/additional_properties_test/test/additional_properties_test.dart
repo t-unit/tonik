@@ -450,7 +450,117 @@ void main() {
   });
 
   // -------------------------------------------------------------------
-  // 9. Runtime errors: invalid encodings
+  // 9. Bug: List<Uri> fromJson
+  //    Generated code uses decodeJsonList<Uri>() which calls
+  //    whereType<Uri>() on String elements. Since JSON arrays contain
+  //    strings (not Uri objects), this always fails.
+  // -------------------------------------------------------------------
+
+  group('UriListHolder (List<Uri> JSON roundtrip)', () {
+    test('toJson encodes Uri list as string list', () {
+      final obj = UriListHolder(
+        links: [
+          Uri.parse('https://example.com'),
+          Uri.parse('https://dart.dev/guides'),
+        ],
+      );
+      expect(obj.toJson(), {
+        'links': ['https://example.com', 'https://dart.dev/guides'],
+      });
+    });
+
+    test('fromJson decodes string list back to Uri list', () {
+      final obj = UriListHolder.fromJson({
+        'links': ['https://example.com', 'https://dart.dev/guides'],
+      });
+      expect(obj.links, [
+        Uri.parse('https://example.com'),
+        Uri.parse('https://dart.dev/guides'),
+      ]);
+    });
+
+    test('json roundtrip', () {
+      final obj = UriListHolder(
+        links: [
+          Uri.parse('https://example.com'),
+          Uri.parse('https://dart.dev/guides'),
+        ],
+      );
+      final json = obj.toJson();
+      final decoded = UriListHolder.fromJson(json);
+      expect(decoded, obj);
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // 10. Bug: List<Map<String, Address>> fromJson
+  //     Generated code uses decodeJsonList<Map<String, Address>>()
+  //     which fails because JSON maps are Map<String, dynamic>, not
+  //     Map<String, Address>. Inner values are never decoded.
+  // -------------------------------------------------------------------
+
+  group('AddressMapListHolder (List<Map<String, Address>> JSON roundtrip)', () {
+    test('toJson encodes list of address maps', () {
+      const obj = AddressMapListHolder(
+        departments: [
+          {
+            'main': Address(street: '1 Main', city: 'NYC'),
+          },
+          {
+            'branch': Address(street: '2 Oak', city: 'LA'),
+          },
+        ],
+      );
+      expect(obj.toJson(), {
+        'departments': [
+          {
+            'main': {'street': '1 Main', 'city': 'NYC'},
+          },
+          {
+            'branch': {'street': '2 Oak', 'city': 'LA'},
+          },
+        ],
+      });
+    });
+
+    test('fromJson decodes list of address maps', () {
+      final obj = AddressMapListHolder.fromJson({
+        'departments': [
+          {
+            'main': {'street': '1 Main', 'city': 'NYC'},
+          },
+          {
+            'branch': {'street': '2 Oak', 'city': 'LA'},
+          },
+        ],
+      });
+      expect(obj.departments, hasLength(2));
+      expect(
+        obj.departments[0]['main'],
+        const Address(street: '1 Main', city: 'NYC'),
+      );
+      expect(
+        obj.departments[1]['branch'],
+        const Address(street: '2 Oak', city: 'LA'),
+      );
+    });
+
+    test('json roundtrip', () {
+      const obj = AddressMapListHolder(
+        departments: [
+          {
+            'main': Address(street: '1 Main', city: 'NYC'),
+          },
+        ],
+      );
+      final json = obj.toJson();
+      final decoded = AddressMapListHolder.fromJson(json);
+      expect(decoded, obj);
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // 11. Runtime errors: invalid encodings
   // -------------------------------------------------------------------
 
   group('MixedComplexAp - runtime encoding errors', () {

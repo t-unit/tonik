@@ -188,6 +188,71 @@ void main() {
     );
   });
 
+  group('Enum array with content-based JSON encoding', () {
+    test(
+      'enum values with special characters are JSON-encoded, not URI-encoded',
+      () async {
+        // The Category enum has values like "science & tech" that contain
+        // special characters. When encoded as application/json in a multipart
+        // part, they should appear as raw strings in the JSON array, not
+        // percent-encoded (e.g., "science & tech", NOT "science%20%26%20tech").
+
+        // Capture the request body before Dio sends it by using an interceptor.
+        String? capturedBody;
+        final capturingApi = MultipartApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              interceptors: [
+                InterceptorsWrapper(
+                  onRequest: (options, handler) {
+                    final data = options.data;
+                    if (data is FormData) {
+                      // Clone the file to read its content without consuming it.
+                      final file = data.files
+                          .firstWhere((e) => e.key == 'categories')
+                          .value;
+                      capturedBody = file.filename;
+                      // Also capture via clone for content inspection.
+                      final clone = file.clone();
+                      clone.finalize().listen(
+                        (chunk) {
+                          capturedBody = String.fromCharCodes(chunk);
+                        },
+                      );
+                    }
+                    handler.next(options);
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+
+        const form = CategoryArrayForm(
+          categories: [
+            Category.scienceAmpersandTech,
+            Category.artsAmpersandCrafts,
+          ],
+        );
+
+        await capturingApi.postCategoryArrayFields(body: form);
+
+        // Wait for the async stream listener to complete.
+        await Future<void>.delayed(const Duration(milliseconds: 100));
+
+        // The JSON content should contain raw enum values, not URI-encoded.
+        // Correct:   ["science & tech","arts & crafts"]
+        // Bug gives: ["science%20%26%20tech","arts%20%26%20crafts"]
+        expect(capturedBody, isNotNull);
+        expect(capturedBody, contains('science & tech'));
+        expect(capturedBody, contains('arts & crafts'));
+        expect(capturedBody, isNot(contains('%26')));
+        expect(capturedBody, isNot(contains('%20')));
+      },
+    );
+  });
+
   group('Mixed required/optional fields', () {
     test('sends only required fields when optional are null', () async {
       const form = MixedRequiredForm(requiredField: 'hello');

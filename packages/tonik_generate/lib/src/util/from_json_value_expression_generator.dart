@@ -253,7 +253,38 @@ Expression _buildListFromJsonExpression(
                 .property('toList')
                 .call([]);
 
-    case DateTimeModel() || DateModel() || DecimalModel():
+    case final MapModel mapModel:
+      final mapDecoderClosure = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body = _buildMapFromJsonExpression(
+            'e',
+            mapModel,
+            nameManager,
+            package: package,
+            contextClass: contextClass,
+            contextProperty: contextProperty,
+            useImmutableCollections: useImmutableCollections,
+          ).code,
+      ).closure;
+      final mapListExpr = refer(value).property(listDecoder).call(
+        [],
+        contextParam,
+        [refer('Object?', 'dart:core')],
+      );
+      result = isNullable
+          ? mapListExpr
+                .nullSafeProperty('map')
+                .call([mapDecoderClosure])
+                .property('toList')
+                .call([])
+          : mapListExpr
+                .property('map')
+                .call([mapDecoderClosure])
+                .property('toList')
+                .call([]);
+
+    case DateTimeModel() || DateModel() || DecimalModel() || UriModel():
       final jsonType = _jsonTypeForPrimitive(unwrappedContent);
       final decodeMethod = _decodeMethodForPrimitive(unwrappedContent)!;
       final mapFunction = Method(
@@ -414,13 +445,16 @@ String? _decodeMethodForPrimitive(Model model) {
   if (model is BooleanModel) return 'decodeJsonBool';
   if (model is DateTimeModel) return 'decodeJsonDateTime';
   if (model is DateModel) return 'decodeJsonDate';
+  if (model is UriModel) return 'decodeJsonUri';
   if (model is BinaryModel) return 'decodeJsonBinary';
   if (model is Base64Model) return 'decodeJsonBase64';
   return null;
 }
 
 String _jsonTypeForPrimitive(Model model) {
-  if (model is DateTimeModel || model is DateModel) return 'String';
+  if (model is DateTimeModel || model is DateModel || model is UriModel) {
+    return 'String';
+  }
   if (model is IntegerModel) return 'int';
   if (model is NumberModel || model is DoubleModel) return 'num';
   if (model is DecimalModel) return 'String';
