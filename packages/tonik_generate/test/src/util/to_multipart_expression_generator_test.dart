@@ -3434,7 +3434,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: address). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   addressParts.add(
@@ -3517,7 +3517,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: address). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   addressParts.add(
@@ -3599,7 +3599,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: address). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   addressParts.add(
@@ -3771,7 +3771,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: address). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   addressParts.add(
@@ -4113,7 +4113,7 @@ void main() {
                 if (value == null) continue;
                 if (value is Map || value is List) {
                   throw EncodingException(
-                    'Standard URL encoding does not support nested values (property: metadata). Only flat key=value pairs are allowed.',
+                    'Standard URL encoding does not support nested values (property: metadata, key: ${entry.key}). Only flat key=value pairs are allowed.',
                   );
                 }
                 metadataParts.add(
@@ -4195,7 +4195,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: metadata). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: metadata, key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   metadataParts.add(

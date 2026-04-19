@@ -1079,7 +1079,8 @@ Code _buildDeepObjectFileAddition(
 /// - **deepObject**: throws an `EncodingException` (maps don't implement
 ///   `ParameterEncodable.toDeepObject()`).
 /// - **URL-encoded (`application/x-www-form-urlencoded`)**: iterates map
-///   entries directly, encoding each key-value pair.
+///   entries directly, encoding each as a flat `key=value` pair. Nested
+///   values (`Map` or `List`) throw an `EncodingException` at runtime.
 /// - **Default (JSON)**: passes the map directly to `jsonEncode()`.
 Code _buildMapModelFileAddition(
   String rawName,
@@ -1187,15 +1188,20 @@ Code _buildUrlEncodedMapFileAddition(
     const Code(' || value is '),
     refer('List', 'dart:core').code,
     const Code(') {'),
-    generateEncodingExceptionExpression(
-      'Standard URL encoding does not support nested values '
-      '(property: $rawName). '
-      'Only flat key=value pairs are allowed.',
-    ).statement,
+    Block.of([
+      const Code('throw '),
+      refer('EncodingException', 'package:tonik_util/tonik_util.dart').code,
+      Code(
+        "('Standard URL encoding does not support nested values "
+        '(property: $rawName, key: \${entry.key}). '
+        "Only flat key=value pairs are allowed.');",
+      ),
+    ]),
     const Code('}'),
     // <partsVarName>.add(
-    //   '\${Uri.encodeQueryComponent(entry.key.toString())}='
-    //   '\${Uri.encodeQueryComponent(value.toString())}',
+    //   Uri.encodeQueryComponent(entry.key.toString()) +
+    //       '=' +
+    //       Uri.encodeQueryComponent(value.toString()),
     // );
     refer(partsVarName).property('add').call([
       refer('Uri', 'dart:core')
@@ -1331,15 +1337,20 @@ Code _buildUrlEncodedObjectFileAddition(
     const Code(' || value is '),
     refer('List', 'dart:core').code,
     const Code(') {'),
-    generateEncodingExceptionExpression(
-      'Standard URL encoding does not support nested values '
-      '(property: $rawName). '
-      'Only flat key=value pairs are allowed.',
-    ).statement,
+    Block.of([
+      const Code('throw '),
+      refer('EncodingException', 'package:tonik_util/tonik_util.dart').code,
+      Code(
+        "('Standard URL encoding does not support nested values "
+        '(property: $rawName, key: \${entry.key}). '
+        "Only flat key=value pairs are allowed.');",
+      ),
+    ]),
     const Code('}'),
     // <partsVarName>.add(
-    //   '\${Uri.encodeQueryComponent(entry.key.toString())}='
-    //   '\${Uri.encodeQueryComponent(value.toString())}',
+    //   Uri.encodeQueryComponent(entry.key.toString()) +
+    //       '=' +
+    //       Uri.encodeQueryComponent(value.toString()),
     // );
     refer(partsVarName).property('add').call([
       refer('Uri', 'dart:core')
