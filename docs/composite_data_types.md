@@ -129,13 +129,15 @@ final fallback = PetChoice.fromJson({'petType': 'unknown', 'name': 'X', 'meow': 
 > ⚠️ **Important:** When constructing a variant, you must set the discriminator property value to match the variant type. For example, when creating a `PetChoiceCat`, always use `petType: 'cat'`. Setting an incorrect value (e.g., `petType: 'dog'` inside a `PetChoiceCat`) will produce JSON that won't roundtrip correctly - decoding will dispatch to the wrong variant based on the discriminator value.
 
 **How it works:**
-- Tonik detects when `oneOf`/`anyOf` variants inherit from a parent with a discriminator via `allOf`
+- Tonik detects when `oneOf` variants inherit from a parent with a discriminator via `allOf`
 - The discriminator property and mappings are inherited automatically
 - If a variant's schema name matches a mapping value, that mapping is used
 - On encode, the discriminator value from the inner type is preserved in the JSON output
-- On decode, the discriminator enables fast O(1) dispatch to the correct variant
+- On decode, the discriminator enables fast O(1) dispatch to the correct variant (oneOf only)
 - If the discriminator value is unknown, all variants are tried as fallback
 - Missing discriminator property will cause a `DecodingException` (since it's required)
+
+> **Note:** For `anyOf`, discriminator properties are inherited and preserved during encoding, but decoding always uses a try-all-variants strategy. This is by design — `anyOf` allows multiple variants to match simultaneously, so discriminator-based single-variant dispatch would change the semantics.
 
 ---
 

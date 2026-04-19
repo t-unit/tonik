@@ -127,9 +127,12 @@ void main() {
 
       const expectedToFormMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          return parameterProperties(
+          return parameterProperties(allowEmpty: allowEmpty).toForm(
+            explode: explode,
             allowEmpty: allowEmpty,
-          ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+            alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
+          );
         }
       ''';
 
@@ -202,9 +205,12 @@ void main() {
               r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
             );
           }
-          return parameterProperties(
+          return parameterProperties(allowEmpty: allowEmpty).toForm(
+            explode: explode,
             allowEmpty: allowEmpty,
-          ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+            alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
+          );
         }
       ''';
 
@@ -230,7 +236,11 @@ void main() {
 
       const expectedToFormMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          return bigDecimal.toForm(explode: explode, allowEmpty: allowEmpty);
+          return bigDecimal.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
         }
       ''';
 
@@ -299,7 +309,11 @@ void main() {
 
         const expectedToFormMethod = '''
         String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-          return status.toForm(explode: explode, allowEmpty: allowEmpty);
+          return status.toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          );
         }
       ''';
 

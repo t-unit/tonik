@@ -773,6 +773,7 @@ String toForm({
     explode: explode,
     allowEmpty: allowEmpty,
     alreadyEncoded: true,
+    useQueryComponent: useQueryComponent,
   );
 }
       ''';
