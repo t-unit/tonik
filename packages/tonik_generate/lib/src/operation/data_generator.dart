@@ -42,8 +42,7 @@ class DataGenerator {
         (c) => c.contentType == ContentType.multipart,
       );
 
-      final requestBodyBaseName =
-          nameManager.requestBodyNames(requestBody).$1;
+      final requestBodyBaseName = nameManager.requestBodyNames(requestBody).$1;
       final parameterType = TypeReference(
         (b) => b
           ..symbol = requestBodyBaseName
@@ -269,8 +268,7 @@ class DataGenerator {
         bodyCode
           ..clear()
           ..addAll([
-            if (!isRequired)
-              const Code('if (body == null) return null;\n'),
+            if (!isRequired) const Code('if (body == null) return null;\n'),
             ...buildMultipartBodyStatements(
               content.first,
               'body',

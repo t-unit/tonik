@@ -1178,12 +1178,14 @@ void main() {
       // Verify the alias chain is wired (not all AnyModel terminals).
       // At least one alias should wrap another alias (not AnyModel).
       final aliasModels = [modelA, modelB, modelC].cast<AliasModel>();
-      final wrapsAlias =
-          aliasModels.where((a) => a.model is AliasModel).toList();
+      final wrapsAlias = aliasModels
+          .where((a) => a.model is AliasModel)
+          .toList();
       expect(
         wrapsAlias,
         isNotEmpty,
-        reason: 'At least one alias should wrap another alias, '
+        reason:
+            'At least one alias should wrap another alias, '
             'not all terminate at AnyModel',
       );
     });
@@ -1215,14 +1217,14 @@ void main() {
 
       // One alias wraps the other, and the chain terminates at AnyModel
       // (bare ref cycles have no concrete type).
+      // A (processed first) wraps B, and B keeps AnyModel terminal.
       final aliasA = modelA as AliasModel;
       final aliasB = modelB as AliasModel;
-      expect(aliasB.model, isA<AliasModel>());
-      expect((aliasB.model as AliasModel).name, 'A');
-
-      // A wraps a placeholder whose inner model is AnyModel.
       expect(aliasA.model, isA<AliasModel>());
-      expect((aliasA.model as AliasModel).model, isA<AnyModel>());
+      expect((aliasA.model as AliasModel).name, 'B');
+
+      // B keeps its AnyModel terminal to break the cycle.
+      expect(aliasB.model, isA<AnyModel>());
     });
   });
 }

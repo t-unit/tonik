@@ -179,10 +179,14 @@ void main() {
 
     test('NestedList equality works on nested ILists', () {
       final a = NestedList(
-        matrix: <IList<String>>[<String>['a'].lock].lock,
+        matrix: <IList<String>>[
+          <String>['a'].lock,
+        ].lock,
       );
       final b = NestedList(
-        matrix: <IList<String>>[<String>['a'].lock].lock,
+        matrix: <IList<String>>[
+          <String>['a'].lock,
+        ].lock,
       );
       expect(a, b);
     });

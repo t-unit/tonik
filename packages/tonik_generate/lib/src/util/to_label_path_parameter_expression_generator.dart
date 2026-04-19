@@ -21,8 +21,9 @@ Expression buildToLabelPathParameterExpression(
   final allowEmpty = literalBool(parameter.allowEmptyValue);
   final isNullable = parameter.model.isEffectivelyNullable;
   // Path parameters are always required; use ! assertion if type is nullable.
-  final valueRef =
-      isNullable ? refer(parameterName).nullChecked : refer(parameterName);
+  final valueRef = isNullable
+      ? refer(parameterName).nullChecked
+      : refer(parameterName);
 
   final model = parameter.model;
 

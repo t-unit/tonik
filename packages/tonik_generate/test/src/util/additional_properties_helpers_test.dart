@@ -44,27 +44,29 @@ void main() {
         expect(result.types.last.accept(emitter).toString(), 'int');
       });
 
-      test('UnrestrictedAdditionalProperties returns IMap<String, Object?>',
-          () {
-        const ap = UnrestrictedAdditionalProperties();
+      test(
+        'UnrestrictedAdditionalProperties returns IMap<String, Object?>',
+        () {
+          const ap = UnrestrictedAdditionalProperties();
 
-        final result = additionalPropertiesType(
-          ap,
-          nameManager,
-          'package:example',
-          useImmutableCollections: true,
-        );
+          final result = additionalPropertiesType(
+            ap,
+            nameManager,
+            'package:example',
+            useImmutableCollections: true,
+          );
 
-        expect(result.symbol, 'IMap');
-        expect(
-          result.url,
-          'package:fast_immutable_collections/'
-          'fast_immutable_collections.dart',
-        );
-        expect(result.types.length, 2);
-        expect(result.types.first.accept(emitter).toString(), 'String');
-        expect(result.types.last.accept(emitter).toString(), 'Object?');
-      });
+          expect(result.symbol, 'IMap');
+          expect(
+            result.url,
+            'package:fast_immutable_collections/'
+            'fast_immutable_collections.dart',
+          );
+          expect(result.types.length, 2);
+          expect(result.types.first.accept(emitter).toString(), 'String');
+          expect(result.types.last.accept(emitter).toString(), 'Object?');
+        },
+      );
     });
 
     group('with useImmutableCollections: false (default)', () {
@@ -86,8 +88,7 @@ void main() {
         expect(result.types.last.accept(emitter).toString(), 'int');
       });
 
-      test('UnrestrictedAdditionalProperties returns Map<String, Object?>',
-          () {
+      test('UnrestrictedAdditionalProperties returns Map<String, Object?>', () {
         const ap = UnrestrictedAdditionalProperties();
 
         final result = additionalPropertiesType(

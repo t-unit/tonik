@@ -727,21 +727,26 @@ void main() {
       expect(key, 'MapModel{null,IntegerModel}');
     });
 
-    test('generates different keys for MapModels with different value types',
-        () {
-      final stringMap = MapModel(
-        name: 'StringMap',
-        valueModel: StringModel(context: context),
-        context: context,
-      );
-      final intMap = MapModel(
-        name: 'IntMap',
-        valueModel: IntegerModel(context: context),
-        context: context,
-      );
+    test(
+      'generates different keys for MapModels with different value types',
+      () {
+        final stringMap = MapModel(
+          name: 'StringMap',
+          valueModel: StringModel(context: context),
+          context: context,
+        );
+        final intMap = MapModel(
+          name: 'IntMap',
+          valueModel: IntegerModel(context: context),
+          context: context,
+        );
 
-      expect(sorter.stableKeyOf(stringMap), isNot(sorter.stableKeyOf(intMap)));
-    });
+        expect(
+          sorter.stableKeyOf(stringMap),
+          isNot(sorter.stableKeyOf(intMap)),
+        );
+      },
+    );
   });
 
   group('sortDiscriminatedModels', () {

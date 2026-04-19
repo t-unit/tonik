@@ -138,7 +138,7 @@ class MapModel extends Model with NamedModel {
   final String? name;
   @override
   String? nameOverride;
-  final Model valueModel;
+  Model valueModel;
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;

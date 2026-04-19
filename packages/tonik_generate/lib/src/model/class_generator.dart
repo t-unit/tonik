@@ -149,7 +149,8 @@ class ClassGenerator {
         .map(
           (prop) => (
             normalizedName: prop.normalizedName,
-            hasCollectionValue: !useImmutableCollections &&
+            hasCollectionValue:
+                !useImmutableCollections &&
                 isCollectionModel(prop.property.model),
           ),
         )

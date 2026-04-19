@@ -81,8 +81,7 @@ void main() {
         expect(generated, contains("filter's"));
       });
 
-      test('generates valid code when rawName contains double quote',
-          () {
+      test('generates valid code when rawName contains double quote', () {
         final parameter = createParameter(
           name: 'filterParam',
           rawName: 'filter"s',

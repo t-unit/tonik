@@ -18,21 +18,306 @@ class ModelImporter {
   final Set<String> _resolving = {};
   final Map<String, AliasModel> _placeholders = {};
 
+  /// Set of named schemas whose composite shells have been populated.
+  ///
+  /// Used during pass 2 to determine whether a referenced model's composite
+  /// sub-models have already been filled in (and thus can be checked for
+  /// back-edges).
+  final Set<String> _populatedComposites = {};
+
   late Set<Model> models;
   final log = Logger('ModelImporter');
 
   static Context get rootContext =>
       Context.initial().pushAll(['components', 'schemas']);
 
+  /// Imports all schemas from components/schemas using a two-pass approach.
+  ///
+  /// **Pass 1 — Shell creation**: Creates empty model shells for all named
+  /// schemas without following `$ref` links. This ensures every named model
+  /// exists before any references are resolved, eliminating the need for
+  /// placeholder-based cycle detection for named schemas.
+  ///
+  /// **Pass 2 — Reference population**: Populates each shell's references
+  /// (sub-models, properties, list content) using the existing recursive
+  /// resolution logic. For composite models (oneOf/allOf/anyOf), back-edges
+  /// that would create cycles are skipped.
   void import() {
     models = <Model>{};
     _placeholders.clear();
+    _populatedComposites.clear();
     _collectAllDefs();
 
     final context = rootContext;
 
+    // --- Pass 1: Create empty shells for all named schemas ---
     for (final MapEntry(key: name, value: schema) in _schemas.entries) {
-      log.fine('Importing schema $name');
+      log.fine('Pass 1: Creating shell for $name');
+      _createShell(name, schema, context);
+    }
+
+    // --- Pass 2: Populate all shells ---
+    for (final MapEntry(key: name, value: schema) in _schemas.entries) {
+      log.fine('Pass 2: Populating $name');
+      _populateShell(name, schema, context);
+    }
+  }
+
+  /// Creates an empty model shell for a named schema without resolving refs.
+  ///
+  /// Determines the model type from the schema structure and creates the
+  /// appropriate model with empty collections. The shell is registered in
+  /// [models] so it can be found during pass 2.
+  void _createShell(String name, Schema schema, Context context) {
+    // Skip if already created (e.g. from a previous pass 1 iteration).
+    if (models.any((m) => m is NamedModel && m.name == name)) {
+      return;
+    }
+
+    // If it's a $ref, create an alias shell.
+    if (schema.ref != null) {
+      // Direct self-reference check.
+      final ref = schema.ref!;
+      if (ref.startsWith('#/components/schemas/')) {
+        final refName = ref.split('/').last;
+        if (name == refName) {
+          // Will be caught during pass 2 with proper error.
+          return;
+        }
+      }
+
+      final aliasModel = AliasModel(
+        name: name,
+        model: AnyModel(context: context),
+        context: context,
+        description: schema.description,
+        isDeprecated: schema.isDeprecated ?? false,
+        isNullable: schema.isNullable ?? schema.type.contains('null'),
+      );
+      _logModelAdded(aliasModel);
+      models.add(aliasModel);
+      return;
+    }
+
+    if (schema.isBooleanSchema != null) {
+      final model = schema.isBooleanSchema!
+          ? AnyModel(context: context)
+          : NeverModel(context: context);
+      final aliasModel = AliasModel(
+        name: name,
+        model: model,
+        context: context,
+      );
+      _logModelAdded(aliasModel);
+      models.add(aliasModel);
+      return;
+    }
+
+    if (schema.allOf != null) {
+      final modelContext = context.push(name);
+      final allOfModel = AllOfModel(
+        isDeprecated: schema.isDeprecated ?? false,
+        models: <Model>{},
+        context: modelContext,
+        name: name,
+        description: schema.description,
+        isNullable: schema.isNullable ?? false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
+      );
+      _logModelAdded(allOfModel);
+      models.add(allOfModel);
+      return;
+    }
+
+    if (schema.oneOf != null) {
+      final oneOfModel = OneOfModel(
+        isDeprecated: schema.isDeprecated ?? false,
+        models: <DiscriminatedModel>{},
+        context: context,
+        name: name,
+        description: schema.description,
+        isNullable: schema.isNullable ?? false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
+      );
+      _logModelAdded(oneOfModel);
+      models.add(oneOfModel);
+      return;
+    }
+
+    if (schema.anyOf != null) {
+      final anyOfModel = AnyOfModel(
+        isDeprecated: schema.isDeprecated ?? false,
+        models: <DiscriminatedModel>{},
+        context: context,
+        name: name,
+        description: schema.description,
+        isNullable: schema.isNullable ?? false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
+      );
+      _logModelAdded(anyOfModel);
+      models.add(anyOfModel);
+      return;
+    }
+
+    final hasNullType = schema.type.contains('null');
+    final types = schema.type.where((t) => t != 'null').toList();
+
+    if (types.length > 1) {
+      // Multi-type becomes OneOfModel — create shell.
+      final oneOfModel = OneOfModel(
+        isDeprecated: schema.isDeprecated ?? false,
+        models: <DiscriminatedModel>{},
+        context: context,
+        name: name,
+        description: schema.description,
+        isNullable: schema.isNullable ?? hasNullType,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
+      );
+      _logModelAdded(oneOfModel);
+      models.add(oneOfModel);
+      return;
+    }
+
+    // Pure map detection.
+    if ((schema.properties == null || schema.properties!.isEmpty) &&
+        schema.additionalProperties != null &&
+        schema.additionalProperties != false) {
+      final model = MapModel(
+        valueModel: AnyModel(context: context),
+        context: context,
+        name: name,
+        isNullable: schema.isNullable ?? hasNullType,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
+      );
+      _logModelAdded(model);
+      models.add(model);
+      return;
+    }
+
+    final firstType = types.firstOrNull;
+
+    // Primitive types get wrapped in AliasModel.
+    if (_isPrimitiveType(firstType, schema)) {
+      final primitiveModel = _createPrimitiveModel(firstType, schema, context);
+      if (primitiveModel != null) {
+        final aliasModel = AliasModel(
+          name: name,
+          model: primitiveModel,
+          context: context,
+          isNullable: schema.isNullable ?? hasNullType,
+          isReadOnly: schema.isReadOnly ?? false,
+          isWriteOnly: schema.isWriteOnly ?? false,
+        );
+        _logModelAdded(aliasModel);
+        models.add(aliasModel);
+        return;
+      }
+    }
+
+    // Enum types.
+    if (firstType == 'string' && schema.enumerated != null) {
+      // Will be fully created during pass 2 since enums are self-contained.
+      return;
+    }
+    if (firstType == 'integer' && schema.enumerated != null) {
+      return;
+    }
+
+    // Array type.
+    if (firstType == 'array') {
+      final listModel = ListModel(
+        content: AnyModel(context: context.push('array')),
+        context: context,
+        name: name,
+        isNullable: schema.isNullable ?? false,
+        isReadOnly: schema.isReadOnly ?? false,
+        isWriteOnly: schema.isWriteOnly ?? false,
+      );
+      _logModelAdded(listModel);
+      models.add(listModel);
+      return;
+    }
+
+    // Default: ClassModel (object type or untyped with properties).
+    final model = ClassModel(
+      isDeprecated: schema.isDeprecated ?? false,
+      name: name,
+      properties: <Property>[],
+      context: context,
+      description: schema.description,
+      isNullable: schema.isNullable ?? false,
+      isReadOnly: schema.isReadOnly ?? false,
+      isWriteOnly: schema.isWriteOnly ?? false,
+    );
+    _logModelAdded(model);
+    models.add(model);
+  }
+
+  /// Returns true if the type string represents a primitive type.
+  bool _isPrimitiveType(String? type, Schema schema) {
+    return switch (type) {
+      'string' when schema.enumerated != null => false,
+      'string' => true,
+      'number' => true,
+      'integer' when schema.enumerated != null => false,
+      'integer' => true,
+      'boolean' => true,
+      _ => false,
+    };
+  }
+
+  /// Creates a primitive model from the type string.
+  Model? _createPrimitiveModel(
+    String? type,
+    Schema schema,
+    Context context,
+  ) {
+    return switch (type) {
+      'string' when schema.format == 'date-time' => DateTimeModel(
+        context: context,
+      ),
+      'string' when schema.format == 'date' => DateModel(context: context),
+      'string'
+          when [
+            'decimal',
+            'currency',
+            'money',
+            'number',
+          ].contains(schema.format) =>
+        DecimalModel(context: context),
+      'string' when schema.format == 'uri' || schema.format == 'url' =>
+        UriModel(context: context),
+      'string' when schema.format == 'binary' => BinaryModel(context: context),
+      'string' when schema.contentEncoding != null =>
+        _resolveContentEncodedModel(schema, context),
+      'string' when schema.format == 'byte' => Base64Model(context: context),
+      'string' => StringModel(context: context),
+      'number' when schema.format == 'float' || schema.format == 'double' =>
+        DoubleModel(context: context),
+      'number' => NumberModel(context: context),
+      'integer' => IntegerModel(context: context),
+      'boolean' => BooleanModel(context: context),
+      _ => null,
+    };
+  }
+
+  /// Populates a named schema shell created during pass 1.
+  ///
+  /// Re-reads the schema and resolves all references. The shell already
+  /// exists in [models], so recursive references find it immediately.
+  void _populateShell(String name, Schema schema, Context context) {
+    final existingModel = models.firstWhereOrNull(
+      (m) => m is NamedModel && m.name == name,
+    );
+
+    // For schemas that didn't get a shell in pass 1 (e.g. direct
+    // self-references that were skipped, enums), run the full parse.
+    if (existingModel == null) {
       var model = _resolveSchemaRef(name, schema, context);
 
       if (model is PrimitiveModel || model is AnyModel || model is NeverModel) {
@@ -43,7 +328,6 @@ class ModelImporter {
         );
       }
 
-      // Apply x-dart-name vendor extension to schema.
       if (schema.xDartName != null) {
         if (model is NamedModel) {
           model.nameOverride = schema.xDartName;
@@ -54,7 +338,497 @@ class ModelImporter {
         log.fine('Adding model $name');
         models.add(model);
       }
+      return;
     }
+
+    // Apply x-dart-name vendor extension.
+    if (schema.xDartName != null) {
+      if (existingModel is NamedModel) {
+        existingModel.nameOverride = schema.xDartName;
+      }
+    }
+
+    // Populate based on model type.
+    if (schema.ref != null) {
+      _populateAliasShell(name, schema, context, existingModel as AliasModel);
+      return;
+    }
+
+    if (schema.isBooleanSchema != null) {
+      // Already fully populated in pass 1.
+      return;
+    }
+
+    if (schema.allOf != null) {
+      _populateAllOfShell(
+        name,
+        schema,
+        context,
+        existingModel as AllOfModel,
+      );
+      return;
+    }
+
+    if (schema.oneOf != null) {
+      _populateOneOfShell(
+        name,
+        schema,
+        context,
+        existingModel as OneOfModel,
+      );
+      return;
+    }
+
+    if (schema.anyOf != null) {
+      _populateAnyOfShell(
+        name,
+        schema,
+        context,
+        existingModel as AnyOfModel,
+      );
+      return;
+    }
+
+    final hasNullType = schema.type.contains('null');
+    final types = schema.type.where((t) => t != 'null').toList();
+
+    if (types.length > 1) {
+      _populateMultiTypeShell(
+        name,
+        schema,
+        hasNullType,
+        context,
+        existingModel as OneOfModel,
+      );
+      return;
+    }
+
+    // Pure map detection.
+    if ((schema.properties == null || schema.properties!.isEmpty) &&
+        schema.additionalProperties != null &&
+        schema.additionalProperties != false) {
+      _populateMapShell(name, schema, context, existingModel as MapModel);
+      return;
+    }
+
+    final firstType = types.firstOrNull;
+
+    // Primitives are already fully populated.
+    if (_isPrimitiveType(firstType, schema)) {
+      return;
+    }
+
+    // Array type.
+    if (firstType == 'array') {
+      _populateArrayShell(name, schema, context, existingModel as ListModel);
+      return;
+    }
+
+    // Default: ClassModel.
+    if (existingModel is ClassModel) {
+      _populateClassShell(name, schema, context, existingModel);
+    }
+  }
+
+  /// Populates an alias shell created for a `$ref` schema.
+  ///
+  /// The shell was already registered in pass 1 and may be referenced by
+  /// other models (e.g. as an allOf member). We update it in place rather
+  /// than replacing it, so existing references remain valid.
+  void _populateAliasShell(
+    String name,
+    Schema schema,
+    Context context,
+    AliasModel shell,
+  ) {
+    final ref = schema.ref!;
+
+    if (ref.contains(r'/$defs/')) {
+      // For $defs references, delegate to the existing resolution logic.
+      models.remove(shell);
+      final model = _resolveDefsReference(name, schema, context);
+      if (model is AliasModel && !identical(model, shell)) {
+        shell
+          ..model = model.model
+          ..description = model.description
+          ..isDeprecated = model.isDeprecated
+          ..isNullable = model.isNullable
+          ..isReadOnly = model.isReadOnly
+          ..isWriteOnly = model.isWriteOnly;
+      }
+      if (models.none((m) => m is NamedModel && m.name == name)) {
+        models.add(shell);
+      }
+      return;
+    }
+
+    if (!ref.startsWith('#/components/schemas/')) {
+      throw UnimplementedError(
+        'Only local schema references are supported, '
+        'found $ref for $name',
+      );
+    }
+
+    final refName = ref.split('/').last;
+
+    if (name == refName) {
+      throw ArgumentError(
+        'Schema $name has a direct self-reference which is not supported',
+      );
+    }
+
+    final refSchema = _schemas[refName];
+    if (refSchema == null) {
+      throw ArgumentError('Schema $ref not found for $name');
+    }
+
+    // Find the target model (shell from pass 1 or fully resolved).
+    final refModel =
+        models.firstWhereOrNull(
+          (model) => model is NamedModel && model.name == refName,
+        ) ??
+        _resolveWithCycleCheck(refName, refSchema);
+
+    // Handle structural siblings ($ref + properties/allOf/oneOf/anyOf).
+    if (_hasStructuralSiblings(schema)) {
+      // Need to replace shell with an AllOfModel.
+      models.remove(shell);
+      final allOfModel = _mergeRefWithStructuralSiblings(
+        name,
+        refModel,
+        schema,
+        context,
+      );
+      // Update shell to point to the allOf so existing references still work.
+      shell.model = allOfModel;
+      // The allOfModel is already registered by
+      // _mergeRefWithStructuralSiblings.
+      // We don't re-add the shell since the allOfModel replaces it.
+      return;
+    }
+
+    // Check for bare $ref cycles before updating the shell.
+    // If following the alias chain from refModel would lead back to this
+    // shell, we'd create an infinite loop. Keep the AnyModel terminal.
+    if (_wouldCreateAliasCycle(shell, refModel)) {
+      // Keep the shell's AnyModel as the terminal to break the cycle.
+      shell
+        ..description = schema.description
+        ..isDeprecated = (schema.isDeprecated ?? false)
+        ..isNullable = (schema.isNullable ?? schema.type.contains('null'));
+      return;
+    }
+
+    // Update the shell's inner model to point to the resolved target.
+    shell
+      ..model = refModel
+      ..description = schema.description
+      ..isDeprecated = (schema.isDeprecated ?? false)
+      ..isNullable = (schema.isNullable ?? schema.type.contains('null'));
+  }
+
+  /// Returns true if setting the shell's model to [target] would create
+  /// an alias cycle (e.g. AliasA -> AliasB -> AliasA).
+  bool _wouldCreateAliasCycle(AliasModel shell, Model target) {
+    var current = target;
+    final visited = <Model>{shell};
+    while (current is AliasModel) {
+      if (visited.contains(current)) {
+        return true;
+      }
+      visited.add(current);
+      current = current.model;
+    }
+    return false;
+  }
+
+  /// Populates an allOf shell's models.
+  void _populateAllOfShell(
+    String name,
+    Schema schema,
+    Context context,
+    AllOfModel shell,
+  ) {
+    final modelContext = context.push(name);
+
+    shell.additionalProperties = _resolveAdditionalProperties(
+      schema,
+      modelContext,
+    );
+
+    final resolvedModels = <Model>{};
+    for (final allOfSchema in schema.allOf!) {
+      final model = _resolveCompositeSubModel(
+        allOfSchema,
+        modelContext,
+        shell,
+      );
+      if (model != null) {
+        resolvedModels.add(model);
+      }
+    }
+    shell.models = resolvedModels;
+
+    _populatedComposites.add(name);
+  }
+
+  /// Populates a oneOf shell's models.
+  void _populateOneOfShell(
+    String name,
+    Schema schema,
+    Context context,
+    OneOfModel shell,
+  ) {
+    final modelContext = context.push(name);
+    final alternatives = schema.oneOf!;
+
+    final effectiveDiscriminator =
+        schema.discriminator ?? _findInheritedDiscriminator(alternatives);
+
+    shell.discriminator = effectiveDiscriminator?.propertyName;
+
+    final resolvedModels = <DiscriminatedModel>{};
+    for (final oneOfSchema in alternatives) {
+      final model = _resolveCompositeSubModel(
+        oneOfSchema,
+        modelContext,
+        shell,
+      );
+      if (model != null) {
+        resolvedModels.add((
+          discriminatorValue: _getDiscriminatorValue(
+            discriminator: effectiveDiscriminator,
+            innerSchema: oneOfSchema,
+          ),
+          model: model,
+        ));
+      }
+    }
+    shell.models = resolvedModels;
+
+    _populatedComposites.add(name);
+
+    // Add nested models to the model set.
+    for (final nestedModel in shell.models) {
+      _addModelToSet(nestedModel.model);
+    }
+  }
+
+  /// Populates an anyOf shell's models.
+  void _populateAnyOfShell(
+    String name,
+    Schema schema,
+    Context context,
+    AnyOfModel shell,
+  ) {
+    final modelContext = context.push(name);
+    final alternatives = schema.anyOf!;
+
+    final effectiveDiscriminator =
+        schema.discriminator ?? _findInheritedDiscriminator(alternatives);
+
+    shell.discriminator = effectiveDiscriminator?.propertyName;
+
+    final resolvedModels = <DiscriminatedModel>{};
+    for (final anyOfSchema in alternatives) {
+      final model = _resolveCompositeSubModel(
+        anyOfSchema,
+        modelContext,
+        shell,
+      );
+      if (model != null) {
+        resolvedModels.add((
+          discriminatorValue: _getDiscriminatorValue(
+            discriminator: effectiveDiscriminator,
+            innerSchema: anyOfSchema,
+          ),
+          model: model,
+        ));
+      }
+    }
+    shell.models = resolvedModels;
+
+    _populatedComposites.add(name);
+  }
+
+  /// Resolves a sub-model for a composite (oneOf/allOf/anyOf) shell.
+  ///
+  /// If the sub-schema is a `$ref` to a named composite model that already
+  /// (transitively) contains [currentShell] in its composite sub-models,
+  /// returns `null` to skip the back-edge and prevent a cycle.
+  Model? _resolveCompositeSubModel(
+    Schema schema,
+    Context context,
+    Model currentShell,
+  ) {
+    if (schema.ref != null) {
+      final ref = schema.ref!;
+      if (ref.startsWith('#/components/schemas/')) {
+        final refName = ref.split('/').last;
+        final refModel = models.firstWhereOrNull(
+          (m) => m is NamedModel && m.name == refName,
+        );
+        if (refModel != null &&
+            _compositeContains(refModel, currentShell, <Model>{})) {
+          log.fine(
+            'Skipping back-edge to $refName during composite population '
+            'to prevent cycle.',
+          );
+          return null;
+        }
+      }
+    }
+
+    return _resolveSchemaRef(null, schema, context);
+  }
+
+  /// Returns true if [model] transitively contains [target] in its
+  /// composite sub-models (oneOf/allOf/anyOf members).
+  bool _compositeContains(Model model, Model target, Set<Model> visited) {
+    if (identical(model, target)) {
+      return true;
+    }
+    if (!visited.add(model)) {
+      return false;
+    }
+
+    final subModels = switch (model) {
+      OneOfModel(:final models) => models.map((m) => m.model),
+      AllOfModel(:final models) => models,
+      AnyOfModel(:final models) => models.map((m) => m.model),
+      AliasModel(:final model) => [model],
+      _ => <Model>[],
+    };
+
+    for (final sub in subModels) {
+      if (_compositeContains(sub, target, visited)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  /// Populates a multi-type OneOfModel shell.
+  void _populateMultiTypeShell(
+    String name,
+    Schema schema,
+    bool hasNullType,
+    Context context,
+    OneOfModel shell,
+  ) {
+    // Remove the shell so _parseMultiType can create the real model.
+    models.remove(shell);
+    final oneOfModel = _parseMultiType(
+      schema.type.where((t) => t != 'null').toList(),
+      schema,
+      hasNullType,
+      context,
+      name,
+    );
+
+    // Transfer the resolved data into the shell and restore it.
+    shell
+      ..models = oneOfModel.models
+      ..discriminator = oneOfModel.discriminator;
+
+    // Remove the duplicate created by _parseMultiType.
+    models.remove(oneOfModel);
+    if (models.none((m) => m is NamedModel && m.name == name)) {
+      models.add(shell);
+    }
+  }
+
+  /// Populates a MapModel shell's valueModel.
+  void _populateMapShell(
+    String name,
+    Schema schema,
+    Context context,
+    MapModel shell,
+  ) {
+    final ap = schema.additionalProperties;
+    final mapContext = context.push(name);
+    if (ap == true) {
+      shell.valueModel = AnyModel(context: mapContext);
+    } else if (ap is Schema) {
+      var valueModel = _resolveSchemaRef(null, ap, mapContext);
+      final apNullable = ap.isNullable ?? ap.type.contains('null');
+      if (apNullable && !valueModel.isEffectivelyNullable) {
+        valueModel = AliasModel(
+          model: valueModel,
+          context: mapContext,
+          isNullable: true,
+        );
+      }
+      shell.valueModel = valueModel;
+    }
+  }
+
+  /// Populates a ListModel shell.
+  void _populateArrayShell(
+    String name,
+    Schema schema,
+    Context context,
+    ListModel shell,
+  ) {
+    final items = schema.items;
+    final modelContext = context.push('array');
+    shell.content = items == null
+        ? AnyModel(context: modelContext)
+        : _resolveSchemaRef(null, items, modelContext);
+  }
+
+  /// Populates a ClassModel shell.
+  void _populateClassShell(
+    String name,
+    Schema schema,
+    Context context,
+    ClassModel shell,
+  ) {
+    shell.additionalProperties = _resolveAdditionalProperties(schema, context);
+
+    if (schema.not != null) {
+      log.warning(
+        'Found not schema for $name. The not keyword is not '
+        'supported and will be ignored.',
+      );
+    }
+
+    final schemaProperties = schema.properties ?? {};
+    final properties = <Property>[];
+
+    for (final MapEntry(key: propertyName, value: propertySchema)
+        in schemaProperties.entries) {
+      final isNullable =
+          propertySchema.isNullable ?? propertySchema.type.contains('null');
+      final isDeprecated = propertySchema.isDeprecated ?? false;
+      final isReadOnly = propertySchema.isReadOnly ?? false;
+      final isWriteOnly = propertySchema.isWriteOnly ?? false;
+      final description = propertySchema.description;
+      final nameOverride = propertySchema.xDartName;
+
+      final property = Property(
+        name: propertyName,
+        model: _resolveSchemaRefForProperty(
+          propertySchema,
+          context.pushAll([name, propertyName]),
+        ),
+        isRequired: schema.required?.contains(propertyName) ?? false,
+        isNullable: isNullable,
+        isDeprecated: isDeprecated,
+        isReadOnly: isReadOnly,
+        isWriteOnly: isWriteOnly,
+        description: description,
+      );
+
+      if (nameOverride != null) {
+        property.nameOverride = nameOverride;
+      }
+
+      properties.add(property);
+    }
+
+    shell.properties = properties;
   }
 
   /// Imports a schema from outside the components.schemas context.
@@ -690,8 +1464,7 @@ class ModelImporter {
       isWriteOnly: schema.isWriteOnly ?? false,
     );
 
-    if (name != null &&
-        models.none((m) => m is NamedModel && m.name == name)) {
+    if (name != null && models.none((m) => m is NamedModel && m.name == name)) {
       _logModelAdded(listModel);
       models.add(listModel);
     }
@@ -720,8 +1493,7 @@ class ModelImporter {
       isWriteOnly: schema.isWriteOnly ?? false,
     );
 
-    if (name == null ||
-        models.none((m) => m is NamedModel && m.name == name)) {
+    if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
       _logModelAdded(allOfModel);
       models.add(allOfModel);
     }
@@ -771,8 +1543,7 @@ class ModelImporter {
       isWriteOnly: schema.isWriteOnly ?? false,
     );
 
-    if (name == null ||
-        models.none((m) => m is NamedModel && m.name == name)) {
+    if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
       _logModelAdded(oneOfModel);
       models.add(oneOfModel);
     }
@@ -818,8 +1589,7 @@ class ModelImporter {
       isWriteOnly: schema.isWriteOnly ?? false,
     );
 
-    if (name == null ||
-        models.none((m) => m is NamedModel && m.name == name)) {
+    if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
       _logModelAdded(anyOfModel);
       models.add(anyOfModel);
     }

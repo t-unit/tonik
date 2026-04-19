@@ -83,9 +83,10 @@ Expression buildToJsonAdditionalPropertiesExpression(
         Parameter((p) => p..name = 'k'),
         Parameter((p) => p..name = 'v'),
       ])
-      ..body = refer('MapEntry', 'dart:core')
-          .call([refer('k'), innerExpr])
-          .code,
+      ..body = refer(
+        'MapEntry',
+        'dart:core',
+      ).call([refer('k'), innerExpr]).code,
   ).closure;
 
   return receiver.property('map').call([mapClosure]);
@@ -195,7 +196,8 @@ Expression _handleListExpression(
     return forceNonNullReceiver ? receiver.nullChecked : receiver;
   }
 
-  final isContentNullable = contentModel.isEffectivelyNullable ||
+  final isContentNullable =
+      contentModel.isEffectivelyNullable ||
       (contentModel is AliasModel && contentModel.isNullable);
 
   final innerExpr = _buildSerializationExpression(
@@ -283,7 +285,8 @@ Expression _handleMapExpression(
     return forceNonNullReceiver ? receiver.nullChecked : receiver;
   }
 
-  final isValueNullable = valueModel.isEffectivelyNullable ||
+  final isValueNullable =
+      valueModel.isEffectivelyNullable ||
       (valueModel is AliasModel && valueModel.isNullable);
 
   final innerExpr = _buildSerializationExpression(
@@ -299,29 +302,25 @@ Expression _handleMapExpression(
         Parameter((p) => p..name = 'k'),
         Parameter((p) => p..name = 'v'),
       ])
-      ..body = refer('MapEntry', 'dart:core')
-          .call([refer('k'), innerExpr])
-          .code,
+      ..body = refer(
+        'MapEntry',
+        'dart:core',
+      ).call([refer('k'), innerExpr]).code,
   ).closure;
 
   // When using immutable collections, unlock to regular Map first
   // so that Map.map() returns a Map (not IMap).
   if (useImmutableCollections) {
     if (forceNonNullReceiver) {
-      return receiver.nullChecked
-          .property('unlock')
-          .property('map')
-          .call([mapClosure]);
+      return receiver.nullChecked.property('unlock').property('map').call([
+        mapClosure,
+      ]);
     } else if (isNullable) {
-      return receiver
-          .nullSafeProperty('unlock')
-          .property('map')
-          .call([mapClosure]);
+      return receiver.nullSafeProperty('unlock').property('map').call([
+        mapClosure,
+      ]);
     } else {
-      return receiver
-          .property('unlock')
-          .property('map')
-          .call([mapClosure]);
+      return receiver.property('unlock').property('map').call([mapClosure]);
     }
   }
 

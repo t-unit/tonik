@@ -119,8 +119,7 @@ void main(List<String> arguments) {
     outputDir: outputDirArg,
     packageName: packageNameArg,
     logLevel: cliLogLevel,
-    useImmutableCollections:
-        immutableCollectionsArg ? true : null,
+    useImmutableCollections: immutableCollectionsArg ? true : null,
   );
 
   final packageName = mergedConfig.packageName;

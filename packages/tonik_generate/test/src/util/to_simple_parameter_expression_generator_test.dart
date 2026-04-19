@@ -547,9 +547,7 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal('result')
-                .assign(expression)
-                .statement,
+            ..body = declareFinal('result').assign(expression).statement,
         );
 
         final generated = format(method.accept(emitter).toString());

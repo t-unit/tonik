@@ -138,8 +138,8 @@ class ResponseGenerator {
           .map(
             (prop) => (
               normalizedName: prop.normalizedName,
-              hasCollectionValue: !useImmutableCollections &&
-                  prop.property.model is ListModel,
+              hasCollectionValue:
+                  !useImmutableCollections && prop.property.model is ListModel,
             ),
           )
           .toList(),
@@ -150,8 +150,8 @@ class ResponseGenerator {
           .map(
             (p) => (
               normalizedName: p.normalizedName,
-              hasCollectionValue: !useImmutableCollections &&
-                  p.property.model is ListModel,
+              hasCollectionValue:
+                  !useImmutableCollections && p.property.model is ListModel,
             ),
           )
           .toList(),
@@ -297,8 +297,9 @@ class ResponseGenerator {
             .map(
               (prop) => (
                 normalizedName: prop.normalizedName,
-                hasCollectionValue: !useImmutableCollections &&
-                  prop.property.model is ListModel,
+                hasCollectionValue:
+                    !useImmutableCollections &&
+                    prop.property.model is ListModel,
               ),
             )
             .toList(),
@@ -309,8 +310,8 @@ class ResponseGenerator {
             .map(
               (p) => (
                 normalizedName: p.normalizedName,
-                hasCollectionValue: !useImmutableCollections &&
-                    p.property.model is ListModel,
+                hasCollectionValue:
+                    !useImmutableCollections && p.property.model is ListModel,
               ),
             )
             .toList(),

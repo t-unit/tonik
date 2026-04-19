@@ -432,8 +432,7 @@ String normalizeEnumValueName(String value) {
   final versionMatch = RegExp(r'^(\d+(?:\.\d+)+)(.*)$').firstMatch(value);
   if (versionMatch != null) {
     final versionPart = versionMatch.group(1)!;
-    final suffix =
-        (versionMatch.group(2) ?? '').replaceFirst(RegExp('^-'), '');
+    final suffix = (versionMatch.group(2) ?? '').replaceFirst(RegExp('^-'), '');
 
     final segments = versionPart.split('.');
     final spelled = segments
