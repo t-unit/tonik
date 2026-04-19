@@ -26,7 +26,7 @@ void main() {
 
   group('Object method property collisions', () {
     test('ObjectMethodCollider has escaped property names', () {
-      final model = ObjectMethodCollider(
+      const model = ObjectMethodCollider(
         $runtimeType: 'container',
         $hashCode: 42,
       );
@@ -36,7 +36,7 @@ void main() {
     });
 
     test('ObjectMethodCollider preserves JSON keys', () {
-      final model = ObjectMethodCollider.fromJson({
+      final model = ObjectMethodCollider.fromJson(const {
         'runtimeType': 'vm',
         'hashCode': 99,
         'noSuchMethod': 'fallback',
@@ -50,14 +50,14 @@ void main() {
     });
 
     test('ObjectMethodCollider toJson uses original keys', () {
-      final model = ObjectMethodCollider(
+      const model = ObjectMethodCollider(
         $runtimeType: 'vm',
         $hashCode: 99,
         $noSuchMethod: 'fallback',
         $toString: 'debug',
       );
 
-      final json = model.toJson() as Map<String, dynamic>;
+      final json = model.toJson()! as Map<String, dynamic>;
 
       expect(json['runtimeType'], 'vm');
       expect(json['hashCode'], 99);
@@ -67,15 +67,15 @@ void main() {
   });
 
   group('Function schema name (built-in identifier)', () {
-    test('Function schema generates as \$Function', () {
-      final fn = $Function(name: 'handler', arn: 'arn:aws:lambda:us-east-1');
+    test(r'Function schema generates as $Function', () {
+      const fn = $Function(name: 'handler', arn: 'arn:aws:lambda:us-east-1');
 
       expect(fn.name, 'handler');
       expect(fn.arn, 'arn:aws:lambda:us-east-1');
     });
 
-    test('\$Function roundtrips through JSON', () {
-      final fn = $Function(name: 'handler', arn: 'arn:aws:lambda:us-east-1');
+    test(r'$Function roundtrips through JSON', () {
+      const fn = $Function(name: 'handler', arn: 'arn:aws:lambda:us-east-1');
       final json = fn.toJson();
       final restored = $Function.fromJson(json);
 
@@ -86,17 +86,17 @@ void main() {
 
   group('dart:core type names as schemas', () {
     test('Enum schema is valid (not prefixed)', () {
-      final model = naming.Enum(index: 0, name: 'active');
+      const model = naming.Enum(index: 0, name: 'active');
       expect(model.name, 'active');
     });
 
     test('Error schema is valid (not prefixed)', () {
-      final model = naming.Error(code: 500, message: 'Internal');
+      const model = naming.Error(code: 500, message: 'Internal');
       expect(model.code, 500);
     });
 
     test('Duration schema is valid (not prefixed)', () {
-      final model = naming.Duration(milliseconds: 5000);
+      const model = naming.Duration(milliseconds: 5000);
       expect(model.milliseconds, 5000);
     });
   });
@@ -117,7 +117,7 @@ void main() {
 
   group('keyword property names', () {
     test('KeywordPropertyNames has escaped field names', () {
-      final model = KeywordPropertyNames(
+      const model = KeywordPropertyNames(
         $class: 'MyClass',
         $return: 'value',
         $switch: 'on',
@@ -133,7 +133,7 @@ void main() {
     });
 
     test('KeywordPropertyNames preserves JSON keys', () {
-      final model = KeywordPropertyNames.fromJson({
+      final model = KeywordPropertyNames.fromJson(const {
         'class': 'MyClass',
         'switch': 'on',
         'is': true,
@@ -145,8 +145,8 @@ void main() {
     });
 
     test('KeywordPropertyNames toJson uses original keys', () {
-      final model = KeywordPropertyNames($class: 'X', $is: false);
-      final json = model.toJson() as Map<String, dynamic>;
+      const model = KeywordPropertyNames($class: 'X', $is: false);
+      final json = model.toJson()! as Map<String, dynamic>;
 
       expect(json['class'], 'X');
       expect(json['is'], isFalse);
@@ -155,7 +155,7 @@ void main() {
 
   group('generated method name collisions', () {
     test('GeneratedMethodCollider has escaped field names', () {
-      final model = GeneratedMethodCollider(
+      const model = GeneratedMethodCollider(
         $fromJson: 'factory',
         $toJson: 'serializer',
         $copyWith: 'cloner',
@@ -169,7 +169,7 @@ void main() {
 
   group('camelCase normalization collisions', () {
     test('CamelCaseCollider deduplicates same-cased properties', () {
-      final model = CamelCaseCollider(
+      const model = CamelCaseCollider(
         myField: 'first',
         myField2: 'second',
         myField3: 'third',
@@ -197,8 +197,8 @@ void main() {
 
   group('self-referencing schema', () {
     test('SelfReferencer can nest', () {
-      final child = SelfReferencer(name: 'child');
-      final parent = SelfReferencer(
+      const child = SelfReferencer(name: 'child');
+      const parent = SelfReferencer(
         name: 'parent',
         children: [child],
       );
@@ -210,7 +210,7 @@ void main() {
 
   group('weird property names', () {
     test('WeirdPropertyNames handles special characters', () {
-      final model = WeirdPropertyNames(
+      const model = WeirdPropertyNames(
         screamingCase: 'LOUD',
         a: 'single',
         kebabCaseName: 'hyphenated',
