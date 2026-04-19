@@ -1,4 +1,4 @@
-openapi: 3.0.4
+openapi: 3.1.0
 info:
   title: Composition API
   description: OpenAPI specification showcasing composition of models
@@ -761,4 +761,14 @@ components:
           properties:
             bField:
               type: integer
-             
+
+    # =========================================================================
+    # Boolean schema (true) in oneOf — OpenAPI 3.1 / JSON Schema 2020-12
+    # =========================================================================
+    # The boolean `true` schema means "accept any value". The parser converts
+    # it to an AnyModel. This exercises the generator's handling of AnyModel
+    # as a oneOf variant.
+    OneOfBooleanSchema:
+      oneOf:
+        - true
+        - $ref: '#/components/schemas/Class1'
