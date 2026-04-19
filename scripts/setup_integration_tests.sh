@@ -374,6 +374,7 @@ restore_test_package_overrides "kubernetes/kubernetes_test/pubspec.yaml" "../../
 restore_test_package_overrides "cloudflare/cloudflare_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "totem/totem_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "immutable_collections/immutable_collections_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "naming/naming_test/pubspec.yaml" "../../../packages/tonik_util"
 
 # Run dart pub get for all test packages in parallel
 echo "Running dart pub get for all test packages in parallel..."
@@ -412,6 +413,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd cloudflare/cloudflare_test && dart pub get &
   cd totem/totem_test && dart pub get &
   cd immutable_collections/immutable_collections_test && dart pub get &
+  ([ -d "naming/naming_test" ] && cd naming/naming_test && dart pub get) &
   wait
 )
 echo "All test package dependencies resolved"
