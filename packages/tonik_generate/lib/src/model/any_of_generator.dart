@@ -210,7 +210,8 @@ class AnyOfGenerator {
         .map(
           (n) => (
             normalizedName: n.normalizedName,
-            hasCollectionValue: !useImmutableCollections &&
+            hasCollectionValue:
+                !useImmutableCollections &&
                 (n.property.model is ListModel || n.property.model is MapModel),
           ),
         )

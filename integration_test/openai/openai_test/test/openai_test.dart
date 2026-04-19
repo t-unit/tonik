@@ -98,8 +98,7 @@ void main() {
       );
 
       expect(result, isA<TonikSuccess<CreateEmbeddingResponse>>());
-      final success =
-          result as TonikSuccess<CreateEmbeddingResponse>;
+      final success = result as TonikSuccess<CreateEmbeddingResponse>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -125,8 +124,7 @@ void main() {
         result,
         isA<TonikSuccess<CreateModerationResponse>>(),
       );
-      final success =
-          result as TonikSuccess<CreateModerationResponse>;
+      final success = result as TonikSuccess<CreateModerationResponse>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -144,27 +142,22 @@ void main() {
 
       final result = await op(
         body: const CreateChatCompletionRequest(
-          createChatCompletionRequestModel:
-              CreateChatCompletionRequestModel(
+          createChatCompletionRequestModel: CreateChatCompletionRequestModel(
             messages: [
               ChatCompletionRequestMessageChatCompletionRequestUserMessage(
                 ChatCompletionRequestUserMessage(
                   content:
                       ChatCompletionRequestUserMessageContentOneOfModelString(
-                    'Hello!',
-                  ),
-                  role:
-                      ChatCompletionRequestUserMessageRoleModel
-                          .user,
+                        'Hello!',
+                      ),
+                  role: ChatCompletionRequestUserMessageRoleModel.user,
                 ),
               ),
             ],
             model: ModelIdsShared(string: 'gpt-4o'),
           ),
-          createModelResponseProperties:
-              CreateModelResponseProperties(
-            modelResponseProperties:
-                ModelResponseProperties(),
+          createModelResponseProperties: CreateModelResponseProperties(
+            modelResponseProperties: ModelResponseProperties(),
           ),
         ),
       );
@@ -173,8 +166,7 @@ void main() {
         result,
         isA<TonikSuccess<ChatCompletionsPost200Response>>(),
       );
-      final success =
-          result as TonikSuccess<ChatCompletionsPost200Response>;
+      final success = result as TonikSuccess<ChatCompletionsPost200Response>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -254,8 +246,7 @@ void main() {
         result,
         isA<TonikSuccess<ListFineTuningJobEventsResponse>>(),
       );
-      final success = result
-          as TonikSuccess<ListFineTuningJobEventsResponse>;
+      final success = result as TonikSuccess<ListFineTuningJobEventsResponse>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -278,8 +269,7 @@ void main() {
         result,
         isA<TonikSuccess<ListFineTuningJobEventsResponse>>(),
       );
-      final success = result
-          as TonikSuccess<ListFineTuningJobEventsResponse>;
+      final success = result as TonikSuccess<ListFineTuningJobEventsResponse>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;

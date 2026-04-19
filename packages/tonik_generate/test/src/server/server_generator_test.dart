@@ -239,52 +239,54 @@ void main() {
   });
 
   group('ServerGenerator multi-line descriptions', () {
-    test('static server with multi-line description has proper doc comments',
-        () {
-      final servers = [
-        const Server(
-          url: 'https://api.example.com',
-          description: "Production server.\nThe main server's endpoint.",
-        ),
-      ];
+    test(
+      'static server with multi-line description has proper doc comments',
+      () {
+        final servers = [
+          const Server(
+            url: 'https://api.example.com',
+            description: "Production server.\nThe main server's endpoint.",
+          ),
+        ];
 
-      final classes = generator.generateClasses(servers);
-      final serverClass = classes[1]; // first server class after base
+        final classes = generator.generateClasses(servers);
+        final serverClass = classes[1]; // first server class after base
 
-      expect(serverClass.docs, [
-        '/// Production server.',
-        "/// The main server's endpoint. - https://api.example.com",
-      ]);
-    });
-
-    test('templated server with multi-line description has proper doc comments',
-        () {
-      final servers = [
-        const Server(
-          url: 'https://{env}.example.com',
-          description: "Environment server.\nThe server's URL varies.",
-          variables: [
-            ServerVariable(
-              name: 'env',
-              defaultValue: 'prod',
-              description: 'Environment',
-            ),
-          ],
-        ),
-      ];
-
-      final classes = generator.generateClasses(servers);
-      final serverClass = classes[1];
-
-      expect(serverClass.docs, [
-        '/// Environment server.',
-        "/// The server's URL varies. - https://{env}.example.com",
-      ]);
-    });
+        expect(serverClass.docs, [
+          '/// Production server.',
+          "/// The main server's endpoint. - https://api.example.com",
+        ]);
+      },
+    );
 
     test(
-        'multi-line server description does not crash DartFormatter',
-        () {
+      'templated server with multi-line description has proper doc comments',
+      () {
+        final servers = [
+          const Server(
+            url: 'https://{env}.example.com',
+            description: "Environment server.\nThe server's URL varies.",
+            variables: [
+              ServerVariable(
+                name: 'env',
+                defaultValue: 'prod',
+                description: 'Environment',
+              ),
+            ],
+          ),
+        ];
+
+        final classes = generator.generateClasses(servers);
+        final serverClass = classes[1];
+
+        expect(serverClass.docs, [
+          '/// Environment server.',
+          "/// The server's URL varies. - https://{env}.example.com",
+        ]);
+      },
+    );
+
+    test('multi-line server description does not crash DartFormatter', () {
       final servers = [
         const Server(
           url: 'https://api.example.com',

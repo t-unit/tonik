@@ -24,30 +24,30 @@ class OperationGenerator {
     required this.package,
     this.useImmutableCollections = false,
   }) : _optionsGenerator = OptionsGenerator(
-        nameManager: nameManager,
-        package: package,
-        useImmutableCollections: useImmutableCollections,
-      ),
-      _queryParametersGenerator = QueryGenerator(
-        nameManager: nameManager,
-        package: package,
-        useImmutableCollections: useImmutableCollections,
-      ),
-      _pathGenerator = PathGenerator(
-        nameManager: nameManager,
-        package: package,
-        useImmutableCollections: useImmutableCollections,
-      ),
-      _dataGenerator = DataGenerator(
-        nameManager: nameManager,
-        package: package,
-        useImmutableCollections: useImmutableCollections,
-      ),
-      _parseGenerator = ParseGenerator(
-        nameManager: nameManager,
-        package: package,
-        useImmutableCollections: useImmutableCollections,
-      );
+         nameManager: nameManager,
+         package: package,
+         useImmutableCollections: useImmutableCollections,
+       ),
+       _queryParametersGenerator = QueryGenerator(
+         nameManager: nameManager,
+         package: package,
+         useImmutableCollections: useImmutableCollections,
+       ),
+       _pathGenerator = PathGenerator(
+         nameManager: nameManager,
+         package: package,
+         useImmutableCollections: useImmutableCollections,
+       ),
+       _dataGenerator = DataGenerator(
+         nameManager: nameManager,
+         package: package,
+         useImmutableCollections: useImmutableCollections,
+       ),
+       _parseGenerator = ParseGenerator(
+         nameManager: nameManager,
+         package: package,
+         useImmutableCollections: useImmutableCollections,
+       );
 
   final NameManager nameManager;
   final String package;

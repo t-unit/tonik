@@ -72,10 +72,9 @@ Expression _buildListUriEncodeExpression(
   // When using immutable collections, the value is an IList which does not
   // The .uriEncode() extension is defined on List, not IList.
   // Unlock first to get a regular List that has the extension method.
-  final listExpr =
-      useImmutableCollections
-          ? valueExpression.property('unlock')
-          : valueExpression;
+  final listExpr = useImmutableCollections
+      ? valueExpression.property('unlock')
+      : valueExpression;
 
   return switch (contentModel) {
     StringModel() => listExpr.property('uriEncode').call(

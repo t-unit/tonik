@@ -119,8 +119,9 @@ class ParseGenerator {
   }
 
   Code _casePattern(ResponseStatus status, String? contentType) {
-    final contentTypePattern =
-        contentType != null ? specLiteralStringCode(contentType) : '_';
+    final contentTypePattern = contentType != null
+        ? specLiteralStringCode(contentType)
+        : '_';
     switch (status) {
       case ExplicitResponseStatus():
         return Code('case (${status.statusCode}, $contentTypePattern):');
@@ -321,8 +322,11 @@ class ParseGenerator {
   ) {
     final wrapperName = nameManager.responseWrapperNames(operation).$2[status]!;
     final wrapperBaseName = nameManager.responseWrapperNames(operation).$1;
-    final wrapperUrl =
-        sourceFileUrl(package, 'response_wrapper', wrapperBaseName);
+    final wrapperUrl = sourceFileUrl(
+      package,
+      'response_wrapper',
+      wrapperBaseName,
+    );
     final bodyDecode = _createBodyDecode(response, contentType);
 
     if (response.hasHeaders || response.bodyCount > 1) {

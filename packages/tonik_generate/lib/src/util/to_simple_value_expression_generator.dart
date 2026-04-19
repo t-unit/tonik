@@ -16,8 +16,9 @@ Expression buildToSimplePathParameterExpression(
 }) {
   final model = parameter.model;
   final isNullable = model.isEffectivelyNullable;
-  final receiver =
-      isNullable ? refer(parameterName).nullChecked : refer(parameterName);
+  final receiver = isNullable
+      ? refer(parameterName).nullChecked
+      : refer(parameterName);
   return _buildSimpleSerializationExpression(
     receiver,
     model,
