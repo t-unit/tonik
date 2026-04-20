@@ -1,3 +1,16 @@
+## 0.7.0
+
+ - **FIX**: address correctness and safety issues from comprehensive audit.
+ - **FIX**: include original error context in OpenAPI loader exceptions.
+ - **FIX**: handle file read errors in OpenAPI loader.
+ - **FIX**: remove duplicate error message string in CLI error output.
+ - **FEAT**: optionally generate code with fast_immutable_collections.
+ - **FEAT**: support for addtional properties.
+ - **DOCS**: highlight per-status-code response types as key differentiator.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.6.0
 
  - **FEAT**: allow custom multipart configuration.

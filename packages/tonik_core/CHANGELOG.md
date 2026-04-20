@@ -1,3 +1,12 @@
+## 0.7.0
+
+ - **REFACTOR**: add Model.resolved getter, remove alias-resolution duplication.
+ - **FIX**: resolve lint violations from previous bug fix commits.
+ - **FIX**: add equality and hashCode to Tag class.
+ - **FIX**: include context field in hashCode for all Alias classes.
+ - **FEAT**: optionally generate code with fast_immutable_collections.
+ - **FEAT**: support for addtional properties.
+
 ## 0.6.0
 
  - **FIX**: shadowing of variables prevent proper names.

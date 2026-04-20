@@ -1,3 +1,58 @@
+## 0.7.0
+
+ - **REFACTOR**: use specLiteralStringCode for trailing slash empty segment.
+ - **REFACTOR**: move body collision logic into normalizeRequestParameters.
+ - **REFACTOR**: add Model.resolved getter, remove alias-resolution duplication.
+ - **REFACTOR**: use switch for encoding type exhaustiveness and fix edge cases.
+ - **FIX**: remove dead `model is! EnumModel` check in OneOf generator.
+ - **FIX**: handle MapModel correctly in multipart encoding.
+ - **FIX**: escape keyword server variable names with $ prefix.
+ - **FIX**: forward useQueryComponent in allOf/anyOf toForm and add UriEncodable to ClassModel.
+ - **FIX**: distinguish user-defined Object from dart:core Object in copyWith cast.
+ - **FIX**: sanitize naming collisions for keywords, Object members, and body params.
+ - **FIX**: use wildcard pattern in throw-only switch arms to avoid unused variable lint.
+ - **FIX**: use non-null-aware access for nullable headers inside null-check blocks.
+ - **FIX**: use buildToJsonPropertyExpression for MapModel in allOf toJson.
+ - **FIX**: include return _$formData in _buildMultipartFields for ClassModel.
+ - **FIX**: use full method body comparison in form query parameter tests.
+ - **FIX**: add null guards and empty-set checks in allOf encoding methods.
+ - **FIX**: use null-safe calls for encoding methods on nullable types.
+ - **FIX**: broken unit test.
+ - **FIX**: use .resolved for all ListModel checks in allOf generator.
+ - **FIX**: prevent parameterProperties calls on List and Map types in allOf.
+ - **FIX**: use expression generator for additional properties toJson serialization.
+ - **FIX**: resolve adjacent-string and prefer_single_quotes lint warnings in tests.
+ - **FIX**: correct JSON decoding for List<Uri>, List<Map<String, T>>, and multipart enum arrays.
+ - **FIX**: resolve alias-to-primitive types in OneOf code generation.
+ - **FIX**: remove self-references in writeOnly empty-properties paths.
+ - **FIX**: emit targeted imports instead of barrel imports in generated code.
+ - **FIX**: escape reserved enum member names and spell out numeric property names.
+ - **FIX**: use flat Code additions instead of Block.of in switch expression.
+ - **FIX**: replace all codegen-time throws with runtime throws in generated code.
+ - **FIX**: generate runtime throw for ClassModel in list simple encoding.
+ - **FIX**: handle AnyModel and NeverModel as oneOf variants.
+ - **FIX**: keep literal suffixes in same path segment as parameters.
+ - **FIX**: restore runtime entry.key context in URL-encoded error messages.
+ - **FIX**: use raw string literals for spec-defined names in generated code.
+ - **FIX**: handle triple-double-quote edge case in specLiteralString.
+ - **FIX**: rewrite tests to follow testing conventions.
+ - **FIX**: address PR review comments.
+ - **FIX**: resolve lint violations from previous bug fix commits.
+ - **FIX**: complete immutable collections support in all_of_generator.
+ - **FIX**: address correctness and safety issues from comprehensive audit.
+ - **FIX**: route \r values through escaped path to avoid literal CR in source.
+ - **FIX**: update existing test to expect throw instead of silent skip.
+ - **FIX**: handle newline characters in specLiteralStringCode.
+ - **FIX**: better escape strings containing part 2.
+ - **FIX**: better escape strings containing ‘ or “.
+ - **FIX**: address PR review feedback.
+ - **FIX**: preserve trailing slash in OpenAPI path segments.
+ - **FEAT**: optionally generate code with fast_immutable_collections.
+ - **FEAT**: add immutable collections integration tests and fix form/uri encoding.
+ - **FEAT**: add request cancellation support via CancelToken.
+ - **FEAT**: support for addtional properties.
+ - **DOCS**: update specLiteralString docstring and add escape function tests.
+
 ## 0.6.0
 
  - **FIX**: validate version and use fallback.

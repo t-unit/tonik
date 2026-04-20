@@ -1,3 +1,14 @@
+## 0.7.0
+
+ - **FIX**: add useQueryComponent parameter to Date.toForm.
+ - **FIX**: address correctness and safety issues from comprehensive audit.
+ - **FIX**: resolve lint violations from previous bug fix commits.
+ - **FIX**: narrow catch clause in Date.parse to FormatException and RangeError.
+ - **FIX**: correct doc comment for decodeJsonNullableList.
+ - **FIX**: wrap Uri.decodeComponent in try-catch in decodeSimpleString.
+ - **FEAT**: add request cancellation support via CancelToken.
+ - **FEAT**: support for addtional properties.
+
 ## 0.6.0
 
  - **FIX**: stable sort performance improvements.

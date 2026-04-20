@@ -1,3 +1,18 @@
+## 0.7.0
+
+ - **REFACTOR**: add Model.resolved getter, remove alias-resolution duplication.
+ - **FIX**: missing context for whitespace properties.
+ - **FIX**: sanitize naming collisions for keywords, Object members, and body params.
+ - **FIX**: register named ListModels early to prevent orphan duplicates.
+ - **FIX**: allow lower and uppder case response code ragnes (5xx vs 5XX).
+ - **FIX**: prevent placeholder shadowing and strengthen cycle tests.
+ - **FIX**: resolve stack overflow on circular schema references.
+ - **FIX**: clarify content-type config override test names.
+ - **FIX**: address PR review feedback.
+ - **FIX**: address correctness and safety issues from comprehensive audit.
+ - **FIX**: warn when OAuth2 flow is missing required URL fields.
+ - **FEAT**: support for addtional properties.
+
 ## 0.6.0
 
  - **FIX**: deduplicate AliasModel instances for bare $ref aliases in allOf.

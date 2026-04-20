@@ -61,7 +61,7 @@ dependencies:
   collection: ^1.17.0
   dio: ^5.8.0+1$ficDependency
   meta: ^1.16.0
-  tonik_util: ^0.6.0
+  tonik_util: ^0.7.0
 
 dev_dependencies:
   lints: ^6.0.0
