@@ -49,10 +49,6 @@ if [ "$DRY_RUN" = false ]; then
   fi
 fi
 
-echo "🧹 Cleaning gitignored artifacts in integration_test/..."
-git clean -fdX integration_test/
-echo ""
-
 echo "📦 Running tests before versioning..."
 melos run test
 if [ $? -ne 0 ]; then
