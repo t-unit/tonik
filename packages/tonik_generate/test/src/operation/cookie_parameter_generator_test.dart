@@ -291,7 +291,7 @@ void main() {
           collapseWhitespace(r'''
               final _$cookieParts = <String>[];
               _$cookieParts.add(
-                r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
+                [r'session_id=', sessionId.toForm(explode: false, allowEmpty: true)].join(),
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -379,10 +379,10 @@ void main() {
           collapseWhitespace(r'''
               final _$cookieParts = <String>[];
               _$cookieParts.add(
-                r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
+                [r'session_id=', sessionId.toForm(explode: false, allowEmpty: true)].join(),
               );
               _$cookieParts.add(
-                r'user_id=' + userId.toForm(explode: false, allowEmpty: true),
+                [r'user_id=', userId.toForm(explode: false, allowEmpty: true)].join(),
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -447,8 +447,10 @@ void main() {
             final _$cookieParts = <String>[];
             if (optionalSession != null) {
               _$cookieParts.add(
-                r'optional_session=' +
-                    optionalSession.toForm(explode: false, allowEmpty: true),
+                [
+                  r'optional_session=',
+                  optionalSession.toForm(explode: false, allowEmpty: true),
+                ].join(),
               );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -513,7 +515,7 @@ void main() {
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
             _$cookieParts.add(
-              r'page=' + pageNum.toForm(explode: false, allowEmpty: true),
+              [r'page=', pageNum.toForm(explode: false, allowEmpty: true)].join(),
             );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -579,7 +581,9 @@ void main() {
         contains(
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
-            _$cookieParts.add(r'tags=' + tags.toForm(explode: false, allowEmpty: true));
+            _$cookieParts.add(
+              [r'tags=', tags.toForm(explode: false, allowEmpty: true)].join(),
+            );
           '''),
         ),
       );
@@ -656,7 +660,7 @@ void main() {
       final methodString = method.accept(emitter).toString();
       expect(
         collapseWhitespace(methodString),
-        contains(r"_$cookieParts.add(r'user=' + user.toForm("),
+        contains(r"_$cookieParts.add([r'user=', user.toForm("),
       );
     });
 
@@ -716,7 +720,10 @@ void main() {
         contains(
           collapseWhitespace(r'''
             _$cookieParts.add(
-              r'identifier=' + identifier.toForm(explode: false, allowEmpty: true),
+              [
+                r'identifier=',
+                identifier.toForm(explode: false, allowEmpty: true),
+              ].join(),
             );
           '''),
         ),
@@ -778,7 +785,9 @@ void main() {
         collapseWhitespace(methodString),
         contains(
           collapseWhitespace(r'''
-            _$cookieParts.add(r'value=' + value.toForm(explode: false, allowEmpty: true));
+            _$cookieParts.add(
+              [r'value=', value.toForm(explode: false, allowEmpty: true)].join(),
+            );
           '''),
         ),
       );
@@ -863,7 +872,7 @@ void main() {
       final methodString = method.accept(emitter).toString();
       expect(
         collapseWhitespace(methodString),
-        contains(r"_$cookieParts.add(r'entity=' + entity.toForm("),
+        contains(r"_$cookieParts.add([r'entity=', entity.toForm("),
       );
     });
 
@@ -999,11 +1008,13 @@ void main() {
         contains(
           collapseWhitespace(r'''
             _$cookieParts.add(
-              r'ids=' +
-                  ids
-                      .map((e) => e.toForm(explode: false, allowEmpty: true))
-                      .toList()
-                      .toForm(explode: false, allowEmpty: true, alreadyEncoded: true),
+              [
+                r'ids=',
+                ids
+                    .map((e) => e.toForm(explode: false, allowEmpty: true))
+                    .toList()
+                    .toForm(explode: false, allowEmpty: true, alreadyEncoded: true),
+              ].join(),
             );
           '''),
         ),
