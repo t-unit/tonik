@@ -3438,9 +3438,10 @@ void main() {
                     );
                   }
                   addressParts.add(
-                    Uri.encodeQueryComponent(entry.key.toString()) +
-                        '=' +
-                        Uri.encodeQueryComponent(value.toString()),
+                    [
+                      Uri.encodeQueryComponent(entry.key.toString()),
+                      Uri.encodeQueryComponent(value.toString()),
+                    ].join('='),
                   );
                 }
                 _$formData.files.add(MapEntry(
@@ -3521,9 +3522,10 @@ void main() {
                     );
                   }
                   addressParts.add(
-                    Uri.encodeQueryComponent(entry.key.toString()) +
-                        '=' +
-                        Uri.encodeQueryComponent(value.toString()),
+                    [
+                      Uri.encodeQueryComponent(entry.key.toString()),
+                      Uri.encodeQueryComponent(value.toString()),
+                    ].join('='),
                   );
                 }
                 _$formData.files.add(MapEntry(
@@ -3603,9 +3605,10 @@ void main() {
                     );
                   }
                   addressParts.add(
-                    Uri.encodeQueryComponent(entry.key.toString()) +
-                        '=' +
-                        Uri.encodeQueryComponent(value.toString()),
+                    [
+                      Uri.encodeQueryComponent(entry.key.toString()),
+                      Uri.encodeQueryComponent(value.toString()),
+                    ].join('='),
                   );
                 }
                 _$formData.files.add(MapEntry(
@@ -3775,9 +3778,10 @@ void main() {
                     );
                   }
                   addressParts.add(
-                    Uri.encodeQueryComponent(entry.key.toString()) +
-                        '=' +
-                        Uri.encodeQueryComponent(value.toString()),
+                    [
+                      Uri.encodeQueryComponent(entry.key.toString()),
+                      Uri.encodeQueryComponent(value.toString()),
+                    ].join('='),
                   );
                 }
                 _$formData.files.add(MapEntry(
@@ -4117,9 +4121,10 @@ void main() {
                   );
                 }
                 metadataParts.add(
-                  Uri.encodeQueryComponent(entry.key.toString()) +
-                      '=' +
-                      Uri.encodeQueryComponent(value.toString()),
+                  [
+                    Uri.encodeQueryComponent(entry.key.toString()),
+                    Uri.encodeQueryComponent(value.toString()),
+                  ].join('='),
                 );
               }
               _$formData.files.add(MapEntry(
@@ -4199,9 +4204,10 @@ void main() {
                     );
                   }
                   metadataParts.add(
-                    Uri.encodeQueryComponent(entry.key.toString()) +
-                        '=' +
-                        Uri.encodeQueryComponent(value.toString()),
+                    [
+                      Uri.encodeQueryComponent(entry.key.toString()),
+                      Uri.encodeQueryComponent(value.toString()),
+                    ].join('='),
                   );
                 }
                 _$formData.files.add(MapEntry(

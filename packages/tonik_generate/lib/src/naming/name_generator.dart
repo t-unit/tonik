@@ -148,10 +148,9 @@ class NameGenerator {
     );
 
     // Only apply keyword check when the response has an explicit name
-    final baseName =
-        response.name != null && response.name!.isNotEmpty
-            ? ensureValidClassName(rawBaseName)
-            : rawBaseName;
+    final baseName = response.name != null && response.name!.isNotEmpty
+        ? ensureValidClassName(rawBaseName)
+        : rawBaseName;
 
     // Only add Response suffix for anonymous responses
     if (response.name == null || (response.name?.isEmpty ?? false)) {

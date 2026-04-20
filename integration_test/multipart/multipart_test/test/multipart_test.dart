@@ -208,7 +208,8 @@ void main() {
                   onRequest: (options, handler) {
                     final data = options.data;
                     if (data is FormData) {
-                      // Clone the file to read its content without consuming it.
+                      // Clone the file to read its content
+                      // without consuming it.
                       final file = data.files
                           .firstWhere((e) => e.key == 'categories')
                           .value;

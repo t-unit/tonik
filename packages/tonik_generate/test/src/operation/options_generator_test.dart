@@ -1169,7 +1169,7 @@ void main() {
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
             _$cookieParts.add(
-              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
+              [r'session_id=', sessionId.toForm(explode: false, allowEmpty: true)].join(),
             );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1229,8 +1229,10 @@ void main() {
             final _$cookieParts = <String>[];
             if (trackingId != null) {
               _$cookieParts.add(
-                r'tracking_id=' +
-                    trackingId.toForm(explode: false, allowEmpty: true),
+                [
+                  r'tracking_id=',
+                  trackingId.toForm(explode: false, allowEmpty: true),
+                ].join(),
               );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -1311,10 +1313,10 @@ void main() {
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
             _$cookieParts.add(
-              r'session_id=' + sessionId.toForm(explode: false, allowEmpty: true),
+              [r'session_id=', sessionId.toForm(explode: false, allowEmpty: true)].join(),
             );
             _$cookieParts.add(
-              r'user_id=' + userId.toForm(explode: false, allowEmpty: true),
+              [r'user_id=', userId.toForm(explode: false, allowEmpty: true)].join(),
             );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1373,7 +1375,7 @@ void main() {
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
             _$cookieParts.add(
-              r'page_num=' + pageNum.toForm(explode: false, allowEmpty: true),
+              [r'page_num=', pageNum.toForm(explode: false, allowEmpty: true)].join(),
             );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');

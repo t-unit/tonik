@@ -883,8 +883,7 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (resolvedType is ListModel &&
-          resolvedType.hasSimpleContent) {
+      } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
@@ -1084,8 +1083,7 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (resolvedType is ListModel &&
-          resolvedType.hasSimpleContent) {
+      } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
@@ -1564,8 +1562,7 @@ class OneOfGenerator {
             ),
           ]);
         }
-      } else if (resolvedType is ListModel &&
-          resolvedType.hasSimpleContent) {
+      } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
         // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 

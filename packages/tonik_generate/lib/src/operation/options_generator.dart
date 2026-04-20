@@ -422,7 +422,9 @@ class OptionsGenerator {
         });
         bodyStatements.add(
           refer(r'_$cookieParts').property('add').call([
-            specLiteralString('$rawName=').operatorAdd(encodedValue),
+            literalList([specLiteralString('$rawName='), encodedValue])
+                .property('join')
+                .call([]),
           ]).statement,
         );
         return;
@@ -430,7 +432,8 @@ class OptionsGenerator {
 
       bodyStatements.add(
         refer(r'_$cookieParts').property('add').call([
-          specLiteralString('$rawName=').operatorAdd(
+          literalList([
+            specLiteralString('$rawName='),
             refer(paramName)
                 .property('map')
                 .call([
@@ -454,7 +457,7 @@ class OptionsGenerator {
                   'allowEmpty': literalBool(true),
                   'alreadyEncoded': literalBool(true),
                 }),
-          ),
+          ]).property('join').call([]),
         ]).statement,
       );
       return;
@@ -467,7 +470,9 @@ class OptionsGenerator {
     });
     bodyStatements.add(
       refer(r'_$cookieParts').property('add').call([
-        specLiteralString('$rawName=').operatorAdd(encodedValue),
+        literalList([specLiteralString('$rawName='), encodedValue])
+            .property('join')
+            .call([]),
       ]).statement,
     );
   }

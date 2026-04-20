@@ -809,8 +809,9 @@ class ModelImporter {
 
       // Use a placeholder for empty or whitespace-only property names
       // so the context path remains valid.
-      final contextPropertyName =
-          propertyName.trim().isEmpty ? 'property' : propertyName;
+      final contextPropertyName = propertyName.trim().isEmpty
+          ? 'property'
+          : propertyName;
 
       final property = Property(
         name: propertyName,
@@ -1785,8 +1786,9 @@ class ModelImporter {
 
       // Use a placeholder for empty or whitespace-only property names
       // so the context path remains valid.
-      final contextPropertyName =
-          propertyName.trim().isEmpty ? 'property' : propertyName;
+      final contextPropertyName = propertyName.trim().isEmpty
+          ? 'property'
+          : propertyName;
 
       final property = Property(
         name: propertyName,

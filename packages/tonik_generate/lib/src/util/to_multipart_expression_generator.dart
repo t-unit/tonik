@@ -1175,9 +1175,7 @@ Code _buildUrlEncodedMapFileAddition(
     refer(accessor).asA(refer('Map', 'dart:core')).code,
     const Code(').entries) {'),
     // final value = entry.value;
-    declareFinal('value')
-        .assign(refer('entry').property('value'))
-        .statement,
+    declareFinal('value').assign(refer('entry').property('value')).statement,
     // if (value == null) continue;
     const Code('if (value == null) continue;'),
     // if (value is Map || value is List) { throw EncodingException(...); }
@@ -1202,27 +1200,29 @@ Code _buildUrlEncodedMapFileAddition(
     //       Uri.encodeQueryComponent(value.toString()),
     // );
     refer(partsVarName).property('add').call([
-      refer('Uri', 'dart:core')
-          .property('encodeQueryComponent')
-          .call([refer('entry').property('key').property('toString').call([])])
-          .operatorAdd(literalString('='))
-          .operatorAdd(
-            refer('Uri', 'dart:core').property('encodeQueryComponent').call([
-              refer('value').property('toString').call([]),
-            ]),
-          ),
+      literalList([
+        refer('Uri', 'dart:core').property('encodeQueryComponent').call([
+          refer('entry').property('key').property('toString').call([]),
+        ]),
+        refer('Uri', 'dart:core').property('encodeQueryComponent').call([
+          refer('value').property('toString').call([]),
+        ]),
+      ]).property('join').call([literalString('=')]),
     ]).statement,
     const Code('}'),
     // _$formData.files.add(MapEntry(...));
     refer(r'_$formData').property('files').property('add').call([
       refer('MapEntry', 'dart:core').call([
         specLiteralString(rawName),
-        refer('MultipartFile', 'package:dio/dio.dart')
-            .property('fromString')
-            .call(
-              [refer(partsVarName).property('join').call([literalString('&')])],
-              namedArgs,
-            ),
+        refer(
+          'MultipartFile',
+          'package:dio/dio.dart',
+        ).property('fromString').call(
+          [
+            refer(partsVarName).property('join').call([literalString('&')]),
+          ],
+          namedArgs,
+        ),
       ]),
     ]).statement,
   ]);
@@ -1319,14 +1319,16 @@ Code _buildUrlEncodedObjectFileAddition(
         .statement,
     // for (final entry in (<accessor>.toJson() as Map).entries) {
     const Code('for (final entry in ('),
-    refer(accessor).property('toJson').call([]).asA(
-      refer('Map', 'dart:core'),
-    ).code,
+    refer(accessor)
+        .property('toJson')
+        .call([])
+        .asA(
+          refer('Map', 'dart:core'),
+        )
+        .code,
     const Code(').entries) {'),
     // final value = entry.value;
-    declareFinal('value')
-        .assign(refer('entry').property('value'))
-        .statement,
+    declareFinal('value').assign(refer('entry').property('value')).statement,
     // if (value == null) continue;
     const Code('if (value == null) continue;'),
     // if (value is Map || value is List) { throw EncodingException(...); }
@@ -1351,27 +1353,29 @@ Code _buildUrlEncodedObjectFileAddition(
     //       Uri.encodeQueryComponent(value.toString()),
     // );
     refer(partsVarName).property('add').call([
-      refer('Uri', 'dart:core')
-          .property('encodeQueryComponent')
-          .call([refer('entry').property('key').property('toString').call([])])
-          .operatorAdd(literalString('='))
-          .operatorAdd(
-            refer('Uri', 'dart:core').property('encodeQueryComponent').call([
-              refer('value').property('toString').call([]),
-            ]),
-          ),
+      literalList([
+        refer('Uri', 'dart:core').property('encodeQueryComponent').call([
+          refer('entry').property('key').property('toString').call([]),
+        ]),
+        refer('Uri', 'dart:core').property('encodeQueryComponent').call([
+          refer('value').property('toString').call([]),
+        ]),
+      ]).property('join').call([literalString('=')]),
     ]).statement,
     const Code('}'),
     // _$formData.files.add(MapEntry(...));
     refer(r'_$formData').property('files').property('add').call([
       refer('MapEntry', 'dart:core').call([
         specLiteralString(rawName),
-        refer('MultipartFile', 'package:dio/dio.dart')
-            .property('fromString')
-            .call(
-              [refer(partsVarName).property('join').call([literalString('&')])],
-              namedArgs,
-            ),
+        refer(
+          'MultipartFile',
+          'package:dio/dio.dart',
+        ).property('fromString').call(
+          [
+            refer(partsVarName).property('join').call([literalString('&')]),
+          ],
+          namedArgs,
+        ),
       ]),
     ]).statement,
   ]);

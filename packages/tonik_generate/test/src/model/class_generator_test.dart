@@ -59,23 +59,26 @@ void main() {
       expect(annotation.accept(emitter).toString(), 'immutable');
     });
 
-    test('generates class implementing ParameterEncodable and UriEncodable',
-        () {
-      final model = ClassModel(
-        isDeprecated: false,
-        name: 'User',
-        properties: const [],
-        context: context,
-      );
+    test(
+      'generates class implementing ParameterEncodable and UriEncodable',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: context,
+        );
 
-      final result = generator.generateClass(model);
+        final result = generator.generateClass(model);
 
-      expect(result.implements.length, 2);
-      final implementsNames =
-          result.implements.map((i) => i.accept(emitter).toString()).toList();
-      expect(implementsNames, contains('ParameterEncodable'));
-      expect(implementsNames, contains('UriEncodable'));
-    });
+        expect(result.implements.length, 2);
+        final implementsNames = result.implements
+            .map((i) => i.accept(emitter).toString())
+            .toList();
+        expect(implementsNames, contains('ParameterEncodable'));
+        expect(implementsNames, contains('UriEncodable'));
+      },
+    );
 
     group('uriEncode', () {
       test('generates uriEncode that throws for class with properties', () {
@@ -172,18 +175,17 @@ void main() {
           'override',
         );
 
-        final allowEmptyParam =
-            uriEncodeMethod.optionalParameters.firstWhere(
+        final allowEmptyParam = uriEncodeMethod.optionalParameters.firstWhere(
           (p) => p.name == 'allowEmpty',
         );
         expect(allowEmptyParam.type?.accept(emitter).toString(), 'bool');
         expect(allowEmptyParam.named, isTrue);
         expect(allowEmptyParam.required, isTrue);
 
-        final useQueryComponentParam =
-            uriEncodeMethod.optionalParameters.firstWhere(
-          (p) => p.name == 'useQueryComponent',
-        );
+        final useQueryComponentParam = uriEncodeMethod.optionalParameters
+            .firstWhere(
+              (p) => p.name == 'useQueryComponent',
+            );
         expect(
           useQueryComponentParam.type?.accept(emitter).toString(),
           'bool',
