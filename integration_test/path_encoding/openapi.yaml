@@ -394,7 +394,7 @@ paths:
     get:
       operationId: testLabelArrayObjects
       tags: [label]
-      summary: Label-style array of objects path parameter (bug 005)
+      summary: Label-style array of objects path parameter
       parameters:
         - name: itemList
           in: path
@@ -416,7 +416,7 @@ paths:
     get:
       operationId: testLabelArrayMaps
       tags: [label]
-      summary: Label-style array of maps path parameter (bug 010)
+      summary: Label-style array of maps path parameter
       parameters:
         - name: items
           in: path
