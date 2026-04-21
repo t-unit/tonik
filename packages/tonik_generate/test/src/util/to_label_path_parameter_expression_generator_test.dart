@@ -586,6 +586,102 @@ void main() {
     );
   });
 
+  group('unsupported types generate throw', () {
+    test('List of ClassModel throws EncodingException', () {
+      final parameter = PathParameterObject(
+        name: 'itemList',
+        rawName: 'itemList',
+        description: 'List of objects parameter',
+        model: ListModel(
+          context: context,
+          content: ClassModel(
+            isDeprecated: false,
+            context: context,
+            name: 'Item',
+            properties: [
+              Property(
+                name: 'id',
+                model: IntegerModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+          ),
+        ),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('itemList', parameter)),
+        contains('throw'),
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('itemList', parameter)),
+        contains('EncodingException'),
+      );
+    });
+
+    test('List of MapModel throws EncodingException', () {
+      final parameter = PathParameterObject(
+        name: 'items',
+        rawName: 'items',
+        description: 'List of maps parameter',
+        model: ListModel(
+          context: context,
+          content: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+          ),
+        ),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('items', parameter)),
+        contains('throw'),
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('items', parameter)),
+        contains('EncodingException'),
+      );
+    });
+
+    test('List of Base64Model throws EncodingException', () {
+      final parameter = PathParameterObject(
+        name: 'files',
+        rawName: 'files',
+        description: 'List of base64 files',
+        model: ListModel(
+          context: context,
+          content: Base64Model(context: context),
+        ),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('files', parameter)),
+        contains('throw'),
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('files', parameter)),
+        contains('EncodingException'),
+      );
+    });
+  });
+
   group('nullable model support', () {
     test(
       'uses null assertion for nullable AliasModel '
