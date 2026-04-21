@@ -45,9 +45,15 @@ Expression buildToLabelPathParameterExpression(
       });
     }
 
-    if (contentModel is BinaryModel) {
+    if (contentModel is BinaryModel || contentModel is Base64Model) {
       return generateEncodingExceptionExpression(
         'Binary data cannot be label-encoded',
+      );
+    }
+
+    if (contentModel is ClassModel || contentModel is MapModel) {
+      return generateEncodingExceptionExpression(
+        'Label encoding does not support arrays of complex types',
       );
     }
 

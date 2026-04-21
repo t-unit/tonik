@@ -386,6 +386,56 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  # =============================================================================
+  # LABEL STYLE - EDGE CASES (bug coverage)
+  # =============================================================================
+
+  /label/array/objects/{itemList}:
+    get:
+      operationId: testLabelArrayObjects
+      tags: [label]
+      summary: Label-style array of objects path parameter (bug 005)
+      parameters:
+        - name: itemList
+          in: path
+          required: true
+          style: label
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/Item'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/array/maps/{items}:
+    get:
+      operationId: testLabelArrayMaps
+      tags: [label]
+      summary: Label-style array of maps path parameter (bug 010)
+      parameters:
+        - name: items
+          in: path
+          required: true
+          style: label
+          schema:
+            type: array
+            items:
+              type: object
+              additionalProperties:
+                type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
   /matrix/primitive/string/{value}:
     get:
       operationId: testMatrixPrimitiveString
@@ -1208,6 +1258,17 @@ components:
           type: string
         'a=b':
           type: integer
+
+    Item:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
 
     EchoResponse:
       type: object
