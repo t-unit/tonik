@@ -361,7 +361,7 @@ components:
           type: string
 
     # allOf combining a MapModel component with a ClassModel — tests
-    # that fast_immutable_collections import is emitted for .lock usage
+    # that fast_immutable_collections import is emitted for IMap constructor usage
     Combined:
       allOf:
         - $ref: '#/components/schemas/ExtraData'

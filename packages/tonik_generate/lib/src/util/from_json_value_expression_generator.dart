@@ -10,8 +10,8 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// to its Dart representation.
 ///
 /// When [useImmutableCollections] is `true`, decoded lists and maps are
-/// wrapped with `.lock` at every nesting level so the result is
-/// `IList` / `IMap` throughout.
+/// wrapped in `IList()` / `IMap()` constructors at every nesting level so
+/// the result is `IList` / `IMap` throughout.
 Expression buildFromJsonValueExpression(
   String value, {
   required Model model,
