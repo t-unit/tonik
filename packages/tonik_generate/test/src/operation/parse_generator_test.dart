@@ -2316,8 +2316,9 @@ String _parseResponse(Response<List<int>> response) {
           },
           securitySchemes: const {},
         );
-        final method =
-            immutableGenerator.generateParseResponseMethod(operation);
+        final method = immutableGenerator.generateParseResponseMethod(
+          operation,
+        );
         const expectedMethod = r'''
 IList<String> _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
@@ -2372,8 +2373,9 @@ IList<String> _parseResponse(Response<List<int>> response) {
           },
           securitySchemes: const {},
         );
-        final method =
-            immutableGenerator.generateParseResponseMethod(operation);
+        final method = immutableGenerator.generateParseResponseMethod(
+          operation,
+        );
         const expectedMethod = r'''
 IMap<String, int> _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {

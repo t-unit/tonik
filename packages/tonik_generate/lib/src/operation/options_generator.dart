@@ -422,9 +422,10 @@ class OptionsGenerator {
         });
         bodyStatements.add(
           refer(r'_$cookieParts').property('add').call([
-            literalList([specLiteralString('$rawName='), encodedValue])
-                .property('join')
-                .call([]),
+            literalList([
+              specLiteralString('$rawName='),
+              encodedValue,
+            ]).property('join').call([]),
           ]).statement,
         );
         return;
@@ -470,9 +471,10 @@ class OptionsGenerator {
     });
     bodyStatements.add(
       refer(r'_$cookieParts').property('add').call([
-        literalList([specLiteralString('$rawName='), encodedValue])
-            .property('join')
-            .call([]),
+        literalList([
+          specLiteralString('$rawName='),
+          encodedValue,
+        ]).property('join').call([]),
       ]).statement,
     );
   }
