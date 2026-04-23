@@ -2324,7 +2324,7 @@ IList<String> _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
-      final _$body = _$json.decodeJsonList<String>().lock;
+      final _$body = IList(_$json.decodeJsonList<String>());
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
@@ -2381,7 +2381,7 @@ IMap<String, int> _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
-      final _$body = _$json.decodeJsonMap((v) => v.decodeJsonInt()).lock;
+      final _$body = IMap(_$json.decodeJsonMap((v) => v.decodeJsonInt()));
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';

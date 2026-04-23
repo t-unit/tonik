@@ -80,14 +80,14 @@ void main() {
         expect((typeRef.types.first as TypeReference).symbol, 'String');
       });
 
-      test('fromJson uses .lock to convert decoded list', () {
+      test('fromJson wraps decoded list in IList constructor', () {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = r'''
 factory User.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'User');
   return User(
-    tags: _$map[r'tags'].decodeJsonList<String>(context: r'User.tags').lock,
+    tags: IList(_$map[r'tags'].decodeJsonList<String>(context: r'User.tags')),
   );
 }
 ''';
@@ -188,19 +188,19 @@ int get hashCode => tags.hashCode;
         expect((typeRef.types.last as TypeReference).symbol, 'String');
       });
 
-      test('fromJson uses .lock to convert decoded map', () {
+      test('fromJson wraps decoded map in IMap constructor', () {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = r'''
 factory Config.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'Config');
   return Config(
-    settings: _$map[r'settings']
-        .decodeJsonMap(
-          (v) => v.decodeJsonString(context: r'Config.settings'),
-          context: r'Config.settings',
-        )
-        .lock,
+    settings: IMap(
+      _$map[r'settings'].decodeJsonMap(
+        (v) => v.decodeJsonString(context: r'Config.settings'),
+        context: r'Config.settings',
+      ),
+    ),
   );
 }
 ''';
@@ -258,18 +258,21 @@ Object? toJson() => {r'settings': settings.unlock};
         );
       });
 
-      test('fromJson locks at every nesting level', () {
+      test('fromJson wraps in IList at every nesting level', () {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = r'''
 factory Matrix.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'Matrix');
   return Matrix(
-    rows: _$map[r'rows']
-        .decodeJsonList<Object?>(context: r'Matrix.rows')
-        .map((e) => e.decodeJsonList<String>(context: r'Matrix.rows').lock)
-        .toList()
-        .lock,
+    rows: IList(
+      _$map[r'rows']
+          .decodeJsonList<Object?>(context: r'Matrix.rows')
+          .map(
+            (e) => IList(e.decodeJsonList<String>(context: r'Matrix.rows')),
+          )
+          .toList(),
+    ),
   );
 }
 ''';
@@ -343,20 +346,20 @@ Object? toJson() => {r'rows': rows.unlock.map((e) => e.unlock).toList()};
         );
       });
 
-      test('fromJson locks at every nesting level', () {
+      test('fromJson wraps in IMap and IList at every nesting level', () {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = r'''
 factory Lookup.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'Lookup');
   return Lookup(
-    data: _$map[r'data']
-        .decodeJsonMap(
-          (v) =>
-              v.decodeJsonList<String>(context: r'Lookup.data').lock,
-          context: r'Lookup.data',
-        )
-        .lock,
+    data: IMap(
+      _$map[r'data'].decodeJsonMap(
+        (v) =>
+            IList(v.decodeJsonList<String>(context: r'Lookup.data')),
+        context: r'Lookup.data',
+      ),
+    ),
   );
 }
 ''';
@@ -577,7 +580,7 @@ Object? toJson() => {r'tags': tags};
         );
       });
 
-      test('fromJson uses .lock on additional properties', () {
+      test('fromJson wraps additional properties in IMap constructor', () {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
         const expectedBody = r'''
@@ -592,7 +595,7 @@ factory Flexible.fromJson(Object? json) {
   }
   return Flexible(
     name: _$map[r'name'].decodeJsonString(context: r'Flexible.name'),
-    additionalProperties: _$additional.lock,
+    additionalProperties: IMap(_$additional),
   );
 }
 ''';

@@ -149,6 +149,24 @@ paths:
                   - - c
                     - d
 
+  /combined:
+    get:
+      operationId: getCombined
+      tags:
+        - items
+      summary: Get a combined allOf with MapModel component
+      responses:
+        '200':
+          description: A combined object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Combined'
+              example:
+                name: test
+                extra1: value1
+                extra2: value2
+
 components:
   schemas:
     # Simple list property + map property + list of objects
@@ -267,5 +285,21 @@ components:
           items:
             type: array
             items:
+              type: string
+
+    # Pure map typedef (additionalProperties-only) for allOf composition test
+    ExtraData:
+      type: object
+      additionalProperties:
+        type: string
+
+    # allOf combining a MapModel component with a ClassModel — tests
+    # that fast_immutable_collections import is emitted for .lock usage
+    Combined:
+      allOf:
+        - $ref: '#/components/schemas/ExtraData'
+        - type: object
+          properties:
+            name:
               type: string
 

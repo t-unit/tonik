@@ -186,7 +186,13 @@ Expression _buildListFromJsonExpression(
 
   // isNullable already accounts for model.isEffectivelyNullable via the
   // caller (buildFromJsonValueExpression), so no need to recompute here.
-  final listDecoder = isNullable ? 'decodeJsonNullableList' : 'decodeJsonList';
+  //
+  // When using immutable collections, always use the non-nullable decoder
+  // internally. We handle null ourselves via a ternary wrapping IList(), so
+  // that refer('IList', ficUrl) properly tracks the import.
+  final effectiveNullable = !useImmutableCollections && isNullable;
+  final listDecoder =
+      effectiveNullable ? 'decodeJsonNullableList' : 'decodeJsonList';
 
   // Unwrap alias to get the underlying model
   final unwrappedContent = content is AliasModel ? content.model : content;
@@ -213,7 +219,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('Object?', 'dart:core')],
       );
-      result = isNullable
+      result = effectiveNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -241,7 +247,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('Object?', 'dart:core')],
       );
-      result = isNullable
+      result = effectiveNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -272,7 +278,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('Object?', 'dart:core')],
       );
-      result = isNullable
+      result = effectiveNullable
           ? mapListExpr
                 .nullSafeProperty('map')
                 .call([mapDecoderClosure])
@@ -299,7 +305,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer(jsonType, 'dart:core')],
       );
-      result = isNullable
+      result = effectiveNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -328,7 +334,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('String', 'dart:core')],
       );
-      result = isNullable
+      result = effectiveNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -357,7 +363,7 @@ Expression _buildListFromJsonExpression(
         contextParam,
         [refer('String', 'dart:core')],
       );
-      result = isNullable
+      result = effectiveNullable
           ? listExpr
                 .nullSafeProperty('map')
                 .call([mapFunction])
@@ -381,11 +387,15 @@ Expression _buildListFromJsonExpression(
       ).property(listDecoder).call([], contextParam, [typeArg]);
   }
 
-  // When using immutable collections, wrap with .lock to convert to IList.
+  // When using immutable collections, wrap with IList() constructor to convert.
+  // Using refer() ensures the fast_immutable_collections import is tracked.
   if (useImmutableCollections) {
-    result = isNullable
-        ? result.nullSafeProperty('lock')
-        : result.property('lock');
+    result = _wrapImmutable(
+      'IList',
+      result,
+      isNullable: isNullable,
+      value: value,
+    );
   }
 
   return result;
@@ -419,21 +429,56 @@ Expression _buildMapFromJsonExpression(
       ).code,
   ).closure;
 
-  final mapDecoder = isNullable ? 'decodeJsonNullableMap' : 'decodeJsonMap';
+  // When using immutable collections, always use non-nullable decoder and
+  // handle null ourselves so that refer('IMap', ficUrl) tracks the import.
+  final effectiveNullable = !useImmutableCollections && isNullable;
+  final mapDecoder =
+      effectiveNullable ? 'decodeJsonNullableMap' : 'decodeJsonMap';
 
   var result = refer(value).property(mapDecoder).call(
     [decoderClosure],
     contextParam,
   );
 
-  // When using immutable collections, wrap with .lock to convert to IMap.
+  // When using immutable collections, wrap with IMap() constructor to convert.
+  // Using refer() ensures the fast_immutable_collections import is tracked.
   if (useImmutableCollections) {
-    result = isNullable
-        ? result.nullSafeProperty('lock')
-        : result.property('lock');
+    result = _wrapImmutable(
+      'IMap',
+      result,
+      isNullable: isNullable,
+      value: value,
+    );
   }
 
   return result;
+}
+
+const _ficUrl =
+    'package:fast_immutable_collections/fast_immutable_collections.dart';
+
+/// Wraps [result] in an immutable collection constructor (`IList` or `IMap`).
+///
+/// For non-nullable results, generates `IList(result)` / `IMap(result)`.
+/// For nullable results, generates `value == null ? null : IList(result)`.
+/// The [result] expression must use a non-nullable decoder (guaranteed by
+/// the caller setting `effectiveNullable = false`), and [value] is the
+/// original JSON variable name for the null guard.
+///
+/// Using `refer(symbol, ficUrl)` ensures the `fast_immutable_collections`
+/// import is automatically tracked by code_builder.
+Expression _wrapImmutable(
+  String symbol,
+  Expression result, {
+  required bool isNullable,
+  required String value,
+}) {
+  final immutableRef = refer(symbol, _ficUrl);
+  final wrapped = immutableRef.call([result]);
+  if (!isNullable) {
+    return wrapped;
+  }
+  return refer(value).equalTo(literalNull).conditional(literalNull, wrapped);
 }
 
 String? _decodeMethodForPrimitive(Model model) {

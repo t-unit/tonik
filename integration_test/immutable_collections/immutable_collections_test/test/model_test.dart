@@ -79,6 +79,21 @@ void main() {
   });
 
   // -------------------------------------------------------------------
+  // 1b. allOf with MapModel component — field types
+  // -------------------------------------------------------------------
+
+  group('Combined (allOf with MapModel) type checks', () {
+    test('extraData field is ExtraData (IMap<String, String>)', () {
+      final combined = Combined(
+        extraData: IMap(const {'key': 'value'}),
+        combinedModel: const CombinedModel(name: 'test'),
+      );
+      expect(combined.extraData, isA<IMap<String, String>>());
+      expect(combined.extraData['key'], 'value');
+    });
+  });
+
+  // -------------------------------------------------------------------
   // 2. Serialization round-trips — toJson → fromJson preserves types
   // -------------------------------------------------------------------
 
@@ -132,6 +147,24 @@ void main() {
       expect(restored.matrix[0][0], 'a');
       expect(restored.matrix[1][1], 'd');
       expect(restored.matrix, original.matrix);
+    });
+  });
+
+  group('Combined (allOf with MapModel) serialization', () {
+    test('round-trip preserves IMap in allOf with MapModel component', () {
+      final original = Combined(
+        extraData: IMap(const {'extra1': 'value1', 'extra2': 'value2'}),
+        combinedModel: const CombinedModel(name: 'test'),
+      );
+
+      final json = original.toJson();
+      expect(json, isA<Map<String, dynamic>>());
+
+      final restored = Combined.fromJson(json);
+      expect(restored.extraData, isA<IMap<String, String>>());
+      expect(restored.extraData['extra1'], 'value1');
+      expect(restored.extraData['extra2'], 'value2');
+      expect(restored.combinedModel.name, 'test');
     });
   });
 

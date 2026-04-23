@@ -534,7 +534,11 @@ class AllOfGenerator {
       ),
     );
     constructorArgs[apFieldName] = useImmutableCollections
-        ? refer(r'_$additional').property('lock')
+        ? refer(
+            'IMap',
+            'package:fast_immutable_collections/'
+                'fast_immutable_collections.dart',
+          ).call([refer(r'_$additional')])
         : refer(r'_$additional');
 
     codes.add(
@@ -1134,7 +1138,11 @@ class AllOfGenerator {
     ];
 
     constructorArgs[apFieldName] = useImmutableCollections
-        ? refer(r'_$additional').property('lock')
+        ? refer(
+            'IMap',
+            'package:fast_immutable_collections/'
+                'fast_immutable_collections.dart',
+          ).call([refer(r'_$additional')])
         : refer(r'_$additional');
 
     codes.add(
