@@ -490,7 +490,12 @@ class ClassGenerator {
     if (captureAP && ap != null) {
       final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
       final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
-      final mapType = additionalPropertiesType(ap, nameManager, package);
+      final mapType = additionalPropertiesType(
+        ap,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
       codes.addAll([
         Code('const _\$knownKeys = {$knownKeySet};'),
         declareFinal(r'_$additional')
@@ -678,6 +683,7 @@ class ClassGenerator {
         model.additionalProperties,
         nameManager,
         package,
+        useImmutableCollections: useImmutableCollections,
       );
 
       codes.addAll([
@@ -1694,7 +1700,12 @@ if ($name != null) {
     if (captureAP && ap != null) {
       final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
       final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
-      final mapType = additionalPropertiesType(ap, nameManager, package);
+      final mapType = additionalPropertiesType(
+        ap,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
       codes.addAll([
         Code('const _\$knownKeys = {$knownKeySet};'),
         declareFinal(r'_$additional')

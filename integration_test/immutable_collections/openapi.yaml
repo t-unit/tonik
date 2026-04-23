@@ -149,6 +149,20 @@ paths:
                   - - c
                     - d
 
+  /tagged-item:
+    get:
+      operationId: getTaggedItem
+      tags:
+        - items
+      summary: Get a tagged item (class with properties + typed AP with list values)
+      responses:
+        '200':
+          description: A tagged item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaggedItem'
+
   /combined:
     get:
       operationId: getCombined
@@ -286,6 +300,18 @@ components:
             type: array
             items:
               type: string
+
+    # Class with properties + typed additionalProperties (list values)
+    # Tests that fromJson scratch map uses IList<String> as value type
+    TaggedItem:
+      type: object
+      properties:
+        name:
+          type: string
+      additionalProperties:
+        type: array
+        items:
+          type: string
 
     # Pure map typedef (additionalProperties-only) for allOf composition test
     ExtraData:

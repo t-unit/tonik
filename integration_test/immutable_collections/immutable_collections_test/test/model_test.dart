@@ -226,6 +226,68 @@ void main() {
   });
 
   // -------------------------------------------------------------------
+  // 3b. TaggedItem — class with properties + typed AP (list values)
+  // -------------------------------------------------------------------
+
+  group('TaggedItem (class with typed AP list values)', () {
+    test('additionalProperties field is IMap<String, IList<String>>', () {
+      final item = TaggedItem(
+        name: 'item1',
+        additionalProperties: IMap(<String, IList<String>>{
+          'colors': <String>['red', 'blue'].lock,
+        }),
+      );
+      expect(item.additionalProperties, isA<IMap<String, IList<String>>>());
+      expect(item.additionalProperties['colors'], isA<IList<String>>());
+    });
+
+    test('fromJson round-trip preserves IMap<String, IList<String>>', () {
+      final original = TaggedItem(
+        name: 'item1',
+        additionalProperties: IMap(<String, IList<String>>{
+          'colors': <String>['red', 'blue'].lock,
+          'sizes': <String>['small', 'large'].lock,
+        }),
+      );
+
+      final json = original.toJson();
+      final restored = TaggedItem.fromJson(json);
+
+      expect(restored.name, 'item1');
+      expect(
+        restored.additionalProperties,
+        isA<IMap<String, IList<String>>>(),
+      );
+      expect(restored.additionalProperties['colors'], isA<IList<String>>());
+      expect(
+        restored.additionalProperties['colors'],
+        <String>['red', 'blue'].lock,
+      );
+      expect(
+        restored.additionalProperties['sizes'],
+        <String>['small', 'large'].lock,
+      );
+    });
+
+    test('equality works with IMap<String, IList<String>> AP', () {
+      final a = TaggedItem(
+        name: 'x',
+        additionalProperties: IMap(<String, IList<String>>{
+          'tags': <String>['a'].lock,
+        }),
+      );
+      final b = TaggedItem(
+        name: 'x',
+        additionalProperties: IMap(<String, IList<String>>{
+          'tags': <String>['a'].lock,
+        }),
+      );
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
+    });
+  });
+
+  // -------------------------------------------------------------------
   // 4. copyWith — verify it works with IList/IMap fields
   // -------------------------------------------------------------------
 
