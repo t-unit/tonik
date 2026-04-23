@@ -1306,7 +1306,7 @@ void main() {
   });
 
   group('with useImmutableCollections', () {
-    test('simple list produces .lock', () {
+    test('simple list wraps in IList constructor', () {
       final listModel = ListModel(
         content: StringModel(context: context),
         context: context,
@@ -1319,11 +1319,11 @@ void main() {
           package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
-        'value.decodeJsonList<String>().lock',
+        'IList(value.decodeJsonList<String>())',
       );
     });
 
-    test('nullable list produces ?.lock', () {
+    test('nullable list wraps in IList with null guard', () {
       final listModel = ListModel(
         content: StringModel(context: context),
         context: context,
@@ -1337,11 +1337,11 @@ void main() {
           isNullable: true,
           useImmutableCollections: true,
         ).accept(emitter).toString(),
-        'value.decodeJsonNullableList<String>()?.lock',
+        'value == null ? null : IList(value.decodeJsonList<String>())',
       );
     });
 
-    test('simple map produces .lock', () {
+    test('simple map wraps in IMap constructor', () {
       final mapModel = MapModel(
         valueModel: StringModel(context: context),
         context: context,
@@ -1354,11 +1354,11 @@ void main() {
           package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
-        'value.decodeJsonMap((v) => v.decodeJsonString()).lock',
+        'IMap(value.decodeJsonMap((v) => v.decodeJsonString()))',
       );
     });
 
-    test('nullable map produces ?.lock', () {
+    test('nullable map wraps in IMap with null guard', () {
       final mapModel = MapModel(
         valueModel: StringModel(context: context),
         context: context,
@@ -1372,11 +1372,11 @@ void main() {
           package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
-        'value.decodeJsonNullableMap((v) => v.decodeJsonString())?.lock',
+        'value == null ? null : IMap(value.decodeJsonMap((v) => v.decodeJsonString()))',
       );
     });
 
-    test('nested list produces .lock at both levels', () {
+    test('nested list wraps in IList at both levels', () {
       final innerList = ListModel(
         content: StringModel(context: context),
         context: context,
@@ -1394,12 +1394,12 @@ void main() {
           useImmutableCollections: true,
         ).accept(emitter).toString(),
         equals(
-          '''value.decodeJsonList<Object?>().map((e) => e.decodeJsonList<String>().lock).toList().lock''',
+          'IList(value.decodeJsonList<Object?>().map((e) => IList(e.decodeJsonList<String>())).toList())',
         ),
       );
     });
 
-    test('map with list values produces .lock at both levels', () {
+    test('map with list values wraps in IMap and IList at both levels', () {
       final listModel = ListModel(
         content: StringModel(context: context),
         context: context,
@@ -1417,7 +1417,7 @@ void main() {
           useImmutableCollections: true,
         ).accept(emitter).toString(),
         equals(
-          'value.decodeJsonMap((v) => v.decodeJsonList<String>().lock).lock',
+          'IMap(value.decodeJsonMap((v) => IList(v.decodeJsonList<String>())))',
         ),
       );
     });

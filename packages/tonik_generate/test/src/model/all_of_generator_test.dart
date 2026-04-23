@@ -3463,7 +3463,7 @@ bool operator ==(Object other) {
           'const IMapConst({})',
         );
 
-        // fromJson should use .lock on _$additional
+        // fromJson should wrap _$additional in IMap constructor
         const expectedFromJson = r'''
 factory ExtendedImmutable.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'ExtendedImmutable');
@@ -3476,7 +3476,7 @@ factory ExtendedImmutable.fromJson(Object? json) {
   }
   return ExtendedImmutable(
     $base: Base.fromJson(json),
-    additionalProperties: _$additional.lock,
+    additionalProperties: IMap(_$additional),
   );
 }
 ''';
@@ -3503,6 +3503,71 @@ Object? toJson() {
         expect(
           collapseWhitespace(generated),
           contains(collapseWhitespace(expectedToJson)),
+        );
+      },
+    );
+
+    test(
+      'allOf with typed additionalProperties (list values) and '
+      'useImmutableCollections',
+      () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ExtendedItem',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+        );
+
+        final combinedClass = immutableGenerator.generateClass(model);
+        final generated = format(
+          combinedClass.accept(emitter).toString(),
+        );
+
+        // fromJson scratch map should use IList<String> as value type
+        const expectedFromJson = r'''
+factory ExtendedItem.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'ExtendedItem');
+  const _$knownKeys = {r'id'};
+  final _$additional = <String, IList<String>>{};
+  for (final _$entry in _$map.entries) {
+    if (!_$knownKeys.contains(_$entry.key)) {
+      _$additional[_$entry.key] = IList(
+        _$entry.value.decodeJsonList<String>(
+          context: r'ExtendedItem.additionalProperties',
+        ),
+      );
+    }
+  }
+  return ExtendedItem(
+    $base: Base.fromJson(json),
+    additionalProperties: IMap(_$additional),
+  );
+}
+''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromJson)),
         );
       },
     );
@@ -3698,6 +3763,75 @@ Object? toJson() {
         expect(
           collapseWhitespace(generated),
           contains(collapseWhitespace(expectedToJson)),
+        );
+      },
+    );
+  });
+
+  group('allOf with MapModel component and useImmutableCollections', () {
+    late AllOfGenerator immutableGenerator;
+
+    setUp(() {
+      immutableGenerator = AllOfGenerator(
+        nameManager: nameManager,
+        package: 'example',
+        stableModelSorter: StableModelSorter(),
+        useImmutableCollections: true,
+      );
+    });
+
+    test(
+      'fromJson wraps MapModel component in IMap constructor',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Details',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final mapModel = MapModel(
+          name: 'ExtraData',
+          valueModel: StringModel(context: context),
+          context: context,
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'Combined',
+          models: {classModel, mapModel},
+          context: context,
+        );
+
+        final combinedClass = immutableGenerator.generateClass(model);
+        final generated = format(
+          combinedClass.accept(emitter).toString(),
+        );
+
+        const expectedFromJson = '''
+factory Combined.fromJson(Object? json) {
+  return Combined(
+    details: Details.fromJson(json),
+    extraData: IMap(
+      json.decodeJsonMap(
+        (v) => v.decodeJsonString(context: r'Combined'),
+        context: r'Combined',
+      ),
+    ),
+  );
+}
+''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromJson)),
         );
       },
     );

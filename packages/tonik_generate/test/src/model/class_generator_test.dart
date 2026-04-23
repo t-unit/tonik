@@ -2819,5 +2819,78 @@ Map<String, String> parameterProperties({
         },
       );
     });
+
+    group(
+      'immutable collections — typed AP with list values in fromJson',
+      () {
+        late ClassGenerator immutableGenerator;
+
+        setUp(() {
+          immutableGenerator = ClassGenerator(
+            nameManager: nameManager,
+            package: 'example',
+            useImmutableCollections: true,
+          );
+        });
+
+        test(
+          'fromJson scratch map uses IList value type for typed AP with '
+          'list values',
+          () {
+            final model = ClassModel(
+              isDeprecated: false,
+              name: 'TaggedItem',
+              properties: [
+                Property(
+                  name: 'name',
+                  model: StringModel(context: context),
+                  isRequired: false,
+                  isNullable: true,
+                  isDeprecated: false,
+                ),
+              ],
+              context: context,
+              additionalProperties: TypedAdditionalProperties(
+                valueModel: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
+                ),
+              ),
+            );
+
+            final result = immutableGenerator.generateClass(model);
+            final generatedCode = format(result.accept(emitter).toString());
+
+            const expectedFromJson = r'''
+factory TaggedItem.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'TaggedItem');
+  const _$knownKeys = {r'name'};
+  final _$additional = <String, IList<String>>{};
+  for (final _$entry in _$map.entries) {
+    if (!_$knownKeys.contains(_$entry.key)) {
+      _$additional[_$entry.key] = IList(
+        _$entry.value.decodeJsonList<String>(
+          context: r'TaggedItem.additionalProperties',
+        ),
+      );
+    }
+  }
+  return TaggedItem(
+    name: _$map[r'name'].decodeJsonNullableString(
+      context: r'TaggedItem.name',
+    ),
+    additionalProperties: IMap(_$additional),
+  );
+}
+            ''';
+
+            expect(
+              collapseWhitespace(generatedCode),
+              contains(collapseWhitespace(expectedFromJson)),
+            );
+          },
+        );
+      },
+    );
   });
 }

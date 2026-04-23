@@ -79,6 +79,21 @@ void main() {
   });
 
   // -------------------------------------------------------------------
+  // 1b. allOf with MapModel component — field types
+  // -------------------------------------------------------------------
+
+  group('Combined (allOf with MapModel) type checks', () {
+    test('extraData field is ExtraData (IMap<String, String>)', () {
+      final combined = Combined(
+        extraData: IMap(const {'key': 'value'}),
+        combinedModel: const CombinedModel(name: 'test'),
+      );
+      expect(combined.extraData, isA<IMap<String, String>>());
+      expect(combined.extraData['key'], 'value');
+    });
+  });
+
+  // -------------------------------------------------------------------
   // 2. Serialization round-trips — toJson → fromJson preserves types
   // -------------------------------------------------------------------
 
@@ -132,6 +147,24 @@ void main() {
       expect(restored.matrix[0][0], 'a');
       expect(restored.matrix[1][1], 'd');
       expect(restored.matrix, original.matrix);
+    });
+  });
+
+  group('Combined (allOf with MapModel) serialization', () {
+    test('round-trip preserves IMap in allOf with MapModel component', () {
+      final original = Combined(
+        extraData: IMap(const {'extra1': 'value1', 'extra2': 'value2'}),
+        combinedModel: const CombinedModel(name: 'test'),
+      );
+
+      final json = original.toJson();
+      expect(json, isA<Map<String, dynamic>>());
+
+      final restored = Combined.fromJson(json);
+      expect(restored.extraData, isA<IMap<String, String>>());
+      expect(restored.extraData['extra1'], 'value1');
+      expect(restored.extraData['extra2'], 'value2');
+      expect(restored.combinedModel.name, 'test');
     });
   });
 
@@ -189,6 +222,68 @@ void main() {
         ].lock,
       );
       expect(a, b);
+    });
+  });
+
+  // -------------------------------------------------------------------
+  // 3b. TaggedItem — class with properties + typed AP (list values)
+  // -------------------------------------------------------------------
+
+  group('TaggedItem (class with typed AP list values)', () {
+    test('additionalProperties field is IMap<String, IList<String>>', () {
+      final item = TaggedItem(
+        name: 'item1',
+        additionalProperties: IMap(<String, IList<String>>{
+          'colors': <String>['red', 'blue'].lock,
+        }),
+      );
+      expect(item.additionalProperties, isA<IMap<String, IList<String>>>());
+      expect(item.additionalProperties['colors'], isA<IList<String>>());
+    });
+
+    test('fromJson round-trip preserves IMap<String, IList<String>>', () {
+      final original = TaggedItem(
+        name: 'item1',
+        additionalProperties: IMap(<String, IList<String>>{
+          'colors': <String>['red', 'blue'].lock,
+          'sizes': <String>['small', 'large'].lock,
+        }),
+      );
+
+      final json = original.toJson();
+      final restored = TaggedItem.fromJson(json);
+
+      expect(restored.name, 'item1');
+      expect(
+        restored.additionalProperties,
+        isA<IMap<String, IList<String>>>(),
+      );
+      expect(restored.additionalProperties['colors'], isA<IList<String>>());
+      expect(
+        restored.additionalProperties['colors'],
+        <String>['red', 'blue'].lock,
+      );
+      expect(
+        restored.additionalProperties['sizes'],
+        <String>['small', 'large'].lock,
+      );
+    });
+
+    test('equality works with IMap<String, IList<String>> AP', () {
+      final a = TaggedItem(
+        name: 'x',
+        additionalProperties: IMap(<String, IList<String>>{
+          'tags': <String>['a'].lock,
+        }),
+      );
+      final b = TaggedItem(
+        name: 'x',
+        additionalProperties: IMap(<String, IList<String>>{
+          'tags': <String>['a'].lock,
+        }),
+      );
+      expect(a, b);
+      expect(a.hashCode, b.hashCode);
     });
   });
 

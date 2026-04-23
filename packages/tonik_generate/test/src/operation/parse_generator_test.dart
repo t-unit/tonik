@@ -2270,5 +2270,131 @@ String _parseResponse(Response<List<int>> response) {
         );
       },
     );
+
+    group('immutable collections', () {
+      late ParseGenerator immutableGenerator;
+
+      setUp(() {
+        immutableGenerator = ParseGenerator(
+          nameManager: nameManager,
+          package: package,
+          useImmutableCollections: true,
+        );
+      });
+
+      test('generates IList return type for direct list response body', () {
+        final operation = Operation(
+          operationId: 'listStringsOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/strings',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: StringModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = immutableGenerator.generateParseResponseMethod(
+          operation,
+        );
+        const expectedMethod = r'''
+IList<String> _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = IList(_$json.decodeJsonList<String>());
+      return _$body;
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates IMap return type for direct map response body', () {
+        final operation = Operation(
+          operationId: 'getCountsOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/counts',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: MapModel(
+                    valueModel: IntegerModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = immutableGenerator.generateParseResponseMethod(
+          operation,
+        );
+        const expectedMethod = r'''
+IMap<String, int> _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = IMap(_$json.decodeJsonMap((v) => v.decodeJsonInt()));
+      return _$body;
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
   });
 }

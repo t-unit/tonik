@@ -84,6 +84,45 @@ paths:
                   color: red
                   size: large
 
+  /string-list:
+    get:
+      operationId: listStrings
+      tags:
+        - items
+      summary: Get a list of strings directly
+      responses:
+        '200':
+          description: A list of strings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - alpha
+                - bravo
+                - charlie
+
+  /counts:
+    get:
+      operationId: getCounts
+      tags:
+        - items
+      summary: Get a map of string to int directly
+      responses:
+        '200':
+          description: A map of counts
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+              example:
+                apples: 3
+                bananas: 5
+
   /nested:
     post:
       operationId: createNested
@@ -109,6 +148,58 @@ paths:
                     - b
                   - - c
                     - d
+
+  /tagged-item:
+    get:
+      operationId: getTaggedItem
+      tags:
+        - items
+      summary: Get a tagged item (class with properties + typed AP with list values)
+      responses:
+        '200':
+          description: A tagged item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TaggedItem'
+
+  /extended-item:
+    get:
+      operationId: getExtendedItem
+      tags:
+        - items
+      summary: Get an extended item (allOf with typed additionalProperties list values)
+      responses:
+        '200':
+          description: An extended item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedItem'
+              example:
+                id: abc-123
+                name: Widget
+                customTags:
+                  - cool
+                  - useful
+
+  /combined:
+    get:
+      operationId: getCombined
+      tags:
+        - items
+      summary: Get a combined allOf with MapModel component
+      responses:
+        '200':
+          description: A combined object
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Combined'
+              example:
+                name: test
+                extra1: value1
+                extra2: value2
 
 components:
   schemas:
@@ -228,5 +319,54 @@ components:
           items:
             type: array
             items:
+              type: string
+
+    # Class with properties + typed additionalProperties (list values)
+    # Tests that fromJson scratch map uses IList<String> as value type
+    TaggedItem:
+      type: object
+      properties:
+        name:
+          type: string
+      additionalProperties:
+        type: array
+        items:
+          type: string
+
+    # Pure map typedef (additionalProperties-only) for allOf composition test
+    ExtraData:
+      type: object
+      additionalProperties:
+        type: string
+
+    # Base schema for allOf composition test with typed additionalProperties
+    BaseItem:
+      type: object
+      properties:
+        id:
+          type: string
+
+    # allOf with typed additionalProperties (list values) at the allOf level
+    # Tests that fromJson scratch map in allOf generator uses IList<String>
+    ExtendedItem:
+      allOf:
+        - $ref: '#/components/schemas/BaseItem'
+        - type: object
+          properties:
+            name:
+              type: string
+      additionalProperties:
+        type: array
+        items:
+          type: string
+
+    # allOf combining a MapModel component with a ClassModel — tests
+    # that fast_immutable_collections import is emitted for IMap constructor usage
+    Combined:
+      allOf:
+        - $ref: '#/components/schemas/ExtraData'
+        - type: object
+          properties:
+            name:
               type: string
 

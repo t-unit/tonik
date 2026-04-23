@@ -490,7 +490,12 @@ class ClassGenerator {
     if (captureAP && ap != null) {
       final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
       final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
-      final mapType = additionalPropertiesType(ap, nameManager, package);
+      final mapType = additionalPropertiesType(
+        ap,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
       codes.addAll([
         Code('const _\$knownKeys = {$knownKeySet};'),
         declareFinal(r'_$additional')
@@ -541,7 +546,11 @@ class ClassGenerator {
         const Code('}'),
       ]);
       constructorArgs[apFieldName] = useImmutableCollections
-          ? refer(r'_$additional').property('lock')
+          ? refer(
+              'IMap',
+              'package:fast_immutable_collections/'
+                  'fast_immutable_collections.dart',
+            ).call([refer(r'_$additional')])
           : refer(r'_$additional');
     }
 
@@ -674,6 +683,7 @@ class ClassGenerator {
         model.additionalProperties,
         nameManager,
         package,
+        useImmutableCollections: useImmutableCollections,
       );
 
       codes.addAll([
@@ -720,7 +730,14 @@ class ClassGenerator {
       if (useImmutableCollections) {
         propertyAssignments
           ..add(Code('$apFieldName: '))
-          ..add(const Code(r'_$additional.lock,'));
+          ..add(
+            refer(
+              'IMap',
+              'package:fast_immutable_collections/'
+                  'fast_immutable_collections.dart',
+            ).call([refer(r'_$additional')]).code,
+          )
+          ..add(const Code(','));
       } else {
         propertyAssignments
           ..add(Code('$apFieldName: '))
@@ -1683,7 +1700,12 @@ if ($name != null) {
     if (captureAP && ap != null) {
       final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
       final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
-      final mapType = additionalPropertiesType(ap, nameManager, package);
+      final mapType = additionalPropertiesType(
+        ap,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      );
       codes.addAll([
         Code('const _\$knownKeys = {$knownKeySet};'),
         declareFinal(r'_$additional')
@@ -1736,7 +1758,11 @@ if ($name != null) {
         const Code('}'),
       ]);
       constructorArgs[apFieldName] = useImmutableCollections
-          ? refer(r'_$additional').property('lock')
+          ? refer(
+              'IMap',
+              'package:fast_immutable_collections/'
+                  'fast_immutable_collections.dart',
+            ).call([refer(r'_$additional')])
           : refer(r'_$additional');
     }
 

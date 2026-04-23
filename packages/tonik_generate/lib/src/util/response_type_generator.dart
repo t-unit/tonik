@@ -10,8 +10,9 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 TypeReference resultTypeForOperation(
   Operation operation,
   NameManager nameManager,
-  String package,
-) {
+  String package, {
+  bool useImmutableCollections = false,
+}) {
   final responses = operation.responses;
   final response = responses.values.firstOrNull;
   final hasHeaders = response?.hasHeaders ?? false;
@@ -51,6 +52,7 @@ TypeReference resultTypeForOperation(
             response!.resolved.bodies.first.model,
             nameManager,
             package,
+            useImmutableCollections: useImmutableCollections,
           ),
         ),
     ),
