@@ -28,6 +28,7 @@ class ParseGenerator {
       operation,
       nameManager,
       package,
+      useImmutableCollections: useImmutableCollections,
     ).types.first;
     final cases = <Code>[];
 

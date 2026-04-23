@@ -216,7 +216,12 @@ class OperationGenerator {
 
     final queryExpr = refer('_queryParameters').call([], queryArgs);
 
-    final resultType = resultTypeForOperation(operation, nameManager, package);
+    final resultType = resultTypeForOperation(
+      operation,
+      nameManager,
+      package,
+      useImmutableCollections: useImmutableCollections,
+    );
     final isVoidReturn =
         resultType.types.isNotEmpty && resultType.types.first.symbol == 'void';
     const responseVar = r'_$response';

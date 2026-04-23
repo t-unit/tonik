@@ -84,6 +84,45 @@ paths:
                   color: red
                   size: large
 
+  /string-list:
+    get:
+      operationId: listStrings
+      tags:
+        - items
+      summary: Get a list of strings directly
+      responses:
+        '200':
+          description: A list of strings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
+              example:
+                - alpha
+                - bravo
+                - charlie
+
+  /counts:
+    get:
+      operationId: getCounts
+      tags:
+        - items
+      summary: Get a map of string to int directly
+      responses:
+        '200':
+          description: A map of counts
+          content:
+            application/json:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+              example:
+                apples: 3
+                bananas: 5
+
   /nested:
     post:
       operationId: createNested

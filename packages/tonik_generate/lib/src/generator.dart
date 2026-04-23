@@ -124,6 +124,7 @@ class Generator {
     final apiClientGenerator = ApiClientGenerator(
       nameManager: nameManager,
       package: package,
+      useImmutableCollections: useImmutableCollections,
     );
 
     final apiClientFileGenerator = ApiClientFileGenerator(

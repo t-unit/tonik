@@ -14,10 +14,15 @@ import 'package:tonik_generate/src/util/source_file_url.dart';
 
 /// Generator for creating API client classes from Operation definitions.
 class ApiClientGenerator {
-  ApiClientGenerator({required this.nameManager, required this.package});
+  ApiClientGenerator({
+    required this.nameManager,
+    required this.package,
+    this.useImmutableCollections = false,
+  });
 
   final NameManager nameManager;
   final String package;
+  final bool useImmutableCollections;
 
   ({String code, String filename}) generate(
     Set<Operation> operations,
@@ -118,7 +123,12 @@ class ApiClientGenerator {
       package: package,
     );
 
-    final resultType = resultTypeForOperation(operation, nameManager, package);
+    final resultType = resultTypeForOperation(
+      operation,
+      nameManager,
+      package,
+      useImmutableCollections: useImmutableCollections,
+    );
     final operationFieldName =
         '_${nameManager.operationName(operation).toCamelCase()}';
 
