@@ -163,6 +163,26 @@ paths:
               schema:
                 $ref: '#/components/schemas/TaggedItem'
 
+  /extended-item:
+    get:
+      operationId: getExtendedItem
+      tags:
+        - items
+      summary: Get an extended item (allOf with typed additionalProperties list values)
+      responses:
+        '200':
+          description: An extended item
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExtendedItem'
+              example:
+                id: abc-123
+                name: Widget
+                customTags:
+                  - cool
+                  - useful
+
   /combined:
     get:
       operationId: getCombined
@@ -318,6 +338,27 @@ components:
       type: object
       additionalProperties:
         type: string
+
+    # Base schema for allOf composition test with typed additionalProperties
+    BaseItem:
+      type: object
+      properties:
+        id:
+          type: string
+
+    # allOf with typed additionalProperties (list values) at the allOf level
+    # Tests that fromJson scratch map in allOf generator uses IList<String>
+    ExtendedItem:
+      allOf:
+        - $ref: '#/components/schemas/BaseItem'
+        - type: object
+          properties:
+            name:
+              type: string
+      additionalProperties:
+        type: array
+        items:
+          type: string
 
     # allOf combining a MapModel component with a ClassModel — tests
     # that fast_immutable_collections import is emitted for .lock usage

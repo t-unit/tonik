@@ -3506,6 +3506,71 @@ Object? toJson() {
         );
       },
     );
+
+    test(
+      'allOf with typed additionalProperties (list values) and '
+      'useImmutableCollections',
+      () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'ExtendedItem',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: ListModel(
+              content: StringModel(context: context),
+              context: context,
+            ),
+          ),
+        );
+
+        final combinedClass = immutableGenerator.generateClass(model);
+        final generated = format(
+          combinedClass.accept(emitter).toString(),
+        );
+
+        // fromJson scratch map should use IList<String> as value type
+        const expectedFromJson = r'''
+factory ExtendedItem.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'ExtendedItem');
+  const _$knownKeys = {r'id'};
+  final _$additional = <String, IList<String>>{};
+  for (final _$entry in _$map.entries) {
+    if (!_$knownKeys.contains(_$entry.key)) {
+      _$additional[_$entry.key] = IList(
+        _$entry.value.decodeJsonList<String>(
+          context: r'ExtendedItem.additionalProperties',
+        ),
+      );
+    }
+  }
+  return ExtendedItem(
+    $base: Base.fromJson(json),
+    additionalProperties: IMap(_$additional),
+  );
+}
+''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromJson)),
+        );
+      },
+    );
   });
 
   group('allOf with MapModel components', () {

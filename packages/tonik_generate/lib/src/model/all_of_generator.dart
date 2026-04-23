@@ -484,6 +484,7 @@ class AllOfGenerator {
       model.additionalProperties,
       nameManager,
       package,
+      useImmutableCollections: useImmutableCollections,
     );
 
     codes.add(
