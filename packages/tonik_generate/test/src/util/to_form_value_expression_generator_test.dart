@@ -795,6 +795,57 @@ void main() {
           'allowEmpty: allowEmpty, )',
         );
       });
+
+      test(
+        'nullable MapModel generates null-safe toParameterMap().toForm()',
+        () {
+          final property = Property(
+            name: 'metadata',
+            model: MapModel(
+              valueModel: IntegerModel(context: context),
+              context: context,
+            ),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          );
+
+          final result = buildToFormPropertyExpression(
+            'metadata',
+            property,
+          );
+
+          expect(
+            emit(result),
+            'metadata?.toParameterMap().toForm(explode: explode, '
+            'allowEmpty: allowEmpty, )',
+          );
+        },
+      );
+
+      test(
+        'nullable Base64Model generates null-safe toBase64String().toForm()',
+        () {
+          final property = Property(
+            name: 'content',
+            model: Base64Model(context: context),
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+          );
+
+          final result = buildToFormPropertyExpression(
+            'content',
+            property,
+          );
+
+          expect(
+            emit(result),
+            'content?.toBase64String().toForm(explode: explode, '
+            'allowEmpty: allowEmpty, )',
+          );
+        },
+      );
     });
 
     group('unsupported model types generate runtime throws', () {

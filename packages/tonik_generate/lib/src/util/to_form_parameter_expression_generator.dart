@@ -160,38 +160,9 @@ Expression _buildListFormExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    // List<Map<String, V>>: map each item through
-    // toParameterMap().toForm()
-    MapModel() =>
-      listMapAccess
-          .call([
-            Method(
-              (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
-                ..body = buildFormParameterExpression(
-                  refer('e'),
-                  contentModel,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                ).code,
-            ).closure,
-          ])
-          .property('toList')
-          .call([])
-          .property('toForm')
-          .call(
-            [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalBool(true),
-            },
-          ),
-    // List<TonikFile> (base64): map each item through
-    // toBase64String().toForm()
-    Base64Model() =>
+    // List<Map<String, V>> or List<TonikFile> (base64): map each item
+    // through toParameterMap().toForm() or toBase64String().toForm()
+    MapModel() || Base64Model() =>
       listMapAccess
           .call([
             Method(

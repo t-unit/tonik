@@ -273,41 +273,10 @@ Expression _handleListExpression(
       allowEmpty: allowEmpty,
     ),
 
-    // For List<Map<String, V>>, map each item through toParameterMap()
-    // then toSimple(), collecting into a List<String>.
-    MapModel() => () {
-      final innerExpr = _buildSimpleSerializationExpression(
-        refer('e'),
-        contentModel,
-        isNullable: false,
-        explode: explode,
-        allowEmpty: allowEmpty,
-      );
-
-      final mapClosure = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((p) => p..name = 'e'))
-          ..body = innerExpr.code,
-      ).closure;
-
-      final mappedList = isNullable
-          ? receiver
-                .nullSafeProperty('map')
-                .call([mapClosure])
-                .property('toList')
-                .call([])
-          : receiver
-                .property('map')
-                .call([mapClosure])
-                .property('toList')
-                .call([]);
-
-      return mappedList.property('toSimple').call([], toSimpleArgs);
-    }(),
-
-    // For List<TonikFile> (base64), map each item through toBase64String()
-    // then toSimple(), collecting into a List<String>.
-    Base64Model() => () {
+    // For List<Map<String, V>> or List<TonikFile> (base64), map each item
+    // through toParameterMap()/toBase64String() then toSimple(),
+    // collecting into a List<String>.
+    MapModel() || Base64Model() => () {
       final innerExpr = _buildSimpleSerializationExpression(
         refer('e'),
         contentModel,

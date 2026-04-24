@@ -317,21 +317,9 @@ String? _handleListExpression(
       return '.map($elementMapBody).toList().toForm($paramString)';
     }(),
 
-    // List<Map<String, V>>: map each item through
-    // toParameterMap().toForm()
-    MapModel() => () {
-      final suffix = _getFormSerializationSuffix(
-        contentModel,
-        explode: explode,
-        allowEmpty: allowEmpty,
-      );
-      final elementMapBody = '(e) => e$suffix';
-      return '.map($elementMapBody).toList().toForm($paramString)';
-    }(),
-
-    // List<TonikFile> (base64): map each item through
-    // toBase64String().toForm()
-    Base64Model() => () {
+    // List<Map<String, V>> or List<TonikFile> (base64): map each item
+    // through toParameterMap().toForm() or toBase64String().toForm()
+    MapModel() || Base64Model() => () {
       final suffix = _getFormSerializationSuffix(
         contentModel,
         explode: explode,
@@ -369,29 +357,19 @@ List<Code> _buildExplodedListCode(
       : 'e.toForm(explode: true, allowEmpty: $allowEmpty)';
 
   // MapModel and Base64Model can be exploded — convert each item first.
-  if (contentModel is MapModel) {
-    final mapToFormCall =
-        'e.toParameterMap().toForm(explode: true, allowEmpty: $allowEmpty)';
+  if (contentModel is MapModel || contentModel is Base64Model) {
+    final itemSuffix = contentModel is MapModel
+        ? 'toParameterMap()'
+        : 'toBase64String()';
+    final itemToFormCall =
+        'e.$itemSuffix.toForm(explode: true, allowEmpty: $allowEmpty)';
     return [
       Code(
         r'_$entries'
         '.addAll($parameterName.map((e) => (',
       ),
       Code('name: $nameCode, '),
-      Code('value: $mapToFormCall,),),);'),
-    ];
-  }
-
-  if (contentModel is Base64Model) {
-    final base64ToFormCall =
-        'e.toBase64String().toForm(explode: true, allowEmpty: $allowEmpty)';
-    return [
-      Code(
-        r'_$entries'
-        '.addAll($parameterName.map((e) => (',
-      ),
-      Code('name: $nameCode, '),
-      Code('value: $base64ToFormCall,),),);'),
+      Code('value: $itemToFormCall,),),);'),
     ];
   }
 

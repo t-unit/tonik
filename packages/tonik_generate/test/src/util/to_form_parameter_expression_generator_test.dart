@@ -664,6 +664,67 @@ void main() {
       );
     });
 
+    test(
+      'generates null-safe toParameterMap().toForm() for nullable MapModel',
+      () {
+        final model = MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        );
+        final expression = buildFormParameterExpression(
+          refer('value'),
+          model,
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+          isNullable: true,
+        );
+
+        final generated = format(
+          'final result = ${expression.accept(emitter)};',
+        );
+        const expected = '''
+          final result = value?.toParameterMap().toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test(
+      'generates null-safe toBase64String().toForm() for nullable Base64Model',
+      () {
+        final model = Base64Model(context: context);
+        final expression = buildFormParameterExpression(
+          refer('value'),
+          model,
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+          isNullable: true,
+        );
+
+        final generated = format(
+          'final result = ${expression.accept(emitter)};',
+        );
+        const expected = '''
+          final result = value?.toBase64String().toForm(
+            explode: explode,
+            allowEmpty: allowEmpty,
+          );
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
     test('does not use null-safe when isNullable is false', () {
       final model = StringModel(context: context);
       final expression = buildFormParameterExpression(

@@ -450,6 +450,99 @@ void main() {
       );
     });
 
+    group('exploded list with MapModel and Base64Model content', () {
+      test(
+        'generates exploded entries with toParameterMap().toForm() '
+        'for List<MapModel>',
+        () {
+          final parameter = createParameter(
+            name: 'mapListParam',
+            rawName: 'mapListParam',
+            model: ListModel(
+              content: MapModel(
+                valueModel: IntegerModel(context: context),
+                context: context,
+              ),
+              context: context,
+            ),
+            explode: true,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'mapListParam',
+            parameter,
+            explode: true,
+          );
+
+          final generated = emitCodes(codes);
+
+          const expectedBody = r'''
+            test() {
+              _$entries.addAll(
+                mapListParam.map(
+                  (e) => (
+                    name: r'mapListParam',
+                    value:
+                        e.toParameterMap().toForm(explode: true, allowEmpty: true),
+                  ),
+                ),
+              );
+            }
+          ''';
+
+          expect(
+            collapseWhitespace(generated),
+            collapseWhitespace(expectedBody),
+          );
+        },
+      );
+
+      test(
+        'generates exploded entries with toBase64String().toForm() '
+        'for List<Base64Model>',
+        () {
+          final parameter = createParameter(
+            name: 'base64ListParam',
+            rawName: 'base64ListParam',
+            model: ListModel(
+              content: Base64Model(context: context),
+              context: context,
+            ),
+            explode: true,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'base64ListParam',
+            parameter,
+            explode: true,
+          );
+
+          final generated = emitCodes(codes);
+
+          const expectedBody = r'''
+            test() {
+              _$entries.addAll(
+                base64ListParam.map(
+                  (e) => (
+                    name: r'base64ListParam',
+                    value:
+                        e.toBase64String().toForm(explode: true, allowEmpty: true),
+                  ),
+                ),
+              );
+            }
+          ''';
+
+          expect(
+            collapseWhitespace(generated),
+            collapseWhitespace(expectedBody),
+          );
+        },
+      );
+    });
+
     group('nullable list content', () {
       test(
         'generates e?.toForm for exploded list '

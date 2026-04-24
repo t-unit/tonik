@@ -184,37 +184,9 @@ Expression _buildListSimpleExpression(
               'alreadyEncoded': literalBool(true),
             },
           ),
-    // List<Map<String, V>>: map each item through toParameterMap().toSimple()
-    MapModel() =>
-      listMapAccess
-          .call([
-            Method(
-              (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
-                ..body = buildSimpleParameterExpression(
-                  refer('e'),
-                  contentModel,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                ).code,
-            ).closure,
-          ])
-          .property('toList')
-          .call([])
-          .property('toSimple')
-          .call(
-            [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalBool(true),
-            },
-          ),
-    // List<TonikFile> (base64): map each item through
-    // toBase64String().toSimple()
-    Base64Model() =>
+    // List<Map<String, V>> or List<TonikFile> (base64): map each item
+    // through toParameterMap().toSimple() or toBase64String().toSimple()
+    MapModel() || Base64Model() =>
       listMapAccess
           .call([
             Method(
