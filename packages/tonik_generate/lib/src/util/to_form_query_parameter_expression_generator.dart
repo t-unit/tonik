@@ -22,18 +22,11 @@ List<Code> buildToFormQueryParameterCode(
     ];
   }
 
-  if (model is BinaryModel || model is Base64Model) {
+  // BinaryModel (format: binary) cannot be form-encoded.
+  if (model is BinaryModel) {
     return [
       generateEncodingExceptionExpression(
         'Binary data cannot be form-encoded.',
-      ).statement,
-    ];
-  }
-
-  if (model is MapModel) {
-    return [
-      generateEncodingExceptionExpression(
-        'Map types cannot be form query encoded.',
       ).statement,
     ];
   }
@@ -62,8 +55,8 @@ List<Code> buildToFormQueryParameterCode(
     final contentModel = model.content.resolved;
     final contentShape = contentModel.encodingShape;
 
-    // Binary/Base64 content cannot be form-encoded.
-    if (contentModel is BinaryModel || contentModel is Base64Model) {
+    // BinaryModel content cannot be form-encoded.
+    if (contentModel is BinaryModel) {
       return [
         generateEncodingExceptionExpression(
           'Binary data cannot be form-encoded.',
@@ -112,6 +105,36 @@ List<Code> buildToFormQueryParameterCode(
             .code,
         const Code(').toList().toForm('),
         Code('explode: $explode, allowEmpty: $allowEmpty),),);'),
+      ];
+    }
+
+    // MapModel and Base64Model content can be form-encoded despite having
+    // complex/simple encoding shapes, because we convert them to strings first.
+    if (contentModel is MapModel || contentModel is Base64Model) {
+      final suffix = _getFormSerializationSuffix(
+        model,
+        explode: explode,
+        allowEmpty: allowEmpty,
+      );
+
+      if (suffix == null) {
+        return [
+          generateEncodingExceptionExpression(
+            'Unsupported list content type for form query encoding.',
+          ).statement,
+        ];
+      }
+
+      final valueExpression = '$parameterName$suffix';
+
+      return [
+        Code(
+          r'_$entries'
+          '.add(('
+          'name: ${specLiteralStringCode(parameter.rawName)}, '
+          'value: $valueExpression, '
+          '),);',
+        ),
       ];
     }
 
@@ -235,6 +258,14 @@ String? _getFormSerializationSuffix(
       allowEmpty: allowEmpty,
     ),
 
+    // MapModel: convert to Map<String, String> via toParameterMap(), then
+    // call toForm() on the resulting map.
+    MapModel() => '.toParameterMap().toForm($paramString)',
+
+    // Base64Model: convert to base64 string via toBase64String(), then
+    // call toForm() on the resulting string.
+    Base64Model() => '.toBase64String().toForm($paramString)',
+
     AnyModel() => '?.toString() ?? ""',
     NeverModel() => null,
     BinaryModel() => null,
@@ -286,6 +317,30 @@ String? _handleListExpression(
       return '.map($elementMapBody).toList().toForm($paramString)';
     }(),
 
+    // List<Map<String, V>>: map each item through
+    // toParameterMap().toForm()
+    MapModel() => () {
+      final suffix = _getFormSerializationSuffix(
+        contentModel,
+        explode: explode,
+        allowEmpty: allowEmpty,
+      );
+      final elementMapBody = '(e) => e$suffix';
+      return '.map($elementMapBody).toList().toForm($paramString)';
+    }(),
+
+    // List<TonikFile> (base64): map each item through
+    // toBase64String().toForm()
+    Base64Model() => () {
+      final suffix = _getFormSerializationSuffix(
+        contentModel,
+        explode: explode,
+        allowEmpty: allowEmpty,
+      );
+      final elementMapBody = '(e) => e$suffix';
+      return '.map($elementMapBody).toList().toForm($paramString)';
+    }(),
+
     AliasModel() => _handleListExpression(
       contentModel.model,
       explode: explode,
@@ -312,6 +367,33 @@ List<Code> _buildExplodedListCode(
   final toFormCall = isContentNullable
       ? "e?.toForm(explode: true, allowEmpty: $allowEmpty) ?? ''"
       : 'e.toForm(explode: true, allowEmpty: $allowEmpty)';
+
+  // MapModel and Base64Model can be exploded — convert each item first.
+  if (contentModel is MapModel) {
+    final mapToFormCall =
+        'e.toParameterMap().toForm(explode: true, allowEmpty: $allowEmpty)';
+    return [
+      Code(
+        r'_$entries'
+        '.addAll($parameterName.map((e) => (',
+      ),
+      Code('name: $nameCode, '),
+      Code('value: $mapToFormCall,),),);'),
+    ];
+  }
+
+  if (contentModel is Base64Model) {
+    final base64ToFormCall =
+        'e.toBase64String().toForm(explode: true, allowEmpty: $allowEmpty)';
+    return [
+      Code(
+        r'_$entries'
+        '.addAll($parameterName.map((e) => (',
+      ),
+      Code('name: $nameCode, '),
+      Code('value: $base64ToFormCall,),),);'),
+    ];
+  }
 
   if (contentShape == EncodingShape.complex) {
     return [

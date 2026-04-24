@@ -56,11 +56,37 @@ Expression buildSimpleParameterExpression(
           'allowEmpty': allowEmpty,
         },
       ),
+    // MapModel: convert to Map<String, String> via toParameterMap(), then
+    // call toSimple() on the resulting map.
+    MapModel() => (isNullable
+            ? valueExpression.nullSafeProperty('toParameterMap').call([])
+            : valueExpression.property('toParameterMap').call([]))
+        .property('toSimple')
+        .call(
+          [],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
+
+    // Base64Model: convert to base64 string via toBase64String(), then
+    // call toSimple() on the resulting string.
+    Base64Model() => (isNullable
+            ? valueExpression.nullSafeProperty('toBase64String').call([])
+            : valueExpression.property('toBase64String').call([]))
+        .property('toSimple')
+        .call(
+          [],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
+
+    // BinaryModel (format: binary) cannot be simple-encoded.
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be simple-encoded',
-    ),
-    MapModel() => generateEncodingExceptionExpression(
-      'Map types cannot be simple-encoded.',
     ),
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for simple encoding.',
@@ -145,6 +171,63 @@ Expression _buildListSimpleExpression(
                   'encodeAnyToUri',
                   'package:tonik_util/tonik_util.dart',
                 ).call([refer('e')], {'allowEmpty': allowEmpty}).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toSimple')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
+    // List<Map<String, V>>: map each item through toParameterMap().toSimple()
+    MapModel() =>
+      listMapAccess
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = buildSimpleParameterExpression(
+                  refer('e'),
+                  contentModel,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                ).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toSimple')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
+    // List<TonikFile> (base64): map each item through
+    // toBase64String().toSimple()
+    Base64Model() =>
+      listMapAccess
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = buildSimpleParameterExpression(
+                  refer('e'),
+                  contentModel,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                ).code,
             ).closure,
           ])
           .property('toList')

@@ -28,6 +28,13 @@ sealed class TonikFile {
   /// native platforms. Throws [UnsupportedError] on web.
   List<int> toBytes();
 
+  /// Returns the base64-encoded string representation of this file's bytes.
+  ///
+  /// This is used for parameter encoding of `format: byte` (Base64) values,
+  /// where the binary content needs to be represented as a base64 string
+  /// for inclusion in path, query, or header parameters.
+  String toBase64String() => base64Encode(toBytes());
+
   /// URI-encodes this file's binary content.
   ///
   /// Converts the binary data to a UTF-8 string, then URI-encodes it.

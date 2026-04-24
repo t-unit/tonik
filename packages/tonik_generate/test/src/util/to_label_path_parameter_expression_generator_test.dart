@@ -626,7 +626,49 @@ void main() {
       );
     });
 
-    test('List of MapModel throws EncodingException', () {
+    test('MapModel generates toParameterMap().toLabel()', () {
+      final parameter = PathParameterObject(
+        name: 'myMap',
+        rawName: 'myMap',
+        description: 'Map parameter',
+        model: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('myMap', parameter)),
+        'myMap.toParameterMap().toLabel(explode: false, allowEmpty: false, )',
+      );
+    });
+
+    test('Base64Model generates toBase64String().toLabel()', () {
+      final parameter = PathParameterObject(
+        name: 'myFile',
+        rawName: 'myFile',
+        description: 'Base64 file parameter',
+        model: Base64Model(context: context),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('myFile', parameter)),
+        'myFile.toBase64String().toLabel(explode: false, allowEmpty: false, )',
+      );
+    });
+
+    test('List of MapModel generates map with toParameterMap().uriEncode()',
+        () {
       final parameter = PathParameterObject(
         name: 'items',
         rawName: 'items',
@@ -647,15 +689,16 @@ void main() {
       );
       expect(
         emit(buildToLabelPathParameterExpression('items', parameter)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToLabelPathParameterExpression('items', parameter)),
-        contains('EncodingException'),
+        // Adjacent strings are concatenated to form a single expected value.
+        // ignore: missing_whitespace_between_adjacent_strings
+        'items.map((e) => e.toParameterMap().uriEncode(allowEmpty: false))'
+        '.toList().toLabel(explode: false, allowEmpty: false, '
+        'alreadyEncoded: true, )',
       );
     });
 
-    test('List of Base64Model throws EncodingException', () {
+    test('List of Base64Model generates map with toBase64String().uriEncode()',
+        () {
       final parameter = PathParameterObject(
         name: 'files',
         rawName: 'files',
@@ -673,11 +716,11 @@ void main() {
       );
       expect(
         emit(buildToLabelPathParameterExpression('files', parameter)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToLabelPathParameterExpression('files', parameter)),
-        contains('EncodingException'),
+        // Adjacent strings are concatenated to form a single expected value.
+        // ignore: missing_whitespace_between_adjacent_strings
+        'files.map((e) => e.toBase64String().uriEncode(allowEmpty: false))'
+        '.toList().toLabel(explode: false, allowEmpty: false, '
+        'alreadyEncoded: true, )',
       );
     });
   });

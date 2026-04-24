@@ -34,9 +34,33 @@ Expression buildFormParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    MapModel() => generateEncodingExceptionExpression(
-      'Form encoding not supported for map types.',
-    ),
+    // MapModel: convert to Map<String, String> via toParameterMap(), then
+    // call toForm() on the resulting map.
+    MapModel() => (isNullable
+            ? valueExpression.nullSafeProperty('toParameterMap').call([])
+            : valueExpression.property('toParameterMap').call([]))
+        .property('toForm')
+        .call(
+          [],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
+
+    // Base64Model: convert to base64 string via toBase64String(), then
+    // call toForm() on the resulting string.
+    Base64Model() => (isNullable
+            ? valueExpression.nullSafeProperty('toBase64String').call([])
+            : valueExpression.property('toBase64String').call([]))
+        .property('toForm')
+        .call(
+          [],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
     ListModel(:final content) => _buildListFormExpression(
       valueExpression,
       content,
@@ -136,6 +160,64 @@ Expression _buildListFormExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
+    // List<Map<String, V>>: map each item through
+    // toParameterMap().toForm()
+    MapModel() =>
+      listMapAccess
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = buildFormParameterExpression(
+                  refer('e'),
+                  contentModel,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                ).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toForm')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
+    // List<TonikFile> (base64): map each item through
+    // toBase64String().toForm()
+    Base64Model() =>
+      listMapAccess
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = buildFormParameterExpression(
+                  refer('e'),
+                  contentModel,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                ).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toForm')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
     ClassModel() || ListModel() => listPropertyAccess.call(
       [],
       {

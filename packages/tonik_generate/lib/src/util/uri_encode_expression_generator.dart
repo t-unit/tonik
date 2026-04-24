@@ -39,9 +39,19 @@ Expression buildUriEncodeExpression(
           'useQueryComponent': ?useQueryComponent,
         },
       ),
-    MapModel() => generateEncodingExceptionExpression(
-      'Map types cannot be URI-encoded.',
-    ),
+    // MapModel: convert to Map<String, String> via toParameterMap(), then
+    // call uriEncode() on the resulting map.
+    MapModel() => valueExpression
+        .property('toParameterMap')
+        .call([])
+        .property('uriEncode')
+        .call(
+          [],
+          {
+            'allowEmpty': allowEmpty,
+            'useQueryComponent': ?useQueryComponent,
+          },
+        ),
     ListModel(:final content) => _buildListUriEncodeExpression(
       valueExpression,
       content,
@@ -143,6 +153,35 @@ Expression _buildListUriEncodeExpression(
                           },
                         )
                         .code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('uriEncode')
+          .call(
+            [],
+            {
+              'allowEmpty': allowEmpty,
+              'useQueryComponent': ?useQueryComponent,
+            },
+          ),
+    // List<Map<String, V>>: map each item through
+    // toParameterMap().uriEncode()
+    MapModel() =>
+      listExpr
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = buildUriEncodeExpression(
+                  refer('e'),
+                  contentModel,
+                  allowEmpty: allowEmpty,
+                  useQueryComponent: useQueryComponent,
+                ).code,
             ).closure,
           ])
           .property('toList')

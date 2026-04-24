@@ -17,6 +17,7 @@ export 'src/encoding/encodable.dart';
 export 'src/encoding/encoding_exception.dart';
 export 'src/encoding/form_encoder_extensions.dart';
 export 'src/encoding/label_encoder_extensions.dart';
+export 'src/encoding/map_encoder.dart';
 export 'src/encoding/matrix_encoder_extensions.dart';
 export 'src/encoding/parameter_entry.dart';
 export 'src/encoding/pipe_delimited_encoder_extensions.dart';

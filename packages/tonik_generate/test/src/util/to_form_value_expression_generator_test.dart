@@ -750,31 +750,58 @@ void main() {
       });
     });
 
-    group('unsupported model types generate runtime throws', () {
-      test('BinaryModel generates encoding exception', () {
+    group('MapModel and Base64Model encoding', () {
+      test('MapModel generates toParameterMap().toForm()', () {
         final property = Property(
-          name: 'file',
-          model: BinaryModel(context: context),
+          name: 'metadata',
+          model: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+          ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
         );
 
         final result = buildToFormPropertyExpression(
-          'file',
+          'metadata',
           property,
         );
 
         expect(
-          scopedEmit(result),
-          '''throw  _i1.EncodingException('Form encoding not supported for binary types.')''',
+          emit(result),
+          'metadata.toParameterMap().toForm(explode: explode, '
+          'allowEmpty: allowEmpty, )',
         );
       });
 
-      test('Base64Model generates encoding exception', () {
+      test('Base64Model generates toBase64String().toForm()', () {
+        final property = Property(
+          name: 'content',
+          model: Base64Model(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression(
+          'content',
+          property,
+        );
+
+        expect(
+          emit(result),
+          'content.toBase64String().toForm(explode: explode, '
+          'allowEmpty: allowEmpty, )',
+        );
+      });
+    });
+
+    group('unsupported model types generate runtime throws', () {
+      test('BinaryModel generates encoding exception', () {
         final property = Property(
           name: 'file',
-          model: Base64Model(context: context),
+          model: BinaryModel(context: context),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,

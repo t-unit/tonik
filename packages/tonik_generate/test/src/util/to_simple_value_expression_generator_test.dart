@@ -329,6 +329,119 @@ void main() {
       );
     });
 
+    test('serializes MapModel via toParameterMap().toSimple()', () {
+      final model = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('myMap'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'myMap.toParameterMap().toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes Base64Model via toBase64String().toSimple()', () {
+      final model = Base64Model(context: context);
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('myFile'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'myFile.toBase64String().toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes nullable MapModel via null-safe toParameterMap()', () {
+      final model = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+        isNullable: true,
+      );
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('myMap'),
+            model,
+            explode: false,
+            allowEmpty: true,
+            isNullable: true,
+          ),
+        ),
+        'myMap?.toParameterMap()?.toSimple(explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes nullable Base64Model via null-safe toBase64String()', () {
+      final model = Base64Model(context: context);
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('myFile'),
+            model,
+            explode: false,
+            allowEmpty: true,
+            isNullable: true,
+          ),
+        ),
+        'myFile?.toBase64String()?.toSimple('
+        'explode: false, allowEmpty: true, )',
+      );
+    });
+
+    test('serializes List<MapModel> content', () {
+      final model = ListModel(
+        content: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        context: context,
+      );
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('value'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'value.map((e) => e.toParameterMap().toSimple(explode: false, '
+        'allowEmpty: true, )).toList().toSimple(explode: false, '
+        'allowEmpty: true, )',
+      );
+    });
+
+    test('serializes List<Base64Model> content', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
+        context: context,
+      );
+      expect(
+        emit(
+          buildSimpleValueExpression(
+            refer('value'),
+            model,
+            explode: false,
+            allowEmpty: true,
+          ),
+        ),
+        'value.map((e) => e.toBase64String().toSimple(explode: false, '
+        'allowEmpty: true, )).toList().toSimple(explode: false, '
+        'allowEmpty: true, )',
+      );
+    });
+
     group('unsupported model types generate runtime throws', () {
       test('nested ListModel generates runtime throw', () {
         final model = ListModel(
@@ -357,16 +470,13 @@ void main() {
             explode: false,
             allowEmpty: true,
           ).accept(scopedEmitter).toString(),
-          '''throw  _i1.EncodingException('Unsupported model type for simple encoding.')''',
+          '''throw  _i1.EncodingException('Binary data cannot be simple-encoded.')''',
         );
       });
 
-      test('generates runtime throw for List with MapModel content', () {
+      test('generates runtime throw for List with BinaryModel content', () {
         final model = ListModel(
-          content: MapModel(
-            valueModel: StringModel(context: context),
-            context: context,
-          ),
+          content: BinaryModel(context: context),
           context: context,
         );
 
@@ -377,7 +487,7 @@ void main() {
             explode: false,
             allowEmpty: true,
           ).accept(scopedEmitter).toString(),
-          '''throw  _i1.EncodingException('Unsupported content model for simple encoding.')''',
+          '''throw  _i1.EncodingException('Binary data cannot be simple-encoded.')''',
         );
       });
     });

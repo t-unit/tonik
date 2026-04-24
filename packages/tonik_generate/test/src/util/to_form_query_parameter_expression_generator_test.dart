@@ -107,7 +107,7 @@ void main() {
     });
 
     group('MapModel', () {
-      test('generates encoding exception for MapModel', () {
+      test('generates toParameterMap().toForm() for MapModel', () {
         final parameter = createParameter(
           name: 'mapParam',
           rawName: 'mapParam',
@@ -130,15 +130,16 @@ void main() {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              '''throw _i1.EncodingException('Map types cannot be form query encoded.')''',
+              'mapParam.toParameterMap().toForm('
+              'explode: false, allowEmpty: true)',
             ),
           ),
         );
       });
     });
 
-    group('unsupported model types generate runtime throws', () {
-      test('Base64Model generates encoding exception', () {
+    group('Base64Model', () {
+      test('generates toBase64String().toForm() for Base64Model', () {
         final parameter = createParameter(
           name: 'base64Param',
           rawName: 'base64Param',
@@ -158,11 +159,20 @@ void main() {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace(
-              '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
+              'base64Param.toBase64String().toForm(',
             ),
           ),
         );
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('explode: false, allowEmpty: true'),
+          ),
+        );
       });
+    });
+
+    group('unsupported model types generate runtime throws', () {
 
       test('BinaryModel generates encoding exception', () {
         final parameter = createParameter(
@@ -249,7 +259,54 @@ void main() {
       );
 
       test(
-        'List with Base64Model content generates encoding exception',
+        'List with MapModel content generates map with '
+        'toParameterMap().toForm()',
+        () {
+          final parameter = createParameter(
+            name: 'mapListParam',
+            rawName: 'mapListParam',
+            model: ListModel(
+              content: MapModel(
+                valueModel: IntegerModel(context: context),
+                context: context,
+              ),
+              context: context,
+            ),
+            explode: false,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'mapListParam',
+            parameter,
+          );
+
+          final generated = emitCodes(codes);
+
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace(
+                // Adjacent strings are concatenated to form a single
+                // expected value for comparison.
+                // ignore: missing_whitespace_between_adjacent_strings
+                '.map((e) => e.toParameterMap().toForm('
+                'explode: false, allowEmpty: true))',
+              ),
+            ),
+          );
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace('.toList()'),
+            ),
+          );
+        },
+      );
+
+      test(
+        'List with Base64Model content generates map with '
+        'toBase64String().toForm()',
         () {
           final parameter = createParameter(
             name: 'base64ListParam',
@@ -273,8 +330,18 @@ void main() {
             collapseWhitespace(generated),
             contains(
               collapseWhitespace(
-                '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
+                // Adjacent strings are concatenated to form a single
+                // expected value for comparison.
+                // ignore: missing_whitespace_between_adjacent_strings
+                '.map((e) => e.toBase64String().toForm('
+                'explode: false, allowEmpty: true))',
               ),
+            ),
+          );
+          expect(
+            collapseWhitespace(generated),
+            contains(
+              collapseWhitespace('.toList()'),
             ),
           );
         },

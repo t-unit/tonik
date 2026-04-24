@@ -116,9 +116,26 @@ Expression _buildSimpleSerializationExpression(
     OneOfModel() ||
     AnyOfModel() => callToSimple(receiver),
 
-    // MapModel cannot be simple-encoded
-    MapModel() => generateEncodingExceptionExpression(
-      'Map types cannot be simple-encoded.',
+    // MapModel: convert to Map<String, String> via toParameterMap(), then
+    // call toSimple() on the resulting map.
+    MapModel() => callToSimple(
+      useNullAware
+          ? receiver.nullSafeProperty('toParameterMap').call([])
+          : receiver.property('toParameterMap').call([]),
+    ),
+
+    // Base64Model: convert to base64 string via toBase64String(), then
+    // call toSimple() on the resulting string.
+    Base64Model() => callToSimple(
+      useNullAware
+          ? receiver.nullSafeProperty('toBase64String').call([])
+          : receiver.property('toBase64String').call([]),
+    ),
+
+    // BinaryModel (format: binary) cannot be simple-encoded — it represents
+    // raw binary uploads, not a string-encodable value.
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be simple-encoded.',
     ),
 
     // Lists need special handling
@@ -254,6 +271,75 @@ Expression _handleListExpression(
       isNullable: isNullable,
       explode: explode,
       allowEmpty: allowEmpty,
+    ),
+
+    // For List<Map<String, V>>, map each item through toParameterMap()
+    // then toSimple(), collecting into a List<String>.
+    MapModel() => () {
+      final innerExpr = _buildSimpleSerializationExpression(
+        refer('e'),
+        contentModel,
+        isNullable: false,
+        explode: explode,
+        allowEmpty: allowEmpty,
+      );
+
+      final mapClosure = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+          ..body = innerExpr.code,
+      ).closure;
+
+      final mappedList = isNullable
+          ? receiver
+                .nullSafeProperty('map')
+                .call([mapClosure])
+                .property('toList')
+                .call([])
+          : receiver
+                .property('map')
+                .call([mapClosure])
+                .property('toList')
+                .call([]);
+
+      return mappedList.property('toSimple').call([], toSimpleArgs);
+    }(),
+
+    // For List<TonikFile> (base64), map each item through toBase64String()
+    // then toSimple(), collecting into a List<String>.
+    Base64Model() => () {
+      final innerExpr = _buildSimpleSerializationExpression(
+        refer('e'),
+        contentModel,
+        isNullable: false,
+        explode: explode,
+        allowEmpty: allowEmpty,
+      );
+
+      final mapClosure = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+          ..body = innerExpr.code,
+      ).closure;
+
+      final mappedList = isNullable
+          ? receiver
+                .nullSafeProperty('map')
+                .call([mapClosure])
+                .property('toList')
+                .call([])
+          : receiver
+                .property('map')
+                .call([mapClosure])
+                .property('toList')
+                .call([]);
+
+      return mappedList.property('toSimple').call([], toSimpleArgs);
+    }(),
+
+    // BinaryModel (format: binary) cannot be simple-encoded in lists.
+    BinaryModel() => generateEncodingExceptionExpression(
+      'Binary data cannot be simple-encoded.',
     ),
 
     AnyModel() => callToSimpleOnList(receiver), // Pass through list as-is

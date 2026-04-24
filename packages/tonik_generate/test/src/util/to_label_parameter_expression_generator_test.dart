@@ -413,6 +413,113 @@ void main() {
       );
     });
 
+    test('generates toParameterMap().toLabel() for MapModel', () {
+      final model = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+      final expression = buildLabelParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.toParameterMap().toLabel(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates toBase64String().toLabel() for Base64Model', () {
+      final model = Base64Model(context: context);
+      final expression = buildLabelParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.toBase64String().toLabel(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates map and toLabel for List<MapModel>', () {
+      final model = ListModel(
+        content: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildLabelParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.map((e) => e.toParameterMap().uriEncode(allowEmpty: allowEmpty)).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates map and toLabel for List<Base64Model>', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
+        context: context,
+      );
+      final expression = buildLabelParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.map((e) => e.toBase64String().uriEncode(allowEmpty: allowEmpty)).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates runtime throw for BinaryModel', () {
+      final model = BinaryModel(context: context);
+      final expression = buildLabelParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      expect(
+        expression.accept(scopedEmitter).toString(),
+        '''throw  _i1.EncodingException('Binary data cannot be label-encoded')''',
+      );
+    });
+
     test('generates runtime throw for NeverModel', () {
       final model = NeverModel(context: context);
       final expression = buildLabelParameterExpression(

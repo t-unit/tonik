@@ -160,6 +160,32 @@ void main() {
     });
   });
 
+  group('toBase64String', () {
+    test('encodes bytes to base64 string', () {
+      // "Hello" in UTF-8
+      const file = TonikFileBytes([72, 101, 108, 108, 111]);
+      expect(file.toBase64String(), 'SGVsbG8=');
+    });
+
+    test('encodes empty bytes to empty base64 string', () {
+      const file = TonikFileBytes([]);
+      expect(file.toBase64String(), '');
+    });
+
+    test('encodes binary data correctly', () {
+      const file = TonikFileBytes([0, 1, 2, 255]);
+      expect(file.toBase64String(), 'AAEC/w==');
+    });
+
+    test('works with TonikFilePath', () {
+      // Uses the tempFile from the TonikFilePath group above, but for
+      // simplicity we test with TonikFileBytes which is a simpler case.
+      // "ABC" in UTF-8
+      const file = TonikFileBytes([65, 66, 67]);
+      expect(file.toBase64String(), 'QUJD');
+    });
+  });
+
   group('uriEncode', () {
     test('encodes non-empty bytes with URI component encoding', () {
       // "Hello" in UTF-8

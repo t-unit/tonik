@@ -107,8 +107,13 @@ Expression _buildFormSerializationExpression(
     AnyOfModel() ||
     ListModel() => callToForm(receiver, nullAware: isNullable),
 
-    MapModel() => generateEncodingExceptionExpression(
-      'Form encoding not supported for map types.',
+    // MapModel: convert to Map<String, String> via toParameterMap(), then
+    // call toForm() on the resulting map.
+    MapModel() => callToForm(
+      isNullable
+          ? receiver.nullSafeProperty('toParameterMap').call([])
+          : receiver.property('toParameterMap').call([]),
+      nullAware: false,
     ),
 
     AliasModel() => _buildFormSerializationExpression(
@@ -120,7 +125,17 @@ Expression _buildFormSerializationExpression(
       allowEmptyLiteral: allowEmptyLiteral,
     ),
 
-    BinaryModel() || Base64Model() => generateEncodingExceptionExpression(
+    // Base64Model: convert to base64 string via toBase64String(), then
+    // call toForm() on the resulting string.
+    Base64Model() => callToForm(
+      isNullable
+          ? receiver.nullSafeProperty('toBase64String').call([])
+          : receiver.property('toBase64String').call([]),
+      nullAware: false,
+    ),
+
+    // BinaryModel (format: binary) cannot be form-encoded.
+    BinaryModel() => generateEncodingExceptionExpression(
       'Form encoding not supported for binary types.',
     ),
 

@@ -57,11 +57,37 @@ Expression buildMatrixParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    // MapModel: convert to Map<String, String> via toParameterMap(), then
+    // call toMatrix() on the resulting map.
+    MapModel() => (isNullable
+            ? valueExpression.nullSafeProperty('toParameterMap').call([])
+            : valueExpression.property('toParameterMap').call([]))
+        .property('toMatrix')
+        .call(
+          [paramName],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
+
+    // Base64Model: convert to base64 string via toBase64String(), then
+    // call toMatrix() on the resulting string.
+    Base64Model() => (isNullable
+            ? valueExpression.nullSafeProperty('toBase64String').call([])
+            : valueExpression.property('toBase64String').call([]))
+        .property('toMatrix')
+        .call(
+          [paramName],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
+
+    // BinaryModel (format: binary) cannot be matrix-encoded.
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be matrix-encoded',
-    ),
-    MapModel() => generateEncodingExceptionExpression(
-      'Map types cannot be matrix-encoded.',
     ),
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for matrix encoding.',
@@ -75,7 +101,7 @@ Expression buildMatrixParameterExpression(
 /// Used by OneOf/AnyOf generators to decide whether to destructure the variant.
 bool matrixParameterExpressionUsesValue(Model model) {
   return switch (model) {
-    BinaryModel() || MapModel() => false,
+    BinaryModel() => false,
     ListModel(:final content) => _listMatrixContentUsesValue(content),
     _ => true,
   };
@@ -192,6 +218,72 @@ Expression _buildListMatrixExpression(
                             {'allowEmpty': allowEmpty},
                           )
                           .code,
+              ).closure,
+            ],
+            {},
+            [refer('String', 'dart:core')],
+          )
+          .property('toList')
+          .call([])
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          ),
+    // List<Map<String, V>>: map each item through
+    // toParameterMap().uriEncode() then call toMatrix().
+    MapModel() =>
+      listMapAccess
+          .call(
+            [
+              Method(
+                (b) => b
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'e'),
+                  )
+                  ..body = refer('e')
+                      .property('toParameterMap')
+                      .call([])
+                      .property('uriEncode')
+                      .call([], {'allowEmpty': allowEmpty})
+                      .code,
+              ).closure,
+            ],
+            {},
+            [refer('String', 'dart:core')],
+          )
+          .property('toList')
+          .call([])
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          ),
+    // List<TonikFile> (base64): map each item through
+    // toBase64String().uriEncode() then call toMatrix().
+    Base64Model() =>
+      listMapAccess
+          .call(
+            [
+              Method(
+                (b) => b
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'e'),
+                  )
+                  ..body = refer('e')
+                      .property('toBase64String')
+                      .call([])
+                      .property('uriEncode')
+                      .call([], {'allowEmpty': allowEmpty})
+                      .code,
               ).closure,
             ],
             {},

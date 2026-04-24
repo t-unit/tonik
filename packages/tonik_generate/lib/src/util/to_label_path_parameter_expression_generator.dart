@@ -45,13 +45,77 @@ Expression buildToLabelPathParameterExpression(
       });
     }
 
-    if (contentModel is BinaryModel || contentModel is Base64Model) {
+    if (contentModel is BinaryModel) {
       return generateEncodingExceptionExpression(
         'Binary data cannot be label-encoded',
       );
     }
 
-    if (contentModel is ClassModel || contentModel is MapModel) {
+    // List<TonikFile> (base64): map each item through
+    // toBase64String().uriEncode() then call toLabel().
+    if (contentModel is Base64Model) {
+      return valueRef
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e')
+                    .property('toBase64String')
+                    .call([])
+                    .property('uriEncode')
+                    .call([], {'allowEmpty': allowEmpty})
+                    .code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toLabel')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          );
+    }
+
+    // List<Map<String, V>>: map each item through
+    // toParameterMap().uriEncode() then call toLabel().
+    if (contentModel is MapModel) {
+      return valueRef
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e')
+                    .property('toParameterMap')
+                    .call([])
+                    .property('uriEncode')
+                    .call([], {'allowEmpty': allowEmpty})
+                    .code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toLabel')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          );
+    }
+
+    if (contentModel is ClassModel) {
       return generateEncodingExceptionExpression(
         'Label encoding does not support arrays of complex types',
       );
@@ -120,6 +184,32 @@ Expression buildToLabelPathParameterExpression(
     return generateEncodingExceptionExpression(
       'Binary data cannot be label-encoded',
     );
+  }
+
+  // MapModel: convert to Map<String, String> via toParameterMap(), then
+  // call toLabel() on the resulting map.
+  if (model is MapModel) {
+    return valueRef
+        .property('toParameterMap')
+        .call([])
+        .property('toLabel')
+        .call([], {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+        });
+  }
+
+  // Base64Model: convert to base64 string via toBase64String(), then
+  // call toLabel() on the resulting string.
+  if (model is Base64Model) {
+    return valueRef
+        .property('toBase64String')
+        .call([])
+        .property('toLabel')
+        .call([], {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+        });
   }
 
   return valueRef.property('toLabel').call([], {

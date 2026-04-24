@@ -279,6 +279,28 @@ void main() {
       );
     });
 
+    test('generates toParameterMap().uriEncode() for MapModel', () {
+      final model = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.toParameterMap().uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates runtime throw for ClassModel', () {
       final model = ClassModel(
         name: 'TestClass',
@@ -566,6 +588,36 @@ void main() {
       const expected = '''
         final result = value
             .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .toList()
+            .uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates map expression for List<MapModel>', () {
+      final model = ListModel(
+        content: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value
+            .map(
+              (e) => e.toParameterMap().uriEncode(allowEmpty: allowEmpty),
+            )
             .toList()
             .uriEncode(allowEmpty: allowEmpty);
       ''';
