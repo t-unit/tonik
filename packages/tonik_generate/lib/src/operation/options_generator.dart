@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
@@ -464,7 +465,42 @@ class OptionsGenerator {
       return;
     }
 
-    // For non-list types, use toForm directly.
+    // MapModel: convert values to Map<String, String> before calling toForm.
+    if (model is MapModel) {
+      final converted = buildMapToStringMapExpression(
+        refer(paramName),
+        model,
+        isNullable: false,
+      );
+
+      if (converted == null) {
+        // Unsupported map value types (ClassModel, ListModel, nested MapModel,
+        // BinaryModel, NeverModel) cannot be form-encoded.
+        bodyStatements.add(
+          generateEncodingExceptionExpression(
+            'Map with complex value types cannot be form-encoded '
+            'for cookie $rawName',
+          ).statement,
+        );
+        return;
+      }
+
+      final encodedValue = converted.property('toForm').call([], {
+        'explode': literalBool(explode),
+        'allowEmpty': literalBool(true),
+      });
+      bodyStatements.add(
+        refer(r'_$cookieParts').property('add').call([
+          literalList([
+            specLiteralString('$rawName='),
+            encodedValue,
+          ]).property('join').call([]),
+        ]).statement,
+      );
+      return;
+    }
+
+    // For non-list, non-map types, use toForm directly.
     final encodedValue = refer(paramName).property('toForm').call([], {
       'explode': literalBool(explode),
       'allowEmpty': literalBool(true),
