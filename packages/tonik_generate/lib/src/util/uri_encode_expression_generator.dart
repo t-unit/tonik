@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
 Expression buildUriEncodeExpression(
   Expression valueExpression,
@@ -39,8 +40,11 @@ Expression buildUriEncodeExpression(
           'useQueryComponent': ?useQueryComponent,
         },
       ),
-    MapModel() => generateEncodingExceptionExpression(
-      'Map types cannot be URI-encoded.',
+    MapModel() => _buildMapUriEncodeExpression(
+      valueExpression,
+      model,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
     ),
     ListModel(:final content) => _buildListUriEncodeExpression(
       valueExpression,
@@ -155,6 +159,12 @@ Expression _buildListUriEncodeExpression(
               'useQueryComponent': ?useQueryComponent,
             },
           ),
+    MapModel() => _buildListMapContentUriEncodeExpression(
+      listExpr,
+      contentModel,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    ),
     AliasModel() => _buildListUriEncodeExpression(
       valueExpression,
       contentModel.model,
@@ -166,4 +176,81 @@ Expression _buildListUriEncodeExpression(
       'Unsupported list content type for URI encoding.',
     ),
   };
+}
+
+Expression _buildMapUriEncodeExpression(
+  Expression valueExpression,
+  MapModel model, {
+  required Expression allowEmpty,
+  Expression? useQueryComponent,
+}) {
+  final converted = buildMapToStringMapExpression(
+    valueExpression,
+    model,
+    isNullable: false,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'Map with complex value types cannot be URI-encoded.',
+    );
+  }
+
+  return converted.property('uriEncode').call(
+    [],
+    {
+      'allowEmpty': allowEmpty,
+      'useQueryComponent': ?useQueryComponent,
+    },
+  );
+}
+
+Expression _buildListMapContentUriEncodeExpression(
+  Expression listExpression,
+  MapModel contentModel, {
+  required Expression allowEmpty,
+  Expression? useQueryComponent,
+}) {
+  final converted = buildMapToStringMapExpression(
+    refer('e'),
+    contentModel,
+    isNullable: false,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'List of maps with complex value types cannot be URI-encoded.',
+    );
+  }
+
+  return listExpression
+      .property('map')
+      .call([
+        Method(
+          (b) => b
+            ..requiredParameters.add(
+              Parameter((b) => b..name = 'e'),
+            )
+            ..body = converted
+                .property('uriEncode')
+                .call(
+                  [],
+                  {
+                    'allowEmpty': allowEmpty,
+                    'useQueryComponent': ?useQueryComponent,
+                  },
+                )
+                .code,
+        ).closure,
+      ])
+      .property('toList')
+      .call([])
+      .property('uriEncode')
+      .call(
+        [],
+        {
+          'allowEmpty': allowEmpty,
+          'useQueryComponent': ?useQueryComponent,
+        },
+      );
 }

@@ -28,6 +28,9 @@ sealed class TonikFile {
   /// native platforms. Throws [UnsupportedError] on web.
   List<int> toBytes();
 
+  /// Returns the binary content as a base64-encoded string.
+  String toBase64String() => base64Encode(toBytes());
+
   /// URI-encodes this file's binary content.
   ///
   /// Converts the binary data to a UTF-8 string, then URI-encodes it.

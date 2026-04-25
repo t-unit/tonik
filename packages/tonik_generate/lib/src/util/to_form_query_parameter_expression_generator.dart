@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -22,7 +23,22 @@ List<Code> buildToFormQueryParameterCode(
     ];
   }
 
-  if (model is BinaryModel || model is Base64Model) {
+  if (model is Base64Model) {
+    final valueExpression =
+        '$parameterName.toBase64String().toForm(explode: $explode, '
+        'allowEmpty: $allowEmpty)';
+    return [
+      Code(
+        r'_$entries'
+        '.add(('
+        'name: ${specLiteralStringCode(parameter.rawName)}, '
+        'value: $valueExpression, '
+        '),);',
+      ),
+    ];
+  }
+
+  if (model is BinaryModel) {
     return [
       generateEncodingExceptionExpression(
         'Binary data cannot be form-encoded.',
@@ -31,10 +47,53 @@ List<Code> buildToFormQueryParameterCode(
   }
 
   if (model is MapModel) {
+    final converted = buildMapToStringMapExpression(
+      refer(parameterName),
+      model,
+      isNullable: false,
+    );
+
+    if (converted == null) {
+      return [
+        generateEncodingExceptionExpression(
+          'Map with complex value types cannot be form query encoded.',
+        ).statement,
+      ];
+    }
+
+    // For StringModel values, converted == refer(parameterName) (identity).
+    final convertedSuffix = '.toForm(explode: $explode, '
+        'allowEmpty: $allowEmpty)';
+
+    if (converted == refer(parameterName)) {
+      return [
+        Code(
+          r'_$entries'
+          '.add(('
+          'name: ${specLiteralStringCode(parameter.rawName)}, '
+          'value: $parameterName$convertedSuffix, '
+          '),);',
+        ),
+      ];
+    }
+
+    // For non-string value types, we need to use code_builder for the
+    // converted expression.
     return [
-      generateEncodingExceptionExpression(
-        'Map types cannot be form query encoded.',
-      ).statement,
+      const Code(r'_$entries.add(('),
+      Code('name: ${specLiteralStringCode(parameter.rawName)}, '),
+      const Code('value: '),
+      converted
+          .property('toForm')
+          .call(
+            [],
+            {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(allowEmpty),
+            },
+          )
+          .code,
+      const Code(',),);'),
     ];
   }
 
@@ -62,8 +121,25 @@ List<Code> buildToFormQueryParameterCode(
     final contentModel = model.content.resolved;
     final contentShape = contentModel.encodingShape;
 
-    // Binary/Base64 content cannot be form-encoded.
-    if (contentModel is BinaryModel || contentModel is Base64Model) {
+    // Base64 content can be form-encoded via toBase64String.
+    if (contentModel is Base64Model) {
+      final toForm = 'toForm(explode: $explode, allowEmpty: $allowEmpty)';
+      final suffix = '.map((e) => e.toBase64String()).toList().$toForm';
+      final valueExpression = '$parameterName$suffix';
+
+      return [
+        Code(
+          r'_$entries'
+          '.add(('
+          'name: ${specLiteralStringCode(parameter.rawName)}, '
+          'value: $valueExpression, '
+          '),);',
+        ),
+      ];
+    }
+
+    // Binary content cannot be form-encoded.
+    if (contentModel is BinaryModel) {
       return [
         generateEncodingExceptionExpression(
           'Binary data cannot be form-encoded.',
@@ -235,6 +311,8 @@ String? _getFormSerializationSuffix(
       allowEmpty: allowEmpty,
     ),
 
+    Base64Model() => '.toBase64String().toForm($paramString)',
+
     AnyModel() => '?.toString() ?? ""',
     NeverModel() => null,
     BinaryModel() => null,
@@ -292,6 +370,10 @@ String? _handleListExpression(
       allowEmpty: allowEmpty,
       isContentNullable: isContentNullable || contentModel.isNullable,
     ),
+
+    Base64Model() => () {
+      return '.map((e) => e.toBase64String()).toList().toForm($paramString)';
+    }(),
 
     BinaryModel() => null,
 

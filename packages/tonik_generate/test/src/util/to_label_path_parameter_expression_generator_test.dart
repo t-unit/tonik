@@ -586,6 +586,121 @@ void main() {
     );
   });
 
+  group('MapModel direct support', () {
+    test('generates label encoding for MapModel with StringModel values', () {
+      final parameter = PathParameterObject(
+        name: 'tags',
+        rawName: 'tags',
+        description: 'Tags parameter',
+        model: MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+        ),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      expect(
+        emit(buildToLabelPathParameterExpression('tags', parameter)),
+        'tags.toLabel(explode: false, allowEmpty: false, )',
+      );
+    });
+
+    test(
+      'generates label encoding for MapModel with IntegerModel values',
+      () {
+        final parameter = PathParameterObject(
+          name: 'counts',
+          rawName: 'counts',
+          description: 'Counts parameter',
+          model: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        final result =
+            emit(buildToLabelPathParameterExpression('counts', parameter));
+        expect(
+          collapseWhitespace(result),
+          collapseWhitespace([
+            'counts.map((k, v, ) => MapEntry(k, v.toString(), ))',
+            '.toLabel(explode: false, allowEmpty: false, )',
+          ].join()),
+        );
+      },
+    );
+
+    test(
+      'throws for MapModel with ClassModel values',
+      () {
+        final parameter = PathParameterObject(
+          name: 'data',
+          rawName: 'data',
+          description: 'Data parameter',
+          model: MapModel(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              context: context,
+              name: 'Obj',
+              properties: [],
+            ),
+            context: context,
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          collapseWhitespace(
+            emit(buildToLabelPathParameterExpression('data', parameter)),
+          ),
+          collapseWhitespace([
+            'throw EncodingException(',
+            "'Map with complex value types cannot be label-encoded.')",
+          ].join()),
+        );
+      },
+    );
+  });
+
+  group('Base64Model direct support', () {
+    test('generates toBase64String then toLabel for Base64Model', () {
+      final parameter = PathParameterObject(
+        name: 'fileData',
+        rawName: 'fileData',
+        description: 'Base64 file parameter',
+        model: Base64Model(context: context),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+      );
+      final result =
+          emit(buildToLabelPathParameterExpression('fileData', parameter));
+      expect(
+        collapseWhitespace(result),
+        collapseWhitespace([
+          'fileData.toBase64String()',
+          '.toLabel(explode: false, allowEmpty: false, )',
+        ].join()),
+      );
+    });
+  });
+
   group('unsupported types generate throw', () {
     test('List of ClassModel throws EncodingException', () {
       final parameter = PathParameterObject(
@@ -617,45 +732,95 @@ void main() {
         context: context,
       );
       expect(
-        emit(buildToLabelPathParameterExpression('itemList', parameter)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToLabelPathParameterExpression('itemList', parameter)),
-        contains('EncodingException'),
-      );
-    });
-
-    test('List of MapModel throws EncodingException', () {
-      final parameter = PathParameterObject(
-        name: 'items',
-        rawName: 'items',
-        description: 'List of maps parameter',
-        model: ListModel(
-          context: context,
-          content: MapModel(
-            valueModel: IntegerModel(context: context),
-            context: context,
-          ),
+        collapseWhitespace(
+          emit(buildToLabelPathParameterExpression('itemList', parameter)),
         ),
-        encoding: PathParameterEncoding.label,
-        explode: false,
-        allowEmptyValue: false,
-        isRequired: true,
-        isDeprecated: false,
-        context: context,
-      );
-      expect(
-        emit(buildToLabelPathParameterExpression('items', parameter)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToLabelPathParameterExpression('items', parameter)),
-        contains('EncodingException'),
+        collapseWhitespace([
+          'throw EncodingException(',
+          "'Label encoding does not support ",
+          "arrays of complex types')",
+        ].join()),
       );
     });
 
-    test('List of Base64Model throws EncodingException', () {
+    test(
+      'List of MapModel with IntegerModel values generates '
+      'label encoding',
+      () {
+        final parameter = PathParameterObject(
+          name: 'items',
+          rawName: 'items',
+          description: 'List of maps parameter',
+          model: ListModel(
+            context: context,
+            content: MapModel(
+              valueModel: IntegerModel(context: context),
+              context: context,
+            ),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        final result =
+            emit(buildToLabelPathParameterExpression('items', parameter));
+        expect(
+          collapseWhitespace(result),
+          collapseWhitespace([
+            'items.map((e) => e.map((k, v, ) ',
+            '=> MapEntry(k, v.toString(), ))',
+            '.toLabel(explode: false, allowEmpty: false, ))',
+            '.toList()',
+            '.toLabel(explode: false, ',
+            'allowEmpty: false, alreadyEncoded: true, )',
+          ].join()),
+        );
+      },
+    );
+
+    test(
+      'List of MapModel with ClassModel values throws EncodingException',
+      () {
+        final parameter = PathParameterObject(
+          name: 'items',
+          rawName: 'items',
+          description: 'List of maps parameter',
+          model: ListModel(
+            context: context,
+            content: MapModel(
+              valueModel: ClassModel(
+                isDeprecated: false,
+                context: context,
+                name: 'Obj',
+                properties: [],
+              ),
+              context: context,
+            ),
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          collapseWhitespace(
+            emit(buildToLabelPathParameterExpression('items', parameter)),
+          ),
+          collapseWhitespace([
+            'throw EncodingException(',
+            "'Label encoding does not support ",
+            "arrays of maps with complex values')",
+          ].join()),
+        );
+      },
+    );
+
+    test('List of Base64Model generates label encoding', () {
       final parameter = PathParameterObject(
         name: 'files',
         rawName: 'files',
@@ -671,13 +836,15 @@ void main() {
         isDeprecated: false,
         context: context,
       );
+      final result =
+          emit(buildToLabelPathParameterExpression('files', parameter));
       expect(
-        emit(buildToLabelPathParameterExpression('files', parameter)),
-        contains('throw'),
-      );
-      expect(
-        emit(buildToLabelPathParameterExpression('files', parameter)),
-        contains('EncodingException'),
+        collapseWhitespace(result),
+        collapseWhitespace([
+          'files.map((e) => e.toBase64String()).toList()',
+          '.toLabel(explode: false, ',
+          'allowEmpty: false, alreadyEncoded: true, )',
+        ].join()),
       );
     });
   });

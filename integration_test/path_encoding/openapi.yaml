@@ -1159,6 +1159,148 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  # =============================================================================
+  # LABEL STYLE - MAP PARAMETERS
+  # =============================================================================
+
+  /label/map/string/{values}:
+    get:
+      operationId: testLabelMapString
+      tags: [label]
+      summary: Label-style map with string values path parameter
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: label
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /label/map/integer/{values}:
+    get:
+      operationId: testLabelMapInteger
+      tags: [label]
+      summary: Label-style map with integer values path parameter
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: label
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  # =============================================================================
+  # MATRIX STYLE - MAP PARAMETERS
+  # =============================================================================
+
+  /matrix/map/string/{values}:
+    get:
+      operationId: testMatrixMapString
+      tags: [matrix]
+      summary: Matrix-style map with string values path parameter
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/map/integer/{values}:
+    get:
+      operationId: testMatrixMapInteger
+      tags: [matrix]
+      summary: Matrix-style map with integer values path parameter
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  # =============================================================================
+  # BASE64 PARAMETERS - LABEL AND MATRIX STYLES
+  # =============================================================================
+
+  /label/base64/{fileData}:
+    get:
+      operationId: testLabelBase64
+      tags: [label]
+      summary: Label-style base64 encoded binary data path parameter
+      parameters:
+        - name: fileData
+          in: path
+          required: true
+          style: label
+          schema:
+            type: string
+            format: byte
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/base64/{fileData}:
+    get:
+      operationId: testMatrixBase64
+      tags: [matrix]
+      summary: Matrix-style base64 encoded binary data path parameter
+      parameters:
+        - name: fileData
+          in: path
+          required: true
+          style: matrix
+          schema:
+            type: string
+            format: byte
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
 components:
   schemas:
     StatusEnum:

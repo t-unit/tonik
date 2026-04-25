@@ -413,6 +413,332 @@ void main() {
       );
     });
 
+    test('generates toSimple for MapModel with StringModel values', () {
+      final model = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.toSimple(explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates map and toSimple for MapModel with IntegerModel values',
+        () {
+      final model = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map((k, v) => MapEntry(k, v.toString()))
+              .toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates map and toSimple for MapModel with DateTimeModel values',
+        () {
+      final model = MapModel(
+        valueModel: DateTimeModel(context: context),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map((k, v) => MapEntry(k, v.toTimeZonedIso8601String()))
+              .toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates map and toSimple for MapModel with EnumModel values', () {
+      final model = MapModel(
+        valueModel: EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+          },
+          isNullable: false,
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map((k, v) => MapEntry(k, v.toJson()))
+              .toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates runtime throw for MapModel with ClassModel values', () {
+      final model = MapModel(
+        valueModel: ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: [],
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(scopedEmitter).toString());
+      final expected = format('''
+        test() {
+          final result = throw _i1.EncodingException(
+            'Map with complex value types cannot be simple-encoded.',
+          );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates toBase64String and toSimple for Base64Model', () {
+      final model = Base64Model(context: context);
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .toBase64String()
+              .toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates toBase64String list content for List<Base64Model>', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map((e) => e.toBase64String())
+              .toList()
+              .toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates list-of-map encoding for List<Map<String, int>>', () {
+      final model = ListModel(
+        content: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map(
+                (e) => e
+                    .map((k, v) => MapEntry(k, v.toString()))
+                    .toSimple(explode: explode, allowEmpty: allowEmpty),
+              )
+              .toList()
+              .toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test(
+        'generates runtime throw for List<Map<String, ClassModel>> '
+        '(unsupported)', () {
+      final model = ListModel(
+        content: MapModel(
+          valueModel: ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: [],
+            context: context,
+          ),
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(scopedEmitter).toString());
+      final expected = format('''
+        test() {
+          final result = throw _i1.EncodingException(
+            'List of maps with complex value types cannot be simple-encoded.',
+          );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
     test('generates runtime throw for NeverModel', () {
       final model = NeverModel(context: context);
       final expression = buildSimpleParameterExpression(

@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
 Expression buildMatrixParameterExpression(
   Expression valueExpression,
@@ -57,11 +58,28 @@ Expression buildMatrixParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    Base64Model() => (isNullable
+            ? valueExpression.nullSafeProperty('toBase64String')
+            : valueExpression.property('toBase64String'))
+        .call([])
+        .property('toMatrix')
+        .call(
+          [paramName],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be matrix-encoded',
     ),
-    MapModel() => generateEncodingExceptionExpression(
-      'Map types cannot be matrix-encoded.',
+    MapModel() => _buildMapMatrixExpression(
+      valueExpression,
+      model,
+      paramName: paramName,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for matrix encoding.',
@@ -75,10 +93,20 @@ Expression buildMatrixParameterExpression(
 /// Used by OneOf/AnyOf generators to decide whether to destructure the variant.
 bool matrixParameterExpressionUsesValue(Model model) {
   return switch (model) {
-    BinaryModel() || MapModel() => false,
+    BinaryModel() => false,
+    MapModel() => _mapMatrixUsesValue(model),
     ListModel(:final content) => _listMatrixContentUsesValue(content),
     _ => true,
   };
+}
+
+bool _mapMatrixUsesValue(MapModel model) {
+  final converted = buildMapToStringMapExpression(
+    refer('_'),
+    model,
+    isNullable: false,
+  );
+  return converted != null;
 }
 
 bool _listMatrixContentUsesValue(Model content) {
@@ -208,6 +236,42 @@ Expression _buildListMatrixExpression(
               'alreadyEncoded': literalTrue,
             },
           ),
+    Base64Model() => listMapAccess
+        .call(
+          [
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e')
+                    .property('toBase64String')
+                    .call([])
+                    .code,
+            ).closure,
+          ],
+          {},
+          [refer('String', 'dart:core')],
+        )
+        .property('toList')
+        .call([])
+        .property('toMatrix')
+        .call(
+          [paramName],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalTrue,
+          },
+        ),
+    MapModel() => _buildListMapContentMatrixExpression(
+      valueExpression,
+      contentModel,
+      paramName: paramName,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
+    ),
     ClassModel() || ListModel() => generateEncodingExceptionExpression(
       'Lists with complex content cannot be matrix-encoded',
     ),
@@ -218,4 +282,97 @@ Expression _buildListMatrixExpression(
       'Unsupported list content type for matrix encoding.',
     ),
   };
+}
+
+Expression _buildMapMatrixExpression(
+  Expression valueExpression,
+  MapModel model, {
+  required Expression paramName,
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  final converted = buildMapToStringMapExpression(
+    valueExpression,
+    model,
+    isNullable: isNullable,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'Map with complex value types cannot be matrix-encoded.',
+    );
+  }
+
+  final toMatrixAccess = (isNullable && converted == valueExpression)
+      ? converted.nullSafeProperty('toMatrix')
+      : converted.property('toMatrix');
+
+  return toMatrixAccess.call(
+    [paramName],
+    {
+      'explode': explode,
+      'allowEmpty': allowEmpty,
+    },
+  );
+}
+
+Expression _buildListMapContentMatrixExpression(
+  Expression valueExpression,
+  MapModel contentModel, {
+  required Expression paramName,
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  final converted = buildMapToStringMapExpression(
+    refer('e'),
+    contentModel,
+    isNullable: false,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'List of maps with complex value types cannot be matrix-encoded.',
+    );
+  }
+
+  final listMapAccess = isNullable
+      ? valueExpression.nullSafeProperty('map')
+      : valueExpression.property('map');
+
+  return listMapAccess
+      .call(
+        [
+          Method(
+            (b) => b
+              ..requiredParameters.add(
+                Parameter((b) => b..name = 'e'),
+              )
+              ..body = converted
+                  .property('toMatrix')
+                  .call(
+                    [paramName],
+                    {
+                      'explode': explode,
+                      'allowEmpty': allowEmpty,
+                    },
+                  )
+                  .code,
+          ).closure,
+        ],
+        {},
+        [refer('String', 'dart:core')],
+      )
+      .property('toList')
+      .call([])
+      .property('toMatrix')
+      .call(
+        [paramName],
+        {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+          'alreadyEncoded': literalTrue,
+        },
+      );
 }

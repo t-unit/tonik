@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
 Expression buildFormParameterExpression(
   Expression valueExpression,
@@ -34,8 +35,24 @@ Expression buildFormParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    MapModel() => generateEncodingExceptionExpression(
-      'Form encoding not supported for map types.',
+    Base64Model() => (isNullable
+            ? valueExpression.nullSafeProperty('toBase64String')
+            : valueExpression.property('toBase64String'))
+        .call([])
+        .property('toForm')
+        .call(
+          [],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
+    MapModel() => _buildMapFormExpression(
+      valueExpression,
+      model,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     ListModel(:final content) => _buildListFormExpression(
       valueExpression,
@@ -136,6 +153,37 @@ Expression _buildListFormExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
+    Base64Model() => listMapAccess
+        .call([
+          Method(
+            (b) => b
+              ..requiredParameters.add(
+                Parameter((b) => b..name = 'e'),
+              )
+              ..body = refer('e')
+                  .property('toBase64String')
+                  .call([])
+                  .code,
+          ).closure,
+        ])
+        .property('toList')
+        .call([])
+        .property('toForm')
+        .call(
+          [],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalBool(true),
+          },
+        ),
+    MapModel() => _buildListMapContentFormExpression(
+      valueExpression,
+      contentModel,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
+    ),
     ClassModel() || ListModel() => listPropertyAccess.call(
       [],
       {
@@ -150,4 +198,91 @@ Expression _buildListFormExpression(
       'Unsupported list content type for form encoding.',
     ),
   };
+}
+
+Expression _buildMapFormExpression(
+  Expression valueExpression,
+  MapModel model, {
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  final converted = buildMapToStringMapExpression(
+    valueExpression,
+    model,
+    isNullable: isNullable,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'Map with complex value types cannot be form-encoded.',
+    );
+  }
+
+  final toFormAccess = (isNullable && converted == valueExpression)
+      ? converted.nullSafeProperty('toForm')
+      : converted.property('toForm');
+
+  return toFormAccess.call(
+    [],
+    {
+      'explode': explode,
+      'allowEmpty': allowEmpty,
+    },
+  );
+}
+
+Expression _buildListMapContentFormExpression(
+  Expression valueExpression,
+  MapModel contentModel, {
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  final converted = buildMapToStringMapExpression(
+    refer('e'),
+    contentModel,
+    isNullable: false,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'List of maps with complex value types cannot be form-encoded.',
+    );
+  }
+
+  final listMapAccess = isNullable
+      ? valueExpression.nullSafeProperty('map')
+      : valueExpression.property('map');
+
+  return listMapAccess
+      .call([
+        Method(
+          (b) => b
+            ..requiredParameters.add(
+              Parameter((b) => b..name = 'e'),
+            )
+            ..body = converted
+                .property('toForm')
+                .call(
+                  [],
+                  {
+                    'explode': explode,
+                    'allowEmpty': allowEmpty,
+                  },
+                )
+                .code,
+        ).closure,
+      ])
+      .property('toList')
+      .call([])
+      .property('toForm')
+      .call(
+        [],
+        {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+          'alreadyEncoded': literalBool(true),
+        },
+      );
 }
