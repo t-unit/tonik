@@ -462,6 +462,272 @@ void main() {
         '''throw  _i1.EncodingException('Unsupported list content type for matrix encoding.')''',
       );
     });
+
+    test('generates toMatrix for MapModel with StringModel values', () {
+      final model = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('generates map and toMatrix for MapModel with IntegerModel values',
+        () {
+      final model = MapModel(
+        valueModel: IntegerModel(context: context),
+        context: context,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map((k, v) => MapEntry(k, v.toString()))
+              .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates runtime throw for MapModel with ClassModel values', () {
+      final model = MapModel(
+        valueModel: ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: [],
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(scopedEmitter).toString());
+      final expected = format('''
+        test() {
+          final result = throw _i1.EncodingException(
+            'Map with complex value types cannot be matrix-encoded.',
+          );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates toBase64String and toMatrix for Base64Model', () {
+      final model = Base64Model(context: context);
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value.toBase64String().toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+              );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates toBase64String list content for List<Base64Model>', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
+        context: context,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map<String>((e) => e.toBase64String())
+              .toList()
+              .toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('generates list-of-map encoding for List<Map<String, int>>', () {
+      final model = ListModel(
+        content: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map<String>(
+                (e) => e
+                    .map((k, v) => MapEntry(k, v.toString()))
+                    .toMatrix(
+                      paramName,
+                      explode: explode,
+                      allowEmpty: allowEmpty,
+                    ),
+              )
+              .toList()
+              .toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test(
+        'generates runtime throw for List<Map<String, ClassModel>> '
+        '(unsupported)', () {
+      final model = ListModel(
+        content: MapModel(
+          valueModel: ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: [],
+            context: context,
+          ),
+          context: context,
+        ),
+        context: context,
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(expression).statement,
+      );
+
+      final generated = format(method.accept(scopedEmitter).toString());
+      final expected = format('''
+        test() {
+          final result = throw _i1.EncodingException(
+            'List of maps with complex value types cannot be matrix-encoded.',
+          );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
   });
 
   group('nullable receiver support', () {

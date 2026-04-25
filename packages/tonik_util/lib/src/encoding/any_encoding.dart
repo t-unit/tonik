@@ -1,4 +1,5 @@
 import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/encoding/datetime_extension.dart';
 import 'package:tonik_util/src/encoding/deep_object_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/encodable.dart';
@@ -290,6 +291,37 @@ String encodeAnyToUri(
   }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to URI',
+  );
+}
+
+/// Converts any value to its string representation for map parameter encoding.
+///
+/// Used when a map has AnyModel values (`Map<String, dynamic>`).
+/// Handles runtime type detection -- primitives produce their standard string
+/// form; unsupported types throw EncodingException.
+///
+/// When [allowEmpty] is false, null throws [EmptyValueException];
+/// when true, null produces an empty string.
+String encodeAnyValueToString(
+  Object? value, {
+  required bool allowEmpty,
+}) {
+  if (value == null) {
+    if (!allowEmpty) {
+      throw const EmptyValueException();
+    }
+    return '';
+  }
+  if (value is String) return value;
+  if (value is int) return value.toString();
+  if (value is double) return value.toString();
+  if (value is bool) return value.toString();
+  if (value is DateTime) return value.toTimeZonedIso8601String();
+  if (value is Date) return value.toString();
+  if (value is Uri) return value.toString();
+  if (value is BigDecimal) return value.toString();
+  throw EncodingException(
+    'Cannot encode ${value.runtimeType} to string for map parameter encoding',
   );
 }
 

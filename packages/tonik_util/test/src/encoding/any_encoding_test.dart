@@ -1,5 +1,6 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/encoding/any_encoding.dart';
 import 'package:tonik_util/src/encoding/encodable.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
@@ -1320,6 +1321,144 @@ void main() {
       test('throws for List (not directly supported)', () {
         expect(
           () => encodeAnyToUri(['a', 'b'], allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+    });
+  });
+
+  group('encodeAnyValueToString', () {
+    group('String', () {
+      test('returns string as-is', () {
+        expect(
+          encodeAnyValueToString('hello', allowEmpty: true),
+          'hello',
+        );
+      });
+
+      test('returns empty string', () {
+        expect(
+          encodeAnyValueToString('', allowEmpty: true),
+          '',
+        );
+      });
+    });
+
+    group('int', () {
+      test('converts int to string', () {
+        expect(
+          encodeAnyValueToString(42, allowEmpty: true),
+          '42',
+        );
+      });
+
+      test('converts negative int', () {
+        expect(
+          encodeAnyValueToString(-7, allowEmpty: true),
+          '-7',
+        );
+      });
+    });
+
+    group('double', () {
+      test('converts double to string', () {
+        expect(
+          encodeAnyValueToString(3.14, allowEmpty: true),
+          '3.14',
+        );
+      });
+    });
+
+    group('bool', () {
+      test('converts true', () {
+        expect(
+          encodeAnyValueToString(true, allowEmpty: true),
+          'true',
+        );
+      });
+
+      test('converts false', () {
+        expect(
+          encodeAnyValueToString(false, allowEmpty: true),
+          'false',
+        );
+      });
+    });
+
+    group('DateTime', () {
+      test('converts DateTime to ISO8601 with timezone', () {
+        final dt = DateTime.utc(2024, 1, 15, 10, 30);
+        expect(
+          encodeAnyValueToString(dt, allowEmpty: true),
+          '2024-01-15T10:30:00.000Z',
+        );
+      });
+    });
+
+    group('Date', () {
+      test('converts Date to string', () {
+        final date = Date(2024, 1, 15);
+        expect(
+          encodeAnyValueToString(date, allowEmpty: true),
+          '2024-01-15',
+        );
+      });
+    });
+
+    group('Uri', () {
+      test('converts Uri to string', () {
+        final uri = Uri.parse('https://example.com');
+        expect(
+          encodeAnyValueToString(uri, allowEmpty: true),
+          'https://example.com',
+        );
+      });
+    });
+
+    group('BigDecimal', () {
+      test('converts BigDecimal to string', () {
+        final bd = BigDecimal.parse('123.456');
+        expect(
+          encodeAnyValueToString(bd, allowEmpty: true),
+          '123.456',
+        );
+      });
+    });
+
+    group('null handling', () {
+      test('returns empty string for null with allowEmpty=true', () {
+        expect(
+          encodeAnyValueToString(null, allowEmpty: true),
+          '',
+        );
+      });
+
+      test('throws EmptyValueException for null with allowEmpty=false', () {
+        expect(
+          () => encodeAnyValueToString(null, allowEmpty: false),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('unsupported types', () {
+      test('throws for unsupported type', () {
+        expect(
+          () => encodeAnyValueToString(Object(), allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for List', () {
+        expect(
+          () => encodeAnyValueToString([1, 2, 3], allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for Map', () {
+        expect(
+          () => encodeAnyValueToString({'a': 'b'}, allowEmpty: true),
           throwsA(isA<EncodingException>()),
         );
       });

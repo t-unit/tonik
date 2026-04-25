@@ -1372,7 +1372,7 @@ void main() {
           package: 'my_package',
           useImmutableCollections: true,
         ).accept(emitter).toString(),
-        'value == null ? null : IMap(value.decodeJsonMap((v) => v.decodeJsonString()))',
+        '''value == null ? null : IMap(value.decodeJsonMap((v) => v.decodeJsonString()))''',
       );
     });
 
@@ -1394,7 +1394,7 @@ void main() {
           useImmutableCollections: true,
         ).accept(emitter).toString(),
         equals(
-          'IList(value.decodeJsonList<Object?>().map((e) => IList(e.decodeJsonList<String>())).toList())',
+          '''IList(value.decodeJsonList<Object?>().map((e) => IList(e.decodeJsonList<String>())).toList())''',
         ),
       );
     });

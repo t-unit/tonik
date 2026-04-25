@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:test/test.dart';
@@ -157,6 +158,33 @@ void main() {
 
       expect(file.toString(), contains('TonikFilePath'));
       expect(file.toString(), contains('/tmp/photo.jpg'));
+    });
+  });
+
+  group('toBase64String', () {
+    test('returns base64-encoded string for TonikFileBytes', () {
+      // "Hello" in UTF-8
+      const file = TonikFileBytes([72, 101, 108, 108, 111]);
+      expect(file.toBase64String(), base64Encode([72, 101, 108, 108, 111]));
+    });
+
+    test('returns base64-encoded string for TonikFilePath', () {
+      final tempFile =
+          File('${Directory.systemTemp.path}/tonik_base64_test.txt')
+            ..writeAsBytesSync([72, 101, 108, 108, 111]);
+      addTearDown(() {
+        if (tempFile.existsSync()) {
+          tempFile.deleteSync();
+        }
+      });
+
+      final file = TonikFilePath(tempFile.path);
+      expect(file.toBase64String(), base64Encode([72, 101, 108, 108, 111]));
+    });
+
+    test('returns empty base64 string for empty bytes', () {
+      const file = TonikFileBytes([]);
+      expect(file.toBase64String(), base64Encode([]));
     });
   });
 

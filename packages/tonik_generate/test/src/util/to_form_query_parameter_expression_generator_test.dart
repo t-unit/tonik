@@ -107,7 +107,7 @@ void main() {
     });
 
     group('MapModel', () {
-      test('generates encoding exception for MapModel', () {
+      test('generates form encoding for MapModel with StringModel values', () {
         final parameter = createParameter(
           name: 'mapParam',
           rawName: 'mapParam',
@@ -125,20 +125,97 @@ void main() {
         );
 
         final generated = emitCodes(codes);
+        final expected = format(r'''
+          test() {
+            _$entries.add((
+              name: r'mapParam',
+              value: mapParam.toForm(explode: false, allowEmpty: true),
+            ));
+          }
+        ''');
 
         expect(
           collapseWhitespace(generated),
-          contains(
-            collapseWhitespace(
-              '''throw _i1.EncodingException('Map types cannot be form query encoded.')''',
-            ),
+          collapseWhitespace(expected),
+        );
+      });
+
+      test('generates form encoding for MapModel with IntegerModel values', () {
+        final parameter = createParameter(
+          name: 'mapParam',
+          rawName: 'mapParam',
+          model: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
           ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'mapParam',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+        final expected = format(r'''
+          test() {
+            _$entries.add((
+              name: r'mapParam',
+              value: mapParam
+                  .map((k, v) => _i1.MapEntry(k, v.toString()))
+                  .toForm(explode: false, allowEmpty: true),
+            ));
+          }
+        ''');
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expected),
+        );
+      });
+
+      test('generates encoding exception for MapModel with ClassModel values',
+          () {
+        final parameter = createParameter(
+          name: 'mapParam',
+          rawName: 'mapParam',
+          model: MapModel(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'User',
+              properties: [],
+              context: context,
+            ),
+            context: context,
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'mapParam',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+        final expected = format('''
+          test() {
+            throw _i1.EncodingException(
+              'Map with complex value types cannot be form query encoded.',
+            );
+          }
+        ''');
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expected),
         );
       });
     });
 
     group('unsupported model types generate runtime throws', () {
-      test('Base64Model generates encoding exception', () {
+      test('Base64Model generates toBase64String form encoding', () {
         final parameter = createParameter(
           name: 'base64Param',
           rawName: 'base64Param',
@@ -153,14 +230,21 @@ void main() {
         );
 
         final generated = emitCodes(codes);
+        final expected = format(r'''
+          test() {
+            _$entries.add((
+              name: r'base64Param',
+              value: base64Param.toBase64String().toForm(
+                    explode: false,
+                    allowEmpty: true,
+                  ),
+            ));
+          }
+        ''');
 
         expect(
           collapseWhitespace(generated),
-          contains(
-            collapseWhitespace(
-              '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
-            ),
-          ),
+          collapseWhitespace(expected),
         );
       });
 
@@ -249,7 +333,7 @@ void main() {
       );
 
       test(
-        'List with Base64Model content generates encoding exception',
+        'List with Base64Model content generates toBase64String encoding',
         () {
           final parameter = createParameter(
             name: 'base64ListParam',
@@ -268,14 +352,21 @@ void main() {
           );
 
           final generated = emitCodes(codes);
+          final expected = format(r'''
+            test() {
+              _$entries.add((
+                name: r'base64ListParam',
+                value: base64ListParam
+                    .map((e) => e.toBase64String())
+                    .toList()
+                    .toForm(explode: false, allowEmpty: true),
+              ));
+            }
+          ''');
 
           expect(
             collapseWhitespace(generated),
-            contains(
-              collapseWhitespace(
-                '''throw _i1.EncodingException('Binary data cannot be form-encoded.')''',
-              ),
-            ),
+            collapseWhitespace(expected),
           );
         },
       );

@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
 Expression buildLabelParameterExpression(
   Expression valueExpression,
@@ -53,11 +54,27 @@ Expression buildLabelParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
+    Base64Model() => (isNullable
+            ? valueExpression.nullSafeProperty('toBase64String')
+            : valueExpression.property('toBase64String'))
+        .call([])
+        .property('toLabel')
+        .call(
+          [],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+          },
+        ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be label-encoded',
     ),
-    MapModel() => generateEncodingExceptionExpression(
-      'Map types cannot be label-encoded.',
+    MapModel() => _buildMapLabelExpression(
+      valueExpression,
+      model,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
     ),
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for label encoding.',
@@ -152,6 +169,37 @@ Expression _buildListLabelExpression(
               'alreadyEncoded': literalTrue,
             },
           ),
+    Base64Model() => listMapAccess
+        .call([
+          Method(
+            (b) => b
+              ..requiredParameters.add(
+                Parameter((b) => b..name = 'e'),
+              )
+              ..body = refer('e')
+                  .property('toBase64String')
+                  .call([])
+                  .code,
+          ).closure,
+        ])
+        .property('toList')
+        .call([])
+        .property('toLabel')
+        .call(
+          [],
+          {
+            'explode': explode,
+            'allowEmpty': allowEmpty,
+            'alreadyEncoded': literalTrue,
+          },
+        ),
+    MapModel() => _buildListMapContentLabelExpression(
+      valueExpression,
+      contentModel,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
+    ),
     ClassModel() || ListModel() => listPropertyAccess.call(
       [],
       {
@@ -166,6 +214,93 @@ Expression _buildListLabelExpression(
       'Unsupported list content type for label encoding.',
     ),
   };
+}
+
+Expression _buildMapLabelExpression(
+  Expression valueExpression,
+  MapModel model, {
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  final converted = buildMapToStringMapExpression(
+    valueExpression,
+    model,
+    isNullable: isNullable,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'Map with complex value types cannot be label-encoded.',
+    );
+  }
+
+  final toLabelAccess = (isNullable && converted == valueExpression)
+      ? converted.nullSafeProperty('toLabel')
+      : converted.property('toLabel');
+
+  return toLabelAccess.call(
+    [],
+    {
+      'explode': explode,
+      'allowEmpty': allowEmpty,
+    },
+  );
+}
+
+Expression _buildListMapContentLabelExpression(
+  Expression valueExpression,
+  MapModel contentModel, {
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  final converted = buildMapToStringMapExpression(
+    refer('e'),
+    contentModel,
+    isNullable: false,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'List of maps with complex value types cannot be label-encoded.',
+    );
+  }
+
+  final listMapAccess = isNullable
+      ? valueExpression.nullSafeProperty('map')
+      : valueExpression.property('map');
+
+  return listMapAccess
+      .call([
+        Method(
+          (b) => b
+            ..requiredParameters.add(
+              Parameter((b) => b..name = 'e'),
+            )
+            ..body = converted
+                .property('toLabel')
+                .call(
+                  [],
+                  {
+                    'explode': explode,
+                    'allowEmpty': allowEmpty,
+                  },
+                )
+                .code,
+        ).closure,
+      ])
+      .property('toList')
+      .call([])
+      .property('toLabel')
+      .call(
+        [],
+        {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+          'alreadyEncoded': literalTrue,
+        },
+      );
 }
 
 Expression _buildAnyModelLabelExpression(

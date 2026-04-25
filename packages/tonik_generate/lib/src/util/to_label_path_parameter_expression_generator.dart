@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
 /// Generates an expression for encoding a path parameter using label style.
 ///
@@ -45,13 +46,84 @@ Expression buildToLabelPathParameterExpression(
       });
     }
 
-    if (contentModel is BinaryModel || contentModel is Base64Model) {
+    if (contentModel is Base64Model) {
+      return valueRef
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e')
+                    .property('toBase64String')
+                    .call([])
+                    .code,
+          ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toLabel')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          );
+    }
+
+    if (contentModel is BinaryModel) {
       return generateEncodingExceptionExpression(
         'Binary data cannot be label-encoded',
       );
     }
 
-    if (contentModel is ClassModel || contentModel is MapModel) {
+    if (contentModel is MapModel) {
+      final converted = buildMapToStringMapExpression(
+        refer('e'),
+        contentModel,
+        isNullable: false,
+      );
+
+      if (converted == null) {
+        return generateEncodingExceptionExpression(
+          'Label encoding does not support arrays of maps with complex values',
+        );
+      }
+
+      return valueRef
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = converted
+                    .property('toLabel')
+                    .call(
+                      [],
+                      {'explode': explode, 'allowEmpty': allowEmpty},
+                    )
+                    .code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toLabel')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          );
+    }
+
+    if (contentModel is ClassModel) {
       return generateEncodingExceptionExpression(
         'Label encoding does not support arrays of complex types',
       );
@@ -116,10 +188,40 @@ Expression buildToLabelPathParameterExpression(
         );
   }
 
+  if (model is Base64Model) {
+    return valueRef
+        .property('toBase64String')
+        .call([])
+        .property('toLabel')
+        .call([], {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+        });
+  }
+
   if (model is BinaryModel) {
     return generateEncodingExceptionExpression(
       'Binary data cannot be label-encoded',
     );
+  }
+
+  if (model is MapModel) {
+    final converted = buildMapToStringMapExpression(
+      valueRef,
+      model,
+      isNullable: false,
+    );
+
+    if (converted == null) {
+      return generateEncodingExceptionExpression(
+        'Map with complex value types cannot be label-encoded.',
+      );
+    }
+
+    return converted.property('toLabel').call([], {
+      'explode': explode,
+      'allowEmpty': allowEmpty,
+    });
   }
 
   return valueRef.property('toLabel').call([], {
