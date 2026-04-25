@@ -478,7 +478,8 @@ class OptionsGenerator {
         // BinaryModel, NeverModel) cannot be form-encoded.
         bodyStatements.add(
           generateEncodingExceptionExpression(
-            'Map with complex value types cannot be form-encoded as a cookie.',
+            'Map with complex value types cannot be form-encoded '
+            'for cookie $rawName',
           ).statement,
         );
         return;

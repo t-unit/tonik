@@ -1640,7 +1640,7 @@ void main() {
         contains(
           collapseWhitespace('''
             throw EncodingException(
-              'Map with complex value types cannot be form-encoded as a cookie.',
+              'Map with complex value types cannot be form-encoded for cookie data',
             );
           '''),
         ),

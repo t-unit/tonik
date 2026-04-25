@@ -578,6 +578,62 @@ void main() {
     });
   });
 
+  group('map cookies', () {
+    test('map with string values', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testMapStringCookie(
+        labels: {'color': 'blue', 'size': 'large'},
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'labels=color=blue&size=large');
+    });
+
+    test('map with integer values', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testMapIntegerCookie(
+        prefs: {'volume': 80, 'brightness': 50},
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'prefs=volume=80&brightness=50');
+    });
+
+    test('map with single entry', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testMapIntegerCookie(prefs: {'volume': 80});
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'prefs=volume=80');
+    });
+
+    test('empty map', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testMapIntegerCookie(prefs: {});
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'prefs=');
+    });
+
+    test('optional map when provided', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testOptionalMapCookie(
+        settings: {'timeout': 30},
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'settings=timeout=30');
+    });
+
+    test('optional map when not provided', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testOptionalMapCookie();
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), isNull);
+    });
+  });
+
   group('nested object cookies', () {
     test('nested object cookie returns encoding error', () async {
       final api = buildCookiesApi(responseStatus: '204');
