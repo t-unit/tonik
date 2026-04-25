@@ -1009,6 +1009,163 @@ paths:
               schema:
                 $ref: '#/components/schemas/PriorityEnum'
 
+  # =============================================================================
+  # MAP PARAMETERS - SIMPLE STYLE
+  # =============================================================================
+
+  /map/string/{values}:
+    get:
+      operationId: testMapStringInPath
+      tags:
+        - simple-encoding
+      summary: Test map with string values in path parameter
+      parameters:
+        - name: values
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+
+  /map/integer/{values}:
+    get:
+      operationId: testMapIntegerInPath
+      tags:
+        - simple-encoding
+      summary: Test map with integer values in path parameter
+      parameters:
+        - name: values
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+      responses:
+        '200':
+          description: OK
+
+  /map/datetime/{values}:
+    get:
+      operationId: testMapDateTimeInPath
+      tags:
+        - simple-encoding
+      summary: Test map with datetime values in path parameter
+      parameters:
+        - name: values
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+              format: date-time
+      responses:
+        '200':
+          description: OK
+
+  /headers/roundtrip/maps:
+    get:
+      operationId: testHeaderRoundtripMaps
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for map types in headers
+      description: Tests encoding and decoding of map parameters with various value types
+      parameters:
+        - name: X-Map-String
+          in: header
+          style: simple
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: X-Map-Integer
+          in: header
+          style: simple
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+        - name: X-Map-DateTime
+          in: header
+          style: simple
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+              format: date-time
+      responses:
+        '200':
+          description: Echoed map headers
+          headers:
+            X-Map-String:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+            X-Map-Integer:
+              schema:
+                type: object
+                additionalProperties:
+                  type: integer
+            X-Map-DateTime:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+                  format: date-time
+
+  # =============================================================================
+  # BASE64 PARAMETERS - SIMPLE STYLE
+  # =============================================================================
+
+  /base64/{fileData}:
+    get:
+      operationId: testBase64InPath
+      tags:
+        - simple-encoding
+      summary: Test base64 encoded binary data in path parameter
+      parameters:
+        - name: fileData
+          in: path
+          style: simple
+          required: true
+          schema:
+            type: string
+            format: byte
+      responses:
+        '200':
+          description: OK
+
+  /headers/roundtrip/base64:
+    get:
+      operationId: testHeaderRoundtripBase64
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for base64 encoded binary data in headers
+      parameters:
+        - name: X-File-Data
+          in: header
+          style: simple
+          schema:
+            type: string
+            format: byte
+      responses:
+        '200':
+          description: Echoed base64 header
+          headers:
+            X-File-Data:
+              schema:
+                type: string
+                format: byte
+
 components:
   schemas:
     StatusEnum:

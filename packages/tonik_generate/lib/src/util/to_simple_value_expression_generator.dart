@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
 /// Creates a Dart expression that correctly serializes a path parameter
 /// to its simple parameter encoding representation.
@@ -116,10 +117,26 @@ Expression _buildSimpleSerializationExpression(
     OneOfModel() ||
     AnyOfModel() => callToSimple(receiver),
 
-    // MapModel cannot be simple-encoded
-    MapModel() => generateEncodingExceptionExpression(
-      'Map types cannot be simple-encoded.',
+    // MapModel: convert values to strings, then call toSimple
+    MapModel() => _buildMapSimpleExpression(
+      receiver,
+      model,
+      isNullable: isNullable,
+      explode: explode,
+      allowEmpty: allowEmpty,
     ),
+
+    // Base64Model: convert to base64 string, then call toSimple
+    Base64Model() => () {
+      final base64Expr = useNullAware
+          ? receiver.nullSafeProperty('toBase64String').call([])
+          : receiver.property('toBase64String').call([]);
+      final args = <String, Expression>{
+        'explode': literalBool(explode),
+        'allowEmpty': literalBool(allowEmpty),
+      };
+      return base64Expr.property('toSimple').call([], args);
+    }(),
 
     // Lists need special handling
     ListModel() => _handleListExpression(
@@ -258,8 +275,133 @@ Expression _handleListExpression(
 
     AnyModel() => callToSimpleOnList(receiver), // Pass through list as-is
 
+    // Base64Model: each element → toBase64String(), then list toSimple
+    Base64Model() => () {
+      final mapClosure = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+          ..body = refer('e').property('toBase64String').call([]).code,
+      ).closure;
+
+      final mappedList = isNullable
+          ? receiver
+                .nullSafeProperty('map')
+                .call([mapClosure])
+                .property('toList')
+                .call([])
+          : receiver
+                .property('map')
+                .call([mapClosure])
+                .property('toList')
+                .call([]);
+
+      return mappedList.property('toSimple').call([], {
+        ...toSimpleArgs,
+        'alreadyEncoded': literalBool(true),
+      });
+    }(),
+
+    // MapModel: each element → convert to string map, then simple-encode
+    MapModel() => _buildListMapContentSimpleExpression(
+      receiver,
+      contentModel,
+      isNullable: isNullable,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
+
     _ => generateEncodingExceptionExpression(
       'Unsupported content model for simple encoding.',
     ),
   };
+}
+
+Expression _buildMapSimpleExpression(
+  Expression receiver,
+  MapModel model, {
+  required bool isNullable,
+  required bool explode,
+  required bool allowEmpty,
+}) {
+  final converted = buildMapToStringMapExpression(
+    receiver,
+    model,
+    isNullable: isNullable,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'Map with complex value types cannot be simple-encoded.',
+    );
+  }
+
+  // For StringModel values, converted == receiver (identity).
+  // For other types, converted is the .map() call result.
+  final toSimpleAccess = (isNullable && converted == receiver)
+      ? converted.nullSafeProperty('toSimple')
+      : converted.property('toSimple');
+
+  return toSimpleAccess.call(
+    [],
+    {
+      'explode': literalBool(explode),
+      'allowEmpty': literalBool(allowEmpty),
+    },
+  );
+}
+
+Expression _buildListMapContentSimpleExpression(
+  Expression receiver,
+  MapModel contentModel, {
+  required bool isNullable,
+  required bool explode,
+  required bool allowEmpty,
+}) {
+  final converted = buildMapToStringMapExpression(
+    refer('e'),
+    contentModel,
+    isNullable: false,
+  );
+
+  if (converted == null) {
+    return generateEncodingExceptionExpression(
+      'List of maps with complex value types cannot be simple-encoded.',
+    );
+  }
+
+  final listMapAccess = isNullable
+      ? receiver.nullSafeProperty('map')
+      : receiver.property('map');
+
+  // Each element is converted to Map<String, String>, then simple-encoded.
+  return listMapAccess
+      .call([
+        Method(
+          (b) => b
+            ..requiredParameters.add(
+              Parameter((b) => b..name = 'e'),
+            )
+            ..body = converted
+                .property('toSimple')
+                .call(
+                  [],
+                  {
+                    'explode': literalBool(explode),
+                    'allowEmpty': literalBool(allowEmpty),
+                  },
+                )
+                .code,
+        ).closure,
+      ])
+      .property('toList')
+      .call([])
+      .property('toSimple')
+      .call(
+        [],
+        {
+          'explode': literalBool(explode),
+          'allowEmpty': literalBool(allowEmpty),
+          'alreadyEncoded': literalBool(true),
+        },
+      );
 }

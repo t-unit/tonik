@@ -1432,6 +1432,130 @@ paths:
         '204':
           description: OK
 
+  # =============================================================================
+  # FORM STYLE - MAP PARAMETERS
+  # =============================================================================
+
+  /form-map:
+    get:
+      operationId: testFormMap
+      tags:
+        - query
+      summary: Test form-style map query parameters (explode=false)
+      description: Demonstrates form-style map query parameter encoding
+      parameters:
+        - name: mapString
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: mapInteger
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+        - name: mapDateTime
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+              format: date-time
+      responses:
+        '204':
+          description: OK
+
+  /form-map-explode:
+    get:
+      operationId: testFormMapExplode
+      tags:
+        - query
+      summary: Test form-style map query parameters (explode=true)
+      description: Demonstrates form-style map query parameter encoding with explode
+      parameters:
+        - name: mapString
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: mapInteger
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+      responses:
+        '204':
+          description: OK
+
+  # =============================================================================
+  # DEEP OBJECT STYLE - MAP PARAMETERS
+  # =============================================================================
+
+  /deepObject-map:
+    get:
+      operationId: testDeepObjectMap
+      tags:
+        - query
+      summary: Test deepObject-style map query parameters
+      description: Demonstrates deepObject-style map query parameter encoding
+      parameters:
+        - name: mapString
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: mapInteger
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+      responses:
+        '204':
+          description: OK
+
+  # =============================================================================
+  # BASE64 QUERY PARAMETERS
+  # =============================================================================
+
+  /form-base64:
+    get:
+      operationId: testFormBase64
+      tags:
+        - query
+      summary: Test form-style base64 query parameter
+      description: Demonstrates form-style base64 encoded binary data in query
+      parameters:
+        - name: fileData
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+            format: byte
+      responses:
+        '204':
+          description: OK
+
 components:
   schemas:
     Class:
