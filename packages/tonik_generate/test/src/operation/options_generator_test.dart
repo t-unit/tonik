@@ -1385,6 +1385,268 @@ void main() {
       );
     });
 
+    test('generates Cookie header for map cookie with string values', () {
+      final cookieParam = CookieParameterObject(
+        name: 'labels',
+        rawName: 'labels',
+        description: 'Labels map',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withMapStringCookie',
+        context: context,
+        summary: 'With map string cookie',
+        description: 'Operation with map string cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/map-string-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'labels', parameter: cookieParam),
+      ]);
+
+      // Check method has required Map<String, String> parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'labels',
+      );
+      expect(param.required, isTrue);
+      expect(
+        param.type?.accept(emitter).toString(),
+        'Map<String,String>',
+      );
+
+      // For string values, the map is passed directly to toForm.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(
+              [r'labels=', labels.toForm(explode: false, allowEmpty: true)].join(),
+            );
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header for map cookie with integer values', () {
+      final cookieParam = CookieParameterObject(
+        name: 'prefs',
+        rawName: 'prefs',
+        description: 'Preferences map',
+        isRequired: true,
+        isDeprecated: false,
+        explode: true,
+        model: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withMapIntCookie',
+        context: context,
+        summary: 'With map int cookie',
+        description: 'Operation with map int cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/map-int-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'prefs', parameter: cookieParam),
+      ]);
+
+      // Check method has required Map<String, int> parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'prefs',
+      );
+      expect(param.required, isTrue);
+      expect(
+        param.type?.accept(emitter).toString(),
+        'Map<String,int>',
+      );
+
+      // For integer values, the map is converted to Map<String, String> first.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(
+              [
+                r'prefs=',
+                prefs
+                    .map((k, v) => MapEntry(k, v.toString()))
+                    .toForm(explode: true, allowEmpty: true),
+              ].join(),
+            );
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('generates Cookie header for optional map cookie', () {
+      final cookieParam = CookieParameterObject(
+        name: 'settings',
+        rawName: 'settings',
+        description: 'Settings map',
+        isRequired: false,
+        isDeprecated: false,
+        explode: false,
+        model: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withOptionalMapCookie',
+        context: context,
+        summary: 'With optional map cookie',
+        description: 'Operation with optional map cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/optional-map-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'settings', parameter: cookieParam),
+      ]);
+
+      // Check method has optional nullable Map<String, int>? parameter.
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'settings',
+      );
+      expect(param.required, isFalse);
+      expect(
+        param.type?.accept(emitter).toString(),
+        'Map<String,int>?',
+      );
+
+      // Optional map cookie wraps in null check.
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace(r'''
+            final _$cookieParts = <String>[];
+            if (settings != null) {
+              _$cookieParts.add(
+                [
+                  r'settings=',
+                  settings
+                      .map((k, v) => MapEntry(k, v.toString()))
+                      .toForm(explode: false, allowEmpty: true),
+                ].join(),
+              );
+            }
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('generates throw for map cookie with unsupported value type', () {
+      final cookieParam = CookieParameterObject(
+        name: 'data',
+        rawName: 'data',
+        description: 'Data map',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: MapModel(
+          valueModel: ClassModel(
+            name: 'Nested',
+            properties: const [],
+            context: context,
+            isDeprecated: false,
+          ),
+          context: context,
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withUnsupportedMapCookie',
+        context: context,
+        summary: 'With unsupported map cookie',
+        description: 'Operation with unsupported map cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/unsupported-map-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'data', parameter: cookieParam),
+      ]);
+
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            throw EncodingException(
+              'Map with complex value types cannot be form-encoded as a cookie.',
+            );
+          '''),
+        ),
+      );
+    });
+
     group('multipart content type', () {
       test('sets contentType to null for single multipart content type', () {
         final requestBody = RequestBodyObject(

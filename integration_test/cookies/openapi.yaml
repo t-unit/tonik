@@ -565,6 +565,72 @@ paths:
         '204':
           description: No content
 
+  # Map cookie with integer values (additionalProperties)
+  /map-integer-cookie:
+    get:
+      operationId: testMapIntegerCookie
+      tags:
+        - cookies
+      summary: Test map cookie with integer values
+      description: Demonstrates a map cookie with additionalProperties integer values
+      parameters:
+        - name: prefs
+          in: cookie
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Map cookie with string values (additionalProperties)
+  /map-string-cookie:
+    get:
+      operationId: testMapStringCookie
+      tags:
+        - cookies
+      summary: Test map cookie with string values
+      description: Demonstrates a map cookie with additionalProperties string values
+      parameters:
+        - name: labels
+          in: cookie
+          required: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Optional map cookie with integer values
+  /optional-map-cookie:
+    get:
+      operationId: testOptionalMapCookie
+      tags:
+        - cookies
+      summary: Test optional map cookie
+      description: Demonstrates an optional map cookie parameter
+      parameters:
+        - name: settings
+          in: cookie
+          required: false
+          schema:
+            type: object
+            additionalProperties:
+              type: integer
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
   # Nested object cookie
   /nested-object-cookie:
     get:
