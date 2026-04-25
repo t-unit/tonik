@@ -432,6 +432,43 @@ class OptionsGenerator {
         return;
       }
 
+      if (contentModel is AnyModel) {
+        bodyStatements.add(
+          refer(r'_$cookieParts').property('add').call([
+            literalList([
+              specLiteralString('$rawName='),
+              refer(paramName)
+                  .property('map')
+                  .call([
+                    Method(
+                      (b) => b
+                        ..lambda = true
+                        ..requiredParameters.add(
+                          Parameter((b) => b..name = 'e'),
+                        )
+                        ..body = refer(
+                          'encodeAnyToForm',
+                          'package:tonik_util/tonik_util.dart',
+                        ).call([refer('e')], {
+                          'explode': literalBool(explode),
+                          'allowEmpty': literalBool(true),
+                        }).code,
+                    ).closure,
+                  ])
+                  .property('toList')
+                  .call([])
+                  .property('toForm')
+                  .call([], {
+                    'explode': literalBool(explode),
+                    'allowEmpty': literalBool(true),
+                    'alreadyEncoded': literalBool(true),
+                  }),
+            ]).property('join').call([]),
+          ]).statement,
+        );
+        return;
+      }
+
       bodyStatements.add(
         refer(r'_$cookieParts').property('add').call([
           literalList([
@@ -486,6 +523,26 @@ class OptionsGenerator {
       }
 
       final encodedValue = converted.property('toForm').call([], {
+        'explode': literalBool(explode),
+        'allowEmpty': literalBool(true),
+      });
+      bodyStatements.add(
+        refer(r'_$cookieParts').property('add').call([
+          literalList([
+            specLiteralString('$rawName='),
+            encodedValue,
+          ]).property('join').call([]),
+        ]).statement,
+      );
+      return;
+    }
+
+    // AnyModel: use encodeAnyToForm for runtime type dispatch.
+    if (model is AnyModel) {
+      final encodedValue = refer(
+        'encodeAnyToForm',
+        'package:tonik_util/tonik_util.dart',
+      ).call([refer(paramName)], {
         'explode': literalBool(explode),
         'allowEmpty': literalBool(true),
       });

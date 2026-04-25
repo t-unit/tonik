@@ -511,5 +511,70 @@ void main() {
         },
       );
     });
+
+    group('AnyModel nullability', () {
+      late Context context;
+      late NameManager nameManager;
+      const package = 'package:test/test.dart';
+
+      setUp(() {
+        context = Context.initial();
+        nameManager = NameManager(
+          generator: NameGenerator(),
+          stableModelSorter: StableModelSorter(),
+        );
+      });
+
+      test('returns nullable Object for AnyModel by default', () {
+        final model = AnyModel(context: context);
+
+        final result = typeReference(model, nameManager, package);
+
+        expect(result.symbol, 'Object');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isTrue);
+      });
+
+      test(
+        'returns nullable Object for AnyModel with isNullableOverride true',
+        () {
+          final model = AnyModel(context: context);
+
+          final result = typeReference(
+            model,
+            nameManager,
+            package,
+            isNullableOverride: true,
+          );
+
+          expect(result.symbol, 'Object');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isTrue);
+        },
+      );
+
+      test(
+        'returns nullable Object for AnyModel in ListModel content',
+        () {
+          final anyModel = AnyModel(context: context);
+          final model = ListModel(
+            content: anyModel,
+            context: context,
+          );
+
+          final result = typeReference(model, nameManager, package);
+
+          expect(result.symbol, 'List');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isFalse);
+          expect(result.types, hasLength(1));
+
+          final innerType = result.types[0] as TypeReference;
+          expect(innerType.symbol, 'Object');
+          expect(innerType.url, 'dart:core');
+          expect(innerType.isNullable, isTrue);
+        },
+      );
+    });
   });
 }

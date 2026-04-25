@@ -1,4 +1,4 @@
-openapi: 3.0.4
+openapi: 3.1.0
 info:
   title: Cookie Parameters API
   description: OpenAPI specification showcasing cookie parameters
@@ -370,8 +370,9 @@ paths:
           in: cookie
           required: false
           schema:
-            type: string
-            nullable: true
+            type:
+              - string
+              - 'null'
       responses:
         '200':
           description: OK
@@ -645,6 +646,46 @@ paths:
           required: true
           schema:
             $ref: '#/components/schemas/NestedProfile'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # AnyModel cookie (schema: true — OAS 3.1 boolean schema)
+  /any-cookie:
+    get:
+      operationId: testAnyCookie
+      tags:
+        - cookies
+      summary: Test AnyModel cookie parameter
+      description: Demonstrates a cookie parameter with boolean schema true (any value)
+      parameters:
+        - name: data
+          in: cookie
+          required: true
+          schema: true
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Array of AnyModel cookie (items: true — OAS 3.1 boolean schema)
+  /array-any-cookie:
+    get:
+      operationId: testArrayAnyCookie
+      tags:
+        - cookies
+      summary: Test array of AnyModel cookie parameter
+      description: Demonstrates a cookie parameter with array of any values
+      parameters:
+        - name: items
+          in: cookie
+          required: true
+          schema:
+            type: array
+            items: true
       responses:
         '200':
           description: OK

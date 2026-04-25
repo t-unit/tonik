@@ -650,4 +650,30 @@ void main() {
       expect(error.error, isA<EncodingException>());
     });
   });
+
+  group('AnyModel cookies', () {
+    test('required AnyModel cookie with string value', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAnyCookie(data: 'hello');
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'data=hello');
+    });
+
+    test('required AnyModel cookie with integer value', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAnyCookie(data: 42);
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'data=42');
+    });
+
+    test('array of AnyModel cookie', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testArrayAnyCookie(items: ['a', 1, true]);
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'items=a,1,true');
+    });
+  });
 }

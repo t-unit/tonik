@@ -1647,6 +1647,243 @@ void main() {
       );
     });
 
+    test(
+      'generates Cookie header for required AnyModel cookie parameter',
+      () {
+        final cookieParam = CookieParameterObject(
+          name: 'data',
+          rawName: 'data',
+          description: 'Any data',
+          isRequired: true,
+          isDeprecated: false,
+          explode: false,
+          model: AnyModel(context: context),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'withAnyCookie',
+          context: context,
+          summary: 'With any cookie',
+          description: 'Operation with AnyModel cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/any-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'data', parameter: cookieParam),
+        ]);
+
+        // Check method has required Object? parameter.
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'data',
+        );
+        expect(param.required, isTrue);
+        expect(param.type?.accept(emitter).toString(), 'Object?');
+
+        const expectedMethod = r'''
+          Options _options({required Object? data}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(
+              [
+                r'data=',
+                encodeAnyToForm(data, explode: false, allowEmpty: true),
+              ].join(),
+            );
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates Cookie header for list of AnyModel cookie parameter',
+      () {
+        final cookieParam = CookieParameterObject(
+          name: 'items',
+          rawName: 'items',
+          description: 'List of any items',
+          isRequired: true,
+          isDeprecated: false,
+          explode: false,
+          model: ListModel(
+            content: AnyModel(context: context),
+            context: context,
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'withArrayAnyCookie',
+          context: context,
+          summary: 'With array any cookie',
+          description: 'Operation with list of AnyModel cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/array-any-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'items', parameter: cookieParam),
+        ]);
+
+        // Check method has required List<Object?> parameter.
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'items',
+        );
+        expect(param.required, isTrue);
+        expect(param.type?.accept(emitter).toString(), 'List<Object?>');
+
+        const expectedMethod = r'''
+          Options _options({required List<Object?> items}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
+            _$cookieParts.add(
+              [
+                r'items=',
+                items
+                    .map(
+                      (e) =>
+                          encodeAnyToForm(e, explode: false, allowEmpty: true),
+                    )
+                    .toList()
+                    .toForm(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    ),
+              ].join(),
+            );
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates Cookie header for optional AnyModel cookie parameter',
+      () {
+        final cookieParam = CookieParameterObject(
+          name: 'metadata',
+          rawName: 'metadata',
+          description: 'Optional any data',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: AnyModel(context: context),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'withOptionalAnyCookie',
+          context: context,
+          summary: 'With optional any cookie',
+          description: 'Operation with optional AnyModel cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-any-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'metadata', parameter: cookieParam),
+        ]);
+
+        // Check method has optional Object? parameter.
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'metadata',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.accept(emitter).toString(), 'Object?');
+
+        const expectedMethod = r'''
+          Options _options({Object? metadata}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
+            if (metadata != null) {
+              _$cookieParts.add(
+                [
+                  r'metadata=',
+                  encodeAnyToForm(metadata, explode: false, allowEmpty: true),
+                ].join(),
+              );
+            }
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
     group('multipart content type', () {
       test('sets contentType to null for single multipart content type', () {
         final requestBody = RequestBodyObject(
