@@ -2941,4 +2941,636 @@ String toLabel({required bool explode, required bool allowEmpty}) {
       },
     );
   });
+
+  group('AnyModel in AnyOf', () {
+    ClassModel makeDetailedFilter() => ClassModel(
+      isDeprecated: false,
+      name: 'DetailedFilter',
+      properties: [
+        Property(
+          name: 'name',
+          model: StringModel(context: context),
+          isRequired: false,
+          isNullable: false,
+          isDeprecated: false,
+        ),
+      ],
+      context: context,
+    );
+
+    AnyOfModel makeMixedFilter() => AnyOfModel(
+      isDeprecated: false,
+      name: 'MixedFilter',
+      models: {
+        (discriminatorValue: null, model: makeDetailedFilter()),
+        (discriminatorValue: null, model: AnyModel(context: context)),
+      },
+      context: context,
+    );
+
+    test('generates Object? field for AnyModel variant', () {
+      final klass = generator.generateClass(makeMixedFilter());
+
+      final fieldNames = klass.fields.map((f) => f.name).toList();
+      expect(fieldNames, containsAll(['object', 'detailedFilter']));
+
+      final objectField = klass.fields.firstWhere((f) => f.name == 'object');
+      expect(objectField.type?.accept(emitter).toString(), 'Object?');
+    });
+
+    test(
+      'currentEncodingShape throws EncodingException for AnyModel field',
+      () {
+        final klass = generator.generateClass(makeMixedFilter());
+        final method = klass.methods.firstWhere(
+          (m) => m.name == 'currentEncodingShape',
+        );
+        final generated = format(method.accept(emitter).toString());
+
+        const expected = r'''
+EncodingShape get currentEncodingShape {
+  final _$shapes = <EncodingShape>{};
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot determine encoding shape',
+    );
+  }
+  if (detailedFilter != null) {
+    _$shapes.add(detailedFilter!.currentEncodingShape);
+  }
+  if (_$shapes.isEmpty) {
+    throw StateError('At least one field must be non-null in anyOf');
+  }
+  if (_$shapes.length > 1) return EncodingShape.mixed;
+  return _$shapes.first;
+}
+''';
+
+        expect(generated.trim(), format(expected).trim());
+      },
+    );
+
+    test('parameterProperties throws EncodingException for AnyModel field', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'parameterProperties',
+      );
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+}) {
+  final _$mapValues = <Map<String, String>>[];
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be parameter encoded',
+    );
+  }
+  if (detailedFilter != null) {
+    _$mapValues.add(
+      detailedFilter!.parameterProperties(
+        allowEmpty: allowEmpty,
+        allowLists: allowLists,
+      ),
+    );
+  }
+  final _$map = <String, String>{};
+  for (final _$m in _$mapValues) {
+    _$map.addAll(_$m);
+  }
+  return _$map;
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
+
+    test('toSimple throws EncodingException for AnyModel field', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final method = klass.methods.firstWhere((m) => m.name == 'toSimple');
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = r'''
+@override
+String toSimple({required bool explode, required bool allowEmpty}) {
+  final _$values = <String>{};
+  final _$mapValues = <Map<String, String>>[];
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be simple-encoded',
+    );
+  }
+  if (detailedFilter != null) {
+    final _$detailedFilterSimple = detailedFilter!.parameterProperties(
+      allowEmpty: allowEmpty,
+    );
+    _$mapValues.add(_$detailedFilterSimple);
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+    throw EncodingException(
+      r'Ambiguous anyOf simple encoding for MixedFilter: mixing simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf simple encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  } else {
+    final _$map = <String, String>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+    );
+  }
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
+
+    test('toForm throws EncodingException for AnyModel field', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final method = klass.methods.firstWhere((m) => m.name == 'toForm');
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = r'''
+@override
+String toForm({
+  required bool explode,
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+}) {
+  final _$values = <String>{};
+  final _$mapValues = <Map<String, String>>[];
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be form-encoded',
+    );
+  }
+  if (detailedFilter != null) {
+    final _$detailedFilterForm = detailedFilter!.parameterProperties(
+      allowEmpty: allowEmpty,
+    );
+    _$mapValues.add(_$detailedFilterForm);
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+    throw EncodingException(
+      r'Ambiguous anyOf form encoding for MixedFilter: mixing simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf form encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  } else {
+    final _$map = <String, String>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
+
+    test('toLabel throws EncodingException for AnyModel field', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final method = klass.methods.firstWhere((m) => m.name == 'toLabel');
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = r'''
+@override
+String toLabel({required bool explode, required bool allowEmpty}) {
+  final _$values = <String>{};
+  final _$mapValues = <Map<String, String>>[];
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be label-encoded',
+    );
+  }
+  if (detailedFilter != null) {
+    final _$detailedFilterLabel = detailedFilter!.parameterProperties(
+      allowEmpty: allowEmpty,
+    );
+    _$mapValues.add(_$detailedFilterLabel);
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+    throw EncodingException(
+      r'Ambiguous anyOf label encoding for MixedFilter: mixing simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf label encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  } else {
+    final _$map = <String, String>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map.toLabel(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+    );
+  }
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
+
+    test('toMatrix throws EncodingException for AnyModel field', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final method = klass.methods.firstWhere((m) => m.name == 'toMatrix');
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = r'''
+@override
+String toMatrix(
+  String paramName, {
+  required bool explode,
+  required bool allowEmpty,
+}) {
+  final _$values = <String>{};
+  final _$mapValues = <Map<String, String>>[];
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be matrix-encoded',
+    );
+  }
+  if (detailedFilter != null) {
+    final _$detailedFilterMatrix = detailedFilter!.parameterProperties(
+      allowEmpty: allowEmpty,
+    );
+    _$mapValues.add(_$detailedFilterMatrix);
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+    throw EncodingException(
+      r'Ambiguous anyOf matrix encoding for MixedFilter: mixing simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf matrix encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  } else {
+    final _$map = <String, String>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map.toMatrix(
+      paramName,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+    );
+  }
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
+
+    test('uriEncode throws EncodingException for AnyModel field', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final method = klass.methods.firstWhere((m) => m.name == 'uriEncode');
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = '''
+@override
+String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of MixedFilter cannot be URI encoded',
+    );
+  }
+  if (detailedFilter != null) {
+    throw EncodingException(
+      r'Cannot uriEncode MixedFilter: contains complex type',
+    );
+  }
+  throw EncodingException(r'Cannot uriEncode MixedFilter: no value set');
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
+
+    test('toJson uses encodeAnyToJson for AnyModel field', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final method = klass.methods.firstWhere((m) => m.name == 'toJson');
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = r'''
+@override
+Object? toJson() {
+  final _$values = <Object?>{};
+  final _$mapValues = <Map<String, Object?>>[];
+  if (object != null) {
+    final Object? _$objectJson = encodeAnyToJson(object!);
+    if (_$objectJson is Map<String, Object?>) {
+      _$mapValues.add(_$objectJson);
+    } else {
+      _$values.add(_$objectJson);
+    }
+  }
+  if (detailedFilter != null) {
+    final Object? _$detailedFilterJson = detailedFilter!.toJson();
+    if (_$detailedFilterJson is Map<String, Object?>) {
+      _$mapValues.add(_$detailedFilterJson);
+    } else {
+      _$values.add(_$detailedFilterJson);
+    }
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return null;
+  if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
+    throw EncodingException(
+      r'Mixed encoding not supported for MixedFilter: cannot encode both simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  }
+  if (_$mapValues.isNotEmpty) {
+    final _$map = <String, Object?>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map;
+  }
+  return null;
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
+
+    test('fromJson assigns AnyModel field as catch-all', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final ctor = klass.constructors.firstWhere(
+        (c) => c.name == 'fromJson',
+      );
+      final wrapped = Method(
+        (b) => b
+          ..name = 'wrap'
+          ..returns = refer('void')
+          ..body = ctor.body,
+      );
+      final body = format(wrapped.accept(emitter).toString());
+
+      const expected = '''
+void wrap() {
+  DetailedFilter? detailedFilter;
+
+  try {
+    detailedFilter = DetailedFilter.fromJson(json);
+  } on Object catch (_) {
+    detailedFilter = null;
+  }
+
+  Object? object;
+  if (detailedFilter == null) {
+    object = json;
+  }
+  if (detailedFilter == null && object == null) {
+    throw JsonDecodingException(
+      r'Invalid JSON for MixedFilter: all variants failed to decode',
+    );
+  }
+  return MixedFilter(object: object, detailedFilter: detailedFilter);
+}
+''';
+
+      expect(body.trim(), format(expected).trim());
+    });
+
+    test('fromSimple skips AnyModel field — passes null to constructor', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final ctor = klass.constructors.firstWhere(
+        (c) => c.name == 'fromSimple',
+      );
+      final wrapped = Method(
+        (b) => b
+          ..name = 'wrap'
+          ..returns = refer('void')
+          ..body = ctor.body,
+      );
+      final body = format(wrapped.accept(emitter).toString());
+
+      const expected = '''
+void wrap() {
+  DetailedFilter? detailedFilter;
+
+  try {
+    detailedFilter = DetailedFilter.fromSimple(value, explode: explode);
+  } on Object catch (_) {
+    detailedFilter = null;
+  }
+
+  if (detailedFilter == null) {
+    throw SimpleDecodingException(
+      r'Invalid simple value for MixedFilter: all variants failed to decode',
+    );
+  }
+  return MixedFilter(object: null, detailedFilter: detailedFilter);
+}
+''';
+
+      expect(body.trim(), format(expected).trim());
+    });
+
+    test('fromForm skips AnyModel field — passes null to constructor', () {
+      final klass = generator.generateClass(makeMixedFilter());
+      final ctor = klass.constructors.firstWhere(
+        (c) => c.name == 'fromForm',
+      );
+      final wrapped = Method(
+        (b) => b
+          ..name = 'wrap'
+          ..returns = refer('void')
+          ..body = ctor.body,
+      );
+      final body = format(wrapped.accept(emitter).toString());
+
+      const expected = '''
+void wrap() {
+  DetailedFilter? detailedFilter;
+
+  try {
+    detailedFilter = DetailedFilter.fromForm(value, explode: explode);
+  } on Object catch (_) {
+    detailedFilter = null;
+  }
+
+  if (detailedFilter == null) {
+    throw FormDecodingException(
+      r'Invalid form value for MixedFilter: all variants failed to decode',
+    );
+  }
+  return MixedFilter(object: null, detailedFilter: detailedFilter);
+}
+''';
+
+      expect(body.trim(), format(expected).trim());
+    });
+  });
+
+  group('NeverModel in AnyOf', () {
+    test('NeverModel variant produces no field on the generated class', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        name: 'DetailedFilter',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+        ],
+        context: context,
+      );
+
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'NeverFilter',
+        models: {
+          (discriminatorValue: null, model: classModel),
+          (discriminatorValue: null, model: NeverModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final fieldNames = klass.fields.map((f) => f.name).toList();
+
+      expect(fieldNames, ['detailedFilter']);
+      expect(fieldNames.contains('never'), isFalse);
+    });
+  });
+
+  group('AnyOf with only AnyModel (degenerate)', () {
+    test('generates Object? field and constructs without validation', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'OnlyAny',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final fieldNames = klass.fields.map((f) => f.name).toList();
+      expect(fieldNames, ['object']);
+      final objectField = klass.fields.firstWhere((f) => f.name == 'object');
+      expect(objectField.type?.accept(emitter).toString(), 'Object?');
+    });
+
+    test('fromJson assigns json directly to AnyModel field', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'OnlyAny',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final ctor = klass.constructors.firstWhere(
+        (c) => c.name == 'fromJson',
+      );
+      final wrapped = Method(
+        (b) => b
+          ..name = 'wrap'
+          ..returns = refer('void')
+          ..body = ctor.body,
+      );
+      final body = format(wrapped.accept(emitter).toString());
+
+      const expected = '''
+void wrap() {
+  Object? object;
+  object = json;
+
+  return OnlyAny(object: object);
+}
+''';
+
+      expect(body.trim(), format(expected).trim());
+    });
+
+    test('currentEncodingShape throws on AnyModel field, '
+        'StateError if all null', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'OnlyAny',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere(
+        (m) => m.name == 'currentEncodingShape',
+      );
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = r'''
+EncodingShape get currentEncodingShape {
+  final _$shapes = <EncodingShape>{};
+  if (object != null) {
+    throw EncodingException(
+      r'AnyModel variant of OnlyAny cannot determine encoding shape',
+    );
+  }
+  if (_$shapes.isEmpty) {
+    throw StateError('At least one field must be non-null in anyOf');
+  }
+  if (_$shapes.length > 1) return EncodingShape.mixed;
+  return _$shapes.first;
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
+  });
 }
