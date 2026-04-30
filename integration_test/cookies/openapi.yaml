@@ -693,8 +693,6 @@ paths:
           description: No content
 
   # Cookie schema is $ref -> $ref -> array of boolean.
-  # Reproduces the bug where the cookie generator skipped the list path
-  # because the model was AliasModel rather than ListModel.
   /alias-bool-list-cookie:
     get:
       operationId: testAliasBoolListCookie
@@ -715,8 +713,6 @@ paths:
           description: No content
 
   # Cookie schema is $ref -> $ref -> array of integer.
-  # Regression: List<int> has a FormBinaryEncoder extension that lets the
-  # default branch silently compile but produces wrong (binary) encoding.
   /alias-int-list-cookie:
     get:
       operationId: testAliasIntListCookie

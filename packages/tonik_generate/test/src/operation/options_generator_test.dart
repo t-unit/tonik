@@ -1965,10 +1965,6 @@ void main() {
       test(
         'alias to list of integers uses list-form encoding (not binary)',
         () {
-          // Regression: List<int> has a FormBinaryEncoder extension that
-          // accidentally compiles when the alias branch was missed, but it
-          // produces wrong output. The fix must route this through the
-          // generic list branch so each element calls .toForm individually.
           final cookieParam = CookieParameterObject(
             name: 'numbers',
             rawName: 'numbers',
@@ -2056,10 +2052,6 @@ void main() {
       test(
         'nested alias chain to list of booleans routes through list path',
         () {
-          // Reproduces the bug: FlagList -> BoolArray -> array of boolean.
-          // Without the .resolved unwrap, model is AliasModel and falls
-          // through to the .toForm() default path which has no extension on
-          // List<bool>, producing a compile error.
           final boolArray = AliasModel(
             name: 'BoolArray',
             model: ListModel(
@@ -2486,10 +2478,6 @@ void main() {
       test(
         'alias to list of strings with explode true threads explode through',
         () {
-          // Cookies default to explode: true for form style. Ensure the
-          // generated body wires the explode flag literal through to the
-          // toForm call so a regression that swaps the literal for
-          // literalBool(false) would be caught.
           final cookieParam = CookieParameterObject(
             name: 'names',
             rawName: 'names',
@@ -2568,10 +2556,6 @@ void main() {
       test(
         'alias to map with unsupported value type throws EncodingException',
         () {
-          // Covers the converted == null path inside the MapModel branch when
-          // reached via an alias. A future refactor of
-          // buildMapToStringMapExpression that quietly accepts complex value
-          // types would silently regress this.
           final cookieParam = CookieParameterObject(
             name: 'data',
             rawName: 'data',

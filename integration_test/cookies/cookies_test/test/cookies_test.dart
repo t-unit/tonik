@@ -679,8 +679,6 @@ void main() {
 
   group('alias-wrapped cookies', () {
     test('nested alias to list of booleans', () async {
-      // FlagList -> BoolArray -> array of boolean. Without alias resolution,
-      // the cookie generator produced code that did not compile.
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testAliasBoolListCookie(
         flags: [true, false, true],
@@ -691,9 +689,6 @@ void main() {
     });
 
     test('nested alias to list of integers encodes as form list', () async {
-      // NumberList -> IntArray -> array of integer. Regression: without
-      // alias resolution, this fell through to the FormBinaryEncoder path
-      // and produced incorrect encoding.
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testAliasIntListCookie(numbers: [1, 2, 3]);
 
