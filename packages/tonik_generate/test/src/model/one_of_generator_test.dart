@@ -3390,4 +3390,396 @@ bool operator ==(Object other) {
       );
     });
   });
+
+  group('Base64Model in OneOf', () {
+    test(
+      'toSimple converts Base64Model variant via toBase64String',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (discriminatorValue: null, model: Base64Model(context: context)),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final toSimpleMethod = baseClass.methods.firstWhere(
+          (m) => m.name == 'toSimple',
+        );
+        final generated = format(toSimpleMethod.accept(emitter).toString());
+
+        const expectedMethod = '''
+          @override
+          String toSimple({required bool explode, required bool allowEmpty}) {
+            return switch (this) {
+              ValueBase64(:final value) => value.toBase64String().toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              ),
+              ValueText(:final value) => value.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'toSimple wraps nullable Base64Model variant in null check',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (
+              discriminatorValue: null,
+              model: AliasModel(
+                name: 'NullableData',
+                model: Base64Model(context: context),
+                isNullable: true,
+                context: context,
+              ),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final toSimpleMethod = baseClass.methods.firstWhere(
+          (m) => m.name == 'toSimple',
+        );
+        final generated = format(toSimpleMethod.accept(emitter).toString());
+
+        const expectedMethod = '''
+          @override
+          String toSimple({required bool explode, required bool allowEmpty}) {
+            return switch (this) {
+              ValueNullableData(:final value) => value == null
+                  ? ''
+                  : value.toBase64String().toSimple(
+                      explode: explode,
+                      allowEmpty: allowEmpty,
+                    ),
+              ValueText(:final value) => value.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'toForm converts Base64Model variant via toBase64String',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (discriminatorValue: null, model: Base64Model(context: context)),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final toFormMethod = baseClass.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+        final generated = format(toFormMethod.accept(emitter).toString());
+
+        const expectedMethod = '''
+          @override
+          String toForm({
+            required bool explode,
+            required bool allowEmpty,
+            bool useQueryComponent = false,
+          }) {
+            return switch (this) {
+              ValueBase64(:final value) => value.toBase64String().toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              ),
+              ValueText(:final value) => value.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'toForm wraps nullable Base64Model variant in null check',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (
+              discriminatorValue: null,
+              model: AliasModel(
+                name: 'NullableData',
+                model: Base64Model(context: context),
+                isNullable: true,
+                context: context,
+              ),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final toFormMethod = baseClass.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+        final generated = format(toFormMethod.accept(emitter).toString());
+
+        const expectedMethod = '''
+          @override
+          String toForm({
+            required bool explode,
+            required bool allowEmpty,
+            bool useQueryComponent = false,
+          }) {
+            return switch (this) {
+              ValueNullableData(:final value) => value == null
+                  ? ''
+                  : value.toBase64String().toForm(
+                      explode: explode,
+                      allowEmpty: allowEmpty,
+                      useQueryComponent: useQueryComponent,
+                    ),
+              ValueText(:final value) => value.toForm(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'toLabel converts Base64Model variant via toBase64String',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (discriminatorValue: null, model: Base64Model(context: context)),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final toLabelMethod = baseClass.methods.firstWhere(
+          (m) => m.name == 'toLabel',
+        );
+        final generated = format(toLabelMethod.accept(emitter).toString());
+
+        const expectedMethod = '''
+          @override
+          String toLabel({required bool explode, required bool allowEmpty}) {
+            return switch (this) {
+              ValueBase64(:final value) => value.toBase64String().toLabel(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              ),
+              ValueText(:final value) => value.toLabel(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'toLabel wraps nullable Base64Model variant in null check',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (
+              discriminatorValue: null,
+              model: AliasModel(
+                name: 'NullableData',
+                model: Base64Model(context: context),
+                isNullable: true,
+                context: context,
+              ),
+            ),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final toLabelMethod = baseClass.methods.firstWhere(
+          (m) => m.name == 'toLabel',
+        );
+        final generated = format(toLabelMethod.accept(emitter).toString());
+
+        const expectedMethod = '''
+          @override
+          String toLabel({required bool explode, required bool allowEmpty}) {
+            return switch (this) {
+              ValueNullableData(:final value) => value == null
+                  ? ''
+                  : value.toBase64String().toLabel(
+                      explode: explode,
+                      allowEmpty: allowEmpty,
+                    ),
+              ValueText(:final value) => value.toLabel(
+                explode: explode,
+                allowEmpty: allowEmpty,
+              ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+  });
 }

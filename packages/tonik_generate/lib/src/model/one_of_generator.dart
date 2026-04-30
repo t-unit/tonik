@@ -916,6 +916,29 @@ class OneOfGenerator {
               .code,
           const Code(','),
         ]);
+      } else if (m.model.resolved is Base64Model) {
+        final isNullable = m.model.isEffectivelyNullable;
+
+        caseCodes.add(Code('$variantName(:final value) => '));
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code("value == null ? '' : "),
+          ]);
+        }
+
+        caseCodes.addAll([
+          refer('value')
+              .property('toBase64String')
+              .call([])
+              .property('toSimple')
+              .call([], {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+              })
+              .code,
+          const Code(','),
+        ]);
       } else if (m.model.resolved is BinaryModel) {
         caseCodes.addAll([
           Code.scope(
@@ -1113,6 +1136,30 @@ class OneOfGenerator {
                 ),
               ])
               .thrown
+              .code,
+          const Code(','),
+        ]);
+      } else if (m.model.resolved is Base64Model) {
+        final isNullable = m.model.isEffectivelyNullable;
+
+        caseCodes.add(Code('$variantName(:final value) => '));
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code("value == null ? '' : "),
+          ]);
+        }
+
+        caseCodes.addAll([
+          refer('value')
+              .property('toBase64String')
+              .call([])
+              .property('toForm')
+              .call([], {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+              })
               .code,
           const Code(','),
         ]);
@@ -1592,6 +1639,29 @@ class OneOfGenerator {
                 ),
               ])
               .thrown
+              .code,
+          const Code(','),
+        ]);
+      } else if (m.model.resolved is Base64Model) {
+        final isNullable = m.model.isEffectivelyNullable;
+
+        caseCodes.add(Code('$variantName(:final value) => '));
+
+        if (isNullable) {
+          caseCodes.addAll([
+            const Code("value == null ? '' : "),
+          ]);
+        }
+
+        caseCodes.addAll([
+          refer('value')
+              .property('toBase64String')
+              .call([])
+              .property('toLabel')
+              .call([], {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+              })
               .code,
           const Code(','),
         ]);

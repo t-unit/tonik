@@ -315,7 +315,18 @@ class AnyOfGenerator {
     final toMethodName = isForm ? 'toForm' : 'toSimple';
     final codes = <Code>[];
 
-    if (fieldModel is BinaryModel) {
+    if (fieldModel.resolved is Base64Model) {
+      codes.add(
+        Code(
+          'final $tmpVarName = $fieldName!.toBase64String().$toMethodName( '
+          'explode: explode, allowEmpty: allowEmpty'
+          '${isForm ? ', useQueryComponent: useQueryComponent' : ''});',
+        ),
+      );
+      if (needsValues) {
+        codes.add(Code('_\$values.add($tmpVarName);'));
+      }
+    } else if (fieldModel is BinaryModel) {
       codes.add(
         generateEncodingExceptionExpression(
           'Binary data cannot be ${isForm ? 'form' : 'simple'}-encoded',
@@ -462,7 +473,17 @@ class AnyOfGenerator {
   }) {
     final codes = <Code>[];
 
-    if (fieldModel is BinaryModel) {
+    if (fieldModel.resolved is Base64Model) {
+      codes.add(
+        Code(
+          'final $tmpVarName = $fieldName!.toBase64String().toLabel( '
+          'explode: explode, allowEmpty: allowEmpty);',
+        ),
+      );
+      if (needsValues) {
+        codes.add(Code('_\$values.add($tmpVarName);'));
+      }
+    } else if (fieldModel is BinaryModel) {
       codes.add(
         generateEncodingExceptionExpression(
           'Binary data cannot be label-encoded',
