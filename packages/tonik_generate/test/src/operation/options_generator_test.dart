@@ -2482,6 +2482,332 @@ void main() {
           );
         },
       );
+
+      test(
+        'alias to list of strings with explode true threads explode through',
+        () {
+          // Cookies default to explode: true for form style. Ensure the
+          // generated body wires the explode flag literal through to the
+          // toForm call so a regression that swaps the literal for
+          // literalBool(false) would be caught.
+          final cookieParam = CookieParameterObject(
+            name: 'names',
+            rawName: 'names',
+            description: 'Alias to list of strings, explode true',
+            isRequired: true,
+            isDeprecated: false,
+            explode: true,
+            model: AliasModel(
+              name: 'NameList',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+              ),
+              context: context,
+            ),
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          );
+
+          final operation = Operation(
+            operationId: 'withAliasStringListCookieExplodeTrue',
+            context: context,
+            summary: 'With alias string list cookie explode true',
+            description: 'Operation with alias-to-list-of-string cookie '
+                'using explode true',
+            tags: const {},
+            isDeprecated: false,
+            path: '/alias-string-list-cookie-explode-true',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: {cookieParam},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateOptionsMethod(operation, [], [
+            (normalizedName: 'names', parameter: cookieParam),
+          ]);
+
+          final param = method.optionalParameters.firstWhere(
+            (p) => p.name == 'names',
+          );
+          expect(param.required, isTrue);
+          expect(param.type?.symbol, 'NameList');
+
+          const expectedMethod = r'''
+            Options _options({required NameList names}) {
+              final _$headers = <String, dynamic>{};
+              _$headers['Accept'] = r'*/*';
+              final _$cookieParts = <String>[];
+              _$cookieParts.add(
+                [r'names=', names.toForm(explode: true, allowEmpty: true)].join(),
+              );
+              if (_$cookieParts.isNotEmpty) {
+                _$headers[r'Cookie'] = _$cookieParts.join('; ');
+              }
+              return Options(
+                method: 'GET',
+                headers: _$headers,
+                responseType: ResponseType.bytes,
+                validateStatus: (_) => true,
+              );
+            }
+          ''';
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'alias to map with unsupported value type throws EncodingException',
+        () {
+          // Covers the converted == null path inside the MapModel branch when
+          // reached via an alias. A future refactor of
+          // buildMapToStringMapExpression that quietly accepts complex value
+          // types would silently regress this.
+          final cookieParam = CookieParameterObject(
+            name: 'data',
+            rawName: 'data',
+            description: 'Alias to map of complex values',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: AliasModel(
+              name: 'NestedMap',
+              model: MapModel(
+                valueModel: ClassModel(
+                  name: 'Nested',
+                  properties: const [],
+                  context: context,
+                  isDeprecated: false,
+                ),
+                context: context,
+              ),
+              context: context,
+            ),
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          );
+
+          final operation = Operation(
+            operationId: 'withAliasUnsupportedMapCookie',
+            context: context,
+            summary: 'With alias unsupported map cookie',
+            description: 'Operation with alias-to-map cookie of complex '
+                'values',
+            tags: const {},
+            isDeprecated: false,
+            path: '/alias-unsupported-map-cookie',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: {cookieParam},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateOptionsMethod(operation, [], [
+            (normalizedName: 'data', parameter: cookieParam),
+          ]);
+
+          final param = method.optionalParameters.firstWhere(
+            (p) => p.name == 'data',
+          );
+          expect(param.required, isTrue);
+          expect(param.type?.symbol, 'NestedMap');
+
+          const expectedMethod = r'''
+            Options _options({required NestedMap data}) {
+              final _$headers = <String, dynamic>{};
+              _$headers['Accept'] = r'*/*';
+              final _$cookieParts = <String>[];
+              throw EncodingException(
+                'Map with complex value types cannot be form-encoded for cookie data',
+              );
+              if (_$cookieParts.isNotEmpty) {
+                _$headers[r'Cookie'] = _$cookieParts.join('; ');
+              }
+              return Options(
+                method: 'GET',
+                headers: _$headers,
+                responseType: ResponseType.bytes,
+                validateStatus: (_) => true,
+              );
+            }
+          ''';
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test('optional alias to map', () {
+        final cookieParam = CookieParameterObject(
+          name: 'prefs',
+          rawName: 'prefs',
+          description: 'Optional alias to map of integers',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: AliasModel(
+            name: 'PrefsMap',
+            model: MapModel(
+              valueModel: IntegerModel(context: context),
+              context: context,
+            ),
+            context: context,
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'withOptionalAliasMapCookie',
+          context: context,
+          summary: 'With optional alias map cookie',
+          description: 'Operation with optional alias-to-map cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-alias-map-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'prefs', parameter: cookieParam),
+        ]);
+
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'prefs',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.accept(emitter).toString(), 'PrefsMap?');
+
+        const expectedMethod = r'''
+          Options _options({PrefsMap? prefs}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
+            if (prefs != null) {
+              _$cookieParts.add(
+                [
+                  r'prefs=',
+                  prefs
+                      .map((k, v) => MapEntry(k, v.toString()))
+                      .toForm(explode: false, allowEmpty: true),
+                ].join(),
+              );
+            }
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('optional alias to AnyModel scalar', () {
+        final cookieParam = CookieParameterObject(
+          name: 'data',
+          rawName: 'data',
+          description: 'Optional alias to AnyModel scalar',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: AliasModel(
+            name: 'AnyData',
+            model: AnyModel(context: context),
+            context: context,
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'withOptionalAliasAnyCookie',
+          context: context,
+          summary: 'With optional alias any cookie',
+          description: 'Operation with optional alias-to-AnyModel cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-alias-any-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'data', parameter: cookieParam),
+        ]);
+
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'data',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.accept(emitter).toString(), 'AnyData?');
+
+        const expectedMethod = r'''
+          Options _options({AnyData? data}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
+            if (data != null) {
+              _$cookieParts.add(
+                [
+                  r'data=',
+                  encodeAnyToForm(data, explode: false, allowEmpty: true),
+                ].join(),
+              );
+            }
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
     });
 
     group('multipart content type', () {
