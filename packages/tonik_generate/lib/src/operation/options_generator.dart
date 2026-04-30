@@ -413,8 +413,13 @@ class OptionsGenerator {
     final paramName = cookie.normalizedName;
     final explode = cookie.parameter.explode;
 
-    if (model is ListModel) {
-      final contentModel = model.content.resolved;
+    // Resolve aliases so a cookie schema declared via $ref to a list/map/any
+    // schema is routed to the correct encoding branch. .resolved follows
+    // nested alias chains automatically.
+    final resolvedModel = model.resolved;
+
+    if (resolvedModel is ListModel) {
+      final contentModel = resolvedModel.content.resolved;
 
       if (contentModel is StringModel) {
         final encodedValue = refer(paramName).property('toForm').call([], {
@@ -503,10 +508,10 @@ class OptionsGenerator {
     }
 
     // MapModel: convert values to Map<String, String> before calling toForm.
-    if (model is MapModel) {
+    if (resolvedModel is MapModel) {
       final converted = buildMapToStringMapExpression(
         refer(paramName),
-        model,
+        resolvedModel,
         isNullable: false,
       );
 
@@ -538,7 +543,7 @@ class OptionsGenerator {
     }
 
     // AnyModel: use encodeAnyToForm for runtime type dispatch.
-    if (model is AnyModel) {
+    if (resolvedModel is AnyModel) {
       final encodedValue = refer(
         'encodeAnyToForm',
         'package:tonik_util/tonik_util.dart',

@@ -692,6 +692,146 @@ paths:
         '204':
           description: No content
 
+  # Cookie schema is $ref -> $ref -> array of boolean.
+  /alias-bool-list-cookie:
+    get:
+      operationId: testAliasBoolListCookie
+      tags:
+        - cookies
+      summary: Test cookie with nested alias to list of booleans
+      description: Demonstrates a cookie parameter using $ref to $ref to array of booleans
+      parameters:
+        - name: flags
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/FlagList'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Cookie schema is $ref -> $ref -> array of integer.
+  /alias-int-list-cookie:
+    get:
+      operationId: testAliasIntListCookie
+      tags:
+        - cookies
+      summary: Test cookie with nested alias to list of integers
+      description: Demonstrates a cookie parameter using $ref to $ref to array of integers
+      parameters:
+        - name: numbers
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/NumberList'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Cookie schema is $ref -> array of string (sanity case).
+  /alias-string-list-cookie:
+    get:
+      operationId: testAliasStringListCookie
+      tags:
+        - cookies
+      summary: Test cookie with alias to list of strings
+      description: Demonstrates a cookie parameter using $ref to array of strings
+      parameters:
+        - name: names
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/StringArray'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Optional alias to list of integers (covers nullable path).
+  /optional-alias-int-list-cookie:
+    get:
+      operationId: testOptionalAliasIntListCookie
+      tags:
+        - cookies
+      summary: Test optional cookie with alias to list of integers
+      description: Demonstrates an optional cookie parameter using $ref to array of integers
+      parameters:
+        - name: numbers
+          in: cookie
+          required: false
+          schema:
+            $ref: '#/components/schemas/IntArray'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Cookie schema is $ref -> object with additionalProperties: integer.
+  /alias-map-cookie:
+    get:
+      operationId: testAliasMapCookie
+      tags:
+        - cookies
+      summary: Test cookie with alias to map of integers
+      description: Demonstrates a cookie parameter using $ref to a map schema
+      parameters:
+        - name: prefs
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/IntPrefsMap'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Cookie schema is $ref -> boolean schema true (alias to AnyModel scalar).
+  /alias-any-cookie:
+    get:
+      operationId: testAliasAnyCookie
+      tags:
+        - cookies
+      summary: Test cookie with alias to AnyModel
+      description: Demonstrates a cookie parameter using $ref to a true boolean schema
+      parameters:
+        - name: data
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/AnyData'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Cookie schema is $ref -> array of items: true (alias to list of AnyModel).
+  /alias-array-any-cookie:
+    get:
+      operationId: testAliasArrayAnyCookie
+      tags:
+        - cookies
+      summary: Test cookie with alias to list of AnyModel
+      description: Demonstrates a cookie parameter using $ref to an array of any items
+      parameters:
+        - name: items
+          in: cookie
+          required: true
+          schema:
+            $ref: '#/components/schemas/AnyList'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
 components:
   schemas:
     ThemeEnum:
@@ -743,6 +883,42 @@ components:
           properties:
             theme:
               type: string
+
+    # Nested alias chain: FlagList -> BoolArray -> array of boolean.
+    FlagList:
+      $ref: '#/components/schemas/BoolArray'
+    BoolArray:
+      type: array
+      items:
+        type: boolean
+
+    # Nested alias chain: NumberList -> IntArray -> array of integer.
+    NumberList:
+      $ref: '#/components/schemas/IntArray'
+    IntArray:
+      type: array
+      items:
+        type: integer
+
+    # Single alias to array of string.
+    StringArray:
+      type: array
+      items:
+        type: string
+
+    # Alias to map (object with additionalProperties: integer).
+    IntPrefsMap:
+      type: object
+      additionalProperties:
+        type: integer
+
+    # Alias to AnyModel (boolean schema true).
+    AnyData: true
+
+    # Alias to list of AnyModel.
+    AnyList:
+      type: array
+      items: true
 
   parameters:
     SessionCookie:
