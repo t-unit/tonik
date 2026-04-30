@@ -316,8 +316,6 @@ class AnyOfGenerator {
     final codes = <Code>[];
 
     if (fieldModel.resolved is Base64Model) {
-      // Base64Model is represented as TonikFile at the API surface; convert
-      // via toBase64String() before delegating to the String encoder.
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.toBase64String().$toMethodName( '
@@ -476,8 +474,6 @@ class AnyOfGenerator {
     final codes = <Code>[];
 
     if (fieldModel.resolved is Base64Model) {
-      // Base64Model is represented as TonikFile at the API surface; convert
-      // via toBase64String() before delegating to the String encoder.
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.toBase64String().toLabel( '

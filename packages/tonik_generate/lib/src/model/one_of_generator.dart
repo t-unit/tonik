@@ -917,8 +917,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (m.model.resolved is Base64Model) {
-        // Base64Model is represented as TonikFile at the API surface; convert
-        // via toBase64String() before delegating to the String encoder.
         final isNullable = m.model.isEffectivelyNullable;
 
         caseCodes.add(Code('$variantName(:final value) => '));
@@ -1142,8 +1140,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (m.model.resolved is Base64Model) {
-        // Base64Model is represented as TonikFile at the API surface; convert
-        // via toBase64String() before delegating to the String encoder.
         final isNullable = m.model.isEffectivelyNullable;
 
         caseCodes.add(Code('$variantName(:final value) => '));
@@ -1647,8 +1643,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (m.model.resolved is Base64Model) {
-        // Base64Model is represented as TonikFile at the API surface; convert
-        // via toBase64String() before delegating to the String encoder.
         final isNullable = m.model.isEffectivelyNullable;
 
         caseCodes.add(Code('$variantName(:final value) => '));
