@@ -2690,4 +2690,255 @@ bool operator ==(Object other) {
       );
     });
   });
+
+  group('Base64Model in AnyOf', () {
+    test(
+      'toSimple converts Base64Model field via toBase64String',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'AnyOfBase64',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (discriminatorValue: null, model: Base64Model(context: context)),
+          },
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final toSimpleMethod = klass.methods.firstWhere(
+          (m) => m.name == 'toSimple',
+        );
+        final generated = format(toSimpleMethod.accept(emitter).toString());
+
+        const expectedMethod = r'''
+@override
+String toSimple({required bool explode, required bool allowEmpty}) {
+  final _$values = <String>{};
+  final _$mapValues = <Map<String, String>>[];
+  if (tonikFile != null) {
+    final _$tonikFileSimple = tonikFile!.toBase64String().toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+    );
+    _$values.add(_$tonikFileSimple);
+  }
+  if (text != null) {
+    final _$textSimple = text!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$textSimple);
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+    throw EncodingException(
+      r'Ambiguous anyOf simple encoding for AnyOfBase64: mixing simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf simple encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  } else {
+    final _$map = <String, String>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+    );
+  }
+}
+''';
+
+        expect(generated.trim(), format(expectedMethod).trim());
+      },
+    );
+
+    test(
+      'toForm converts Base64Model field via toBase64String',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'AnyOfBase64',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (discriminatorValue: null, model: Base64Model(context: context)),
+          },
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final toFormMethod = klass.methods.firstWhere(
+          (m) => m.name == 'toForm',
+        );
+        final generated = format(toFormMethod.accept(emitter).toString());
+
+        const expectedMethod = r'''
+@override
+String toForm({
+  required bool explode,
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+}) {
+  final _$values = <String>{};
+  final _$mapValues = <Map<String, String>>[];
+  if (tonikFile != null) {
+    final _$tonikFileForm = tonikFile!.toBase64String().toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+    _$values.add(_$tonikFileForm);
+  }
+  if (text != null) {
+    final _$textForm = text!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$textForm);
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+    throw EncodingException(
+      r'Ambiguous anyOf form encoding for AnyOfBase64: mixing simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf form encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  } else {
+    final _$map = <String, String>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+}
+''';
+
+        expect(generated.trim(), format(expectedMethod).trim());
+      },
+    );
+
+    test(
+      'toLabel converts Base64Model field via toBase64String',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'AnyOfBase64',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (discriminatorValue: null, model: Base64Model(context: context)),
+          },
+          context: context,
+        );
+
+        final klass = generator.generateClass(model);
+        final toLabelMethod = klass.methods.firstWhere(
+          (m) => m.name == 'toLabel',
+        );
+        final generated = format(toLabelMethod.accept(emitter).toString());
+
+        const expectedMethod = r'''
+@override
+String toLabel({required bool explode, required bool allowEmpty}) {
+  final _$values = <String>{};
+  final _$mapValues = <Map<String, String>>[];
+  if (tonikFile != null) {
+    final _$tonikFileLabel = tonikFile!.toBase64String().toLabel(
+      explode: explode,
+      allowEmpty: allowEmpty,
+    );
+    _$values.add(_$tonikFileLabel);
+  }
+  if (text != null) {
+    final _$textLabel = text!.parameterProperties(allowEmpty: allowEmpty);
+    _$mapValues.add(_$textLabel);
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+    throw EncodingException(
+      r'Ambiguous anyOf label encoding for AnyOfBase64: mixing simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf label encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  } else {
+    final _$map = <String, String>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map.toLabel(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+    );
+  }
+}
+''';
+
+        expect(generated.trim(), format(expectedMethod).trim());
+      },
+    );
+  });
 }
