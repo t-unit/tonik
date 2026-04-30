@@ -792,14 +792,7 @@ components:
         - type: string
           format: byte
 
-    # =========================================================================
-    # Boolean schema (true) in anyOf — OpenAPI 3.1 / JSON Schema 2020-12
-    # =========================================================================
-    # The boolean `true` schema becomes an AnyModel variant. The anyOf
-    # generator must handle this without producing calls to encoding methods
-    # on the resulting `Object?` field. Encoding methods throw
-    # EncodingException when the AnyModel field is set; toJson uses
-    # encodeAnyToJson; fromJson treats AnyModel as a catch-all.
+    # Boolean true → AnyModel variant (OpenAPI 3.1 / JSON Schema 2020-12).
     AnyOfBooleanSchema:
       anyOf:
         - true

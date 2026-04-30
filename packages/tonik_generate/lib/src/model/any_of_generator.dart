@@ -51,9 +51,7 @@ class AnyOfGenerator {
   List<Spec> generateClasses(AnyOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
 
-    // NeverModel variants cannot have any value at runtime, so emitting a
-    // `Never?` field would be dead weight and trigger analyzer warnings. We
-    // skip them entirely; encoding/decoding paths simply omit them.
+    // NeverModel has no runtime value; emitting Never? is dead weight.
     final pseudoProperties = stableModelSorter
         .sortDiscriminatedModels(model.models)
         .where((d) => d.model.resolved is! NeverModel)
@@ -706,9 +704,7 @@ class AnyOfGenerator {
       );
     }
 
-    // AnyModel acts as a catch-all: only assigned when every typed variant
-    // failed to decode. This avoids a redundant raw-value field on every
-    // successful typed decode.
+    // AnyModel only catches input no typed variant accepted.
     for (final n in anyProperties) {
       final modelType = n.property.model;
       final varName = n.normalizedName;
@@ -738,9 +734,7 @@ class AnyOfGenerator {
         n.normalizedName: refer(n.normalizedName),
     };
 
-    // Validation: fail when every decodable variant ended up null.
-    // For anyOf with only AnyModel variants, AnyModel always succeeds so
-    // no validation is needed.
+    // AnyModel always succeeds, so skip validation when it's the only variant.
     final decodableProperties = [...typedProperties, ...anyProperties];
     final validationCheck = typedProperties.isEmpty
         ? const Code('')

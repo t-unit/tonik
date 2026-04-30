@@ -4869,6 +4869,14 @@ void main() {
         expect(result.object, isNull);
       });
 
+      test('fromJson(null) throws JsonDecodingException', () {
+        // All variants null → all-null validation throws.
+        expect(
+          () => AnyOfBooleanSchema.fromJson(null),
+          throwsA(isA<JsonDecodingException>()),
+        );
+      });
+
       test('fromJson roundtrip with raw string value', () {
         const original = AnyOfBooleanSchema(object: 'raw string');
         final json = original.toJson();

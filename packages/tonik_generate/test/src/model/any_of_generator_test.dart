@@ -3572,5 +3572,60 @@ EncodingShape get currentEncodingShape {
 
       expect(generated.trim(), format(expected).trim());
     });
+
+    test('toJson encodes AnyModel field via encodeAnyToJson', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'OnlyAny',
+        models: {
+          (discriminatorValue: null, model: AnyModel(context: context)),
+        },
+        context: context,
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere((m) => m.name == 'toJson');
+      final generated = format(method.accept(emitter).toString());
+
+      const expected = r'''
+@override
+Object? toJson() {
+  final _$values = <Object?>{};
+  final _$mapValues = <Map<String, Object?>>[];
+  if (object != null) {
+    final Object? _$objectJson = encodeAnyToJson(object!);
+    if (_$objectJson is Map<String, Object?>) {
+      _$mapValues.add(_$objectJson);
+    } else {
+      _$values.add(_$objectJson);
+    }
+  }
+  if (_$values.isEmpty && _$mapValues.isEmpty) return null;
+  if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
+    throw EncodingException(
+      r'Mixed encoding not supported for OnlyAny: cannot encode both simple and complex values',
+    );
+  }
+  if (_$values.isNotEmpty) {
+    if (_$values.length > 1) {
+      throw EncodingException(
+        r'Ambiguous anyOf encoding for OnlyAny: multiple values provided, anyOf requires exactly one value',
+      );
+    }
+    return _$values.first;
+  }
+  if (_$mapValues.isNotEmpty) {
+    final _$map = <String, Object?>{};
+    for (final _$m in _$mapValues) {
+      _$map.addAll(_$m);
+    }
+    return _$map;
+  }
+  return null;
+}
+''';
+
+      expect(generated.trim(), format(expected).trim());
+    });
   });
 }
