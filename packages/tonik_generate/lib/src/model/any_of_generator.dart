@@ -133,7 +133,7 @@ class AnyOfGenerator {
               )
             : publicClassName);
 
-    // NeverModel variants are skipped — see [generateClasses] for rationale.
+    // NeverModel has no runtime value; emitting Never? is dead weight.
     final pseudoProperties = stableModelSorter
         .sortDiscriminatedModels(model.models)
         .where((d) => d.model.resolved is! NeverModel)
@@ -704,7 +704,7 @@ class AnyOfGenerator {
       );
     }
 
-    // AnyModel only catches input no typed variant accepted.
+    // AnyModel is the catch-all: assigned only when no typed variant decodes.
     for (final n in anyProperties) {
       final modelType = n.property.model;
       final varName = n.normalizedName;
@@ -734,7 +734,7 @@ class AnyOfGenerator {
         n.normalizedName: refer(n.normalizedName),
     };
 
-    // AnyModel always succeeds, so skip validation when it's the only variant.
+    // Only AnyModel variants: the catch-all assigns unconditionally.
     final decodableProperties = [...typedProperties, ...anyProperties];
     final validationCheck = typedProperties.isEmpty
         ? const Code('')
@@ -1120,8 +1120,7 @@ class AnyOfGenerator {
       final varName = n.normalizedName;
 
       if (modelType.resolved is AnyModel) {
-        // AnyModel cannot be meaningfully decoded from a parameter string —
-        // the field stays null and another variant must satisfy the input.
+        // AnyModel has no parameter-string decoding; the field stays null.
         nonDecodableProperties.add(n);
       } else if ((modelType is ListModel && !modelType.hasSimpleContent) ||
           modelType is MapModel) {
