@@ -676,4 +676,85 @@ void main() {
       expect(getCookieHeader(response), 'items=a,1,true');
     });
   });
+
+  group('alias-wrapped cookies', () {
+    test('nested alias to list of booleans', () async {
+      // FlagList -> BoolArray -> array of boolean. Without alias resolution,
+      // the cookie generator produced code that did not compile.
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAliasBoolListCookie(
+        flags: [true, false, true],
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'flags=true,false,true');
+    });
+
+    test('nested alias to list of integers encodes as form list', () async {
+      // NumberList -> IntArray -> array of integer. Regression: without
+      // alias resolution, this fell through to the FormBinaryEncoder path
+      // and produced incorrect encoding.
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAliasIntListCookie(numbers: [1, 2, 3]);
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'numbers=1,2,3');
+    });
+
+    test('alias to list of strings', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAliasStringListCookie(
+        names: ['alice', 'bob', 'carol'],
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'names=alice,bob,carol');
+    });
+
+    test('optional alias to list of integers when provided', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testOptionalAliasIntListCookie(
+        numbers: [10, 20],
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'numbers=10,20');
+    });
+
+    test('optional alias to list of integers when not provided', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testOptionalAliasIntListCookie();
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), isNull);
+    });
+
+    test('alias to map of integers', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAliasMapCookie(
+        prefs: {'volume': 80, 'brightness': 50},
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'prefs=volume=80&brightness=50');
+    });
+
+    test('alias to AnyModel scalar', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAliasAnyCookie(data: 'hello');
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'data=hello');
+    });
+
+    test('alias to list of AnyModel', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.testAliasArrayAnyCookie(
+        items: ['a', 1, true],
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(getCookieHeader(response), 'items=a,1,true');
+    });
+  });
 }
