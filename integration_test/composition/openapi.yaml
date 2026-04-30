@@ -772,3 +772,22 @@ components:
       oneOf:
         - true
         - $ref: '#/components/schemas/Class1'
+
+    # =========================================================================
+    # Base64 (format: byte) variant in oneOf and anyOf
+    # =========================================================================
+    # `type: string, format: byte` is parsed as Base64Model and represented as
+    # TonikFile at the API surface. Encoding to simple/form/label parameter
+    # styles must convert the file via toBase64String() before delegating to
+    # the String encoders, mirroring the precedent in plain Base64 encoders.
+    OneOfBase64Variant:
+      oneOf:
+        - $ref: '#/components/schemas/Class1'
+        - type: string
+          format: byte
+
+    AnyOfBase64Variant:
+      anyOf:
+        - $ref: '#/components/schemas/Class1'
+        - type: string
+          format: byte
