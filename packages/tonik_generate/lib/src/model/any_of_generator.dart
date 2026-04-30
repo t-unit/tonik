@@ -133,7 +133,6 @@ class AnyOfGenerator {
               )
             : publicClassName);
 
-    // NeverModel has no runtime value; emitting Never? is dead weight.
     final pseudoProperties = stableModelSorter
         .sortDiscriminatedModels(model.models)
         .where((d) => d.model.resolved is! NeverModel)
@@ -734,8 +733,8 @@ class AnyOfGenerator {
         n.normalizedName: refer(n.normalizedName),
     };
 
-    // Only AnyModel variants: the catch-all assigns unconditionally.
     final decodableProperties = [...typedProperties, ...anyProperties];
+    // AnyModel-only: catch-all assigns; no validation needed.
     final validationCheck = typedProperties.isEmpty
         ? const Code('')
         : _buildAllNullValidation(
