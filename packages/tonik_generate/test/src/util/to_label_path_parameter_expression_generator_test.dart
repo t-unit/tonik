@@ -584,6 +584,28 @@ void main() {
         );
       },
     );
+
+    test(
+      'generates encodeAnyToLabel for scalar AnyModel path parameter',
+      () {
+        final parameter = PathParameterObject(
+          name: 'anyValue',
+          rawName: 'anyValue',
+          description: 'Any value parameter',
+          model: AnyModel(context: context),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+        );
+        expect(
+          emit(buildToLabelPathParameterExpression('anyValue', parameter)),
+          'encodeAnyToLabel(anyValue, explode: false, allowEmpty: false, )',
+        );
+      },
+    );
   });
 
   group('MapModel direct support', () {

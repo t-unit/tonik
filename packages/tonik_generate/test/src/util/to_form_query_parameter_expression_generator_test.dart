@@ -620,5 +620,136 @@ void main() {
         },
       );
     });
+
+    group('AnyModel encoding', () {
+      test('generates encodeAnyToForm for top-level AnyModel parameter', () {
+        final parameter = createParameter(
+          name: 'anyParam',
+          rawName: 'anyParam',
+          model: AnyModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'anyParam',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+        final expected = format(r'''
+          test() {
+            _$entries.add((
+              name: r'anyParam',
+              value: _i1.encodeAnyToForm(
+                anyParam,
+                explode: false,
+                allowEmpty: true,
+              ),
+            ));
+          }
+        ''');
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expected),
+        );
+      });
+
+      test(
+        'generates encodeAnyToUri map for non-exploded List<AnyModel>',
+        () {
+          final parameter = createParameter(
+            name: 'anyList',
+            rawName: 'anyList',
+            model: ListModel(
+              content: AnyModel(context: context),
+              context: context,
+            ),
+            explode: false,
+            allowEmpty: true,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'anyList',
+            parameter,
+          );
+
+          final generated = emitCodes(codes);
+          final expected = format(r'''
+            test() {
+              _$entries.add((
+                name: r'anyList',
+                value: anyList
+                    .map((e) => _i1.encodeAnyToUri(e, allowEmpty: true))
+                    .toList()
+                    .toForm(explode: false, allowEmpty: true),
+              ));
+            }
+          ''');
+
+          expect(
+            collapseWhitespace(generated),
+            collapseWhitespace(expected),
+          );
+        },
+      );
+
+      test(
+        'generates encodeAnyToUri addAll for exploded List<OneOfModel>',
+        () {
+          final parameter = createParameter(
+            name: 'oneOfList',
+            rawName: 'oneOfList',
+            model: ListModel(
+              content: OneOfModel(
+                isDeprecated: false,
+                context: context,
+                name: 'StringOrInt',
+                models: {
+                  (
+                    discriminatorValue: 's',
+                    model: StringModel(context: context),
+                  ),
+                  (
+                    discriminatorValue: 'i',
+                    model: IntegerModel(context: context),
+                  ),
+                },
+              ),
+              context: context,
+            ),
+            explode: true,
+            allowEmpty: false,
+          );
+
+          final codes = buildToFormQueryParameterCode(
+            'oneOfList',
+            parameter,
+            explode: true,
+            allowEmpty: false,
+          );
+
+          final generated = emitCodes(codes);
+          final expected = format(r'''
+            test() {
+              _$entries.addAll(
+                oneOfList.map(
+                  (e) => (
+                    name: r'oneOfList',
+                    value: _i1.encodeAnyToUri(e, allowEmpty: false),
+                  ),
+                ),
+              );
+            }
+          ''');
+
+          expect(
+            collapseWhitespace(generated),
+            collapseWhitespace(expected),
+          );
+        },
+      );
+    });
   });
 }
