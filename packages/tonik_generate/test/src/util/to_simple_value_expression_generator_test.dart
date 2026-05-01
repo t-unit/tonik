@@ -367,6 +367,54 @@ void main() {
       });
     });
 
+    group('AnyModel', () {
+      test('generates encodeAnyToSimple call with literal explode/allowEmpty',
+          () {
+        final model = AnyModel(context: context);
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final generated = format(
+          'final result = ${expression.accept(emitter)};',
+        );
+        const expected = '''
+          final result = encodeAnyToSimple(value, explode: true, allowEmpty: false);
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expected)),
+        );
+      });
+
+      test('passes through explode/allowEmpty unchanged when nullable', () {
+        final model = AnyModel(context: context);
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+          isNullable: true,
+        );
+
+        final generated = format(
+          'final result = ${expression.accept(emitter)};',
+        );
+        const expected = '''
+          final result = encodeAnyToSimple(value, explode: false, allowEmpty: true);
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expected)),
+        );
+      });
+    });
+
     group('MapModel', () {
       test('generates toSimple for MapModel with StringModel values', () {
         final model = MapModel(

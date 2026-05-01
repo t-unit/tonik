@@ -313,7 +313,7 @@ String? _getFormSerializationSuffix(
 
     Base64Model() => '.toBase64String().toForm($paramString)',
 
-    AnyModel() => '?.toString() ?? ""',
+    AnyModel() => null,
     NeverModel() => null,
     BinaryModel() => null,
 
