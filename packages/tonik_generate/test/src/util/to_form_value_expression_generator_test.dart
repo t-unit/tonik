@@ -671,15 +671,13 @@ void main() {
         );
 
         final result = buildToFormPropertyExpression('data', property);
-        // Default useQueryComponent=false omits the named arg.
         expect(
           emit(result),
           'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
         );
       });
 
-      test('required + nullable AnyModel emits ifNullThen wrap (no-op for '
-          'encodeAnyToForm which already returns String)', () {
+      test('required + nullable AnyModel does NOT emit ifNullThen wrap', () {
         final property = Property(
           name: 'data',
           model: AnyModel(context: context),
@@ -689,15 +687,37 @@ void main() {
         );
 
         final result = buildToFormPropertyExpression('data', property);
-        // The wrap is emitted because the property is required + nullable;
-        // the runtime helper already returns String (never null) so the
-        // fallback never fires, but the surrounding wrap is consistent with
-        // every other primitive branch.
+        final emitted = emit(result);
+
         expect(
-          emit(result),
-          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )'
-          " ?? ''",
+          emitted,
+          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
         );
+        expect(emitted.contains("?? ''"), isFalse);
+      });
+
+      test('required + nullable AnyModel through AliasModel does NOT emit '
+          'ifNullThen wrap', () {
+        final property = Property(
+          name: 'data',
+          model: AliasModel(
+            name: 'AnyAlias',
+            model: AnyModel(context: context),
+            context: context,
+          ),
+          isRequired: true,
+          isNullable: true,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression('data', property);
+        final emitted = emit(result);
+
+        expect(
+          emitted,
+          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
+        );
+        expect(emitted.contains("?? ''"), isFalse);
       });
     });
 

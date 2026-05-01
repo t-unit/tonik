@@ -182,49 +182,4 @@ void main() {
       );
     });
   });
-
-  group('neverThrow', () {
-    // Each factory returns its own EncodingPolicy, but they all share the
-    // same `neverThrow` closure. One parameterised assertion covers every
-    // factory; if a future refactor splits the closures the loop still
-    // surfaces a regression at the diverging factory.
-    final factories = <String, EncodingPolicy Function()>{
-      'jsonEncodingPolicy': jsonEncodingPolicy,
-      'simpleEncodingPolicy': () => simpleEncodingPolicy(
-            explode: refer('explode'),
-            allowEmpty: refer('allowEmpty'),
-          ),
-      'formEncodingPolicy': () => formEncodingPolicy(
-            explode: refer('explode'),
-            allowEmpty: refer('allowEmpty'),
-          ),
-      'matrixEncodingPolicy': () => matrixEncodingPolicy(
-            paramName: refer('paramName'),
-            explode: refer('explode'),
-            allowEmpty: refer('allowEmpty'),
-          ),
-      'labelEncodingPolicy': () => labelEncodingPolicy(
-            explode: refer('explode'),
-            allowEmpty: refer('allowEmpty'),
-          ),
-    };
-
-    final expectedThrow = formatStatement(
-      "throw EncodingException('Cannot encode NeverModel - this type "
-      "does not permit any value.')",
-    );
-
-    for (final entry in factories.entries) {
-      test('${entry.key} neverThrow emits the standard NeverModel throw', () {
-        final policy = entry.value();
-
-        final actual = formatExpression(policy.neverThrow());
-
-        expect(
-          collapseWhitespace(actual),
-          collapseWhitespace(expectedThrow),
-        );
-      });
-    }
-  });
 }

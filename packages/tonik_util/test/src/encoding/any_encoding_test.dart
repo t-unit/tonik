@@ -790,10 +790,6 @@ void main() {
       });
 
       test('encodes map of lists recursively', () {
-        // Inner list is comma-joined first; the outer map then comma-joins
-        // key,value pairs (the comma is shared between inner-list separator
-        // and outer-map separator -- this is an inherent limitation of
-        // simple-style for nested structures).
         expect(
           encodeAnyToSimple(
             <String, dynamic>{
@@ -803,6 +799,56 @@ void main() {
             allowEmpty: true,
           ),
           'tags,a,b',
+        );
+      });
+
+      test('encodes map of map with explode=false (true nesting)', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{
+              'outer': <String, dynamic>{'inner': 'v'},
+            },
+            explode: false,
+            allowEmpty: true,
+          ),
+          'outer,inner,v',
+        );
+      });
+
+      test('encodes map of map with explode=true (true nesting)', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{
+              'outer': <String, dynamic>{'inner': 'v'},
+            },
+            explode: true,
+            allowEmpty: true,
+          ),
+          'outer=inner=v',
+        );
+      });
+
+      test('encodes map with null inner value when allowEmpty=true', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{'key': null},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'key,',
+        );
+      });
+    });
+
+    group('null inner element with allowEmpty=true', () {
+      test('encodes list with leading null when allowEmpty=true', () {
+        expect(
+          encodeAnyToSimple(
+            <dynamic>[null, 'a'],
+            explode: false,
+            allowEmpty: true,
+          ),
+          ',a',
         );
       });
     });
@@ -1096,6 +1142,17 @@ void main() {
         );
       });
 
+      test('uses %20 for spaces by default on list elements', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>['hello world'],
+            explode: false,
+            allowEmpty: true,
+          ),
+          'hello%20world',
+        );
+      });
+
       test('encodes empty list with allowEmpty=true', () {
         expect(
           encodeAnyToForm(
@@ -1179,6 +1236,17 @@ void main() {
         );
       });
 
+      test('uses %20 for spaces by default on map values', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'q': 'hello world'},
+            explode: true,
+            allowEmpty: true,
+          ),
+          'q=hello%20world',
+        );
+      });
+
       test('encodes empty map with allowEmpty=true', () {
         expect(
           encodeAnyToForm(
@@ -1211,6 +1279,159 @@ void main() {
             allowEmpty: true,
           ),
           'tags,a,b',
+        );
+      });
+
+      test('encodes map of map with explode=false (true nesting)', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{
+              'outer': <String, dynamic>{'inner': 'v'},
+            },
+            explode: false,
+            allowEmpty: true,
+          ),
+          'outer,inner,v',
+        );
+      });
+
+      test('encodes map of map with explode=true (true nesting)', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{
+              'outer': <String, dynamic>{'inner': 'v'},
+            },
+            explode: true,
+            allowEmpty: true,
+          ),
+          'outer=inner=v',
+        );
+      });
+
+      test('encodes map with null inner value when allowEmpty=true', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'key': null},
+            explode: true,
+            allowEmpty: true,
+          ),
+          'key=',
+        );
+      });
+    });
+
+    group('null inner element with allowEmpty=true', () {
+      test('encodes list with leading null when allowEmpty=true', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[null, 'a'],
+            explode: false,
+            allowEmpty: true,
+          ),
+          ',a',
+        );
+      });
+    });
+
+    group('useQueryComponent recursion', () {
+      test('threads + into list elements inside a map value', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{
+              'q': <dynamic>['hello world', 'foo bar'],
+            },
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'q,hello+world,foo+bar',
+        );
+      });
+
+      test('uses %20 for list elements inside a map value by default', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{
+              'q': <dynamic>['hello world', 'foo bar'],
+            },
+            explode: false,
+            allowEmpty: true,
+          ),
+          'q,hello%20world,foo%20bar',
+        );
+      });
+
+      test('threads + into map values inside a list', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[
+              <String, dynamic>{'q': 'hello world'},
+            ],
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'q,hello+world',
+        );
+      });
+
+      test('uses %20 for map values inside a list by default', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[
+              <String, dynamic>{'q': 'hello world'},
+            ],
+            explode: false,
+            allowEmpty: true,
+          ),
+          'q,hello%20world',
+        );
+      });
+
+      test('threads + into map keys', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'has space': 'v'},
+            explode: true,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'has+space=v',
+        );
+      });
+
+      test('uses %20 for map keys by default', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'has space': 'v'},
+            explode: true,
+            allowEmpty: true,
+          ),
+          'has%20space=v',
+        );
+      });
+
+      test('threads + into ParameterEncodable elements inside a list', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[const QueryComponentAwareEncodable('hello world')],
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'hello+world',
+        );
+      });
+
+      test('uses %20 for ParameterEncodable elements inside a list by default',
+          () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[const QueryComponentAwareEncodable('hello world')],
+            explode: false,
+            allowEmpty: true,
+          ),
+          'hello%20world',
         );
       });
     });

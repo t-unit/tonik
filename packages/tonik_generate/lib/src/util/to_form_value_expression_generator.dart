@@ -23,13 +23,24 @@ Expression buildToFormPropertyExpression(
     useQueryComponent: useQueryComponent,
   );
 
-  // For required but nullable properties, provide empty string fallback
-  if (property.isRequired && property.isNullable) {
+  // For required but nullable properties, provide empty string fallback.
+  // Skip the wrap when the underlying model is AnyModel: encodeAnyToForm
+  // returns a non-nullable String, so `?? ''` would be a dead null-aware
+  // expression in the consumer's analyzer.
+  if (property.isRequired &&
+      property.isNullable &&
+      !_resolvesToAnyModel(model)) {
     return expr.ifNullThen(literalString(''));
   }
 
   return expr;
 }
+
+bool _resolvesToAnyModel(Model model) => switch (model) {
+      AnyModel() => true,
+      AliasModel(:final model) => _resolvesToAnyModel(model),
+      _ => false,
+    };
 
 /// Creates a Dart expression that correctly serializes any model
 /// to its form-encoded representation, including complex types.
@@ -128,11 +139,6 @@ Expression _buildFormSerializationExpression(
       'Form encoding not supported for binary types.',
     ),
 
-    // Null is handled by the runtime helper itself (which returns the
-    // empty string when allowEmpty is true), so the surrounding
-    // `.ifNullThen(literalString(''))` wrap in [buildToFormPropertyExpression]
-    // is a no-op for this branch (encodeAnyToForm returns String, not
-    // String?).
     AnyModel() => formEncodingPolicy(
       explode: explodeArg,
       allowEmpty: allowEmptyArg,

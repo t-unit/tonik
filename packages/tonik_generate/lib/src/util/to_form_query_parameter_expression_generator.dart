@@ -313,6 +313,8 @@ String? _getFormSerializationSuffix(
 
     Base64Model() => '.toBase64String().toForm($paramString)',
 
+    // Follow-up: route through formEncodingPolicy — same anti-pattern this
+    // PR removes from value-level generators.
     AnyModel() => '?.toString() ?? ""',
     NeverModel() => null,
     BinaryModel() => null,

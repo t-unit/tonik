@@ -112,6 +112,10 @@ String encodeAnyToLabel(
 /// list / map / null value at any depth raises [EmptyValueException]. The
 /// flag is threaded through the recursion so that `{'k': []}` with
 /// `allowEmpty: false` throws rather than silently producing `'k,'`.
+///
+/// Note: when an unsupported nested element raises [EncodingException], the
+/// message identifies only the inner type — no path / key context is attached
+/// to indicate where in the structure the failure originated.
 String encodeAnyToSimple(
   Object? value, {
   required bool explode,
@@ -211,6 +215,10 @@ String encodeAnyToSimple(
 /// `Uri.encodeQueryComponent` (spaces become `+`) instead of
 /// `Uri.encodeComponent` (spaces become `%20`); the same flag is threaded
 /// into recursive list/map element encoding.
+///
+/// Note: when an unsupported nested element raises [EncodingException], the
+/// message identifies only the inner type — no path / key context is attached
+/// to indicate where in the structure the failure originated.
 String encodeAnyToForm(
   Object? value, {
   required bool explode,
