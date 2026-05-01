@@ -22,8 +22,13 @@ Expression buildToFormPropertyExpression(
     useQueryComponent: useQueryComponent,
   );
 
-  // For required but nullable properties, provide empty string fallback
-  if (property.isRequired && property.isNullable) {
+  // Skip the empty-string fallback when the underlying model is AnyModel:
+  // encodeAnyToForm returns a non-nullable String, so `?? ''` would be dead
+  // code and trigger a `dead_null_aware_expression` lint in the generated
+  // output.
+  if (property.isRequired &&
+      property.isNullable &&
+      property.model.resolved is! AnyModel) {
     return expr.ifNullThen(literalString(''));
   }
 
@@ -124,7 +129,21 @@ Expression _buildFormSerializationExpression(
       'Form encoding not supported for binary types.',
     ),
 
-    AnyModel() => receiver, // Pass through as-is
+    AnyModel() => refer(
+      'encodeAnyToForm',
+      'package:tonik_util/tonik_util.dart',
+    ).call(
+      [receiver],
+      {
+        'explode': explodeLiteral != null
+            ? literalBool(explodeLiteral)
+            : refer('explode'),
+        'allowEmpty': allowEmptyLiteral != null
+            ? literalBool(allowEmptyLiteral)
+            : refer('allowEmpty'),
+        if (useQueryComponent) 'useQueryComponent': literalBool(true),
+      },
+    ),
 
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for form encoding.',

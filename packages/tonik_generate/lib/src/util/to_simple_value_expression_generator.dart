@@ -156,12 +156,14 @@ Expression _buildSimpleSerializationExpression(
       allowEmpty: allowEmpty,
     ),
 
-    // AnyModel (Object?) - convert to String representation
     AnyModel() =>
-      receiver
-          .nullSafeProperty('toString')
-          .call([])
-          .ifNullThen(literalString('')),
+      refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
+        [receiver],
+        {
+          'explode': literalBool(explode),
+          'allowEmpty': literalBool(allowEmpty),
+        },
+      ),
 
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for simple encoding.',
