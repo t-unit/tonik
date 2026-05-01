@@ -693,7 +693,6 @@ void main() {
           emitted,
           'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
         );
-        expect(emitted.contains("?? ''"), isFalse);
       });
 
       test('required + nullable AnyModel through AliasModel does NOT emit '
@@ -717,7 +716,6 @@ void main() {
           emitted,
           'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
         );
-        expect(emitted.contains("?? ''"), isFalse);
       });
     });
 

@@ -1,91 +1,52 @@
 import 'package:code_builder/code_builder.dart';
 
-/// Per-encoding-style policy for emitting `AnyModel` arms.
-///
-/// Centralizes the choice of runtime helper for each encoding style so that
-/// every value-level and parameter-level generator routes through one table.
-/// Adding a new style or fixing an edge case is a single edit point here.
-class EncodingPolicy {
-  const EncodingPolicy({required this.encodeAny});
+const _utilUri = 'package:tonik_util/tonik_util.dart';
 
-  final Expression Function(Expression receiver) encodeAny;
-}
+Expression encodeAnyToJsonExpression(Expression receiver) =>
+    refer('encodeAnyToJson', _utilUri).call([receiver]);
 
-EncodingPolicy jsonEncodingPolicy() {
-  return EncodingPolicy(
-    encodeAny: (receiver) => refer(
-      'encodeAnyToJson',
-      'package:tonik_util/tonik_util.dart',
-    ).call([receiver]),
-  );
-}
-
-EncodingPolicy simpleEncodingPolicy({
+Expression encodeAnyToSimpleExpression(
+  Expression receiver, {
   required Expression explode,
   required Expression allowEmpty,
-}) {
-  return EncodingPolicy(
-    encodeAny: (receiver) =>
-        refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
-          [receiver],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
-  );
-}
+}) => refer('encodeAnyToSimple', _utilUri).call(
+  [receiver],
+  {'explode': explode, 'allowEmpty': allowEmpty},
+);
 
 /// When [useQueryComponent] is non-null, it is forwarded to the runtime helper
 /// so primitives use `Uri.encodeQueryComponent` (spaces → `+`) instead of
-/// `Uri.encodeComponent` (spaces → `%20`).
-EncodingPolicy formEncodingPolicy({
+/// `Uri.encodeComponent` (spaces → `%20`). The choice threads through
+/// recursive list/map element encoding.
+Expression encodeAnyToFormExpression(
+  Expression receiver, {
   required Expression explode,
   required Expression allowEmpty,
   Expression? useQueryComponent,
-}) {
-  return EncodingPolicy(
-    encodeAny: (receiver) =>
-        refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart').call(
-          [receiver],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'useQueryComponent': ?useQueryComponent,
-          },
-        ),
-  );
-}
+}) => refer('encodeAnyToForm', _utilUri).call(
+  [receiver],
+  {
+    'explode': explode,
+    'allowEmpty': allowEmpty,
+    'useQueryComponent': ?useQueryComponent,
+  },
+);
 
-EncodingPolicy matrixEncodingPolicy({
+Expression encodeAnyToMatrixExpression(
+  Expression receiver, {
   required Expression paramName,
   required Expression explode,
   required Expression allowEmpty,
-}) {
-  return EncodingPolicy(
-    encodeAny: (receiver) =>
-        refer('encodeAnyToMatrix', 'package:tonik_util/tonik_util.dart').call(
-          [receiver, paramName],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
-  );
-}
+}) => refer('encodeAnyToMatrix', _utilUri).call(
+  [receiver, paramName],
+  {'explode': explode, 'allowEmpty': allowEmpty},
+);
 
-EncodingPolicy labelEncodingPolicy({
+Expression encodeAnyToLabelExpression(
+  Expression receiver, {
   required Expression explode,
   required Expression allowEmpty,
-}) {
-  return EncodingPolicy(
-    encodeAny: (receiver) =>
-        refer('encodeAnyToLabel', 'package:tonik_util/tonik_util.dart').call(
-          [receiver],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
-  );
-}
+}) => refer('encodeAnyToLabel', _utilUri).call(
+  [receiver],
+  {'explode': explode, 'allowEmpty': allowEmpty},
+);

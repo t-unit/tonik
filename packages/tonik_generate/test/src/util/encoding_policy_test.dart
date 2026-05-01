@@ -19,11 +19,11 @@ void main() {
 
   String formatStatement(String body) => format('final result = $body;');
 
-  group('jsonEncodingPolicy', () {
-    test('encodeAny calls encodeAnyToJson with the receiver', () {
-      final policy = jsonEncodingPolicy();
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
+  group('encodeAnyToJsonExpression', () {
+    test('emits encodeAnyToJson(receiver)', () {
+      final actual = formatExpression(
+        encodeAnyToJsonExpression(refer('value')),
+      );
       final expected = formatStatement('encodeAnyToJson(value)');
 
       expect(
@@ -33,31 +33,15 @@ void main() {
     });
   });
 
-  group('simpleEncodingPolicy', () {
-    test('encodeAny calls encodeAnyToSimple with named arguments', () {
-      final policy = simpleEncodingPolicy(
-        explode: refer('explode'),
-        allowEmpty: refer('allowEmpty'),
+  group('encodeAnyToSimpleExpression', () {
+    test('emits encodeAnyToSimple with named arguments', () {
+      final actual = formatExpression(
+        encodeAnyToSimpleExpression(
+          refer('value'),
+          explode: literalBool(true),
+          allowEmpty: literalBool(false),
+        ),
       );
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
-      final expected = formatStatement(
-        'encodeAnyToSimple(value, explode: explode, allowEmpty: allowEmpty)',
-      );
-
-      expect(
-        collapseWhitespace(actual),
-        collapseWhitespace(expected),
-      );
-    });
-
-    test('encodeAny accepts boolean literals for explode and allowEmpty', () {
-      final policy = simpleEncodingPolicy(
-        explode: literalBool(true),
-        allowEmpty: literalBool(false),
-      );
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
       final expected = formatStatement(
         'encodeAnyToSimple(value, explode: true, allowEmpty: false)',
       );
@@ -69,16 +53,17 @@ void main() {
     });
   });
 
-  group('formEncodingPolicy', () {
-    test('encodeAny calls encodeAnyToForm with named arguments', () {
-      final policy = formEncodingPolicy(
-        explode: refer('explode'),
-        allowEmpty: refer('allowEmpty'),
+  group('encodeAnyToFormExpression', () {
+    test('omits useQueryComponent when caller does not supply it', () {
+      final actual = formatExpression(
+        encodeAnyToFormExpression(
+          refer('value'),
+          explode: literalBool(true),
+          allowEmpty: literalBool(true),
+        ),
       );
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
       final expected = formatStatement(
-        'encodeAnyToForm(value, explode: explode, allowEmpty: allowEmpty)',
+        'encodeAnyToForm(value, explode: true, allowEmpty: true)',
       );
 
       expect(
@@ -87,31 +72,15 @@ void main() {
       );
     });
 
-    test('encodeAny accepts boolean literals for explode and allowEmpty', () {
-      final policy = formEncodingPolicy(
-        explode: literalBool(false),
-        allowEmpty: literalBool(true),
+    test('threads useQueryComponent: true into encodeAnyToForm', () {
+      final actual = formatExpression(
+        encodeAnyToFormExpression(
+          refer('value'),
+          explode: literalBool(true),
+          allowEmpty: literalBool(true),
+          useQueryComponent: literalBool(true),
+        ),
       );
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
-      final expected = formatStatement(
-        'encodeAnyToForm(value, explode: false, allowEmpty: true)',
-      );
-
-      expect(
-        collapseWhitespace(actual),
-        collapseWhitespace(expected),
-      );
-    });
-
-    test('encodeAny threads useQueryComponent into encodeAnyToForm', () {
-      final policy = formEncodingPolicy(
-        explode: literalBool(true),
-        allowEmpty: literalBool(true),
-        useQueryComponent: literalBool(true),
-      );
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
       final expected = formatStatement(
         'encodeAnyToForm(value, explode: true, allowEmpty: true, '
         'useQueryComponent: true)',
@@ -123,16 +92,18 @@ void main() {
       );
     });
 
-    test('encodeAny omits useQueryComponent when caller does not supply it',
-        () {
-      final policy = formEncodingPolicy(
-        explode: literalBool(true),
-        allowEmpty: literalBool(true),
+    test('threads useQueryComponent: false into encodeAnyToForm', () {
+      final actual = formatExpression(
+        encodeAnyToFormExpression(
+          refer('value'),
+          explode: literalBool(false),
+          allowEmpty: literalBool(false),
+          useQueryComponent: literalBool(false),
+        ),
       );
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
       final expected = formatStatement(
-        'encodeAnyToForm(value, explode: true, allowEmpty: true)',
+        'encodeAnyToForm(value, explode: false, allowEmpty: false, '
+        'useQueryComponent: false)',
       );
 
       expect(
@@ -142,16 +113,16 @@ void main() {
     });
   });
 
-  group('matrixEncodingPolicy', () {
-    test('encodeAny calls encodeAnyToMatrix with paramName and named args',
-        () {
-      final policy = matrixEncodingPolicy(
-        paramName: refer('paramName'),
-        explode: refer('explode'),
-        allowEmpty: refer('allowEmpty'),
+  group('encodeAnyToMatrixExpression', () {
+    test('emits encodeAnyToMatrix with paramName and named args', () {
+      final actual = formatExpression(
+        encodeAnyToMatrixExpression(
+          refer('value'),
+          paramName: refer('paramName'),
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+        ),
       );
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
       final expected = formatStatement(
         'encodeAnyToMatrix(value, paramName, explode: explode, '
         'allowEmpty: allowEmpty)',
@@ -164,14 +135,15 @@ void main() {
     });
   });
 
-  group('labelEncodingPolicy', () {
-    test('encodeAny calls encodeAnyToLabel with named arguments', () {
-      final policy = labelEncodingPolicy(
-        explode: refer('explode'),
-        allowEmpty: refer('allowEmpty'),
+  group('encodeAnyToLabelExpression', () {
+    test('emits encodeAnyToLabel with named arguments', () {
+      final actual = formatExpression(
+        encodeAnyToLabelExpression(
+          refer('value'),
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+        ),
       );
-
-      final actual = formatExpression(policy.encodeAny(refer('value')));
       final expected = formatStatement(
         'encodeAnyToLabel(value, explode: explode, allowEmpty: allowEmpty)',
       );

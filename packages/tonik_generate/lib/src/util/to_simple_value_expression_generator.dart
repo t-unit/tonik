@@ -157,10 +157,11 @@ Expression _buildSimpleSerializationExpression(
       allowEmpty: allowEmpty,
     ),
 
-    AnyModel() => simpleEncodingPolicy(
+    AnyModel() => encodeAnyToSimpleExpression(
+      receiver,
       explode: literalBool(explode),
       allowEmpty: literalBool(allowEmpty),
-    ).encodeAny(receiver),
+    ),
 
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for simple encoding.',

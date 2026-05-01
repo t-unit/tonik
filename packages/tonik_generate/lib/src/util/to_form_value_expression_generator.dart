@@ -139,11 +139,12 @@ Expression _buildFormSerializationExpression(
       'Form encoding not supported for binary types.',
     ),
 
-    AnyModel() => formEncodingPolicy(
+    AnyModel() => encodeAnyToFormExpression(
+      receiver,
       explode: explodeArg,
       allowEmpty: allowEmptyArg,
       useQueryComponent: useQueryComponent ? literalBool(true) : null,
-    ).encodeAny(receiver),
+    ),
 
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for form encoding.',

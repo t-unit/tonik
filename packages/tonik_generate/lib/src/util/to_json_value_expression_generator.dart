@@ -163,7 +163,7 @@ Expression _buildSerializationExpression(
       useImmutableCollections: useImmutableCollections,
     ),
     PrimitiveModel() => directReceiver,
-    AnyModel() => jsonEncodingPolicy().encodeAny(directReceiver),
+    AnyModel() => encodeAnyToJsonExpression(directReceiver),
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for JSON encoding.',
     ),

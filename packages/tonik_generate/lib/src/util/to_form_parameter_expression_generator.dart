@@ -69,10 +69,11 @@ Expression buildFormParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AnyModel() => formEncodingPolicy(
+    AnyModel() => encodeAnyToFormExpression(
+      valueExpression,
       explode: explode,
       allowEmpty: allowEmpty,
-    ).encodeAny(valueExpression),
+    ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be form-encoded',
     ),

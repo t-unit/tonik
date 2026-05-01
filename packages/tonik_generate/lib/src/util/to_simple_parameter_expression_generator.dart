@@ -50,10 +50,11 @@ Expression buildSimpleParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AnyModel() => simpleEncodingPolicy(
+    AnyModel() => encodeAnyToSimpleExpression(
+      valueExpression,
       explode: explode,
       allowEmpty: allowEmpty,
-    ).encodeAny(valueExpression),
+    ),
     Base64Model() => (isNullable
             ? valueExpression.nullSafeProperty('toBase64String')
             : valueExpression.property('toBase64String'))

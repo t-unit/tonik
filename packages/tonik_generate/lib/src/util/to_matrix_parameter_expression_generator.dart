@@ -53,11 +53,12 @@ Expression buildMatrixParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AnyModel() => matrixEncodingPolicy(
+    AnyModel() => encodeAnyToMatrixExpression(
+      valueExpression,
       paramName: paramName,
       explode: explode,
       allowEmpty: allowEmpty,
-    ).encodeAny(valueExpression),
+    ),
     Base64Model() => (isNullable
             ? valueExpression.nullSafeProperty('toBase64String')
             : valueExpression.property('toBase64String'))
