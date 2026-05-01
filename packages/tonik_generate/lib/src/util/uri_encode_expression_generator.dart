@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
@@ -30,15 +31,10 @@ Expression buildUriEncodeExpression(
       },
     ),
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
-      refer(
-        'encodeAnyToUri',
-        'package:tonik_util/tonik_util.dart',
-      ).call(
-        [valueExpression],
-        {
-          'allowEmpty': allowEmpty,
-          'useQueryComponent': ?useQueryComponent,
-        },
+      encodeAnyToUriExpression(
+        valueExpression,
+        allowEmpty: allowEmpty,
+        useQueryComponent: useQueryComponent,
       ),
     MapModel() => _buildMapUriEncodeExpression(
       valueExpression,
@@ -134,19 +130,11 @@ Expression _buildListUriEncodeExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body =
-                    refer(
-                          'encodeAnyToUri',
-                          'package:tonik_util/tonik_util.dart',
-                        )
-                        .call(
-                          [refer('e')],
-                          {
-                            'allowEmpty': allowEmpty,
-                            'useQueryComponent': ?useQueryComponent,
-                          },
-                        )
-                        .code,
+                ..body = encodeAnyToUriExpression(
+                  refer('e'),
+                  allowEmpty: allowEmpty,
+                  useQueryComponent: useQueryComponent,
+                ).code,
             ).closure,
           ])
           .property('toList')

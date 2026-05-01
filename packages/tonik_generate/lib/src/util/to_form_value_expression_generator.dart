@@ -29,18 +29,12 @@ Expression buildToFormPropertyExpression(
   // expression in the consumer's analyzer.
   if (property.isRequired &&
       property.isNullable &&
-      !_resolvesToAnyModel(model)) {
+      model.resolved is! AnyModel) {
     return expr.ifNullThen(literalString(''));
   }
 
   return expr;
 }
-
-bool _resolvesToAnyModel(Model model) => switch (model) {
-      AnyModel() => true,
-      AliasModel(:final model) => _resolvesToAnyModel(model),
-      _ => false,
-    };
 
 /// Creates a Dart expression that correctly serializes any model
 /// to its form-encoded representation, including complex types.

@@ -153,10 +153,10 @@ Expression _buildListLabelExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer(
-                  'encodeAnyToUri',
-                  'package:tonik_util/tonik_util.dart',
-                ).call([refer('e')], {'allowEmpty': allowEmpty}).code,
+                ..body = encodeAnyToUriExpression(
+                  refer('e'),
+                  allowEmpty: allowEmpty,
+                ).code,
             ).closure,
           ])
           .property('toList')

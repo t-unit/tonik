@@ -102,11 +102,12 @@ String encodeAnyToLabel(
 /// Generated models implementing [ParameterEncodable] encode themselves.
 /// Primitives use extension methods.
 ///
-/// `List` values are encoded comma-separated (the explode setting does not
-/// affect simple-style list serialisation per RFC 6570). `Map` values are
-/// encoded as `k1=v1,k2=v2` when explode=true and `k1,v1,k2,v2` when
-/// explode=false, with each element pre-encoded recursively via
-/// [encodeAnyToSimple] so nested lists / maps / primitives all work.
+/// `List` values are encoded comma-separated (at the immediate list level —
+/// explode still propagates into nested maps/lists, where it can affect
+/// their internal rendering). `Map` values are encoded as `k1=v1,k2=v2`
+/// when explode=true and `k1,v1,k2,v2` when explode=false, with each
+/// element pre-encoded recursively via [encodeAnyToSimple] so nested lists
+/// / maps / primitives all work.
 ///
 /// [allowEmpty] applies to the whole structure: when `false`, an empty inner
 /// list / map / null value at any depth raises [EmptyValueException]. The
@@ -199,12 +200,12 @@ String encodeAnyToSimple(
 /// Generated models implementing [ParameterEncodable] encode themselves.
 /// Primitives use extension methods.
 ///
-/// `List` values are encoded comma-separated for explode=false (the
-/// repeated-key explode=true form is handled at the parameter encoder
-/// layer, not here). `Map` values are encoded as `k1=v1&k2=v2` when
-/// explode=true and `k1,v1,k2,v2` when explode=false, with each element
-/// pre-encoded recursively via [encodeAnyToForm] so nested collections
-/// work.
+/// `List` values are always encoded comma-separated within this helper,
+/// regardless of explode. The repeated-key form for explode=true is
+/// applied at the parameter-encoder layer above, not here. `Map` values
+/// are encoded as `k1=v1&k2=v2` when explode=true and `k1,v1,k2,v2` when
+/// explode=false, with each element pre-encoded recursively via
+/// [encodeAnyToForm] so nested collections work.
 ///
 /// [allowEmpty] applies to the whole structure: when `false`, an empty inner
 /// list / map / null value at any depth raises [EmptyValueException]. The

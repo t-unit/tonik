@@ -860,6 +860,29 @@ void main() {
           throwsA(isA<EncodingException>()),
         );
       });
+
+      test('throws for Map<dynamic, dynamic> (type guard requires '
+          'Map<String, dynamic>)', () {
+        expect(
+          () => encodeAnyToSimple(
+            <dynamic, dynamic>{'a': 1},
+            explode: false,
+            allowEmpty: true,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('encodes Map<String, int> (covariant Map<String, dynamic>)', () {
+        expect(
+          encodeAnyToSimple(
+            <String, int>{'a': 1},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'a,1',
+        );
+      });
     });
 
     group('recursive allowEmpty propagation', () {
@@ -1466,6 +1489,29 @@ void main() {
         expect(
           () => encodeAnyToForm(Object(), explode: false, allowEmpty: false),
           throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for Map<dynamic, dynamic> (type guard requires '
+          'Map<String, dynamic>)', () {
+        expect(
+          () => encodeAnyToForm(
+            <dynamic, dynamic>{'a': 1},
+            explode: false,
+            allowEmpty: true,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('encodes Map<String, int> (covariant Map<String, dynamic>)', () {
+        expect(
+          encodeAnyToForm(
+            <String, int>{'a': 1},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'a,1',
         );
       });
     });

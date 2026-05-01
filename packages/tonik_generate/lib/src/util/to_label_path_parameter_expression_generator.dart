@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
@@ -29,9 +30,10 @@ Expression buildToLabelPathParameterExpression(
   final model = parameter.model;
 
   if (model is AnyModel) {
-    return refer('encodeAnyToLabel', 'package:tonik_util/tonik_util.dart').call(
-      [valueRef],
-      {'explode': explode, 'allowEmpty': allowEmpty},
+    return encodeAnyToLabelExpression(
+      valueRef,
+      explode: explode,
+      allowEmpty: allowEmpty,
     );
   }
 
@@ -143,10 +145,10 @@ Expression buildToLabelPathParameterExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer(
-                  'encodeAnyToUri',
-                  'package:tonik_util/tonik_util.dart',
-                ).call([refer('e')], {'allowEmpty': allowEmpty}).code,
+                ..body = encodeAnyToUriExpression(
+                  refer('e'),
+                  allowEmpty: allowEmpty,
+                ).code,
             ).closure,
           ])
           .property('toList')

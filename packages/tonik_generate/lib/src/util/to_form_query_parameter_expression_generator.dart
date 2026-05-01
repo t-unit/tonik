@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
@@ -102,17 +103,11 @@ List<Code> buildToFormQueryParameterCode(
       const Code(r'_$entries.add(('),
       Code('name: ${specLiteralStringCode(parameter.rawName)}, '),
       const Code('value: '),
-      refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart')
-          .call(
-            [
-              refer(parameterName),
-            ],
-            {
-              'explode': literalBool(explode),
-              'allowEmpty': literalBool(allowEmpty),
-            },
-          )
-          .code,
+      encodeAnyToFormExpression(
+        refer(parameterName),
+        explode: literalBool(explode),
+        allowEmpty: literalBool(allowEmpty),
+      ).code,
       const Code(',),);'),
     ];
   }
@@ -178,14 +173,10 @@ List<Code> buildToFormQueryParameterCode(
         const Code('value: '),
         refer(parameterName).code,
         const Code('.map((e) => '),
-        refer('encodeAnyToUri', 'package:tonik_util/tonik_util.dart')
-            .call(
-              [refer('e')],
-              {
-                'allowEmpty': literalBool(allowEmpty),
-              },
-            )
-            .code,
+        encodeAnyToUriExpression(
+          refer('e'),
+          allowEmpty: literalBool(allowEmpty),
+        ).code,
         const Code(').toList().toForm('),
         Code('explode: $explode, allowEmpty: $allowEmpty),),);'),
       ];
@@ -313,9 +304,10 @@ String? _getFormSerializationSuffix(
 
     Base64Model() => '.toBase64String().toForm($paramString)',
 
-    // AnyModel falls back to toString here; structural form encoding lives in
-    // encodeAnyToForm but is not yet wired into the query-suffix path.
-    AnyModel() => '?.toString() ?? ""',
+    // AnyModel cannot be encoded via the suffix path; falls through to
+    // EncodingException so callers see an explicit failure rather than a
+    // silent toString.
+    AnyModel() => null,
     NeverModel() => null,
     BinaryModel() => null,
 
@@ -356,15 +348,12 @@ String? _handleListExpression(
       return '.map($elementMapBody).toList().toForm($paramString)';
     }(),
 
-    AnyModel() => () {
-      final suffix = _getFormSerializationSuffix(
-        contentModel,
-        explode: explode,
-        allowEmpty: allowEmpty,
-      );
-      final elementMapBody = '(e) => e$suffix';
-      return '.map($elementMapBody).toList().toForm($paramString)';
-    }(),
+    // AnyModel cannot be encoded via the suffix path; the top-level
+    // ListModel branch routes List<AnyModel> through encodeAnyToUri, so
+    // returning null here causes any unexpected fall-through (e.g., a
+    // List<List<AnyModel>>) to produce an EncodingException rather than
+    // silently emitting wrong code.
+    AnyModel() => null,
 
     AliasModel() => _handleListExpression(
       contentModel.model,
@@ -418,10 +407,10 @@ List<Code> _buildExplodedListCode(
       ),
       Code('name: $nameCode, '),
       const Code('value: '),
-      refer(
-        'encodeAnyToUri',
-        'package:tonik_util/tonik_util.dart',
-      ).call([refer('e')], {'allowEmpty': literalBool(allowEmpty)}).code,
+      encodeAnyToUriExpression(
+        refer('e'),
+        allowEmpty: literalBool(allowEmpty),
+      ).code,
       const Code(',),),);'),
     ];
   }

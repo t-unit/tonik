@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
@@ -22,15 +23,12 @@ Code buildToDeepObjectQueryParameterCode(
   final allowEmpty = parameter.allowEmptyValue;
 
   if (model is AnyModel) {
-    return refer('encodeAnyToDeepObject', 'package:tonik_util/tonik_util.dart')
-        .call(
-          [refer(parameterName), specLiteralString(rawName)],
-          {
-            'explode': literalBool(explode),
-            'allowEmpty': literalBool(allowEmpty),
-          },
-        )
-        .code;
+    return encodeAnyToDeepObjectExpression(
+      refer(parameterName),
+      paramName: specLiteralString(rawName),
+      explode: literalBool(explode),
+      allowEmpty: literalBool(allowEmpty),
+    ).code;
   }
 
   // Handle MapModel (including aliases to MapModel) before the general
