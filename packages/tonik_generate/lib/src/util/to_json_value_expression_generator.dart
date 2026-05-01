@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 /// Creates a Dart expression that correctly serializes a property
@@ -162,10 +163,7 @@ Expression _buildSerializationExpression(
       useImmutableCollections: useImmutableCollections,
     ),
     PrimitiveModel() => directReceiver,
-    AnyModel() => refer(
-      'encodeAnyToJson',
-      'package:tonik_util/tonik_util.dart',
-    ).call([directReceiver]),
+    AnyModel() => jsonEncodingPolicy().encodeAny(directReceiver),
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for JSON encoding.',
     ),

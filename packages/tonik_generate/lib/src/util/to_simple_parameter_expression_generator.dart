@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
@@ -49,14 +50,10 @@ Expression buildSimpleParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AnyModel() =>
-      refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
-        [valueExpression],
-        {
-          'explode': explode,
-          'allowEmpty': allowEmpty,
-        },
-      ),
+    AnyModel() => simpleEncodingPolicy(
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ).encodeAny(valueExpression),
     Base64Model() => (isNullable
             ? valueExpression.nullSafeProperty('toBase64String')
             : valueExpression.property('toBase64String'))

@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
@@ -68,14 +69,10 @@ Expression buildFormParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AnyModel() =>
-      refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart').call(
-        [valueExpression],
-        {
-          'explode': explode,
-          'allowEmpty': allowEmpty,
-        },
-      ),
+    AnyModel() => formEncodingPolicy(
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ).encodeAny(valueExpression),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be form-encoded',
     ),

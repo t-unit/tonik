@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
@@ -49,11 +50,10 @@ Expression buildLabelParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AnyModel() => _buildAnyModelLabelExpression(
-      valueExpression,
+    AnyModel() => labelEncodingPolicy(
       explode: explode,
       allowEmpty: allowEmpty,
-    ),
+    ).encodeAny(valueExpression),
     Base64Model() => (isNullable
             ? valueExpression.nullSafeProperty('toBase64String')
             : valueExpression.property('toBase64String'))
@@ -301,18 +301,4 @@ Expression _buildListMapContentLabelExpression(
           'alreadyEncoded': literalTrue,
         },
       );
-}
-
-Expression _buildAnyModelLabelExpression(
-  Expression valueExpression, {
-  required Expression explode,
-  required Expression allowEmpty,
-}) {
-  return refer('encodeAnyToLabel', 'package:tonik_util/tonik_util.dart').call(
-    [valueExpression],
-    {
-      'explode': explode,
-      'allowEmpty': allowEmpty,
-    },
-  );
 }

@@ -598,6 +598,109 @@ void main() {
       });
     });
 
+    group('AnyModel', () {
+      test('generates encodeAnyToForm call referencing scope variables', () {
+        final property = Property(
+          name: 'data',
+          model: AnyModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression('data', property);
+        expect(
+          emit(result),
+          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
+        );
+      });
+
+      test('nullable AnyModel still routes through encodeAnyToForm', () {
+        final property = Property(
+          name: 'data',
+          model: AnyModel(context: context),
+          isRequired: false,
+          isNullable: true,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression('data', property);
+        expect(
+          emit(result),
+          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
+        );
+      });
+
+      test('uses literal explode/allowEmpty when buildToFormValueExpression '
+          'is called with literals', () {
+        final result = buildToFormValueExpression(
+          'value',
+          AnyModel(context: context),
+          useQueryComponent: false,
+          explodeLiteral: true,
+          allowEmptyLiteral: false,
+        );
+        expect(
+          emit(result),
+          'encodeAnyToForm(value, explode: true, allowEmpty: false, )',
+        );
+      });
+
+      test('threads useQueryComponent: true into encodeAnyToForm when set', () {
+        final result = buildToFormValueExpression(
+          'value',
+          AnyModel(context: context),
+          useQueryComponent: true,
+          explodeLiteral: true,
+          allowEmptyLiteral: true,
+        );
+        expect(
+          emit(result),
+          'encodeAnyToForm(value, explode: true, allowEmpty: true, '
+          'useQueryComponent: true, )',
+        );
+      });
+
+      test('omits useQueryComponent from encodeAnyToForm when false', () {
+        final property = Property(
+          name: 'data',
+          model: AnyModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression('data', property);
+        // Default useQueryComponent=false omits the named arg.
+        expect(
+          emit(result),
+          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
+        );
+      });
+
+      test('required + nullable AnyModel emits ifNullThen wrap (no-op for '
+          'encodeAnyToForm which already returns String)', () {
+        final property = Property(
+          name: 'data',
+          model: AnyModel(context: context),
+          isRequired: true,
+          isNullable: true,
+          isDeprecated: false,
+        );
+
+        final result = buildToFormPropertyExpression('data', property);
+        // The wrap is emitted because the property is required + nullable;
+        // the runtime helper already returns String (never null) so the
+        // fallback never fires, but the surrounding wrap is consistent with
+        // every other primitive branch.
+        expect(
+          emit(result),
+          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )'
+          " ?? ''",
+        );
+      });
+    });
+
     group('useQueryComponent parameter', () {
       test('omits useQueryComponent when false (default)', () {
         final property = Property(

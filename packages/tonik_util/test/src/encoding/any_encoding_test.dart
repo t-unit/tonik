@@ -91,6 +91,53 @@ enum TestUriEncodableEnum implements UriEncodable {
   }
 }
 
+/// A ParameterEncodable stub whose `toForm` actually branches on
+/// `useQueryComponent`. Used to verify the flag is forwarded by
+/// `encodeAnyToForm` instead of being silently dropped.
+class QueryComponentAwareEncodable implements ParameterEncodable {
+  const QueryComponentAwareEncodable(this.rawValue);
+
+  final String rawValue;
+
+  @override
+  String toForm({
+    required bool explode,
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+  }) {
+    return useQueryComponent
+        ? Uri.encodeQueryComponent(rawValue)
+        : Uri.encodeComponent(rawValue);
+  }
+
+  @override
+  String toMatrix(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  String toLabel({required bool explode, required bool allowEmpty}) =>
+      throw UnimplementedError();
+
+  @override
+  String toSimple({required bool explode, required bool allowEmpty}) =>
+      throw UnimplementedError();
+
+  @override
+  List<ParameterEntry> toDeepObject(
+    String paramName, {
+    required bool explode,
+    required bool allowEmpty,
+  }) =>
+      throw UnimplementedError();
+
+  @override
+  Object? toJson() => throw UnimplementedError();
+}
+
 void main() {
   group('encodeAnyToMatrix', () {
     group('ParameterEncodable', () {
@@ -602,11 +649,247 @@ void main() {
       });
     });
 
+    group('List<dynamic>', () {
+      test('encodes a primitive list as comma-separated values', () {
+        expect(
+          encodeAnyToSimple(
+            <dynamic>[1, 2, 3],
+            explode: false,
+            allowEmpty: true,
+          ),
+          '1,2,3',
+        );
+      });
+
+      test('explode=true still produces comma-separated values', () {
+        // Per RFC 6570 simple-style, list items use a single comma separator
+        // regardless of explode (the multi-instance form does not apply).
+        expect(
+          encodeAnyToSimple(
+            <dynamic>[1, 2, 3],
+            explode: true,
+            allowEmpty: true,
+          ),
+          '1,2,3',
+        );
+      });
+
+      test('encodes mixed-type list', () {
+        expect(
+          encodeAnyToSimple(
+            <dynamic>['a', 1, true],
+            explode: false,
+            allowEmpty: true,
+          ),
+          'a,1,true',
+        );
+      });
+
+      test('URL-encodes string elements', () {
+        expect(
+          encodeAnyToSimple(
+            <dynamic>['hello world', 'foo&bar'],
+            explode: false,
+            allowEmpty: true,
+          ),
+          'hello%20world,foo%26bar',
+        );
+      });
+
+      test('encodes empty list with allowEmpty=true', () {
+        expect(
+          encodeAnyToSimple(
+            <dynamic>[],
+            explode: false,
+            allowEmpty: true,
+          ),
+          '',
+        );
+      });
+
+      test('throws for empty list with allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSimple(
+            <dynamic>[],
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes nested list of maps recursively', () {
+        expect(
+          encodeAnyToSimple(
+            <dynamic>[
+              <String, dynamic>{'a': 1},
+              <String, dynamic>{'b': 2},
+            ],
+            explode: false,
+            allowEmpty: true,
+          ),
+          'a,1,b,2',
+        );
+      });
+    });
+
+    group('Map<String, dynamic>', () {
+      test('encodes map with explode=false as k1,v1,k2,v2', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{'key': 'value', 'count': 5},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'key,value,count,5',
+        );
+      });
+
+      test('encodes map with explode=true as k1=v1,k2=v2', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{'key': 'value', 'count': 5},
+            explode: true,
+            allowEmpty: true,
+          ),
+          'key=value,count=5',
+        );
+      });
+
+      test('URL-encodes string values', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{'q': 'hello world'},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'q,hello%20world',
+        );
+      });
+
+      test('encodes empty map with allowEmpty=true', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{},
+            explode: false,
+            allowEmpty: true,
+          ),
+          '',
+        );
+      });
+
+      test('throws for empty map with allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSimple(
+            <String, dynamic>{},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes map of lists recursively', () {
+        // Inner list is comma-joined first; the outer map then comma-joins
+        // key,value pairs (the comma is shared between inner-list separator
+        // and outer-map separator -- this is an inherent limitation of
+        // simple-style for nested structures).
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{
+              'tags': <dynamic>['a', 'b'],
+            },
+            explode: false,
+            allowEmpty: true,
+          ),
+          'tags,a,b',
+        );
+      });
+    });
+
     group('unsupported types', () {
       test('throws for unsupported type', () {
         expect(
           () => encodeAnyToSimple(Object(), explode: false, allowEmpty: false),
           throwsA(isA<EncodingException>()),
+        );
+      });
+    });
+
+    group('recursive allowEmpty propagation', () {
+      // The caller's allowEmpty must apply at every depth. An inner empty
+      // list / map / null inside a non-empty outer container must throw when
+      // the caller asked for no empty values.
+      test('throws for non-empty map with empty inner list and '
+          'allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSimple(
+            <String, dynamic>{'key': <dynamic>[]},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for non-empty list with empty inner list and '
+          'allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSimple(
+            <dynamic>[<dynamic>[]],
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for non-empty map with empty inner map and '
+          'allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSimple(
+            <String, dynamic>{'key': <String, dynamic>{}},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for non-empty map with null inner value and '
+          'allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSimple(
+            <String, dynamic>{'key': null},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes non-empty map with empty inner list when '
+          'allowEmpty=true', () {
+        // The bifurcation check: same shape, opposite flag must succeed.
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{'key': <dynamic>[]},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'key,',
+        );
+      });
+
+      test('encodes non-empty list with empty inner list when '
+          'allowEmpty=true', () {
+        expect(
+          encodeAnyToSimple(
+            <dynamic>[<dynamic>[]],
+            explode: false,
+            allowEmpty: true,
+          ),
+          '',
         );
       });
     });
@@ -628,6 +911,26 @@ void main() {
           encodeAnyToForm(model, explode: false, allowEmpty: false),
           'name,test,value,42',
         );
+      });
+
+      test('forwards useQueryComponent to ParameterEncodable.toForm', () {
+        const model = QueryComponentAwareEncodable('hello world');
+
+        final withoutQuery = encodeAnyToForm(
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
+        final withQuery = encodeAnyToForm(
+          model,
+          explode: false,
+          allowEmpty: true,
+          useQueryComponent: true,
+        );
+
+        expect(withoutQuery, 'hello%20world');
+        expect(withQuery, 'hello+world');
+        expect(withoutQuery == withQuery, isFalse);
       });
     });
 
@@ -745,11 +1048,281 @@ void main() {
       });
     });
 
+    group('List<dynamic>', () {
+      test('encodes a primitive list as comma-separated values', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[1, 2, 3],
+            explode: false,
+            allowEmpty: true,
+          ),
+          '1,2,3',
+        );
+      });
+
+      test('explode=true still produces comma-separated values', () {
+        // The explode=true repeated-key form is handled at the parameter
+        // encoder layer; this helper returns a single string.
+        expect(
+          encodeAnyToForm(
+            <dynamic>[1, 2, 3],
+            explode: true,
+            allowEmpty: true,
+          ),
+          '1,2,3',
+        );
+      });
+
+      test('URL-encodes string elements with %20 by default', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>['hello world', 'foo&bar'],
+            explode: false,
+            allowEmpty: true,
+          ),
+          'hello%20world,foo%26bar',
+        );
+      });
+
+      test('uses + for spaces with useQueryComponent=true', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>['hello world'],
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'hello+world',
+        );
+      });
+
+      test('encodes empty list with allowEmpty=true', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[],
+            explode: false,
+            allowEmpty: true,
+          ),
+          '',
+        );
+      });
+
+      test('throws for empty list with allowEmpty=false', () {
+        expect(
+          () => encodeAnyToForm(
+            <dynamic>[],
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes nested list of maps recursively', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[
+              <String, dynamic>{'a': 1},
+              <String, dynamic>{'b': 2},
+            ],
+            explode: false,
+            allowEmpty: true,
+          ),
+          'a,1,b,2',
+        );
+      });
+    });
+
+    group('Map<String, dynamic>', () {
+      test('encodes map with explode=false as k1,v1,k2,v2', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'key': 'value', 'count': 5},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'key,value,count,5',
+        );
+      });
+
+      test('encodes map with explode=true as k1=v1&k2=v2', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'key': 'value', 'count': 5},
+            explode: true,
+            allowEmpty: true,
+          ),
+          'key=value&count=5',
+        );
+      });
+
+      test('URL-encodes string values with %20 by default', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'q': 'hello world'},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'q,hello%20world',
+        );
+      });
+
+      test('uses + for spaces with useQueryComponent=true', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'q': 'hello world'},
+            explode: true,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'q=hello+world',
+        );
+      });
+
+      test('encodes empty map with allowEmpty=true', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{},
+            explode: false,
+            allowEmpty: true,
+          ),
+          '',
+        );
+      });
+
+      test('throws for empty map with allowEmpty=false', () {
+        expect(
+          () => encodeAnyToForm(
+            <String, dynamic>{},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes map of lists recursively', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{
+              'tags': <dynamic>['a', 'b'],
+            },
+            explode: false,
+            allowEmpty: true,
+          ),
+          'tags,a,b',
+        );
+      });
+    });
+
+    group('useQueryComponent on primitives', () {
+      test('uses + for spaces with useQueryComponent=true on String', () {
+        expect(
+          encodeAnyToForm(
+            'hello world',
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          'hello+world',
+        );
+      });
+
+      test('uses %20 for spaces by default on String', () {
+        expect(
+          encodeAnyToForm(
+            'hello world',
+            explode: false,
+            allowEmpty: true,
+          ),
+          'hello%20world',
+        );
+      });
+    });
+
     group('unsupported types', () {
       test('throws for unsupported type', () {
         expect(
           () => encodeAnyToForm(Object(), explode: false, allowEmpty: false),
           throwsA(isA<EncodingException>()),
+        );
+      });
+    });
+
+    group('recursive allowEmpty propagation', () {
+      // The caller's allowEmpty must apply at every depth. An inner empty
+      // list / map / null inside a non-empty outer container must throw when
+      // the caller asked for no empty values.
+      test('throws for non-empty map with empty inner list and '
+          'allowEmpty=false', () {
+        expect(
+          () => encodeAnyToForm(
+            <String, dynamic>{'key': <dynamic>[]},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for non-empty list with empty inner list and '
+          'allowEmpty=false', () {
+        expect(
+          () => encodeAnyToForm(
+            <dynamic>[<dynamic>[]],
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for non-empty map with empty inner map and '
+          'allowEmpty=false', () {
+        expect(
+          () => encodeAnyToForm(
+            <String, dynamic>{'key': <String, dynamic>{}},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for non-empty map with null inner value and '
+          'allowEmpty=false', () {
+        expect(
+          () => encodeAnyToForm(
+            <String, dynamic>{'key': null},
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('encodes non-empty map with empty inner list when '
+          'allowEmpty=true', () {
+        // The bifurcation check: same shape, opposite flag must succeed.
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'key': <dynamic>[]},
+            explode: false,
+            allowEmpty: true,
+          ),
+          'key,',
+        );
+      });
+
+      test('encodes non-empty list with empty inner list when '
+          'allowEmpty=true', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>[<dynamic>[]],
+            explode: false,
+            allowEmpty: true,
+          ),
+          '',
         );
       });
     });

@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
 /// Creates a Dart expression that correctly serializes a property
@@ -66,15 +67,18 @@ Expression _buildFormSerializationExpression(
   bool? explodeLiteral,
   bool? allowEmptyLiteral,
 }) {
+  final explodeArg = explodeLiteral != null
+      ? literalBool(explodeLiteral)
+      : refer('explode');
+  final allowEmptyArg = allowEmptyLiteral != null
+      ? literalBool(allowEmptyLiteral)
+      : refer('allowEmpty');
+
   Expression callToForm(Expression target, {required bool nullAware}) {
     const methodName = 'toForm';
     final args = <String, Expression>{
-      'explode': explodeLiteral != null
-          ? literalBool(explodeLiteral)
-          : refer('explode'),
-      'allowEmpty': allowEmptyLiteral != null
-          ? literalBool(allowEmptyLiteral)
-          : refer('allowEmpty'),
+      'explode': explodeArg,
+      'allowEmpty': allowEmptyArg,
     };
     if (useQueryComponent) {
       args['useQueryComponent'] = literalBool(true);
@@ -124,7 +128,16 @@ Expression _buildFormSerializationExpression(
       'Form encoding not supported for binary types.',
     ),
 
-    AnyModel() => receiver, // Pass through as-is
+    // Null is handled by the runtime helper itself (which returns the
+    // empty string when allowEmpty is true), so the surrounding
+    // `.ifNullThen(literalString(''))` wrap in [buildToFormPropertyExpression]
+    // is a no-op for this branch (encodeAnyToForm returns String, not
+    // String?).
+    AnyModel() => formEncodingPolicy(
+      explode: explodeArg,
+      allowEmpty: allowEmptyArg,
+      useQueryComponent: useQueryComponent ? literalBool(true) : null,
+    ).encodeAny(receiver),
 
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for form encoding.',

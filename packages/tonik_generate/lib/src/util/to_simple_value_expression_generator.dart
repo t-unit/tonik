@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
@@ -156,12 +157,10 @@ Expression _buildSimpleSerializationExpression(
       allowEmpty: allowEmpty,
     ),
 
-    // AnyModel (Object?) - convert to String representation
-    AnyModel() =>
-      receiver
-          .nullSafeProperty('toString')
-          .call([])
-          .ifNullThen(literalString('')),
+    AnyModel() => simpleEncodingPolicy(
+      explode: literalBool(explode),
+      allowEmpty: literalBool(allowEmpty),
+    ).encodeAny(receiver),
 
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for simple encoding.',

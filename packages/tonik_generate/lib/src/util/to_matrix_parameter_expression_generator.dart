@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/encoding_policy.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
@@ -52,12 +53,11 @@ Expression buildMatrixParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AnyModel() => _buildAnyModelMatrixExpression(
-      valueExpression,
+    AnyModel() => matrixEncodingPolicy(
       paramName: paramName,
       explode: explode,
       allowEmpty: allowEmpty,
-    ),
+    ).encodeAny(valueExpression),
     Base64Model() => (isNullable
             ? valueExpression.nullSafeProperty('toBase64String')
             : valueExpression.property('toBase64String'))
@@ -115,21 +115,6 @@ bool _listMatrixContentUsesValue(Model content) {
     AliasModel(:final model) => _listMatrixContentUsesValue(model),
     _ => true,
   };
-}
-
-Expression _buildAnyModelMatrixExpression(
-  Expression valueExpression, {
-  required Expression paramName,
-  required Expression explode,
-  required Expression allowEmpty,
-}) {
-  return refer('encodeAnyToMatrix', 'package:tonik_util/tonik_util.dart').call(
-    [valueExpression, paramName],
-    {
-      'explode': explode,
-      'allowEmpty': allowEmpty,
-    },
-  );
 }
 
 Expression _buildListMatrixExpression(

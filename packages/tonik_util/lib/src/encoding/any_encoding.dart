@@ -101,6 +101,17 @@ String encodeAnyToLabel(
 /// Handles runtime type detection for values of unknown type.
 /// Generated models implementing [ParameterEncodable] encode themselves.
 /// Primitives use extension methods.
+///
+/// `List` values are encoded comma-separated (the explode setting does not
+/// affect simple-style list serialisation per RFC 6570). `Map` values are
+/// encoded as `k1=v1,k2=v2` when explode=true and `k1,v1,k2,v2` when
+/// explode=false, with each element pre-encoded recursively via
+/// [encodeAnyToSimple] so nested lists / maps / primitives all work.
+///
+/// [allowEmpty] applies to the whole structure: when `false`, an empty inner
+/// list / map / null value at any depth raises [EmptyValueException]. The
+/// flag is threaded through the recursion so that `{'k': []}` with
+/// `allowEmpty: false` throws rather than silently producing `'k,'`.
 String encodeAnyToSimple(
   Object? value, {
   required bool explode,
@@ -136,6 +147,43 @@ String encodeAnyToSimple(
   if (value is BigDecimal) {
     return value.toSimple(explode: explode, allowEmpty: allowEmpty);
   }
+  if (value is Map<String, dynamic>) {
+    if (value.isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final encoded = <String, String>{
+      for (final entry in value.entries)
+        entry.key: encodeAnyToSimple(
+          entry.value,
+          explode: explode,
+          allowEmpty: allowEmpty,
+        ),
+    };
+    return encoded.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+    );
+  }
+  if (value is List<dynamic>) {
+    if (value.isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final encoded = value
+        .map(
+          (item) => encodeAnyToSimple(
+            item,
+            explode: explode,
+            allowEmpty: allowEmpty,
+          ),
+        )
+        .toList();
+    return encoded.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+    );
+  }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to simple style',
   );
@@ -146,10 +194,28 @@ String encodeAnyToSimple(
 /// Handles runtime type detection for values of unknown type.
 /// Generated models implementing [ParameterEncodable] encode themselves.
 /// Primitives use extension methods.
+///
+/// `List` values are encoded comma-separated for explode=false (the
+/// repeated-key explode=true form is handled at the parameter encoder
+/// layer, not here). `Map` values are encoded as `k1=v1&k2=v2` when
+/// explode=true and `k1,v1,k2,v2` when explode=false, with each element
+/// pre-encoded recursively via [encodeAnyToForm] so nested collections
+/// work.
+///
+/// [allowEmpty] applies to the whole structure: when `false`, an empty inner
+/// list / map / null value at any depth raises [EmptyValueException]. The
+/// flag is threaded through the recursion so that `{'k': []}` with
+/// `allowEmpty: false` throws rather than silently producing `'k,'`.
+///
+/// When [useQueryComponent] is true, primitives use
+/// `Uri.encodeQueryComponent` (spaces become `+`) instead of
+/// `Uri.encodeComponent` (spaces become `%20`); the same flag is threaded
+/// into recursive list/map element encoding.
 String encodeAnyToForm(
   Object? value, {
   required bool explode,
   required bool allowEmpty,
+  bool useQueryComponent = false,
 }) {
   if (value == null) {
     if (!allowEmpty) {
@@ -158,28 +224,101 @@ String encodeAnyToForm(
     return '';
   }
   if (value is ParameterEncodable) {
-    return value.toForm(explode: explode, allowEmpty: allowEmpty);
+    return value.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   }
   if (value is String) {
-    return value.toForm(explode: explode, allowEmpty: allowEmpty);
+    return value.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   }
   if (value is int) {
-    return value.toForm(explode: explode, allowEmpty: allowEmpty);
+    return value.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   }
   if (value is double) {
-    return value.toForm(explode: explode, allowEmpty: allowEmpty);
+    return value.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   }
   if (value is bool) {
-    return value.toForm(explode: explode, allowEmpty: allowEmpty);
+    return value.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   }
   if (value is DateTime) {
-    return value.toForm(explode: explode, allowEmpty: allowEmpty);
+    return value.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   }
   if (value is Uri) {
-    return value.toForm(explode: explode, allowEmpty: allowEmpty);
+    return value.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
   }
   if (value is BigDecimal) {
-    return value.toForm(explode: explode, allowEmpty: allowEmpty);
+    return value.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is Map<String, dynamic>) {
+    if (value.isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final encoded = <String, String>{
+      for (final entry in value.entries)
+        entry.key: encodeAnyToForm(
+          entry.value,
+          explode: explode,
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+        ),
+    };
+    return encoded.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (value is List<dynamic>) {
+    if (value.isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final encoded = value
+        .map(
+          (item) => encodeAnyToForm(
+            item,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            useQueryComponent: useQueryComponent,
+          ),
+        )
+        .toList();
+    return encoded.toForm(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      alreadyEncoded: true,
+      useQueryComponent: useQueryComponent,
+    );
   }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to form style',
