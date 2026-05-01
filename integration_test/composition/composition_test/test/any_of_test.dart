@@ -4814,4 +4814,154 @@ void main() {
       });
     });
   });
+
+  group('AnyOfBooleanSchema', () {
+    group('AnyModel variant (from boolean true schema)', () {
+      late AnyOfBooleanSchema anyVariant;
+
+      setUp(() {
+        anyVariant = const AnyOfBooleanSchema(object: 'hello');
+      });
+
+      test('create with string value', () {
+        expect(anyVariant.object, 'hello');
+        expect(anyVariant.class1, isNull);
+      });
+
+      test('create with int value', () {
+        const variant = AnyOfBooleanSchema(object: 42);
+        expect(variant.object, 42);
+        expect(variant.class1, isNull);
+      });
+
+      test('create with map value', () {
+        const variant = AnyOfBooleanSchema(
+          object: <String, String>{'key': 'value'},
+        );
+        expect(variant.object, {'key': 'value'});
+      });
+
+      test('toJson uses encodeAnyToJson for primitive', () {
+        expect(anyVariant.toJson(), 'hello');
+      });
+
+      test('toJson with map value', () {
+        const variant = AnyOfBooleanSchema(
+          object: <String, String>{'key': 'value'},
+        );
+        expect(variant.toJson(), {'key': 'value'});
+      });
+
+      test('fromJson with non-Class1 value falls through to AnyModel', () {
+        final result = AnyOfBooleanSchema.fromJson(42);
+        expect(result.class1, isNull);
+        expect(result.object, 42);
+      });
+
+      test('fromJson with Class1-shaped value populates class1 only', () {
+        final result = AnyOfBooleanSchema.fromJson(
+          const <String, Object?>{'name': 'test'},
+        );
+        expect(result.class1, const Class1(name: 'test'));
+        expect(result.object, isNull);
+      });
+
+      test('fromJson(null) throws JsonDecodingException', () {
+        expect(
+          () => AnyOfBooleanSchema.fromJson(null),
+          throwsA(isA<JsonDecodingException>()),
+        );
+      });
+
+      test('fromJson roundtrip with raw string value', () {
+        const original = AnyOfBooleanSchema(object: 'raw string');
+        final json = original.toJson();
+        final reconstructed = AnyOfBooleanSchema.fromJson(json);
+        expect(reconstructed.class1, isNull);
+        expect(reconstructed.object, 'raw string');
+      });
+
+      test('toSimple throws EncodingException', () {
+        expect(
+          () => anyVariant.toSimple(explode: true, allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('toForm throws EncodingException', () {
+        expect(
+          () => anyVariant.toForm(explode: true, allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('toLabel throws EncodingException', () {
+        expect(
+          () => anyVariant.toLabel(explode: true, allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('toMatrix throws EncodingException', () {
+        expect(
+          () => anyVariant.toMatrix('p', explode: true, allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('uriEncode throws EncodingException', () {
+        expect(
+          () => anyVariant.uriEncode(allowEmpty: true),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('parameterProperties throws EncodingException', () {
+        expect(
+          () => anyVariant.parameterProperties(),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('currentEncodingShape throws EncodingException', () {
+        expect(
+          () => anyVariant.currentEncodingShape,
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('equality with same object value', () {
+        const a = AnyOfBooleanSchema(object: 'hello');
+        const b = AnyOfBooleanSchema(object: 'hello');
+        const c = AnyOfBooleanSchema(object: 'world');
+
+        expect(a, b);
+        expect(a, isNot(c));
+      });
+    });
+
+    group('Class1 variant', () {
+      late AnyOfBooleanSchema classVariant;
+
+      setUp(() {
+        classVariant = const AnyOfBooleanSchema(
+          class1: Class1(name: 'test'),
+        );
+      });
+
+      test('toJson', () {
+        expect(classVariant.toJson(), {'name': 'test'});
+      });
+
+      test('json roundtrip', () {
+        final json = classVariant.toJson();
+        final reconstructed = AnyOfBooleanSchema.fromJson(json);
+        expect(reconstructed, classVariant);
+      });
+
+      test('currentEncodingShape', () {
+        expect(classVariant.currentEncodingShape, EncodingShape.complex);
+      });
+    });
+  });
 }

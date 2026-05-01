@@ -791,3 +791,9 @@ components:
         - $ref: '#/components/schemas/Class1'
         - type: string
           format: byte
+
+    # Boolean true → AnyModel variant (OpenAPI 3.1 / JSON Schema 2020-12).
+    AnyOfBooleanSchema:
+      anyOf:
+        - true
+        - $ref: '#/components/schemas/Class1'

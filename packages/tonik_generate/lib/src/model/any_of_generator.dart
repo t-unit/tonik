@@ -51,8 +51,10 @@ class AnyOfGenerator {
   List<Spec> generateClasses(AnyOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
 
+    // NeverModel has no runtime value; emitting Never? is dead weight.
     final pseudoProperties = stableModelSorter
         .sortDiscriminatedModels(model.models)
+        .where((d) => d.model.resolved is! NeverModel)
         .map((discriminated) {
           final typeRef = typeReference(
             discriminated.model,
@@ -133,6 +135,7 @@ class AnyOfGenerator {
 
     final pseudoProperties = stableModelSorter
         .sortDiscriminatedModels(model.models)
+        .where((d) => d.model.resolved is! NeverModel)
         .map((discriminated) {
           final typeRef = typeReference(
             discriminated.model,
@@ -310,10 +313,22 @@ class AnyOfGenerator {
     required bool isForm,
     required bool needsValues,
     required bool needsMapValues,
+    required String className,
     String? discriminatorValue,
   }) {
     final toMethodName = isForm ? 'toForm' : 'toSimple';
     final codes = <Code>[];
+
+    if (fieldModel.resolved is AnyModel) {
+      codes.add(
+        generateEncodingExceptionExpression(
+          'AnyModel variant of $className cannot be '
+          '${isForm ? 'form' : 'simple'}-encoded',
+          raw: true,
+        ).statement,
+      );
+      return codes;
+    }
 
     if (fieldModel.resolved is Base64Model) {
       codes.add(
@@ -469,9 +484,20 @@ class AnyOfGenerator {
     required String tmpVarName,
     required bool needsValues,
     required bool needsMapValues,
+    required String className,
     String? discriminatorValue,
   }) {
     final codes = <Code>[];
+
+    if (fieldModel.resolved is AnyModel) {
+      codes.add(
+        generateEncodingExceptionExpression(
+          'AnyModel variant of $className cannot be label-encoded',
+          raw: true,
+        ).statement,
+      );
+      return codes;
+    }
 
     if (fieldModel.resolved is Base64Model) {
       codes.add(
@@ -645,7 +671,17 @@ class AnyOfGenerator {
   ) {
     final localDecls = <Code>[];
 
+    final typedProperties = <({String normalizedName, Property property})>[];
+    final anyProperties = <({String normalizedName, Property property})>[];
     for (final n in normalizedProperties) {
+      if (n.property.model.resolved is AnyModel) {
+        anyProperties.add(n);
+      } else {
+        typedProperties.add(n);
+      }
+    }
+
+    for (final n in typedProperties) {
       final modelType = n.property.model;
       final varName = n.normalizedName;
 
@@ -667,17 +703,46 @@ class AnyOfGenerator {
       );
     }
 
+    // AnyModel is the catch-all: assigned only when no typed variant decodes.
+    for (final n in anyProperties) {
+      final modelType = n.property.model;
+      final varName = n.normalizedName;
+
+      localDecls.addAll([
+        _nullableTypeReference(modelType).code,
+        Code(' $varName;'),
+      ]);
+
+      if (typedProperties.isEmpty) {
+        // Degenerate anyOf with only AnyModel variants — assign directly.
+        localDecls.add(Code('$varName = json;'));
+      } else {
+        final typedNullChecks = typedProperties
+            .map((t) => '${t.normalizedName} == null')
+            .join(' && ');
+        localDecls.addAll([
+          Code('if ($typedNullChecks) {'),
+          Code('$varName = json;'),
+          const Code('}'),
+        ]);
+      }
+    }
+
     final ctorArgs = {
       for (final n in normalizedProperties)
         n.normalizedName: refer(n.normalizedName),
     };
 
-    final validationCheck = _buildAllNullValidation(
-      normalizedProperties,
-      'Invalid JSON for $className: all variants failed to decode',
-      generateJsonDecodingExceptionExpression,
-      raw: true,
-    );
+    final decodableProperties = [...typedProperties, ...anyProperties];
+    // AnyModel-only: catch-all assigns; no validation needed.
+    final validationCheck = typedProperties.isEmpty
+        ? const Code('')
+        : _buildAllNullValidation(
+            decodableProperties,
+            'Invalid JSON for $className: all variants failed to decode',
+            generateJsonDecodingExceptionExpression,
+            raw: true,
+          );
 
     return Constructor(
       (b) => b
@@ -938,6 +1003,7 @@ class AnyOfGenerator {
             isForm: false,
             needsValues: needsValues,
             needsMapValues: needsMapValues,
+            className: className,
             discriminatorValue: hasDiscriminator ? discValue : null,
           ),
         )
@@ -1052,7 +1118,10 @@ class AnyOfGenerator {
       final modelType = n.property.model;
       final varName = n.normalizedName;
 
-      if ((modelType is ListModel && !modelType.hasSimpleContent) ||
+      if (modelType.resolved is AnyModel) {
+        // AnyModel has no parameter-string decoding; the field stays null.
+        nonDecodableProperties.add(n);
+      } else if ((modelType is ListModel && !modelType.hasSimpleContent) ||
           modelType is MapModel) {
         nonDecodableProperties.add(n);
       } else {
@@ -1170,12 +1239,20 @@ class AnyOfGenerator {
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
       final fieldModel = n.property.model;
+      final isAnyModel = fieldModel.resolved is AnyModel;
       final isSimple = fieldModel.encodingShape == EncodingShape.simple;
       final isList = fieldModel is ListModel;
       final isMap = fieldModel is MapModel;
 
       body.add(Code('if ($name != null) {'));
-      if (isSimple) {
+      if (isAnyModel) {
+        body.add(
+          generateEncodingExceptionExpression(
+            'AnyModel variant of $className cannot determine encoding shape',
+            raw: true,
+          ).statement,
+        );
+      } else if (isSimple) {
         body.addAll([
           const Code(r'  _$shapes.add('),
           encodingShapeType.property('simple').code,
@@ -1290,6 +1367,7 @@ class AnyOfGenerator {
             isForm: true,
             needsValues: needsValues,
             needsMapValues: needsMapValues,
+            className: className,
             discriminatorValue: hasDiscriminator ? discValue : null,
           ),
         )
@@ -1456,6 +1534,20 @@ class AnyOfGenerator {
       final name = n.normalizedName;
       final discValue = discMap[n.property.model];
       final fieldModel = n.property.model;
+      final isAnyModel = fieldModel.resolved is AnyModel;
+
+      if (isAnyModel) {
+        body
+          ..add(Code('if ($name != null) {'))
+          ..add(
+            generateEncodingExceptionExpression(
+              'AnyModel variant of $className cannot be parameter encoded',
+              raw: true,
+            ).statement,
+          )
+          ..add(const Code('}'));
+        continue;
+      }
 
       final needsProcessing =
           needsMapValues &&
@@ -1497,6 +1589,8 @@ class AnyOfGenerator {
       for (final n in normalizedProperties) {
         final name = n.normalizedName;
         final fieldModel = n.property.model;
+        // AnyModel handled above; skip to avoid duplicate throws.
+        if (fieldModel.resolved is AnyModel) continue;
 
         if (fieldModel.encodingShape == EncodingShape.simple) {
           body.addAll([
@@ -1736,6 +1830,7 @@ class AnyOfGenerator {
             tmpVarName: '_\$${name}Label',
             needsValues: needsValues,
             needsMapValues: needsMapValues,
+            className: className,
             discriminatorValue: hasDiscriminator ? discValue : null,
           ),
         )
@@ -1907,6 +2002,7 @@ class AnyOfGenerator {
             tmpVarName: '_\$${name}Matrix',
             needsValues: needsValues,
             needsMapValues: needsMapValues,
+            className: className,
             discriminatorValue: hasDiscriminator ? discValue : null,
           ),
         )
@@ -2020,9 +2116,17 @@ class AnyOfGenerator {
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
       final propertyModel = n.property.model;
-
-      // Check if this property can be URI encoded
-      if (propertyModel.encodingShape == EncodingShape.complex) {
+      if (propertyModel.resolved is AnyModel) {
+        body
+          ..add(Code('if ($name != null) {'))
+          ..add(
+            generateEncodingExceptionExpression(
+              'AnyModel variant of $className cannot be URI encoded',
+              raw: true,
+            ).statement,
+          )
+          ..add(const Code('}'));
+      } else if (propertyModel.encodingShape == EncodingShape.complex) {
         // Complex types cannot be URI encoded
         body
           ..add(Code('if ($name != null) {'))
@@ -2085,9 +2189,20 @@ class AnyOfGenerator {
     required String tmpVarName,
     required bool needsValues,
     required bool needsMapValues,
+    required String className,
     String? discriminatorValue,
   }) {
     final codes = <Code>[];
+
+    if (fieldModel.resolved is AnyModel) {
+      codes.add(
+        generateEncodingExceptionExpression(
+          'AnyModel variant of $className cannot be matrix-encoded',
+          raw: true,
+        ).statement,
+      );
+      return codes;
+    }
 
     if (fieldModel.encodingShape == EncodingShape.simple) {
       codes.add(
