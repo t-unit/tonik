@@ -4853,15 +4853,12 @@ void main() {
       });
 
       test('fromJson with non-Class1 value falls through to AnyModel', () {
-        // Integer JSON cannot be decoded as Class1, so the AnyModel
-        // catch-all wraps the raw value.
         final result = AnyOfBooleanSchema.fromJson(42);
         expect(result.class1, isNull);
         expect(result.object, 42);
       });
 
       test('fromJson with Class1-shaped value populates class1 only', () {
-        // When the JSON matches Class1, the catch-all is suppressed.
         final result = AnyOfBooleanSchema.fromJson(
           const <String, Object?>{'name': 'test'},
         );
@@ -4870,7 +4867,6 @@ void main() {
       });
 
       test('fromJson(null) throws JsonDecodingException', () {
-        // All variants null → all-null validation throws.
         expect(
           () => AnyOfBooleanSchema.fromJson(null),
           throwsA(isA<JsonDecodingException>()),
