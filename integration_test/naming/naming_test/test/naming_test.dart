@@ -12,9 +12,7 @@ import 'package:naming_api/src/model/object_method_collider.dart';
 import 'package:naming_api/src/model/self_referencer.dart';
 import 'package:naming_api/src/model/simple_result.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
-import 'package:naming_api/src/operation/create_with_body_cookie.dart';
-import 'package:naming_api/src/operation/create_with_body_header.dart';
-import 'package:naming_api/src/operation/create_with_body_query.dart';
+import 'package:naming_api/src/operation/get_param_counter_collision.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_cookie.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_header.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_path.dart';
@@ -22,8 +20,18 @@ import 'package:naming_api/src/operation/get_with_cancel_token_query.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_sanitized.dart';
 import 'package:naming_api/src/operation/post_with_cancel_token_and_body.dart';
 import 'package:test/test.dart';
+import 'package:test_helpers/test_helpers.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  late ImposterServer imposterServer;
+  late String baseUrl;
+
+  setUpAll(() async {
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}';
+  });
+
   group('keyword operationId method names', () {
     test('API client has escaped keyword method names', () {
       // The fact that DefaultApi2 compiles proves operationIds like
@@ -109,115 +117,128 @@ void main() {
     });
   });
 
-  group('body parameter collision', () {
-    test('CreateWithBodyQuery compiles with suffixed param', () {
-      expect(CreateWithBodyQuery, isNotNull);
-    });
-
-    test('CreateWithBodyHeader compiles with suffixed param', () {
-      expect(CreateWithBodyHeader, isNotNull);
-    });
-
-    test('CreateWithBodyCookie compiles with suffixed param', () {
-      expect(CreateWithBodyCookie, isNotNull);
-    });
-  });
-
   group('cancelToken parameter collision', () {
     test(
       'GetWithCancelTokenQuery call() accepts cancelTokenQuery and '
       'built-in cancelToken',
-      () {
-        final op = GetWithCancelTokenQuery(Dio());
-        // Local function with explicit parameter names: won't compile if
-        // cancelTokenQuery doesn't exist or if duplicate_definition persists.
-        Object? fn({required String cancelTokenQuery, CancelToken? cancelToken}) =>
-            op.call(
-              cancelTokenQuery: cancelTokenQuery,
-              cancelToken: cancelToken,
-            );
-        expect(fn, isNotNull);
+      () async {
+        final op = GetWithCancelTokenQuery(Dio(BaseOptions(baseUrl: baseUrl)));
+        final response = await op.call(
+          cancelTokenQuery: 'myToken',
+          cancelToken: CancelToken(),
+        );
+
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.requestOptions.cancelToken, isNotNull);
+        expect(
+          success.response.requestOptions.uri.queryParameters['cancelToken'],
+          'myToken',
+        );
       },
     );
 
     test(
-      'GetWithCancelTokenPath call() accepts cancelTokenPath and '
-      'built-in cancelToken',
-      () {
-        final op = GetWithCancelTokenPath(Dio());
-        Object? fn({required String cancelTokenPath, CancelToken? cancelToken}) =>
-            op.call(
-              cancelTokenPath: cancelTokenPath,
-              cancelToken: cancelToken,
-            );
-        expect(fn, isNotNull);
+      'GetWithCancelTokenPath call() sends cancelTokenPath as path segment '
+      'and threads built-in cancelToken through to Dio',
+      () async {
+        final op = GetWithCancelTokenPath(Dio(BaseOptions(baseUrl: baseUrl)));
+        final response = await op.call(
+          cancelTokenPath: 'myToken',
+          cancelToken: CancelToken(),
+        );
+
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.requestOptions.cancelToken, isNotNull);
+        expect(
+          success.response.requestOptions.path,
+          contains('myToken'),
+        );
       },
     );
 
     test(
-      'GetWithCancelTokenHeader call() accepts cancelTokenHeader and '
-      'built-in cancelToken',
-      () {
-        final op = GetWithCancelTokenHeader(Dio());
-        Object? fn({
-          required String cancelTokenHeader,
-          CancelToken? cancelToken,
-        }) =>
-            op.call(
-              cancelTokenHeader: cancelTokenHeader,
-              cancelToken: cancelToken,
-            );
-        expect(fn, isNotNull);
+      'GetWithCancelTokenHeader call() sends cancelTokenHeader as request '
+      'header and threads built-in cancelToken through to Dio',
+      () async {
+        final op = GetWithCancelTokenHeader(Dio(BaseOptions(baseUrl: baseUrl)));
+        final response = await op.call(
+          cancelTokenHeader: 'myToken',
+          cancelToken: CancelToken(),
+        );
+
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.requestOptions.cancelToken, isNotNull);
+        expect(
+          success.response.requestOptions.headers['cancelToken'],
+          'myToken',
+        );
       },
     );
 
     test(
-      'GetWithCancelTokenCookie call() accepts cancelTokenCookie and '
-      'built-in cancelToken',
-      () {
-        final op = GetWithCancelTokenCookie(Dio());
-        Object? fn({
-          required String cancelTokenCookie,
-          CancelToken? cancelToken,
-        }) =>
-            op.call(
-              cancelTokenCookie: cancelTokenCookie,
-              cancelToken: cancelToken,
-            );
-        expect(fn, isNotNull);
+      'GetWithCancelTokenCookie call() sends cancelTokenCookie as Cookie '
+      'header and threads built-in cancelToken through to Dio',
+      () async {
+        final op =
+            GetWithCancelTokenCookie(Dio(BaseOptions(baseUrl: baseUrl)));
+        final response = await op.call(
+          cancelTokenCookie: 'myToken',
+          cancelToken: CancelToken(),
+        );
+
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.requestOptions.cancelToken, isNotNull);
+        expect(
+          success.response.requestOptions.headers['Cookie'],
+          'cancelToken=myToken',
+        );
       },
     );
 
     test(
-      'GetWithCancelTokenSanitized call() accepts cancelTokenQuery '
-      'when raw name sanitizes to cancelToken',
-      () {
-        final op = GetWithCancelTokenSanitized(Dio());
-        Object? fn({required String cancelTokenQuery, CancelToken? cancelToken}) =>
-            op.call(
-              cancelTokenQuery: cancelTokenQuery,
-              cancelToken: cancelToken,
-            );
-        expect(fn, isNotNull);
+      'GetWithCancelTokenSanitized call() sends cancelTokenQuery under '
+      'wire key Cancel-Token and threads built-in cancelToken through to Dio',
+      () async {
+        final op =
+            GetWithCancelTokenSanitized(Dio(BaseOptions(baseUrl: baseUrl)));
+        final response = await op.call(
+          cancelTokenQuery: 'myToken',
+          cancelToken: CancelToken(),
+        );
+
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.requestOptions.cancelToken, isNotNull);
+        expect(
+          success.response.requestOptions.uri.queryParameters['Cancel-Token'],
+          'myToken',
+        );
       },
     );
 
     test(
-      'PostWithCancelTokenAndBody call() accepts body, cancelTokenQuery '
-      'and built-in cancelToken',
-      () {
-        final op = PostWithCancelTokenAndBody(Dio());
-        Object? fn({
-          required SimpleResult body,
-          required String cancelTokenQuery,
-          CancelToken? cancelToken,
-        }) =>
-            op.call(
-              body: body,
-              cancelTokenQuery: cancelTokenQuery,
-              cancelToken: cancelToken,
-            );
-        expect(fn, isNotNull);
+      'PostWithCancelTokenAndBody call() sends cancelTokenQuery as query '
+      'param, body as JSON, and threads built-in cancelToken through to Dio',
+      () async {
+        final op =
+            PostWithCancelTokenAndBody(Dio(BaseOptions(baseUrl: baseUrl)));
+        final response = await op.call(
+          body: const SimpleResult(id: 'test'),
+          cancelTokenQuery: 'myToken',
+          cancelToken: CancelToken(),
+        );
+
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.requestOptions.cancelToken, isNotNull);
+        expect(
+          success.response.requestOptions.uri.queryParameters['cancelToken'],
+          'myToken',
+        );
       },
     );
   });
@@ -327,5 +348,76 @@ void main() {
       expect(model.a, 'single');
       expect(model.kebabCaseName, 'hyphenated');
     });
+  });
+
+  group('parameter counter-suffix collision (GetParamCounterCollision)', () {
+    test(
+      'exposes four distinct Dart parameter names — tokenPath, tokenQuery, '
+      'tokenQuery2, tokenQuery3 — and tokenQuery3 still serialises under the '
+      'wire key "token"',
+      () async {
+        final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
+        Uri? capturedUri;
+        dio.interceptors.add(
+          InterceptorsWrapper(
+            onRequest: (options, handler) {
+              capturedUri = options.uri;
+              handler.reject(
+                DioException(
+                  requestOptions: options,
+                  type: DioExceptionType.cancel,
+                ),
+              );
+            },
+          ),
+        );
+
+        final operation = GetParamCounterCollision(dio);
+
+        // The named-arg call site IS the compile-time check on Dart names:
+        // if any of the four were renamed, this wouldn't compile.
+        await operation.call(
+          tokenPath: 'P',
+          tokenQuery: 'A',
+          tokenQuery2: 'B',
+          tokenQuery3: 'C',
+        );
+
+        expect(capturedUri, isNotNull);
+        final uri = capturedUri!;
+
+        expect(
+          uri.path,
+          contains('/param-counter-collision/P'),
+        );
+
+        final params = uri.queryParametersAll;
+
+        expect(
+          params['token'],
+          ['C'],
+          reason:
+              'tokenQuery3 must serialise under wire key "token" — the '
+              'Dart-side counter rename must not change the on-the-wire name.',
+        );
+        expect(
+          params['token_query'],
+          ['A'],
+          reason: 'tokenQuery must keep its raw wire name "token_query".',
+        );
+        expect(
+          params['token_query2'],
+          ['B'],
+          reason: 'tokenQuery2 must keep its raw wire name "token_query2".',
+        );
+        expect(
+          params.containsKey('token_query3'),
+          isFalse,
+          reason:
+              'No query key should adopt the renamed Dart identifier — that '
+              'would corrupt the outgoing request.',
+        );
+      },
+    );
   });
 }
