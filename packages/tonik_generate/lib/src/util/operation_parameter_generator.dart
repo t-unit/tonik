@@ -48,8 +48,6 @@ List<Parameter> generateParameters({
     );
   }
 
-  // Normalize all parameter names, reserving 'body' when a request body
-  // exists so that any parameter named 'body' gets a type suffix.
   final normalizedParams = normalizeRequestParameters(
     pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
     queryParameters: operation.queryParameters.map((p) => p.resolve()).toSet(),
@@ -57,7 +55,9 @@ List<Parameter> generateParameters({
     cookieParameters: operation.cookieParameters
         .map((p) => p.resolve())
         .toSet(),
-    reservedNames: hasRequestBody ? {'body'} : {},
+    reservedNames: operationReservedParameterNames(
+      hasRequestBody: hasRequestBody,
+    ),
   );
 
   // Add path parameters

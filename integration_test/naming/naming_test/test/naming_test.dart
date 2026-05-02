@@ -13,6 +13,11 @@ import 'package:naming_api/src/model/weird_property_names.dart';
 import 'package:naming_api/src/operation/create_with_body_cookie.dart';
 import 'package:naming_api/src/operation/create_with_body_header.dart';
 import 'package:naming_api/src/operation/create_with_body_query.dart';
+import 'package:naming_api/src/operation/get_with_cancel_token_cookie.dart';
+import 'package:naming_api/src/operation/get_with_cancel_token_header.dart';
+import 'package:naming_api/src/operation/get_with_cancel_token_path.dart';
+import 'package:naming_api/src/operation/get_with_cancel_token_query.dart';
+import 'package:naming_api/src/operation/get_with_cancel_token_sanitized.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -113,6 +118,32 @@ void main() {
     test('CreateWithBodyCookie compiles with suffixed param', () {
       expect(CreateWithBodyCookie, isNotNull);
     });
+  });
+
+  group('cancelToken parameter collision', () {
+    test('GetWithCancelTokenQuery compiles with renamed user parameter', () {
+      expect(GetWithCancelTokenQuery, isNotNull);
+    });
+
+    test('GetWithCancelTokenPath compiles with renamed user parameter', () {
+      expect(GetWithCancelTokenPath, isNotNull);
+    });
+
+    test('GetWithCancelTokenHeader compiles with renamed user parameter', () {
+      expect(GetWithCancelTokenHeader, isNotNull);
+    });
+
+    test('GetWithCancelTokenCookie compiles with renamed user parameter', () {
+      expect(GetWithCancelTokenCookie, isNotNull);
+    });
+
+    test(
+      'GetWithCancelTokenSanitized compiles when raw name sanitizes to '
+      'cancelToken',
+      () {
+        expect(GetWithCancelTokenSanitized, isNotNull);
+      },
+    );
   });
 
   group('keyword property names', () {

@@ -105,7 +105,9 @@ class OperationGenerator {
       queryParameters: queryParams,
       headers: headerParams,
       cookieParameters: cookieParams,
-      reservedNames: hasRequestBody ? {'body'} : {},
+      reservedNames: operationReservedParameterNames(
+        hasRequestBody: hasRequestBody,
+      ),
     );
 
     return Class(

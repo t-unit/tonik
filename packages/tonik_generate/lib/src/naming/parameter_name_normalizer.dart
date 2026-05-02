@@ -6,6 +6,13 @@ const _querySuffix = 'Query';
 const _headerSuffix = 'Header';
 const _cookieSuffix = 'Cookie';
 
+/// `cancelToken` is reserved because the generated `call(...)` method
+/// always declares a built-in `CancelToken? cancelToken` parameter.
+/// `body` is reserved only when a request body exists, since `call(...)`
+/// then also declares a `body` parameter.
+Set<String> operationReservedParameterNames({required bool hasRequestBody}) =>
+    {if (hasRequestBody) 'body', 'cancelToken'};
+
 /// Result of normalizing request parameters.
 class NormalizedRequestParameters {
   const NormalizedRequestParameters({

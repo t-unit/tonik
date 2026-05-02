@@ -1045,6 +1045,59 @@ void main() {
           contains('/// [limit] Overridden description from reference'),
         );
       });
+
+      test(
+        'parameter doc reference uses renamed identifier on cancelToken '
+        'collision',
+        () {
+          final operation = Operation(
+            operationId: 'getA',
+            context: testContext,
+            summary: 'Get A',
+            tags: {Tag(name: 'a')},
+            isDeprecated: false,
+            path: '/a',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {
+              QueryParameterObject(
+                name: 'cancelToken',
+                rawName: 'cancelToken',
+                description: 'Caller-supplied cancel token id',
+                isRequired: true,
+                isDeprecated: false,
+                allowEmptyValue: false,
+                allowReserved: false,
+                explode: false,
+                model: StringModel(context: testContext),
+                encoding: QueryParameterEncoding.form,
+                context: testContext,
+              ),
+            },
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final generatedClass = generator.generateClass(
+            {operation},
+            Tag(name: 'a'),
+            testServers,
+          );
+
+          final method = generatedClass.methods.first;
+
+          expect(
+            method.docs,
+            contains('/// [cancelTokenQuery] Caller-supplied cancel token id'),
+          );
+          expect(
+            method.docs.any((d) => d.startsWith('/// [cancelToken] ')),
+            isFalse,
+          );
+        },
+      );
     });
 
     group('security scheme descriptions with newlines', () {

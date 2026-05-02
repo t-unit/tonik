@@ -377,6 +377,100 @@ void main() {
         'body',
       ]);
     });
+
+    test('reserves cancelToken for query parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('cancelToken')},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenQuery',
+      ]);
+    });
+
+    test('reserves cancelToken for path parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {createPathParameter('cancelToken')},
+        queryParameters: {},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
+
+      expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenPath',
+      ]);
+    });
+
+    test('reserves cancelToken for header parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {createHeader('cancelToken')},
+        reservedNames: {'cancelToken'},
+      );
+
+      expect(result.headers.map((r) => r.normalizedName).toList(), [
+        'cancelTokenHeader',
+      ]);
+    });
+
+    test('reserves cancelToken for cookie parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {},
+        cookieParameters: {createCookieParameter('cancelToken')},
+        reservedNames: {'cancelToken'},
+      );
+
+      expect(result.cookieParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenCookie',
+      ]);
+    });
+
+    test('reserves cancelToken for snake_case raw name that sanitizes to it',
+        () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('cancel_token')},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenQuery',
+      ]);
+    });
+
+    test('reserves cancelToken for kebab-case raw name that sanitizes to it',
+        () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('Cancel-Token')},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenQuery',
+      ]);
+    });
+
+    test('does not rename non-colliding token-like names', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('token')},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'token',
+      ]);
+    });
   });
 
   group('normalizeMultipartHeaderName', () {
@@ -412,6 +506,23 @@ void main() {
       final name1 = normalizeMultipartHeaderName('file', 'X-Custom');
       final name2 = normalizeMultipartHeaderName('avatar', 'X-Custom');
       expect(name1, isNot(name2));
+    });
+  });
+
+  group('operationReservedParameterNames', () {
+    test('always reserves cancelToken when there is no request body', () {
+      expect(
+        operationReservedParameterNames(hasRequestBody: false),
+        {'cancelToken'},
+      );
+    });
+
+    test('reserves both body and cancelToken when there is a request body',
+        () {
+      expect(
+        operationReservedParameterNames(hasRequestBody: true),
+        {'body', 'cancelToken'},
+      );
     });
   });
 }
