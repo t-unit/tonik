@@ -7,7 +7,7 @@ import 'package:tonik_core/tonik_core.dart';
 /// For StringModel values, returns the [receiver] unchanged (already
 /// `Map<String, String>`). For primitive values, emits a `.map()` call
 /// with the correct type-specific conversion. For unsupported values
-/// (ClassModel, ListModel, nested MapModel, BinaryModel, NeverModel),
+/// (see [isMapValueTypeSimplyEncodable] for the authoritative list),
 /// returns `null` -- the caller is responsible for throwing an
 /// `EncodingException`.
 ///
@@ -47,9 +47,24 @@ bool isMapValueTypeSimplyEncodable(Model valueModel) {
     Base64Model() ||
     AnyModel() => true,
     AliasModel(:final model) => isMapValueTypeSimplyEncodable(model),
-    _ => false,
+    NeverModel() ||
+    BinaryModel() ||
+    ListModel() ||
+    MapModel() ||
+    ClassModel() ||
+    AllOfModel() ||
+    OneOfModel() ||
+    AnyOfModel() => false,
+    // Catch-all throws so a newly-added Model subtype surfaces at runtime
+    // instead of silently returning false (drift protection). NamedModel and
+    // CompositeModel are mixins on the sealed Model, so the analyzer does
+    // not let us enumerate "every concrete subtype" exhaustively here.
+    _ => _unreachableModelType('isMapValueTypeSimplyEncodable'),
   };
 }
+
+Never _unreachableModelType(String fn) =>
+    throw UnsupportedError('Unreachable Model subtype in $fn');
 
 Expression? _buildConversion(
   Expression receiver,
@@ -125,7 +140,11 @@ Expression? _buildConversion(
       isNullable: isNullable,
       valueIsNullable: valueIsNullable,
     ),
-    _ => null,
+    // Catch-all throws so a model type the predicate forgot to filter
+    // surfaces at runtime instead of returning a wrong/null expression.
+    // The early-return guard above already rejects every model type not
+    // explicitly handled here; this arm is the drift-protection backstop.
+    _ => _unreachableModelType('_buildConversion'),
   };
 }
 

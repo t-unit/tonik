@@ -3,13 +3,11 @@ import 'package:collection/collection.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_label_path_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 /// Generator for creating path method for operations.
 class PathGenerator {
@@ -108,6 +106,10 @@ class PathGenerator {
       // they produce their own prefix (. or ;).
       final currentConcatParts = <Expression>[];
 
+      // Labelled so that throw-emitting branches can break out of the for
+      // loop from inside the encoding switch. A bare `break` would only exit
+      // the switch and the loop would continue appending literal suffixes
+      // (e.g. `.json`) after the emitted throw statement.
       partLoop:
       for (final part in parts.where((p) => p.isNotEmpty)) {
         if (!part.startsWith('{') || !part.endsWith('}')) {
@@ -129,25 +131,16 @@ class PathGenerator {
 
         switch (param.parameter.encoding) {
           case PathParameterEncoding.simple:
-            final model = param.parameter.model;
-
-            final invalidSimpleReason = switch (model.resolved) {
-              ListModel(:final content)
-                  when content.encodingShape != EncodingShape.simple =>
-                'list with complex elements',
-              MapModel(:final valueModel)
-                  when !isMapValueTypeSimplyEncodable(valueModel) =>
-                'map with complex value types',
-              _ => null,
-            };
-
-            if (invalidSimpleReason != null) {
+            final throwReason = simpleEncodingThrowReason(
+              param.parameter.model,
+            );
+            if (throwReason != null) {
               // `throw X + literal` parses as `throw (X + literal)`; emit the
               // throw as a standalone statement instead.
               currentConcatParts.clear();
               body.add(
                 generateEncodingExceptionExpression(
-                  'Simple encoding does not support $invalidSimpleReason '
+                  'Simple encoding does not support $throwReason '
                   'for path parameter ${param.parameter.rawName}',
                 ).statement,
               );

@@ -1385,6 +1385,103 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  /simple/throw-suffix/binary/{p}.json:
+    get:
+      operationId: testSimpleBinaryWithSuffix
+      tags: [simple]
+      summary: Simple-style binary path parameter with literal suffix
+      description: |
+        Generator must emit a runtime throw for binary path parameters
+        without concatenating it with the literal `.json` suffix.
+      parameters:
+        - name: p
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/list-binary/{p}.json:
+    get:
+      operationId: testSimpleListBinaryWithSuffix
+      tags: [simple]
+      summary: Simple-style list-of-binary path parameter with literal suffix
+      parameters:
+        - name: p
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: array
+            items:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/alias-map-complex/{p}.json:
+    get:
+      operationId: testSimpleAliasMapComplexWithSuffix
+      tags: [simple]
+      summary: Simple-style aliased map of complex objects with literal suffix
+      description: |
+        Path parameter is a $ref to a named component map; the sibling
+        description on the parameter schema forces parser to wrap in
+        AliasModel. Generator must unwrap the alias and emit a throw.
+      parameters:
+        - name: p
+          in: path
+          required: true
+          style: simple
+          schema:
+            $ref: '#/components/schemas/AliasedComplexMap'
+            description: Wrap forces alias.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/alias-never/{p}.json:
+    get:
+      operationId: testSimpleAliasNeverWithSuffix
+      tags: [simple]
+      summary: Simple-style aliased never-typed path parameter with literal suffix
+      description: |
+        Path parameter is a $ref to a never-typed component; the sibling
+        description annotation forces parser to wrap in AliasModel. Generator
+        must unwrap the alias and emit a throw without concatenation.
+      parameters:
+        - name: p
+          in: path
+          required: true
+          style: simple
+          schema:
+            $ref: '#/components/schemas/NeverSchema'
+            description: Wrap forces alias.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
 components:
   schemas:
     StatusEnum:
@@ -1495,6 +1592,13 @@ components:
           type: integer
         name:
           type: string
+
+    AliasedComplexMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/SimpleObject'
+
+    NeverSchema: false
 
     EchoResponse:
       type: object

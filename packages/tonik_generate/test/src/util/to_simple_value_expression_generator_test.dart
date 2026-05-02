@@ -1103,4 +1103,453 @@ void main() {
       },
     );
   });
+
+  group('simpleEncodingThrowReason', () {
+    void expectSupported(Model model, {required String label}) {
+      expect(
+        simpleEncodingThrowReason(model),
+        isNull,
+        reason: '$label should be supported (no throw)',
+      );
+    }
+
+    void expectThrowReason(
+      Model model, {
+      required String label,
+      required String containsText,
+    }) {
+      final reason = simpleEncodingThrowReason(model);
+      expect(
+        reason,
+        isNotNull,
+        reason: '$label should produce a throw reason',
+      );
+      expect(
+        reason!.contains(containsText),
+        isTrue,
+        reason:
+            '$label reason "$reason" should contain "$containsText"',
+      );
+    }
+
+    test('supported leaf models return null', () {
+      expectSupported(StringModel(context: context), label: 'StringModel');
+      expectSupported(IntegerModel(context: context), label: 'IntegerModel');
+      expectSupported(DoubleModel(context: context), label: 'DoubleModel');
+      expectSupported(NumberModel(context: context), label: 'NumberModel');
+      expectSupported(BooleanModel(context: context), label: 'BooleanModel');
+      expectSupported(DateTimeModel(context: context), label: 'DateTimeModel');
+      expectSupported(DateModel(context: context), label: 'DateModel');
+      expectSupported(DecimalModel(context: context), label: 'DecimalModel');
+      expectSupported(UriModel(context: context), label: 'UriModel');
+      expectSupported(Base64Model(context: context), label: 'Base64Model');
+      expectSupported(AnyModel(context: context), label: 'AnyModel');
+      expectSupported(
+        EnumModel<String>(
+          isDeprecated: false,
+          name: 'StatusE',
+          values: {const EnumEntry(value: 'a')},
+          isNullable: false,
+          context: context,
+        ),
+        label: 'EnumModel<String>',
+      );
+      expectSupported(
+        ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: context,
+        ),
+        label: 'ClassModel',
+      );
+      expectSupported(
+        AllOfModel(
+          isDeprecated: false,
+          name: 'AllOfX',
+          models: {StringModel(context: context)},
+          context: context,
+        ),
+        label: 'AllOfModel',
+      );
+      expectSupported(
+        OneOfModel(
+          isDeprecated: false,
+          name: 'OneOfX',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          context: context,
+        ),
+        label: 'OneOfModel',
+      );
+      expectSupported(
+        AnyOfModel(
+          isDeprecated: false,
+          name: 'AnyOfX',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          context: context,
+        ),
+        label: 'AnyOfModel',
+      );
+    });
+
+    test('AliasModel chains delegate to underlying type', () {
+      expectSupported(
+        AliasModel(
+          name: 'A1',
+          model: StringModel(context: context),
+          context: context,
+        ),
+        label: 'AliasModel(StringModel)',
+      );
+      expectSupported(
+        AliasModel(
+          name: 'A2',
+          model: AliasModel(
+            name: 'A1',
+            model: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'AliasModel(AliasModel(StringModel))',
+      );
+    });
+
+    test('NeverModel returns never-typed reason', () {
+      expectThrowReason(
+        NeverModel(context: context),
+        label: 'NeverModel',
+        containsText: 'never-typed',
+      );
+    });
+
+    test('BinaryModel returns binary reason', () {
+      expectThrowReason(
+        BinaryModel(context: context),
+        label: 'BinaryModel',
+        containsText: 'binary',
+      );
+    });
+
+    test('ListModel<NeverModel> returns unsupported elements reason', () {
+      expectThrowReason(
+        ListModel(
+          content: NeverModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<NeverModel>',
+        containsText: 'lists with unsupported element types',
+      );
+    });
+
+    test('ListModel<BinaryModel> returns unsupported elements reason', () {
+      expectThrowReason(
+        ListModel(
+          content: BinaryModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<BinaryModel>',
+        containsText: 'lists with unsupported element types',
+      );
+    });
+
+    test('ListModel<ListModel<String>> returns unsupported elements reason '
+        '(nested list)', () {
+      expectThrowReason(
+        ListModel(
+          content: ListModel(
+            content: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<ListModel<String>>',
+        containsText: 'lists with unsupported element types',
+      );
+    });
+
+    test('MapModel with complex value returns map complex reason', () {
+      expectThrowReason(
+        MapModel(
+          valueModel: ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: const [],
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'MapModel(ClassModel)',
+        containsText: 'map with complex value types',
+      );
+    });
+
+    test('AliasModel(NeverModel) returns never-typed reason '
+        '(unwrap depth 1)', () {
+      expectThrowReason(
+        AliasModel(
+          name: 'NA',
+          model: NeverModel(context: context),
+          context: context,
+        ),
+        label: 'AliasModel(NeverModel)',
+        containsText: 'never-typed',
+      );
+    });
+
+    test('AliasModel(AliasModel(NeverModel)) returns never-typed reason '
+        '(unwrap depth 2)', () {
+      expectThrowReason(
+        AliasModel(
+          name: 'NA2',
+          model: AliasModel(
+            name: 'NA1',
+            model: NeverModel(context: context),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'AliasModel(AliasModel(NeverModel))',
+        containsText: 'never-typed',
+      );
+    });
+
+    test('AliasModel(MapModel(ClassModel)) returns map complex reason', () {
+      expectThrowReason(
+        AliasModel(
+          name: 'AM',
+          model: MapModel(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'User',
+              properties: const [],
+              context: context,
+            ),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'AliasModel(MapModel(ClassModel))',
+        containsText: 'map with complex value types',
+      );
+    });
+
+    test('MapModel with simple value returns null', () {
+      expectSupported(
+        MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+        ),
+        label: 'MapModel<String>',
+      );
+      expectSupported(
+        MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        ),
+        label: 'MapModel<Integer>',
+      );
+    });
+
+    test('ListModel<AnyModel> returns unsupported elements reason', () {
+      // List<AnyModel> compiles to List<Object?>, which has no toSimple
+      // extension in tonik_util. The pre-flight guard must throw.
+      expectThrowReason(
+        ListModel(
+          content: AnyModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<AnyModel>',
+        containsText: 'lists with unsupported element types',
+      );
+    });
+
+    test('ListModel with complex map content returns unsupported reason', () {
+      expectThrowReason(
+        ListModel(
+          content: MapModel(
+            valueModel: ClassModel(
+              isDeprecated: false,
+              name: 'User',
+              properties: const [],
+              context: context,
+            ),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<MapModel<ClassModel>>',
+        containsText: 'lists with unsupported element types',
+      );
+    });
+
+    test('ListModel<AliasModel(NeverModel)> unwraps and returns reason', () {
+      expectThrowReason(
+        ListModel(
+          content: AliasModel(
+            name: 'NA',
+            model: NeverModel(context: context),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<AliasModel(NeverModel)>',
+        containsText: 'lists with unsupported element types',
+      );
+    });
+
+    test('ListModel content arms backed by runtime support return null', () {
+      // These exercise every "supported" arm of _listContentThrowReason so it
+      // stays in lock-step with _handleListExpression's runtime support.
+      expectSupported(
+        ListModel(
+          content: ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: const [],
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<ClassModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: EnumModel<String>(
+            isDeprecated: false,
+            name: 'StatusE',
+            values: {const EnumEntry(value: 'a')},
+            isNullable: false,
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<EnumModel<String>>',
+      );
+      expectSupported(
+        ListModel(
+          content: AllOfModel(
+            isDeprecated: false,
+            name: 'AllOfX',
+            models: {StringModel(context: context)},
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<AllOfModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: OneOfModel(
+            isDeprecated: false,
+            name: 'OneOfX',
+            models: {
+              (discriminatorValue: null, model: StringModel(context: context)),
+            },
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<OneOfModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: AnyOfModel(
+            isDeprecated: false,
+            name: 'AnyOfX',
+            models: {
+              (discriminatorValue: null, model: StringModel(context: context)),
+            },
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<AnyOfModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<DateTimeModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: DateModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<DateModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: DecimalModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<DecimalModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: UriModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<UriModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: Base64Model(context: context),
+          context: context,
+        ),
+        label: 'ListModel<Base64Model>',
+      );
+      expectSupported(
+        ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<IntegerModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: DoubleModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<DoubleModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: NumberModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<NumberModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: BooleanModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<BooleanModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
+        label: 'ListModel<StringModel>',
+      );
+      expectSupported(
+        ListModel(
+          content: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'ListModel<MapModel<String>>',
+      );
+    });
+  });
 }

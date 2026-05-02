@@ -942,6 +942,37 @@ void main() {
       );
 
       expectParity(
+        AliasModel(
+          name: 'OuterAlias',
+          model: AliasModel(
+            name: 'InnerAlias',
+            model: IntegerModel(context: context),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'AliasModel(AliasModel(IntegerModel))',
+      );
+
+      expectParity(
+        AliasModel(
+          name: 'OuterAliasC',
+          model: AliasModel(
+            name: 'InnerAliasC',
+            model: ClassModel(
+              isDeprecated: false,
+              name: 'User2',
+              properties: const [],
+              context: context,
+            ),
+            context: context,
+          ),
+          context: context,
+        ),
+        label: 'AliasModel(AliasModel(ClassModel))',
+      );
+
+      expectParity(
         ClassModel(
           isDeprecated: false,
           name: 'User2',
