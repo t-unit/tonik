@@ -82,7 +82,8 @@ Before declaring done, re-read every file you changed and verify:
 - Every null check is in place
 - All HARD RULES above are satisfied
 - Analysis passes with zero issues: `fvm dart analyze` (run ONCE from project root)
-- All tests pass: `melos run test`
+- Tests pass for each touched package: `cd packages/<package> && fvm dart test` (one per modified package — do NOT run `melos run test` here unless you touched 3+ packages)
+- If you already ran integration tests in Phase 3, do NOT run the full suite again here
 - Patch coverage >= 90%: `bash scripts/coverage.sh --diff main`
 
 **Comment accuracy & quantity:** Every comment accurately describes the code it refers to. No misleading terminology, no stale references. Default to NO comments. Only keep a comment when it captures WHY (a hidden constraint, non-obvious invariant, operator-precedence trap, bug workaround) — never WHAT the code does. Delete comments that restate the code, summarise switch cases, or document obvious helpers. See HARD RULE 15.
@@ -108,8 +109,8 @@ Before reporting completion, run two built-in skills against your diff and addre
 **5c. Re-verify**
 After applying all `/simplify` and `/security-review` fixes:
 - `fvm dart analyze` — must pass with zero issues
-- `melos run test` — all tests pass
-- If integration tests apply: `./scripts/setup_integration_tests.sh && melos run test` — all pass
+- Tests for each touched package: `cd packages/<package> && fvm dart test` — do NOT re-run `melos run test` if you already ran it in Phase 3; the full suite does not need to run a second time
+- Only re-run `./scripts/setup_integration_tests.sh` if `/simplify` or `/security-review` changed generation logic
 
 If any of those fail after cleanup, you broke something — fix it. Do NOT declare done with broken tests.
 
