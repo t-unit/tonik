@@ -18,6 +18,7 @@ import 'package:naming_api/src/operation/get_with_cancel_token_header.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_path.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_query.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_sanitized.dart';
+import 'package:naming_api/src/operation/post_with_cancel_token_and_body.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -142,6 +143,14 @@ void main() {
       'cancelToken',
       () {
         expect(GetWithCancelTokenSanitized, isNotNull);
+      },
+    );
+
+    test(
+      'PostWithCancelTokenAndBody compiles with renamed cancelToken and body '
+      'params',
+      () {
+        expect(PostWithCancelTokenAndBody, isNotNull);
       },
     );
   });

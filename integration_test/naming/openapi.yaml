@@ -572,6 +572,25 @@ paths:
         '200':
           description: OK
 
+  /cancel-token-collision/with-body:
+    post:
+      operationId: postWithCancelTokenAndBody
+      parameters:
+        - name: cancelToken
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleResult'
+      responses:
+        '200':
+          description: OK
+
   /param-keyword-collision/{class}:
     post:
       operationId: createWithKeywordParams
