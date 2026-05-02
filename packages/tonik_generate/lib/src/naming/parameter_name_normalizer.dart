@@ -162,6 +162,12 @@ List<({String normalizedName, T parameter})> _ensureUniquenessInGroup<T>(
     // tokenQuery] — naive increment yields tokenQuery2, which already exists.
     while (usedNames.contains(lowerName)) {
       final counter = nameCounters.putIfAbsent(baseLowerName, () => 2);
+      assert(
+        counter <= parameters.length + 2,
+        'Counter for "$baseName" exceeded parameters.length + 2 '
+        '(${parameters.length + 2}); _ensureUniquenessInGroup is not '
+        'converging — counter increment is broken.',
+      );
       name = '$baseName$counter';
       lowerName = name.toLowerCase();
       nameCounters[baseLowerName] = counter + 1;

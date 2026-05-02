@@ -194,6 +194,11 @@ void main() {
       expect(names.length, 2, reason: 'Should have 2 parameters');
       expect(names.toSet().length, 2, reason: 'Should have unique names');
       expect(names.contains('value'), isTrue);
+      expect(
+        names.contains('value2'),
+        isTrue,
+        reason: 'Second duplicate must be deterministically pinned to value2',
+      );
     });
 
     test('applies type suffixes to nameOverride duplicates across types', () {
@@ -446,6 +451,73 @@ void main() {
           'x2',
           'x3',
           'x4',
+        ]);
+      },
+    );
+
+    test(
+      'type-suffix application creates a within-group collision that the '
+      'counter-loop must resolve (path foo + query foo_query + query foo)',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {createPathParameter('foo')},
+          queryParameters: {
+            createQueryParameter('foo_query'),
+            createQueryParameter('foo'),
+          },
+          headers: {},
+        );
+
+        expect(result.pathParameters.map((r) => r.normalizedName), [
+          'fooPath',
+        ]);
+        expect(result.queryParameters.map((r) => r.normalizedName), [
+          'fooQuery',
+          'fooQuery2',
+        ]);
+      },
+    );
+
+    test(
+      'within-group dedup applies to header parameters '
+      '(non-query group coverage)',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {},
+          queryParameters: {},
+          headers: {
+            createHeader('trace'),
+            createHeader('trace2'),
+            createHeader('trace'),
+          },
+        );
+
+        expect(result.headers.map((r) => r.normalizedName), [
+          'trace',
+          'trace2',
+          'trace3',
+        ]);
+      },
+    );
+
+    test(
+      'within-group dedup applies to path parameters '
+      '(non-query group coverage)',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {
+            createPathParameter('id'),
+            createPathParameter('id2'),
+            createPathParameter('id'),
+          },
+          queryParameters: {},
+          headers: {},
+        );
+
+        expect(result.pathParameters.map((r) => r.normalizedName), [
+          'id',
+          'id2',
+          'id3',
         ]);
       },
     );
