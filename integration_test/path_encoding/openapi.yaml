@@ -1482,6 +1482,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  /simple/encode-suffix/map-string/{m}.json:
+    get:
+      operationId: testSimpleMapStringWithSuffix
+      tags: [simple]
+      summary: Simple-style string-value map with literal suffix (positive case)
+      description: |
+        Regression guard for the original bug: a Map<String, String> path
+        parameter followed by a literal '.json' suffix must generate valid
+        encoding code, not `throw EncodingException(...) + '.json'`.
+        explode=false: key,value pairs separated by commas.
+      parameters:
+        - name: m
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/encode-suffix/map-string-explode/{m}.json:
+    get:
+      operationId: testSimpleMapStringExplodeWithSuffix
+      tags: [simple]
+      summary: Simple-style string-value map (explode=true) with literal suffix
+      description: |
+        Companion to testSimpleMapStringWithSuffix with explode=true.
+        explode=true: key=value pairs separated by commas.
+      parameters:
+        - name: m
+          in: path
+          required: true
+          style: simple
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
 components:
   schemas:
     StatusEnum:
