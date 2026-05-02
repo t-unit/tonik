@@ -6,6 +6,13 @@ const _querySuffix = 'Query';
 const _headerSuffix = 'Header';
 const _cookieSuffix = 'Cookie';
 
+/// `cancelToken` is reserved because the generated `call(...)` method
+/// always declares a built-in `CancelToken? cancelToken` parameter.
+/// `body` is reserved only when a request body exists, since `call(...)`
+/// then also declares a `body` parameter.
+Set<String> operationReservedParameterNames({required bool hasRequestBody}) =>
+    {if (hasRequestBody) 'body', 'cancelToken'};
+
 /// Result of normalizing request parameters.
 class NormalizedRequestParameters {
   const NormalizedRequestParameters({
@@ -143,45 +150,26 @@ NormalizedRequestParameters normalizeRequestParameters({
   );
 }
 
+/// Ensures uniqueness of names within a parameter group
 List<({String normalizedName, T parameter})> _ensureUniquenessInGroup<T>(
   List<({String normalizedName, T parameter})> parameters,
 ) {
   final result = <({String normalizedName, T parameter})>[];
-  final usedNames = <String>{};
-  final nameCounters = <String, int>{};
-
-  // Worst case: all N parameters share the same base, so the maximum
-  // counter value reached is N. The +2 buffer gives headroom and matches
-  // the initial counter value of 2.
-  final convergenceBound = parameters.length + 2;
+  final usedNames = <String>{}; // lowercase names for uniqueness check
+  final nameCounters = <String, int>{}; // lowercase base name -> counter
 
   for (final item in parameters) {
-    final baseName = item.normalizedName;
-    final baseLowerName = baseName.toLowerCase();
+    var name = item.normalizedName;
+    final baseLowerName = name.toLowerCase();
 
-    var name = baseName;
-    var lowerName = baseLowerName;
-
-    nameCounters.putIfAbsent(baseLowerName, () => 2);
-
-    // Loop (not single increment) because a counter-generated candidate may
-    // itself collide with an earlier entry: group [tokenQuery, tokenQuery2,
-    // tokenQuery] — naive increment yields tokenQuery2, which already exists.
-    while (usedNames.contains(lowerName)) {
-      final counter = nameCounters[baseLowerName]!;
-      if (counter > convergenceBound) {
-        throw StateError(
-          'Counter for "$baseName" exceeded parameters.length + 2 '
-          '($convergenceBound); _ensureUniquenessInGroup is not '
-          'converging — counter increment is broken.',
-        );
-      }
-      name = '$baseName$counter';
-      lowerName = name.toLowerCase();
+    // If the name is already used, add a numeric suffix
+    if (usedNames.contains(baseLowerName)) {
+      final counter = nameCounters.putIfAbsent(baseLowerName, () => 2);
+      name = '$name$counter';
       nameCounters[baseLowerName] = counter + 1;
     }
 
-    usedNames.add(lowerName);
+    usedNames.add(name.toLowerCase());
     result.add((normalizedName: name, parameter: item.parameter));
   }
 

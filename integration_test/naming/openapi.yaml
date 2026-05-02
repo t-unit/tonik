@@ -507,6 +507,90 @@ paths:
         '200':
           description: OK
 
+  /cancel-token-collision/query:
+    get:
+      operationId: getWithCancelTokenQuery
+      parameters:
+        - name: cancelToken
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /cancel-token-collision/path/{cancelToken}:
+    get:
+      operationId: getWithCancelTokenPath
+      parameters:
+        - name: cancelToken
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /cancel-token-collision/header:
+    get:
+      operationId: getWithCancelTokenHeader
+      parameters:
+        - name: cancelToken
+          in: header
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /cancel-token-collision/cookie:
+    get:
+      operationId: getWithCancelTokenCookie
+      parameters:
+        - name: cancelToken
+          in: cookie
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /cancel-token-collision/sanitized:
+    get:
+      operationId: getWithCancelTokenSanitized
+      parameters:
+        - name: Cancel-Token
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /cancel-token-collision/with-body:
+    post:
+      operationId: postWithCancelTokenAndBody
+      parameters:
+        - name: cancelToken
+          in: query
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SimpleResult'
+      responses:
+        '200':
+          description: OK
+
   /param-keyword-collision/{class}:
     post:
       operationId: createWithKeywordParams
@@ -541,35 +625,6 @@ paths:
       responses:
         '200':
           description: OK
-
-  /param-counter-collision/{token}:
-    get:
-      operationId: getParamCounterCollision
-      parameters:
-        - name: token_query
-          in: query
-          schema:
-            type: string
-        - name: token_query2
-          in: query
-          schema:
-            type: string
-        - name: token
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: token
-          in: query
-          schema:
-            type: string
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/SimpleResult'
 
   /param-duplicates/{id}:
     get:
