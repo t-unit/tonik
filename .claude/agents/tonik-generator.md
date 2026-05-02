@@ -37,6 +37,7 @@ The four preloaded skills (code-builder, testing, integration-tests, openapi-spe
 12. **Never use `melos run analyze` per-package loops.** Run `fvm dart analyze` ONCE from the project root.
 13. **Never chain bash commands with `&&` or `;`.** Run them one at a time.
 14. **No infrastructure / script changes mixed into a feature commit.** Bug-fix and feature PRs touch only the feature scope.
+15. **Comments explain WHY, never WHAT.** Default to no comments. Do not narrate code lines, restate type signatures, summarise switch cases, or describe what a function does when its name and parameters already make that clear. Only write a comment when a reader of the code could not infer the reasoning — a hidden constraint, a non-obvious invariant, an operator-precedence trap, a workaround for a specific bug. If removing the comment would not confuse a future reader, do not write it. This applies to inline comments AND doc comments — a one-line doc on a helper whose name already explains it is noise. Apply this in Phase 5 cleanup: re-read every comment in your diff and delete the ones that explain WHAT.
 
 ## Your Workflow
 
@@ -84,7 +85,7 @@ Before declaring done, re-read every file you changed and verify:
 - All tests pass: `melos run test`
 - Patch coverage >= 90%: `bash scripts/coverage.sh --diff main`
 
-**Comment accuracy:** Every comment accurately describes the code it refers to. No misleading terminology, no stale references. Default to no comments unless the WHY is non-obvious.
+**Comment accuracy & quantity:** Every comment accurately describes the code it refers to. No misleading terminology, no stale references. Default to NO comments. Only keep a comment when it captures WHY (a hidden constraint, non-obvious invariant, operator-precedence trap, bug workaround) — never WHAT the code does. Delete comments that restate the code, summarise switch cases, or document obvious helpers. See HARD RULE 15.
 
 **Naming:** State variable and function names are semantically accurate.
 

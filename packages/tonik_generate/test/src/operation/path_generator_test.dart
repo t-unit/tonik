@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -11,6 +12,10 @@ void main() {
   late DartEmitter emitter;
   late NameManager nameManager;
   late NameGenerator nameGenerator;
+
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -969,7 +974,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<List<AnonymousModel>> matrix}) {
-          throw EncodingException('Simple encoding does not support list with complex elements for path parameter matrix');
+          throw EncodingException('Simple encoding does not support lists with unsupported element types for path parameter matrix');
           return [r'data'];
         }
       ''';
@@ -1311,7 +1316,7 @@ void main() {
 
     const expectedMethod = '''
         List<String> _path({required List<List<String>> matrix}) {
-          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays');
+          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter matrix');
           return [r'data'];
         }
       ''';
@@ -2108,6 +2113,1484 @@ void main() {
         collapseWhitespace(method.accept(emitter).toString()),
         collapseWhitespace(expectedMethod),
       );
+    });
+  });
+
+  group('throw-producing simple parameter with literal suffix', () {
+    void expectMethodMatches(Method method, String expected) {
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expected)),
+      );
+    }
+
+    test('MapModel with complex value type and literal suffix '
+        'emits throw statement without concatenation', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        properties: const [],
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: classModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map of complex values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Reproduces map+suffix bug',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, AnonymousModel> m}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('MapModel with ListModel value type and literal suffix '
+        'emits throw statement without concatenation', () {
+      final listValueModel = ListModel(
+        context: context,
+        content: StringModel(context: context),
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: listValueModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map with list values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Map of list values with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, List<String>> m}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('MapModel with OneOfModel value type and literal suffix '
+        'emits throw statement (composite has mixed encoding shape)', () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'StringOrInt',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              isDeprecated: false,
+              context: context,
+              properties: const [],
+            ),
+          ),
+        },
+        context: context,
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: oneOfModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map with oneOf values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Map of oneOf values with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {pathParam.model, oneOfModel},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, StringOrInt> m}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('MapModel with AllOfModel value type and literal suffix '
+        'emits throw statement', () {
+      final allOfModel = AllOfModel(
+        isDeprecated: false,
+        name: 'CombinedObject',
+        models: {
+          ClassModel(
+            isDeprecated: false,
+            context: context,
+            properties: const [],
+          ),
+        },
+        context: context,
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: allOfModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map with allOf values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Map of allOf values with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {pathParam.model, allOfModel},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, CombinedObject> m}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('MapModel with String value type and literal suffix '
+        'still concatenates correctly (regression guard)', () {
+      final mapModel = MapModel(
+        context: context,
+        valueModel: StringModel(context: context),
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map of string values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Map of strings with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/x/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, String> m}) {
+          return [r'x', m.toSimple(explode: false, allowEmpty: false) + r'.json'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('MapModel with AnyModel value type and literal suffix '
+        'concatenates correctly (regression — AnyModel is supported)', () {
+      final mapModel = MapModel(
+        context: context,
+        valueModel: AnyModel(context: context),
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map of any values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Map of any-typed values with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, Object?> m}) {
+          return [
+            r'r',
+            m
+                    .map(
+                      (k, v) =>
+                          MapEntry(k, encodeAnyValueToString(v, allowEmpty: false)),
+                    )
+                    .toSimple(explode: false, allowEmpty: false) +
+                r'.json',
+          ];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('MapModel with OneOfModel of all-simple members and literal '
+        'suffix emits throw (composite has shape simple but encoder rejects)',
+        () {
+      final oneOfModel = OneOfModel(
+        isDeprecated: false,
+        name: 'StringOrIntSimple',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: oneOfModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map with all-simple oneOf values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Map of all-simple oneOf values with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {pathParam.model, oneOfModel},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, StringOrIntSimple> m}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('MapModel with AllOfModel of all-simple members and literal '
+        'suffix emits throw (composite has shape simple but encoder rejects)',
+        () {
+      final allOfModel = AllOfModel(
+        isDeprecated: false,
+        name: 'StringOnly',
+        models: {
+          StringModel(context: context),
+        },
+        context: context,
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: allOfModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map with all-simple allOf values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Map of all-simple allOf values with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {pathParam.model, allOfModel},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, StringOnly> m}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('AliasModel wrapping MapModel with complex value type and literal '
+        'suffix emits throw statement without concatenation', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        properties: const [],
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: classModel,
+      );
+      final aliasModel = AliasModel(
+        name: 'MyMap',
+        model: mapModel,
+        context: context,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Aliased map of complex values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: aliasModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Aliased map with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {aliasModel, mapModel, classModel},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required MyMap m}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('AliasModel wrapping ListModel of nested lists and literal '
+        'suffix emits throw statement without concatenation', () {
+      final innerListModel = ListModel(
+        context: context,
+        content: StringModel(context: context),
+      );
+      final listModel = ListModel(
+        context: context,
+        content: innerListModel,
+      );
+      final aliasModel = AliasModel(
+        name: 'MyList',
+        model: listModel,
+        context: context,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'l',
+        rawName: 'l',
+        description: 'Aliased list of nested lists',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: aliasModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Aliased list with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{l}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {aliasModel, listModel, innerListModel},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required MyList l}) {
+          throw EncodingException('Simple encoding does not support lists with unsupported element types for path parameter l');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'l', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('matrix encoding nested arrays throw includes path parameter '
+        'name', () {
+      final innerListModel = ListModel(
+        context: context,
+        content: StringModel(context: context),
+      );
+      final outerListModel = ListModel(
+        context: context,
+        content: innerListModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Nested list',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: PathParameterEncoding.matrix,
+        model: outerListModel,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Matrix nested list',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required List<List<String>> m}) {
+          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('matrix encoding with AliasModel-wrapped nested arrays uses '
+        'rawName error message', () {
+      final innerListModel = ListModel(
+        context: context,
+        content: StringModel(context: context),
+      );
+      final outerListModel = ListModel(
+        context: context,
+        content: innerListModel,
+      );
+      final aliasModel = AliasModel(
+        name: 'NestedListAlias',
+        model: outerListModel,
+        context: context,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Alias-wrapped nested list',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: PathParameterEncoding.matrix,
+        model: aliasModel,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Matrix alias-wrapped nested list',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required NestedListAlias m}) {
+          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('matrix encoding with alias-wrapped inner list still emits '
+        'rawName error message', () {
+      final innerListModel = ListModel(
+        context: context,
+        content: StringModel(context: context),
+      );
+      final innerAlias = AliasModel(
+        name: 'InnerListAlias',
+        model: innerListModel,
+        context: context,
+      );
+      final outerListModel = ListModel(
+        context: context,
+        content: innerAlias,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'List with alias-wrapped inner list',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: PathParameterEncoding.matrix,
+        model: outerListModel,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Matrix list with alias-wrapped inner list',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required List<InnerListAlias> m}) {
+          throw EncodingException('Matrix encoding does not support arrays of objects or nested arrays for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('MapModel with complex value type without suffix '
+        'also emits throw statement', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        properties: const [],
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: classModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'm',
+        rawName: 'm',
+        description: 'Map of complex values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Map of complex values without suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{m}',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, AnonymousModel> m}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('NeverModel with literal suffix emits throw statement '
+        'without concatenation', () {
+      final pathParam = PathParameterObject(
+        name: 'p',
+        rawName: 'p',
+        description: 'Never-typed path parameter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: NeverModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'NeverModel with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{p}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Never p}) {
+          throw EncodingException('Simple encoding does not support never-typed values for path parameter p');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'p', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('BinaryModel with literal suffix emits throw statement '
+        'without concatenation', () {
+      final pathParam = PathParameterObject(
+        name: 'p',
+        rawName: 'p',
+        description: 'Binary-typed path parameter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: BinaryModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'BinaryModel with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{p}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required TonikFile p}) {
+          throw EncodingException('Simple encoding does not support binary values for path parameter p');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'p', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('ListModel<NeverModel> with literal suffix emits throw statement '
+        'without concatenation', () {
+      final listModel = ListModel(
+        context: context,
+        content: NeverModel(context: context),
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'p',
+        rawName: 'p',
+        description: 'List of never values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: listModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'List<NeverModel> with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{p}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required List<Never> p}) {
+          throw EncodingException('Simple encoding does not support lists with unsupported element types for path parameter p');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'p', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('ListModel<BinaryModel> with literal suffix emits throw statement '
+        'without concatenation', () {
+      final listModel = ListModel(
+        context: context,
+        content: BinaryModel(context: context),
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'p',
+        rawName: 'p',
+        description: 'List of binary values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: listModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'List<BinaryModel> with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{p}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required List<TonikFile> p}) {
+          throw EncodingException('Simple encoding does not support lists with unsupported element types for path parameter p');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'p', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('AliasModel(NeverModel) with literal suffix emits throw statement '
+        'unwrapping at depth 1', () {
+      final aliasModel = AliasModel(
+        name: 'NeverAlias',
+        model: NeverModel(context: context),
+        context: context,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'p',
+        rawName: 'p',
+        description: 'Aliased never value',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: aliasModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'AliasModel(NeverModel) with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{p}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {aliasModel},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required NeverAlias p}) {
+          throw EncodingException('Simple encoding does not support never-typed values for path parameter p');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'p', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('AliasModel(AliasModel(NeverModel)) with literal suffix emits '
+        'throw statement unwrapping at depth 2', () {
+      final innerAlias = AliasModel(
+        name: 'NeverInner',
+        model: NeverModel(context: context),
+        context: context,
+      );
+      final outerAlias = AliasModel(
+        name: 'NeverOuter',
+        model: innerAlias,
+        context: context,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'p',
+        rawName: 'p',
+        description: 'Doubly aliased never value',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: outerAlias,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'AliasModel(AliasModel(NeverModel)) with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{p}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {outerAlias, innerAlias},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required NeverOuter p}) {
+          throw EncodingException('Simple encoding does not support never-typed values for path parameter p');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'p', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('AliasModel(AliasModel(MapModel(ClassModel))) with literal suffix '
+        'emits throw statement unwrapping at depth 2', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        properties: const [],
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: classModel,
+      );
+      final innerAlias = AliasModel(
+        name: 'MapInner',
+        model: mapModel,
+        context: context,
+      );
+      final outerAlias = AliasModel(
+        name: 'MapOuter',
+        model: innerAlias,
+        context: context,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'p',
+        rawName: 'p',
+        description: 'Doubly aliased map of complex values',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: outerAlias,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'AliasModel(AliasModel(MapModel(ClassModel))) with suffix',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{p}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      nameManager.prime(
+        models: {outerAlias, innerAlias, mapModel, classModel},
+        requestBodies: const [],
+        responses: const [],
+        operations: const [],
+        tags: const [],
+        servers: const [],
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required MapOuter p}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter p');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'p', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('multi-parameter same-segment with valid prefix and throwing '
+        'parameter emits throw without concatenation', () {
+      final goodParam = PathParameterObject(
+        name: 'good',
+        rawName: 'good',
+        description: 'Valid string parameter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final classModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        properties: const [],
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: classModel,
+      );
+      final badParam = PathParameterObject(
+        name: 'badMap',
+        rawName: 'badMap',
+        description: 'Throw-producing map parameter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'Multi-parameter same-segment with throwing trailing',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{good}-{badMap}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {goodParam, badParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({
+          required String good,
+          required Map<String, AnonymousModel> badMap,
+        }) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter badMap');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'good', parameter: goodParam),
+            (normalizedName: 'badMap', parameter: badParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
+    });
+
+    test('rawName != name divergence uses rawName in error message', () {
+      final classModel = ClassModel(
+        isDeprecated: false,
+        context: context,
+        properties: const [],
+      );
+      final mapModel = MapModel(
+        context: context,
+        valueModel: classModel,
+      );
+
+      final pathParam = PathParameterObject(
+        name: 'mNorm',
+        rawName: 'M-RAW',
+        description: 'Map parameter with divergent rawName',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: mapModel,
+        encoding: PathParameterEncoding.simple,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'getR',
+        context: context,
+        summary: 'Get R',
+        description: 'rawName divergence test',
+        tags: const {},
+        isDeprecated: false,
+        path: '/r/{M-RAW}.json',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: {pathParam},
+        responses: const {},
+        securitySchemes: const {},
+        cookieParameters: const {},
+      );
+
+      const expectedMethod = '''
+        List<String> _path({required Map<String, AnonymousModel> mNorm}) {
+          throw EncodingException('Simple encoding does not support map with complex value types for path parameter M-RAW');
+          return [r'r'];
+        }
+      ''';
+
+      final pathParameters =
+          <({String normalizedName, PathParameterObject parameter})>[
+            (normalizedName: 'mNorm', parameter: pathParam),
+          ];
+
+      final method = generator.generatePathMethod(operation, pathParameters);
+
+      expectMethodMatches(method, expectedMethod);
     });
   });
 }

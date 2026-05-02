@@ -1301,6 +1301,187 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  # =============================================================================
+  # SIMPLE STYLE - LITERAL SUFFIX AFTER THROW-PRODUCING PARAMETERS
+  # =============================================================================
+
+  /simple/throw-suffix/map-complex/{m}.json:
+    get:
+      operationId: testSimpleMapComplexWithSuffix
+      tags: [simple]
+      summary: Simple-style map with complex value type and literal suffix
+      description: |
+        Path parameter is a map whose values are objects (complex). Simple
+        encoding cannot represent such maps, so the generator must emit a
+        runtime throw without concatenating it with the literal `.json`
+        suffix.
+      parameters:
+        - name: m
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: object
+            additionalProperties:
+              $ref: '#/components/schemas/SimpleObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/map-list/{m}.json:
+    get:
+      operationId: testSimpleMapListWithSuffix
+      tags: [simple]
+      summary: Simple-style map with list value type and literal suffix
+      parameters:
+        - name: m
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: object
+            additionalProperties:
+              type: array
+              items:
+                type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/map-oneof-simple/{m}.json:
+    get:
+      operationId: testSimpleMapOneOfSimpleWithSuffix
+      tags: [simple]
+      summary: Simple-style map with oneOf-of-simple-members value type and literal suffix
+      description: |
+        Locks the gap that pre-PR `encodingShape != EncodingShape.simple` missed:
+        a oneOf composed of all-simple members has shape `simple`, but the
+        underlying encoder still rejects it. Generator must emit a runtime
+        throw without concatenating it with the literal `.json` suffix.
+      parameters:
+        - name: m
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: object
+            additionalProperties:
+              oneOf:
+                - type: string
+                - type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/binary/{p}.json:
+    get:
+      operationId: testSimpleBinaryWithSuffix
+      tags: [simple]
+      summary: Simple-style binary path parameter with literal suffix
+      description: |
+        Generator must emit a runtime throw for binary path parameters
+        without concatenating it with the literal `.json` suffix.
+      parameters:
+        - name: p
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: string
+            format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/list-binary/{p}.json:
+    get:
+      operationId: testSimpleListBinaryWithSuffix
+      tags: [simple]
+      summary: Simple-style list-of-binary path parameter with literal suffix
+      parameters:
+        - name: p
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: array
+            items:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/alias-map-complex/{p}.json:
+    get:
+      operationId: testSimpleAliasMapComplexWithSuffix
+      tags: [simple]
+      summary: Simple-style aliased map of complex objects with literal suffix
+      description: |
+        Path parameter is a $ref to a named component map; the sibling
+        description on the parameter schema forces parser to wrap in
+        AliasModel. Generator must unwrap the alias and emit a throw.
+      parameters:
+        - name: p
+          in: path
+          required: true
+          style: simple
+          schema:
+            $ref: '#/components/schemas/AliasedComplexMap'
+            description: Wrap forces alias.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/throw-suffix/alias-never/{p}.json:
+    get:
+      operationId: testSimpleAliasNeverWithSuffix
+      tags: [simple]
+      summary: Simple-style aliased never-typed path parameter with literal suffix
+      description: |
+        Path parameter is a $ref to a never-typed component; the sibling
+        description annotation forces parser to wrap in AliasModel. Generator
+        must unwrap the alias and emit a throw without concatenation.
+      parameters:
+        - name: p
+          in: path
+          required: true
+          style: simple
+          schema:
+            $ref: '#/components/schemas/NeverSchema'
+            description: Wrap forces alias.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
 components:
   schemas:
     StatusEnum:
@@ -1411,6 +1592,13 @@ components:
           type: integer
         name:
           type: string
+
+    AliasedComplexMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/SimpleObject'
+
+    NeverSchema: false
 
     EchoResponse:
       type: object

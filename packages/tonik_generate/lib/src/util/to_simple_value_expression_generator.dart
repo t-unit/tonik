@@ -3,6 +3,83 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
+/// Returns a non-null reason if simple-encoding [model] would produce a
+/// throw expression rather than a real value. Path-generator pre-flight
+/// guards must use this — a parallel switch would drift and re-introduce
+/// the bug where a throw is concatenated with a literal path suffix.
+String? simpleEncodingThrowReason(Model model) {
+  return switch (model) {
+    NeverModel() => 'never-typed values',
+    BinaryModel() => 'binary values',
+    ListModel(:final content) => _listContentThrowReason(content),
+    MapModel(:final valueModel)
+        when !isMapValueTypeSimplyEncodable(valueModel) =>
+      'map with complex value types',
+    MapModel() => null,
+    AliasModel(:final model) => simpleEncodingThrowReason(model),
+    ClassModel() ||
+    EnumModel() ||
+    AllOfModel() ||
+    OneOfModel() ||
+    AnyOfModel() ||
+    StringModel() ||
+    IntegerModel() ||
+    DoubleModel() ||
+    NumberModel() ||
+    BooleanModel() ||
+    DateTimeModel() ||
+    DateModel() ||
+    DecimalModel() ||
+    UriModel() ||
+    Base64Model() ||
+    AnyModel() => null,
+    // Catch-all throws so a newly-added Model subtype surfaces at runtime
+    // instead of silently returning null (drift protection). NamedModel and
+    // CompositeModel are mixins on the sealed Model, so the analyzer does
+    // not let us enumerate "every concrete subtype" exhaustively here.
+    _ => _unreachableModelType('simpleEncodingThrowReason'),
+  };
+}
+
+Never _unreachableModelType(String fn) =>
+    throw UnsupportedError('Unreachable Model subtype in $fn');
+
+String? _listContentThrowReason(Model content) {
+  const unsupported = 'lists with unsupported element types';
+  return switch (content) {
+    // _handleListExpression's AnyModel branch would emit
+    // `list.toSimple(...)` which has no extension on `List<Object?>` — the
+    // predicate intercepts before codegen so the bad code never lands.
+    NeverModel() ||
+    BinaryModel() ||
+    ListModel() ||
+    AnyModel() => unsupported,
+    MapModel(:final valueModel)
+        when !isMapValueTypeSimplyEncodable(valueModel) =>
+      unsupported,
+    MapModel() => null,
+    AliasModel(:final model) => _listContentThrowReason(model),
+    ClassModel() ||
+    EnumModel() ||
+    AllOfModel() ||
+    OneOfModel() ||
+    AnyOfModel() ||
+    StringModel() ||
+    IntegerModel() ||
+    DoubleModel() ||
+    NumberModel() ||
+    BooleanModel() ||
+    DateTimeModel() ||
+    DateModel() ||
+    DecimalModel() ||
+    UriModel() ||
+    Base64Model() => null,
+    // Catch-all throws (same drift-protection rationale as
+    // simpleEncodingThrowReason).
+    _ => _unreachableModelType('_listContentThrowReason'),
+  };
+}
+
 /// Creates a Dart expression that correctly serializes a path parameter
 /// to its simple parameter encoding representation.
 ///
