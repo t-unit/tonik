@@ -626,6 +626,35 @@ paths:
         '200':
           description: OK
 
+  /param-counter-collision/{token}:
+    get:
+      operationId: getParamCounterCollision
+      parameters:
+        - name: token_query
+          in: query
+          schema:
+            type: string
+        - name: token_query2
+          in: query
+          schema:
+            type: string
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: token
+          in: query
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
   /param-duplicates/{id}:
     get:
       operationId: getWithDuplicateParams
