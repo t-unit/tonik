@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:naming_api/src/api_client/default_api2.dart';
 import 'package:naming_api/src/model/_function.dart';
 import 'package:naming_api/src/model/camel_case_collider.dart';
@@ -13,6 +14,7 @@ import 'package:naming_api/src/model/weird_property_names.dart';
 import 'package:naming_api/src/operation/create_with_body_cookie.dart';
 import 'package:naming_api/src/operation/create_with_body_header.dart';
 import 'package:naming_api/src/operation/create_with_body_query.dart';
+import 'package:naming_api/src/operation/get_param_counter_collision.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -220,5 +222,76 @@ void main() {
       expect(model.a, 'single');
       expect(model.kebabCaseName, 'hyphenated');
     });
+  });
+
+  group('parameter counter-suffix collision (GetParamCounterCollision)', () {
+    test(
+      'exposes four distinct Dart parameter names — tokenPath, tokenQuery, '
+      'tokenQuery2, tokenQuery3 — and tokenQuery3 still serialises under the '
+      'wire key "token"',
+      () async {
+        final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
+        Uri? capturedUri;
+        dio.interceptors.add(
+          InterceptorsWrapper(
+            onRequest: (options, handler) {
+              capturedUri = options.uri;
+              handler.reject(
+                DioException(
+                  requestOptions: options,
+                  type: DioExceptionType.cancel,
+                ),
+              );
+            },
+          ),
+        );
+
+        final operation = GetParamCounterCollision(dio);
+
+        // The named-arg call site IS the compile-time check on Dart names:
+        // if any of the four were renamed, this wouldn't compile.
+        await operation.call(
+          tokenPath: 'P',
+          tokenQuery: 'A',
+          tokenQuery2: 'B',
+          tokenQuery3: 'C',
+        );
+
+        expect(capturedUri, isNotNull);
+        final uri = capturedUri!;
+
+        expect(
+          uri.path,
+          contains('/param-counter-collision/P'),
+        );
+
+        final params = uri.queryParametersAll;
+
+        expect(
+          params['token'],
+          ['C'],
+          reason:
+              'tokenQuery3 must serialise under wire key "token" — the '
+              'Dart-side counter rename must not change the on-the-wire name.',
+        );
+        expect(
+          params['token_query'],
+          ['A'],
+          reason: 'tokenQuery must keep its raw wire name "token_query".',
+        );
+        expect(
+          params['token_query2'],
+          ['B'],
+          reason: 'tokenQuery2 must keep its raw wire name "token_query2".',
+        );
+        expect(
+          params.containsKey('token_query3'),
+          isFalse,
+          reason:
+              'No query key should adopt the renamed Dart identifier — that '
+              'would corrupt the outgoing request.',
+        );
+      },
+    );
   });
 }
