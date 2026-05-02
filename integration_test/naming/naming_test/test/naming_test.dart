@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:naming_api/src/api_client/default_api2.dart';
 import 'package:naming_api/src/model/_function.dart';
 import 'package:naming_api/src/model/camel_case_collider.dart';
@@ -9,6 +10,7 @@ import 'package:naming_api/src/model/keyword_enum.dart';
 import 'package:naming_api/src/model/keyword_property_names.dart';
 import 'package:naming_api/src/model/object_method_collider.dart';
 import 'package:naming_api/src/model/self_referencer.dart';
+import 'package:naming_api/src/model/simple_result.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
 import 'package:naming_api/src/operation/create_with_body_cookie.dart';
 import 'package:naming_api/src/operation/create_with_body_header.dart';
@@ -122,35 +124,100 @@ void main() {
   });
 
   group('cancelToken parameter collision', () {
-    test('GetWithCancelTokenQuery compiles with renamed user parameter', () {
-      expect(GetWithCancelTokenQuery, isNotNull);
-    });
-
-    test('GetWithCancelTokenPath compiles with renamed user parameter', () {
-      expect(GetWithCancelTokenPath, isNotNull);
-    });
-
-    test('GetWithCancelTokenHeader compiles with renamed user parameter', () {
-      expect(GetWithCancelTokenHeader, isNotNull);
-    });
-
-    test('GetWithCancelTokenCookie compiles with renamed user parameter', () {
-      expect(GetWithCancelTokenCookie, isNotNull);
-    });
-
     test(
-      'GetWithCancelTokenSanitized compiles when raw name sanitizes to '
-      'cancelToken',
+      'GetWithCancelTokenQuery call() accepts cancelTokenQuery and '
+      'built-in cancelToken',
       () {
-        expect(GetWithCancelTokenSanitized, isNotNull);
+        final op = GetWithCancelTokenQuery(Dio());
+        // Local function with explicit parameter names: won't compile if
+        // cancelTokenQuery doesn't exist or if duplicate_definition persists.
+        Object? fn({required String cancelTokenQuery, CancelToken? cancelToken}) =>
+            op.call(
+              cancelTokenQuery: cancelTokenQuery,
+              cancelToken: cancelToken,
+            );
+        expect(fn, isNotNull);
       },
     );
 
     test(
-      'PostWithCancelTokenAndBody compiles with renamed cancelToken and body '
-      'params',
+      'GetWithCancelTokenPath call() accepts cancelTokenPath and '
+      'built-in cancelToken',
       () {
-        expect(PostWithCancelTokenAndBody, isNotNull);
+        final op = GetWithCancelTokenPath(Dio());
+        Object? fn({required String cancelTokenPath, CancelToken? cancelToken}) =>
+            op.call(
+              cancelTokenPath: cancelTokenPath,
+              cancelToken: cancelToken,
+            );
+        expect(fn, isNotNull);
+      },
+    );
+
+    test(
+      'GetWithCancelTokenHeader call() accepts cancelTokenHeader and '
+      'built-in cancelToken',
+      () {
+        final op = GetWithCancelTokenHeader(Dio());
+        Object? fn({
+          required String cancelTokenHeader,
+          CancelToken? cancelToken,
+        }) =>
+            op.call(
+              cancelTokenHeader: cancelTokenHeader,
+              cancelToken: cancelToken,
+            );
+        expect(fn, isNotNull);
+      },
+    );
+
+    test(
+      'GetWithCancelTokenCookie call() accepts cancelTokenCookie and '
+      'built-in cancelToken',
+      () {
+        final op = GetWithCancelTokenCookie(Dio());
+        Object? fn({
+          required String cancelTokenCookie,
+          CancelToken? cancelToken,
+        }) =>
+            op.call(
+              cancelTokenCookie: cancelTokenCookie,
+              cancelToken: cancelToken,
+            );
+        expect(fn, isNotNull);
+      },
+    );
+
+    test(
+      'GetWithCancelTokenSanitized call() accepts cancelTokenQuery '
+      'when raw name sanitizes to cancelToken',
+      () {
+        final op = GetWithCancelTokenSanitized(Dio());
+        Object? fn({required String cancelTokenQuery, CancelToken? cancelToken}) =>
+            op.call(
+              cancelTokenQuery: cancelTokenQuery,
+              cancelToken: cancelToken,
+            );
+        expect(fn, isNotNull);
+      },
+    );
+
+    test(
+      'PostWithCancelTokenAndBody call() accepts body, cancelTokenQuery '
+      'and built-in cancelToken',
+      () {
+        final op = PostWithCancelTokenAndBody(Dio());
+        Object? fn({
+          required SimpleResult body,
+          required String cancelTokenQuery,
+          CancelToken? cancelToken,
+        }) =>
+            op.call(
+              body: body,
+              cancelTokenQuery: cancelTokenQuery,
+              cancelToken: cancelToken,
+            );
+        expect(fn, isNotNull);
       },
     );
   });
