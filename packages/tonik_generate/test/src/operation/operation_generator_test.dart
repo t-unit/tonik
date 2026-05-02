@@ -1847,6 +1847,134 @@ Future<TonikResult<void>> call({
       );
 
       test(
+        'renames query parameter colliding with built-in cancelToken when '
+        'request body is also present',
+        () {
+          final requestBody = RequestBodyObject(
+            name: 'singleBody',
+            context: context,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: StringModel(context: context),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+            },
+          );
+
+          final queryParam = QueryParameterObject(
+            name: 'cancelToken',
+            rawName: 'cancelToken',
+            description: null,
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+          );
+
+          final operation = Operation(
+            operationId: 'postA',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/a',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+Future<TonikResult<void>> call({
+  required String body,
+  required String cancelTokenQuery,
+  CancelToken? cancelToken,
+}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(
+      path: _$newPath,
+      query: _queryParameters(cancelTokenQuery: cancelTokenQuery),
+    );
+    _$data = _data(body: body);
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  return TonikSuccess(null, _$response);
+}
+''';
+
+          final cls = generator.generateClass(operation, 'PostA');
+          final method = cls.methods.firstWhere((m) => m.name == 'call');
+
+          final paramNames =
+              method.optionalParameters.map((p) => p.name).toList();
+          expect(paramNames, ['body', 'cancelTokenQuery', 'cancelToken']);
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(expectedMethod),
+          );
+        },
+      );
+
+      test(
         'renames path parameter colliding with built-in cancelToken',
         () {
           final pathParam = PathParameterObject(
