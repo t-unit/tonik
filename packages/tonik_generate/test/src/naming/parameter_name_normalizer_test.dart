@@ -379,6 +379,78 @@ void main() {
     });
   });
 
+  group('counter-suffix collision avoidance', () {
+    test(
+      'reproducing spec: path token + query token + token_query + '
+      'token_query2 produces four distinct names',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {createPathParameter('token')},
+          queryParameters: {
+            createQueryParameter('token_query'),
+            createQueryParameter('token_query2'),
+            createQueryParameter('token'),
+          },
+          headers: {},
+        );
+
+        expect(result.pathParameters.map((r) => r.normalizedName), [
+          'tokenPath',
+        ]);
+        expect(result.queryParameters.map((r) => r.normalizedName), [
+          'tokenQuery',
+          'tokenQuery2',
+          'tokenQuery3',
+        ]);
+      },
+    );
+
+    test(
+      'within-group dedup skips counter values that already collide with '
+      'an existing name (e.g. [a, a2, a] -> [a, a2, a3])',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {},
+          queryParameters: {
+            createQueryParameter('a'),
+            createQueryParameter('a2'),
+            createQueryParameter('a'),
+          },
+          headers: {},
+        );
+
+        expect(result.queryParameters.map((r) => r.normalizedName), [
+          'a',
+          'a2',
+          'a3',
+        ]);
+      },
+    );
+
+    test(
+      'within-group dedup advances past multiple consecutive collisions',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {},
+          queryParameters: {
+            createQueryParameter('x'),
+            createQueryParameter('x2'),
+            createQueryParameter('x3'),
+            createQueryParameter('x'),
+          },
+          headers: {},
+        );
+
+        expect(result.queryParameters.map((r) => r.normalizedName), [
+          'x',
+          'x2',
+          'x3',
+          'x4',
+        ]);
+      },
+    );
+  });
+
   group('normalizeMultipartHeaderName', () {
     test('combines property name and header name', () {
       expect(

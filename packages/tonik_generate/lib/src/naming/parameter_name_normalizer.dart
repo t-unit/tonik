@@ -143,26 +143,31 @@ NormalizedRequestParameters normalizeRequestParameters({
   );
 }
 
-/// Ensures uniqueness of names within a parameter group
 List<({String normalizedName, T parameter})> _ensureUniquenessInGroup<T>(
   List<({String normalizedName, T parameter})> parameters,
 ) {
   final result = <({String normalizedName, T parameter})>[];
-  final usedNames = <String>{}; // lowercase names for uniqueness check
-  final nameCounters = <String, int>{}; // lowercase base name -> counter
+  final usedNames = <String>{};
+  final nameCounters = <String, int>{};
 
   for (final item in parameters) {
-    var name = item.normalizedName;
-    final baseLowerName = name.toLowerCase();
+    final baseName = item.normalizedName;
+    final baseLowerName = baseName.toLowerCase();
 
-    // If the name is already used, add a numeric suffix
-    if (usedNames.contains(baseLowerName)) {
+    var name = baseName;
+    var lowerName = baseLowerName;
+
+    // Loop (not single increment) because a counter-generated candidate may
+    // itself collide with an earlier entry: group [tokenQuery, tokenQuery2,
+    // tokenQuery] — naive increment yields tokenQuery2, which already exists.
+    while (usedNames.contains(lowerName)) {
       final counter = nameCounters.putIfAbsent(baseLowerName, () => 2);
-      name = '$name$counter';
+      name = '$baseName$counter';
+      lowerName = name.toLowerCase();
       nameCounters[baseLowerName] = counter + 1;
     }
 
-    usedNames.add(name.toLowerCase());
+    usedNames.add(lowerName);
     result.add((normalizedName: name, parameter: item.parameter));
   }
 
