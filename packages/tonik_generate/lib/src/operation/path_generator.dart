@@ -3,6 +3,7 @@ import 'package:collection/collection.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_label_path_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
@@ -107,6 +108,7 @@ class PathGenerator {
       // they produce their own prefix (. or ;).
       final currentConcatParts = <Expression>[];
 
+      partLoop:
       for (final part in parts.where((p) => p.isNotEmpty)) {
         if (!part.startsWith('{') || !part.endsWith('}')) {
           // Literal text within the segment — accumulate for concatenation.
@@ -128,17 +130,28 @@ class PathGenerator {
         switch (param.parameter.encoding) {
           case PathParameterEncoding.simple:
             final model = param.parameter.model;
-            if (model is ListModel &&
-                model.content.encodingShape != EncodingShape.simple) {
+
+            final invalidSimpleReason = switch (model.resolved) {
+              ListModel(:final content)
+                  when content.encodingShape != EncodingShape.simple =>
+                'list with complex elements',
+              MapModel(:final valueModel)
+                  when !isMapValueTypeSimplyEncodable(valueModel) =>
+                'map with complex value types',
+              _ => null,
+            };
+
+            if (invalidSimpleReason != null) {
+              // `throw X + literal` parses as `throw (X + literal)`; emit the
+              // throw as a standalone statement instead.
               currentConcatParts.clear();
               body.add(
                 generateEncodingExceptionExpression(
-                  'Simple encoding does not support list with complex elements '
+                  'Simple encoding does not support $invalidSimpleReason '
                   'for path parameter ${param.parameter.rawName}',
                 ).statement,
               );
-
-              continue;
+              break partLoop;
             }
 
             final valueExpression = buildToSimplePathParameterExpression(
@@ -162,17 +175,20 @@ class PathGenerator {
             // Flush any accumulated concat parts before the matrix parameter.
             _flushConcatParts(currentConcatParts, pathPartExpressions);
 
-            final model = param.parameter.model;
-            if (model is ListModel && model.content is ListModel) {
+            // `.resolved` is only needed for this pre-flight type test —
+            // `isEffectivelyNullable` and `buildMatrixParameterExpression`
+            // handle aliases.
+            final model = param.parameter.model.resolved;
+            if (model is ListModel && model.content.resolved is ListModel) {
               currentConcatParts.clear();
               body.add(
                 generateEncodingExceptionExpression(
                   'Matrix encoding does not support arrays of objects or '
-                  'nested arrays',
+                  'nested arrays for path parameter '
+                  '${param.parameter.rawName}',
                 ).statement,
               );
-
-              continue;
+              break partLoop;
             }
 
             final isModelNullable = param.parameter.model.isEffectivelyNullable;

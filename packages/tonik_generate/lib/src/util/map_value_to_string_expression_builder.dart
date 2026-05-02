@@ -29,12 +29,36 @@ Expression? buildMapToStringMapExpression(
   );
 }
 
+/// Single source of truth for which map value types simple encoding
+/// supports. Path-generator guards must use this — a parallel switch
+/// would drift and re-introduce the `throw + r'.json'` invalid-Dart bug.
+bool isMapValueTypeSimplyEncodable(Model valueModel) {
+  return switch (valueModel) {
+    StringModel() ||
+    IntegerModel() ||
+    DoubleModel() ||
+    NumberModel() ||
+    BooleanModel() ||
+    DecimalModel() ||
+    UriModel() ||
+    DateModel() ||
+    DateTimeModel() ||
+    EnumModel() ||
+    Base64Model() ||
+    AnyModel() => true,
+    AliasModel(:final model) => isMapValueTypeSimplyEncodable(model),
+    _ => false,
+  };
+}
+
 Expression? _buildConversion(
   Expression receiver,
   Model valueModel, {
   required bool isNullable,
   required bool valueIsNullable,
 }) {
+  if (!isMapValueTypeSimplyEncodable(valueModel)) return null;
+
   return switch (valueModel) {
     StringModel() => receiver,
     IntegerModel() ||
@@ -101,18 +125,10 @@ Expression? _buildConversion(
       isNullable: isNullable,
       valueIsNullable: valueIsNullable,
     ),
-    ClassModel() ||
-    ListModel() ||
-    MapModel() ||
-    BinaryModel() ||
-    NeverModel() =>
-      null,
     _ => null,
   };
 }
 
-/// Wraps a conversion expression with a null check when the value
-/// is nullable: `v == null ? '' : <conversion>`.
 Expression _wrapNullable(Expression conversion, bool valueIsNullable) {
   if (!valueIsNullable) return conversion;
   return refer('v')
@@ -120,8 +136,6 @@ Expression _wrapNullable(Expression conversion, bool valueIsNullable) {
       .conditional(literalString(''), conversion);
 }
 
-/// Builds a `.map((k, v) => MapEntry(k, <valueExpr>))` call on the
-/// [receiver].
 Expression _buildMapCall(
   Expression receiver,
   Expression valueExpression, {
