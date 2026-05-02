@@ -22,6 +22,38 @@ void main() {
     );
   }
 
+  group('Simple style - string-value map with literal suffix', () {
+    test('map (explode=false) encodes key,value pairs before suffix', () async {
+      final api = buildSimpleApi();
+      final response = await api.testSimpleMapStringWithSuffix(
+        m: const {'k': 'v'},
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/simple/encode-suffix/map-string/k,v.json',
+      );
+    });
+
+    test('map (explode=true) encodes key=value pairs before suffix', () async {
+      final api = buildSimpleApi();
+      final response = await api.testSimpleMapStringExplodeWithSuffix(
+        m: const {'k': 'v'},
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/simple/encode-suffix/map-string-explode/k=v.json',
+      );
+    });
+  });
+
   group('Simple style - Special character property names', () {
     test(
       'special keys (explode=false) encodes keys with URI encoding',
