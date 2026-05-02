@@ -150,6 +150,11 @@ List<({String normalizedName, T parameter})> _ensureUniquenessInGroup<T>(
   final usedNames = <String>{};
   final nameCounters = <String, int>{};
 
+  // Worst case: all N parameters share the same base, so the maximum
+  // counter value reached is N. The +2 buffer gives headroom and matches
+  // the initial counter value of 2.
+  final convergenceBound = parameters.length + 2;
+
   for (final item in parameters) {
     final baseName = item.normalizedName;
     final baseLowerName = baseName.toLowerCase();
@@ -157,17 +162,20 @@ List<({String normalizedName, T parameter})> _ensureUniquenessInGroup<T>(
     var name = baseName;
     var lowerName = baseLowerName;
 
+    nameCounters.putIfAbsent(baseLowerName, () => 2);
+
     // Loop (not single increment) because a counter-generated candidate may
     // itself collide with an earlier entry: group [tokenQuery, tokenQuery2,
     // tokenQuery] — naive increment yields tokenQuery2, which already exists.
     while (usedNames.contains(lowerName)) {
-      final counter = nameCounters.putIfAbsent(baseLowerName, () => 2);
-      assert(
-        counter <= parameters.length + 2,
-        'Counter for "$baseName" exceeded parameters.length + 2 '
-        '(${parameters.length + 2}); _ensureUniquenessInGroup is not '
-        'converging — counter increment is broken.',
-      );
+      final counter = nameCounters[baseLowerName]!;
+      if (counter > convergenceBound) {
+        throw StateError(
+          'Counter for "$baseName" exceeded parameters.length + 2 '
+          '($convergenceBound); _ensureUniquenessInGroup is not '
+          'converging — counter increment is broken.',
+        );
+      }
       name = '$baseName$counter';
       lowerName = name.toLowerCase();
       nameCounters[baseLowerName] = counter + 1;

@@ -521,6 +521,29 @@ void main() {
         ]);
       },
     );
+
+    test(
+      'within-group dedup applies to cookie parameters '
+      '(non-query group coverage)',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {},
+          queryParameters: {},
+          headers: {},
+          cookieParameters: {
+            createCookieParameter('session'),
+            createCookieParameter('session2'),
+            createCookieParameter('session'),
+          },
+        );
+
+        expect(result.cookieParameters.map((r) => r.normalizedName), [
+          'session',
+          'session2',
+          'session3',
+        ]);
+      },
+    );
   });
 
   group('normalizeMultipartHeaderName', () {
