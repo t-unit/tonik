@@ -293,12 +293,21 @@ class ApiClientGenerator {
   ) {
     final docs = <String>[];
 
+    final hasRequestBody =
+        operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+
     final normalizedParams = normalizeRequestParameters(
       pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
       queryParameters: operation.queryParameters
           .map((p) => p.resolve())
           .toSet(),
       headers: operation.headers.map((p) => p.resolve()).toSet(),
+      cookieParameters: operation.cookieParameters
+          .map((p) => p.resolve())
+          .toSet(),
+      reservedNames: operationReservedParameterNames(
+        hasRequestBody: hasRequestBody,
+      ),
     );
 
     final paramDescriptionsByOriginalName = <String, String>{};

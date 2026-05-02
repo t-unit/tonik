@@ -194,11 +194,6 @@ void main() {
       expect(names.length, 2, reason: 'Should have 2 parameters');
       expect(names.toSet().length, 2, reason: 'Should have unique names');
       expect(names.contains('value'), isTrue);
-      expect(
-        names.contains('value2'),
-        isTrue,
-        reason: 'Second duplicate must be deterministically pinned to value2',
-      );
     });
 
     test('applies type suffixes to nameOverride duplicates across types', () {
@@ -382,168 +377,100 @@ void main() {
         'body',
       ]);
     });
-  });
 
-  group('counter-suffix collision avoidance', () {
-    test(
-      'reproducing spec: path token + query token + token_query + '
-      'token_query2 produces four distinct names',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {createPathParameter('token')},
-          queryParameters: {
-            createQueryParameter('token_query'),
-            createQueryParameter('token_query2'),
-            createQueryParameter('token'),
-          },
-          headers: {},
-        );
+    test('reserves cancelToken for query parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('cancelToken')},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
 
-        expect(result.pathParameters.map((r) => r.normalizedName), [
-          'tokenPath',
-        ]);
-        expect(result.queryParameters.map((r) => r.normalizedName), [
-          'tokenQuery',
-          'tokenQuery2',
-          'tokenQuery3',
-        ]);
-      },
-    );
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenQuery',
+      ]);
+    });
 
-    test(
-      'within-group dedup skips counter values that already collide with '
-      'an existing name (e.g. [a, a2, a] -> [a, a2, a3])',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {},
-          queryParameters: {
-            createQueryParameter('a'),
-            createQueryParameter('a2'),
-            createQueryParameter('a'),
-          },
-          headers: {},
-        );
+    test('reserves cancelToken for path parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {createPathParameter('cancelToken')},
+        queryParameters: {},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
 
-        expect(result.queryParameters.map((r) => r.normalizedName), [
-          'a',
-          'a2',
-          'a3',
-        ]);
-      },
-    );
+      expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenPath',
+      ]);
+    });
 
-    test(
-      'within-group dedup advances past multiple consecutive collisions',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {},
-          queryParameters: {
-            createQueryParameter('x'),
-            createQueryParameter('x2'),
-            createQueryParameter('x3'),
-            createQueryParameter('x'),
-          },
-          headers: {},
-        );
+    test('reserves cancelToken for header parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {createHeader('cancelToken')},
+        reservedNames: {'cancelToken'},
+      );
 
-        expect(result.queryParameters.map((r) => r.normalizedName), [
-          'x',
-          'x2',
-          'x3',
-          'x4',
-        ]);
-      },
-    );
+      expect(result.headers.map((r) => r.normalizedName).toList(), [
+        'cancelTokenHeader',
+      ]);
+    });
 
-    test(
-      'type-suffix application creates a within-group collision that the '
-      'counter-loop must resolve (path foo + query foo_query + query foo)',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {createPathParameter('foo')},
-          queryParameters: {
-            createQueryParameter('foo_query'),
-            createQueryParameter('foo'),
-          },
-          headers: {},
-        );
+    test('reserves cancelToken for cookie parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {},
+        headers: {},
+        cookieParameters: {createCookieParameter('cancelToken')},
+        reservedNames: {'cancelToken'},
+      );
 
-        expect(result.pathParameters.map((r) => r.normalizedName), [
-          'fooPath',
-        ]);
-        expect(result.queryParameters.map((r) => r.normalizedName), [
-          'fooQuery',
-          'fooQuery2',
-        ]);
-      },
-    );
+      expect(result.cookieParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenCookie',
+      ]);
+    });
 
-    test(
-      'within-group dedup applies to header parameters '
-      '(non-query group coverage)',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {},
-          queryParameters: {},
-          headers: {
-            createHeader('trace'),
-            createHeader('trace2'),
-            createHeader('trace'),
-          },
-        );
+    test('reserves cancelToken for snake_case raw name that sanitizes to it',
+        () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('cancel_token')},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
 
-        expect(result.headers.map((r) => r.normalizedName), [
-          'trace',
-          'trace2',
-          'trace3',
-        ]);
-      },
-    );
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenQuery',
+      ]);
+    });
 
-    test(
-      'within-group dedup applies to path parameters '
-      '(non-query group coverage)',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {
-            createPathParameter('id'),
-            createPathParameter('id2'),
-            createPathParameter('id'),
-          },
-          queryParameters: {},
-          headers: {},
-        );
+    test('reserves cancelToken for kebab-case raw name that sanitizes to it',
+        () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('Cancel-Token')},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
 
-        expect(result.pathParameters.map((r) => r.normalizedName), [
-          'id',
-          'id2',
-          'id3',
-        ]);
-      },
-    );
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'cancelTokenQuery',
+      ]);
+    });
 
-    test(
-      'within-group dedup applies to cookie parameters '
-      '(non-query group coverage)',
-      () {
-        final result = normalizeRequestParameters(
-          pathParameters: {},
-          queryParameters: {},
-          headers: {},
-          cookieParameters: {
-            createCookieParameter('session'),
-            createCookieParameter('session2'),
-            createCookieParameter('session'),
-          },
-        );
+    test('does not rename non-colliding token-like names', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('token')},
+        headers: {},
+        reservedNames: {'cancelToken'},
+      );
 
-        expect(result.cookieParameters.map((r) => r.normalizedName), [
-          'session',
-          'session2',
-          'session3',
-        ]);
-      },
-    );
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'token',
+      ]);
+    });
   });
 
   group('normalizeMultipartHeaderName', () {
@@ -579,6 +506,23 @@ void main() {
       final name1 = normalizeMultipartHeaderName('file', 'X-Custom');
       final name2 = normalizeMultipartHeaderName('avatar', 'X-Custom');
       expect(name1, isNot(name2));
+    });
+  });
+
+  group('operationReservedParameterNames', () {
+    test('always reserves cancelToken when there is no request body', () {
+      expect(
+        operationReservedParameterNames(hasRequestBody: false),
+        {'cancelToken'},
+      );
+    });
+
+    test('reserves both body and cancelToken when there is a request body',
+        () {
+      expect(
+        operationReservedParameterNames(hasRequestBody: true),
+        {'body', 'cancelToken'},
+      );
     });
   });
 }

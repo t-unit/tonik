@@ -90,7 +90,7 @@ packages:
     source: hosted
     version: "3.0.7"
   dio:
-    dependency: "direct dev"
+    dependency: "direct main"
     description:
       name: dio
       sha256: aff32c08f92787a557dd5c0145ac91536481831a01b4648136373cddb0e64f8c
@@ -344,6 +344,13 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.6.17"
+  test_helpers:
+    dependency: "direct dev"
+    description:
+      path: "../../test_helpers"
+      relative: true
+    source: path
+    version: "1.0.0"
   tonik_util:
     dependency: "direct main"
     description:
