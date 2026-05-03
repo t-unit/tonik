@@ -345,6 +345,21 @@ class ApiClientGenerator {
       }
     }
 
+    for (final param in operation.cookieParameters) {
+      final description = switch (param) {
+        CookieParameterAlias(:final description, :final parameter) =>
+          description ?? _getCookieParameterDescription(parameter),
+        CookieParameterObject(:final description) => description,
+      };
+      if (description != null && description.isNotEmpty) {
+        final resolvedParam = param.resolve();
+        final name = resolvedParam.name;
+        if (name != null) {
+          paramDescriptionsByOriginalName[name] = description;
+        }
+      }
+    }
+
     for (final pathParam in normalizedParams.pathParameters) {
       final description =
           paramDescriptionsByOriginalName[pathParam.parameter.name];
@@ -384,6 +399,19 @@ class ApiClientGenerator {
       }
     }
 
+    for (final cookieParam in normalizedParams.cookieParameters) {
+      final description =
+          paramDescriptionsByOriginalName[cookieParam.parameter.name];
+      if (description != null && description.isNotEmpty) {
+        docs.addAll(
+          formatDocCommentWithPrefix(
+            '[${cookieParam.normalizedName}] ',
+            description,
+          ),
+        );
+      }
+    }
+
     return docs;
   }
 
@@ -408,6 +436,14 @@ class ApiClientGenerator {
       RequestHeaderAlias(:final description, :final header) =>
         description ?? _getHeaderDescription(header),
       RequestHeaderObject(:final description) => description,
+    };
+  }
+
+  String? _getCookieParameterDescription(CookieParameter param) {
+    return switch (param) {
+      CookieParameterAlias(:final description, :final parameter) =>
+        description ?? _getCookieParameterDescription(parameter),
+      CookieParameterObject(:final description) => description,
     };
   }
 }
