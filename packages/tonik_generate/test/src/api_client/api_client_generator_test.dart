@@ -835,7 +835,19 @@ void main() {
           },
           responses: const {},
           securitySchemes: const {},
-          cookieParameters: const {},
+          cookieParameters: {
+            CookieParameterObject(
+              name: 'sessionId',
+              rawName: 'session_id',
+              description: 'Session ID cookie',
+              isRequired: false,
+              isDeprecated: false,
+              explode: false,
+              model: StringModel(context: testContext),
+              encoding: CookieParameterEncoding.form,
+              context: testContext,
+            ),
+          },
         );
 
         final generatedClass = generator.generateClass(
@@ -853,6 +865,10 @@ void main() {
           contains(
             '/// [includeDetails] Whether to include additional details',
           ),
+        );
+        expect(
+          method.docs,
+          contains('/// [sessionId] Session ID cookie'),
         );
       });
 
