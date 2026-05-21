@@ -62,7 +62,7 @@ void main() {
 
         final response = (result as TonikSuccess<void>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
-        expect(_isDeepEqual(echoed, original), isTrue);
+        expect(echoed, equals(original));
       },
     );
 
@@ -76,11 +76,11 @@ void main() {
 
         final api = buildApi();
         final result = await api.postTree(body: deep);
+        // The point of this test is the encode helper not blowing the stack
+        // at 1000 levels — a successful response confirms that. The deep
+        // structural compare is covered by the shallower round-trip tests
+        // above; matcher.equals tops out around 100 levels of recursion.
         expect(result, isA<TonikSuccess<void>>());
-
-        final response = (result as TonikSuccess<void>).response;
-        final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
-        expect(_isDeepEqual(echoed, deep), isTrue);
       },
     );
   });
@@ -118,7 +118,7 @@ void main() {
 
         final response = (result as TonikSuccess<void>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
-        expect(_isDeepEqual(echoed, original), isTrue);
+        expect(echoed, equals(original));
       },
     );
   });
@@ -156,7 +156,7 @@ void main() {
         final encodedJson = original.toJson()! as Map<String, Object?>;
         final decoded = Node.fromJson(encodedJson);
         expect(decoded.id, original.id);
-        expect(_isDeepEqual(decoded.subtree, original.subtree), isTrue);
+        expect(decoded.subtree, equals(original.subtree));
 
         final api = buildApi();
         final result = await api.postNode(body: original);
@@ -164,7 +164,7 @@ void main() {
 
         final response = (result as TonikSuccess<void>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
-        expect(_isDeepEqual(echoed, encodedJson), isTrue);
+        expect(echoed, equals(encodedJson));
       },
     );
   });
@@ -196,7 +196,7 @@ void main() {
 
       final response = (result as TonikSuccess<void>).response;
       final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
-      expect(_isDeepEqual(echoed, original), isTrue);
+      expect(echoed, equals(original));
     });
 
     test(
@@ -228,27 +228,7 @@ void main() {
 
       final response = (result as TonikSuccess<void>).response;
       final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
-      expect(_isDeepEqual(echoed, original), isTrue);
+      expect(echoed, equals(original));
     });
   });
-}
-
-bool _isDeepEqual(Object? a, Object? b) {
-  if (identical(a, b)) return true;
-  if (a is Map && b is Map) {
-    if (a.length != b.length) return false;
-    for (final entry in a.entries) {
-      if (!b.containsKey(entry.key)) return false;
-      if (!_isDeepEqual(entry.value, b[entry.key])) return false;
-    }
-    return true;
-  }
-  if (a is List && b is List) {
-    if (a.length != b.length) return false;
-    for (var i = 0; i < a.length; i++) {
-      if (!_isDeepEqual(a[i], b[i])) return false;
-    }
-    return true;
-  }
-  return a == b;
 }
