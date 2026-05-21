@@ -3,15 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
-/// Creates a [BuiltExpression] that correctly serializes a property to its
-/// form-encoded representation.
-///
-/// Form encoding cannot reach recursive named typedefs — OpenAPI forbids
-/// complex parameter types — so the result always carries an empty
-/// [BuiltExpression.inlineFunctions].
-///
-/// The [useQueryComponent] parameter controls whether to use query component
-/// encoding with spaces as + (for form-urlencoded bodies).
+/// [useQueryComponent] uses `+` for spaces (for form-urlencoded bodies).
 BuiltExpression buildToFormPropertyExpression(
   String fieldName,
   Property property, {
@@ -40,20 +32,8 @@ BuiltExpression buildToFormPropertyExpression(
   return BuiltExpression.simple(expr);
 }
 
-/// Creates a [BuiltExpression] that correctly serializes any model to its
-/// form-encoded representation, including complex types.
-///
-/// Form encoding cannot reach recursive named typedefs — OpenAPI forbids
-/// complex parameter types — so the result always carries an empty
-/// [BuiltExpression.inlineFunctions].
-///
-/// The [useQueryComponent] parameter controls whether to use query component
-/// encoding with spaces as + (for form-urlencoded bodies).
-///
-/// The [explodeLiteral] and [allowEmptyLiteral] parameters allow specifying
-/// literal boolean values for these arguments instead of using variable
-/// references. When null, the expression will reference 'explode' and
-/// 'allowEmpty' variables expected to be in scope.
+/// When [explodeLiteral] / [allowEmptyLiteral] are null the expression
+/// references `explode` / `allowEmpty` variables expected to be in scope.
 BuiltExpression buildToFormValueExpression(
   String valueExpression,
   Model model, {

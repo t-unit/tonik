@@ -61,12 +61,6 @@ String? _getListContentUnsupportedReason(Model content) {
   };
 }
 
-/// Creates a [BuiltExpression] that correctly deserializes a simple value
-/// to its Dart representation.
-///
-/// Simple encoding cannot reach recursive named typedefs — OpenAPI forbids
-/// complex parameter types — so the result always carries an empty
-/// [BuiltExpression.inlineFunctions].
 BuiltExpression buildSimpleValueExpression(
   Expression value, {
   required Model model,

@@ -4,10 +4,6 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
-/// Creates a [BuiltExpression] for the form parameter encoding of a value.
-/// Form encoding cannot reach recursive named typedefs — OpenAPI forbids
-/// complex parameter types — so the result always carries an empty
-/// [BuiltExpression.inlineFunctions].
 BuiltExpression buildFormParameterExpression(
   Expression valueExpression,
   Model model, {

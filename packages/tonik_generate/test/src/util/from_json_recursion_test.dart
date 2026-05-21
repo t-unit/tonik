@@ -39,7 +39,7 @@ void main() {
   }
 
   group('recursive named MapModel (Tree)', () {
-    test('emits a local _decode helper and calls it', () {
+    test(r'emits a local _$decode helper and calls it', () {
       final tree = MapModel(
         name: 'Tree',
         valueModel: AnyModel(context: context),
@@ -58,15 +58,15 @@ void main() {
 
       expect(built.inlineFunctions, hasLength(1));
       final helperName = built.inlineFunctions.single.name;
-      expect(helperName, '_decodeTree');
+      expect(helperName, r'_$decodeTree');
 
       final actual = emitMethod(built);
-      final expected = format('''
+      final expected = format(r'''
         fromJson() {
-          late final Tree Function(Object?) _decodeTree;
-          _decodeTree = (Object? v) =>
-              v.decodeJsonMap((v) => _decodeTree(v), context: r'Tree');
-          return _decodeTree(json);
+          late final Tree Function(Object?) _$decodeTree;
+          _$decodeTree = (Object? v) =>
+              v.decodeJsonMap((v) => _$decodeTree(v), context: r'Tree');
+          return _$decodeTree(json);
         }
       ''');
 
@@ -75,7 +75,7 @@ void main() {
   });
 
   group('recursive named ListModel (Forest)', () {
-    test('emits a single local _decodeForest helper', () {
+    test(r'emits a single local _$decodeForest helper', () {
       final forest = ListModel(
         name: 'Forest',
         content: AnyModel(context: context),
@@ -93,7 +93,7 @@ void main() {
       );
 
       expect(built.inlineFunctions, hasLength(1));
-      expect(built.inlineFunctions.single.name, '_decodeForest');
+      expect(built.inlineFunctions.single.name, r'_$decodeForest');
     });
   });
 
@@ -153,13 +153,13 @@ void main() {
       );
 
       final actual = emitMethod(built);
-      final expected = format('''
+      final expected = format(r'''
         fromJson() {
-          late final B Function(Object?) _decodeB;
-          late final A Function(Object?) _decodeA;
-          _decodeB = (Object? v) => v.decodeJsonMap((v) => _decodeA(v), context: r'B');
-          _decodeA = (Object? v) => v.decodeJsonMap((v) => _decodeB(v), context: r'A');
-          return _decodeA(json);
+          late final B Function(Object?) _$decodeB;
+          late final A Function(Object?) _$decodeA;
+          _$decodeB = (Object? v) => v.decodeJsonMap((v) => _$decodeA(v), context: r'B');
+          _$decodeA = (Object? v) => v.decodeJsonMap((v) => _$decodeB(v), context: r'A');
+          return _$decodeA(json);
         }
       ''');
 
@@ -188,12 +188,12 @@ void main() {
       );
 
       final actual = emitMethod(built);
-      final expected = format('''
+      final expected = format(r'''
         fromJson() {
-          late final Tree Function(Object?) _decodeTree;
-          _decodeTree = (Object? v) => v.decodeJsonMap(
-              (v) => v == null ? null : _decodeTree(v), context: r'Tree');
-          return json == null ? null : _decodeTree(json);
+          late final Tree Function(Object?) _$decodeTree;
+          _$decodeTree = (Object? v) => v.decodeJsonMap(
+              (v) => v == null ? null : _$decodeTree(v), context: r'Tree');
+          return json == null ? null : _$decodeTree(json);
         }
       ''');
 
@@ -225,15 +225,15 @@ void main() {
       );
 
       expect(built.inlineFunctions, hasLength(1));
-      expect(built.inlineFunctions.single.name, '_decodeTree');
+      expect(built.inlineFunctions.single.name, r'_$decodeTree');
 
       final actual = emitMethod(built);
-      final expected = format('''
+      final expected = format(r'''
         fromJson() {
-          late final Tree Function(Object?) _decodeTree;
-          _decodeTree = (Object? v) =>
-              v.decodeJsonMap((v) => _decodeTree(v), context: r'Tree');
-          return _decodeTree(json);
+          late final Tree Function(Object?) _$decodeTree;
+          _$decodeTree = (Object? v) =>
+              v.decodeJsonMap((v) => _$decodeTree(v), context: r'Tree');
+          return _$decodeTree(json);
         }
       ''');
 
@@ -273,48 +273,23 @@ void main() {
 
       expect(
         built.inlineFunctions.map((h) => h.name).toList(),
-        ['_decodeC', '_decodeB', '_decodeA'],
+        [r'_$decodeC', r'_$decodeB', r'_$decodeA'],
       );
 
       final actual = emitMethod(built);
-      final expected = format('''
+      final expected = format(r'''
         fromJson() {
-          late final C Function(Object?) _decodeC;
-          late final B Function(Object?) _decodeB;
-          late final A Function(Object?) _decodeA;
-          _decodeC = (Object? v) => v.decodeJsonMap((v) => _decodeA(v), context: r'C');
-          _decodeB = (Object? v) => v.decodeJsonMap((v) => _decodeC(v), context: r'B');
-          _decodeA = (Object? v) => v.decodeJsonMap((v) => _decodeB(v), context: r'A');
-          return _decodeA(json);
+          late final C Function(Object?) _$decodeC;
+          late final B Function(Object?) _$decodeB;
+          late final A Function(Object?) _$decodeA;
+          _$decodeC = (Object? v) => v.decodeJsonMap((v) => _$decodeA(v), context: r'C');
+          _$decodeB = (Object? v) => v.decodeJsonMap((v) => _$decodeC(v), context: r'B');
+          _$decodeA = (Object? v) => v.decodeJsonMap((v) => _$decodeB(v), context: r'A');
+          return _$decodeA(json);
         }
       ''');
 
       expect(collapseWhitespace(actual), collapseWhitespace(expected));
-    });
-  });
-
-  group('naming collision', () {
-    test('reserved scope names force a numeric suffix', () {
-      final tree = MapModel(
-        name: 'Tree',
-        valueModel: AnyModel(context: context),
-        context: context,
-      );
-      tree.valueModel = tree;
-
-      final ctx = InlineHelperContext(
-        nameManager: nameManager,
-        reservedNames: {'_decodeTree'},
-      );
-      final built = buildFromJsonValueExpression(
-        'json',
-        model: tree,
-        nameManager: nameManager,
-        package: 'pkg',
-        helperContext: ctx,
-      );
-
-      expect(built.inlineFunctions.single.name, '_decodeTree2');
     });
   });
 }

@@ -81,16 +81,9 @@ String? _listContentThrowReason(Model content) {
   };
 }
 
-/// Creates a [BuiltExpression] that correctly serializes a path parameter
-/// to its simple parameter encoding representation.
-///
-/// Simple encoding cannot reach recursive named typedefs — OpenAPI forbids
-/// complex parameter types — so the result always carries an empty
-/// [BuiltExpression.inlineFunctions].
-///
-/// Path parameters are always required, so even if the underlying model type
-/// is nullable (e.g., `typedef X = String?`), we assert non-null via `!`
-/// rather than using `?.` which would produce `String?` output.
+/// Path parameters are always required: if the underlying model is
+/// nullable (e.g. `typedef X = String?`), assert non-null via `!` rather
+/// than `?.`, which would produce `String?` output.
 BuiltExpression buildToSimplePathParameterExpression(
   String parameterName,
   PathParameterObject parameter, {
@@ -113,15 +106,8 @@ BuiltExpression buildToSimplePathParameterExpression(
   );
 }
 
-/// Creates a [BuiltExpression] that correctly serializes a header parameter
-/// to its simple parameter encoding representation.
-///
-/// Simple encoding cannot reach recursive named typedefs — see
-/// [buildToSimplePathParameterExpression].
-///
-/// When [isNullChecked] is true, the expression is already inside a
-/// null-check block (`if (param != null)`), so null-aware access is
-/// unnecessary even for nullable models.
+/// [isNullChecked] suppresses null-aware access for callers already
+/// inside an `if (param != null)` block.
 BuiltExpression buildToSimpleHeaderParameterExpression(
   String parameterName,
   RequestHeaderObject parameter, {
@@ -141,13 +127,6 @@ BuiltExpression buildToSimpleHeaderParameterExpression(
   );
 }
 
-/// Creates a [BuiltExpression] that serializes a value using simple-style
-/// encoding, accepting a [Model] directly.
-///
-/// This is the model-based variant that works independently of the parameter
-/// type (request header, response header, per-part header, etc.). Simple
-/// encoding cannot reach recursive named typedefs — see
-/// [buildToSimplePathParameterExpression].
 BuiltExpression buildSimpleValueExpression(
   Expression accessor,
   Model model, {

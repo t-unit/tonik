@@ -577,7 +577,7 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
   final resolvedPackage = package!;
   final named = model as NamedModel;
   final typedefName = nameManager.modelName(named);
-  final helperName = helperContext.reserveHelperName(named, _encodePrefix);
+  final helperName = helperContext.helperName(named, _encodePrefix);
 
   final helpers = <InlineHelper>[];
   if (!helperContext.isHelperEmitted(named, _encodePrefix)) {
@@ -688,7 +688,7 @@ String _encodeContextSuffix(String? contextClass, String? contextProperty) {
   return " (at '$location')";
 }
 
-const _encodePrefix = '_encode';
+const _encodePrefix = r'_$encode';
 
 /// Calls `.toBytes().methodName()` on a `TonikFile` receiver.
 Expression _callToBytesMethod(

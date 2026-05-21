@@ -2832,7 +2832,9 @@ void main() {
         return format(library.accept(emitter).toString());
       }
 
-      test('splices _decode helper into fromJson for recursive AP values', () {
+      test(
+        r'splices _$decode helper into fromJson for recursive AP values',
+        () {
         final model = buildRecursiveTreeBag();
         final clazz = generator.generateClass(model);
         final fromJson = clazz.constructors.firstWhere(
@@ -2843,9 +2845,9 @@ void main() {
         const expected = r'''
 class Holder {
   factory Holder.fromJson(Object? json) {
-    late final Tree Function(Object?) _decodeTree;
-    _decodeTree = (Object? v) => v.decodeJsonMap(
-      (v) => _decodeTree(v),
+    late final Tree Function(Object?) _$decodeTree;
+    _$decodeTree = (Object? v) => v.decodeJsonMap(
+      (v) => _$decodeTree(v),
       context: r"Tree (at 'TreeBag.additionalProperties')",
     );
     final _$map = json.decodeMap(context: r'TreeBag');
@@ -2853,7 +2855,7 @@ class Holder {
     final _$additional = <String, Tree>{};
     for (final _$entry in _$map.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _decodeTree(_$entry.value);
+        _$additional[_$entry.key] = _$decodeTree(_$entry.value);
       }
     }
     return TreeBag(
@@ -2870,7 +2872,7 @@ class Holder {
       });
 
       test(
-        'splices _encode helper into toJson dynamic branch when a member has '
+        r'splices _$encode helper into toJson dynamic branch when a member has '
         'mixed encoding shape and AP is recursive',
         () {
           // A OneOf member mixing a primitive (simple) with a class (complex)
@@ -2921,8 +2923,8 @@ class Holder {
 class Holder {
   @override
   Object? toJson() {
-    late final Object? Function(Object?) _encodeTree;
-    _encodeTree = (Object? raw) {
+    late final Object? Function(Object?) _$encodeTree;
+    _$encodeTree = (Object? raw) {
       if (raw is! Tree) {
         throw EncodingException(
           'Cannot encode value as Tree (at \'DynamicTreeBag.additionalProperties\'); got: '
@@ -2930,7 +2932,7 @@ class Holder {
         );
       }
       final v = raw;
-      return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+      return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
     };
     if (currentEncodingShape == EncodingShape.mixed) {
       throw EncodingException(
@@ -2946,7 +2948,7 @@ class Holder {
     }
     _$map.addAll(_$idOrUserJson);
     _$map.addAll(
-      additionalProperties.map((k, v) => MapEntry(k, _encodeTree(v))),
+      additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))),
     );
     return _$map;
   }
@@ -2959,7 +2961,7 @@ class Holder {
         },
       );
 
-      test('splices _encode helper into toJson for recursive AP values', () {
+      test(r'splices _$encode helper into toJson for recursive AP values', () {
         final model = buildRecursiveTreeBag();
         final clazz = generator.generateClass(model);
         final toJson = clazz.methods.firstWhere((m) => m.name == 'toJson');
@@ -2969,8 +2971,8 @@ class Holder {
 class Holder {
   @override
   Object? toJson() {
-    late final Object? Function(Object?) _encodeTree;
-    _encodeTree = (Object? raw) {
+    late final Object? Function(Object?) _$encodeTree;
+    _$encodeTree = (Object? raw) {
       if (raw is! Tree) {
         throw EncodingException(
           'Cannot encode value as Tree (at \'TreeBag.additionalProperties\'); got: '
@@ -2978,7 +2980,7 @@ class Holder {
         );
       }
       final v = raw;
-      return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+      return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
     };
     final _$map = <String, Object?>{};
     final _$$baseJson = $base.toJson();
@@ -2988,7 +2990,7 @@ class Holder {
       );
     }
     _$map.addAll(_$$baseJson);
-    _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, _encodeTree(v))));
+    _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))));
     return _$map;
   }
 }''';
@@ -3048,12 +3050,12 @@ class Holder {
           const expected = r'''
 class Holder {
   factory Holder.fromJson(Object? json) {
-    late final B Function(Object?) _decodeB;
-    late final A Function(Object?) _decodeA;
-    _decodeB = (Object? v) =>
-        v.decodeJsonMap((v) => _decodeA(v), context: r'B');
-    _decodeA = (Object? v) => v.decodeJsonMap(
-      (v) => _decodeB(v),
+    late final B Function(Object?) _$decodeB;
+    late final A Function(Object?) _$decodeA;
+    _$decodeB = (Object? v) =>
+        v.decodeJsonMap((v) => _$decodeA(v), context: r'B');
+    _$decodeA = (Object? v) => v.decodeJsonMap(
+      (v) => _$decodeB(v),
       context: r"A (at 'AAndBBag.additionalProperties')",
     );
     final _$map = json.decodeMap(context: r'AAndBBag');
@@ -3061,7 +3063,7 @@ class Holder {
     final _$additional = <String, A>{};
     for (final _$entry in _$map.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _decodeA(_$entry.value);
+        _$additional[_$entry.key] = _$decodeA(_$entry.value);
       }
     }
     return AAndBBag(

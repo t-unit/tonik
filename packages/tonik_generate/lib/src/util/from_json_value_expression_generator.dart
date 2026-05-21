@@ -620,7 +620,7 @@ BuiltExpression _buildNamedTypedefHelperCall({
   final named = model as NamedModel;
   final typedefName = nameManager.modelName(model);
   final typedefUrl = sourceFileUrl(package, 'model', typedefName);
-  final helperName = helperContext.reserveHelperName(named, _decodePrefix);
+  final helperName = helperContext.helperName(named, _decodePrefix);
 
   final helpers = <InlineHelper>[];
   if (!helperContext.isHelperEmitted(named, _decodePrefix)) {
@@ -675,7 +675,7 @@ BuiltExpression _buildNamedTypedefHelperCall({
   return BuiltExpression(body: body, inlineFunctions: helpers);
 }
 
-const _decodePrefix = '_decode';
+const _decodePrefix = r'_$decode';
 
 String _helperBodyContextClass(
   String typedefName,

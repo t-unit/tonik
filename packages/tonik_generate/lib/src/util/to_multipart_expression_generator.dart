@@ -8,11 +8,7 @@ import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
-/// Builds [BuiltStatements] for FormData construction statements of a
-/// single-content multipart body. Multipart bodies require ClassModel —
-/// recursive map/list typedefs are rejected upstream — so the result
-/// always carries an empty [BuiltStatements.inlineFunctions]. The caller
-/// is responsible for adding `return formData;`.
+/// Returns FormData construction statements; caller adds `return formData;`.
 BuiltStatements buildMultipartBodyStatements(
   RequestContent content,
   String bodyAccessor,
@@ -24,13 +20,9 @@ BuiltStatements buildMultipartBodyStatements(
   );
 }
 
-/// Builds a [BuiltExpression] wrapping an IIFE that constructs and returns
-/// a FormData instance. Multipart bodies require ClassModel — recursive
-/// map/list typedefs are rejected upstream — so the result always carries
-/// an empty [BuiltExpression.inlineFunctions].
-///
-/// For use in multi-content switch arms. Produces:
-/// `() { final formData = FormData(); ...; return formData; }()`
+/// Builds an IIFE producing a FormData instance:
+/// `() { final formData = FormData(); ...; return formData; }()`.
+/// For use in multi-content switch arms.
 BuiltExpression buildMultipartBodyExpression(
   RequestContent content,
   String bodyAccessor,

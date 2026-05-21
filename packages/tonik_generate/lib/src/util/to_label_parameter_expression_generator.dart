@@ -4,10 +4,6 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
-/// Creates a [BuiltExpression] serializing a value using label parameter
-/// encoding. Label encoding cannot reach recursive named typedefs —
-/// OpenAPI forbids complex parameter types — so the result always carries
-/// an empty [BuiltExpression.inlineFunctions].
 BuiltExpression buildLabelParameterExpression(
   Expression valueExpression,
   Model model, {

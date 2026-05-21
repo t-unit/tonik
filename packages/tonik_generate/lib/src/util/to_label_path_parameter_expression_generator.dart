@@ -4,19 +4,8 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
-/// Generates a [BuiltExpression] for encoding a path parameter using label
-/// style. Label-path encoding cannot reach recursive named typedefs —
-/// OpenAPI forbids complex parameter types — so the result always carries
-/// an empty [BuiltExpression.inlineFunctions].
-///
-/// Label encoding is used for path parameters in OpenAPI and follows the
-/// simple encoding style with dot-prefixed values.
-///
-/// The generated expression calls the appropriate `toLabel` method on the
-/// parameter value with the correct explode and allowEmpty settings.
-///
-/// For lists of non-string primitives, enums, or composite types (OneOf,
-/// AnyOf), the items are first mapped to their URI-encoded string
+/// For lists of non-string primitives, enums, or composite types
+/// (OneOf, AnyOf), items are first mapped to their URI-encoded string
 /// representation before calling `toLabel` on the resulting `List<String>`.
 BuiltExpression buildToLabelPathParameterExpression(
   String parameterName,

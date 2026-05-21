@@ -234,10 +234,7 @@ class ParseGenerator {
           .statement,
     );
 
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: const {'response', jsonVar, bodyVar},
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final built = buildFromJsonValueExpression(
       jsonVar,
       model: responseBody.model,

@@ -268,10 +268,7 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: {className, 'value', ...variantNames.values},
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final caseCodes = <Code>[];
     final sortedModels = stableModelSorter.sortDiscriminatedModels(
@@ -371,10 +368,7 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: {'json', className, ...variantNames.values},
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final blocks = <Code>[];
 

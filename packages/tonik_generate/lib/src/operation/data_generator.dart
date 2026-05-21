@@ -39,10 +39,7 @@ class DataGenerator {
     final hasMultipleContent = content.length > 1;
     final isRequired = requestBody.isRequired;
 
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: const {'body', 'value', '_data'},
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
 
     if (hasMultipleContent) {

@@ -16,56 +16,19 @@ void main() {
     );
   });
 
-  group('reserveHelperName', () {
-    test('returns the natural name when no collision exists', () {
+  group('helperName', () {
+    test('returns prefix + modelName', () {
       final tree = MapModel(
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
-      expect(ctx.reserveHelperName(tree, '_decode'), '_decodeTree');
+      expect(ctx.helperName(tree, r'_$decode'), r'_$decodeTree');
+      expect(ctx.helperName(tree, r'_$encode'), r'_$encodeTree');
     });
 
-    test('returns same name when called twice for the same model+prefix', () {
-      final tree = MapModel(
-        name: 'Tree',
-        valueModel: AnyModel(context: context),
-        context: context,
-      );
-      final ctx = InlineHelperContext(nameManager: nameManager);
-      final first = ctx.reserveHelperName(tree, '_decode');
-      final second = ctx.reserveHelperName(tree, '_decode');
-      expect(first, second);
-    });
-
-    test('different prefixes produce distinct reservations', () {
-      final tree = MapModel(
-        name: 'Tree',
-        valueModel: AnyModel(context: context),
-        context: context,
-      );
-      final ctx = InlineHelperContext(nameManager: nameManager);
-      final decode = ctx.reserveHelperName(tree, '_decode');
-      final encode = ctx.reserveHelperName(tree, '_encode');
-      expect(decode, '_decodeTree');
-      expect(encode, '_encodeTree');
-    });
-
-    test('suffixes a numeric counter on collision with reserved names', () {
-      final tree = MapModel(
-        name: 'Tree',
-        valueModel: AnyModel(context: context),
-        context: context,
-      );
-      final ctx = InlineHelperContext(
-        nameManager: nameManager,
-        reservedNames: {'_decodeTree', '_decodeTree2'},
-      );
-      expect(ctx.reserveHelperName(tree, '_decode'), '_decodeTree3');
-    });
-
-    test('emits distinct names for two different models', () {
+    test('different models produce distinct names', () {
       final tree = MapModel(
         name: 'Tree',
         valueModel: AnyModel(context: context),
@@ -77,38 +40,9 @@ void main() {
         context: context,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
-      expect(ctx.reserveHelperName(tree, '_decode'), '_decodeTree');
-      expect(ctx.reserveHelperName(forest, '_decode'), '_decodeForest');
+      expect(ctx.helperName(tree, r'_$decode'), r'_$decodeTree');
+      expect(ctx.helperName(forest, r'_$decode'), r'_$decodeForest');
     });
-
-    test(
-      'throws StateError when suffix collisions exceed the iteration cap',
-      () {
-        final tree = MapModel(
-          name: 'Tree',
-          valueModel: AnyModel(context: context),
-          context: context,
-        );
-        final reserved = <String>{'_decodeTree'};
-        for (var i = 2; i <= 33; i++) {
-          reserved.add('_decodeTree$i');
-        }
-        final ctx = InlineHelperContext(
-          nameManager: nameManager,
-          reservedNames: reserved,
-        );
-        expect(
-          () => ctx.reserveHelperName(tree, '_decode'),
-          throwsA(
-            isA<StateError>().having(
-              (e) => e.message,
-              'message',
-              contains('Tree'),
-            ),
-          ),
-        );
-      },
-    );
   });
 
   group('emitted state tracking', () {
@@ -119,7 +53,7 @@ void main() {
         context: context,
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
-      expect(ctx.isHelperEmitted(tree, '_decode'), isFalse);
+      expect(ctx.isHelperEmitted(tree, r'_$decode'), isFalse);
     });
 
     test('markHelperEmitted flips isHelperEmitted to true', () {
@@ -129,9 +63,9 @@ void main() {
         context: context,
       );
       final ctx = InlineHelperContext(nameManager: nameManager)
-        ..markHelperEmitted(tree, '_decode');
-      expect(ctx.isHelperEmitted(tree, '_decode'), isTrue);
-      expect(ctx.isHelperEmitted(tree, '_encode'), isFalse);
+        ..markHelperEmitted(tree, r'_$decode');
+      expect(ctx.isHelperEmitted(tree, r'_$decode'), isTrue);
+      expect(ctx.isHelperEmitted(tree, r'_$encode'), isFalse);
     });
   });
 

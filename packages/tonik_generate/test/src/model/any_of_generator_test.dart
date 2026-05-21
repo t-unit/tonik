@@ -3631,7 +3631,7 @@ Object? toJson() {
 
   group('recursion splicing', () {
     test(
-      'AnyOf { Tree, ClassA } splices _encodeTree into toJson',
+      r'AnyOf { Tree, ClassA } splices _$encodeTree into toJson',
       () {
         final tree = MapModel(
           name: 'Tree',
@@ -3662,8 +3662,8 @@ Object? toJson() {
         const expected = r'''
           @override
           Object? toJson() {
-            late final Object? Function(Object?) _encodeTree;
-            _encodeTree = (Object? raw) {
+            late final Object? Function(Object?) _$encodeTree;
+            _$encodeTree = (Object? raw) {
               if (raw is! Tree) {
                 throw EncodingException(
                   'Cannot encode value as Tree (at \'TreeAndClassA.Tree\'); got: '
@@ -3671,7 +3671,7 @@ Object? toJson() {
                 );
               }
               final v = raw;
-              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+              return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
             };
             final _$values = <Object?>{};
             final _$mapValues = <Map<String, Object?>>[];
@@ -3684,7 +3684,7 @@ Object? toJson() {
               }
             }
             if (tree != null) {
-              final Object? _$treeJson = _encodeTree(tree!);
+              final Object? _$treeJson = _$encodeTree(tree!);
               if (_$treeJson is Map<String, Object?>) {
                 _$mapValues.add(_$treeJson);
               } else {
@@ -3724,7 +3724,7 @@ Object? toJson() {
     );
 
     test(
-      'AnyOf { Tree, ClassA } splices _decodeTree into fromJson',
+      r'AnyOf { Tree, ClassA } splices _$decodeTree into fromJson',
       () {
         final tree = MapModel(
           name: 'Tree',
@@ -3758,12 +3758,12 @@ Object? toJson() {
             ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
         );
 
-        const expected = '''
+        const expected = r'''
           class TreeAndClassA {
             factory TreeAndClassA.fromJson(Object? json) {
-              late final Tree Function(Object?) _decodeTree;
-              _decodeTree = (Object? v) =>
-                  v.decodeJsonMap((v) => _decodeTree(v), context: r"Tree (at 'TreeAndClassA')");
+              late final Tree Function(Object?) _$decodeTree;
+              _$decodeTree = (Object? v) =>
+                  v.decodeJsonMap((v) => _$decodeTree(v), context: r"Tree (at 'TreeAndClassA')");
               ClassA? classA;
               try {
                 classA = ClassA.fromJson(json);
@@ -3772,7 +3772,7 @@ Object? toJson() {
               }
               Tree? tree;
               try {
-                tree = _decodeTree(json);
+                tree = _$decodeTree(json);
               } on Object catch (_) {
                 tree = null;
               }
@@ -3830,24 +3830,24 @@ Object? toJson() {
             ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
         );
 
-        const expected = '''
+        const expected = r'''
           class AAndB {
             factory AAndB.fromJson(Object? json) {
-              late final B Function(Object?) _decodeB;
-              late final A Function(Object?) _decodeA;
-              _decodeB = (Object? v) =>
-                  v.decodeJsonMap((v) => _decodeA(v), context: r'B');
-              _decodeA = (Object? v) =>
-                  v.decodeJsonMap((v) => _decodeB(v), context: r"A (at 'AAndB')");
+              late final B Function(Object?) _$decodeB;
+              late final A Function(Object?) _$decodeA;
+              _$decodeB = (Object? v) =>
+                  v.decodeJsonMap((v) => _$decodeA(v), context: r'B');
+              _$decodeA = (Object? v) =>
+                  v.decodeJsonMap((v) => _$decodeB(v), context: r"A (at 'AAndB')");
               A? a;
               try {
-                a = _decodeA(json);
+                a = _$decodeA(json);
               } on Object catch (_) {
                 a = null;
               }
               B? b;
               try {
-                b = _decodeB(json);
+                b = _$decodeB(json);
               } on Object catch (_) {
                 b = null;
               }

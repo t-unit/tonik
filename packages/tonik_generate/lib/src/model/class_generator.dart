@@ -610,19 +610,7 @@ class ClassGenerator {
             normalizeProperties(model.properties.toList()),
           )
         : null;
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: {
-        'json',
-        className,
-        r'_$map',
-        r'_$knownKeys',
-        r'_$additional',
-        r'_$entry',
-        for (final p in normalizedProperties) p.normalizedName,
-        ?apFieldName,
-      },
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
 
     // If there are no readable properties and no additional properties,
@@ -798,13 +786,7 @@ class ClassGenerator {
       model.properties.where((p) => !p.isReadOnly).toList(),
     );
 
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: {
-        className,
-        for (final p in normalizedProperties) p.normalizedName,
-      },
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
 
     final requiredWriteOnlyNonNullable = normalizedProperties

@@ -671,14 +671,7 @@ class AnyOfGenerator {
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: {
-        'json',
-        className,
-        for (final p in normalizedProperties) p.normalizedName,
-      },
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final localDecls = <Code>[];
 
@@ -782,13 +775,7 @@ class AnyOfGenerator {
     AnyOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: {
-        className,
-        for (final p in normalizedProperties) p.normalizedName,
-      },
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
 
     final body = <Code>[

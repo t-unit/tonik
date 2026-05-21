@@ -4,11 +4,6 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-/// Builds a [BuiltStatements] that serializes a query parameter to its
-/// delimited representation (space or pipe delimited). Delimited encoding
-/// cannot reach recursive named typedefs — OpenAPI forbids complex
-/// parameter types — so the result always carries an empty
-/// [BuiltStatements.inlineFunctions].
 BuiltStatements buildToDelimitedQueryParameterCode(
   String parameterName,
   QueryParameterObject parameter, {

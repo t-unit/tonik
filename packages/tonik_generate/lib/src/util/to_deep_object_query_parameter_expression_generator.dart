@@ -4,17 +4,9 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
-/// Creates a [BuiltExpression] serializing a query parameter using
-/// deepObject encoding. Deep-object encoding cannot reach recursive named
-/// typedefs — OpenAPI forbids complex parameter types — so the result
-/// always carries an empty [BuiltExpression.inlineFunctions].
-///
-/// According to OpenAPI spec, deepObject style is ONLY for query parameters
-/// with object values. It produces:
-///   `paramName[key1]=value1&paramName[key2]=value2`
-///
-/// For invalid types (primitives, lists, enums), generates code that throws
-/// at runtime with a descriptive error message.
+/// Produces `paramName[key1]=value1&paramName[key2]=value2`. Per OpenAPI,
+/// deepObject style is query-only and object-only; primitives / lists /
+/// enums emit code that throws at runtime.
 BuiltExpression buildToDeepObjectQueryParameterCode(
   String parameterName,
   QueryParameterObject parameter,

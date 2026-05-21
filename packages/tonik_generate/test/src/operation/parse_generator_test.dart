@@ -2398,7 +2398,7 @@ IMap<String, int> _parseResponse(Response<List<int>> response) {
     });
 
     test(
-      'splices _decodeTree helper into _parseResponse for self-referential '
+      r'splices _$decodeTree helper into _parseResponse for self-referential '
       'MapModel response body',
       () {
         final tree = MapModel(
@@ -2444,9 +2444,9 @@ Tree _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
-      late final Tree Function(Object?) _decodeTree;
-      _decodeTree = (Object? v) => v.decodeJsonMap((v) => _decodeTree(v), context: r'Tree');
-      final _$body = _decodeTree(_$json);
+      late final Tree Function(Object?) _$decodeTree;
+      _$decodeTree = (Object? v) => v.decodeJsonMap((v) => _$decodeTree(v), context: r'Tree');
+      final _$body = _$decodeTree(_$json);
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';

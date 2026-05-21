@@ -2925,7 +2925,7 @@ factory TaggedItem.fromJson(Object? json) {
       }
 
       test(
-        'two Tree-typed properties splice exactly one _decodeTree helper '
+        r'two Tree-typed properties splice exactly one _$decodeTree helper '
         'into fromJson',
         () {
           final result = generator.generateClass(buildTwoTrees());
@@ -2941,15 +2941,15 @@ factory TaggedItem.fromJson(Object? json) {
           const expected = r'''
             class TwoTrees {
               factory TwoTrees.fromJson(Object? json) {
-                late final Tree Function(Object?) _decodeTree;
-                _decodeTree = (Object? v) => v.decodeJsonMap(
-                  (v) => _decodeTree(v),
+                late final Tree Function(Object?) _$decodeTree;
+                _$decodeTree = (Object? v) => v.decodeJsonMap(
+                  (v) => _$decodeTree(v),
                   context: r"Tree (at 'TwoTrees.left')",
                 );
                 final _$map = json.decodeMap(context: r'TwoTrees');
                 return TwoTrees(
-                  left: _decodeTree(_$map[r'left']),
-                  right: _decodeTree(_$map[r'right']),
+                  left: _$decodeTree(_$map[r'left']),
+                  right: _$decodeTree(_$map[r'right']),
                 );
               }
             }
@@ -2963,7 +2963,7 @@ factory TaggedItem.fromJson(Object? json) {
       );
 
       test(
-        'two Tree-typed properties splice exactly one _encodeTree helper '
+        r'two Tree-typed properties splice exactly one _$encodeTree helper '
         'into toJson',
         () {
           final result = generator.generateClass(buildTwoTrees());
@@ -2973,8 +2973,8 @@ factory TaggedItem.fromJson(Object? json) {
           const expected = r'''
             @override
             Object? toJson() {
-              late final Object? Function(Object?) _encodeTree;
-              _encodeTree = (Object? raw) {
+              late final Object? Function(Object?) _$encodeTree;
+              _$encodeTree = (Object? raw) {
                 if (raw is! Tree) {
                   throw EncodingException(
                     'Cannot encode value as Tree (at \'TwoTrees.left\'); got: '
@@ -2982,9 +2982,9 @@ factory TaggedItem.fromJson(Object? json) {
                   );
                 }
                 final v = raw;
-                return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+                return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
               };
-              return {r'left': _encodeTree(left), r'right': _encodeTree(right)};
+              return {r'left': _$encodeTree(left), r'right': _$encodeTree(right)};
             }
           ''';
 

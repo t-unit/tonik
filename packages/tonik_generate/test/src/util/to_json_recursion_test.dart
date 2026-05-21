@@ -39,7 +39,7 @@ void main() {
   }
 
   group('recursive named MapModel (Tree)', () {
-    test('emits a local _encode helper that delegates to itself', () {
+    test(r'emits a local _$encode helper that delegates to itself', () {
       final tree = MapModel(
         name: 'Tree',
         valueModel: AnyModel(context: context),
@@ -64,21 +64,21 @@ void main() {
       );
 
       expect(built.inlineFunctions, hasLength(1));
-      expect(built.inlineFunctions.single.name, '_encodeTree');
+      expect(built.inlineFunctions.single.name, r'_$encodeTree');
 
       final actual = emitMethod(built);
       final expected = format(r'''
         toJson() {
-          late final Object? Function(Object?) _encodeTree;
-          _encodeTree = (Object? raw) {
+          late final Object? Function(Object?) _$encodeTree;
+          _$encodeTree = (Object? raw) {
             if (raw is! Tree) {
               throw EncodingException('Cannot encode value as Tree; got: '
                   '${raw.runtimeType}');
             }
             final v = raw;
-            return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+            return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
           };
-          return _encodeTree(body);
+          return _$encodeTree(body);
         }
       ''');
 
@@ -116,8 +116,8 @@ void main() {
         final actual = emitMethod(built);
         final expected = format(r'''
           toJson() {
-            late final Object? Function(Object?) _encodeTree;
-            _encodeTree = (Object? raw) {
+            late final Object? Function(Object?) _$encodeTree;
+            _$encodeTree = (Object? raw) {
               if (raw is! Tree) {
                 throw EncodingException(
                   'Cannot encode value as Tree (at \'Node.subtree\'); got: '
@@ -125,9 +125,9 @@ void main() {
                 );
               }
               final v = raw;
-              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+              return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
             };
-            return _encodeTree(subtree);
+            return _$encodeTree(subtree);
           }
         ''');
 
@@ -164,16 +164,16 @@ void main() {
       final actual = emitMethod(built);
       final expected = format(r'''
         toJson() {
-          late final Object? Function(Object?) _encodeTree;
-          _encodeTree = (Object? raw) {
+          late final Object? Function(Object?) _$encodeTree;
+          _$encodeTree = (Object? raw) {
             if (raw is! Tree) {
               throw EncodingException('Cannot encode value as Tree; got: '
                   '${raw.runtimeType}');
             }
             final v = raw;
-            return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+            return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
           };
-          return subtree == null ? null : _encodeTree(subtree);
+          return subtree == null ? null : _$encodeTree(subtree);
         }
       ''');
 
@@ -182,7 +182,7 @@ void main() {
   });
 
   group('dedup on to_json side', () {
-    test('two property uses share one _encode helper', () {
+    test(r'two property uses share one _$encode helper', () {
       final tree = MapModel(
         name: 'Tree',
         valueModel: AnyModel(context: context),
@@ -250,21 +250,21 @@ void main() {
       );
 
       expect(built.inlineFunctions, hasLength(1));
-      expect(built.inlineFunctions.single.name, '_encodeTree');
+      expect(built.inlineFunctions.single.name, r'_$encodeTree');
 
       final actual = emitMethod(built);
       final expected = format(r'''
         toJson() {
-          late final Object? Function(Object?) _encodeTree;
-          _encodeTree = (Object? raw) {
+          late final Object? Function(Object?) _$encodeTree;
+          _$encodeTree = (Object? raw) {
             if (raw is! Tree) {
               throw EncodingException('Cannot encode value as Tree; got: '
                   '${raw.runtimeType}');
             }
             final v = raw;
-            return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+            return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
           };
-          return _encodeTree(body);
+          return _$encodeTree(body);
         }
       ''');
 
@@ -311,40 +311,40 @@ void main() {
 
       expect(
         built.inlineFunctions.map((h) => h.name).toList(),
-        ['_encodeC', '_encodeB', '_encodeA'],
+        [r'_$encodeC', r'_$encodeB', r'_$encodeA'],
       );
 
       final actual = emitMethod(built);
       final expected = format(r'''
         toJson() {
-          late final Object? Function(Object?) _encodeC;
-          late final Object? Function(Object?) _encodeB;
-          late final Object? Function(Object?) _encodeA;
-          _encodeC = (Object? raw) {
+          late final Object? Function(Object?) _$encodeC;
+          late final Object? Function(Object?) _$encodeB;
+          late final Object? Function(Object?) _$encodeA;
+          _$encodeC = (Object? raw) {
             if (raw is! C) {
               throw EncodingException('Cannot encode value as C; got: '
                   '${raw.runtimeType}');
             }
             final v = raw;
-            return v.map((k, v) => MapEntry(k, _encodeA(v)));
+            return v.map((k, v) => MapEntry(k, _$encodeA(v)));
           };
-          _encodeB = (Object? raw) {
+          _$encodeB = (Object? raw) {
             if (raw is! B) {
               throw EncodingException('Cannot encode value as B; got: '
                   '${raw.runtimeType}');
             }
             final v = raw;
-            return v.map((k, v) => MapEntry(k, _encodeC(v)));
+            return v.map((k, v) => MapEntry(k, _$encodeC(v)));
           };
-          _encodeA = (Object? raw) {
+          _$encodeA = (Object? raw) {
             if (raw is! A) {
               throw EncodingException('Cannot encode value as A; got: '
                   '${raw.runtimeType}');
             }
             final v = raw;
-            return v.map((k, v) => MapEntry(k, _encodeB(v)));
+            return v.map((k, v) => MapEntry(k, _$encodeB(v)));
           };
-          return _encodeA(body);
+          return _$encodeA(body);
         }
       ''');
 
@@ -386,25 +386,25 @@ void main() {
       final actual = emitMethod(built);
       final expected = format(r'''
         toJson() {
-          late final Object? Function(Object?) _encodeB;
-          late final Object? Function(Object?) _encodeA;
-          _encodeB = (Object? raw) {
+          late final Object? Function(Object?) _$encodeB;
+          late final Object? Function(Object?) _$encodeA;
+          _$encodeB = (Object? raw) {
             if (raw is! B) {
               throw EncodingException('Cannot encode value as B; got: '
                   '${raw.runtimeType}');
             }
             final v = raw;
-            return v.map((k, v) => MapEntry(k, _encodeA(v)));
+            return v.map((k, v) => MapEntry(k, _$encodeA(v)));
           };
-          _encodeA = (Object? raw) {
+          _$encodeA = (Object? raw) {
             if (raw is! A) {
               throw EncodingException('Cannot encode value as A; got: '
                   '${raw.runtimeType}');
             }
             final v = raw;
-            return v.map((k, v) => MapEntry(k, _encodeB(v)));
+            return v.map((k, v) => MapEntry(k, _$encodeB(v)));
           };
-          return _encodeA(body);
+          return _$encodeA(body);
         }
       ''');
 

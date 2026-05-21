@@ -3787,7 +3787,7 @@ bool operator ==(Object other) {
 
   group('recursion splicing', () {
     test(
-      'OneOf { Tree, ClassA } splices _encodeTree helper into toJson',
+      r'OneOf { Tree, ClassA } splices _$encodeTree helper into toJson',
       () {
         final tree = MapModel(
           name: 'Tree',
@@ -3821,8 +3821,8 @@ bool operator ==(Object other) {
         const expected = r'''
           @override
           Object? toJson() {
-            late final Object? Function(Object?) _encodeTree;
-            _encodeTree = (Object? raw) {
+            late final Object? Function(Object?) _$encodeTree;
+            _$encodeTree = (Object? raw) {
               if (raw is! Tree) {
                 throw EncodingException(
                   'Cannot encode value as Tree (at \'TreeOrClassA.value\'); got: '
@@ -3830,11 +3830,11 @@ bool operator ==(Object other) {
                 );
               }
               final v = raw;
-              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+              return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
             };
             final (dynamic _$json, String? _$discriminator) = switch (this) {
               TreeOrClassAClassA(:final value) => (value.toJson(), null),
-              TreeOrClassATree(:final value) => (_encodeTree(value), null),
+              TreeOrClassATree(:final value) => (_$encodeTree(value), null),
             };
 
             return _$json;
@@ -3849,7 +3849,7 @@ bool operator ==(Object other) {
     );
 
     test(
-      'OneOf { Tree, ClassA } splices _decodeTree helper into fromJson '
+      r'OneOf { Tree, ClassA } splices _$decodeTree helper into fromJson '
       'factory for the Tree-typed primitive case',
       () {
         final tree = MapModel(
@@ -3885,17 +3885,17 @@ bool operator ==(Object other) {
             ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
         );
 
-        const expected = '''
+        const expected = r'''
           class TreeOrClassA {
             factory TreeOrClassA.fromJson(Object? json) {
-              late final Tree Function(Object?) _decodeTree;
-              _decodeTree = (Object? v) =>
-                  v.decodeJsonMap((v) => _decodeTree(v), context: r"Tree (at 'TreeOrClassA')");
+              late final Tree Function(Object?) _$decodeTree;
+              _$decodeTree = (Object? v) =>
+                  v.decodeJsonMap((v) => _$decodeTree(v), context: r"Tree (at 'TreeOrClassA')");
               try {
                 return TreeOrClassAClassA(ClassA.fromJson(json));
               } on Object catch (_) {}
               try {
-                return TreeOrClassATree(_decodeTree(json));
+                return TreeOrClassATree(_$decodeTree(json));
               } on Object catch (_) {}
               throw JsonDecodingException(r'Invalid JSON for TreeOrClassA');
             }
@@ -3946,9 +3946,9 @@ bool operator ==(Object other) {
         const expected = r'''
           @override
           Object? toJson() {
-            late final Object? Function(Object?) _encodeB;
-            late final Object? Function(Object?) _encodeA;
-            _encodeB = (Object? raw) {
+            late final Object? Function(Object?) _$encodeB;
+            late final Object? Function(Object?) _$encodeA;
+            _$encodeB = (Object? raw) {
               if (raw is! B) {
                 throw EncodingException(
                   'Cannot encode value as B (at \'AOrB.value\'); got: '
@@ -3956,9 +3956,9 @@ bool operator ==(Object other) {
                 );
               }
               final v = raw;
-              return v.map((k, v) => MapEntry(k, _encodeA(v)));
+              return v.map((k, v) => MapEntry(k, _$encodeA(v)));
             };
-            _encodeA = (Object? raw) {
+            _$encodeA = (Object? raw) {
               if (raw is! A) {
                 throw EncodingException(
                   'Cannot encode value as A (at \'AOrB.value\'); got: '
@@ -3966,11 +3966,11 @@ bool operator ==(Object other) {
                 );
               }
               final v = raw;
-              return v.map((k, v) => MapEntry(k, _encodeB(v)));
+              return v.map((k, v) => MapEntry(k, _$encodeB(v)));
             };
             final (dynamic _$json, String? _$discriminator) = switch (this) {
-              AOrBA(:final value) => (_encodeA(value), null),
-              AOrBB(:final value) => (_encodeB(value), null),
+              AOrBA(:final value) => (_$encodeA(value), null),
+              AOrBB(:final value) => (_$encodeB(value), null),
             };
 
             return _$json;

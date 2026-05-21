@@ -6,15 +6,6 @@ import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-/// Creates a [BuiltExpression] that correctly deserializes a form-encoded
-/// value to its Dart representation.
-///
-/// Form encoding cannot reach recursive named typedefs — OpenAPI forbids
-/// complex parameter types — so the result always carries an empty
-/// [BuiltExpression.inlineFunctions].
-///
-/// When [useImmutableCollections] is `true`, decoded lists are wrapped with
-/// `.lock` so the result is `IList` throughout.
 BuiltExpression buildFromFormValueExpression(
   Expression value, {
   required Model model,

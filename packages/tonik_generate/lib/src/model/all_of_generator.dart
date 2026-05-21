@@ -419,14 +419,7 @@ class AllOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: {
-        'json',
-        className,
-        for (final p in normalizedProperties) p.normalizedName,
-      },
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
 
     final fromJsonParams = <Expression>[];
     final fieldNames = <String>[];
@@ -675,13 +668,7 @@ class AllOfGenerator {
     AllOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    final helperContext = InlineHelperContext(
-      nameManager: nameManager,
-      reservedNames: {
-        className,
-        for (final p in normalizedProperties) p.normalizedName,
-      },
-    );
+    final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
 
     // Check for list properties first (before any other logic)

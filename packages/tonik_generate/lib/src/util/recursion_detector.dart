@@ -1,30 +1,14 @@
 import 'package:tonik_core/tonik_core.dart';
 
-/// Returns `true` when [start] is a named [MapModel] or [ListModel] that
-/// reaches itself, directly or indirectly, through its value/content models.
+/// Returns `true` when [start] is a named [MapModel]/[ListModel] whose
+/// value/content graph reaches a typedef cycle. Detects direct cycles
+/// (`Tree -> Map<String, Tree>`), nested (`Tree -> Map<String, List<Tree>>`),
+/// and indirect (`A -> Map<String, B>` ↔ `B -> Map<String, A>`).
 ///
-/// A typedef'd [MapModel]/[ListModel] decoded inline cannot break the cycle
-/// through a generated factory the way a class can (typedefs have no
-/// constructor). When this predicate returns `true`, the expression builder
-/// emits a local recursive helper instead of inlining.
+/// Cycles reachable from [start] do not need to pass through [start]
+/// itself — the recovery (emit a local helper) is identical either way.
 ///
-/// Direct cycles (`Tree -> Map<String, Tree>`), nested cycles
-/// (`Tree -> List<Tree>`, `Tree -> Map<String, List<Tree>>`), and indirect
-/// cycles (`A -> Map<String, B>` <-> `B -> Map<String, A>`) are all detected.
-///
-/// Only typedef'd collections — [MapModel] and [ListModel] with a non-null
-/// [NamedModel.name] — are considered. Inline (anonymous) maps/lists return
-/// `false` because callers can still recurse through their content models
-/// without re-entering the same builder shape; the `_buildXFromY` recursion
-/// only blows the stack on a NAMED typedef whose value/content reaches itself.
-///
-/// Returns `false` unless [start] is a named [MapModel] or [ListModel].
-///
-/// Cycles reachable from [start] need not pass through [start] itself —
-/// e.g. `A = Map<String, B>; B = Map<String, B>` walks from `A`, finds
-/// the `B`-only cycle, and returns `true`. Callers only need the yes/no
-/// answer because the recovery action — emitting a local helper — is
-/// identical in either case.
+/// Returns `false` for anonymous maps/lists or non-collection models.
 bool isRecursive(Model start) {
   final namedStart = _asNamedTypedef(start);
   if (namedStart == null) return false;

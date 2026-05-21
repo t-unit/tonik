@@ -210,8 +210,8 @@ void main() {
 
         const expectedMethod = r'''
           Object? _data({required Tree body}) {
-            late final Object? Function(Object?) _encodeTree;
-            _encodeTree = (Object? raw) {
+            late final Object? Function(Object?) _$encodeTree;
+            _$encodeTree = (Object? raw) {
               if (raw is! Tree) {
                 throw EncodingException(
                   'Cannot encode value as Tree (at \'postTree.body\'); got: '
@@ -219,9 +219,9 @@ void main() {
                 );
               }
               final v = raw;
-              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+              return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
             };
-            return _encodeTree(body);
+            return _$encodeTree(body);
           }
         ''';
 
@@ -284,8 +284,8 @@ void main() {
 
         const expectedMethod = r'''
           Object? _data({required RecursiveBody body}) {
-            late final Object? Function(Object?) _encodeTree;
-            _encodeTree = (Object? raw) {
+            late final Object? Function(Object?) _$encodeTree;
+            _$encodeTree = (Object? raw) {
               if (raw is! Tree) {
                 throw EncodingException(
                   'Cannot encode value as Tree (at \'testOp.body\'); got: '
@@ -293,10 +293,10 @@ void main() {
                 );
               }
               final v = raw;
-              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+              return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
             };
             return switch (body) {
-              final RecursiveBodyJson value => _encodeTree(value.value),
+              final RecursiveBodyJson value => _$encodeTree(value.value),
               final RecursiveBodyJsonProblem value => value.value.toJson(),
             };
           }
