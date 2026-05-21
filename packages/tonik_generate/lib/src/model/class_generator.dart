@@ -831,6 +831,8 @@ class ClassGenerator {
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
+        contextClass: className,
+        contextProperty: property.name,
         forceNonNullReceiver: forceNonNullReceiver,
         useImmutableCollections: useImmutableCollections,
       );
@@ -865,6 +867,7 @@ class ClassGenerator {
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
+          contextClass: className,
           useImmutableCollections: useImmutableCollections,
         );
         inlineHelpers.addAll(apBuilt.inlineFunctions);

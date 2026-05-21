@@ -116,6 +116,8 @@ class DataGenerator {
               nameManager: nameManager,
               package: package,
               helperContext: helperContext,
+              contextClass: operation.operationId,
+              contextProperty: 'body',
             );
             inlineHelpers.addAll(jsonBuilt.inlineFunctions);
             switchCases
@@ -267,6 +269,8 @@ class DataGenerator {
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
+          contextClass: operation.operationId,
+          contextProperty: 'body',
         );
         inlineHelpers.addAll(jsonBuilt.inlineFunctions);
         bodyCode

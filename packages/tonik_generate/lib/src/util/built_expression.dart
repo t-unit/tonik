@@ -15,9 +15,9 @@ import 'package:meta/meta.dart';
 ///   the cycle through). A late-bound local function in Dart can reference
 ///   itself by name; a single emitted helper per recursive type is enough.
 ///
-/// The non-recursive case always returns [inlineFunctions] empty via
-/// [BuiltExpression.simple]; callers can read [expression] without worrying
-/// about helper splicing.
+/// Primitive non-recursive builders use [BuiltExpression.simple]; compound
+/// builders forward inner helpers via the full constructor and may still
+/// return an empty list when no recursion is reachable.
 ///
 /// Accessors [expression], [code], [statement], and [accept] all run
 /// [_assertNoHelpers] so a caller that forgets to splice [inlineFunctions]
@@ -29,6 +29,9 @@ import 'package:meta/meta.dart';
 /// nested closure body whose helpers will flow up the chain — should use
 /// [unsafeRawBody], which skips the assertion. Read its dartdoc before
 /// reaching for it.
+///
+/// Pure value type; not thread-safe but immutable instances are safe to
+/// share.
 @immutable
 class BuiltExpression {
   const BuiltExpression({
@@ -58,6 +61,10 @@ class BuiltExpression {
   /// — typically when composing the inner expression into a closure body
   /// while propagating [inlineFunctions] up into a parent [BuiltExpression].
   /// If you are not propagating helpers yourself, prefer [expression].
+  ///
+  /// If you read [unsafeRawBody] and do not propagate [inlineFunctions]
+  /// in your returned [BuiltExpression], the generated code will reference
+  /// undeclared local functions and fail to compile.
   Expression get unsafeRawBody => _body;
 
   /// Forwards to [Expression.accept] on the inner expression. Convenience
@@ -98,7 +105,7 @@ class BuiltExpression {
 ///   forward declarations but before any use site.
 ///
 /// Splitting declaration from assignment lets mutually-recursive helpers
-/// (`_encodeAMap` ↔ `_encodeBMap`) reference each other without a
+/// (`_encodeAMap` <-> `_encodeBMap`) reference each other without a
 /// "referenced before declaration" error.
 @immutable
 class InlineHelper {
@@ -153,19 +160,60 @@ List<InlineHelper> collectInlineFunctions(
 /// than a single [Expression] — for example, the delimited and form-query
 /// parameter encoders, which expand into a `for` loop.
 ///
-/// Carries the same inline-helper contract as [BuiltExpression] so call
-/// sites treat the two shapes interchangeably from a recursion-handling
-/// perspective.
+/// Mirrors the [BuiltExpression] safety pattern: the public [statements]
+/// getter runs [_assertNoHelpers] so a caller that forgets to splice
+/// [inlineFunctions] gets a clear error instead of silently emitting code
+/// that references undeclared local functions. Callers composing the
+/// statements into a larger block and propagating [inlineFunctions] up to
+/// a parent builder should use [unsafeRawStatements].
+///
+/// Pure value type; not thread-safe but immutable instances are safe to
+/// share.
 @immutable
 class BuiltStatements {
   const BuiltStatements({
-    required this.statements,
+    required List<Code> statements,
     this.inlineFunctions = const [],
-  });
+  }) : _statements = statements;
 
   /// Convenience for the common case: just statements, no helpers.
-  const BuiltStatements.simple(this.statements) : inlineFunctions = const [];
+  const BuiltStatements.simple(List<Code> statements)
+      : _statements = statements,
+        inlineFunctions = const [];
 
-  final List<Code> statements;
+  final List<Code> _statements;
   final List<InlineHelper> inlineFunctions;
+
+  /// The result statements. Throws if [inlineFunctions] is non-empty, so
+  /// callers that ignore helpers cannot silently emit references to
+  /// undeclared local functions.
+  List<Code> get statements {
+    _assertNoHelpers('statements');
+    return _statements;
+  }
+
+  /// Raw access to the inner statements list. Skips [_assertNoHelpers].
+  ///
+  /// Use only when the caller takes responsibility for [inlineFunctions]
+  /// — typically when composing the statements into a larger block while
+  /// propagating [inlineFunctions] up into a parent [BuiltStatements] or
+  /// [BuiltExpression]. If you are not propagating helpers yourself,
+  /// prefer [statements].
+  ///
+  /// If you read [unsafeRawStatements] and do not propagate
+  /// [inlineFunctions] in your returned builder, the generated code will
+  /// reference undeclared local functions and fail to compile.
+  List<Code> get unsafeRawStatements => _statements;
+
+  void _assertNoHelpers(String op) {
+    if (inlineFunctions.isEmpty) return;
+    throw StateError(
+      'BuiltStatements.$op called but ${inlineFunctions.length} '
+      'inline helper(s) would be dropped. The caller must splice '
+      'BuiltStatements.inlineFunctions into the enclosing method body '
+      'before reading the inner statements. If composing into a larger '
+      'block whose enclosing method will splice the helpers, use '
+      'BuiltStatements.unsafeRawStatements.',
+    );
+  }
 }

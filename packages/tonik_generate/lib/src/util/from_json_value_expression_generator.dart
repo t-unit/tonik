@@ -18,9 +18,9 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 ///
 /// When [helperContext] is provided, self-referential `MapModel`/`ListModel`
 /// typedefs are broken via local recursive functions returned in
-/// [BuiltExpression.inlineFunctions]. If omitted, recursion blocking is
-/// skipped — callers using this overload must guarantee the model is
-/// acyclic (e.g. a single primitive header decode).
+/// [BuiltExpression.inlineFunctions]. If [helperContext] is omitted, a
+/// fresh context is created and helpers cannot be shared with sibling
+/// builders — every builder pass independently emits its own helpers.
 BuiltExpression buildFromJsonValueExpression(
   String value, {
   required Model model,
@@ -232,7 +232,7 @@ BuiltExpression _buildListFromJsonExpression(
   ListModel model,
   NameManager nameManager,
   InlineHelperContext helperContext, {
-  String? package,
+  required String package,
   String? contextClass,
   String? contextProperty,
   bool isNullable = false,
@@ -244,7 +244,7 @@ BuiltExpression _buildListFromJsonExpression(
       model: model,
       nameManager: nameManager,
       helperContext: helperContext,
-      package: package ?? '',
+      package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
       isNullable: isNullable,
@@ -270,7 +270,7 @@ bool _shouldUseHelper(Model model, InlineHelperContext helperContext) {
   if (model.name == null) return false;
   return helperContext.isHelperEmitted(model, _decodePrefix) ||
       helperContext.isOnStack(model) ||
-      findRecursionTarget(model) != null;
+      isRecursive(model);
 }
 
 BuiltExpression _buildListFromJsonBody(
@@ -278,7 +278,7 @@ BuiltExpression _buildListFromJsonBody(
   ListModel model,
   NameManager nameManager,
   InlineHelperContext helperContext, {
-  String? package,
+  required String package,
   String? contextClass,
   String? contextProperty,
   bool isNullable = false,
@@ -287,12 +287,10 @@ BuiltExpression _buildListFromJsonBody(
   final content = model.content;
   final contextParam = _buildContextParam(contextClass, contextProperty);
 
-  // isNullable already accounts for model.isEffectivelyNullable via the
-  // caller (buildFromJsonValueExpression), so no need to recompute here.
-  //
-  // When using immutable collections, always use the non-nullable decoder
-  // internally. We handle null ourselves via a ternary wrapping IList(), so
-  // that refer('IList', ficUrl) properly tracks the import.
+  // When useImmutableCollections is true we keep the non-nullable decoder
+  // internally and handle null via a ternary wrapping IList(), so the
+  // refer('IList', ficUrl) call inside _wrapImmutable still tracks the
+  // import for the allocator.
   final effectiveNullable = !useImmutableCollections && isNullable;
   final listDecoder =
       effectiveNullable ? 'decodeJsonNullableList' : 'decodeJsonList';
@@ -345,7 +343,7 @@ BuiltExpression _buildListFromJsonBody(
       final className = nameManager.modelName(unwrappedContent);
       final mapFunction = refer(
         className,
-        package != null ? sourceFileUrl(package, 'model', className) : null,
+        sourceFileUrl(package, 'model', className),
       ).property('fromJson');
       final listExpr = refer(value).property(listDecoder).call(
         [],
@@ -492,7 +490,7 @@ BuiltExpression _buildListFromJsonBody(
       );
 
     default:
-      final typeArg = typeReference(content, nameManager, package ?? '');
+      final typeArg = typeReference(content, nameManager, package);
       result = refer(
         value,
       ).property(listDecoder).call([], contextParam, [typeArg]);
@@ -515,7 +513,7 @@ BuiltExpression _buildMapFromJsonExpression(
   MapModel model,
   NameManager nameManager,
   InlineHelperContext helperContext, {
-  String? package,
+  required String package,
   String? contextClass,
   String? contextProperty,
   bool isNullable = false,
@@ -527,7 +525,7 @@ BuiltExpression _buildMapFromJsonExpression(
       model: model,
       nameManager: nameManager,
       helperContext: helperContext,
-      package: package ?? '',
+      package: package,
       contextClass: contextClass,
       contextProperty: contextProperty,
       isNullable: isNullable,
@@ -553,7 +551,7 @@ BuiltExpression _buildMapFromJsonBody(
   MapModel model,
   NameManager nameManager,
   InlineHelperContext helperContext, {
-  String? package,
+  required String package,
   String? contextClass,
   String? contextProperty,
   bool isNullable = false,
@@ -566,7 +564,7 @@ BuiltExpression _buildMapFromJsonBody(
     'v',
     model: valueModel,
     nameManager: nameManager,
-    package: package ?? '',
+    package: package,
     helperContext: helperContext,
     contextClass: contextClass,
     contextProperty: contextProperty,
@@ -626,8 +624,6 @@ BuiltExpression _buildNamedTypedefHelperCall({
 
   final helpers = <InlineHelper>[];
   if (!helperContext.isHelperEmitted(named, _decodePrefix)) {
-    // Mark emitted BEFORE recursing so self-references inside the body
-    // resolve to a call to `helperName` rather than rebuilding the body.
     helperContext
       ..markHelperEmitted(named, _decodePrefix)
       ..withRecursion(named, () {
@@ -744,14 +740,7 @@ Map<String, Expression> _buildContextParam(
   String? contextClass,
   String? contextProperty,
 ) {
-  if (contextClass != null || contextProperty != null) {
-    return {
-      'context': specLiteralString(
-        (contextClass != null && contextProperty != null)
-            ? '$contextClass.$contextProperty'
-            : contextClass ?? contextProperty!,
-      ),
-    };
-  }
-  return <String, Expression>{};
+  final location = [?contextClass, ?contextProperty].join('.');
+  if (location.isEmpty) return const <String, Expression>{};
+  return {'context': specLiteralString(location)};
 }

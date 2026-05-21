@@ -318,6 +318,8 @@ class OneOfGenerator {
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
+          contextClass: className,
+          contextProperty: 'value',
           useImmutableCollections: useImmutableCollections,
         );
         inlineHelpers.addAll(jsonValueBuilt.inlineFunctions);

@@ -3784,4 +3784,129 @@ bool operator ==(Object other) {
       },
     );
   });
+
+  group('recursion splicing', () {
+    test(
+      'OneOf { Tree, ClassA } splices _encodeTree helper into toJson',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        final classA = ClassModel(
+          isDeprecated: false,
+          name: 'ClassA',
+          properties: const [],
+          context: context,
+        );
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'TreeOrClassA',
+          models: {
+            (discriminatorValue: null, model: tree),
+            (discriminatorValue: null, model: classA),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'TreeOrClassA');
+        final toJson = baseClass.methods.firstWhere(
+          (m) => m.name == 'toJson',
+        );
+        final actual = format(toJson.accept(emitter).toString());
+
+        const expected = r'''
+          @override
+          Object? toJson() {
+            late final Object? Function(Object?) _encodeTree;
+            _encodeTree = (Object? raw) {
+              if (raw is! Tree) {
+                throw EncodingException(
+                  'Cannot encode value as Tree (at \'TreeOrClassA.value\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+            };
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
+              TreeOrClassAClassA(:final value) => (value.toJson(), null),
+              TreeOrClassATree(:final value) => (_encodeTree(value), null),
+            };
+
+            return _$json;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test(
+      'OneOf { Tree, ClassA } splices _decodeTree helper into fromJson '
+      'factory for the Tree-typed primitive case',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        final classA = ClassModel(
+          isDeprecated: false,
+          name: 'ClassA',
+          properties: const [],
+          context: context,
+        );
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'TreeOrClassA',
+          models: {
+            (discriminatorValue: null, model: tree),
+            (discriminatorValue: null, model: classA),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'TreeOrClassA');
+        final fromJsonCtor = baseClass.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final actual = format(
+          Class((b) => b
+            ..name = 'TreeOrClassA'
+            ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+        );
+
+        const expected = '''
+          class TreeOrClassA {
+            factory TreeOrClassA.fromJson(Object? json) {
+              late final Tree Function(Object?) _decodeTree;
+              _decodeTree = (Object? v) =>
+                  v.decodeJsonMap((v) => _decodeTree(v), context: r'TreeOrClassA');
+              try {
+                return TreeOrClassAClassA(ClassA.fromJson(json));
+              } on Object catch (_) {}
+              try {
+                return TreeOrClassATree(_decodeTree(json));
+              } on Object catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for TreeOrClassA');
+            }
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+  });
 }

@@ -67,14 +67,113 @@ void main() {
       expect(built.inlineFunctions.single.name, '_encodeTree');
 
       final actual = emitMethod(built);
-      final expected = format('''
+      final expected = format(r'''
         toJson() {
           late final Object? Function(Object?) _encodeTree;
           _encodeTree = (Object? raw) {
-            final v = raw as Tree;
+            if (raw is! Tree) {
+              throw EncodingException('Cannot encode value as Tree; got: '
+                  '${raw.runtimeType}');
+            }
+            final v = raw;
             return v.map((k, v) => MapEntry(k, _encodeTree(v)));
           };
           return _encodeTree(body);
+        }
+      ''');
+
+      expect(collapseWhitespace(actual), collapseWhitespace(expected));
+    });
+
+    test(
+      'encode helper carries contextClass.contextProperty in the message',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+
+        final ctx = InlineHelperContext(nameManager: nameManager);
+        final property = Property(
+          name: 'subtree',
+          model: tree,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+        );
+        final built = buildToJsonPropertyExpression(
+          'subtree',
+          property,
+          nameManager: nameManager,
+          package: 'pkg',
+          helperContext: ctx,
+          contextClass: 'Node',
+          contextProperty: 'subtree',
+        );
+
+        final actual = emitMethod(built);
+        final expected = format(r'''
+          toJson() {
+            late final Object? Function(Object?) _encodeTree;
+            _encodeTree = (Object? raw) {
+              if (raw is! Tree) {
+                throw EncodingException(
+                  'Cannot encode value as Tree (at \'Node.subtree\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+            };
+            return _encodeTree(subtree);
+          }
+        ''');
+
+        expect(collapseWhitespace(actual), collapseWhitespace(expected));
+      },
+    );
+  });
+
+  group('nullable cycle', () {
+    test('nullable recursive Tree wraps helper call in null-handling', () {
+      final tree = MapModel(
+        name: 'Tree',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      tree.valueModel = tree;
+
+      final ctx = InlineHelperContext(nameManager: nameManager);
+      final property = Property(
+        name: 'subtree',
+        model: tree,
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+      );
+      final built = buildToJsonPropertyExpression(
+        'subtree',
+        property,
+        nameManager: nameManager,
+        package: 'pkg',
+        helperContext: ctx,
+      );
+
+      final actual = emitMethod(built);
+      final expected = format(r'''
+        toJson() {
+          late final Object? Function(Object?) _encodeTree;
+          _encodeTree = (Object? raw) {
+            if (raw is! Tree) {
+              throw EncodingException('Cannot encode value as Tree; got: '
+                  '${raw.runtimeType}');
+            }
+            final v = raw;
+            return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+          };
+          return subtree == null ? null : _encodeTree(subtree);
         }
       ''');
 
@@ -121,7 +220,7 @@ void main() {
   });
 
   group('indirect to-JSON cycle', () {
-    test('A ↔ B emits encode helpers for both', () {
+    test('A <-> B emits encode helpers for both', () {
       final a = MapModel(
         name: 'A',
         valueModel: AnyModel(context: context),
@@ -152,16 +251,24 @@ void main() {
       );
 
       final actual = emitMethod(built);
-      final expected = format('''
+      final expected = format(r'''
         toJson() {
           late final Object? Function(Object?) _encodeB;
           late final Object? Function(Object?) _encodeA;
           _encodeB = (Object? raw) {
-            final v = raw as B;
+            if (raw is! B) {
+              throw EncodingException('Cannot encode value as B; got: '
+                  '${raw.runtimeType}');
+            }
+            final v = raw;
             return v.map((k, v) => MapEntry(k, _encodeA(v)));
           };
           _encodeA = (Object? raw) {
-            final v = raw as A;
+            if (raw is! A) {
+              throw EncodingException('Cannot encode value as A; got: '
+                  '${raw.runtimeType}');
+            }
+            final v = raw;
             return v.map((k, v) => MapEntry(k, _encodeB(v)));
           };
           return _encodeA(body);

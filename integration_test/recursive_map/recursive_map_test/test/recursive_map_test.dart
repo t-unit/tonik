@@ -32,7 +32,7 @@ void main() {
   }
 
   group('Tree (direct self-referential map)', () {
-    test('getTree decodes nested JSON through _decodeTree', () async {
+    test('getTree decodes nested JSON via the recursion helper', () async {
       final api = buildApi();
       final result = await api.getTree();
       expect(result, isA<TonikSuccess<Tree>>());
@@ -47,7 +47,7 @@ void main() {
     });
 
     test(
-      'postTree round-trips through _encodeTree and matches the source map',
+      'postTree round-trips via the recursion helper and matches the source',
       () async {
         final original = <String, Object?>{
           'a': <String, Object?>{
@@ -65,11 +65,29 @@ void main() {
         expect(_isDeepEqual(echoed, original), isTrue);
       },
     );
+
+    test(
+      'postTree handles deeply nested input without runtime stack overflow',
+      () async {
+        var deep = <String, Object?>{};
+        for (var i = 0; i < 1000; i++) {
+          deep = <String, Object?>{'n': deep};
+        }
+
+        final api = buildApi();
+        final result = await api.postTree(body: deep);
+        expect(result, isA<TonikSuccess<void>>());
+
+        final response = (result as TonikSuccess<void>).response;
+        final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
+        expect(_isDeepEqual(echoed, deep), isTrue);
+      },
+    );
   });
 
   group('Forest (direct self-referential list)', () {
     test(
-      'getForest decodes nested JSON arrays through _decodeForest',
+      'getForest decodes nested JSON arrays via the recursion helper',
       () async {
         final api = buildApi();
         final result = await api.getForest();
@@ -87,7 +105,7 @@ void main() {
     );
 
     test(
-      'postForest round-trips through _encodeForest and matches the source',
+      'postForest round-trips via the recursion helper and matches the source',
       () async {
         final original = <Object?>[
           <Object?>[<Object?>[]],
@@ -174,6 +192,38 @@ void main() {
 
       final api = buildApi();
       final result = await api.postAMap(body: original);
+      expect(result, isA<TonikSuccess<void>>());
+
+      final response = (result as TonikSuccess<void>).response;
+      final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
+      expect(_isDeepEqual(echoed, original), isTrue);
+    });
+
+    test(
+      'getBMap decodes a BMap rooted at the symmetric end of the cycle',
+      () async {
+        final api = buildApi();
+        final result = await api.getBMap();
+        expect(result, isA<TonikSuccess<BMap>>());
+        final root = (result as TonikSuccess<BMap>).value;
+
+        final a = root['a']! as AMap;
+        final b = a['b']! as BMap;
+        expect(b, isEmpty);
+      },
+    );
+
+    test('BMap round-trips through the POST helper', () async {
+      final original = <String, Object?>{
+        'a': <String, Object?>{
+          'b': <String, Object?>{
+            'a': <String, Object?>{},
+          },
+        },
+      };
+
+      final api = buildApi();
+      final result = await api.postBMap(body: original);
       expect(result, isA<TonikSuccess<void>>());
 
       final response = (result as TonikSuccess<void>).response;

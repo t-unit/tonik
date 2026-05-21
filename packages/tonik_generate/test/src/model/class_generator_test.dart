@@ -2892,5 +2892,113 @@ factory TaggedItem.fromJson(Object? json) {
         );
       },
     );
+
+    group('recursion helper dedup across multiple properties', () {
+      test(
+        'two Tree-typed properties produce exactly one _decodeTree '
+        'declaration in fromJson',
+        () {
+          final tree = MapModel(
+            name: 'Tree',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          tree.valueModel = tree;
+
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'TwoTrees',
+            properties: [
+              Property(
+                name: 'left',
+                model: tree,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'right',
+                model: tree,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final fromJsonCtor = result.constructors.firstWhere(
+            (c) => c.name == 'fromJson',
+          );
+          final actual = format(
+            Class((b) => b
+              ..name = 'TwoTrees'
+              ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+          );
+          final collapsed = collapseWhitespace(actual);
+
+          const forwardDecl =
+              'late final Tree Function(Object?) _decodeTree;';
+          final firstIdx = collapsed.indexOf(forwardDecl);
+          expect(firstIdx, isNot(-1));
+          expect(
+            collapsed.indexOf(forwardDecl, firstIdx + forwardDecl.length),
+            -1,
+            reason: 'expected exactly one _decodeTree forward declaration',
+          );
+        },
+      );
+
+      test(
+        'two Tree-typed properties produce exactly one _encodeTree '
+        'declaration in toJson',
+        () {
+          final tree = MapModel(
+            name: 'Tree',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          tree.valueModel = tree;
+
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'TwoTrees',
+            properties: [
+              Property(
+                name: 'left',
+                model: tree,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              Property(
+                name: 'right',
+                model: tree,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+            ],
+            context: context,
+          );
+
+          final result = generator.generateClass(model);
+          final toJson = result.methods.firstWhere((m) => m.name == 'toJson');
+          final actual = format(toJson.accept(emitter).toString());
+          final collapsed = collapseWhitespace(actual);
+
+          const forwardDecl =
+              'late final Object? Function(Object?) _encodeTree;';
+          final firstIdx = collapsed.indexOf(forwardDecl);
+          expect(firstIdx, isNot(-1));
+          expect(
+            collapsed.indexOf(forwardDecl, firstIdx + forwardDecl.length),
+            -1,
+            reason: 'expected exactly one _encodeTree forward declaration',
+          );
+        },
+      );
+    });
   });
 }

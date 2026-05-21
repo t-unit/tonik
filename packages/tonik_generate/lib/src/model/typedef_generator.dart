@@ -140,11 +140,11 @@ class TypedefGenerator {
       if (!visited.add(m)) return false;
       if (m is AliasModel) return walk(m.model);
       if (m is MapModel) {
-        if (m.name != null && findRecursionTarget(m) != null) return true;
+        if (m.name != null && isRecursive(m)) return true;
         return walk(m.valueModel);
       }
       if (m is ListModel) {
-        if (m.name != null && findRecursionTarget(m) != null) return true;
+        if (m.name != null && isRecursive(m)) return true;
         return walk(m.content);
       }
       return false;

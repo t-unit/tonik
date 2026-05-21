@@ -9,27 +9,27 @@ void main() {
     context = Context.initial();
   });
 
-  group('findRecursionTarget', () {
-    test('returns null for primitive types', () {
-      expect(findRecursionTarget(StringModel(context: context)), isNull);
-      expect(findRecursionTarget(IntegerModel(context: context)), isNull);
+  group('isRecursive', () {
+    test('returns false for primitive types', () {
+      expect(isRecursive(StringModel(context: context)), isFalse);
+      expect(isRecursive(IntegerModel(context: context)), isFalse);
     });
 
-    test('returns null for unnamed MapModel', () {
+    test('returns false for unnamed MapModel', () {
       final map = MapModel(
         valueModel: StringModel(context: context),
         context: context,
       );
-      expect(findRecursionTarget(map), isNull);
+      expect(isRecursive(map), isFalse);
     });
 
-    test('returns null for non-recursive named MapModel', () {
+    test('returns false for non-recursive named MapModel', () {
       final map = MapModel(
         name: 'StringMap',
         valueModel: StringModel(context: context),
         context: context,
       );
-      expect(findRecursionTarget(map), isNull);
+      expect(isRecursive(map), isFalse);
     });
 
     test('detects direct self-referential MapModel', () {
@@ -40,7 +40,7 @@ void main() {
       );
       treeSelfRef.valueModel = treeSelfRef;
 
-      expect(findRecursionTarget(treeSelfRef), same(treeSelfRef));
+      expect(isRecursive(treeSelfRef), isTrue);
     });
 
     test('detects direct self-referential ListModel (Forest)', () {
@@ -51,11 +51,10 @@ void main() {
       );
       forest.content = forest;
 
-      expect(findRecursionTarget(forest), same(forest));
+      expect(isRecursive(forest), isTrue);
     });
 
     test('detects nested recursion through List inside Map', () {
-      // Tree → Map<String, List<Tree>>
       final tree = MapModel(
         name: 'Tree',
         valueModel: AnyModel(context: context),
@@ -66,10 +65,10 @@ void main() {
         context: context,
       );
 
-      expect(findRecursionTarget(tree), same(tree));
+      expect(isRecursive(tree), isTrue);
     });
 
-    test('detects indirect cycle: A ↔ B', () {
+    test('detects indirect cycle: A <-> B', () {
       final a = MapModel(
         name: 'A',
         valueModel: AnyModel(context: context),
@@ -83,8 +82,33 @@ void main() {
       a.valueModel = b;
       b.valueModel = a;
 
-      expect(findRecursionTarget(a), same(a));
-      expect(findRecursionTarget(b), same(b));
+      expect(isRecursive(a), isTrue);
+      expect(isRecursive(b), isTrue);
+    });
+
+    test('detects three-way indirect cycle: A -> B -> C -> A', () {
+      final a = MapModel(
+        name: 'A',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      final b = MapModel(
+        name: 'B',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      final c = MapModel(
+        name: 'C',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      a.valueModel = b;
+      b.valueModel = c;
+      c.valueModel = a;
+
+      expect(isRecursive(a), isTrue);
+      expect(isRecursive(b), isTrue);
+      expect(isRecursive(c), isTrue);
     });
 
     test('detects recursion through AliasModel chain', () {
@@ -100,7 +124,7 @@ void main() {
       );
       tree.valueModel = alias;
 
-      expect(findRecursionTarget(tree), same(tree));
+      expect(isRecursive(tree), isTrue);
     });
   });
 }

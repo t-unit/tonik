@@ -823,6 +823,8 @@ class AnyOfGenerator {
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
+        contextClass: className,
+        contextProperty: n.property.name,
         forceNonNullReceiver: true,
         useImmutableCollections: useImmutableCollections,
       );

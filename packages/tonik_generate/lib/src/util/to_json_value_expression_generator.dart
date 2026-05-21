@@ -13,14 +13,20 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// [nameManager] is required because recursive named typedefs ([MapModel]
 /// or [ListModel] cycles) emit local helper functions whose identifiers
 /// derive from [NameManager.modelName]. Test callers should construct a
-/// [NameManager] via `NameManager(generator: NameGenerator(), ...)` — see
-/// the test helpers in `packages/tonik_generate/test/src/util/`.
+/// [NameManager] via the `testNameManager()` helper in
+/// `packages/tonik_generate/test/src/util/name_manager_test_helper.dart`.
+///
+/// [contextClass] and [contextProperty] are threaded into emitted
+/// recursive encode helpers so the runtime `EncodingException` message
+/// identifies the failing class+property when a typedef cast fails.
 BuiltExpression buildToJsonPropertyExpression(
   String propertyName,
   Property property, {
   required NameManager nameManager,
   String? package,
   InlineHelperContext? helperContext,
+  String? contextClass,
+  String? contextProperty,
   bool forceNonNullReceiver = false,
   bool useImmutableCollections = false,
 }) {
@@ -34,6 +40,8 @@ BuiltExpression buildToJsonPropertyExpression(
     package: package,
     helperContext:
         helperContext ?? InlineHelperContext(nameManager: nameManager),
+    contextClass: contextClass,
+    contextProperty: contextProperty,
     forceNonNullReceiver: forceNonNullReceiver,
     useImmutableCollections: useImmutableCollections,
   );
@@ -92,6 +100,7 @@ BuiltExpression buildToJsonAdditionalPropertiesExpression(
   required NameManager nameManager,
   String? package,
   InlineHelperContext? helperContext,
+  String? contextClass,
   bool useImmutableCollections = false,
 }) {
   final ctx = helperContext ?? InlineHelperContext(nameManager: nameManager);
@@ -113,6 +122,8 @@ BuiltExpression buildToJsonAdditionalPropertiesExpression(
     nameManager: nameManager,
     package: package,
     helperContext: ctx,
+    contextClass: contextClass,
+    contextProperty: 'additionalProperties',
     useImmutableCollections: useImmutableCollections,
   );
 
@@ -141,6 +152,8 @@ BuiltExpression _buildSerializationExpression(
   required NameManager nameManager,
   required InlineHelperContext helperContext,
   String? package,
+  String? contextClass,
+  String? contextProperty,
   bool forceNonNullReceiver = false,
   bool useImmutableCollections = false,
 }) {
@@ -206,6 +219,8 @@ BuiltExpression _buildSerializationExpression(
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
+        contextClass: contextClass,
+        contextProperty: contextProperty,
         forceNonNullReceiver: forceNonNullReceiver,
         useImmutableCollections: useImmutableCollections,
       );
@@ -217,6 +232,8 @@ BuiltExpression _buildSerializationExpression(
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
+        contextClass: contextClass,
+        contextProperty: contextProperty,
         forceNonNullReceiver: forceNonNullReceiver,
         useImmutableCollections: useImmutableCollections,
       );
@@ -228,6 +245,8 @@ BuiltExpression _buildSerializationExpression(
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
+        contextClass: contextClass,
+        contextProperty: contextProperty,
         forceNonNullReceiver: forceNonNullReceiver,
         useImmutableCollections: useImmutableCollections,
       );
@@ -256,6 +275,8 @@ BuiltExpression _handleListExpression(
   required NameManager nameManager,
   required InlineHelperContext helperContext,
   String? package,
+  String? contextClass,
+  String? contextProperty,
   bool forceNonNullReceiver = false,
   bool useImmutableCollections = false,
 }) {
@@ -265,7 +286,9 @@ BuiltExpression _handleListExpression(
       model: model,
       nameManager: nameManager,
       helperContext: helperContext,
-      package: package ?? '',
+      package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
       forceNonNullReceiver: forceNonNullReceiver,
       isNullable: isNullable,
       useImmutableCollections: useImmutableCollections,
@@ -279,6 +302,8 @@ BuiltExpression _handleListExpression(
     helperContext: helperContext,
     nameManager: nameManager,
     package: package,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
     forceNonNullReceiver: forceNonNullReceiver,
     useImmutableCollections: useImmutableCollections,
   );
@@ -291,6 +316,8 @@ BuiltExpression _handleListExpressionBody(
   required NameManager nameManager,
   required InlineHelperContext helperContext,
   String? package,
+  String? contextClass,
+  String? contextProperty,
   bool forceNonNullReceiver = false,
   bool useImmutableCollections = false,
 }) {
@@ -328,6 +355,8 @@ BuiltExpression _handleListExpressionBody(
     nameManager: nameManager,
     package: package,
     helperContext: helperContext,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
     useImmutableCollections: useImmutableCollections,
   );
 
@@ -394,6 +423,8 @@ BuiltExpression _handleMapExpression(
   required NameManager nameManager,
   required InlineHelperContext helperContext,
   String? package,
+  String? contextClass,
+  String? contextProperty,
   bool forceNonNullReceiver = false,
   bool useImmutableCollections = false,
 }) {
@@ -403,7 +434,9 @@ BuiltExpression _handleMapExpression(
       model: model,
       nameManager: nameManager,
       helperContext: helperContext,
-      package: package ?? '',
+      package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
       forceNonNullReceiver: forceNonNullReceiver,
       isNullable: isNullable,
       useImmutableCollections: useImmutableCollections,
@@ -417,6 +450,8 @@ BuiltExpression _handleMapExpression(
     helperContext: helperContext,
     nameManager: nameManager,
     package: package,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
     forceNonNullReceiver: forceNonNullReceiver,
     useImmutableCollections: useImmutableCollections,
   );
@@ -429,6 +464,8 @@ BuiltExpression _handleMapExpressionBody(
   required NameManager nameManager,
   required InlineHelperContext helperContext,
   String? package,
+  String? contextClass,
+  String? contextProperty,
   bool forceNonNullReceiver = false,
   bool useImmutableCollections = false,
 }) {
@@ -466,6 +503,8 @@ BuiltExpression _handleMapExpressionBody(
     nameManager: nameManager,
     package: package,
     helperContext: helperContext,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
     useImmutableCollections: useImmutableCollections,
   );
 
@@ -513,7 +552,7 @@ bool _shouldUseHelper(Model model, InlineHelperContext helperContext) {
   if (model.name == null) return false;
   return helperContext.isHelperEmitted(model, _encodePrefix) ||
       helperContext.isOnStack(model) ||
-      findRecursionTarget(model) != null;
+      isRecursive(model);
 }
 
 BuiltExpression _buildNamedTypedefEncodeHelperCall({
@@ -521,12 +560,23 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
   required Model model,
   required NameManager nameManager,
   required InlineHelperContext helperContext,
-  required String package,
+  required String? package,
+  required String? contextClass,
+  required String? contextProperty,
   required bool isNullable,
   required bool forceNonNullReceiver,
   required bool useImmutableCollections,
 }) {
+  assert(
+    package != null,
+    'Recursive typedef encode helpers require a non-null package URL to '
+    'resolve the typedef Dart type. Public callers that emit helpers '
+    '(parse_generator, data_generator, class/oneOf/anyOf/allOf generators) '
+    'always pass package.',
+  );
+  final resolvedPackage = package!;
   final named = model as NamedModel;
+  final typedefName = nameManager.modelName(named);
   final helperName = helperContext.reserveHelperName(named, _encodePrefix);
 
   final helpers = <InlineHelper>[];
@@ -541,8 +591,10 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
             model,
             false,
             nameManager: nameManager,
-            package: package,
+            package: resolvedPackage,
             helperContext: helperContext,
+            contextClass: contextClass,
+            contextProperty: contextProperty,
             useImmutableCollections: useImmutableCollections,
           ),
           ListModel() => _handleListExpressionBody(
@@ -550,14 +602,15 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
             model,
             false,
             nameManager: nameManager,
-            package: package,
+            package: resolvedPackage,
             helperContext: helperContext,
+            contextClass: contextClass,
+            contextProperty: contextProperty,
             useImmutableCollections: useImmutableCollections,
           ),
           _ => throw ArgumentError(
             'Encode helper only valid for named MapModel/ListModel; '
-            'got ${model.runtimeType} for typedef '
-            '"${nameManager.modelName(named)}"',
+            'got ${model.runtimeType} for typedef "$typedefName"',
           ),
         };
 
@@ -567,11 +620,19 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
         final typedefType = typeReference(
           model,
           nameManager,
-          package,
+          resolvedPackage,
           useImmutableCollections: useImmutableCollections,
         );
         final returnType = refer('Object?', 'dart:core');
         final paramType = refer('Object?', 'dart:core');
+
+        final contextSuffix = _encodeContextSuffix(
+          contextClass,
+          contextProperty,
+        );
+        final castFailureMessage = literalString(
+          'Cannot encode value as $typedefName$contextSuffix; got: ',
+        );
 
         helpers
           ..addAll(inner.inlineFunctions)
@@ -588,9 +649,17 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
               assignment: Block.of([
                 Code('$helperName = ('),
                 paramType.code,
-                const Code(' raw) { final v = raw as '),
+                const Code(' raw) { if (raw is! '),
                 typedefType.code,
-                const Code('; return '),
+                const Code(') { throw '),
+                refer(
+                  'EncodingException',
+                  'package:tonik_util/tonik_util.dart',
+                ).code,
+                const Code('('),
+                castFailureMessage.code,
+                const Code(r" '${raw.runtimeType}'"),
+                const Code('); } final v = raw; return '),
                 inner.unsafeRawBody.code,
                 const Code('; };'),
               ]),
@@ -611,6 +680,12 @@ BuiltExpression _buildNamedTypedefEncodeHelperCall({
   }
 
   return BuiltExpression(body: call, inlineFunctions: helpers);
+}
+
+String _encodeContextSuffix(String? contextClass, String? contextProperty) {
+  final location = [?contextClass, ?contextProperty].join('.');
+  if (location.isEmpty) return '';
+  return " (at '$location')";
 }
 
 const _encodePrefix = '_encode';
@@ -656,10 +731,10 @@ bool _needsTransformationImpl(
   required Set<Model> visited,
 }) {
   if (!visited.add(model)) {
-    // Cycle detected — the value type is a recursive named typedef. Treat
-    // it as transformation-required so the recursive helper path emits a
-    // .map() call (and a self-referencing local function) rather than
-    // identity-returning the receiver.
+    // A recursive named typedef has been seen on the current descent; we
+    // must treat it as transformation-required so the recursive helper
+    // path emits a .map() call (and a self-referencing local function)
+    // rather than identity-returning the receiver.
     return true;
   }
   return switch (model) {

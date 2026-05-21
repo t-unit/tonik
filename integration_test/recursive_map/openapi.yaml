@@ -130,6 +130,34 @@ paths:
         '204':
           description: No Content
 
+  /bMap:
+    get:
+      operationId: getBMap
+      tags:
+        - recursive
+      summary: Returns BMap in an A<->B indirect cycle.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BMap'
+    post:
+      operationId: postBMap
+      tags:
+        - recursive
+      summary: Accepts BMap in an A<->B indirect cycle.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BMap'
+      responses:
+        '204':
+          description: No Content
+
 components:
   schemas:
     # Direct self-referential map: Tree = Map<String, Tree>.

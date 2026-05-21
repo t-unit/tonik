@@ -155,5 +155,30 @@ void main() {
       expect(built.inlineFunctions, isEmpty);
       expect(built.statements, statements);
     });
+
+    test('statements throws when helpers would be dropped', () {
+      final helper = sampleHelper('_decodeTree');
+      final built = BuiltStatements(
+        statements: const [Code('x;')],
+        inlineFunctions: [helper],
+      );
+      expect(() => built.statements, throwsStateError);
+    });
+
+    test('unsafeRawStatements returns statements even with helpers', () {
+      final helper = sampleHelper('_decodeTree');
+      const statements = [Code('x;')];
+      final built = BuiltStatements(
+        statements: statements,
+        inlineFunctions: [helper],
+      );
+      expect(built.unsafeRawStatements, same(statements));
+    });
+
+    test('unsafeRawStatements returns statements without helpers', () {
+      const statements = [Code('x;')];
+      const built = BuiltStatements.simple(statements);
+      expect(built.unsafeRawStatements, same(statements));
+    });
   });
 }

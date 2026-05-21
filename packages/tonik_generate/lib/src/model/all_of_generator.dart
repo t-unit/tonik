@@ -732,6 +732,8 @@ class AllOfGenerator {
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
+          contextClass: className,
+          contextProperty: normalized.property.name,
           useImmutableCollections: useImmutableCollections,
         );
         inlineHelpers.addAll(built.inlineFunctions);
@@ -827,6 +829,8 @@ class AllOfGenerator {
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
+          contextClass: className,
+          contextProperty: normalized.property.name,
           forceNonNullReceiver: isNullable,
           useImmutableCollections: useImmutableCollections,
         );
@@ -885,6 +889,7 @@ class AllOfGenerator {
             nameManager: nameManager,
             package: package,
             helperContext: helperContext,
+            contextClass: className,
             useImmutableCollections: useImmutableCollections,
           );
           inlineHelpers.addAll(apBuilt.inlineFunctions);
@@ -947,6 +952,8 @@ class AllOfGenerator {
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
+          contextClass: className,
+          contextProperty: firstFieldName,
           useImmutableCollections: useImmutableCollections,
         );
         inlineHelpers.addAll(simpleBuilt.inlineFunctions);
@@ -998,6 +1005,8 @@ class AllOfGenerator {
             nameManager: nameManager,
             package: package,
             helperContext: helperContext,
+            contextClass: className,
+            contextProperty: normalized.property.name,
             forceNonNullReceiver: isNullable,
             useImmutableCollections: useImmutableCollections,
           );
@@ -1058,6 +1067,7 @@ class AllOfGenerator {
               nameManager: nameManager,
               package: package,
               helperContext: helperContext,
+              contextClass: className,
               useImmutableCollections: useImmutableCollections,
             );
             inlineHelpers.addAll(apBuilt.inlineFunctions);

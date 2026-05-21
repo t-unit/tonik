@@ -80,5 +80,20 @@ if (method == 'POST' && path.endsWith('/aMap')) {
     return
 }
 
+if (method == 'GET' && path.endsWith('/bMap')) {
+    // BMap-rooted entry point to exercise the symmetric direction of the
+    // A<->B cycle.
+    respond()
+        .withStatusCode(200)
+        .withHeader('Content-Type', 'application/json')
+        .withContent('''{"a":{"b":{}}}''')
+    return
+}
+
+if (method == 'POST' && path.endsWith('/bMap')) {
+    echo204()
+    return
+}
+
 // Fallback: default OpenAPI behaviour for any unhandled paths.
 respond().usingDefaultBehaviour()

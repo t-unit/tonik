@@ -218,11 +218,17 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? _data({required RecursiveBody body}) {
             late final Object? Function(Object?) _encodeTree;
             _encodeTree = (Object? raw) {
-              final v = raw as Tree;
+              if (raw is! Tree) {
+                throw EncodingException(
+                  'Cannot encode value as Tree (at \'testOp.body\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
               return v.map((k, v) => MapEntry(k, _encodeTree(v)));
             };
             return switch (body) {

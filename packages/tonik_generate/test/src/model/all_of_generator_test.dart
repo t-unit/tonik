@@ -2923,7 +2923,13 @@ class Holder {
   Object? toJson() {
     late final Object? Function(Object?) _encodeTree;
     _encodeTree = (Object? raw) {
-      final v = raw as Tree;
+      if (raw is! Tree) {
+        throw EncodingException(
+          'Cannot encode value as Tree (at \'DynamicTreeBag.additionalProperties\'); got: '
+          '${raw.runtimeType}',
+        );
+      }
+      final v = raw;
       return v.map((k, v) => MapEntry(k, _encodeTree(v)));
     };
     if (currentEncodingShape == EncodingShape.mixed) {
@@ -2965,7 +2971,13 @@ class Holder {
   Object? toJson() {
     late final Object? Function(Object?) _encodeTree;
     _encodeTree = (Object? raw) {
-      final v = raw as Tree;
+      if (raw is! Tree) {
+        throw EncodingException(
+          'Cannot encode value as Tree (at \'TreeBag.additionalProperties\'); got: '
+          '${raw.runtimeType}',
+        );
+      }
+      final v = raw;
       return v.map((k, v) => MapEntry(k, _encodeTree(v)));
     };
     final _$map = <String, Object?>{};

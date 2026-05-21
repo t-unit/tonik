@@ -20,6 +20,10 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 /// Callers obtain a name via [reserveHelperName] before emitting the
 /// helper. Subsequent requests with the same `(NamedModel, prefix)` key
 /// return the originally-reserved name so dedup is automatic.
+///
+/// Single-threaded; one instance per generated method body. Sharing an
+/// instance across methods would silently emit duplicate helpers, because
+/// the `_emittedHelpers` set is method-local by design.
 class InlineHelperContext {
   InlineHelperContext({
     required this.nameManager,
@@ -57,9 +61,11 @@ class InlineHelperContext {
     }
   }
 
-  /// True if [model] is currently being built — its inner content
-  /// re-entering the builder would re-enter the same typedef and would
-  /// stack-overflow if inlined.
+  /// Redundant defensive check kept in case the emit-before-recurse
+  /// ordering in `_buildNamedTypedef*HelperCall` is changed; today
+  /// [markHelperEmitted] is always called before [withRecursion], so when
+  /// [isOnStack] would be true [isHelperEmitted] is already true and
+  /// short-circuits in every `_shouldUseHelper` caller.
   bool isOnStack(NamedModel model) =>
       _stack.any((entry) => identical(entry, model));
 
@@ -71,6 +77,11 @@ class InlineHelperContext {
   /// inline helpers in the same method scope cannot collide with it. A
   /// monotonic numeric suffix is appended only if the natural name is
   /// already taken.
+  ///
+  /// Caller is responsible for ensuring `prefix + nameManager.modelName(model)`
+  /// yields a valid Dart identifier. Callers in this codebase use the
+  /// constants `_decode` and `_encode` plus a `NameManager`-produced PascalCase
+  /// name, both of which are always valid identifiers.
   String reserveHelperName(NamedModel model, String prefix) {
     final key = _HelperKey(model, prefix);
     final existing = _helperNames[key];

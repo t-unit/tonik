@@ -1,40 +1,36 @@
 import 'package:tonik_core/tonik_core.dart';
 
-/// Walks [AliasModel]/[MapModel]/[ListModel] wrappers and reports the
-/// named typedef [start] points back to itself through, directly or
-/// indirectly.
+/// Returns `true` when [start] is a named [MapModel] or [ListModel] that
+/// reaches itself, directly or indirectly, through its value/content models.
 ///
-/// A typedef'd [MapModel]/[ListModel] decoded inline cannot break the
-/// cycle through a generated factory the way a class can (typedefs have
-/// no constructor). The result of this predicate tells the expression
-/// builder to emit a local recursive helper instead of inlining.
+/// A typedef'd [MapModel]/[ListModel] decoded inline cannot break the cycle
+/// through a generated factory the way a class can (typedefs have no
+/// constructor). When this predicate returns `true`, the expression builder
+/// emits a local recursive helper instead of inlining.
 ///
-/// Returns the named typedef [start] is recursive on, or `null` if no
-/// cycle is reachable. Direct cycles (`Tree → Map<String, Tree>`),
-/// nested cycles (`Tree → List<Tree>`, `Tree → Map<String, List<Tree>>`),
-/// and indirect cycles (`A → Map<String, B>` ↔ `B → Map<String, A>`)
-/// are all detected.
+/// Direct cycles (`Tree -> Map<String, Tree>`), nested cycles
+/// (`Tree -> List<Tree>`, `Tree -> Map<String, List<Tree>>`), and indirect
+/// cycles (`A -> Map<String, B>` <-> `B -> Map<String, A>`) are all detected.
 ///
 /// Only typedef'd collections — [MapModel] and [ListModel] with a non-null
-/// [NamedModel.name] — are reported. Inline (anonymous) maps/lists are
-/// returned through `null` because callers can still recurse through their
-/// content models without re-entering the same builder shape; the
-/// `_buildXFromY` recursion only blows the stack on a NAMED typedef whose
-/// value/content reaches itself.
+/// [NamedModel.name] — are considered. Inline (anonymous) maps/lists return
+/// `false` because callers can still recurse through their content models
+/// without re-entering the same builder shape; the `_buildXFromY` recursion
+/// only blows the stack on a NAMED typedef whose value/content reaches itself.
 ///
-/// [start] must be a named [MapModel] or [ListModel]; passing other models
-/// returns `null`.
-NamedModel? findRecursionTarget(Model start) {
+/// Returns `false` unless [start] is a named [MapModel] or [ListModel].
+///
+/// Only the named typedef passed in as [start] is reported on; the function
+/// never identifies a different model as the recursion target. The
+/// `bool` return reflects that callers only need the yes/no answer.
+bool isRecursive(Model start) {
   final namedStart = _asNamedTypedef(start);
-  if (namedStart == null) return null;
+  if (namedStart == null) return false;
 
   final stack = <NamedModel>[namedStart];
   final visited = <Model>{start};
 
-  if (_reachesAny(_innerOf(start), stack, visited)) {
-    return namedStart;
-  }
-  return null;
+  return _reachesAny(_innerOf(start), stack, visited);
 }
 
 NamedModel? _asNamedTypedef(Model model) {
