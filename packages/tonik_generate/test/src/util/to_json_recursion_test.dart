@@ -219,6 +219,139 @@ void main() {
     });
   });
 
+  group('AliasModel chain recursion', () {
+    test('Tree -> TreeAlias -> Tree still emits a single encode helper', () {
+      final tree = MapModel(
+        name: 'Tree',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      final alias = AliasModel(
+        name: 'TreeAlias',
+        model: tree,
+        context: context,
+      );
+      tree.valueModel = alias;
+
+      final ctx = InlineHelperContext(nameManager: nameManager);
+      final property = Property(
+        name: 'body',
+        model: tree,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      final built = buildToJsonPropertyExpression(
+        'body',
+        property,
+        nameManager: nameManager,
+        package: 'pkg',
+        helperContext: ctx,
+      );
+
+      expect(built.inlineFunctions, hasLength(1));
+      expect(built.inlineFunctions.single.name, '_encodeTree');
+
+      final actual = emitMethod(built);
+      final expected = format(r'''
+        toJson() {
+          late final Object? Function(Object?) _encodeTree;
+          _encodeTree = (Object? raw) {
+            if (raw is! Tree) {
+              throw EncodingException('Cannot encode value as Tree; got: '
+                  '${raw.runtimeType}');
+            }
+            final v = raw;
+            return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+          };
+          return _encodeTree(body);
+        }
+      ''');
+
+      expect(collapseWhitespace(actual), collapseWhitespace(expected));
+    });
+  });
+
+  group('three-way indirect to-JSON cycle', () {
+    test('A -> Map<String,B> -> Map<String,C> -> Map<String,A>', () {
+      final a = MapModel(
+        name: 'A',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      final b = MapModel(
+        name: 'B',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      final c = MapModel(
+        name: 'C',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      a.valueModel = b;
+      b.valueModel = c;
+      c.valueModel = a;
+
+      final ctx = InlineHelperContext(nameManager: nameManager);
+      final property = Property(
+        name: 'body',
+        model: a,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+      );
+      final built = buildToJsonPropertyExpression(
+        'body',
+        property,
+        nameManager: nameManager,
+        package: 'pkg',
+        helperContext: ctx,
+      );
+
+      expect(
+        built.inlineFunctions.map((h) => h.name).toList(),
+        ['_encodeC', '_encodeB', '_encodeA'],
+      );
+
+      final actual = emitMethod(built);
+      final expected = format(r'''
+        toJson() {
+          late final Object? Function(Object?) _encodeC;
+          late final Object? Function(Object?) _encodeB;
+          late final Object? Function(Object?) _encodeA;
+          _encodeC = (Object? raw) {
+            if (raw is! C) {
+              throw EncodingException('Cannot encode value as C; got: '
+                  '${raw.runtimeType}');
+            }
+            final v = raw;
+            return v.map((k, v) => MapEntry(k, _encodeA(v)));
+          };
+          _encodeB = (Object? raw) {
+            if (raw is! B) {
+              throw EncodingException('Cannot encode value as B; got: '
+                  '${raw.runtimeType}');
+            }
+            final v = raw;
+            return v.map((k, v) => MapEntry(k, _encodeC(v)));
+          };
+          _encodeA = (Object? raw) {
+            if (raw is! A) {
+              throw EncodingException('Cannot encode value as A; got: '
+                  '${raw.runtimeType}');
+            }
+            final v = raw;
+            return v.map((k, v) => MapEntry(k, _encodeB(v)));
+          };
+          return _encodeA(body);
+        }
+      ''');
+
+      expect(collapseWhitespace(actual), collapseWhitespace(expected));
+    });
+  });
+
   group('indirect to-JSON cycle', () {
     test('A <-> B emits encode helpers for both', () {
       final a = MapModel(

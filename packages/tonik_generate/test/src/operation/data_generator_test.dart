@@ -171,6 +171,70 @@ void main() {
     });
 
     test(
+      'handles single-content JSON with a recursive named MapModel body',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: testContext),
+          context: testContext,
+        );
+        tree.valueModel = tree;
+
+        final operation = Operation(
+          operationId: 'postTree',
+          path: '/tree',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'treeBody',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: tree,
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = r'''
+          Object? _data({required Tree body}) {
+            late final Object? Function(Object?) _encodeTree;
+            _encodeTree = (Object? raw) {
+              if (raw is! Tree) {
+                throw EncodingException(
+                  'Cannot encode value as Tree (at \'postTree.body\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+            };
+            return _encodeTree(body);
+          }
+        ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
       'handles multi-content JSON with a recursive named MapModel variant',
       () {
         final tree = MapModel(

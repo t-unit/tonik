@@ -3890,7 +3890,7 @@ bool operator ==(Object other) {
             factory TreeOrClassA.fromJson(Object? json) {
               late final Tree Function(Object?) _decodeTree;
               _decodeTree = (Object? v) =>
-                  v.decodeJsonMap((v) => _decodeTree(v), context: r'TreeOrClassA');
+                  v.decodeJsonMap((v) => _decodeTree(v), context: r"Tree (at 'TreeOrClassA')");
               try {
                 return TreeOrClassAClassA(ClassA.fromJson(json));
               } on Object catch (_) {}
@@ -3899,6 +3899,81 @@ bool operator ==(Object other) {
               } on Object catch (_) {}
               throw JsonDecodingException(r'Invalid JSON for TreeOrClassA');
             }
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test(
+      'OneOf { A, B } indirect cycle splices two mutually recursive '
+      'encode helpers into toJson',
+      () {
+        final a = MapModel(
+          name: 'A',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        final b = MapModel(
+          name: 'B',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        a.valueModel = b;
+        b.valueModel = a;
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'AOrB',
+          models: {
+            (discriminatorValue: null, model: a),
+            (discriminatorValue: null, model: b),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'AOrB');
+        final toJson = baseClass.methods.firstWhere(
+          (m) => m.name == 'toJson',
+        );
+        final actual = format(toJson.accept(emitter).toString());
+
+        const expected = r'''
+          @override
+          Object? toJson() {
+            late final Object? Function(Object?) _encodeB;
+            late final Object? Function(Object?) _encodeA;
+            _encodeB = (Object? raw) {
+              if (raw is! B) {
+                throw EncodingException(
+                  'Cannot encode value as B (at \'AOrB.value\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _encodeA(v)));
+            };
+            _encodeA = (Object? raw) {
+              if (raw is! A) {
+                throw EncodingException(
+                  'Cannot encode value as A (at \'AOrB.value\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _encodeB(v)));
+            };
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
+              AOrBA(:final value) => (_encodeA(value), null),
+              AOrBB(:final value) => (_encodeB(value), null),
+            };
+
+            return _$json;
           }
         ''';
 

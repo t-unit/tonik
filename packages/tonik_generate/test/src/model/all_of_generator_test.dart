@@ -2846,7 +2846,7 @@ class Holder {
     late final Tree Function(Object?) _decodeTree;
     _decodeTree = (Object? v) => v.decodeJsonMap(
       (v) => _decodeTree(v),
-      context: r'TreeBag.additionalProperties',
+      context: r"Tree (at 'TreeBag.additionalProperties')",
     );
     final _$map = json.decodeMap(context: r'TreeBag');
     const _$knownKeys = {r'id'};
@@ -2998,6 +2998,85 @@ class Holder {
           collapseWhitespace(format(expected)),
         );
       });
+
+      test(
+        'indirect cycle A <-> B in AP splices two mutually recursive '
+        'decode helpers into fromJson',
+        () {
+          final a = MapModel(
+            name: 'A',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          final b = MapModel(
+            name: 'B',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          a.valueModel = b;
+          b.valueModel = a;
+
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'AAndBBag',
+            models: {
+              ClassModel(
+                isDeprecated: false,
+                name: 'Base',
+                context: context,
+                properties: [
+                  Property(
+                    name: 'id',
+                    model: IntegerModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                  ),
+                ],
+              ),
+            },
+            context: context,
+            additionalProperties: TypedAdditionalProperties(valueModel: a),
+          );
+
+          final clazz = generator.generateClass(model);
+          final fromJson = clazz.constructors.firstWhere(
+            (c) => c.name == 'fromJson',
+          );
+          final emittedClass = emitConstructorMember(fromJson);
+
+          const expected = r'''
+class Holder {
+  factory Holder.fromJson(Object? json) {
+    late final B Function(Object?) _decodeB;
+    late final A Function(Object?) _decodeA;
+    _decodeB = (Object? v) =>
+        v.decodeJsonMap((v) => _decodeA(v), context: r'B');
+    _decodeA = (Object? v) => v.decodeJsonMap(
+      (v) => _decodeB(v),
+      context: r"A (at 'AAndBBag.additionalProperties')",
+    );
+    final _$map = json.decodeMap(context: r'AAndBBag');
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, A>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _decodeA(_$entry.value);
+      }
+    }
+    return AAndBBag(
+      $base: Base.fromJson(json),
+      additionalProperties: _$additional,
+    );
+  }
+}''';
+
+          expect(
+            collapseWhitespace(emittedClass),
+            collapseWhitespace(format(expected)),
+          );
+        },
+      );
     });
 
     group('NoAdditionalProperties', () {

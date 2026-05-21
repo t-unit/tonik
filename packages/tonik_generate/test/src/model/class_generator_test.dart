@@ -2894,40 +2894,41 @@ factory TaggedItem.fromJson(Object? json) {
     );
 
     group('recursion helper dedup across multiple properties', () {
+      ClassModel buildTwoTrees() {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        return ClassModel(
+          isDeprecated: false,
+          name: 'TwoTrees',
+          properties: [
+            Property(
+              name: 'left',
+              model: tree,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'right',
+              model: tree,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+      }
+
       test(
-        'two Tree-typed properties produce exactly one _decodeTree '
-        'declaration in fromJson',
+        'two Tree-typed properties splice exactly one _decodeTree helper '
+        'into fromJson',
         () {
-          final tree = MapModel(
-            name: 'Tree',
-            valueModel: AnyModel(context: context),
-            context: context,
-          );
-          tree.valueModel = tree;
-
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'TwoTrees',
-            properties: [
-              Property(
-                name: 'left',
-                model: tree,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'right',
-                model: tree,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-          );
-
-          final result = generator.generateClass(model);
+          final result = generator.generateClass(buildTwoTrees());
           final fromJsonCtor = result.constructors.firstWhere(
             (c) => c.name == 'fromJson',
           );
@@ -2936,66 +2937,60 @@ factory TaggedItem.fromJson(Object? json) {
               ..name = 'TwoTrees'
               ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
           );
-          final collapsed = collapseWhitespace(actual);
 
-          const forwardDecl =
-              'late final Tree Function(Object?) _decodeTree;';
-          final firstIdx = collapsed.indexOf(forwardDecl);
-          expect(firstIdx, isNot(-1));
+          const expected = r'''
+            class TwoTrees {
+              factory TwoTrees.fromJson(Object? json) {
+                late final Tree Function(Object?) _decodeTree;
+                _decodeTree = (Object? v) => v.decodeJsonMap(
+                  (v) => _decodeTree(v),
+                  context: r"Tree (at 'TwoTrees.left')",
+                );
+                final _$map = json.decodeMap(context: r'TwoTrees');
+                return TwoTrees(
+                  left: _decodeTree(_$map[r'left']),
+                  right: _decodeTree(_$map[r'right']),
+                );
+              }
+            }
+          ''';
+
           expect(
-            collapsed.indexOf(forwardDecl, firstIdx + forwardDecl.length),
-            -1,
-            reason: 'expected exactly one _decodeTree forward declaration',
+            collapseWhitespace(actual),
+            collapseWhitespace(format(expected)),
           );
         },
       );
 
       test(
-        'two Tree-typed properties produce exactly one _encodeTree '
-        'declaration in toJson',
+        'two Tree-typed properties splice exactly one _encodeTree helper '
+        'into toJson',
         () {
-          final tree = MapModel(
-            name: 'Tree',
-            valueModel: AnyModel(context: context),
-            context: context,
-          );
-          tree.valueModel = tree;
-
-          final model = ClassModel(
-            isDeprecated: false,
-            name: 'TwoTrees',
-            properties: [
-              Property(
-                name: 'left',
-                model: tree,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              Property(
-                name: 'right',
-                model: tree,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-            ],
-            context: context,
-          );
-
-          final result = generator.generateClass(model);
+          final result = generator.generateClass(buildTwoTrees());
           final toJson = result.methods.firstWhere((m) => m.name == 'toJson');
           final actual = format(toJson.accept(emitter).toString());
-          final collapsed = collapseWhitespace(actual);
 
-          const forwardDecl =
-              'late final Object? Function(Object?) _encodeTree;';
-          final firstIdx = collapsed.indexOf(forwardDecl);
-          expect(firstIdx, isNot(-1));
+          const expected = r'''
+            @override
+            Object? toJson() {
+              late final Object? Function(Object?) _encodeTree;
+              _encodeTree = (Object? raw) {
+                if (raw is! Tree) {
+                  throw EncodingException(
+                    'Cannot encode value as Tree (at \'TwoTrees.left\'); got: '
+                    '${raw.runtimeType}',
+                  );
+                }
+                final v = raw;
+                return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+              };
+              return {r'left': _encodeTree(left), r'right': _encodeTree(right)};
+            }
+          ''';
+
           expect(
-            collapsed.indexOf(forwardDecl, firstIdx + forwardDecl.length),
-            -1,
-            reason: 'expected exactly one _encodeTree forward declaration',
+            collapseWhitespace(actual),
+            collapseWhitespace(format(expected)),
           );
         },
       );

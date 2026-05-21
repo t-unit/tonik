@@ -89,11 +89,8 @@ void main() {
           valueModel: AnyModel(context: context),
           context: context,
         );
-        // Pre-reserve `_decodeTree` plus every numeric suffix up to and
-        // including the limit, leaving no candidate for `reserveHelperName`
-        // to settle on before the cap fires.
         final reserved = <String>{'_decodeTree'};
-        for (var i = 2; i <= 1001; i++) {
+        for (var i = 2; i <= 33; i++) {
           reserved.add('_decodeTree$i');
         }
         final ctx = InlineHelperContext(

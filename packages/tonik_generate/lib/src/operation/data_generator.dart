@@ -201,8 +201,8 @@ class DataGenerator {
           ..optionalParameters.addAll(multipartHeaderParams)
           ..lambda = false
           ..body = Block.of([
-            ...spliceInlineHelpers(inlineHelpers),
             if (!isRequired) const Code('if (body == null) return null;\n'),
+            ...spliceInlineHelpers(inlineHelpers),
             const Code('return switch (body) {'),
             ...switchCases,
             const Code('\n};'),

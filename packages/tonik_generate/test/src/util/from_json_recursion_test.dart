@@ -65,7 +65,7 @@ void main() {
         fromJson() {
           late final Tree Function(Object?) _decodeTree;
           _decodeTree = (Object? v) =>
-              v.decodeJsonMap((v) => _decodeTree(v));
+              v.decodeJsonMap((v) => _decodeTree(v), context: r'Tree');
           return _decodeTree(json);
         }
       ''');
@@ -157,8 +157,8 @@ void main() {
         fromJson() {
           late final B Function(Object?) _decodeB;
           late final A Function(Object?) _decodeA;
-          _decodeB = (Object? v) => v.decodeJsonMap((v) => _decodeA(v));
-          _decodeA = (Object? v) => v.decodeJsonMap((v) => _decodeB(v));
+          _decodeB = (Object? v) => v.decodeJsonMap((v) => _decodeA(v), context: r'B');
+          _decodeA = (Object? v) => v.decodeJsonMap((v) => _decodeB(v), context: r'A');
           return _decodeA(json);
         }
       ''');
@@ -192,8 +192,100 @@ void main() {
         fromJson() {
           late final Tree Function(Object?) _decodeTree;
           _decodeTree = (Object? v) => v.decodeJsonMap(
-              (v) => v == null ? null : _decodeTree(v));
+              (v) => v == null ? null : _decodeTree(v), context: r'Tree');
           return json == null ? null : _decodeTree(json);
+        }
+      ''');
+
+      expect(collapseWhitespace(actual), collapseWhitespace(expected));
+    });
+  });
+
+  group('AliasModel chain recursion', () {
+    test('Tree -> TreeAlias -> Tree still emits a single decode helper', () {
+      final tree = MapModel(
+        name: 'Tree',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      final alias = AliasModel(
+        name: 'TreeAlias',
+        model: tree,
+        context: context,
+      );
+      tree.valueModel = alias;
+
+      final ctx = InlineHelperContext(nameManager: nameManager);
+      final built = buildFromJsonValueExpression(
+        'json',
+        model: tree,
+        nameManager: nameManager,
+        package: 'pkg',
+        helperContext: ctx,
+      );
+
+      expect(built.inlineFunctions, hasLength(1));
+      expect(built.inlineFunctions.single.name, '_decodeTree');
+
+      final actual = emitMethod(built);
+      final expected = format('''
+        fromJson() {
+          late final Tree Function(Object?) _decodeTree;
+          _decodeTree = (Object? v) =>
+              v.decodeJsonMap((v) => _decodeTree(v), context: r'Tree');
+          return _decodeTree(json);
+        }
+      ''');
+
+      expect(collapseWhitespace(actual), collapseWhitespace(expected));
+    });
+  });
+
+  group('three-way indirect cycle', () {
+    test('A -> Map<String,B> -> Map<String,C> -> Map<String,A>', () {
+      final a = MapModel(
+        name: 'A',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      final b = MapModel(
+        name: 'B',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      final c = MapModel(
+        name: 'C',
+        valueModel: AnyModel(context: context),
+        context: context,
+      );
+      a.valueModel = b;
+      b.valueModel = c;
+      c.valueModel = a;
+
+      final ctx = InlineHelperContext(nameManager: nameManager);
+      final built = buildFromJsonValueExpression(
+        'json',
+        model: a,
+        nameManager: nameManager,
+        package: 'pkg',
+        helperContext: ctx,
+      );
+
+      expect(
+        built.inlineFunctions.map((h) => h.name).toList(),
+        ['_decodeC', '_decodeB', '_decodeA'],
+      );
+
+      final actual = emitMethod(built);
+      final expected = format('''
+        fromJson() {
+          late final C Function(Object?) _decodeC;
+          late final B Function(Object?) _decodeB;
+          late final A Function(Object?) _decodeA;
+          _decodeC = (Object? v) => v.decodeJsonMap((v) => _decodeA(v), context: r'C');
+          _decodeB = (Object? v) => v.decodeJsonMap((v) => _decodeC(v), context: r'B');
+          _decodeA = (Object? v) => v.decodeJsonMap((v) => _decodeB(v), context: r'A');
+          return _decodeA(json);
         }
       ''');
 

@@ -21,9 +21,9 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 /// helper. Subsequent requests with the same `(NamedModel, prefix)` key
 /// return the originally-reserved name so dedup is automatic.
 ///
-/// Single-threaded; one instance per generated method body. Sharing an
-/// instance across methods would silently emit duplicate helpers, because
-/// the `_emittedHelpers` set is method-local by design.
+/// One instance per generated method body. Sharing across methods would
+/// silently emit duplicate helpers because `_emittedHelpers` is
+/// method-local by design.
 class InlineHelperContext {
   InlineHelperContext({
     required this.nameManager,
@@ -61,11 +61,12 @@ class InlineHelperContext {
     }
   }
 
-  /// Redundant defensive check kept in case the emit-before-recurse
-  /// ordering in `_buildNamedTypedef*HelperCall` is changed; today
-  /// [markHelperEmitted] is always called before [withRecursion], so when
-  /// [isOnStack] would be true [isHelperEmitted] is already true and
-  /// short-circuits in every `_shouldUseHelper` caller.
+  /// Detects whether [model] is currently being expanded on this
+  /// context's recursion stack. Today this is redundant with
+  /// [isHelperEmitted] because every `_buildNamedTypedef*HelperCall` calls
+  /// [markHelperEmitted] immediately before [withRecursion]. The check
+  /// remains as a load-bearing safety net for future call sites that
+  /// might not preserve that ordering — do not delete it as dead code.
   bool isOnStack(NamedModel model) =>
       _stack.any((entry) => identical(entry, model));
 
@@ -109,8 +110,11 @@ class InlineHelperContext {
   }
 
   /// Upper bound on suffixed retries before [reserveHelperName] throws.
-  /// Set well above any plausible legitimate clash.
-  static const int _suffixCollisionLimit = 1000;
+  /// Set tightly so a generator bug producing exponential collisions
+  /// surfaces in test logs instead of running silently for thousands of
+  /// iterations. Legitimate single-method clashes do not exceed single
+  /// digits.
+  static const int _suffixCollisionLimit = 32;
 
   /// True if a helper function body for `(model, prefix)` has been
   /// emitted into [BuiltExpression.inlineFunctions] at some level above

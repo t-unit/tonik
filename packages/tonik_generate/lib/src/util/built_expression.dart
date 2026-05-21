@@ -4,7 +4,8 @@ import 'package:meta/meta.dart';
 /// The result of an expression builder.
 ///
 /// Every value-encoding/decoding builder in `tonik_generate` returns a
-/// `BuiltExpression`. It carries:
+/// `BuiltExpression` (or [BuiltStatements], for builders that emit a
+/// sequence of statements rather than a single expression). It carries:
 ///
 /// * The inner [Expression] (accessed via [expression], [code], [statement],
 ///   or [accept]) that the caller substitutes at the use-site.
@@ -29,15 +30,13 @@ import 'package:meta/meta.dart';
 /// nested closure body whose helpers will flow up the chain — should use
 /// [unsafeRawBody], which skips the assertion. Read its dartdoc before
 /// reaching for it.
-///
-/// Pure value type; not thread-safe but immutable instances are safe to
-/// share.
 @immutable
 class BuiltExpression {
-  const BuiltExpression({
+  BuiltExpression({
     required Expression body,
-    this.inlineFunctions = const [],
-  }) : _body = body;
+    List<InlineHelper> inlineFunctions = const [],
+  })  : _body = body,
+        inlineFunctions = List.unmodifiable(inlineFunctions);
 
   /// Convenience for the common case: just an expression, no helpers.
   const BuiltExpression.simple(Expression body)
@@ -45,6 +44,9 @@ class BuiltExpression {
         inlineFunctions = const [];
 
   final Expression _body;
+
+  /// Inline helpers the caller must splice into the enclosing method body
+  /// before any use of this expression. May be empty.
   final List<InlineHelper> inlineFunctions;
 
   /// The result expression. Throws if [inlineFunctions] is non-empty, so
@@ -101,8 +103,13 @@ class BuiltExpression {
 ///
 /// * [forwardDeclaration] — a `late final Return Function(Param) name;`
 ///   line emitted at the top of the enclosing method's body.
-/// * [assignment] — a `name = (param) => body;` line emitted after all
-///   forward declarations but before any use site.
+/// * [assignment] — a single statement binding a function expression to
+///   `name`, emitted after every forward declaration but before any use
+///   site. The body may be arrow-form (the decode side emits
+///   `name = (Object? v) => body;`) or a statement block (the encode side
+///   emits `name = (Object? raw) { if (raw is! T) throw ...; final v = raw;
+///   return body; };` so the runtime cast failure can be reported with the
+///   typedef name).
 ///
 /// Splitting declaration from assignment lets mutually-recursive helpers
 /// (`_encodeAMap` <-> `_encodeBMap`) reference each other without a
@@ -166,15 +173,13 @@ List<InlineHelper> collectInlineFunctions(
 /// that references undeclared local functions. Callers composing the
 /// statements into a larger block and propagating [inlineFunctions] up to
 /// a parent builder should use [unsafeRawStatements].
-///
-/// Pure value type; not thread-safe but immutable instances are safe to
-/// share.
 @immutable
 class BuiltStatements {
-  const BuiltStatements({
+  BuiltStatements({
     required List<Code> statements,
-    this.inlineFunctions = const [],
-  }) : _statements = statements;
+    List<InlineHelper> inlineFunctions = const [],
+  })  : _statements = List.unmodifiable(statements),
+        inlineFunctions = List.unmodifiable(inlineFunctions);
 
   /// Convenience for the common case: just statements, no helpers.
   const BuiltStatements.simple(List<Code> statements)
@@ -182,6 +187,9 @@ class BuiltStatements {
         inlineFunctions = const [];
 
   final List<Code> _statements;
+
+  /// Inline helpers the caller must splice into the enclosing method body
+  /// before any use of these statements. May be empty.
   final List<InlineHelper> inlineFunctions;
 
   /// The result statements. Throws if [inlineFunctions] is non-empty, so

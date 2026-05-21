@@ -20,9 +20,11 @@ import 'package:tonik_core/tonik_core.dart';
 ///
 /// Returns `false` unless [start] is a named [MapModel] or [ListModel].
 ///
-/// Only the named typedef passed in as [start] is reported on; the function
-/// never identifies a different model as the recursion target. The
-/// `bool` return reflects that callers only need the yes/no answer.
+/// Cycles reachable from [start] need not pass through [start] itself —
+/// e.g. `A = Map<String, B>; B = Map<String, B>` walks from `A`, finds
+/// the `B`-only cycle, and returns `true`. Callers only need the yes/no
+/// answer because the recovery action — emitting a local helper — is
+/// identical in either case.
 bool isRecursive(Model start) {
   final namedStart = _asNamedTypedef(start);
   if (namedStart == null) return false;

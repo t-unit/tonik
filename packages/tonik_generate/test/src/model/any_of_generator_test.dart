@@ -3763,7 +3763,7 @@ Object? toJson() {
             factory TreeAndClassA.fromJson(Object? json) {
               late final Tree Function(Object?) _decodeTree;
               _decodeTree = (Object? v) =>
-                  v.decodeJsonMap((v) => _decodeTree(v), context: r'TreeAndClassA');
+                  v.decodeJsonMap((v) => _decodeTree(v), context: r"Tree (at 'TreeAndClassA')");
               ClassA? classA;
               try {
                 classA = ClassA.fromJson(json);
@@ -3782,6 +3782,81 @@ Object? toJson() {
                 );
               }
               return TreeAndClassA(classA: classA, tree: tree);
+            }
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test(
+      'AnyOf { A, B } indirect cycle splices two mutually recursive '
+      'decode helpers into fromJson',
+      () {
+        final a = MapModel(
+          name: 'A',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        final b = MapModel(
+          name: 'B',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        a.valueModel = b;
+        b.valueModel = a;
+
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'AAndB',
+          models: {
+            (discriminatorValue: null, model: a),
+            (discriminatorValue: null, model: b),
+          },
+          context: context,
+        );
+
+        final clazz = generator.generateClass(model);
+        final fromJsonCtor = clazz.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final actual = format(
+          Class((b) => b
+            ..name = 'AAndB'
+            ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+        );
+
+        const expected = '''
+          class AAndB {
+            factory AAndB.fromJson(Object? json) {
+              late final B Function(Object?) _decodeB;
+              late final A Function(Object?) _decodeA;
+              _decodeB = (Object? v) =>
+                  v.decodeJsonMap((v) => _decodeA(v), context: r'B');
+              _decodeA = (Object? v) =>
+                  v.decodeJsonMap((v) => _decodeB(v), context: r"A (at 'AAndB')");
+              A? a;
+              try {
+                a = _decodeA(json);
+              } on Object catch (_) {
+                a = null;
+              }
+              B? b;
+              try {
+                b = _decodeB(json);
+              } on Object catch (_) {
+                b = null;
+              }
+              if (a == null && b == null) {
+                throw JsonDecodingException(
+                  r'Invalid JSON for AAndB: all variants failed to decode',
+                );
+              }
+              return AAndB(a: a, b: b);
             }
           }
         ''';

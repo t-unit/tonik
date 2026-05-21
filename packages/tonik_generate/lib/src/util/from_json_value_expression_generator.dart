@@ -627,32 +627,19 @@ BuiltExpression _buildNamedTypedefHelperCall({
     helperContext
       ..markHelperEmitted(named, _decodePrefix)
       ..withRecursion(named, () {
-        final inner = switch (model) {
-          MapModel() => _buildMapFromJsonBody(
-            'v',
-            model,
-            nameManager,
-            helperContext,
-            package: package,
-            contextClass: contextClass,
-            contextProperty: contextProperty,
-            useImmutableCollections: useImmutableCollections,
-          ),
-          ListModel() => _buildListFromJsonBody(
-            'v',
-            model,
-            nameManager,
-            helperContext,
-            package: package,
-            contextClass: contextClass,
-            contextProperty: contextProperty,
-            useImmutableCollections: useImmutableCollections,
-          ),
-          _ => throw ArgumentError(
-            'Decode helper only valid for named MapModel/ListModel; '
-            'got ${model.runtimeType} for typedef "$typedefName"',
-          ),
-        };
+        final helperContextClass = _helperBodyContextClass(
+          typedefName,
+          contextClass,
+          contextProperty,
+        );
+        final inner = _buildTypedefHelperBody(
+          model: model,
+          nameManager: nameManager,
+          helperContext: helperContext,
+          package: package,
+          helperContextClass: helperContextClass,
+          useImmutableCollections: useImmutableCollections,
+        );
 
         final returnType = refer(typedefName, typedefUrl);
         final paramType = refer('Object?', 'dart:core');
@@ -689,6 +676,106 @@ BuiltExpression _buildNamedTypedefHelperCall({
 }
 
 const _decodePrefix = '_decode';
+
+String _helperBodyContextClass(
+  String typedefName,
+  String? contextClass,
+  String? contextProperty,
+) {
+  final location = [?contextClass, ?contextProperty].join('.');
+  if (location.isEmpty) return typedefName;
+  return "$typedefName (at '$location')";
+}
+
+/// Builds the body of a typedef decode helper (the right-hand side of
+/// `_decodeX = (Object? v) => <body>`). The immediate decodeJsonMap/
+/// decodeJsonList call uses [helperContextClass] for its `context:`
+/// argument so a runtime type-mismatch on the helper input is reported
+/// against the typedef's logical name. The value decoder is built with
+/// no inherited context so any nested typedef helpers it triggers stay
+/// standalone — each helper carries only its own type identity.
+BuiltExpression _buildTypedefHelperBody({
+  required Model model,
+  required NameManager nameManager,
+  required InlineHelperContext helperContext,
+  required String package,
+  required String helperContextClass,
+  required bool useImmutableCollections,
+}) {
+  final contextParam = _buildContextParam(helperContextClass, null);
+  switch (model) {
+    case final MapModel mapModel:
+      final innerBuilt = _buildFromJson(
+        'v',
+        model: mapModel.valueModel,
+        nameManager: nameManager,
+        package: package,
+        helperContext: helperContext,
+        useImmutableCollections: useImmutableCollections,
+      );
+      final decoderClosure = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((p) => p..name = 'v'))
+          ..body = innerBuilt.unsafeRawBody.code,
+      ).closure;
+      var result = refer('v').property('decodeJsonMap').call(
+        [decoderClosure],
+        contextParam,
+      );
+      if (useImmutableCollections) {
+        result = _wrapImmutable(
+          'IMap',
+          result,
+          isNullable: false,
+          value: 'v',
+        );
+      }
+      return BuiltExpression(
+        body: result,
+        inlineFunctions: innerBuilt.inlineFunctions,
+      );
+    case final ListModel listModel:
+      final inlineFunctions = <InlineHelper>[];
+      final content = listModel.content;
+      final unwrappedContent = content is AliasModel ? content.model : content;
+      final inner = _buildFromJson(
+        'e',
+        model: unwrappedContent,
+        nameManager: nameManager,
+        package: package,
+        helperContext: helperContext,
+        useImmutableCollections: useImmutableCollections,
+      );
+      inlineFunctions.addAll(inner.inlineFunctions);
+      final mapFunction = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+          ..body = inner.unsafeRawBody.code,
+      ).closure;
+      var result = refer('v').property('decodeJsonList').call(
+        [],
+        contextParam,
+        [refer('Object?', 'dart:core')],
+      ).property('map').call([mapFunction]).property('toList').call([]);
+      if (useImmutableCollections) {
+        result = _wrapImmutable(
+          'IList',
+          result,
+          isNullable: false,
+          value: 'v',
+        );
+      }
+      return BuiltExpression(
+        body: result,
+        inlineFunctions: inlineFunctions,
+      );
+    default:
+      throw ArgumentError(
+        'Decode helper only valid for named MapModel/ListModel; '
+        'got ${model.runtimeType}',
+      );
+  }
+}
 
 const _ficUrl =
     'package:fast_immutable_collections/fast_immutable_collections.dart';

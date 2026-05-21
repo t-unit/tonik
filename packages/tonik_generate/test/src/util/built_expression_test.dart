@@ -79,6 +79,15 @@ void main() {
       final built = BuiltExpression.simple(refer('value'));
       expect(built.unsafeRawBody, refer('value'));
     });
+
+    test('inlineFunctions list is unmodifiable', () {
+      final helper = sampleHelper('_decodeTree');
+      final built = BuiltExpression(
+        body: refer('x'),
+        inlineFunctions: [helper],
+      );
+      expect(() => built.inlineFunctions.add(helper), throwsUnsupportedError);
+    });
   });
 
   group('dedupHelpers', () {
@@ -172,13 +181,22 @@ void main() {
         statements: statements,
         inlineFunctions: [helper],
       );
-      expect(built.unsafeRawStatements, same(statements));
+      expect(built.unsafeRawStatements, statements);
     });
 
     test('unsafeRawStatements returns statements without helpers', () {
       const statements = [Code('x;')];
       const built = BuiltStatements.simple(statements);
       expect(built.unsafeRawStatements, same(statements));
+    });
+
+    test('inlineFunctions list is unmodifiable', () {
+      final helper = sampleHelper('_decodeTree');
+      final built = BuiltStatements(
+        statements: const [Code('x;')],
+        inlineFunctions: [helper],
+      );
+      expect(() => built.inlineFunctions.add(helper), throwsUnsupportedError);
     });
   });
 }

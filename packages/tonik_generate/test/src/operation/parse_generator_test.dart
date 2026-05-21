@@ -2445,7 +2445,7 @@ Tree _parseResponse(Response<List<int>> response) {
     case (200, r'application/json'):
       final _$json = decodeResponseJson<Object?>(response.data);
       late final Tree Function(Object?) _decodeTree;
-      _decodeTree = (Object? v) => v.decodeJsonMap((v) => _decodeTree(v));
+      _decodeTree = (Object? v) => v.decodeJsonMap((v) => _decodeTree(v), context: r'Tree');
       final _$body = _decodeTree(_$json);
       return _$body;
     default:
