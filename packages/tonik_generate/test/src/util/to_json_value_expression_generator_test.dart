@@ -1,12 +1,11 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
-
-import 'name_manager_test_helper.dart';
 
 void main() {
   late Context context;
@@ -21,7 +20,10 @@ void main() {
       useNullSafetySyntax: true,
       allocator: CorePrefixedAllocator(),
     );
-    nameManager = testNameManager();
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
   });
 
   String emit(BuiltExpression built) =>
