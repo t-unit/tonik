@@ -1,22 +1,58 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
+import 'package:tonik_generate/src/util/recursion_detector.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
-/// Creates a Dart expression that correctly deserializes a JSON value
+/// Creates a [BuiltExpression] that correctly deserializes a JSON value
 /// to its Dart representation.
 ///
 /// When [useImmutableCollections] is `true`, decoded lists and maps are
 /// wrapped in `IList()` / `IMap()` constructors at every nesting level so
 /// the result is `IList` / `IMap` throughout.
-Expression buildFromJsonValueExpression(
+///
+/// When [helperContext] is provided, self-referential `MapModel`/`ListModel`
+/// typedefs are broken via local recursive functions returned in
+/// [BuiltExpression.inlineFunctions]. If omitted, recursion blocking is
+/// skipped — callers using this overload must guarantee the model is
+/// acyclic (e.g. a single primitive header decode).
+BuiltExpression buildFromJsonValueExpression(
   String value, {
   required Model model,
   required NameManager nameManager,
   required String package,
+  InlineHelperContext? helperContext,
+  String? contextClass,
+  String? contextProperty,
+  bool isNullable = false,
+  bool useImmutableCollections = false,
+}) {
+  final ctx =
+      helperContext ?? InlineHelperContext(nameManager: nameManager);
+  return _buildFromJson(
+    value,
+    model: model,
+    nameManager: nameManager,
+    package: package,
+    helperContext: ctx,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
+    isNullable: isNullable,
+    useImmutableCollections: useImmutableCollections,
+  );
+}
+
+BuiltExpression _buildFromJson(
+  String value, {
+  required Model model,
+  required NameManager nameManager,
+  required String package,
+  required InlineHelperContext helperContext,
   String? contextClass,
   String? contextProperty,
   bool isNullable = false,
@@ -27,59 +63,69 @@ Expression buildFromJsonValueExpression(
 
   switch (model) {
     case IntegerModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableInt' : 'decodeJsonInt',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(nullable ? 'decodeJsonNullableInt' : 'decodeJsonInt')
+            .call([], contextParam),
+      );
     case NumberModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableNum' : 'decodeJsonNum',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(nullable ? 'decodeJsonNullableNum' : 'decodeJsonNum')
+            .call([], contextParam),
+      );
     case DoubleModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableDouble' : 'decodeJsonDouble',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(
+              nullable ? 'decodeJsonNullableDouble' : 'decodeJsonDouble',
+            )
+            .call([], contextParam),
+      );
     case DecimalModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableBigDecimal' : 'decodeJsonBigDecimal',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(
+              nullable
+                  ? 'decodeJsonNullableBigDecimal'
+                  : 'decodeJsonBigDecimal',
+            )
+            .call([], contextParam),
+      );
     case StringModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableString' : 'decodeJsonString',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(
+              nullable ? 'decodeJsonNullableString' : 'decodeJsonString',
+            )
+            .call([], contextParam),
+      );
     case BooleanModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableBool' : 'decodeJsonBool',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(nullable ? 'decodeJsonNullableBool' : 'decodeJsonBool')
+            .call([], contextParam),
+      );
     case DateTimeModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableDateTime' : 'decodeJsonDateTime',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(
+              nullable ? 'decodeJsonNullableDateTime' : 'decodeJsonDateTime',
+            )
+            .call([], contextParam),
+      );
     case DateModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableDate' : 'decodeJsonDate',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(nullable ? 'decodeJsonNullableDate' : 'decodeJsonDate')
+            .call([], contextParam),
+      );
     case UriModel():
-      return refer(value)
-          .property(
-            nullable ? 'decodeJsonNullableUri' : 'decodeJsonUri',
-          )
-          .call([], contextParam);
+      return BuiltExpression.simple(
+        refer(value)
+            .property(nullable ? 'decodeJsonNullableUri' : 'decodeJsonUri')
+            .call([], contextParam),
+      );
     case BinaryModel():
       final decodeExpr = refer(
         value,
@@ -88,9 +134,10 @@ Expression buildFromJsonValueExpression(
         'TonikFileBytes',
         'package:tonik_util/tonik_util.dart',
       ).call([decodeExpr]);
-      return nullable
+      final body = nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, wrapExpr)
           : wrapExpr;
+      return BuiltExpression.simple(body);
     case Base64Model():
       final decodeExpr = refer(
         value,
@@ -99,14 +146,16 @@ Expression buildFromJsonValueExpression(
         'TonikFileBytes',
         'package:tonik_util/tonik_util.dart',
       ).call([decodeExpr]);
-      return nullable
+      final body = nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, wrapExpr)
           : wrapExpr;
+      return BuiltExpression.simple(body);
     case ListModel():
       return _buildListFromJsonExpression(
         value,
         model,
         nameManager,
+        helperContext,
         package: package,
         contextClass: contextClass,
         contextProperty: contextProperty,
@@ -118,6 +167,7 @@ Expression buildFromJsonValueExpression(
         value,
         model,
         nameManager,
+        helperContext,
         package: package,
         contextClass: contextClass,
         contextProperty: contextProperty,
@@ -130,24 +180,27 @@ Expression buildFromJsonValueExpression(
         className,
         sourceFileUrl(package, 'model', className),
       ).property('fromJson').call([refer(value)]);
-      return nullable
+      final body = nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, expr)
           : expr;
+      return BuiltExpression.simple(body);
     case EnumModel():
       final className = nameManager.modelName(model);
       final expr = refer(
         className,
         sourceFileUrl(package, 'model', className),
       ).property('fromJson').call([refer(value)]);
-      return nullable
+      final body = nullable
           ? refer(value).equalTo(literalNull).conditional(literalNull, expr)
           : expr;
+      return BuiltExpression.simple(body);
     case AliasModel():
-      return buildFromJsonValueExpression(
+      return _buildFromJson(
         value,
-        model: model.resolved,
+        model: model.model,
         nameManager: nameManager,
         package: package,
+        helperContext: helperContext,
         contextClass: contextClass,
         contextProperty: contextProperty,
         isNullable: nullable,
@@ -157,24 +210,74 @@ Expression buildFromJsonValueExpression(
       final throwExpr = generateJsonDecodingExceptionExpression(
         'Cannot decode NeverModel - this type does not permit any value.',
       );
-      return nullable
-          ? refer(
-              value,
-            ).equalTo(literalNull).conditional(literalNull, throwExpr)
+      final body = nullable
+          ? refer(value)
+                .equalTo(literalNull)
+                .conditional(literalNull, throwExpr)
           : throwExpr;
+      return BuiltExpression.simple(body);
     case AnyModel():
-      return refer(value);
+      return BuiltExpression.simple(refer(value));
     case NamedModel() || CompositeModel():
-      return generateJsonDecodingExceptionExpression(
-        'Unsupported model type for JSON decoding.',
+      return BuiltExpression.simple(
+        generateJsonDecodingExceptionExpression(
+          'Unsupported model type for JSON decoding.',
+        ),
       );
   }
 }
 
-Expression _buildListFromJsonExpression(
+BuiltExpression _buildListFromJsonExpression(
   String value,
   ListModel model,
-  NameManager nameManager, {
+  NameManager nameManager,
+  InlineHelperContext helperContext, {
+  String? package,
+  String? contextClass,
+  String? contextProperty,
+  bool isNullable = false,
+  bool useImmutableCollections = false,
+}) {
+  if (_shouldUseHelper(model, helperContext)) {
+    return _buildNamedTypedefHelperCall(
+      value: value,
+      model: model,
+      nameManager: nameManager,
+      helperContext: helperContext,
+      package: package ?? '',
+      contextClass: contextClass,
+      contextProperty: contextProperty,
+      isNullable: isNullable,
+      useImmutableCollections: useImmutableCollections,
+    );
+  }
+
+  return _buildListFromJsonBody(
+    value,
+    model,
+    nameManager,
+    helperContext,
+    package: package,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
+    isNullable: isNullable,
+    useImmutableCollections: useImmutableCollections,
+  );
+}
+
+bool _shouldUseHelper(Model model, InlineHelperContext helperContext) {
+  if (model is! NamedModel) return false;
+  if (model.name == null) return false;
+  return helperContext.isHelperEmitted(model, _decodePrefix) ||
+      helperContext.isOnStack(model) ||
+      findRecursionTarget(model) != null;
+}
+
+BuiltExpression _buildListFromJsonBody(
+  String value,
+  ListModel model,
+  NameManager nameManager,
+  InlineHelperContext helperContext, {
   String? package,
   String? contextClass,
   String? contextProperty,
@@ -194,25 +297,28 @@ Expression _buildListFromJsonExpression(
   final listDecoder =
       effectiveNullable ? 'decodeJsonNullableList' : 'decodeJsonList';
 
-  // Unwrap alias to get the underlying model
   final unwrappedContent = content is AliasModel ? content.model : content;
+  final inlineFunctions = <InlineHelper>[];
 
   Expression result;
 
   switch (unwrappedContent) {
     case final ListModel nestedList:
+      final inner = _buildListFromJsonExpression(
+        'e',
+        nestedList,
+        nameManager,
+        helperContext,
+        package: package,
+        contextClass: contextClass,
+        contextProperty: contextProperty,
+        useImmutableCollections: useImmutableCollections,
+      );
+      inlineFunctions.addAll(inner.inlineFunctions);
       final mapFunction = Method(
         (b) => b
           ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body = _buildListFromJsonExpression(
-            'e',
-            nestedList,
-            nameManager,
-            package: package,
-            contextClass: contextClass,
-            contextProperty: contextProperty,
-            useImmutableCollections: useImmutableCollections,
-          ).code,
+          ..body = inner.unsafeRawBody.code,
       ).closure;
       final listExpr = refer(value).property(listDecoder).call(
         [],
@@ -237,7 +343,6 @@ Expression _buildListFromJsonExpression(
         AnyOfModel() ||
         EnumModel():
       final className = nameManager.modelName(unwrappedContent);
-      // Use tear-off for fromJson
       final mapFunction = refer(
         className,
         package != null ? sourceFileUrl(package, 'model', className) : null,
@@ -260,18 +365,21 @@ Expression _buildListFromJsonExpression(
                 .call([]);
 
     case final MapModel mapModel:
+      final inner = _buildMapFromJsonExpression(
+        'e',
+        mapModel,
+        nameManager,
+        helperContext,
+        package: package,
+        contextClass: contextClass,
+        contextProperty: contextProperty,
+        useImmutableCollections: useImmutableCollections,
+      );
+      inlineFunctions.addAll(inner.inlineFunctions);
       final mapDecoderClosure = Method(
         (b) => b
           ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body = _buildMapFromJsonExpression(
-            'e',
-            mapModel,
-            nameManager,
-            package: package,
-            contextClass: contextClass,
-            contextProperty: contextProperty,
-            useImmutableCollections: useImmutableCollections,
-          ).code,
+          ..body = inner.unsafeRawBody.code,
       ).closure;
       final mapListExpr = refer(value).property(listDecoder).call(
         [],
@@ -376,8 +484,11 @@ Expression _buildListFromJsonExpression(
                 .call([]);
 
     case NeverModel():
-      return generateJsonDecodingExceptionExpression(
-        'Cannot decode List<NeverModel> - this type does not permit any value.',
+      return BuiltExpression.simple(
+        generateJsonDecodingExceptionExpression(
+          'Cannot decode List<NeverModel> - this type does not permit any '
+          'value.',
+        ),
       );
 
     default:
@@ -387,8 +498,6 @@ Expression _buildListFromJsonExpression(
       ).property(listDecoder).call([], contextParam, [typeArg]);
   }
 
-  // When using immutable collections, wrap with IList() constructor to convert.
-  // Using refer() ensures the fast_immutable_collections import is tracked.
   if (useImmutableCollections) {
     result = _wrapImmutable(
       'IList',
@@ -398,13 +507,52 @@ Expression _buildListFromJsonExpression(
     );
   }
 
-  return result;
+  return BuiltExpression(body: result, inlineFunctions: inlineFunctions);
 }
 
-Expression _buildMapFromJsonExpression(
+BuiltExpression _buildMapFromJsonExpression(
   String value,
   MapModel model,
-  NameManager nameManager, {
+  NameManager nameManager,
+  InlineHelperContext helperContext, {
+  String? package,
+  String? contextClass,
+  String? contextProperty,
+  bool isNullable = false,
+  bool useImmutableCollections = false,
+}) {
+  if (_shouldUseHelper(model, helperContext)) {
+    return _buildNamedTypedefHelperCall(
+      value: value,
+      model: model,
+      nameManager: nameManager,
+      helperContext: helperContext,
+      package: package ?? '',
+      contextClass: contextClass,
+      contextProperty: contextProperty,
+      isNullable: isNullable,
+      useImmutableCollections: useImmutableCollections,
+    );
+  }
+
+  return _buildMapFromJsonBody(
+    value,
+    model,
+    nameManager,
+    helperContext,
+    package: package,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
+    isNullable: isNullable,
+    useImmutableCollections: useImmutableCollections,
+  );
+}
+
+BuiltExpression _buildMapFromJsonBody(
+  String value,
+  MapModel model,
+  NameManager nameManager,
+  InlineHelperContext helperContext, {
   String? package,
   String? contextClass,
   String? contextProperty,
@@ -414,23 +562,23 @@ Expression _buildMapFromJsonExpression(
   final contextParam = _buildContextParam(contextClass, contextProperty);
   final valueModel = model.valueModel;
 
-  // Build a decoder closure for map values.
+  final innerBuilt = _buildFromJson(
+    'v',
+    model: valueModel,
+    nameManager: nameManager,
+    package: package ?? '',
+    helperContext: helperContext,
+    contextClass: contextClass,
+    contextProperty: contextProperty,
+    useImmutableCollections: useImmutableCollections,
+  );
+
   final decoderClosure = Method(
     (b) => b
       ..requiredParameters.add(Parameter((p) => p..name = 'v'))
-      ..body = buildFromJsonValueExpression(
-        'v',
-        model: valueModel,
-        nameManager: nameManager,
-        package: package ?? '',
-        contextClass: contextClass,
-        contextProperty: contextProperty,
-        useImmutableCollections: useImmutableCollections,
-      ).code,
+      ..body = innerBuilt.unsafeRawBody.code,
   ).closure;
 
-  // When using immutable collections, always use non-nullable decoder and
-  // handle null ourselves so that refer('IMap', ficUrl) tracks the import.
   final effectiveNullable = !useImmutableCollections && isNullable;
   final mapDecoder =
       effectiveNullable ? 'decodeJsonNullableMap' : 'decodeJsonMap';
@@ -440,8 +588,6 @@ Expression _buildMapFromJsonExpression(
     contextParam,
   );
 
-  // When using immutable collections, wrap with IMap() constructor to convert.
-  // Using refer() ensures the fast_immutable_collections import is tracked.
   if (useImmutableCollections) {
     result = _wrapImmutable(
       'IMap',
@@ -451,22 +597,106 @@ Expression _buildMapFromJsonExpression(
     );
   }
 
-  return result;
+  return BuiltExpression(
+    body: result,
+    inlineFunctions: innerBuilt.inlineFunctions,
+  );
 }
+
+/// Emits a call to a local recursive `_decode<TypeName>(value)` helper and
+/// declares the helper itself the first time the typedef is encountered.
+///
+/// [model] must be a [MapModel] or [ListModel] with a non-null `name` —
+/// the only models emitted as typedefs.
+BuiltExpression _buildNamedTypedefHelperCall({
+  required String value,
+  required Model model,
+  required NameManager nameManager,
+  required InlineHelperContext helperContext,
+  required String package,
+  required String? contextClass,
+  required String? contextProperty,
+  required bool isNullable,
+  required bool useImmutableCollections,
+}) {
+  final named = model as NamedModel;
+  final typedefName = nameManager.modelName(model);
+  final typedefUrl = sourceFileUrl(package, 'model', typedefName);
+  final helperName = helperContext.reserveHelperName(named, _decodePrefix);
+
+  final helpers = <InlineHelper>[];
+  if (!helperContext.isHelperEmitted(named, _decodePrefix)) {
+    // Mark emitted BEFORE recursing so self-references inside the body
+    // resolve to a call to `helperName` rather than rebuilding the body.
+    helperContext
+      ..markHelperEmitted(named, _decodePrefix)
+      ..withRecursion(named, () {
+        final inner = switch (model) {
+          MapModel() => _buildMapFromJsonBody(
+            'v',
+            model,
+            nameManager,
+            helperContext,
+            package: package,
+            contextClass: contextClass,
+            contextProperty: contextProperty,
+            useImmutableCollections: useImmutableCollections,
+          ),
+          ListModel() => _buildListFromJsonBody(
+            'v',
+            model,
+            nameManager,
+            helperContext,
+            package: package,
+            contextClass: contextClass,
+            contextProperty: contextProperty,
+            useImmutableCollections: useImmutableCollections,
+          ),
+          _ => throw ArgumentError(
+            'Decode helper only valid for named MapModel/ListModel; '
+            'got ${model.runtimeType} for typedef "$typedefName"',
+          ),
+        };
+
+        final returnType = refer(typedefName, typedefUrl);
+        final paramType = refer('Object?', 'dart:core');
+        helpers
+          ..addAll(inner.inlineFunctions)
+          ..add(
+            InlineHelper(
+              name: helperName,
+              forwardDeclaration: Block.of([
+                const Code('late final '),
+                returnType.code,
+                const Code(' Function('),
+                paramType.code,
+                Code(') $helperName;'),
+              ]),
+              assignment: Block.of([
+                Code('$helperName = ('),
+                paramType.code,
+                const Code(' v) => '),
+                inner.unsafeRawBody.code,
+                const Code(';'),
+              ]),
+            ),
+          );
+      });
+  }
+
+  final call = refer(helperName).call([refer(value)]);
+  final body = isNullable
+      ? refer(value).equalTo(literalNull).conditional(literalNull, call)
+      : call;
+
+  return BuiltExpression(body: body, inlineFunctions: helpers);
+}
+
+const _decodePrefix = '_decode';
 
 const _ficUrl =
     'package:fast_immutable_collections/fast_immutable_collections.dart';
 
-/// Wraps [result] in an immutable collection constructor (`IList` or `IMap`).
-///
-/// For non-nullable results, generates `IList(result)` / `IMap(result)`.
-/// For nullable results, generates `value == null ? null : IList(result)`.
-/// The [result] expression must use a non-nullable decoder (guaranteed by
-/// the caller setting `effectiveNullable = false`), and [value] is the
-/// original JSON variable name for the null guard.
-///
-/// Using `refer(symbol, ficUrl)` ensures the `fast_immutable_collections`
-/// import is automatically tracked by code_builder.
 Expression _wrapImmutable(
   String symbol,
   Expression result, {

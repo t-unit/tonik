@@ -1,10 +1,13 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
-/// Creates a Code expression that correctly serializes a query parameter
-/// using deepObject encoding.
+/// Creates a [BuiltExpression] serializing a query parameter using
+/// deepObject encoding. Deep-object encoding cannot reach recursive named
+/// typedefs — OpenAPI forbids complex parameter types — so the result
+/// always carries an empty [BuiltExpression.inlineFunctions].
 ///
 /// According to OpenAPI spec, deepObject style is ONLY for query parameters
 /// with object values. It produces:
@@ -12,7 +15,7 @@ import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 ///
 /// For invalid types (primitives, lists, enums), generates code that throws
 /// at runtime with a descriptive error message.
-Code buildToDeepObjectQueryParameterCode(
+BuiltExpression buildToDeepObjectQueryParameterCode(
   String parameterName,
   QueryParameterObject parameter,
 ) {
@@ -22,15 +25,16 @@ Code buildToDeepObjectQueryParameterCode(
   final allowEmpty = parameter.allowEmptyValue;
 
   if (model is AnyModel) {
-    return refer('encodeAnyToDeepObject', 'package:tonik_util/tonik_util.dart')
-        .call(
-          [refer(parameterName), specLiteralString(rawName)],
-          {
-            'explode': literalBool(explode),
-            'allowEmpty': literalBool(allowEmpty),
-          },
-        )
-        .code;
+    return BuiltExpression.simple(
+      refer('encodeAnyToDeepObject', 'package:tonik_util/tonik_util.dart')
+          .call(
+            [refer(parameterName), specLiteralString(rawName)],
+            {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(allowEmpty),
+            },
+          ),
+    );
   }
 
   // Handle MapModel (including aliases to MapModel) before the general
@@ -38,37 +42,41 @@ Code buildToDeepObjectQueryParameterCode(
   // ParameterEncodable.
   final resolvedModel = model.resolved;
   if (resolvedModel is MapModel) {
-    return _buildMapDeepObjectCode(
-      parameterName,
-      rawName,
-      resolvedModel,
-      explode: explode,
-      allowEmpty: allowEmpty,
+    return BuiltExpression.simple(
+      _buildMapDeepObjectExpression(
+        parameterName,
+        rawName,
+        resolvedModel,
+        explode: explode,
+        allowEmpty: allowEmpty,
+      ),
     );
   }
 
   if (_isValidDeepObjectModel(model)) {
-    return refer(parameterName)
-        .property('toDeepObject')
-        .call(
-          [specLiteralString(rawName)],
-          {
-            'explode': literalBool(explode),
-            'allowEmpty': literalBool(allowEmpty),
-          },
-        )
-        .code;
+    return BuiltExpression.simple(
+      refer(parameterName)
+          .property('toDeepObject')
+          .call(
+            [specLiteralString(rawName)],
+            {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(allowEmpty),
+            },
+          ),
+    );
   }
 
-  return refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-      .call([
-        specLiteralString(
-          'deepObject encoding only supports object types. '
-          'Parameter "$rawName" is not supported.',
-        ),
-      ])
-      .thrown
-      .code;
+  return BuiltExpression.simple(
+    refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+        .call([
+          specLiteralString(
+            'deepObject encoding only supports object types. '
+            'Parameter "$rawName" is not supported.',
+          ),
+        ])
+        .thrown,
+  );
 }
 
 /// Builds deep-object encoding code for a [MapModel] parameter.
@@ -81,7 +89,7 @@ Code buildToDeepObjectQueryParameterCode(
 /// Throws an `EncodingException` for maps with complex value types
 /// (ClassModel, ListModel, nested MapModel) that can't be flattened to
 /// a single string per entry.
-Code _buildMapDeepObjectCode(
+Expression _buildMapDeepObjectExpression(
   String parameterName,
   String rawName,
   MapModel model, {
@@ -101,8 +109,7 @@ Code _buildMapDeepObjectCode(
             'explode': literalBool(explode),
             'allowEmpty': literalBool(allowEmpty),
           },
-        )
-        .code;
+        );
   }
 
   // For maps with simple value types, convert values to URI-encoded strings
@@ -123,7 +130,7 @@ Code _buildMapDeepObjectCode(
         ..body = refer(
           'MapEntry',
           'dart:core',
-        ).newInstance([refer('k'), uriEncodeExpr]).code,
+        ).newInstance([refer('k'), uriEncodeExpr.expression]).code,
     ).closure;
 
     return refer(parameterName)
@@ -137,8 +144,7 @@ Code _buildMapDeepObjectCode(
             'allowEmpty': literalBool(allowEmpty),
             'alreadyEncoded': literalBool(true),
           },
-        )
-        .code;
+        );
   }
 
   // Complex value types (ClassModel, ListModel, nested MapModel) can't be
@@ -150,8 +156,7 @@ Code _buildMapDeepObjectCode(
           'complex values. Parameter "$rawName" cannot be encoded.',
         ),
       ])
-      .thrown
-      .code;
+      .thrown;
 }
 
 /// Whether [model] can be converted to a single URI-encoded string.

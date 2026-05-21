@@ -2778,6 +2778,216 @@ void main() {
       });
     });
 
+    group('typed additionalProperties with recursive named typedef', () {
+      AllOfModel buildRecursiveTreeBag({
+        AdditionalProperties? overrideAdditionalProperties,
+      }) {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        return AllOfModel(
+          isDeprecated: false,
+          name: 'TreeBag',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'Base',
+              context: context,
+              properties: [
+                Property(
+                  name: 'id',
+                  model: IntegerModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                ),
+              ],
+            ),
+          },
+          context: context,
+          additionalProperties:
+              overrideAdditionalProperties ??
+              TypedAdditionalProperties(valueModel: tree),
+        );
+      }
+
+      String emitMethodMember(Method method) {
+        final library = Library(
+          (b) => b.body.add(
+            Class((c) => c..name = 'Holder'..methods.add(method)),
+          ),
+        );
+        return format(library.accept(emitter).toString());
+      }
+
+      String emitConstructorMember(Constructor ctor) {
+        final library = Library(
+          (b) => b.body.add(
+            Class((c) => c..name = 'Holder'..constructors.add(ctor)),
+          ),
+        );
+        return format(library.accept(emitter).toString());
+      }
+
+      test('splices _decode helper into fromJson for recursive AP values', () {
+        final model = buildRecursiveTreeBag();
+        final clazz = generator.generateClass(model);
+        final fromJson = clazz.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final emittedClass = emitConstructorMember(fromJson);
+
+        const expected = r'''
+class Holder {
+  factory Holder.fromJson(Object? json) {
+    late final Tree Function(Object?) _decodeTree;
+    _decodeTree = (Object? v) => v.decodeJsonMap(
+      (v) => _decodeTree(v),
+      context: r'TreeBag.additionalProperties',
+    );
+    final _$map = json.decodeMap(context: r'TreeBag');
+    const _$knownKeys = {r'id'};
+    final _$additional = <String, Tree>{};
+    for (final _$entry in _$map.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        _$additional[_$entry.key] = _decodeTree(_$entry.value);
+      }
+    }
+    return TreeBag(
+      $base: Base.fromJson(json),
+      additionalProperties: _$additional,
+    );
+  }
+}''';
+
+        expect(
+          collapseWhitespace(emittedClass),
+          collapseWhitespace(format(expected)),
+        );
+      });
+
+      test(
+        'splices _encode helper into toJson dynamic branch when a member has '
+        'mixed encoding shape and AP is recursive',
+        () {
+          // A OneOf member mixing a primitive (simple) with a class (complex)
+          // resolves to `EncodingShape.mixed`, which triggers the
+          // `hasDynamicModels` branch of `toJson` — exactly the path that
+          // routes a TypedAdditionalProperties value through the inline
+          // helper splice point.
+          final mixedOneOf = OneOfModel(
+            name: 'IdOrUser',
+            models: {
+              (
+                discriminatorValue: null,
+                model: StringModel(context: context),
+              ),
+              (
+                discriminatorValue: null,
+                model: ClassModel(
+                  isDeprecated: false,
+                  name: 'User',
+                  properties: const [],
+                  context: context,
+                ),
+              ),
+            },
+            context: context,
+            isDeprecated: false,
+          );
+          final tree = MapModel(
+            name: 'Tree',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          tree.valueModel = tree;
+
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'DynamicTreeBag',
+            models: {mixedOneOf},
+            context: context,
+            additionalProperties: TypedAdditionalProperties(valueModel: tree),
+          );
+
+          final clazz = generator.generateClass(model);
+          final toJson = clazz.methods.firstWhere((m) => m.name == 'toJson');
+          final emittedSource = emitMethodMember(toJson);
+
+          const expected = r'''
+class Holder {
+  @override
+  Object? toJson() {
+    late final Object? Function(Object?) _encodeTree;
+    _encodeTree = (Object? raw) {
+      final v = raw as Tree;
+      return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+    };
+    if (currentEncodingShape == EncodingShape.mixed) {
+      throw EncodingException(
+        r'Cannot encode DynamicTreeBag: mixing simple values (primitives/enums) and complex types is not supported',
+      );
+    }
+    final _$map = <String, Object?>{};
+    final _$idOrUserJson = idOrUser.toJson();
+    if (_$idOrUserJson is! Map<String, Object?>) {
+      throw EncodingException(
+        'Expected idOrUser.toJson() to return Map<String, Object?>, got ${_$idOrUserJson.runtimeType}',
+      );
+    }
+    _$map.addAll(_$idOrUserJson);
+    _$map.addAll(
+      additionalProperties.map((k, v) => MapEntry(k, _encodeTree(v))),
+    );
+    return _$map;
+  }
+}''';
+
+          expect(
+            collapseWhitespace(emittedSource),
+            collapseWhitespace(format(expected)),
+          );
+        },
+      );
+
+      test('splices _encode helper into toJson for recursive AP values', () {
+        final model = buildRecursiveTreeBag();
+        final clazz = generator.generateClass(model);
+        final toJson = clazz.methods.firstWhere((m) => m.name == 'toJson');
+        final emittedClass = emitMethodMember(toJson);
+
+        const expected = r'''
+class Holder {
+  @override
+  Object? toJson() {
+    late final Object? Function(Object?) _encodeTree;
+    _encodeTree = (Object? raw) {
+      final v = raw as Tree;
+      return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+    };
+    final _$map = <String, Object?>{};
+    final _$$baseJson = $base.toJson();
+    if (_$$baseJson is! Map<String, Object?>) {
+      throw EncodingException(
+        'Expected \$base.toJson() to return Map<String, Object?>, got ${_$$baseJson.runtimeType}',
+      );
+    }
+    _$map.addAll(_$$baseJson);
+    _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, _encodeTree(v))));
+    return _$map;
+  }
+}''';
+
+        expect(
+          collapseWhitespace(emittedClass),
+          collapseWhitespace(format(expected)),
+        );
+      });
+    });
+
     group('NoAdditionalProperties', () {
       test('generates fromJson without AP logic', () {
         final model = AllOfModel(

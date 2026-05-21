@@ -1,9 +1,32 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
-Expression buildUriEncodeExpression(
+/// Creates a [BuiltExpression] producing the URI-encoded form of a value.
+/// URI encoding cannot reach recursive named typedefs — OpenAPI forbids
+/// complex parameter types — so the result always carries an empty
+/// [BuiltExpression.inlineFunctions].
+BuiltExpression buildUriEncodeExpression(
+  Expression valueExpression,
+  Model model, {
+  required Expression allowEmpty,
+  Expression? useQueryComponent,
+  bool useImmutableCollections = false,
+}) {
+  return BuiltExpression.simple(
+    _buildUriEncodeExpression(
+      valueExpression,
+      model,
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+      useImmutableCollections: useImmutableCollections,
+    ),
+  );
+}
+
+Expression _buildUriEncodeExpression(
   Expression valueExpression,
   Model model, {
   required Expression allowEmpty,
@@ -53,7 +76,7 @@ Expression buildUriEncodeExpression(
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
     ),
-    AliasModel() => buildUriEncodeExpression(
+    AliasModel() => _buildUriEncodeExpression(
       valueExpression,
       model.model,
       allowEmpty: allowEmpty,
@@ -107,7 +130,7 @@ Expression _buildListUriEncodeExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = buildUriEncodeExpression(
+                ..body = _buildUriEncodeExpression(
                   refer('e'),
                   contentModel,
                   allowEmpty: allowEmpty,

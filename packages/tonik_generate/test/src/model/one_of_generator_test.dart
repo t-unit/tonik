@@ -2451,7 +2451,9 @@ void main() {
         );
         final fieldType = valueField.type!.accept(emitter).toString();
 
-        expect(fieldType, 'List<String>?');
+        // Named list models reference their typedef name, matching the
+        // behaviour of named MapModels — both are emitted as typedefs.
+        expect(fieldType, 'Items?');
       },
     );
 

@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/to_label_path_parameter_expression_generator.dart';
 
 void main() {
@@ -12,7 +13,8 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  String emit(Expression expr) => expr.accept(emitter).toString();
+  String emit(BuiltExpression built) =>
+      built.expression.accept(emitter).toString();
 
   group('buildToLabelPathParameterExpression', () {
     test('generates toLabel expression for primitive path parameter', () {

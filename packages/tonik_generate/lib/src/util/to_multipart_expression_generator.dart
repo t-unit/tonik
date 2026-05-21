@@ -3,28 +3,35 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
-/// Builds FormData construction statements for single-content multipart bodies.
-///
-/// Returns a [List<Code>] containing FormData construction and field additions.
-/// The caller is responsible for adding `return formData;`.
-List<Code> buildMultipartBodyStatements(
+/// Builds [BuiltStatements] for FormData construction statements of a
+/// single-content multipart body. Multipart bodies require ClassModel —
+/// recursive map/list typedefs are rejected upstream — so the result
+/// always carries an empty [BuiltStatements.inlineFunctions]. The caller
+/// is responsible for adding `return formData;`.
+BuiltStatements buildMultipartBodyStatements(
   RequestContent content,
   String bodyAccessor,
   NameManager nameManager,
   String package,
 ) {
-  return _buildMultipartFields(content, bodyAccessor, nameManager, package);
+  return BuiltStatements.simple(
+    _buildMultipartFields(content, bodyAccessor, nameManager, package),
+  );
 }
 
-/// Builds an IIFE expression that constructs and returns a FormData instance.
+/// Builds a [BuiltExpression] wrapping an IIFE that constructs and returns
+/// a FormData instance. Multipart bodies require ClassModel — recursive
+/// map/list typedefs are rejected upstream — so the result always carries
+/// an empty [BuiltExpression.inlineFunctions].
 ///
 /// For use in multi-content switch arms. Produces:
 /// `() { final formData = FormData(); ...; return formData; }()`
-Expression buildMultipartBodyExpression(
+BuiltExpression buildMultipartBodyExpression(
   RequestContent content,
   String bodyAccessor,
   NameManager nameManager,
@@ -37,12 +44,14 @@ Expression buildMultipartBodyExpression(
     package,
   );
 
-  return Method(
-    (b) => b
-      ..modifier = MethodModifier.async
-      ..lambda = false
-      ..body = Block.of(statements),
-  ).closure.call([]).awaited;
+  return BuiltExpression.simple(
+    Method(
+      (b) => b
+        ..modifier = MethodModifier.async
+        ..lambda = false
+        ..body = Block.of(statements),
+    ).closure.call([]).awaited,
+  );
 }
 
 List<Code> _buildMultipartFields(
@@ -331,7 +340,7 @@ _HeaderMapResult? _buildHeaderMapStatements(
 
     final assignStatement = refer(headerVarName)
         .index(specLiteralString(rawHeaderName))
-        .assign(literalList([serializeExpr]))
+        .assign(literalList([serializeExpr.expression]))
         .statement;
 
     if (!header.isRequired) {

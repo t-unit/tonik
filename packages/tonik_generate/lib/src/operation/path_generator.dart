@@ -174,7 +174,7 @@ class PathGenerator {
             explode: param.parameter.explode,
             allowEmpty: param.parameter.allowEmptyValue,
           );
-          currentConcatParts.add(valueExpression);
+          currentConcatParts.add(valueExpression.expression);
         case PathParameterEncoding.label:
           _flushConcatParts(currentConcatParts, pathPartExpressions);
 
@@ -182,7 +182,7 @@ class PathGenerator {
             param.normalizedName,
             param.parameter,
           );
-          pathPartExpressions.add(valueExpression);
+          pathPartExpressions.add(valueExpression.expression);
         case PathParameterEncoding.matrix:
           _flushConcatParts(currentConcatParts, pathPartExpressions);
 
@@ -214,7 +214,7 @@ class PathGenerator {
             explode: literalBool(param.parameter.explode),
             allowEmpty: literalBool(param.parameter.allowEmptyValue),
           );
-          pathPartExpressions.add(matrixExpression);
+          pathPartExpressions.add(matrixExpression.expression);
       }
     }
 

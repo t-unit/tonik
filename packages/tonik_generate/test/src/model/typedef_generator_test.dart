@@ -1012,5 +1012,156 @@ void main() {
         );
       });
     });
+
+    group('recursive typedef fallback to Object?', () {
+      test(
+        'self-referential MapModel erases recursive value type to Object?',
+        () {
+          final tree = MapModel(
+            name: 'Tree',
+            valueModel: StringModel(context: context),
+            context: context,
+          );
+          tree.valueModel = tree;
+
+          final typedef = generator.generateMapTypedef(tree);
+
+          expect(
+            typedef.accept(emitter).toString().trim(),
+            'typedef Tree = Map<String,Object?>;',
+          );
+        },
+      );
+
+      test(
+        'self-referential ListModel erases recursive content type to Object?',
+        () {
+          final forest = ListModel(
+            name: 'Forest',
+            content: StringModel(context: context),
+            context: context,
+          );
+          forest.content = forest;
+
+          final typedef = generator.generateListTypedef(forest);
+
+          expect(
+            typedef.accept(emitter).toString().trim(),
+            'typedef Forest = List<Object?>;',
+          );
+        },
+      );
+
+      test(
+        'MapModel whose value reaches a separate recursive typedef erases '
+        'to Object?',
+        () {
+          final a = MapModel(
+            name: 'AMap',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          final b = MapModel(
+            name: 'BMap',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          a.valueModel = b;
+          b.valueModel = a;
+
+          final aTypedef = generator.generateMapTypedef(a);
+          expect(
+            aTypedef.accept(emitter).toString().trim(),
+            'typedef AMap = Map<String,Object?>;',
+          );
+        },
+      );
+
+      test(
+        'ListModel whose content reaches a separate recursive typedef erases '
+        'to Object?',
+        () {
+          final aList = ListModel(
+            name: 'AList',
+            content: AnyModel(context: context),
+            context: context,
+          );
+          final bList = ListModel(
+            name: 'BList',
+            content: AnyModel(context: context),
+            context: context,
+          );
+          aList.content = bList;
+          bList.content = aList;
+
+          final aTypedef = generator.generateListTypedef(aList);
+          expect(
+            aTypedef.accept(emitter).toString().trim(),
+            'typedef AList = List<Object?>;',
+          );
+        },
+      );
+
+      test(
+        'AliasModel chain resolving to a recursive MapModel erases the outer '
+        'typedef RHS to Object?',
+        () {
+          final tree = MapModel(
+            name: 'Tree',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          tree.valueModel = tree;
+
+          final inner = AliasModel(model: tree, context: context);
+          final alias = AliasModel(
+            name: 'MyAlias',
+            model: inner,
+            context: context,
+          );
+
+          final outer = MapModel(
+            name: 'WrappedAlias',
+            valueModel: alias,
+            context: context,
+          );
+
+          final typedef = generator.generateMapTypedef(outer);
+          expect(
+            typedef.accept(emitter).toString().trim(),
+            'typedef WrappedAlias = Map<String,Object?>;',
+          );
+        },
+      );
+
+      test(
+        'unnamed inline MapModel wrapping a self-referential Tree erases the '
+        'outer typedef RHS to Object?',
+        () {
+          final tree = MapModel(
+            name: 'Tree',
+            valueModel: AnyModel(context: context),
+            context: context,
+          );
+          tree.valueModel = tree;
+
+          final wrapped = MapModel(
+            valueModel: tree,
+            context: context,
+          );
+          final outer = MapModel(
+            name: 'WrappedTree',
+            valueModel: wrapped,
+            context: context,
+          );
+
+          final typedef = generator.generateMapTypedef(outer);
+          expect(
+            typedef.accept(emitter).toString().trim(),
+            'typedef WrappedTree = Map<String,Object?>;',
+          );
+        },
+      );
+    });
   });
 }

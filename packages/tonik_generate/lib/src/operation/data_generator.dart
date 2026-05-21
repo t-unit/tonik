@@ -1,7 +1,9 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -36,6 +38,12 @@ class DataGenerator {
     final content = requestBody.resolvedContent;
     final hasMultipleContent = content.length > 1;
     final isRequired = requestBody.isRequired;
+
+    final helperContext = InlineHelperContext(
+      nameManager: nameManager,
+      reservedNames: const {'body', 'value', '_data'},
+    );
+    final inlineHelpers = <InlineHelper>[];
 
     if (hasMultipleContent) {
       final hasMultipartArm = content.any(
@@ -96,20 +104,23 @@ class DataGenerator {
                   ..add(const Code(','));
             }
           case .json:
+            final jsonBuilt = buildToJsonPropertyExpression(
+              'value.value',
+              Property(
+                name: 'value',
+                model: c.model,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+              ),
+              nameManager: nameManager,
+              package: package,
+              helperContext: helperContext,
+            );
+            inlineHelpers.addAll(jsonBuilt.inlineFunctions);
             switchCases
-              ..add(const Code(' value => value.'))
-              ..add(
-                buildToJsonPropertyExpression(
-                  'value',
-                  Property(
-                    name: 'value',
-                    model: c.model,
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                  ),
-                ).code,
-              )
+              ..add(const Code(' value => '))
+              ..add(jsonBuilt.unsafeRawBody.code)
               ..add(const Code(','));
           case .form:
             switchCases
@@ -188,6 +199,7 @@ class DataGenerator {
           ..optionalParameters.addAll(multipartHeaderParams)
           ..lambda = false
           ..body = Block.of([
+            ...spliceInlineHelpers(inlineHelpers),
             if (!isRequired) const Code('if (body == null) return null;\n'),
             const Code('return switch (body) {'),
             ...switchCases,
@@ -249,8 +261,16 @@ class DataGenerator {
               ..add(const Code(';'));
         }
       case ContentType.json:
+        final jsonBuilt = buildToJsonPropertyExpression(
+          'body',
+          property,
+          nameManager: nameManager,
+          package: package,
+          helperContext: helperContext,
+        );
+        inlineHelpers.addAll(jsonBuilt.inlineFunctions);
         bodyCode
-          ..add(buildToJsonPropertyExpression('body', property).code)
+          ..add(jsonBuilt.unsafeRawBody.code)
           ..add(const Code(';'));
       case ContentType.form:
         final formExpr = buildToFormValueExpression(
@@ -274,7 +294,7 @@ class DataGenerator {
               'body',
               nameManager,
               package,
-            ),
+            ).statements,
           ]);
     }
 
@@ -324,7 +344,10 @@ class DataGenerator {
         )
         ..optionalParameters.addAll(multipartHeaderParams)
         ..lambda = false
-        ..body = Block.of(bodyCode),
+        ..body = Block.of([
+          ...spliceInlineHelpers(inlineHelpers),
+          ...bodyCode,
+        ]),
     );
   }
 }

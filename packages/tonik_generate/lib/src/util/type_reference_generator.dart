@@ -16,7 +16,11 @@ TypeReference typeReference(
   bool useImmutableCollections = false,
 }) {
   return switch (model) {
-    final ListModel m => TypeReference(
+    // Named ListModels are emitted as typedefs at the top level — references
+    // to them must use the typedef name (handled by the NamedModel branch
+    // below), not the underlying List<...> expansion. The expansion happens
+    // exactly once in TypedefGenerator.generateListTypedef.
+    final ListModel m when model.name == null => TypeReference(
       (b) => b
         ..symbol = useImmutableCollections ? 'IList' : 'List'
         ..url = useImmutableCollections ? _ficUrl : 'dart:core'

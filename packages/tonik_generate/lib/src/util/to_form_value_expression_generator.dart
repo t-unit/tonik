@@ -1,13 +1,18 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 
-/// Creates a Dart expression that correctly serializes a property
-/// to its form-encoded representation.
+/// Creates a [BuiltExpression] that correctly serializes a property to its
+/// form-encoded representation.
+///
+/// Form encoding cannot reach recursive named typedefs — OpenAPI forbids
+/// complex parameter types — so the result always carries an empty
+/// [BuiltExpression.inlineFunctions].
 ///
 /// The [useQueryComponent] parameter controls whether to use query component
 /// encoding with spaces as + (for form-urlencoded bodies).
-Expression buildToFormPropertyExpression(
+BuiltExpression buildToFormPropertyExpression(
   String fieldName,
   Property property, {
   bool useQueryComponent = false,
@@ -29,14 +34,18 @@ Expression buildToFormPropertyExpression(
   if (property.isRequired &&
       property.isNullable &&
       property.model.resolved is! AnyModel) {
-    return expr.ifNullThen(literalString(''));
+    return BuiltExpression.simple(expr.ifNullThen(literalString('')));
   }
 
-  return expr;
+  return BuiltExpression.simple(expr);
 }
 
-/// Creates a Dart expression that correctly serializes any model
-/// to its form-encoded representation, including complex types.
+/// Creates a [BuiltExpression] that correctly serializes any model to its
+/// form-encoded representation, including complex types.
+///
+/// Form encoding cannot reach recursive named typedefs — OpenAPI forbids
+/// complex parameter types — so the result always carries an empty
+/// [BuiltExpression.inlineFunctions].
 ///
 /// The [useQueryComponent] parameter controls whether to use query component
 /// encoding with spaces as + (for form-urlencoded bodies).
@@ -45,7 +54,7 @@ Expression buildToFormPropertyExpression(
 /// literal boolean values for these arguments instead of using variable
 /// references. When null, the expression will reference 'explode' and
 /// 'allowEmpty' variables expected to be in scope.
-Expression buildToFormValueExpression(
+BuiltExpression buildToFormValueExpression(
   String valueExpression,
   Model model, {
   required bool useQueryComponent,
@@ -53,13 +62,15 @@ Expression buildToFormValueExpression(
   bool? allowEmptyLiteral,
   bool isNullable = false,
 }) {
-  return _buildFormSerializationExpression(
-    refer(valueExpression),
-    model,
-    isNullable: isNullable,
-    useQueryComponent: useQueryComponent,
-    explodeLiteral: explodeLiteral,
-    allowEmptyLiteral: allowEmptyLiteral,
+  return BuiltExpression.simple(
+    _buildFormSerializationExpression(
+      refer(valueExpression),
+      model,
+      isNullable: isNullable,
+      useQueryComponent: useQueryComponent,
+      explodeLiteral: explodeLiteral,
+      allowEmptyLiteral: allowEmptyLiteral,
+    ),
   );
 }
 

@@ -4,6 +4,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/composite_guard_builders.dart';
 import 'package:tonik_generate/src/util/composite_library_builder.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
@@ -14,6 +15,7 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/known_keys_collector.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
@@ -417,24 +419,48 @@ class AllOfGenerator {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
+    final helperContext = InlineHelperContext(
+      nameManager: nameManager,
+      reservedNames: {
+        'json',
+        className,
+        for (final p in normalizedProperties) p.normalizedName,
+      },
+    );
+
     final fromJsonParams = <Expression>[];
     final fieldNames = <String>[];
+    final inlineHelpers = <InlineHelper>[];
     for (final normalized in normalizedProperties) {
       fieldNames.add(normalized.normalizedName);
-      final expr = buildFromJsonValueExpression(
+      final built = buildFromJsonValueExpression(
         'json',
         model: normalized.property.model,
         nameManager: nameManager,
         package: package,
+        helperContext: helperContext,
         contextClass: className,
         useImmutableCollections: useImmutableCollections,
       );
-      fromJsonParams.add(expr);
+      inlineHelpers.addAll(built.inlineFunctions);
+      fromJsonParams.add(built.unsafeRawBody);
     }
 
     final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
 
     if (!hasAP) {
+      final returnStatement = refer(className)
+          .call(
+            [],
+            Map.fromEntries(
+              List.generate(
+                fromJsonParams.length,
+                (i) => MapEntry(fieldNames[i], fromJsonParams[i]),
+              ),
+            ),
+          )
+          .returned
+          .statement;
       return Constructor(
         (b) => b
           ..factory = true
@@ -446,21 +472,10 @@ class AllOfGenerator {
                 ..type = refer('Object?', 'dart:core'),
             ),
           )
-          ..body = refer(className)
-              .call(
-                [],
-                Map.fromEntries(
-                  List.generate(
-                    fromJsonParams.length,
-                    (i) => MapEntry(
-                      fieldNames[i],
-                      fromJsonParams[i],
-                    ),
-                  ),
-                ),
-              )
-              .returned
-              .statement,
+          ..body = Block.of([
+            ...spliceInlineHelpers(inlineHelpers),
+            returnStatement,
+          ]),
       );
     }
 
@@ -500,20 +515,22 @@ class AllOfGenerator {
     );
 
     if (ap is TypedAdditionalProperties) {
-      final decodeExpr = buildFromJsonValueExpression(
+      final decodeBuilt = buildFromJsonValueExpression(
         r'_$entry.value',
         model: ap.valueModel,
         nameManager: nameManager,
         package: package,
+        helperContext: helperContext,
         contextClass: className,
         contextProperty: 'additionalProperties',
         useImmutableCollections: useImmutableCollections,
       );
+      inlineHelpers.addAll(decodeBuilt.inlineFunctions);
       codes.addAll([
         const Code(r'for (final _$entry in _$map.entries) {'),
         const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
         const Code(r'_$additional[_$entry.key] = '),
-        decodeExpr.code,
+        decodeBuilt.unsafeRawBody.code,
         const Code(';'),
         const Code('}'),
         const Code('}'),
@@ -557,7 +574,10 @@ class AllOfGenerator {
               ..type = refer('Object?', 'dart:core'),
           ),
         )
-        ..body = Block.of(codes),
+        ..body = Block.of([
+          ...spliceInlineHelpers(inlineHelpers),
+          ...codes,
+        ]),
     );
   }
 
@@ -655,6 +675,15 @@ class AllOfGenerator {
     AllOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
+    final helperContext = InlineHelperContext(
+      nameManager: nameManager,
+      reservedNames: {
+        className,
+        for (final p in normalizedProperties) p.normalizedName,
+      },
+    );
+    final inlineHelpers = <InlineHelper>[];
+
     // Check for list properties first (before any other logic)
     final hasListProperties = normalizedProperties.any(
       (prop) => prop.property.model.resolved is ListModel,
@@ -697,14 +726,19 @@ class AllOfGenerator {
       for (final normalized in normalizedProperties) {
         final fieldName = normalized.normalizedName;
         final fieldNameJson = '_\$${fieldName}Json';
+        final built = buildToJsonPropertyExpression(
+          fieldName,
+          normalized.property,
+          nameManager: nameManager,
+          package: package,
+          helperContext: helperContext,
+          useImmutableCollections: useImmutableCollections,
+        );
+        inlineHelpers.addAll(built.inlineFunctions);
 
         jsonParts.addAll([
           Code('final $fieldNameJson = '),
-          buildToJsonPropertyExpression(
-            fieldName,
-            normalized.property,
-            useImmutableCollections: useImmutableCollections,
-          ).code,
+          built.unsafeRawBody.code,
           const Code(';'),
           refer(
             r'_$values',
@@ -745,7 +779,10 @@ class AllOfGenerator {
           ..returns = refer('Object?', 'dart:core')
           ..name = 'toJson'
           ..lambda = false
-          ..body = Block.of(jsonParts),
+          ..body = Block.of([
+            ...spliceInlineHelpers(inlineHelpers),
+            ...jsonParts,
+          ]),
       );
     }
 
@@ -784,12 +821,16 @@ class AllOfGenerator {
           bodyCode.add(Code('if ($fieldName != null) {'));
         }
 
-        final toJsonExpr = buildToJsonPropertyExpression(
+        final toJsonBuilt = buildToJsonPropertyExpression(
           fieldName,
           normalized.property,
+          nameManager: nameManager,
+          package: package,
+          helperContext: helperContext,
           forceNonNullReceiver: isNullable,
           useImmutableCollections: useImmutableCollections,
         );
+        inlineHelpers.addAll(toJsonBuilt.inlineFunctions);
 
         final isMapModel = normalized.property.model.resolved is MapModel;
 
@@ -798,7 +839,7 @@ class AllOfGenerator {
           // so no runtime type check is needed.
           bodyCode.addAll([
             Code('final $fieldNameJson = '),
-            toJsonExpr.code,
+            toJsonBuilt.unsafeRawBody.code,
             const Code(';'),
             const Code(r'_$map.addAll('),
             refer(fieldNameJson).code,
@@ -807,7 +848,7 @@ class AllOfGenerator {
         } else {
           bodyCode.addAll([
             Code('final $fieldNameJson = '),
-            toJsonExpr.code,
+            toJsonBuilt.unsafeRawBody.code,
             const Code(';'),
             const Code('if ('),
             refer(fieldNameJson).code,
@@ -838,14 +879,18 @@ class AllOfGenerator {
             ? '$apFieldName.unlock'
             : apFieldName;
         if (ap is TypedAdditionalProperties) {
-          final apExpr = buildToJsonAdditionalPropertiesExpression(
+          final apBuilt = buildToJsonAdditionalPropertiesExpression(
             apFieldName,
             ap.valueModel,
+            nameManager: nameManager,
+            package: package,
+            helperContext: helperContext,
             useImmutableCollections: useImmutableCollections,
           );
+          inlineHelpers.addAll(apBuilt.inlineFunctions);
           bodyCode.addAll([
             const Code(r'_$map.addAll('),
-            apExpr.code,
+            apBuilt.unsafeRawBody.code,
             const Code(');'),
           ]);
         } else {
@@ -866,7 +911,10 @@ class AllOfGenerator {
           ..returns = refer('Object?', 'dart:core')
           ..name = 'toJson'
           ..lambda = false
-          ..body = Block.of(bodyCode),
+          ..body = Block.of([
+            ...spliceInlineHelpers(inlineHelpers),
+            ...bodyCode,
+          ]),
       );
     }
 
@@ -887,24 +935,44 @@ class AllOfGenerator {
       case EncodingShape.simple:
         final firstModel = model.models.first;
         final firstFieldName = normalizedProperties.first.normalizedName;
+        final simpleBuilt = buildToJsonPropertyExpression(
+          firstFieldName,
+          Property(
+            name: firstFieldName,
+            model: firstModel,
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+          ),
+          nameManager: nameManager,
+          package: package,
+          helperContext: helperContext,
+          useImmutableCollections: useImmutableCollections,
+        );
+        inlineHelpers.addAll(simpleBuilt.inlineFunctions);
 
+        if (inlineHelpers.isEmpty) {
+          return Method(
+            (b) => b
+              ..annotations.add(refer('override', 'dart:core'))
+              ..returns = refer('Object?', 'dart:core')
+              ..name = 'toJson'
+              ..lambda = true
+              ..body = simpleBuilt.unsafeRawBody.code,
+          );
+        }
         return Method(
           (b) => b
             ..annotations.add(refer('override', 'dart:core'))
             ..returns = refer('Object?', 'dart:core')
             ..name = 'toJson'
-            ..lambda = true
-            ..body = buildToJsonPropertyExpression(
-              firstFieldName,
-              Property(
-                name: firstFieldName,
-                model: firstModel,
-                isRequired: true,
-                isNullable: false,
-                isDeprecated: false,
-              ),
-              useImmutableCollections: useImmutableCollections,
-            ).code,
+            ..lambda = false
+            ..body = Block.of([
+              ...spliceInlineHelpers(inlineHelpers),
+              const Code('return '),
+              simpleBuilt.unsafeRawBody.code,
+              const Code(';'),
+            ]),
         );
 
       case EncodingShape.complex:
@@ -924,12 +992,16 @@ class AllOfGenerator {
             mapParts.add(Code('if ($fieldName != null) {'));
           }
 
-          final toJsonExpr = buildToJsonPropertyExpression(
+          final toJsonBuilt = buildToJsonPropertyExpression(
             fieldName,
             normalized.property,
+            nameManager: nameManager,
+            package: package,
+            helperContext: helperContext,
             forceNonNullReceiver: isNullable,
             useImmutableCollections: useImmutableCollections,
           );
+          inlineHelpers.addAll(toJsonBuilt.inlineFunctions);
 
           final isMapModel = normalized.property.model.resolved is MapModel;
 
@@ -938,7 +1010,7 @@ class AllOfGenerator {
             // so no runtime type check is needed.
             mapParts.addAll([
               Code('final $fieldNameJson = '),
-              toJsonExpr.code,
+              toJsonBuilt.unsafeRawBody.code,
               const Code(';'),
               const Code(r'_$map.addAll('),
               refer(fieldNameJson).code,
@@ -947,7 +1019,7 @@ class AllOfGenerator {
           } else {
             mapParts.addAll([
               Code('final $fieldNameJson = '),
-              toJsonExpr.code,
+              toJsonBuilt.unsafeRawBody.code,
               const Code(';'),
               const Code('if ('),
               refer(fieldNameJson).code,
@@ -980,14 +1052,18 @@ class AllOfGenerator {
               ? '$apFieldName.unlock'
               : apFieldName;
           if (ap is TypedAdditionalProperties) {
-            final apExpr = buildToJsonAdditionalPropertiesExpression(
+            final apBuilt = buildToJsonAdditionalPropertiesExpression(
               apFieldName,
               ap.valueModel,
+              nameManager: nameManager,
+              package: package,
+              helperContext: helperContext,
               useImmutableCollections: useImmutableCollections,
             );
+            inlineHelpers.addAll(apBuilt.inlineFunctions);
             mapParts.addAll([
               const Code(r'_$map.addAll('),
-              apExpr.code,
+              apBuilt.unsafeRawBody.code,
               const Code(');'),
             ]);
           } else {
@@ -1008,7 +1084,10 @@ class AllOfGenerator {
             ..returns = refer('Object?', 'dart:core')
             ..name = 'toJson'
             ..lambda = false
-            ..body = Block.of(mapParts),
+            ..body = Block.of([
+              ...spliceInlineHelpers(inlineHelpers),
+              ...mapParts,
+            ]),
         );
     }
   }
@@ -1071,7 +1150,7 @@ class AllOfGenerator {
               explode: refer('explode'),
             );
 
-      constructorArgs[name] = expression;
+      constructorArgs[name] = expression.expression;
     }
 
     final captureAP = _hasStringCapturableAP(model);
@@ -1538,7 +1617,7 @@ for (final _\$e in $apFieldName.entries) {
                     prop.property.model,
                     explode: refer('explode'),
                     allowEmpty: refer('allowEmpty'),
-                  ),
+                  ).expression,
                 )
                 .statement,
             refer(r'_$values').property('add').call([
@@ -1920,7 +1999,7 @@ for (final _\$e in $apFieldName.entries) {
                       prop.property.model,
                       explode: refer('explode'),
                       allowEmpty: refer('allowEmpty'),
-                    ),
+                    ).expression,
                   )
                   .statement,
               refer(r'_$values').property('add').call([
@@ -2232,7 +2311,7 @@ for (final _\$e in $apFieldName.entries) {
                     prop.property.model,
                     explode: refer('explode'),
                     allowEmpty: refer('allowEmpty'),
-                  ),
+                  ).expression,
                 )
                 .statement,
             refer(r'_$values').property('add').call([
@@ -2449,7 +2528,7 @@ for (final _\$e in $apFieldName.entries) {
                     paramName: refer('paramName'),
                     explode: refer('explode'),
                     allowEmpty: refer('allowEmpty'),
-                  ),
+                  ).expression,
                 )
                 .statement,
             refer(r'_$values').property('add').call([
@@ -2586,7 +2665,7 @@ for (final _\$e in $apFieldName.entries) {
                 paramName: refer('paramName'),
                 explode: refer('explode'),
                 allowEmpty: refer('allowEmpty'),
-              ),
+              ).expression,
             )
             .statement,
         refer(r'_$values').property('add').call([

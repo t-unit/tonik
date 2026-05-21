@@ -170,6 +170,77 @@ void main() {
       );
     });
 
+    test(
+      'handles multi-content JSON with a recursive named MapModel variant',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: testContext),
+          context: testContext,
+        );
+        tree.valueModel = tree;
+
+        final operation = Operation(
+          operationId: 'testOp',
+          path: '/test',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'recursiveBody',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: tree,
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+              RequestContent(
+                model: ClassModel(
+                  isDeprecated: false,
+                  name: 'Plain',
+                  properties: const [],
+                  context: testContext,
+                ),
+                contentType: ContentType.json,
+                rawContentType: 'application/json+problem',
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: const {},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = '''
+          Object? _data({required RecursiveBody body}) {
+            late final Object? Function(Object?) _encodeTree;
+            _encodeTree = (Object? raw) {
+              final v = raw as Tree;
+              return v.map((k, v) => MapEntry(k, _encodeTree(v)));
+            };
+            return switch (body) {
+              final RecursiveBodyJson value => _encodeTree(value.value),
+              final RecursiveBodyJsonProblem value => value.value.toJson(),
+            };
+          }
+        ''';
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
     test('handles primitive model in request body', () {
       final operation = Operation(
         operationId: 'testOp',

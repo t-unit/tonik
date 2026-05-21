@@ -214,7 +214,7 @@ class OptionsGenerator {
                 acceptHeader!.parameter,
                 explode: acceptHeader.parameter.explode,
                 allowEmpty: acceptHeader.parameter.allowEmptyValue,
-              ),
+              ).expression,
             )
             .statement,
       );
@@ -231,7 +231,7 @@ class OptionsGenerator {
                   explode: acceptHeader.parameter.explode,
                   allowEmpty: acceptHeader.parameter.allowEmptyValue,
                   isNullChecked: true,
-                ),
+                ).expression,
               )
               .statement,
         )
@@ -613,7 +613,7 @@ class OptionsGenerator {
 
     return refer(r'_$headers')
         .index(specLiteralString(resolvedParam.rawName))
-        .assign(valueExpression)
+        .assign(valueExpression.expression)
         .statement;
   }
 

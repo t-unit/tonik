@@ -1,9 +1,32 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
-Expression buildLabelParameterExpression(
+/// Creates a [BuiltExpression] serializing a value using label parameter
+/// encoding. Label encoding cannot reach recursive named typedefs —
+/// OpenAPI forbids complex parameter types — so the result always carries
+/// an empty [BuiltExpression.inlineFunctions].
+BuiltExpression buildLabelParameterExpression(
+  Expression valueExpression,
+  Model model, {
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  return BuiltExpression.simple(
+    _buildLabelParameterExpression(
+      valueExpression,
+      model,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
+    ),
+  );
+}
+
+Expression _buildLabelParameterExpression(
   Expression valueExpression,
   Model model, {
   required Expression explode,
@@ -42,7 +65,7 @@ Expression buildLabelParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AliasModel() => buildLabelParameterExpression(
+    AliasModel() => _buildLabelParameterExpression(
       valueExpression,
       model.model,
       explode: explode,

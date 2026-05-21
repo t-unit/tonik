@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
@@ -60,9 +61,37 @@ String? _getListContentUnsupportedReason(Model content) {
   };
 }
 
-/// Creates a Dart expression that correctly deserializes a simple value
+/// Creates a [BuiltExpression] that correctly deserializes a simple value
 /// to its Dart representation.
-Expression buildSimpleValueExpression(
+///
+/// Simple encoding cannot reach recursive named typedefs — OpenAPI forbids
+/// complex parameter types — so the result always carries an empty
+/// [BuiltExpression.inlineFunctions].
+BuiltExpression buildSimpleValueExpression(
+  Expression value, {
+  required Model model,
+  required bool isRequired,
+  required NameManager nameManager,
+  required Expression explode,
+  String? package,
+  String? contextClass,
+  String? contextProperty,
+}) {
+  return BuiltExpression.simple(
+    _buildSimpleValueExpression(
+      value,
+      model: model,
+      isRequired: isRequired,
+      nameManager: nameManager,
+      explode: explode,
+      package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
+    ),
+  );
+}
+
+Expression _buildSimpleValueExpression(
   Expression value, {
   required Model model,
   required bool isRequired,
@@ -157,7 +186,7 @@ Expression buildSimpleValueExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
-    final AliasModel aliasModel => buildSimpleValueExpression(
+    final AliasModel aliasModel => _buildSimpleValueExpression(
       value,
       model: aliasModel.model,
       isRequired: isRequired,
