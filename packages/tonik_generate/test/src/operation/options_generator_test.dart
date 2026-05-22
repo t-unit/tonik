@@ -2177,6 +2177,307 @@ void main() {
       },
     );
 
+    test('generates Cookie header for optional Base64 cookie parameter', () {
+      final cookieParam = CookieParameterObject(
+        name: 'token',
+        rawName: 'token',
+        description: 'Optional Base64 token',
+        isRequired: false,
+        isDeprecated: false,
+        explode: true,
+        model: Base64Model(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+      );
+
+      final operation = Operation(
+        operationId: 'withOptionalBase64Cookie',
+        context: context,
+        summary: 'With optional base64 cookie',
+        description: 'Operation with optional Base64 cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/optional-base64-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'token', parameter: cookieParam),
+      ]);
+
+      final param = method.optionalParameters.firstWhere(
+        (p) => p.name == 'token',
+      );
+      expect(param.required, isFalse);
+      expect(param.type?.accept(emitter).toString(), 'TonikFile?');
+
+      const expectedMethod = r'''
+        Options _options({TonikFile? token}) {
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = r'*/*';
+          final _$cookieParts = <String>[];
+          if (token != null) {
+            _$cookieParts.add(
+              [
+                r'token=',
+                token.toBase64String().toForm(explode: true, allowEmpty: true),
+              ].join(),
+            );
+          }
+          if (_$cookieParts.isNotEmpty) {
+            _$headers[r'Cookie'] = _$cookieParts.join('; ');
+          }
+          return Options(
+            method: 'GET',
+            headers: _$headers,
+            responseType: ResponseType.bytes,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
+
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test(
+      'generates EncodingException for optional Binary cookie parameter',
+      () {
+        final cookieParam = CookieParameterObject(
+          name: 'token',
+          rawName: 'token',
+          description: 'Optional Binary token',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: BinaryModel(context: context),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'withOptionalBinaryCookie',
+          context: context,
+          summary: 'With optional binary cookie',
+          description: 'Operation with optional Binary cookie',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-binary-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'token', parameter: cookieParam),
+        ]);
+
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'token',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.accept(emitter).toString(), 'TonikFile?');
+
+        const expectedMethod = r'''
+          Options _options({TonikFile? token}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
+            if (token != null) {
+              throw EncodingException(
+                'Binary data cannot be form-encoded for cookie token',
+              );
+            }
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates Cookie header for optional list of Base64 cookie parameter',
+      () {
+        final cookieParam = CookieParameterObject(
+          name: 'tokens',
+          rawName: 'tokens',
+          description: 'Optional list of Base64 tokens',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: ListModel(
+            content: Base64Model(context: context),
+            context: context,
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'withOptionalListBase64Cookie',
+          context: context,
+          summary: 'With optional list base64 cookie',
+          description: 'Operation with optional list of Base64 cookies',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-list-base64-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'tokens', parameter: cookieParam),
+        ]);
+
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'tokens',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.accept(emitter).toString(), 'List<TonikFile>?');
+
+        const expectedMethod = r'''
+          Options _options({List<TonikFile>? tokens}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
+            if (tokens != null) {
+              _$cookieParts.add(
+                [
+                  r'tokens=',
+                  tokens
+                      .map((e) => e.toBase64String())
+                      .toList()
+                      .toForm(explode: false, allowEmpty: true),
+                ].join(),
+              );
+            }
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates EncodingException for optional list of '
+      'Binary cookie parameter',
+      () {
+        final cookieParam = CookieParameterObject(
+          name: 'files',
+          rawName: 'files',
+          description: 'Optional list of binary files',
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: ListModel(
+            content: BinaryModel(context: context),
+            context: context,
+          ),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+        );
+
+        final operation = Operation(
+          operationId: 'withOptionalListBinaryCookie',
+          context: context,
+          summary: 'With optional list binary cookie',
+          description: 'Operation with optional list of Binary cookies',
+          tags: const {},
+          isDeprecated: false,
+          path: '/optional-list-binary-cookie',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: {cookieParam},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateOptionsMethod(operation, [], [
+          (normalizedName: 'files', parameter: cookieParam),
+        ]);
+
+        final param = method.optionalParameters.firstWhere(
+          (p) => p.name == 'files',
+        );
+        expect(param.required, isFalse);
+        expect(param.type?.accept(emitter).toString(), 'List<TonikFile>?');
+
+        const expectedMethod = r'''
+          Options _options({List<TonikFile>? files}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
+            if (files != null) {
+              throw EncodingException(
+                'Binary data cannot be form-encoded for cookie files',
+              );
+            }
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
     group('alias-wrapped cookie parameters', () {
       test(
         'alias to list of strings routes through list path',
@@ -3085,6 +3386,157 @@ void main() {
           collapseWhitespace(format(expectedMethod)),
         );
       });
+
+      test(
+        'generates Cookie header for alias-wrapped Base64 cookie parameter',
+        () {
+          final cookieParam = CookieParameterObject(
+            name: 'token',
+            rawName: 'token',
+            description: 'Alias to Base64',
+            isRequired: true,
+            isDeprecated: false,
+            explode: true,
+            model: AliasModel(
+              name: 'BinaryToken',
+              model: Base64Model(context: context),
+              context: context,
+            ),
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          );
+
+          final operation = Operation(
+            operationId: 'withAliasBase64Cookie',
+            context: context,
+            summary: 'With alias base64 cookie',
+            description: 'Operation with alias-to-Base64 cookie',
+            tags: const {},
+            isDeprecated: false,
+            path: '/alias-base64-cookie',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: {cookieParam},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateOptionsMethod(operation, [], [
+            (normalizedName: 'token', parameter: cookieParam),
+          ]);
+
+          final param = method.optionalParameters.firstWhere(
+            (p) => p.name == 'token',
+          );
+          expect(param.required, isTrue);
+          expect(param.type?.symbol, 'BinaryToken');
+
+          const expectedMethod = r'''
+            Options _options({required BinaryToken token}) {
+              final _$headers = <String, dynamic>{};
+              _$headers['Accept'] = r'*/*';
+              final _$cookieParts = <String>[];
+              _$cookieParts.add(
+                [
+                  r'token=',
+                  token.toBase64String().toForm(explode: true, allowEmpty: true),
+                ].join(),
+              );
+              if (_$cookieParts.isNotEmpty) {
+                _$headers[r'Cookie'] = _$cookieParts.join('; ');
+              }
+              return Options(
+                method: 'GET',
+                headers: _$headers,
+                responseType: ResponseType.bytes,
+                validateStatus: (_) => true,
+              );
+            }
+          ''';
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates EncodingException for alias-wrapped Binary cookie parameter',
+        () {
+          final cookieParam = CookieParameterObject(
+            name: 'blob',
+            rawName: 'blob',
+            description: 'Alias to Binary',
+            isRequired: true,
+            isDeprecated: false,
+            explode: false,
+            model: AliasModel(
+              name: 'BinaryBlob',
+              model: BinaryModel(context: context),
+              context: context,
+            ),
+            encoding: CookieParameterEncoding.form,
+            context: context,
+          );
+
+          final operation = Operation(
+            operationId: 'withAliasBinaryCookie',
+            context: context,
+            summary: 'With alias binary cookie',
+            description: 'Operation with alias-to-Binary cookie',
+            tags: const {},
+            isDeprecated: false,
+            path: '/alias-binary-cookie',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: {cookieParam},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final method = generator.generateOptionsMethod(operation, [], [
+            (normalizedName: 'blob', parameter: cookieParam),
+          ]);
+
+          final param = method.optionalParameters.firstWhere(
+            (p) => p.name == 'blob',
+          );
+          expect(param.required, isTrue);
+          expect(param.type?.symbol, 'BinaryBlob');
+
+          const expectedMethod = r'''
+            Options _options({required BinaryBlob blob}) {
+              final _$headers = <String, dynamic>{};
+              _$headers['Accept'] = r'*/*';
+              final _$cookieParts = <String>[];
+              throw EncodingException(
+                'Binary data cannot be form-encoded for cookie blob',
+              );
+              if (_$cookieParts.isNotEmpty) {
+                _$headers[r'Cookie'] = _$cookieParts.join('; ');
+              }
+              return Options(
+                method: 'GET',
+                headers: _$headers,
+                responseType: ResponseType.bytes,
+                validateStatus: (_) => true,
+              );
+            }
+          ''';
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
     });
 
     group('multipart content type', () {

@@ -631,7 +631,6 @@ class OptionsGenerator {
       return;
     }
 
-    // For non-list, non-map types, use toForm directly.
     final encodedValue = refer(paramName).property('toForm').call([], {
       'explode': literalBool(explode),
       'allowEmpty': literalBool(true),

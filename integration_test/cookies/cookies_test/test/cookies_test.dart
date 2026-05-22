@@ -752,4 +752,41 @@ void main() {
       expect(getCookieHeader(response), 'items=a,1,true');
     });
   });
+
+  group('base64 (byte) cookies', () {
+    test('scalar and array base64 cookies encode as base64 form', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.getBase64Cookies(
+        binaryToken: const TonikFileBytes([104, 105]),
+        binaryTokens: const [
+          TonikFileBytes([97]),
+          TonikFileBytes([98, 99]),
+        ],
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      expect(
+        getCookieHeader(response),
+        'binaryToken=aGk%3D; binaryTokens=YQ%3D%3D,YmM%3D',
+      );
+    });
+  });
+
+  group('binary cookies', () {
+    test('binary scalar cookie returns encoding error', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.getBinaryCookies(
+        binaryData: const TonikFileBytes([1, 2, 3]),
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+      expect(error.error, isA<EncodingException>());
+      expect(
+        (error.error as EncodingException).message,
+        'Binary data cannot be form-encoded for cookie binaryData',
+      );
+    });
+  });
 }
