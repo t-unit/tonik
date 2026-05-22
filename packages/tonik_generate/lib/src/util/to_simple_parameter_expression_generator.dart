@@ -1,9 +1,28 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
-Expression buildSimpleParameterExpression(
+BuiltExpression buildSimpleParameterExpression(
+  Expression valueExpression,
+  Model model, {
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  return BuiltExpression.simple(
+    _buildSimpleParameterExpression(
+      valueExpression,
+      model,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
+    ),
+  );
+}
+
+Expression _buildSimpleParameterExpression(
   Expression valueExpression,
   Model model, {
   required Expression explode,
@@ -42,7 +61,7 @@ Expression buildSimpleParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AliasModel() => buildSimpleParameterExpression(
+    AliasModel() => _buildSimpleParameterExpression(
       valueExpression,
       model.model,
       explode: explode,
@@ -124,7 +143,7 @@ Expression _buildListSimpleExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = buildSimpleParameterExpression(
+                ..body = _buildSimpleParameterExpression(
                   refer('e'),
                   contentModel,
                   explode: explode,

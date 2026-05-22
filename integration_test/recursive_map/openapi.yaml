@@ -1,0 +1,195 @@
+openapi: 3.0.4
+info:
+  title: Recursive Map API
+  description: >-
+    OpenAPI specification exercising self-referential map/list typedefs and
+    indirect cycles between them.
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: recursive
+    description: Operations exercising recursive schema shapes.
+
+paths:
+  /tree:
+    get:
+      operationId: getTree
+      tags:
+        - recursive
+      summary: Returns a recursive Tree.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Tree'
+    post:
+      operationId: postTree
+      tags:
+        - recursive
+      summary: Accepts a recursive Tree as the request body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Tree'
+      responses:
+        '204':
+          description: No Content
+
+  /forest:
+    get:
+      operationId: getForest
+      tags:
+        - recursive
+      summary: Returns a recursive Forest.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Forest'
+    post:
+      operationId: postForest
+      tags:
+        - recursive
+      summary: Accepts a recursive Forest as the request body.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Forest'
+      responses:
+        '204':
+          description: No Content
+
+  /node:
+    get:
+      operationId: getNode
+      tags:
+        - recursive
+      summary: Returns a class wrapping a Tree-typed property.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Node'
+    post:
+      operationId: postNode
+      tags:
+        - recursive
+      summary: Accepts a class wrapping a Tree-typed property.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Node'
+      responses:
+        '204':
+          description: No Content
+
+  /aMap:
+    get:
+      operationId: getAMap
+      tags:
+        - recursive
+      summary: Returns AMap in an A<->B indirect cycle.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AMap'
+    post:
+      operationId: postAMap
+      tags:
+        - recursive
+      summary: Accepts AMap in an A<->B indirect cycle.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AMap'
+      responses:
+        '204':
+          description: No Content
+
+  /bMap:
+    get:
+      operationId: getBMap
+      tags:
+        - recursive
+      summary: Returns BMap in an A<->B indirect cycle.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BMap'
+    post:
+      operationId: postBMap
+      tags:
+        - recursive
+      summary: Accepts BMap in an A<->B indirect cycle.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BMap'
+      responses:
+        '204':
+          description: No Content
+
+components:
+  schemas:
+    # Direct self-referential map: Tree = Map<String, Tree>.
+    Tree:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Tree'
+
+    # Direct self-referential list: Forest = List<Forest>.
+    Forest:
+      type: array
+      items:
+        $ref: '#/components/schemas/Forest'
+
+    # Class whose property carries a recursive map.
+    Node:
+      type: object
+      required:
+        - id
+        - subtree
+      properties:
+        id:
+          type: string
+        subtree:
+          $ref: '#/components/schemas/Tree'
+
+    # Indirect cycle: AMap = Map<String, BMap>, BMap = Map<String, AMap>.
+    AMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/BMap'
+    BMap:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/AMap'

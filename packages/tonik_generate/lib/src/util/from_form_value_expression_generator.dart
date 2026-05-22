@@ -1,16 +1,38 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-/// Creates a Dart expression that correctly deserializes a form-encoded value
-/// to its Dart representation.
-///
-/// When [useImmutableCollections] is `true`, decoded lists are wrapped with
-/// `.lock` so the result is `IList` throughout.
-Expression buildFromFormValueExpression(
+BuiltExpression buildFromFormValueExpression(
+  Expression value, {
+  required Model model,
+  required bool isRequired,
+  required NameManager nameManager,
+  String? package,
+  String? contextClass,
+  String? contextProperty,
+  Expression? explode,
+  bool useImmutableCollections = false,
+}) {
+  return BuiltExpression.simple(
+    _buildFromFormValueExpression(
+      value,
+      model: model,
+      isRequired: isRequired,
+      nameManager: nameManager,
+      package: package,
+      contextClass: contextClass,
+      contextProperty: contextProperty,
+      explode: explode,
+      useImmutableCollections: useImmutableCollections,
+    ),
+  );
+}
+
+Expression _buildFromFormValueExpression(
   Expression value, {
   required Model model,
   required bool isRequired,
@@ -101,7 +123,7 @@ Expression buildFromFormValueExpression(
       contextParam: contextParam,
     ),
 
-    AliasModel() => buildFromFormValueExpression(
+    AliasModel() => _buildFromFormValueExpression(
       value,
       model: model.model,
       isRequired: isRequired,

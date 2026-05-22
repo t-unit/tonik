@@ -6,6 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
@@ -16,6 +17,7 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -443,7 +445,7 @@ class ClassGenerator {
         contextClass: className,
         contextProperty: propertyName,
         explode: refer('explode'),
-      );
+      ).expression;
 
       if (useImmutableCollections && isCollectionModel(modelType)) {
         final effectivelyNullable = isNullable || !isRequired;
@@ -608,6 +610,8 @@ class ClassGenerator {
             normalizeProperties(model.properties.toList()),
           )
         : null;
+    final helperContext = InlineHelperContext(nameManager: nameManager);
+    final inlineHelpers = <InlineHelper>[];
 
     // If there are no readable properties and no additional properties,
     // return an empty model.
@@ -640,11 +644,12 @@ class ClassGenerator {
       final jsonKey = property.name;
       final requiredInResponse = property.isRequired && !property.isWriteOnly;
 
-      final valueExpression = buildFromJsonValueExpression(
+      final valueBuilt = buildFromJsonValueExpression(
         '_\$map[${specLiteralStringCode(jsonKey)}]',
         model: property.model,
         nameManager: nameManager,
         package: package,
+        helperContext: helperContext,
         contextClass: className,
         contextProperty: jsonKey,
         isNullable:
@@ -653,10 +658,11 @@ class ClassGenerator {
             property.model.isEffectivelyNullable,
         useImmutableCollections: useImmutableCollections,
       );
+      inlineHelpers.addAll(valueBuilt.inlineFunctions);
 
       propertyAssignments
         ..add(Code('$normalizedName: '))
-        ..add(valueExpression.code)
+        ..add(valueBuilt.unsafeRawBody.code)
         ..add(const Code(','));
     }
 
@@ -701,18 +707,20 @@ class ClassGenerator {
       ]);
 
       if (ap is TypedAdditionalProperties) {
-        final decodeExpr = buildFromJsonValueExpression(
+        final decodeBuilt = buildFromJsonValueExpression(
           r'_$entry.value',
           model: ap.valueModel,
           nameManager: nameManager,
           package: package,
+          helperContext: helperContext,
           contextClass: className,
           contextProperty: 'additionalProperties',
           useImmutableCollections: useImmutableCollections,
         );
+        inlineHelpers.addAll(decodeBuilt.inlineFunctions);
         codes.addAll([
           const Code(r'_$additional[_$entry.key] = '),
-          decodeExpr.code,
+          decodeBuilt.unsafeRawBody.code,
           const Code(';'),
         ]);
       } else {
@@ -750,7 +758,10 @@ class ClassGenerator {
       ..addAll(propertyAssignments)
       ..add(const Code(');'));
 
-    return Block.of(codes);
+    return Block.of([
+      ...spliceInlineHelpers(inlineHelpers),
+      ...codes,
+    ]);
   }
 
   Method _buildToJsonMethod(ClassModel model) {
@@ -775,6 +786,9 @@ class ClassGenerator {
       model.properties.where((p) => !p.isReadOnly).toList(),
     );
 
+    final helperContext = InlineHelperContext(nameManager: nameManager);
+    final inlineHelpers = <InlineHelper>[];
+
     final requiredWriteOnlyNonNullable = normalizedProperties
         .where(
           (p) =>
@@ -793,23 +807,29 @@ class ClassGenerator {
       final forceNonNullReceiver =
           property.isWriteOnly && requiredInRequest && !property.isNullable;
 
-      final valueExpr = buildToJsonPropertyExpression(
+      final valueBuilt = buildToJsonPropertyExpression(
         name,
         property,
+        nameManager: nameManager,
+        package: package,
+        helperContext: helperContext,
+        contextClass: className,
+        contextProperty: property.name,
         forceNonNullReceiver: forceNonNullReceiver,
         useImmutableCollections: useImmutableCollections,
       );
+      inlineHelpers.addAll(valueBuilt.inlineFunctions);
 
       final keyLiteral = specLiteralStringCode(property.name);
       if (!requiredInRequest && !property.isNullable) {
         mapEntries
           ..add(Code('if ($name != null) $keyLiteral: '))
-          ..add(valueExpr.code)
+          ..add(valueBuilt.unsafeRawBody.code)
           ..add(const Code(','));
       } else {
         mapEntries
           ..add(Code('$keyLiteral: '))
-          ..add(valueExpr.code)
+          ..add(valueBuilt.unsafeRawBody.code)
           ..add(const Code(','));
       }
     }
@@ -823,14 +843,19 @@ class ClassGenerator {
           ? '$apFieldName.unlock'
           : apFieldName;
       if (ap is TypedAdditionalProperties) {
-        final apExpr = buildToJsonAdditionalPropertiesExpression(
+        final apBuilt = buildToJsonAdditionalPropertiesExpression(
           apFieldName,
           ap.valueModel,
+          nameManager: nameManager,
+          package: package,
+          helperContext: helperContext,
+          contextClass: className,
           useImmutableCollections: useImmutableCollections,
         );
+        inlineHelpers.addAll(apBuilt.inlineFunctions);
         mapEntries.addAll([
           const Code('...'),
-          apExpr.code,
+          apBuilt.unsafeRawBody.code,
           const Code(','),
         ]);
       } else {
@@ -839,17 +864,33 @@ class ClassGenerator {
       }
     }
 
+    final helperPrelude = spliceInlineHelpers(inlineHelpers);
+
     if (requiredWriteOnlyNonNullable.isEmpty) {
+      if (helperPrelude.isEmpty) {
+        return Method(
+          (b) => b
+            ..annotations.add(refer('override', 'dart:core'))
+            ..name = 'toJson'
+            ..returns = refer('Object?', 'dart:core')
+            ..lambda = true
+            ..body = Block.of([
+              const Code('{'),
+              ...mapEntries,
+              const Code('}'),
+            ]),
+        );
+      }
       return Method(
         (b) => b
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toJson'
           ..returns = refer('Object?', 'dart:core')
-          ..lambda = true
           ..body = Block.of([
-            const Code('{'),
+            ...helperPrelude,
+            const Code('return {'),
             ...mapEntries,
-            const Code('}'),
+            const Code('};'),
           ]),
       );
     }
@@ -873,6 +914,7 @@ class ClassGenerator {
         ..name = 'toJson'
         ..returns = refer('Object?', 'dart:core')
         ..body = Block.of([
+          ...helperPrelude,
           ...nullChecks,
           const Code('return {'),
           ...mapEntries,
@@ -1293,7 +1335,7 @@ if ($name != null) {
 
         final assignmentExpr = refer(
           r'_$result',
-        ).index(specLiteralString(propertyName)).assign(encodeExpr);
+        ).index(specLiteralString(propertyName)).assign(encodeExpr.expression);
 
         if (isRequired && !isNullable) {
           if (isFieldNullable) {
@@ -1662,7 +1704,7 @@ if ($name != null) {
         contextProperty: propertyName,
         explode: refer('explode'),
         useImmutableCollections: useImmutableCollections,
-      );
+      ).expression;
     }
 
     for (final name in writeOnlyRequiredNames) {

@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/to_delimited_query_parameter_expression_generator.dart';
 
 void main() {
@@ -18,13 +19,13 @@ void main() {
       emitter = DartEmitter(useNullSafetySyntax: true);
     });
 
-    String emitStatements(List<Code> statements) {
+    String emitStatements(BuiltStatements built) {
       final method = Method(
         (b) => b
           ..name = 'test'
           ..returns = refer('void')
           ..lambda = false
-          ..body = Block.of(statements),
+          ..body = Block.of(built.statements),
       );
       return format(method.accept(emitter).toString());
     }

@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
@@ -80,13 +81,10 @@ String? _listContentThrowReason(Model content) {
   };
 }
 
-/// Creates a Dart expression that correctly serializes a path parameter
-/// to its simple parameter encoding representation.
-///
-/// Path parameters are always required, so even if the underlying model type
-/// is nullable (e.g., `typedef X = String?`), we assert non-null via `!`
-/// rather than using `?.` which would produce `String?` output.
-Expression buildToSimplePathParameterExpression(
+/// Path parameters are always required: if the underlying model is
+/// nullable (e.g. `typedef X = String?`), assert non-null via `!` rather
+/// than `?.`, which would produce `String?` output.
+BuiltExpression buildToSimplePathParameterExpression(
   String parameterName,
   PathParameterObject parameter, {
   bool explode = false,
@@ -97,22 +95,20 @@ Expression buildToSimplePathParameterExpression(
   final receiver = isNullable
       ? refer(parameterName).nullChecked
       : refer(parameterName);
-  return _buildSimpleSerializationExpression(
-    receiver,
-    model,
-    isNullable: false,
-    explode: explode,
-    allowEmpty: allowEmpty,
+  return BuiltExpression.simple(
+    _buildSimpleSerializationExpression(
+      receiver,
+      model,
+      isNullable: false,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
   );
 }
 
-/// Creates a Dart expression that correctly serializes a
-/// header parameter to its simple parameter encoding representation.
-///
-/// When [isNullChecked] is true, the expression is already inside a
-/// null-check block (`if (param != null)`), so null-aware access is
-/// unnecessary even for nullable models.
-Expression buildToSimpleHeaderParameterExpression(
+/// [isNullChecked] suppresses null-aware access for callers already
+/// inside an `if (param != null)` block.
+BuiltExpression buildToSimpleHeaderParameterExpression(
   String parameterName,
   RequestHeaderObject parameter, {
   bool explode = false,
@@ -120,33 +116,32 @@ Expression buildToSimpleHeaderParameterExpression(
   bool isNullChecked = false,
 }) {
   final model = parameter.model;
-  return _buildSimpleSerializationExpression(
-    refer(parameterName),
-    model,
-    isNullable: !isNullChecked && model.isEffectivelyNullable,
-    explode: explode,
-    allowEmpty: allowEmpty,
+  return BuiltExpression.simple(
+    _buildSimpleSerializationExpression(
+      refer(parameterName),
+      model,
+      isNullable: !isNullChecked && model.isEffectivelyNullable,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
   );
 }
 
-/// Creates a Dart expression that serializes a value using simple style
-/// encoding, accepting a [Model] directly.
-///
-/// This is the model-based variant that works independently of the parameter
-/// type (request header, response header, per-part header, etc.).
-Expression buildSimpleValueExpression(
+BuiltExpression buildSimpleValueExpression(
   Expression accessor,
   Model model, {
   required bool explode,
   required bool allowEmpty,
   bool isNullable = false,
 }) {
-  return _buildSimpleSerializationExpression(
-    accessor,
-    model,
-    isNullable: isNullable,
-    explode: explode,
-    allowEmpty: allowEmpty,
+  return BuiltExpression.simple(
+    _buildSimpleSerializationExpression(
+      accessor,
+      model,
+      isNullable: isNullable,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
   );
 }
 

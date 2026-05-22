@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/composite_guard_builders.dart';
 import 'package:tonik_generate/src/util/composite_library_builder.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
@@ -11,6 +12,7 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
@@ -266,6 +268,8 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
+    final helperContext = InlineHelperContext(nameManager: nameManager);
+    final inlineHelpers = <InlineHelper>[];
     final caseCodes = <Code>[];
     final sortedModels = stableModelSorter.sortDiscriminatedModels(
       model.models,
@@ -305,15 +309,21 @@ class OneOfGenerator {
           isNullable: false,
           isDeprecated: false,
         );
-        final jsonValueExpr = buildToJsonPropertyExpression(
+        final jsonValueBuilt = buildToJsonPropertyExpression(
           'value',
           property,
+          nameManager: nameManager,
+          package: package,
+          helperContext: helperContext,
+          contextClass: className,
+          contextProperty: 'value',
           useImmutableCollections: useImmutableCollections,
         );
+        inlineHelpers.addAll(jsonValueBuilt.inlineFunctions);
 
         caseCodes
           ..add(Code('$variantName(:final value) => ('))
-          ..add(jsonValueExpr.code)
+          ..add(jsonValueBuilt.unsafeRawBody.code)
           ..add(Code(', $discriminatorValue)'));
       }
       if (i < sortedModels.length - 1) {
@@ -347,7 +357,10 @@ class OneOfGenerator {
 
     blocks.add(const Code(r'return _$json;'));
 
-    return Block.of(blocks);
+    return Block.of([
+      ...spliceInlineHelpers(inlineHelpers),
+      ...blocks,
+    ]);
   }
 
   Code _generateFromJsonBody(
@@ -355,6 +368,8 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
+    final helperContext = InlineHelperContext(nameManager: nameManager);
+    final inlineHelpers = <InlineHelper>[];
     final blocks = <Code>[];
 
     if (model.discriminator != null) {
@@ -499,17 +514,22 @@ class OneOfGenerator {
       final variantName = variantNames[m]!;
 
       if (resolvedType is ListModel || resolvedType is MapModel) {
-        final decodeExpr = buildFromJsonValueExpression(
+        final decodeBuilt = buildFromJsonValueExpression(
           'json',
           model: modelType,
           nameManager: nameManager,
           package: package,
+          helperContext: helperContext,
           contextClass: className,
           useImmutableCollections: useImmutableCollections,
         );
+        inlineHelpers.addAll(decodeBuilt.inlineFunctions);
         blocks.addAll([
           const Code('try {'),
-          refer(variantName).call([decodeExpr]).returned.statement,
+          refer(variantName)
+              .call([decodeBuilt.unsafeRawBody])
+              .returned
+              .statement,
           const Code('} on '),
           refer('Object', 'dart:core').code,
           const Code(' catch(_) {}'),
@@ -553,7 +573,10 @@ class OneOfGenerator {
       );
     }
 
-    return Block.of(blocks);
+    return Block.of([
+      ...spliceInlineHelpers(inlineHelpers),
+      ...blocks,
+    ]);
   }
 
   /// Builds a fromSimple or fromForm factory constructor for oneOf.
@@ -679,7 +702,9 @@ class OneOfGenerator {
                 contextClass: className,
                 explode: refer('explode'),
               );
-        tryBody.add(refer(variantName).call([decodeExpr]).returned.statement);
+        tryBody.add(
+          refer(variantName).call([decodeExpr.expression]).returned.statement,
+        );
       } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
         final decodeExpr = isForm
             ? buildFromFormValueExpression(
@@ -702,7 +727,7 @@ class OneOfGenerator {
                 explode: refer('explode'),
               );
         tryBody.add(
-          refer(variantName).call([decodeExpr]).returned.statement,
+          refer(variantName).call([decodeExpr.expression]).returned.statement,
         );
       } else if (resolvedType is ListModel) {
         // Add throw directly to bodyBlocks (not tryBody) so it is NOT

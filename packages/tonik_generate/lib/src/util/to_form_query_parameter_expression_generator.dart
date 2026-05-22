@@ -1,13 +1,28 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_util/tonik_util.dart';
 
-/// Creates code blocks that serialize a query parameter to its form-encoded
-/// representation.
-List<Code> buildToFormQueryParameterCode(
+BuiltStatements buildToFormQueryParameterCode(
+  String parameterName,
+  QueryParameterObject parameter, {
+  bool explode = false,
+  bool allowEmpty = true,
+}) {
+  return BuiltStatements.simple(
+    _buildToFormQueryParameterCode(
+      parameterName,
+      parameter,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
+  );
+}
+
+List<Code> _buildToFormQueryParameterCode(
   String parameterName,
   QueryParameterObject parameter, {
   bool explode = false,

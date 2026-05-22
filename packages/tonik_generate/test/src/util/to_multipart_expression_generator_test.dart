@@ -4,6 +4,7 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
 
 void main() {
@@ -24,27 +25,28 @@ void main() {
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
-  /// Wraps a list of [Code] statements in a method body so they can be
+  /// Wraps a [BuiltStatements] in a method body so it can be
   /// formatted and inspected as a single string.
-  String emitStatements(List<Code> statements) {
+  String emitStatements(BuiltStatements built) {
     final method = Method(
       (b) => b
         ..name = 'test'
         ..returns = refer('void')
         ..lambda = false
-        ..body = Block.of(statements),
+        ..body = Block.of(built.statements),
     );
     return format(method.accept(emitter).toString());
   }
 
-  /// Wraps an [Expression] in a method body for full-body comparison.
-  String emitExpressionAsMethod(Expression expr) {
+  /// Wraps a [BuiltExpression] in a method body for full-body comparison.
+  String emitExpressionAsMethod(BuiltExpression built) {
+    expect(built.inlineFunctions, isEmpty);
     final method = Method(
       (b) => b
         ..name = 'test'
         ..returns = refer('void')
         ..lambda = false
-        ..body = Block.of([expr.statement]),
+        ..body = Block.of([built.unsafeRawBody.statement]),
     );
     return format(method.accept(emitter).toString());
   }

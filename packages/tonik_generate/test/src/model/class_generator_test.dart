@@ -2892,5 +2892,108 @@ factory TaggedItem.fromJson(Object? json) {
         );
       },
     );
+
+    group('recursion helper dedup across multiple properties', () {
+      ClassModel buildTwoTrees() {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        return ClassModel(
+          isDeprecated: false,
+          name: 'TwoTrees',
+          properties: [
+            Property(
+              name: 'left',
+              model: tree,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+            Property(
+              name: 'right',
+              model: tree,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+            ),
+          ],
+          context: context,
+        );
+      }
+
+      test(
+        r'two Tree-typed properties splice exactly one _$decodeTree helper '
+        'into fromJson',
+        () {
+          final result = generator.generateClass(buildTwoTrees());
+          final fromJsonCtor = result.constructors.firstWhere(
+            (c) => c.name == 'fromJson',
+          );
+          final actual = format(
+            Class((b) => b
+              ..name = 'TwoTrees'
+              ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+          );
+
+          const expected = r'''
+            class TwoTrees {
+              factory TwoTrees.fromJson(Object? json) {
+                late final Tree Function(Object?) _$decodeTree;
+                _$decodeTree = (Object? v) => v.decodeJsonMap(
+                  (v) => _$decodeTree(v),
+                  context: r"Tree (at 'TwoTrees.left')",
+                );
+                final _$map = json.decodeMap(context: r'TwoTrees');
+                return TwoTrees(
+                  left: _$decodeTree(_$map[r'left']),
+                  right: _$decodeTree(_$map[r'right']),
+                );
+              }
+            }
+          ''';
+
+          expect(
+            collapseWhitespace(actual),
+            collapseWhitespace(format(expected)),
+          );
+        },
+      );
+
+      test(
+        r'two Tree-typed properties splice exactly one _$encodeTree helper '
+        'into toJson',
+        () {
+          final result = generator.generateClass(buildTwoTrees());
+          final toJson = result.methods.firstWhere((m) => m.name == 'toJson');
+          final actual = format(toJson.accept(emitter).toString());
+
+          const expected = r'''
+            @override
+            Object? toJson() {
+              late final Object? Function(Object?) _$encodeTree;
+              _$encodeTree = (Object? raw) {
+                if (raw is! Tree) {
+                  throw EncodingException(
+                    'Cannot encode value as Tree (at \'TwoTrees.left\'); got: '
+                    '${raw.runtimeType}',
+                  );
+                }
+                final v = raw;
+                return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
+              };
+              return {r'left': _$encodeTree(left), r'right': _$encodeTree(right)};
+            }
+          ''';
+
+          expect(
+            collapseWhitespace(actual),
+            collapseWhitespace(format(expected)),
+          );
+        },
+      );
+    });
   });
 }

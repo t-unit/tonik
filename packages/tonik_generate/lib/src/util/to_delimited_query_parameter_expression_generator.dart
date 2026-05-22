@@ -1,11 +1,28 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-/// Creates code blocks that serialize a query parameter to its delimited
-/// representation (space or pipe delimited).
-List<Code> buildToDelimitedQueryParameterCode(
+BuiltStatements buildToDelimitedQueryParameterCode(
+  String parameterName,
+  QueryParameterObject parameter, {
+  required QueryParameterEncoding encoding,
+  bool explode = false,
+  bool allowEmpty = true,
+}) {
+  return BuiltStatements.simple(
+    _buildToDelimitedQueryParameterCode(
+      parameterName,
+      parameter,
+      encoding: encoding,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    ),
+  );
+}
+
+List<Code> _buildToDelimitedQueryParameterCode(
   String parameterName,
   QueryParameterObject parameter, {
   required QueryParameterEncoding encoding,

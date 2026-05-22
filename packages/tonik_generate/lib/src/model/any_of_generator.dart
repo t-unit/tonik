@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/composite_guard_builders.dart';
 import 'package:tonik_generate/src/util/composite_library_builder.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
@@ -13,6 +14,7 @@ import 'package:tonik_generate/src/util/from_form_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
@@ -372,7 +374,7 @@ class AnyOfGenerator {
               fieldModel,
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
-            ).statement,
+            ).expression.statement,
           ]),
         );
         if (needsValues) {
@@ -669,6 +671,8 @@ class AnyOfGenerator {
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
+    final helperContext = InlineHelperContext(nameManager: nameManager);
+    final inlineHelpers = <InlineHelper>[];
     final localDecls = <Code>[];
 
     final typedProperties = <({String normalizedName, Property property})>[];
@@ -685,20 +689,22 @@ class AnyOfGenerator {
       final modelType = n.property.model;
       final varName = n.normalizedName;
 
-      final decodeExpr = buildFromJsonValueExpression(
+      final decodeBuilt = buildFromJsonValueExpression(
         'json',
         model: modelType,
         nameManager: nameManager,
         package: package,
+        helperContext: helperContext,
         contextClass: className,
         useImmutableCollections: useImmutableCollections,
       );
+      inlineHelpers.addAll(decodeBuilt.inlineFunctions);
 
       localDecls.add(
         _tryAssignLocal(
           variableName: varName,
           nullableType: _nullableTypeReference(modelType),
-          decodeExpression: decodeExpr,
+          decodeExpression: decodeBuilt.unsafeRawBody,
         ),
       );
     }
@@ -756,6 +762,7 @@ class AnyOfGenerator {
           ),
         )
         ..body = Block.of([
+          ...spliceInlineHelpers(inlineHelpers),
           ...localDecls,
           validationCheck,
           refer(className).call([], ctorArgs).returned.statement,
@@ -768,6 +775,9 @@ class AnyOfGenerator {
     AnyOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
+    final helperContext = InlineHelperContext(nameManager: nameManager);
+    final inlineHelpers = <InlineHelper>[];
+
     final body = <Code>[
       declareFinal(
         r'_$values',
@@ -794,12 +804,18 @@ class AnyOfGenerator {
 
     for (final n in normalizedProperties) {
       final name = n.normalizedName;
-      final valueExpr = buildToJsonPropertyExpression(
+      final valueBuilt = buildToJsonPropertyExpression(
         name,
         n.property,
+        nameManager: nameManager,
+        package: package,
+        helperContext: helperContext,
+        contextClass: className,
+        contextProperty: n.property.name,
         forceNonNullReceiver: true,
         useImmutableCollections: useImmutableCollections,
       );
+      inlineHelpers.addAll(valueBuilt.inlineFunctions);
 
       final discValue = discMap[n.property.model];
 
@@ -808,7 +824,7 @@ class AnyOfGenerator {
         const Code('final '),
         refer('Object?', 'dart:core').code,
         Code(' _\$${name}Json = '),
-        valueExpr.code,
+        valueBuilt.unsafeRawBody.code,
         const Code(';'),
       ]);
 
@@ -916,7 +932,10 @@ class AnyOfGenerator {
         ..name = 'toJson'
         ..returns = refer('Object?', 'dart:core')
         ..lambda = false
-        ..body = Block.of(body),
+        ..body = Block.of([
+          ...spliceInlineHelpers(inlineHelpers),
+          ...body,
+        ]),
     );
   }
 
@@ -1151,25 +1170,26 @@ class AnyOfGenerator {
                   },
                 ),
           _ =>
-            isForm
-                ? buildFromFormValueExpression(
-                    refer('value'),
-                    model: modelType,
-                    isRequired: true,
-                    nameManager: nameManager,
-                    package: package,
-                    contextClass: className,
-                    useImmutableCollections: useImmutableCollections,
-                  )
-                : buildSimpleValueExpression(
-                    refer('value'),
-                    model: modelType,
-                    isRequired: true,
-                    nameManager: nameManager,
-                    package: package,
-                    contextClass: className,
-                    explode: refer('explode'),
-                  ),
+            (isForm
+                    ? buildFromFormValueExpression(
+                        refer('value'),
+                        model: modelType,
+                        isRequired: true,
+                        nameManager: nameManager,
+                        package: package,
+                        contextClass: className,
+                        useImmutableCollections: useImmutableCollections,
+                      )
+                    : buildSimpleValueExpression(
+                        refer('value'),
+                        model: modelType,
+                        isRequired: true,
+                        nameManager: nameManager,
+                        package: package,
+                        contextClass: className,
+                        explode: refer('explode'),
+                      ))
+                .expression,
         };
 
         localDecls.add(
@@ -2318,7 +2338,7 @@ class AnyOfGenerator {
                 paramName: refer('paramName'),
                 explode: refer('explode'),
                 allowEmpty: refer('allowEmpty'),
-              ),
+              ).expression,
             ]).statement,
           );
         }
