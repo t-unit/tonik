@@ -421,6 +421,46 @@ class OptionsGenerator {
     if (resolvedModel is ListModel) {
       final contentModel = resolvedModel.content.resolved;
 
+      if (contentModel is Base64Model) {
+        final encodedValue = refer(paramName)
+            .property('map')
+            .call([
+              Method(
+                (b) => b
+                  ..lambda = true
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'e'),
+                  )
+                  ..body = refer('e').property('toBase64String').call([]).code,
+              ).closure,
+            ])
+            .property('toList')
+            .call([])
+            .property('toForm')
+            .call([], {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(true),
+            });
+        bodyStatements.add(
+          refer(r'_$cookieParts').property('add').call([
+            literalList([
+              specLiteralString('$rawName='),
+              encodedValue,
+            ]).property('join').call([]),
+          ]).statement,
+        );
+        return;
+      }
+
+      if (contentModel is BinaryModel) {
+        bodyStatements.add(
+          generateEncodingExceptionExpression(
+            'Binary data cannot be form-encoded for cookie $rawName',
+          ).statement,
+        );
+        return;
+      }
+
       if (contentModel is StringModel) {
         final encodedValue = refer(paramName).property('toForm').call([], {
           'explode': literalBool(explode),
@@ -558,6 +598,35 @@ class OptionsGenerator {
             encodedValue,
           ]).property('join').call([]),
         ]).statement,
+      );
+      return;
+    }
+
+    if (resolvedModel is Base64Model) {
+      final encodedValue = refer(paramName)
+          .property('toBase64String')
+          .call([])
+          .property('toForm')
+          .call([], {
+            'explode': literalBool(explode),
+            'allowEmpty': literalBool(true),
+          });
+      bodyStatements.add(
+        refer(r'_$cookieParts').property('add').call([
+          literalList([
+            specLiteralString('$rawName='),
+            encodedValue,
+          ]).property('join').call([]),
+        ]).statement,
+      );
+      return;
+    }
+
+    if (resolvedModel is BinaryModel) {
+      bodyStatements.add(
+        generateEncodingExceptionExpression(
+          'Binary data cannot be form-encoded for cookie $rawName',
+        ).statement,
       );
       return;
     }
