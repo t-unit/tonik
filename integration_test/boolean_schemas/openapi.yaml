@@ -752,6 +752,31 @@ paths:
                   status:
                     type: string
 
+  /form/nullable-never-array:
+    post:
+      operationId: postFormNullableNeverArray
+      tags:
+        - boolean-schemas
+      summary: Post form-urlencoded body decoded as nullable never-item array (code generation only)
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+      responses:
+        '200':
+          description: Nullable never-item array form response body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: array
+                nullable: true
+                items: false
+
   /query/list-any:
     get:
       operationId: getQueryListAny

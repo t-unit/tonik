@@ -463,6 +463,27 @@ void main() {
       );
     });
 
+    test(
+      'honors ListModel(isNullable: true) intrinsic nullability when the '
+      'caller leaves isNullable at the default',
+      () {
+        final listModel = ListModel(
+          content: StringModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+        expect(
+          buildFromJsonValueExpression(
+            'value',
+            model: listModel,
+            nameManager: nameManager,
+            package: 'my_package',
+          ).accept(emitter).toString(),
+          'value.decodeJsonNullableList<String>()',
+        );
+      },
+    );
+
     test('generates for list of maps with typed values', () {
       final addressModel = ClassModel(
         isDeprecated: false,

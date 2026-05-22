@@ -298,14 +298,142 @@ Future<TonikResult<Never>> call({CancelToken? cancelToken}) async {
       },
     );
 
-    // `isNeverParseReturn` also guards against `Never?` to keep the
-    // unassigned try/catch branch unreachable when the parse method is not
-    // statically guaranteed to throw. The current core model graph does not
-    // expose a way to construct a single-body operation whose parse-response
-    // type renders as `Never?` (NeverModel has no isNullable field; named
-    // alias chains drop nullability via the NamedModel branch in
-    // typeReference), so this case is not exercised by a unit test — but the
-    // guard prevents a regression if future model changes ever permit it.
+    // `isNeverParseReturn` also guards against `Never?` defensively. The
+    // current `tonik_parse` package does not produce OpenAPI input that
+    // yields a `Never?` parse-response type, but the core model layer
+    // permits the shape (e.g. an anonymous AliasModel with `isNullable: true`
+    // wrapping NeverModel renders as `Never?` via the anonymous-alias branch
+    // in typeReference). The guard prevents the unassigned try/catch branch
+    // from being emitted should such a model ever reach the generator.
+    test(
+      'nullable anonymous-alias Never response uses assigned-var shape',
+      () {
+        final operation = Operation(
+          operationId: 'nullableNeverAliasBodyOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/nullable-never-alias-body',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          securitySchemes: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: AliasModel(
+                    isNullable: true,
+                    model: NeverModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+        );
+        const normalizedParams = NormalizedRequestParameters(
+          pathParameters: [],
+          queryParameters: [],
+          headers: [],
+          cookieParameters: [],
+        );
+        final method = generator.generateCallMethod(
+          operation,
+          normalizedParams,
+        );
+
+        expect(
+          method.returns?.accept(emitter).toString(),
+          'Future<TonikResult<Never?>>',
+        );
+
+        const expectedMethod = r'''
+Future<TonikResult<Never?>> call({CancelToken? cancelToken}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/')
+        ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}'
+        : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+  final Never? _$parsedResponse;
+  try {
+    _$parsedResponse = _parseResponse(_$response);
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.decoding,
+      response: _$response,
+    );
+  }
+  return TonikSuccess(_$parsedResponse, _$response);
+}
+''';
+        final format = DartFormatter(
+          languageVersion: DartFormatter.latestLanguageVersion,
+        ).format;
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
 
     test('returns result with model for single status code with body only', () {
       final operation = Operation(

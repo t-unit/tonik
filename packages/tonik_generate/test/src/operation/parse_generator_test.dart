@@ -2569,8 +2569,8 @@ List<Never> _parseResponse(Response<List<int>> response) {
       );
 
       test(
-        'nullable ListModel<NeverModel> form body falls through to '
-        'standard non-pure-throw shape',
+        'nullable ListModel<NeverModel> form body emits pure throw without '
+        r'declaring an unused _$formString local',
         () {
           final operation = Operation(
             operationId: 'formNullableListNeverBodyOp',
@@ -2611,11 +2611,9 @@ List<Never> _parseResponse(Response<List<int>> response) {
 List<Never>? _parseResponse(Response<List<int>> response) {
   switch ((response.statusCode, response.headers.value('content-type'))) {
     case (200, r'application/x-www-form-urlencoded'):
-      final _$formString = decodeResponseText(response.data);
-      final _$body = throw FormDecodingException(
+      throw FormDecodingException(
         'Cannot decode List<NeverModel> - this type does not permit any value.',
       );
-      return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
       final _$status = response.statusCode;
