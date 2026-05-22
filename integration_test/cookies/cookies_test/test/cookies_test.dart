@@ -788,5 +788,24 @@ void main() {
         'Binary data cannot be form-encoded for cookie binaryData',
       );
     });
+
+    test('binary array cookie returns encoding error', () async {
+      final api = buildCookiesApi(responseStatus: '204');
+      final response = await api.getBinaryCookiesArray(
+        binaryDataList: const [
+          TonikFileBytes([1, 2, 3]),
+          TonikFileBytes([4, 5, 6]),
+        ],
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+      expect(error.error, isA<EncodingException>());
+      expect(
+        (error.error as EncodingException).message,
+        'Binary data cannot be form-encoded for cookie binaryDataList',
+      );
+    });
   });
 }
