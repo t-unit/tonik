@@ -178,7 +178,7 @@ class ParseGenerator {
     return responseBody?.contentType == ContentType.multipart;
   }
 
-  ({List<Code> statements, String varName})? _createBodyDecode(
+  ({List<Code> statements, String? varName})? _createBodyDecode(
     ResponseObject response,
     String? contentType,
   ) {
@@ -212,9 +212,20 @@ class ParseGenerator {
     };
   }
 
-  ({List<Code> statements, String varName}) _createJsonBodyDecode(
+  ({List<Code> statements, String? varName}) _createJsonBodyDecode(
     ResponseBody responseBody,
   ) {
+    if (_isJsonBodyPureThrow(responseBody.model)) {
+      return (
+        statements: [
+          generateJsonDecodingExceptionExpression(
+            _neverPureThrowMessage(responseBody.model),
+          ).statement,
+        ],
+        varName: null,
+      );
+    }
+
     final statements = <Code>[];
     const jsonVar = r'_$json';
     const bodyVar = r'_$body';
@@ -289,9 +300,20 @@ class ParseGenerator {
     );
   }
 
-  ({List<Code> statements, String varName}) _createFormBodyDecode(
+  ({List<Code> statements, String? varName}) _createFormBodyDecode(
     ResponseBody responseBody,
   ) {
+    if (_isFormBodyPureThrow(responseBody.model)) {
+      return (
+        statements: [
+          generateFormDecodingExceptionExpression(
+            _neverPureThrowMessage(responseBody.model),
+          ).statement,
+        ],
+        varName: null,
+      );
+    }
+
     final statements = <Code>[];
     const formStringVar = r'_$formString';
     const bodyVar = r'_$body';
@@ -321,6 +343,57 @@ class ParseGenerator {
       ..add(declareFinal(bodyVar).assign(bodyBuilt.unsafeRawBody).statement);
 
     return (statements: statements, varName: bodyVar);
+  }
+
+  // Mirrors the *non-nullable* `NeverModel` and `ListModel<NeverModel>` arms
+  // in buildFromJsonValueExpression — only those emit a bare
+  // `throw JsonDecodingException(...)`. When the model is nullable the arms
+  // emit `value == null ? null : throw …`, which references `_$json` and so
+  // must NOT short-circuit here. The `!nullable` gates in the switch below
+  // enforce that.
+  bool _isJsonBodyPureThrow(Model model, {bool isNullable = false}) {
+    final nullable = isNullable || model.isEffectivelyNullable;
+    switch (model) {
+      case NeverModel():
+        return !nullable;
+      case ListModel(:final content):
+        final unwrapped = content is AliasModel ? content.model : content;
+        return !nullable && unwrapped is NeverModel;
+      case AliasModel():
+        return _isJsonBodyPureThrow(model.model, isNullable: nullable);
+      default:
+        return false;
+    }
+  }
+
+  // Bare `NeverModel` and `ListModel<NeverModel>` both collapse to a pure
+  // throw regardless of nullability, because `_$formString` comes from
+  // `decodeResponseText` and is typed `String` (non-null). Wrapping the throw
+  // in `_$formString == null ? null : throw …` would trip
+  // `unnecessary_null_comparison`. This differs from `_isJsonBodyPureThrow`,
+  // where `_$json` is `Object?` and the nullable arms emit the null-guarded
+  // ternary — see the `!nullable` gates there.
+  bool _isFormBodyPureThrow(Model model) {
+    switch (model) {
+      case NeverModel():
+        return true;
+      case ListModel(:final content):
+        final unwrapped = content is AliasModel ? content.model : content;
+        return unwrapped is NeverModel;
+      case AliasModel():
+        return _isFormBodyPureThrow(model.model);
+      default:
+        return false;
+    }
+  }
+
+  String _neverPureThrowMessage(Model model) {
+    final resolved = model is AliasModel ? model.resolved : model;
+    if (resolved is ListModel) {
+      return 'Cannot decode List<NeverModel> - this type does not permit '
+          'any value.';
+    }
+    return 'Cannot decode NeverModel - this type does not permit any value.';
   }
 
   Code _generateMultiResponseCase(
@@ -370,9 +443,12 @@ class ParseGenerator {
         bodyDecode,
       );
     } else if (bodyDecode != null) {
+      if (bodyDecode.varName == null) {
+        return Block.of(bodyDecode.statements);
+      }
       return Block.of([
         ...bodyDecode.statements,
-        refer(bodyDecode.varName).returned.statement,
+        refer(bodyDecode.varName!).returned.statement,
       ]);
     } else {
       return const Code('return;');
@@ -384,7 +460,7 @@ class ParseGenerator {
     String wrapperUrl,
     ResponseObject response,
     String? contentType,
-    ({List<Code> statements, String varName})? bodyDecode,
+    ({List<Code> statements, String? varName})? bodyDecode,
   ) {
     final headerResult = _decodeHeaders(response);
 
@@ -395,9 +471,21 @@ class ParseGenerator {
       ).statement;
     }
 
+    if (bodyDecode != null && bodyDecode.varName == null) {
+      // Pure-throw body: no wrapper or response object is constructed, so
+      // typed-header decode expressions are intentionally omitted from the
+      // emitted block — only never-header existence checks run before the
+      // throw. Raw headers remain available to callers via
+      // TonikError.response.headers.
+      return Block.of([
+        ..._generateNeverHeaderChecks(headerResult.neverHeaders),
+        ...bodyDecode.statements,
+      ]);
+    }
+
     final responseArgs = <String, Expression>{};
     if (bodyDecode != null) {
-      responseArgs['body'] = refer(bodyDecode.varName);
+      responseArgs['body'] = refer(bodyDecode.varName!);
     }
     responseArgs.addAll(headerResult.supported);
 
@@ -424,21 +512,24 @@ class ParseGenerator {
   Code _generateMultiResponseWithBody(
     String wrapperName,
     String wrapperUrl,
-    ({List<Code> statements, String varName}) bodyDecode,
+    ({List<Code> statements, String? varName}) bodyDecode,
   ) {
+    if (bodyDecode.varName == null) {
+      return Block.of(bodyDecode.statements);
+    }
     return Block.of([
       ...bodyDecode.statements,
       refer(
         wrapperName,
         wrapperUrl,
-      ).call([], {'body': refer(bodyDecode.varName)}).returned.statement,
+      ).call([], {'body': refer(bodyDecode.varName!)}).returned.statement,
     ]);
   }
 
   Code _generateSingleResponseWithHeaders(
     ResponseObject response,
     String? contentType,
-    ({List<Code> statements, String varName})? bodyDecode,
+    ({List<Code> statements, String? varName})? bodyDecode,
   ) {
     final headerResult = _decodeHeaders(response);
 
@@ -449,9 +540,21 @@ class ParseGenerator {
       ).statement;
     }
 
+    if (bodyDecode != null && bodyDecode.varName == null) {
+      // Pure-throw body: no wrapper or response object is constructed, so
+      // typed-header decode expressions are intentionally omitted from the
+      // emitted block — only never-header existence checks run before the
+      // throw. Raw headers remain available to callers via
+      // TonikError.response.headers.
+      return Block.of([
+        ..._generateNeverHeaderChecks(headerResult.neverHeaders),
+        ...bodyDecode.statements,
+      ]);
+    }
+
     final args = <String, Expression>{};
     if (bodyDecode != null) {
-      args['body'] = refer(bodyDecode.varName);
+      args['body'] = refer(bodyDecode.varName!);
     }
     args.addAll(headerResult.supported);
 

@@ -201,6 +201,26 @@ paths:
                 extra1: value1
                 extra2: value2
 
+  /response/nullable-never-array:
+    get:
+      operationId: getResponseNullableNeverArray
+      tags:
+        - items
+      summary: >-
+        Nullable array of never items under immutableCollections.
+        Code-generation-only regression check — the JSON list decoder must
+        emit a `value == null ? null : throw ...` shape rather than a bare
+        throw, so the generated client analyzes cleanly.
+      responses:
+        '200':
+          description: Nullable never-item array body
+          content:
+            application/json:
+              schema:
+                type: array
+                nullable: true
+                items: false
+
 components:
   schemas:
     # Simple list property + map property + list of objects

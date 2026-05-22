@@ -810,6 +810,98 @@ void main() {
       });
     });
 
+    group('List of NeverModel', () {
+      test('generates bare throw for required non-nullable list', () {
+        final expression = buildFromFormValueExpression(
+          refer('formString'),
+          model: ListModel(
+            content: NeverModel(context: context),
+            context: context,
+          ),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          """throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')""",
+        );
+      });
+
+      test(
+        'generates null-guarded throw for required nullable list so the '
+        'caller-supplied local stays referenced',
+        () {
+          final expression = buildFromFormValueExpression(
+            refer('formString'),
+            model: ListModel(
+              content: NeverModel(context: context),
+              isNullable: true,
+              context: context,
+            ),
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'test_package',
+          );
+
+          final code = expression.accept(DartEmitter()).toString();
+          expect(
+            code,
+            """formString == null ? null : throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')""",
+          );
+        },
+      );
+
+      test('generates null-guarded throw for optional non-nullable list', () {
+        final expression = buildFromFormValueExpression(
+          refer('formString'),
+          model: ListModel(
+            content: NeverModel(context: context),
+            context: context,
+          ),
+          isRequired: false,
+          nameManager: nameManager,
+          package: 'test_package',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          """formString == null ? null : throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')""",
+        );
+      });
+
+      test(
+        'preserves nullability when content is an AliasModel resolving to '
+        'NeverModel',
+        () {
+          final expression = buildFromFormValueExpression(
+            refer('formString'),
+            model: ListModel(
+              content: AliasModel(
+                name: 'ForbiddenAlias',
+                model: NeverModel(context: context),
+                context: context,
+              ),
+              isNullable: true,
+              context: context,
+            ),
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'test_package',
+          );
+
+          final code = expression.accept(DartEmitter()).toString();
+          expect(
+            code,
+            """formString == null ? null : throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')""",
+          );
+        },
+      );
+    });
+
     group('unsupported model types generate runtime throws', () {
       test('ClassModel in list generates runtime throw', () {
         final expression = buildFromFormValueExpression(

@@ -151,6 +151,11 @@ BuiltExpression _buildFromJson(
           : wrapExpr;
       return BuiltExpression.simple(body);
     case ListModel():
+      // Forward the combined `nullable` (caller flag OR
+      // model.isEffectivelyNullable) — _buildListFromJsonExpression doesn't
+      // re-derive intrinsic nullability, so dropping this would make nullable
+      // list-of-Never emit a bare throw and reintroduce the unused `_$json`
+      // local.
       return _buildListFromJsonExpression(
         value,
         model,
@@ -159,7 +164,7 @@ BuiltExpression _buildFromJson(
         package: package,
         contextClass: contextClass,
         contextProperty: contextProperty,
-        isNullable: isNullable,
+        isNullable: nullable,
         useImmutableCollections: useImmutableCollections,
       );
     case MapModel():
@@ -482,12 +487,22 @@ BuiltExpression _buildListFromJsonBody(
                 .call([]);
 
     case NeverModel():
-      return BuiltExpression.simple(
-        generateJsonDecodingExceptionExpression(
-          'Cannot decode List<NeverModel> - this type does not permit any '
-          'value.',
-        ),
+      final throwExpr = generateJsonDecodingExceptionExpression(
+        'Cannot decode List<NeverModel> - this type does not permit any '
+        'value.',
       );
+      // Gate on isNullable, not effectiveNullable: useImmutableCollections
+      // must not erase nullable semantics (a `null` payload yields `null`,
+      // not a throw). The non-nullable case stays a bare throw so
+      // _isJsonBodyPureThrow can drop the surrounding _$json / _$body locals.
+      if (isNullable) {
+        return BuiltExpression.simple(
+          refer(
+            value,
+          ).equalTo(literalNull).conditional(literalNull, throwExpr),
+        );
+      }
+      return BuiltExpression.simple(throwExpr);
 
     default:
       final typeArg = typeReference(content, nameManager, package);

@@ -226,6 +226,18 @@ class OperationGenerator {
     );
     final isVoidReturn =
         resultType.types.isNotEmpty && resultType.types.first.symbol == 'void';
+    // The unassigned try/catch is only safe when `_parseResponse` is
+    // statically guaranteed to throw. `Never?` widens to a type that can
+    // legitimately complete normally with `null`, so the nullable case
+    // must keep the final-var assignment. The url == 'dart:core' guard
+    // excludes a user-defined type that happens to be named `Never`.
+    final firstResultType = resultType.types.firstOrNull;
+    final isNeverParseReturn =
+        firstResultType != null &&
+        firstResultType.symbol == 'Never' &&
+        firstResultType.url == 'dart:core' &&
+        (firstResultType is! TypeReference ||
+            firstResultType.isNullable != true);
     const responseVar = r'_$response';
     const parsedResponseVar = r'_$parsedResponse';
     final responseType = resultType.types.isNotEmpty
@@ -251,7 +263,9 @@ class OperationGenerator {
     final hasResponses = operation.responses.isNotEmpty;
 
     if (hasResponses) {
-      if (!isVoidReturn) {
+      if (isNeverParseReturn) {
+        bodyStatements.add(_unassignedParseResponseTryCatch(responseVar));
+      } else if (!isVoidReturn) {
         bodyStatements
           ..addAll(
             _generateParsedResponseStatements(
@@ -267,33 +281,8 @@ class OperationGenerator {
                 .statement,
           );
       } else {
-        // For void return type, just call the parse method without
-        // assigning to a variable
         bodyStatements
-          ..add(
-            Block.of([
-              const Code('try {'),
-              refer('_parseResponse').call([refer(responseVar)]).statement,
-              const Code('} on '),
-              refer('Object', 'dart:core').code,
-              const Code(' catch (exception, stackTrace) {'),
-              refer('TonikError', 'package:tonik_util/tonik_util.dart')
-                  .call(
-                    [refer('exception')],
-                    {
-                      'stackTrace': refer('stackTrace'),
-                      'type': refer(
-                        'TonikErrorType.decoding',
-                        'package:tonik_util/tonik_util.dart',
-                      ),
-                      'response': refer(responseVar),
-                    },
-                  )
-                  .returned
-                  .statement,
-              const Code('}\n'),
-            ]),
-          )
+          ..add(_unassignedParseResponseTryCatch(responseVar))
           ..add(
             refer(
               'TonikSuccess',
@@ -547,6 +536,31 @@ class OperationGenerator {
             .statement,
         const Code('}\n'),
       ]),
+    ]);
+  }
+
+  Code _unassignedParseResponseTryCatch(String responseVar) {
+    return Block.of([
+      const Code('try {'),
+      refer('_parseResponse').call([refer(responseVar)]).statement,
+      const Code('} on '),
+      refer('Object', 'dart:core').code,
+      const Code(' catch (exception, stackTrace) {'),
+      refer('TonikError', 'package:tonik_util/tonik_util.dart')
+          .call(
+            [refer('exception')],
+            {
+              'stackTrace': refer('stackTrace'),
+              'type': refer(
+                'TonikErrorType.decoding',
+                'package:tonik_util/tonik_util.dart',
+              ),
+              'response': refer(responseVar),
+            },
+          )
+          .returned
+          .statement,
+      const Code('}\n'),
     ]);
   }
 
