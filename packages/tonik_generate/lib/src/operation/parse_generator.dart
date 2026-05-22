@@ -297,7 +297,7 @@ class ParseGenerator {
   ({List<Code> statements, String? varName}) _createFormBodyDecode(
     ResponseBody responseBody,
   ) {
-    if (_isFormBodyPureThrow(responseBody.model, isRequired: true)) {
+    if (_isFormBodyPureThrow(responseBody.model)) {
       return (
         statements: [
           generateFormDecodingExceptionExpression(
@@ -361,8 +361,7 @@ class ParseGenerator {
   // String), so a `_$formString == null ? null : throw ...` wrap would trip
   // unnecessary_null_comparison. The body payload is non-null and `throw` is
   // the only sound result for `List<Never>`.
-  bool _isFormBodyPureThrow(Model model, {required bool isRequired}) {
-    if (!isRequired) return false;
+  bool _isFormBodyPureThrow(Model model) {
     switch (model) {
       case NeverModel():
         return true;
@@ -370,7 +369,7 @@ class ParseGenerator {
         final unwrapped = content is AliasModel ? content.model : content;
         return unwrapped is NeverModel;
       case AliasModel():
-        return _isFormBodyPureThrow(model.model, isRequired: isRequired);
+        return _isFormBodyPureThrow(model.model);
       default:
         return false;
     }
@@ -461,10 +460,11 @@ class ParseGenerator {
     }
 
     if (bodyDecode != null && bodyDecode.varName == null) {
-      // Pure-throw body: no wrapper exists to attach decoded typed-header
-      // values to. They are computed but discarded; only never-header
-      // existence checks remain. Callers retain access to the raw response
-      // headers via TonikError.response.headers.
+      // Pure-throw body: no wrapper or response object is constructed, so
+      // typed-header decode expressions are intentionally omitted from the
+      // emitted block — only never-header existence checks run before the
+      // throw. Raw headers remain available to callers via
+      // TonikError.response.headers.
       return Block.of([
         ..._generateNeverHeaderChecks(headerResult.neverHeaders),
         ...bodyDecode.statements,
@@ -529,10 +529,11 @@ class ParseGenerator {
     }
 
     if (bodyDecode != null && bodyDecode.varName == null) {
-      // Pure-throw body: no response object exists to attach decoded
-      // typed-header values to. They are computed but discarded; only
-      // never-header existence checks remain. Callers retain access to the
-      // raw response headers via TonikError.response.headers.
+      // Pure-throw body: no wrapper or response object is constructed, so
+      // typed-header decode expressions are intentionally omitted from the
+      // emitted block — only never-header existence checks run before the
+      // throw. Raw headers remain available to callers via
+      // TonikError.response.headers.
       return Block.of([
         ..._generateNeverHeaderChecks(headerResult.neverHeaders),
         ...bodyDecode.statements,

@@ -103,6 +103,11 @@ Expression buildFromJsonValueExpression(
           ? refer(value).equalTo(literalNull).conditional(literalNull, wrapExpr)
           : wrapExpr;
     case ListModel():
+      // Forward the combined `nullable` (caller flag OR
+      // model.isEffectivelyNullable) — _buildListFromJsonExpression doesn't
+      // re-derive intrinsic nullability, so dropping this would make nullable
+      // list-of-Never emit a bare throw and reintroduce the unused `_$json`
+      // local.
       return _buildListFromJsonExpression(
         value,
         model,
