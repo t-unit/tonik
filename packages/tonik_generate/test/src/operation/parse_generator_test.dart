@@ -1980,6 +1980,659 @@ DateTime _parseResponse(Response<List<int>> response) {
       );
     });
 
+    group('NeverModel response bodies', () {
+      test('generates pure throw for ListModel<NeverModel> JSON body', () {
+        final operation = Operation(
+          operationId: 'listNeverOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/list-never',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: NeverModel(context: context),
+                    context: context,
+                  ),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+List<Never> _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      throw JsonDecodingException(
+        'Cannot decode List<NeverModel> - this type does not permit any value.',
+      );
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates pure throw for non-nullable NeverModel JSON body', () {
+        final operation = Operation(
+          operationId: 'pureNeverOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/pure-never',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: NeverModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+Never _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      throw JsonDecodingException(
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test(
+        'generates pure throw for AliasModel resolving to NeverModel JSON body',
+        () {
+          final operation = Operation(
+            operationId: 'aliasNeverOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/alias-never',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: AliasModel(
+                      name: 'NeverAlias',
+                      model: NeverModel(context: context),
+                      context: context,
+                    ),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+NeverAlias _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      throw JsonDecodingException(
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'multi-status response keeps non-Never case unchanged and emits pure '
+        'throw for Never case',
+        () {
+          final operation = Operation(
+            operationId: 'multiNeverBodyOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/multi-never-body',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: NeverModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+              const ExplicitResponseStatus(statusCode: 404): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      throw JsonDecodingException(
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    case (404, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return MultiNeverBodyOpResponse404(body: _$body);
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} for status code: ${_$status}',
+      );
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'emits never-header check before pure throw without wrapper',
+        () {
+          final responseHeaders = {
+            'X-Never-Header': ResponseHeaderObject(
+              name: 'X-Never-Header',
+              context: context,
+              description: '',
+              isRequired: false,
+              isDeprecated: false,
+              model: NeverModel(context: context),
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+            ),
+          };
+          final operation = Operation(
+            operationId: 'neverBodyAndHeaderOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/never-body-and-header',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: responseHeaders,
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: NeverModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+AnonymousResponse _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      if (response.headers.value(r'X-Never-Header') != null) {
+        throw SimpleDecodingException(
+          r'NeverModel does not permit any value at X-Never-Header',
+        );
+      }
+      throw JsonDecodingException(
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} for status code: ${_$status}',
+      );
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'multi-status response emits pure throw with never-header check '
+        'without wrapper construction for Never body case',
+        () {
+          final responseHeaders = {
+            'X-Never-Header': ResponseHeaderObject(
+              name: 'X-Never-Header',
+              context: context,
+              description: '',
+              isRequired: false,
+              isDeprecated: false,
+              model: NeverModel(context: context),
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+            ),
+          };
+          final operation = Operation(
+            operationId: 'multiNeverBodyHeaderOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/multi-never-body-header',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: responseHeaders,
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: NeverModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+              const ExplicitResponseStatus(statusCode: 404): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      if (response.headers.value(r'X-Never-Header') != null) {
+        throw SimpleDecodingException(
+          r'NeverModel does not permit any value at X-Never-Header',
+        );
+      }
+      throw JsonDecodingException(
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    case (404, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return MultiNeverBodyHeaderOpResponse404(body: _$body);
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} for status code: ${_$status}',
+      );
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates pure throw for AliasModel resolving to NeverModel '
+        'form-urlencoded body',
+        () {
+          final operation = Operation(
+            operationId: 'formAliasNeverOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/form-alias-never',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: AliasModel(
+                      name: 'NeverFormAlias',
+                      model: NeverModel(context: context),
+                      context: context,
+                    ),
+                    rawContentType: 'application/x-www-form-urlencoded',
+                    contentType: ContentType.form,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+NeverFormAlias _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/x-www-form-urlencoded'):
+      throw FormDecodingException(
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} for status code: ${_$status}',
+      );
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates pure throw for required NeverModel form-urlencoded body',
+        () {
+          final operation = Operation(
+            operationId: 'formNeverBodyOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/form-never-body',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: NeverModel(context: context),
+                    rawContentType: 'application/x-www-form-urlencoded',
+                    contentType: ContentType.form,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+Never _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/x-www-form-urlencoded'):
+      throw FormDecodingException(
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} for status code: ${_$status}',
+      );
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'generates pure throw for required ListModel<NeverModel> '
+        'form-urlencoded body',
+        () {
+          final operation = Operation(
+            operationId: 'formListNeverBodyOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/form-list-never-body',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: ListModel(
+                      content: NeverModel(context: context),
+                      context: context,
+                    ),
+                    rawContentType: 'application/x-www-form-urlencoded',
+                    contentType: ContentType.form,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+List<Never> _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/x-www-form-urlencoded'):
+      throw FormDecodingException(
+        'Cannot decode List<NeverModel> - this type does not permit any value.',
+      );
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} for status code: ${_$status}',
+      );
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'nullable ListModel<NeverModel> form body falls through to '
+        'standard non-pure-throw shape',
+        () {
+          final operation = Operation(
+            operationId: 'formNullableListNeverBodyOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/form-nullable-list-never-body',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: ListModel(
+                      content: NeverModel(context: context),
+                      isNullable: true,
+                      context: context,
+                    ),
+                    rawContentType: 'application/x-www-form-urlencoded',
+                    contentType: ContentType.form,
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+List<Never>? _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/x-www-form-urlencoded'):
+      final _$formString = decodeResponseText(response.data);
+      final _$body = throw FormDecodingException(
+        'Cannot decode List<NeverModel> - this type does not permit any value.',
+      );
+      return _$body;
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} for status code: ${_$status}',
+      );
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+    });
+
     group('multipart response', () {
       test(
         'generates code that throws ResponseDecodingException '

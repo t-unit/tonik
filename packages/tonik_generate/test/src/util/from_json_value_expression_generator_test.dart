@@ -1303,6 +1303,48 @@ void main() {
         '''throw  _i1.JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')''',
       );
     });
+
+    test(
+      'generates null check for List of NeverModel when caller marks nullable',
+      () {
+        final listModel = ListModel(
+          content: NeverModel(context: context),
+          context: context,
+        );
+        final result = buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'my_package',
+          isNullable: true,
+        ).accept(emitter).toString();
+        expect(
+          result,
+          '''value == null ? null : throw  _i1.JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')''',
+        );
+      },
+    );
+
+    test(
+      'generates null check for ListModel(isNullable: true) of NeverModel',
+      () {
+        final listModel = ListModel(
+          content: NeverModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+        final result = buildFromJsonValueExpression(
+          'value',
+          model: listModel,
+          nameManager: nameManager,
+          package: 'my_package',
+        ).accept(emitter).toString();
+        expect(
+          result,
+          '''value == null ? null : throw  _i1.JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')''',
+        );
+      },
+    );
   });
 
   group('with useImmutableCollections', () {
@@ -1437,5 +1479,48 @@ void main() {
         'value.decodeJsonList<String>()',
       );
     });
+
+    test(
+      'nullable List of NeverModel still emits null-guarded throw '
+      'under useImmutableCollections',
+      () {
+        final listModel = ListModel(
+          content: NeverModel(context: context),
+          isNullable: true,
+          context: context,
+        );
+        expect(
+          buildFromJsonValueExpression(
+            'value',
+            model: listModel,
+            nameManager: nameManager,
+            package: 'my_package',
+            useImmutableCollections: true,
+          ).accept(emitter).toString(),
+          '''value == null ? null : throw  JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')''',
+        );
+      },
+    );
+
+    test(
+      'non-nullable List of NeverModel emits bare throw '
+      'under useImmutableCollections',
+      () {
+        final listModel = ListModel(
+          content: NeverModel(context: context),
+          context: context,
+        );
+        expect(
+          buildFromJsonValueExpression(
+            'value',
+            model: listModel,
+            nameManager: nameManager,
+            package: 'my_package',
+            useImmutableCollections: true,
+          ).accept(emitter).toString(),
+          '''throw  JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')''',
+        );
+      },
+    );
   });
 }

@@ -596,6 +596,70 @@ paths:
                   neverField:
                     $ref: '#/components/schemas/NeverValid'
 
+  /response/pure-never:
+    get:
+      operationId: getResponsePureNever
+      tags:
+        - boolean-schemas
+      summary: Get response with pure never schema body (code generation only)
+      responses:
+        '200':
+          description: Pure never response body
+          content:
+            application/json:
+              schema: false
+
+  /response/never-array:
+    get:
+      operationId: getResponseNeverArray
+      tags:
+        - boolean-schemas
+      summary: Get response with array of never items (code generation only)
+      responses:
+        '200':
+          description: Never-item array response body
+          content:
+            application/json:
+              schema:
+                type: array
+                items: false
+
+  /response/never-array-with-headers:
+    get:
+      operationId: getResponseNeverArrayWithHeaders
+      tags:
+        - boolean-schemas
+      summary: Never-item array body alongside a normal header
+      responses:
+        '200':
+          description: Never-item array body with header
+          headers:
+            X-Trace-Id:
+              description: Trace id header
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                type: array
+                items: false
+
+  /response/nullable-never-array:
+    get:
+      operationId: getResponseNullableNeverArray
+      tags:
+        - boolean-schemas
+      summary: Nullable never-item array response body (code generation only)
+      responses:
+        '200':
+          description: Nullable never-item array response body
+          content:
+            application/json:
+              schema:
+                type: array
+                nullable: true
+                items: false
+
   /response/headers:
     get:
       operationId: getResponseHeaders

@@ -110,7 +110,7 @@ Expression buildFromJsonValueExpression(
         package: package,
         contextClass: contextClass,
         contextProperty: contextProperty,
-        isNullable: isNullable,
+        isNullable: nullable,
         useImmutableCollections: useImmutableCollections,
       );
     case MapModel():
@@ -184,12 +184,10 @@ Expression _buildListFromJsonExpression(
   final content = model.content;
   final contextParam = _buildContextParam(contextClass, contextProperty);
 
-  // isNullable already accounts for model.isEffectivelyNullable via the
-  // caller (buildFromJsonValueExpression), so no need to recompute here.
-  //
-  // When using immutable collections, always use the non-nullable decoder
-  // internally. We handle null ourselves via a ternary wrapping IList(), so
-  // that refer('IList', ficUrl) properly tracks the import.
+  // When useImmutableCollections, force the non-nullable list decoder so that
+  // null handling lives in a ternary wrapping the IList constructor; that
+  // way refer('IList', ficUrl) is always part of the emitted expression and
+  // the fast_immutable_collections import is tracked.
   final effectiveNullable = !useImmutableCollections && isNullable;
   final listDecoder =
       effectiveNullable ? 'decodeJsonNullableList' : 'decodeJsonList';
@@ -376,9 +374,19 @@ Expression _buildListFromJsonExpression(
                 .call([]);
 
     case NeverModel():
-      return generateJsonDecodingExceptionExpression(
+      final throwExpr = generateJsonDecodingExceptionExpression(
         'Cannot decode List<NeverModel> - this type does not permit any value.',
       );
+      // Gate on isNullable, not effectiveNullable: useImmutableCollections
+      // must not erase nullable semantics (a `null` payload yields `null`,
+      // not a throw). The non-nullable case stays a bare throw so
+      // _isJsonBodyPureThrow can drop the surrounding _$json / _$body locals.
+      if (isNullable) {
+        return refer(
+          value,
+        ).equalTo(literalNull).conditional(literalNull, throwExpr);
+      }
+      return throwExpr;
 
     default:
       final typeArg = typeReference(content, nameManager, package ?? '');
