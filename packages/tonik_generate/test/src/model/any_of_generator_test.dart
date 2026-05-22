@@ -3628,4 +3628,244 @@ Object? toJson() {
       expect(generated.trim(), format(expected).trim());
     });
   });
+
+  group('recursion splicing', () {
+    test(
+      r'AnyOf { Tree, ClassA } splices _$encodeTree into toJson',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        final classA = ClassModel(
+          isDeprecated: false,
+          name: 'ClassA',
+          properties: const [],
+          context: context,
+        );
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'TreeAndClassA',
+          models: {
+            (discriminatorValue: null, model: tree),
+            (discriminatorValue: null, model: classA),
+          },
+          context: context,
+        );
+
+        final clazz = generator.generateClass(model);
+        final toJson = clazz.methods.firstWhere((m) => m.name == 'toJson');
+        final actual = format(toJson.accept(emitter).toString());
+
+        const expected = r'''
+          @override
+          Object? toJson() {
+            late final Object? Function(Object?) _$encodeTree;
+            _$encodeTree = (Object? raw) {
+              if (raw is! Tree) {
+                throw EncodingException(
+                  'Cannot encode value as Tree (at \'TreeAndClassA.Tree\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
+            };
+            final _$values = <Object?>{};
+            final _$mapValues = <Map<String, Object?>>[];
+            if (classA != null) {
+              final Object? _$classAJson = classA!.toJson();
+              if (_$classAJson is Map<String, Object?>) {
+                _$mapValues.add(_$classAJson);
+              } else {
+                _$values.add(_$classAJson);
+              }
+            }
+            if (tree != null) {
+              final Object? _$treeJson = _$encodeTree(tree!);
+              if (_$treeJson is Map<String, Object?>) {
+                _$mapValues.add(_$treeJson);
+              } else {
+                _$values.add(_$treeJson);
+              }
+            }
+            if (_$values.isEmpty && _$mapValues.isEmpty) return null;
+            if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {
+              throw EncodingException(
+                r'Mixed encoding not supported for TreeAndClassA: cannot encode both simple and complex values',
+              );
+            }
+            if (_$values.isNotEmpty) {
+              if (_$values.length > 1) {
+                throw EncodingException(
+                  r'Ambiguous anyOf encoding for TreeAndClassA: multiple values provided, anyOf requires exactly one value',
+                );
+              }
+              return _$values.first;
+            }
+            if (_$mapValues.isNotEmpty) {
+              final _$map = <String, Object?>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
+              }
+              return _$map;
+            }
+            return null;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test(
+      r'AnyOf { Tree, ClassA } splices _$decodeTree into fromJson',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        final classA = ClassModel(
+          isDeprecated: false,
+          name: 'ClassA',
+          properties: const [],
+          context: context,
+        );
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'TreeAndClassA',
+          models: {
+            (discriminatorValue: null, model: tree),
+            (discriminatorValue: null, model: classA),
+          },
+          context: context,
+        );
+
+        final clazz = generator.generateClass(model);
+        final fromJsonCtor = clazz.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final actual = format(
+          Class((b) => b
+            ..name = 'TreeAndClassA'
+            ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+        );
+
+        const expected = r'''
+          class TreeAndClassA {
+            factory TreeAndClassA.fromJson(Object? json) {
+              late final Tree Function(Object?) _$decodeTree;
+              _$decodeTree = (Object? v) =>
+                  v.decodeJsonMap((v) => _$decodeTree(v), context: r"Tree (at 'TreeAndClassA')");
+              ClassA? classA;
+              try {
+                classA = ClassA.fromJson(json);
+              } on Object catch (_) {
+                classA = null;
+              }
+              Tree? tree;
+              try {
+                tree = _$decodeTree(json);
+              } on Object catch (_) {
+                tree = null;
+              }
+              if (classA == null && tree == null) {
+                throw JsonDecodingException(
+                  r'Invalid JSON for TreeAndClassA: all variants failed to decode',
+                );
+              }
+              return TreeAndClassA(classA: classA, tree: tree);
+            }
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test(
+      'AnyOf { A, B } indirect cycle splices two mutually recursive '
+      'decode helpers into fromJson',
+      () {
+        final a = MapModel(
+          name: 'A',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        final b = MapModel(
+          name: 'B',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        a.valueModel = b;
+        b.valueModel = a;
+
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'AAndB',
+          models: {
+            (discriminatorValue: null, model: a),
+            (discriminatorValue: null, model: b),
+          },
+          context: context,
+        );
+
+        final clazz = generator.generateClass(model);
+        final fromJsonCtor = clazz.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final actual = format(
+          Class((b) => b
+            ..name = 'AAndB'
+            ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+        );
+
+        const expected = r'''
+          class AAndB {
+            factory AAndB.fromJson(Object? json) {
+              late final B Function(Object?) _$decodeB;
+              late final A Function(Object?) _$decodeA;
+              _$decodeB = (Object? v) =>
+                  v.decodeJsonMap((v) => _$decodeA(v), context: r'B');
+              _$decodeA = (Object? v) =>
+                  v.decodeJsonMap((v) => _$decodeB(v), context: r"A (at 'AAndB')");
+              A? a;
+              try {
+                a = _$decodeA(json);
+              } on Object catch (_) {
+                a = null;
+              }
+              B? b;
+              try {
+                b = _$decodeB(json);
+              } on Object catch (_) {
+                b = null;
+              }
+              if (a == null && b == null) {
+                throw JsonDecodingException(
+                  r'Invalid JSON for AAndB: all variants failed to decode',
+                );
+              }
+              return AAndB(a: a, b: b);
+            }
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+  });
 }

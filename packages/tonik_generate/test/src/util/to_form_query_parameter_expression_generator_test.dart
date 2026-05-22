@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_form_query_parameter_expression_generator.dart';
 
@@ -46,11 +47,11 @@ void main() {
       );
     }
 
-    String emitCodes(List<Code> codes) {
+    String emitCodes(BuiltStatements codes) {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = Block.of(codes),
+          ..body = Block.of(codes.statements),
       );
       return format(method.accept(scopedEmitter).toString());
     }
@@ -73,7 +74,7 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = Block.of(codes),
+            ..body = Block.of(codes.statements),
         );
 
         // Should not throw when formatting (valid Dart syntax)
@@ -98,7 +99,7 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = Block.of(codes),
+            ..body = Block.of(codes.statements),
         );
 
         final generated = format(method.accept(emitter).toString());

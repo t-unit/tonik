@@ -2451,7 +2451,9 @@ void main() {
         );
         final fieldType = valueField.type!.accept(emitter).toString();
 
-        expect(fieldType, 'List<String>?');
+        // Named list models reference their typedef name, matching the
+        // behaviour of named MapModels — both are emitted as typedefs.
+        expect(fieldType, 'Items?');
       },
     );
 
@@ -3778,6 +3780,206 @@ bool operator ==(Object other) {
         expect(
           collapseWhitespace(generated),
           collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+  });
+
+  group('recursion splicing', () {
+    test(
+      r'OneOf { Tree, ClassA } splices _$encodeTree helper into toJson',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        final classA = ClassModel(
+          isDeprecated: false,
+          name: 'ClassA',
+          properties: const [],
+          context: context,
+        );
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'TreeOrClassA',
+          models: {
+            (discriminatorValue: null, model: tree),
+            (discriminatorValue: null, model: classA),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'TreeOrClassA');
+        final toJson = baseClass.methods.firstWhere(
+          (m) => m.name == 'toJson',
+        );
+        final actual = format(toJson.accept(emitter).toString());
+
+        const expected = r'''
+          @override
+          Object? toJson() {
+            late final Object? Function(Object?) _$encodeTree;
+            _$encodeTree = (Object? raw) {
+              if (raw is! Tree) {
+                throw EncodingException(
+                  'Cannot encode value as Tree (at \'TreeOrClassA.value\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
+            };
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
+              TreeOrClassAClassA(:final value) => (value.toJson(), null),
+              TreeOrClassATree(:final value) => (_$encodeTree(value), null),
+            };
+
+            return _$json;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test(
+      r'OneOf { Tree, ClassA } splices _$decodeTree helper into fromJson '
+      'factory for the Tree-typed primitive case',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+        final classA = ClassModel(
+          isDeprecated: false,
+          name: 'ClassA',
+          properties: const [],
+          context: context,
+        );
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'TreeOrClassA',
+          models: {
+            (discriminatorValue: null, model: tree),
+            (discriminatorValue: null, model: classA),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'TreeOrClassA');
+        final fromJsonCtor = baseClass.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final actual = format(
+          Class((b) => b
+            ..name = 'TreeOrClassA'
+            ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+        );
+
+        const expected = r'''
+          class TreeOrClassA {
+            factory TreeOrClassA.fromJson(Object? json) {
+              late final Tree Function(Object?) _$decodeTree;
+              _$decodeTree = (Object? v) =>
+                  v.decodeJsonMap((v) => _$decodeTree(v), context: r"Tree (at 'TreeOrClassA')");
+              try {
+                return TreeOrClassAClassA(ClassA.fromJson(json));
+              } on Object catch (_) {}
+              try {
+                return TreeOrClassATree(_$decodeTree(json));
+              } on Object catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for TreeOrClassA');
+            }
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test(
+      'OneOf { A, B } indirect cycle splices two mutually recursive '
+      'encode helpers into toJson',
+      () {
+        final a = MapModel(
+          name: 'A',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        final b = MapModel(
+          name: 'B',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        a.valueModel = b;
+        b.valueModel = a;
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'AOrB',
+          models: {
+            (discriminatorValue: null, model: a),
+            (discriminatorValue: null, model: b),
+          },
+          context: context,
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'AOrB');
+        final toJson = baseClass.methods.firstWhere(
+          (m) => m.name == 'toJson',
+        );
+        final actual = format(toJson.accept(emitter).toString());
+
+        const expected = r'''
+          @override
+          Object? toJson() {
+            late final Object? Function(Object?) _$encodeB;
+            late final Object? Function(Object?) _$encodeA;
+            _$encodeB = (Object? raw) {
+              if (raw is! B) {
+                throw EncodingException(
+                  'Cannot encode value as B (at \'AOrB.value\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _$encodeA(v)));
+            };
+            _$encodeA = (Object? raw) {
+              if (raw is! A) {
+                throw EncodingException(
+                  'Cannot encode value as A (at \'AOrB.value\'); got: '
+                  '${raw.runtimeType}',
+                );
+              }
+              final v = raw;
+              return v.map((k, v) => MapEntry(k, _$encodeB(v)));
+            };
+            final (dynamic _$json, String? _$discriminator) = switch (this) {
+              AOrBA(:final value) => (_$encodeA(value), null),
+              AOrBB(:final value) => (_$encodeB(value), null),
+            };
+
+            return _$json;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
         );
       },
     );

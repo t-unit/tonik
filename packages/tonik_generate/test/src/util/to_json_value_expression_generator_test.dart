@@ -1,6 +1,9 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_generator.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 
@@ -8,6 +11,7 @@ void main() {
   late Context context;
   late DartEmitter emitter;
   late DartEmitter scopedEmitter;
+  late NameManager nameManager;
 
   setUp(() {
     context = Context.initial();
@@ -16,11 +20,17 @@ void main() {
       useNullSafetySyntax: true,
       allocator: CorePrefixedAllocator(),
     );
+    nameManager = NameManager(
+      generator: NameGenerator(),
+      stableModelSorter: StableModelSorter(),
+    );
   });
 
-  String emit(Expression expr) => expr.accept(emitter).toString();
+  String emit(BuiltExpression built) =>
+      built.expression.accept(emitter).toString();
 
-  String scopedEmit(Expression expr) => expr.accept(scopedEmitter).toString();
+  String scopedEmit(BuiltExpression built) =>
+      built.expression.accept(scopedEmitter).toString();
 
   group('buildToJsonValueExpression', () {
     test('for String property', () {
@@ -32,7 +42,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('testName', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'testName',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'testName',
       );
     });
@@ -46,7 +62,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('testName', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'testName',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'testName',
       );
     });
@@ -60,7 +82,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('testAge', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'testAge',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'testAge',
       );
     });
@@ -74,7 +102,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('startTime', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'startTime',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'startTime.toTimeZonedIso8601String()',
       );
     });
@@ -88,7 +122,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('dueDate', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'dueDate',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'dueDate?.toJson()',
       );
     });
@@ -102,7 +142,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('price', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'price',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'price.toString()',
       );
     });
@@ -116,7 +162,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('discountPrice', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'discountPrice',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'discountPrice?.toString()',
       );
     });
@@ -131,7 +183,13 @@ void main() {
       );
       // Binary data: toBytes() then decode to String for JSON.
       expect(
-        emit(buildToJsonPropertyExpression('thumbnail', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'thumbnail',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'thumbnail.toBytes().decodeToString()',
       );
     });
@@ -145,7 +203,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('data', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'data',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'data?.toBytes().decodeToString()',
       );
     });
@@ -160,7 +224,13 @@ void main() {
       );
       // Base64 data: toBytes() then encode to base64 string for JSON.
       expect(
-        emit(buildToJsonPropertyExpression('thumbnail', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'thumbnail',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'thumbnail.toBytes().encodeToBase64String()',
       );
     });
@@ -174,7 +244,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('data', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'data',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'data?.toBytes().encodeToBase64String()',
       );
     });
@@ -198,7 +274,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('status', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'status',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'status.toJson()',
       );
     });
@@ -222,7 +304,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('priority', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'priority',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'priority?.toJson()',
       );
     });
@@ -247,7 +335,13 @@ void main() {
       );
 
       expect(
-        emit(buildToJsonPropertyExpression('priority', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'priority',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'priority?.toJson()',
       );
     });
@@ -269,7 +363,13 @@ void main() {
       );
 
       expect(
-        emit(buildToJsonPropertyExpression('metadata', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'metadata',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'metadata?.toJson()',
       );
     });
@@ -291,7 +391,13 @@ void main() {
       );
 
       expect(
-        emit(buildToJsonPropertyExpression('combined', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'combined',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'combined?.toJson()',
       );
     });
@@ -314,7 +420,13 @@ void main() {
       );
 
       expect(
-        emit(buildToJsonPropertyExpression('pet', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'pet',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'pet?.toJson()',
       );
     });
@@ -337,7 +449,13 @@ void main() {
       );
 
       expect(
-        emit(buildToJsonPropertyExpression('content', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'content',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'content?.toJson()',
       );
     });
@@ -354,7 +472,16 @@ void main() {
         isDeprecated: false,
       );
       // List<primitive> is handled directly
-      expect(emit(buildToJsonPropertyExpression('tags', property)), 'tags');
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'tags',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
+        'tags',
+      );
     });
 
     test('for List<DateTime> property', () {
@@ -369,7 +496,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('meetingTimes', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'meetingTimes',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'meetingTimes.map((e) => e.toTimeZonedIso8601String()).toList()',
       );
     });
@@ -387,7 +520,13 @@ void main() {
       );
       // List of binary needs each element's bytes decoded to string
       expect(
-        emit(buildToJsonPropertyExpression('images', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'images',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'images.map((e) => e.toBytes().decodeToString()).toList()',
       );
     });
@@ -405,7 +544,13 @@ void main() {
       );
       // List of base64 needs each element's bytes base64-encoded
       expect(
-        emit(buildToJsonPropertyExpression('images', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'images',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'images.map((e) => e.toBytes().encodeToBase64String()).toList()',
       );
     });
@@ -425,7 +570,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('addresses', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'addresses',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'addresses.map((e) => e.toJson()).toList()',
       );
     });
@@ -442,7 +593,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('lineItems', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'lineItems',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'lineItems?.map((e) => e.toString()).toList()',
       );
     });
@@ -460,7 +617,16 @@ void main() {
         isNullable: false,
         isDeprecated: false,
       );
-      expect(emit(buildToJsonPropertyExpression('id', property)), 'id');
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'id',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
+        'id',
+      );
     });
 
     test('for AliasModel property (DateTime)', () {
@@ -477,7 +643,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('createdAt', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'createdAt',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'createdAt.toTimeZonedIso8601String()',
       );
     });
@@ -496,7 +668,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('updatedAt', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'updatedAt',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'updatedAt?.toTimeZonedIso8601String()',
       );
     });
@@ -521,7 +699,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('address', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'address',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'address.toJson()',
       );
     });
@@ -546,7 +730,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('address', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'address',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'address?.toJson()',
       );
     });
@@ -566,7 +756,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('homeAddress', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'homeAddress',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'homeAddress.toJson()',
       );
     });
@@ -586,7 +782,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('workAddress', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'workAddress',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'workAddress?.toJson()',
       );
     });
@@ -606,7 +808,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('combinedData', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'combinedData',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'combinedData.toJson()',
       );
     });
@@ -626,7 +834,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('combinedData', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'combinedData',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'combinedData?.toJson()',
       );
     });
@@ -647,7 +861,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('pet', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'pet',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'pet.toJson()',
       );
     });
@@ -668,7 +888,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('pet', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'pet',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'pet?.toJson()',
       );
     });
@@ -689,7 +915,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('content', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'content',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'content.toJson()',
       );
     });
@@ -709,7 +941,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('content', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'content',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'content?.toJson()',
       );
     });
@@ -736,7 +974,13 @@ void main() {
       );
 
       expect(
-        emit(buildToJsonPropertyExpression('address', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'address',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'address?.toJson()',
       );
     });
@@ -757,7 +1001,13 @@ void main() {
       );
 
       expect(
-        emit(buildToJsonPropertyExpression('createdAt', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'createdAt',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'createdAt?.toTimeZonedIso8601String()',
       );
     });
@@ -779,7 +1029,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('meetingTimes', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'meetingTimes',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'meetingTimes.map((e) => e.toTimeZonedIso8601String()).toList()',
       );
     });
@@ -801,7 +1057,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('meetingTimes', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'meetingTimes',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'meetingTimes?.map((e) => e.toTimeZonedIso8601String()).toList()',
       );
     });
@@ -826,7 +1088,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('addresses', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'addresses',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'addresses.map((e) => e.toJson()).toList()',
       );
     });
@@ -851,7 +1119,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('addresses', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'addresses',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'addresses?.map((e) => e.toJson()).toList()',
       );
     });
@@ -871,7 +1145,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('metadata', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'metadata',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'metadata',
       );
     });
@@ -889,7 +1169,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('counts', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'counts',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'counts',
       );
     });
@@ -913,7 +1199,11 @@ void main() {
         isDeprecated: false,
       );
       final result = emit(
-        buildToJsonPropertyExpression('addresses', property),
+        buildToJsonPropertyExpression(
+          'addresses',
+          property,
+          nameManager: nameManager,
+        ),
       );
       expect(
         result,
@@ -940,7 +1230,11 @@ void main() {
         isDeprecated: false,
       );
       final result = emit(
-        buildToJsonPropertyExpression('addresses', property),
+        buildToJsonPropertyExpression(
+          'addresses',
+          property,
+          nameManager: nameManager,
+        ),
       );
       expect(
         result,
@@ -968,7 +1262,11 @@ void main() {
         isDeprecated: false,
       );
       final result = emit(
-        buildToJsonPropertyExpression('addresses', property),
+        buildToJsonPropertyExpression(
+          'addresses',
+          property,
+          nameManager: nameManager,
+        ),
       );
       expect(
         result,
@@ -989,7 +1287,11 @@ void main() {
         isDeprecated: false,
       );
       final result = emit(
-        buildToJsonPropertyExpression('timestamps', property),
+        buildToJsonPropertyExpression(
+          'timestamps',
+          property,
+          nameManager: nameManager,
+        ),
       );
       expect(
         result,
@@ -1021,7 +1323,11 @@ void main() {
         isDeprecated: false,
       );
       final result = emit(
-        buildToJsonPropertyExpression('statuses', property),
+        buildToJsonPropertyExpression(
+          'statuses',
+          property,
+          nameManager: nameManager,
+        ),
       );
       expect(
         result,
@@ -1053,6 +1359,7 @@ void main() {
           buildToJsonPropertyExpression(
             'addresses',
             property,
+            nameManager: nameManager,
             forceNonNullReceiver: true,
           ),
         );
@@ -1079,7 +1386,13 @@ void main() {
         context: context,
       );
       expect(
-        emit(buildToJsonPathParameterExpression('testName', parameter)),
+        emit(
+          buildToJsonPathParameterExpression(
+            'testName',
+            parameter,
+            nameManager: nameManager,
+          ),
+        ),
         'testName',
       );
     });
@@ -1098,7 +1411,13 @@ void main() {
         context: context,
       );
       expect(
-        emit(buildToJsonPathParameterExpression('testAge', parameter)),
+        emit(
+          buildToJsonPathParameterExpression(
+            'testAge',
+            parameter,
+            nameManager: nameManager,
+          ),
+        ),
         'testAge',
       );
     });
@@ -1117,7 +1436,13 @@ void main() {
         context: context,
       );
       expect(
-        emit(buildToJsonPathParameterExpression('startTime', parameter)),
+        emit(
+          buildToJsonPathParameterExpression(
+            'startTime',
+            parameter,
+            nameManager: nameManager,
+          ),
+        ),
         'startTime.toTimeZonedIso8601String()',
       );
     });
@@ -1146,7 +1471,13 @@ void main() {
         context: context,
       );
       expect(
-        emit(buildToJsonPathParameterExpression('status', parameter)),
+        emit(
+          buildToJsonPathParameterExpression(
+            'status',
+            parameter,
+            nameManager: nameManager,
+          ),
+        ),
         'status.toJson()',
       );
     });
@@ -1168,7 +1499,13 @@ void main() {
         allowReserved: true,
       );
       expect(
-        emit(buildToJsonQueryParameterExpression('testName', parameter)),
+        emit(
+          buildToJsonQueryParameterExpression(
+            'testName',
+            parameter,
+            nameManager: nameManager,
+          ),
+        ),
         'testName',
       );
     });
@@ -1188,7 +1525,13 @@ void main() {
         allowReserved: true,
       );
       expect(
-        emit(buildToJsonQueryParameterExpression('testAge', parameter)),
+        emit(
+          buildToJsonQueryParameterExpression(
+            'testAge',
+            parameter,
+            nameManager: nameManager,
+          ),
+        ),
         'testAge',
       );
     });
@@ -1208,7 +1551,13 @@ void main() {
         allowReserved: true,
       );
       expect(
-        emit(buildToJsonQueryParameterExpression('startTime', parameter)),
+        emit(
+          buildToJsonQueryParameterExpression(
+            'startTime',
+            parameter,
+            nameManager: nameManager,
+          ),
+        ),
         'startTime.toTimeZonedIso8601String()',
       );
     });
@@ -1238,7 +1587,13 @@ void main() {
         allowReserved: true,
       );
       expect(
-        emit(buildToJsonQueryParameterExpression('status', parameter)),
+        emit(
+          buildToJsonQueryParameterExpression(
+            'status',
+            parameter,
+            nameManager: nameManager,
+          ),
+        ),
         'status.toJson()',
       );
     });
@@ -1255,7 +1610,11 @@ void main() {
       );
       expect(
         scopedEmit(
-          buildToJsonPropertyExpression('forbidden', property),
+          buildToJsonPropertyExpression(
+            'forbidden',
+            property,
+            nameManager: nameManager,
+          ),
         ),
         '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
@@ -1271,7 +1630,11 @@ void main() {
       );
       expect(
         scopedEmit(
-          buildToJsonPropertyExpression('forbidden', property),
+          buildToJsonPropertyExpression(
+            'forbidden',
+            property,
+            nameManager: nameManager,
+          ),
         ),
         '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
@@ -1291,7 +1654,11 @@ void main() {
       );
       expect(
         scopedEmit(
-          buildToJsonPropertyExpression('forbiddenList', property),
+          buildToJsonPropertyExpression(
+            'forbiddenList',
+            property,
+            nameManager: nameManager,
+          ),
         ),
         '''forbiddenList.map((e) => throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')).toList()''',
       );
@@ -1312,7 +1679,11 @@ void main() {
       );
       expect(
         scopedEmit(
-          buildToJsonPropertyExpression('forbiddenAlias', property),
+          buildToJsonPropertyExpression(
+            'forbiddenAlias',
+            property,
+            nameManager: nameManager,
+          ),
         ),
         '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
@@ -1335,7 +1706,11 @@ void main() {
       );
       expect(
         scopedEmit(
-          buildToJsonPathParameterExpression('forbidden', parameter),
+          buildToJsonPathParameterExpression(
+            'forbidden',
+            parameter,
+            nameManager: nameManager,
+          ),
         ),
         '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
@@ -1359,7 +1734,11 @@ void main() {
       );
       expect(
         scopedEmit(
-          buildToJsonQueryParameterExpression('forbidden', parameter),
+          buildToJsonQueryParameterExpression(
+            'forbidden',
+            parameter,
+            nameManager: nameManager,
+          ),
         ),
         '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
@@ -1380,6 +1759,7 @@ void main() {
           buildToJsonPropertyExpression(
             'avatar',
             property,
+            nameManager: nameManager,
             forceNonNullReceiver: true,
           ),
         ),
@@ -1402,6 +1782,7 @@ void main() {
           buildToJsonPropertyExpression(
             'avatar',
             property,
+            nameManager: nameManager,
             forceNonNullReceiver: true,
           ),
         ),
@@ -1420,7 +1801,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('data', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'data',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'encodeAnyToJson(data)',
       );
     });
@@ -1434,7 +1821,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('data', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'data',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'encodeAnyToJson(data)',
       );
     });
@@ -1457,6 +1850,7 @@ void main() {
           buildToJsonPropertyExpression(
             'tags',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1480,6 +1874,7 @@ void main() {
           buildToJsonPropertyExpression(
             'tags',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1503,6 +1898,7 @@ void main() {
           buildToJsonPropertyExpression(
             'meetingTimes',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1526,6 +1922,7 @@ void main() {
           buildToJsonPropertyExpression(
             'metadata',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1549,6 +1946,7 @@ void main() {
           buildToJsonPropertyExpression(
             'metadata',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1578,6 +1976,7 @@ void main() {
           buildToJsonPropertyExpression(
             'addresses',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1605,6 +2004,7 @@ void main() {
           buildToJsonPropertyExpression(
             'matrix',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1624,7 +2024,13 @@ void main() {
         isDeprecated: false,
       );
       expect(
-        emit(buildToJsonPropertyExpression('tags', property)),
+        emit(
+          buildToJsonPropertyExpression(
+            'tags',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
         'tags',
       );
     });
@@ -1646,6 +2052,7 @@ void main() {
           buildToJsonPropertyExpression(
             'tags',
             property,
+            nameManager: nameManager,
             forceNonNullReceiver: true,
             useImmutableCollections: true,
           ),
@@ -1674,6 +2081,7 @@ void main() {
             buildToJsonPropertyExpression(
               'times',
               property,
+            nameManager: nameManager,
               forceNonNullReceiver: true,
               useImmutableCollections: true,
             ),
@@ -1699,6 +2107,7 @@ void main() {
           buildToJsonPropertyExpression(
             'times',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1723,6 +2132,7 @@ void main() {
           buildToJsonPropertyExpression(
             'meta',
             property,
+            nameManager: nameManager,
             forceNonNullReceiver: true,
             useImmutableCollections: true,
           ),
@@ -1757,6 +2167,7 @@ void main() {
             buildToJsonPropertyExpression(
               'addrs',
               property,
+            nameManager: nameManager,
               forceNonNullReceiver: true,
               useImmutableCollections: true,
             ),
@@ -1788,6 +2199,7 @@ void main() {
           buildToJsonPropertyExpression(
             'addrs',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),
@@ -1816,6 +2228,7 @@ void main() {
           buildToJsonPropertyExpression(
             'tags',
             property,
+            nameManager: nameManager,
             useImmutableCollections: true,
           ),
         ),

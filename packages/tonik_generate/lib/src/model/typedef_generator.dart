@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/recursion_detector.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// A generator for creating Dart typedef files from
@@ -66,12 +67,16 @@ class TypedefGenerator {
   TypeDef generateListTypedef(ListModel model) {
     final isNullable = model.isNullable;
 
-    final baseType = typeReference(
-      model,
-      nameManager,
-      package,
-      isNullableOverride: isNullable,
-      useImmutableCollections: useImmutableCollections,
+    const ficUrl =
+        'package:fast_immutable_collections/fast_immutable_collections.dart';
+    final baseType = TypeReference(
+      (b) => b
+        ..symbol = useImmutableCollections ? 'IList' : 'List'
+        ..url = useImmutableCollections ? ficUrl : 'dart:core'
+        ..types.add(
+          _safeContentTypeReference(model, model.content),
+        )
+        ..isNullable = isNullable,
     );
 
     return TypeDef(
@@ -93,12 +98,7 @@ class TypedefGenerator {
         ..url = useImmutableCollections ? ficUrl : 'dart:core'
         ..types.addAll([
           refer('String', 'dart:core'),
-          typeReference(
-            model.valueModel,
-            nameManager,
-            package,
-            useImmutableCollections: useImmutableCollections,
-          ),
+          _safeContentTypeReference(model, model.valueModel),
         ])
         ..isNullable = isNullable,
     );
@@ -108,6 +108,49 @@ class TypedefGenerator {
         ..name = nameManager.modelName(model)
         ..definition = baseType,
     );
+  }
+
+  /// Returns a [TypeReference] for the content/value model of a typedef'd
+  /// collection. When the content reaches back to a recursive named typedef
+  /// (directly or through any chain), Dart forbids the self-reference; in
+  /// that case we erase to `Object?` for the typedef RHS only — runtime
+  /// recursion is broken by the inline `_decode<Type>` / `_encode<Type>`
+  /// helpers emitted at every use site.
+  TypeReference _safeContentTypeReference(Model owner, Model content) {
+    if (_reachesRecursiveTypedef(content, owner)) {
+      return TypeReference(
+        (b) => b
+          ..symbol = 'Object?'
+          ..url = 'dart:core',
+      );
+    }
+    return typeReference(
+      content,
+      nameManager,
+      package,
+      useImmutableCollections: useImmutableCollections,
+    );
+  }
+
+  bool _reachesRecursiveTypedef(Model start, Model self) {
+    final visited = <Model>{};
+
+    bool walk(Model m) {
+      if (identical(m, self)) return true;
+      if (!visited.add(m)) return false;
+      if (m is AliasModel) return walk(m.model);
+      if (m is MapModel) {
+        if (m.name != null && isRecursive(m)) return true;
+        return walk(m.valueModel);
+      }
+      if (m is ListModel) {
+        if (m.name != null && isRecursive(m)) return true;
+        return walk(m.content);
+      }
+      return false;
+    }
+
+    return walk(start);
   }
 
   ({String code, String filename}) _generateFile(TypeDef typedef) {

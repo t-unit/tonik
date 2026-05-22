@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 
@@ -16,9 +17,11 @@ void main() {
     );
   });
 
-  String emit(Expression expr) => expr.accept(emitter).toString();
+  String emit(BuiltExpression built) =>
+      built.expression.accept(emitter).toString();
 
-  String scopedEmit(Expression expr) => expr.accept(scopedEmitter).toString();
+  String scopedEmit(BuiltExpression built) =>
+      built.expression.accept(scopedEmitter).toString();
 
   group('buildToFormPropertyExpression', () {
     late Context context;

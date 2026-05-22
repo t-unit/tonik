@@ -86,7 +86,7 @@ class QueryGenerator {
         resolvedParam,
         explode: resolvedParam.explode,
         allowEmpty: resolvedParam.allowEmptyValue,
-      );
+      ).statements;
     }
 
     if (encoding == QueryParameterEncoding.spaceDelimited ||
@@ -97,7 +97,7 @@ class QueryGenerator {
         encoding: encoding,
         explode: resolvedParam.explode,
         allowEmpty: resolvedParam.allowEmptyValue,
-      );
+      ).statements;
     }
 
     return [
@@ -116,7 +116,7 @@ class QueryGenerator {
 
     return Block.of([
       const Code(r'_$entries.addAll('),
-      deepObjectExpression,
+      deepObjectExpression.code,
       const Code(');'),
     ]);
   }

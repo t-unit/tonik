@@ -1,9 +1,30 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
-Expression buildMatrixParameterExpression(
+BuiltExpression buildMatrixParameterExpression(
+  Expression valueExpression,
+  Model model, {
+  required Expression paramName,
+  required Expression explode,
+  required Expression allowEmpty,
+  bool isNullable = false,
+}) {
+  return BuiltExpression.simple(
+    _buildMatrixParameterExpression(
+      valueExpression,
+      model,
+      paramName: paramName,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      isNullable: isNullable,
+    ),
+  );
+}
+
+Expression _buildMatrixParameterExpression(
   Expression valueExpression,
   Model model, {
   required Expression paramName,
@@ -44,7 +65,7 @@ Expression buildMatrixParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    AliasModel() => buildMatrixParameterExpression(
+    AliasModel() => _buildMatrixParameterExpression(
       valueExpression,
       model.model,
       paramName: paramName,

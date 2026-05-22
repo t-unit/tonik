@@ -1,10 +1,12 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/response_property_normalizer.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
@@ -243,14 +245,18 @@ class ParseGenerator {
           .statement,
     );
 
-    final bodyExpr = buildFromJsonValueExpression(
+    final helperContext = InlineHelperContext(nameManager: nameManager);
+    final built = buildFromJsonValueExpression(
       jsonVar,
       model: responseBody.model,
       nameManager: nameManager,
       package: package,
+      helperContext: helperContext,
       useImmutableCollections: useImmutableCollections,
     );
-    statements.add(declareFinal(bodyVar).assign(bodyExpr).statement);
+    statements
+      ..addAll(spliceInlineHelpers(built.inlineFunctions))
+      ..add(declareFinal(bodyVar).assign(built.unsafeRawBody).statement);
 
     return (statements: statements, varName: bodyVar);
   }
@@ -323,7 +329,7 @@ class ParseGenerator {
           .statement,
     );
 
-    final bodyExpr = buildFromFormValueExpression(
+    final bodyBuilt = buildFromFormValueExpression(
       refer(formStringVar),
       model: responseBody.model,
       isRequired: true,
@@ -332,7 +338,9 @@ class ParseGenerator {
       explode: literalTrue,
       useImmutableCollections: useImmutableCollections,
     );
-    statements.add(declareFinal(bodyVar).assign(bodyExpr).statement);
+    statements
+      ..addAll(spliceInlineHelpers(bodyBuilt.inlineFunctions))
+      ..add(declareFinal(bodyVar).assign(bodyBuilt.unsafeRawBody).statement);
 
     return (statements: statements, varName: bodyVar);
   }
@@ -633,7 +641,7 @@ class ParseGenerator {
         contextProperty: rawHeaderName,
         explode: literalBool(resolvedHeader.explode),
       );
-      supported[normalizedName] = decode;
+      supported[normalizedName] = decode.expression;
     }
     return (
       supported: supported,

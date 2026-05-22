@@ -3047,5 +3047,70 @@ IMap<String, int> _parseResponse(Response<List<int>> response) {
         );
       });
     });
+
+    test(
+      r'splices _$decodeTree helper into _parseResponse for self-referential '
+      'MapModel response body',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+        );
+        tree.valueModel = tree;
+
+        final operation = Operation(
+          operationId: 'getTree',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/tree',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: tree,
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+Tree _parseResponse(Response<List<int>> response) {
+  switch ((response.statusCode, response.headers.value('content-type'))) {
+    case (200, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      late final Tree Function(Object?) _$decodeTree;
+      _$decodeTree = (Object? v) => v.decodeJsonMap((v) => _$decodeTree(v), context: r'Tree');
+      final _$body = _$decodeTree(_$json);
+      return _$body;
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
   });
 }
