@@ -179,7 +179,10 @@ class OneOfGenerator {
               buildReadOnlyToMatrixMethod(throwBody)
             else
               _generateToMatrixMethod(className, model, variantNames),
-            buildToDeepObjectMethod(),
+            if (useThrowBody)
+              buildReadOnlyToDeepObjectMethod(throwBody)
+            else
+              buildToDeepObjectMethod(),
             if (useThrowBody)
               buildReadOnlyUriEncodeMethod(throwBody)
             else

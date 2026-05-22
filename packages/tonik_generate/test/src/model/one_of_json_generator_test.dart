@@ -1232,46 +1232,134 @@ void main() {
       );
     });
 
-    test('every encoder method throws for empty oneOf', () {
+    group('encoder method bodies for empty oneOf', () {
+      late String generatedCode;
+
+      setUp(() {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Empty',
+          models: const <DiscriminatedModel>{},
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'Empty',
+        );
+        generatedCode = format(baseClass.accept(emitter).toString());
+      });
+
+      void expectContainsBody(String body) {
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(body)),
+        );
+      }
+
+      const throwExpr =
+          "throw EncodingException(r'Empty has no variants and cannot be "
+          "encoded.');";
+
+      test('toSimple', () {
+        expectContainsBody(
+          'String toSimple({required bool explode, required bool '
+          'allowEmpty}) => $throwExpr',
+        );
+      });
+
+      test('toForm', () {
+        expectContainsBody(
+          'String toForm({ required bool explode, required bool allowEmpty, '
+          'bool useQueryComponent = false, }) => $throwExpr',
+        );
+      });
+
+      test('toLabel', () {
+        expectContainsBody(
+          'String toLabel({required bool explode, required bool '
+          'allowEmpty}) => $throwExpr',
+        );
+      });
+
+      test('toMatrix', () {
+        expectContainsBody(
+          'String toMatrix( String paramName, { required bool explode, '
+          'required bool allowEmpty, }) => $throwExpr',
+        );
+      });
+
+      test('uriEncode', () {
+        expectContainsBody(
+          'String uriEncode({ required bool allowEmpty, bool '
+          'useQueryComponent = false, }) => $throwExpr',
+        );
+      });
+
+      test('currentEncodingShape', () {
+        expectContainsBody(
+          'EncodingShape get currentEncodingShape => $throwExpr',
+        );
+      });
+
+      test('parameterProperties', () {
+        expectContainsBody(
+          'Map<String, String> parameterProperties({ bool allowEmpty = true, '
+          'bool allowLists = true, }) => $throwExpr',
+        );
+      });
+
+      test('toDeepObject', () {
+        expectContainsBody(
+          'List<ParameterEntry> toDeepObject( String paramName, { required '
+          'bool explode, required bool allowEmpty, }) => $throwExpr',
+        );
+      });
+    });
+
+    test('writeOnly takes precedence over empty for decoders', () {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Empty',
         models: const <DiscriminatedModel>{},
         context: context,
+        isWriteOnly: true,
       );
 
       final generatedClasses = generator.generateClasses(model);
       final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
       final generatedCode = format(baseClass.accept(emitter).toString());
 
-      const message = "r'Empty has no variants and cannot be encoded.'";
-
-      for (final methodName in const [
-        'toJson',
-        'toSimple',
-        'toForm',
-        'toLabel',
-        'toMatrix',
-        'uriEncode',
-        'currentEncodingShape',
-        'parameterProperties',
-      ]) {
-        expect(
-          generatedCode,
-          contains(methodName),
-          reason: 'expected generated code to declare $methodName',
-        );
-      }
+      const expectedFromJson = '''
+        factory Empty.fromJson(Object? json) =>
+          throw JsonDecodingException(
+            r'Empty is write-only and cannot be decoded.',
+          );
+      ''';
+      const expectedFromSimple = '''
+        factory Empty.fromSimple(String? value, {required bool explode}) =>
+          throw SimpleDecodingException(
+            r'Empty is write-only and cannot be decoded.',
+          );
+      ''';
+      const expectedFromForm = '''
+        factory Empty.fromForm(String? value, {required bool explode}) =>
+          throw FormDecodingException(
+            r'Empty is write-only and cannot be decoded.',
+          );
+      ''';
 
       expect(
-        generatedCode,
-        contains(message),
-        reason: 'expected throw message in generated code',
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromJson)),
       );
       expect(
         collapseWhitespace(generatedCode),
-        isNot(contains('switch (this) {}')),
-        reason: 'no method body should leave an empty switch in place',
+        contains(collapseWhitespace(expectedFromSimple)),
+      );
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromForm)),
       );
     });
   });
