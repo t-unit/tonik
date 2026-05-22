@@ -1159,4 +1159,120 @@ void main() {
       );
     });
   });
+
+  group('empty oneOf variants', () {
+    test('toJson throws EncodingException for empty oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Empty',
+        models: const <DiscriminatedModel>{},
+        context: context,
+      );
+
+      final generatedClasses = generator.generateClasses(model);
+      final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const expectedMethod =
+          "Object? toJson() => throw EncodingException(r'Empty has no "
+          "variants and cannot be encoded.');";
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('readOnly takes precedence over empty when both apply', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Empty',
+        models: const <DiscriminatedModel>{},
+        context: context,
+        isReadOnly: true,
+      );
+
+      final generatedClasses = generator.generateClasses(model);
+      final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const expectedMethod =
+          "Object? toJson() => throw EncodingException(r'Empty is "
+          "read-only and cannot be encoded.');";
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('fromJson throws JsonDecodingException for empty oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Empty',
+        models: const <DiscriminatedModel>{},
+        context: context,
+      );
+
+      final generatedClasses = generator.generateClasses(model);
+      final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const expectedFactory = '''
+        factory Empty.fromJson(Object? json) {
+          throw JsonDecodingException(
+            r'Empty has no variants and cannot be decoded.',
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFactory)),
+      );
+    });
+
+    test('every encoder method throws for empty oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Empty',
+        models: const <DiscriminatedModel>{},
+        context: context,
+      );
+
+      final generatedClasses = generator.generateClasses(model);
+      final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const message = "r'Empty has no variants and cannot be encoded.'";
+
+      for (final methodName in const [
+        'toJson',
+        'toSimple',
+        'toForm',
+        'toLabel',
+        'toMatrix',
+        'uriEncode',
+        'currentEncodingShape',
+        'parameterProperties',
+      ]) {
+        expect(
+          generatedCode,
+          contains(methodName),
+          reason: 'expected generated code to declare $methodName',
+        );
+      }
+
+      expect(
+        generatedCode,
+        contains(message),
+        reason: 'expected throw message in generated code',
+      );
+      expect(
+        collapseWhitespace(generatedCode),
+        isNot(contains('switch (this) {}')),
+        reason: 'no method body should leave an empty switch in place',
+      );
+    });
+  });
 }

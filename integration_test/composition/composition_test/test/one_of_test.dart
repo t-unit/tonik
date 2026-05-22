@@ -4417,4 +4417,49 @@ void main() {
       });
     });
   });
+
+  group('EmptyOneOf', () {
+    Matcher hasMessage(String fragment) => predicate<Object>(
+      (e) => e.toString().contains(fragment),
+      'toString contains "$fragment"',
+    );
+
+    test('fromJson throws JsonDecodingException with structural message', () {
+      expect(
+        () => EmptyOneOf.fromJson(const <String, Object?>{}),
+        throwsA(
+          allOf(
+            isA<JsonDecodingException>(),
+            hasMessage('EmptyOneOf has no variants and cannot be decoded.'),
+          ),
+        ),
+      );
+    });
+
+    test('fromSimple throws SimpleDecodingException with structural '
+        'message', () {
+      expect(
+        () => EmptyOneOf.fromSimple('anything', explode: false),
+        throwsA(
+          allOf(
+            isA<SimpleDecodingException>(),
+            hasMessage('EmptyOneOf has no variants and cannot be decoded.'),
+          ),
+        ),
+      );
+    });
+
+    test('fromForm throws FormDecodingException with structural '
+        'message', () {
+      expect(
+        () => EmptyOneOf.fromForm('anything', explode: false),
+        throwsA(
+          allOf(
+            isA<FormDecodingException>(),
+            hasMessage('EmptyOneOf has no variants and cannot be decoded.'),
+          ),
+        ),
+      );
+    });
+  });
 }

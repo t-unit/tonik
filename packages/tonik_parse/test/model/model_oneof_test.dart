@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
@@ -288,6 +289,51 @@ void main() {
               as OneOfModel;
 
       expect(model.description, isNull);
+    });
+  });
+
+  group('empty oneOf', () {
+    const emptyOneOfSpec = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'EmptyOneOf': {
+            'oneOf': <Map<String, dynamic>>[],
+          },
+        },
+      },
+    };
+
+    test('logs warning when oneOf is empty', () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+      addTearDown(sub.cancel);
+
+      Importer().import(emptyOneOfSpec);
+
+      expect(
+        logs.any(
+          (r) =>
+              r.level == Level.WARNING &&
+              r.message.contains('EmptyOneOf') &&
+              r.message.contains('empty'),
+        ),
+        isTrue,
+        reason: 'expected a warning about empty oneOf for EmptyOneOf',
+      );
+    });
+
+    test('still produces a OneOfModel with empty models set', () {
+      final api = Importer().import(emptyOneOfSpec);
+      final model =
+          api.models.firstWhere(
+                (m) => m is NamedModel && m.name == 'EmptyOneOf',
+              )
+              as OneOfModel;
+
+      expect(model.models, isEmpty);
     });
   });
 }
