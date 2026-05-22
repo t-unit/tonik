@@ -81,12 +81,15 @@ components:
         - $ref: '#/components/schemas/Class1'
         - $ref: '#/components/schemas/Class2'
 
-    OneOfEnum: 
+    OneOfEnum:
       oneOf:
         - $ref: '#/components/schemas/Enum1'
         - $ref: '#/components/schemas/Enum2'
 
-    AllOfPrimitive: 
+    EmptyOneOf:
+      oneOf: []
+
+    AllOfPrimitive:
       allOf:
         - type: object
           properties:

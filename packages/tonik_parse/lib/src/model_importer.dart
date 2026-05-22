@@ -582,6 +582,14 @@ class ModelImporter {
     final modelContext = context.push(name);
     final alternatives = schema.oneOf!;
 
+    if (alternatives.isEmpty) {
+      log.warning(
+        'oneOf for $name is empty. Per JSON Schema, oneOf must be a '
+        'non-empty array. The generated $name class will throw on all '
+        'encode and decode operations.',
+      );
+    }
+
     final effectiveDiscriminator =
         schema.discriminator ?? _findInheritedDiscriminator(alternatives);
 

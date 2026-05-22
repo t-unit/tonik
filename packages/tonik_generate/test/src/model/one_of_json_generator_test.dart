@@ -1159,4 +1159,208 @@ void main() {
       );
     });
   });
+
+  group('empty oneOf variants', () {
+    test('toJson throws EncodingException for empty oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Empty',
+        models: const <DiscriminatedModel>{},
+        context: context,
+      );
+
+      final generatedClasses = generator.generateClasses(model);
+      final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const expectedMethod =
+          "Object? toJson() => throw EncodingException(r'Empty has no "
+          "variants and cannot be encoded.');";
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('readOnly takes precedence over empty when both apply', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Empty',
+        models: const <DiscriminatedModel>{},
+        context: context,
+        isReadOnly: true,
+      );
+
+      final generatedClasses = generator.generateClasses(model);
+      final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const expectedMethod =
+          "Object? toJson() => throw EncodingException(r'Empty is "
+          "read-only and cannot be encoded.');";
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('fromJson throws JsonDecodingException for empty oneOf', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Empty',
+        models: const <DiscriminatedModel>{},
+        context: context,
+      );
+
+      final generatedClasses = generator.generateClasses(model);
+      final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const expectedFactory = '''
+        factory Empty.fromJson(Object? json) {
+          throw JsonDecodingException(
+            r'Empty has no variants and cannot be decoded.',
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFactory)),
+      );
+    });
+
+    group('encoder method bodies for empty oneOf', () {
+      late String generatedCode;
+
+      setUp(() {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Empty',
+          models: const <DiscriminatedModel>{},
+          context: context,
+        );
+
+        final generatedClasses = generator.generateClasses(model);
+        final baseClass = generatedClasses.firstWhere(
+          (c) => c.name == 'Empty',
+        );
+        generatedCode = format(baseClass.accept(emitter).toString());
+      });
+
+      void expectContainsBody(String body) {
+        expect(
+          collapseWhitespace(generatedCode),
+          contains(collapseWhitespace(body)),
+        );
+      }
+
+      const throwExpr =
+          "throw EncodingException(r'Empty has no variants and cannot be "
+          "encoded.');";
+
+      test('toSimple', () {
+        expectContainsBody(
+          'String toSimple({required bool explode, required bool '
+          'allowEmpty}) => $throwExpr',
+        );
+      });
+
+      test('toForm', () {
+        expectContainsBody(
+          'String toForm({ required bool explode, required bool allowEmpty, '
+          'bool useQueryComponent = false, }) => $throwExpr',
+        );
+      });
+
+      test('toLabel', () {
+        expectContainsBody(
+          'String toLabel({required bool explode, required bool '
+          'allowEmpty}) => $throwExpr',
+        );
+      });
+
+      test('toMatrix', () {
+        expectContainsBody(
+          'String toMatrix( String paramName, { required bool explode, '
+          'required bool allowEmpty, }) => $throwExpr',
+        );
+      });
+
+      test('uriEncode', () {
+        expectContainsBody(
+          'String uriEncode({ required bool allowEmpty, bool '
+          'useQueryComponent = false, }) => $throwExpr',
+        );
+      });
+
+      test('currentEncodingShape', () {
+        expectContainsBody(
+          'EncodingShape get currentEncodingShape => $throwExpr',
+        );
+      });
+
+      test('parameterProperties', () {
+        expectContainsBody(
+          'Map<String, String> parameterProperties({ bool allowEmpty = true, '
+          'bool allowLists = true, }) => $throwExpr',
+        );
+      });
+
+      test('toDeepObject', () {
+        expectContainsBody(
+          'List<ParameterEntry> toDeepObject( String paramName, { required '
+          'bool explode, required bool allowEmpty, }) => $throwExpr',
+        );
+      });
+    });
+
+    test('writeOnly takes precedence over empty for decoders', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Empty',
+        models: const <DiscriminatedModel>{},
+        context: context,
+        isWriteOnly: true,
+      );
+
+      final generatedClasses = generator.generateClasses(model);
+      final baseClass = generatedClasses.firstWhere((c) => c.name == 'Empty');
+      final generatedCode = format(baseClass.accept(emitter).toString());
+
+      const expectedFromJson = '''
+        factory Empty.fromJson(Object? json) =>
+          throw JsonDecodingException(
+            r'Empty is write-only and cannot be decoded.',
+          );
+      ''';
+      const expectedFromSimple = '''
+        factory Empty.fromSimple(String? value, {required bool explode}) =>
+          throw SimpleDecodingException(
+            r'Empty is write-only and cannot be decoded.',
+          );
+      ''';
+      const expectedFromForm = '''
+        factory Empty.fromForm(String? value, {required bool explode}) =>
+          throw FormDecodingException(
+            r'Empty is write-only and cannot be decoded.',
+          );
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromSimple)),
+      );
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromForm)),
+      );
+    });
+  });
 }

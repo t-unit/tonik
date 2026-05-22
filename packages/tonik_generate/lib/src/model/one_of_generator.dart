@@ -116,6 +116,18 @@ class OneOfGenerator {
           raw: true,
         ).code;
 
+        // Empty `oneOf: []` produces `switch (this) {}` which the analyzer
+        // infers as `Object?` — toJson's record-destructuring then fails
+        // `pattern_type_mismatch_in_irrefutable_context`. Route every
+        // encoder through a throwing body instead.
+        final useThrowBody = model.isReadOnly || model.models.isEmpty;
+        final throwBody = model.isReadOnly
+            ? encodingExceptionBody
+            : generateEncodingExceptionExpression(
+                '$className has no variants and cannot be encoded.',
+                raw: true,
+              ).code;
+
         b
           ..constructors.add(Constructor((b) => b..constant = true))
           ..constructors.add(
@@ -139,37 +151,56 @@ class OneOfGenerator {
                   ),
           )
           ..methods.addAll([
-            if (model.isReadOnly)
-              buildReadOnlyCurrentEncodingShapeGetter(encodingExceptionBody)
+            if (useThrowBody)
+              buildReadOnlyCurrentEncodingShapeGetter(throwBody)
             else
               _generateCurrentEncodingShapeGetter(model, variantNames),
-            if (model.isReadOnly)
-              buildReadOnlyParameterPropertiesMethod(encodingExceptionBody)
+            if (useThrowBody)
+              buildReadOnlyParameterPropertiesMethod(throwBody)
             else
               _generateParameterPropertiesMethod(
                 className,
                 model,
                 variantNames,
               ),
-            _generateToSimpleMethod(className, model, variantNames),
-            _generateToFormMethod(className, model, variantNames),
-            _generateToLabelMethod(className, model, variantNames),
-            _generateToMatrixMethod(className, model, variantNames),
-            buildToDeepObjectMethod(),
-            if (model.isReadOnly)
-              buildReadOnlyUriEncodeMethod(encodingExceptionBody)
+            if (useThrowBody)
+              buildReadOnlyToSimpleMethod(throwBody)
+            else
+              _generateToSimpleMethod(className, model, variantNames),
+            if (useThrowBody)
+              buildReadOnlyToFormMethod(throwBody)
+            else
+              _generateToFormMethod(className, model, variantNames),
+            if (useThrowBody)
+              buildReadOnlyToLabelMethod(throwBody)
+            else
+              _generateToLabelMethod(className, model, variantNames),
+            if (useThrowBody)
+              buildReadOnlyToMatrixMethod(throwBody)
+            else
+              _generateToMatrixMethod(className, model, variantNames),
+            if (useThrowBody)
+              buildReadOnlyToDeepObjectMethod(throwBody)
+            else
+              buildToDeepObjectMethod(),
+            if (useThrowBody)
+              buildReadOnlyUriEncodeMethod(throwBody)
             else
               _generateUriEncodeMethod(className, model, variantNames),
-            Method(
-              (b) => b
-                ..annotations.add(refer('override', 'dart:core'))
-                ..name = 'toJson'
-                ..returns = refer('Object?', 'dart:core')
-                ..body = model.isReadOnly
-                    ? encodingExceptionBody
-                    : _generateToJsonBody(className, model, variantNames)
-                ..lambda = model.isReadOnly,
-            ),
+            if (useThrowBody)
+              buildReadOnlyToJsonMethod(throwBody)
+            else
+              Method(
+                (b) => b
+                  ..annotations.add(refer('override', 'dart:core'))
+                  ..name = 'toJson'
+                  ..returns = refer('Object?', 'dart:core')
+                  ..body = _generateToJsonBody(
+                    className,
+                    model,
+                    variantNames,
+                  ),
+              ),
           ])
           ..constructors.add(
             model.isWriteOnly
@@ -368,6 +399,13 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
+    if (model.models.isEmpty) {
+      return generateJsonDecodingExceptionExpression(
+        '$className has no variants and cannot be decoded.',
+        raw: true,
+      ).statement;
+    }
+
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final blocks = <Code>[];
@@ -589,6 +627,32 @@ class OneOfGenerator {
     final constructorName = isForm ? 'fromForm' : 'fromSimple';
     final encodingStyleName = isForm ? 'form' : 'simple';
     final bodyBlocks = <Code>[];
+
+    if (model.models.isEmpty) {
+      return Constructor(
+        (b) => b
+          ..factory = true
+          ..name = constructorName
+          ..requiredParameters.add(
+            Parameter(
+              (b) => b
+                ..name = 'value'
+                ..type = refer('String?', 'dart:core'),
+            ),
+          )
+          ..optionalParameters.add(
+            buildBoolParameter('explode', required: true),
+          )
+          ..lambda = true
+          ..body = (isForm
+                  ? generateFormDecodingExceptionExpression
+                  : generateSimpleDecodingExceptionExpression)(
+                '$className has no variants and cannot be decoded.',
+                raw: true,
+              )
+              .code,
+      );
+    }
 
     if (model.discriminator != null) {
       final hasDiscriminatedComplexTypes = model.models.any(
