@@ -337,10 +337,12 @@ class ParseGenerator {
     return (statements: statements, varName: bodyVar);
   }
 
-  // Must stay in sync with buildFromJsonValueExpression's NeverModel and
-  // ListModel-with-NeverModel-content arms: those return a bare
-  // `throw JsonDecodingException(...)`, so callers must skip emitting the
-  // _$json local and the trailing return.
+  // Mirrors the *non-nullable* `NeverModel` and `ListModel<NeverModel>` arms
+  // in buildFromJsonValueExpression — only those emit a bare
+  // `throw JsonDecodingException(...)`. When the model is nullable the arms
+  // emit `value == null ? null : throw …`, which references `_$json` and so
+  // must NOT short-circuit here. The `!nullable` gates in the switch below
+  // enforce that.
   bool _isJsonBodyPureThrow(Model model, {bool isNullable = false}) {
     final nullable = isNullable || model.isEffectivelyNullable;
     switch (model) {
@@ -356,11 +358,13 @@ class ParseGenerator {
     }
   }
 
-  // List-of-Never collapses to a pure throw even when the outer ListModel is
-  // nullable: `_$formString` would come from `decodeResponseText` (non-null
-  // String), so a `_$formString == null ? null : throw ...` wrap would trip
-  // unnecessary_null_comparison. The body payload is non-null and `throw` is
-  // the only sound result for `List<Never>`.
+  // Bare `NeverModel` and `ListModel<NeverModel>` both collapse to a pure
+  // throw regardless of nullability, because `_$formString` comes from
+  // `decodeResponseText` and is typed `String` (non-null). Wrapping the throw
+  // in `_$formString == null ? null : throw …` would trip
+  // `unnecessary_null_comparison`. This differs from `_isJsonBodyPureThrow`,
+  // where `_$json` is `Object?` and the nullable arms emit the null-guarded
+  // ternary — see the `!nullable` gates there.
   bool _isFormBodyPureThrow(Model model) {
     switch (model) {
       case NeverModel():
