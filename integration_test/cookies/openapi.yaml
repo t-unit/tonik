@@ -832,6 +832,78 @@ paths:
         '204':
           description: No content
 
+  # Base64 cookies
+  /base64-cookies:
+    get:
+      operationId: getBase64Cookies
+      tags:
+        - cookies
+      summary: Test base64 cookie parameters
+      description: Demonstrates cookie parameters with string/byte (Base64) format, both scalar and array
+      parameters:
+        - name: binaryToken
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: byte
+        - name: binaryTokens
+          in: cookie
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  # Binary cookie
+  /binary-cookies:
+    get:
+      operationId: getBinaryCookies
+      tags:
+        - cookies
+      summary: Test binary cookie parameter
+      description: Demonstrates a cookie parameter with string/binary format which cannot be form-encoded
+      parameters:
+        - name: binaryData
+          in: cookie
+          required: true
+          schema:
+            type: string
+            format: binary
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
+  /binary-cookies-array:
+    get:
+      operationId: getBinaryCookiesArray
+      tags:
+        - cookies
+      summary: Test binary array cookie parameter
+      description: Demonstrates an array cookie parameter with string/binary items which cannot be form-encoded
+      parameters:
+        - name: binaryDataList
+          in: cookie
+          required: true
+          schema:
+            type: array
+            items:
+              type: string
+              format: binary
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
 components:
   schemas:
     ThemeEnum:
