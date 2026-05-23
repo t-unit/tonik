@@ -1,3 +1,7 @@
+## 0.7.1
+
+ - Bump "tonik_core" to `0.7.1`.
+
 ## 0.7.0
 
  - **REFACTOR**: add Model.resolved getter, remove alias-resolution duplication.

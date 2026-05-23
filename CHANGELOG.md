@@ -3,6 +3,80 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-05-23
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.7.1`](#tonik_util---v071)
+ - [`tonik_core` - `v0.7.1`](#tonik_core---v071)
+ - [`tonik_parse` - `v0.7.1`](#tonik_parse---v071)
+ - [`tonik_generate` - `v0.7.1`](#tonik_generate---v071)
+ - [`tonik` - `v0.7.1`](#tonik---v071)
+
+---
+
+#### `tonik_util` - `v0.7.1`
+
+ - **FIX**: AnyModel encoding in tonik_util runtime and three generator callsites.
+ - **FEAT**: add MapModel and Base64Model parameter encoding support.
+
+#### `tonik_core` - `v0.7.1`
+
+ - Bump "tonik_core" to `0.7.1`.
+
+#### `tonik_parse` - `v0.7.1`
+
+ - **FIX**: handle empty oneOf without producing invalid Dart.
+
+#### `tonik_generate` - `v0.7.1`
+
+ - **REFACTOR**: inline NameManager construction in test, drop test helper.
+ - **REFACTOR**: simplify inline helper context, use _$ sigil for helper names.
+ - **REFACTOR**: replace labelled break with extracted _processSegment method.
+ - **FIX**: handle byte/binary cookie params instead of emitting toForm on TonikFile.
+ - **FIX**: handle empty oneOf without producing invalid Dart.
+ - **FIX**: drop dead _isFormBodyPureThrow parameter and tighten WHY comments.
+ - **FIX**: extend pure-throw handling to nullable List<Never> form bodies.
+ - **FIX**: skip unused decode locals when response body decodes to a pure throw.
+ - **FIX**: tighten dedup tests, doc accuracy, and decode helper context.
+ - **FIX**: harden BuiltStatements safety pattern and recursion test coverage.
+ - **FIX**: prevent stack overflow on self-referential map/list schemas.
+ - **FIX**: add missing doc string for cookie parameters.
+ - **FIX**: restore param-counter-collision endpoint and loop-based uniqueness fix.
+ - **FIX**: reserve cancelToken in parameter name normalizer to prevent collision with built-in Dio parameter.
+ - **FIX**: replace assert with throw StateError and hoist putIfAbsent in loop.
+ - **FIX**: use loop in _ensureUniquenessInGroup to avoid counter collision.
+ - **FIX**: close throw-class for all simple-encoded path parameter shapes.
+ - **FIX**: hoist throw expressions for unsupported simple/matrix path params.
+ - **FIX**: AnyModel encoding in tonik_util runtime and three generator callsites.
+ - **FIX**: handle AnyModel and NeverModel as anyOf variants.
+ - **FIX**: handle Base64Model variant in oneOf and anyOf encoding.
+ - **FIX**: handle AliasModel in cookie parameter encoding.
+ - **FIX**: handle AnyModel in cookie parameter encoding.
+ - **FIX**: handle MapModel in cookie parameter encoding.
+ - **FIX**: update stale comments referencing .lock to IList/IMap constructors.
+ - **FIX**: pass useImmutableCollections to additionalPropertiesType in allOf fromJson.
+ - **FIX**: pass useImmutableCollections to additionalPropertiesType in fromJson/fromSimple/fromForm.
+ - **FIX**: use IList/IMap constructors via refer() instead of .lock extension for immutable collections.
+ - **FIX**: use IList/IMap return types for direct collection response bodies with immutable collections.
+ - **FIX**: reject complex list element types in label path parameter encoding.
+ - **FEAT**: add integration tests and fix simple-style map/base64 encoding.
+ - **FEAT**: add MapModel and Base64Model parameter encoding support.
+ - **DOCS**: clarify nullability invariants in pure-throw helper comments.
+
+#### `tonik` - `v0.7.1`
+
+ - Bump "tonik" to `0.7.1`.
+
+
 ## 2026-04-20
 
 ### Changes

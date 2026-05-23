@@ -1,3 +1,7 @@
+## 0.7.1
+
+ - **FIX**: handle empty oneOf without producing invalid Dart.
+
 ## 0.7.0
 
  - **REFACTOR**: add Model.resolved getter, remove alias-resolution duplication.

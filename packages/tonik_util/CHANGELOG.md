@@ -1,3 +1,8 @@
+## 0.7.1
+
+ - **FIX**: AnyModel encoding in tonik_util runtime and three generator callsites.
+ - **FEAT**: add MapModel and Base64Model parameter encoding support.
+
 ## 0.7.0
 
  - **FIX**: add useQueryComponent parameter to Date.toForm.

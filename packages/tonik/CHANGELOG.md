@@ -1,3 +1,10 @@
+## 0.7.1
+
+ - Bump "tonik" to `0.7.1`.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.7.0
 
  - **FIX**: address correctness and safety issues from comprehensive audit.
