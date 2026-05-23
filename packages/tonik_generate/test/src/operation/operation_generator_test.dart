@@ -1834,8 +1834,9 @@ Future<TonikResult<void>> call({
           final cls = generator.generateClass(operation, 'GetA');
           final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames =
-              method.optionalParameters.map((p) => p.name).toList();
+          final paramNames = method.optionalParameters
+              .map((p) => p.name)
+              .toList();
           expect(paramNames, ['cancelTokenQuery', 'cancelToken']);
 
           final methodString = format(method.accept(emitter).toString());
@@ -1962,8 +1963,9 @@ Future<TonikResult<void>> call({
           final cls = generator.generateClass(operation, 'PostA');
           final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames =
-              method.optionalParameters.map((p) => p.name).toList();
+          final paramNames = method.optionalParameters
+              .map((p) => p.name)
+              .toList();
           expect(paramNames, ['body', 'cancelTokenQuery', 'cancelToken']);
 
           final methodString = format(method.accept(emitter).toString());
@@ -2069,8 +2071,9 @@ Future<TonikResult<void>> call({
           final cls = generator.generateClass(operation, 'GetA');
           final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames =
-              method.optionalParameters.map((p) => p.name).toList();
+          final paramNames = method.optionalParameters
+              .map((p) => p.name)
+              .toList();
           expect(paramNames, ['cancelTokenPath', 'cancelToken']);
 
           final methodString = format(method.accept(emitter).toString());
@@ -2176,8 +2179,9 @@ Future<TonikResult<void>> call({
           final cls = generator.generateClass(operation, 'GetA');
           final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames =
-              method.optionalParameters.map((p) => p.name).toList();
+          final paramNames = method.optionalParameters
+              .map((p) => p.name)
+              .toList();
           expect(paramNames, ['cancelTokenHeader', 'cancelToken']);
 
           final methodString = format(method.accept(emitter).toString());
@@ -2282,8 +2286,9 @@ Future<TonikResult<void>> call({
           final cls = generator.generateClass(operation, 'GetA');
           final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames =
-              method.optionalParameters.map((p) => p.name).toList();
+          final paramNames = method.optionalParameters
+              .map((p) => p.name)
+              .toList();
           expect(paramNames, ['cancelTokenCookie', 'cancelToken']);
 
           final methodString = format(method.accept(emitter).toString());
@@ -2393,8 +2398,9 @@ Future<TonikResult<void>> call({
           final cls = generator.generateClass(operation, 'GetA');
           final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames =
-              method.optionalParameters.map((p) => p.name).toList();
+          final paramNames = method.optionalParameters
+              .map((p) => p.name)
+              .toList();
           expect(paramNames, ['cancelTokenQuery', 'cancelToken']);
 
           final methodString = format(method.accept(emitter).toString());
@@ -2440,8 +2446,9 @@ Future<TonikResult<void>> call({
           final cls = generator.generateClass(operation, 'GetA');
           final method = cls.methods.firstWhere((m) => m.name == 'call');
 
-          final paramNames =
-              method.optionalParameters.map((p) => p.name).toList();
+          final paramNames = method.optionalParameters
+              .map((p) => p.name)
+              .toList();
           expect(paramNames, ['token', 'cancelToken']);
         },
       );

@@ -629,14 +629,17 @@ void main() {
           isDeprecated: false,
           context: context,
         );
-        final result =
-            emit(buildToLabelPathParameterExpression('counts', parameter));
+        final result = emit(
+          buildToLabelPathParameterExpression('counts', parameter),
+        );
         expect(
           collapseWhitespace(result),
-          collapseWhitespace([
-            'counts.map((k, v, ) => MapEntry(k, v.toString(), ))',
-            '.toLabel(explode: false, allowEmpty: false, )',
-          ].join()),
+          collapseWhitespace(
+            [
+              'counts.map((k, v, ) => MapEntry(k, v.toString(), ))',
+              '.toLabel(explode: false, allowEmpty: false, )',
+            ].join(),
+          ),
         );
       },
     );
@@ -668,10 +671,12 @@ void main() {
           collapseWhitespace(
             emit(buildToLabelPathParameterExpression('data', parameter)),
           ),
-          collapseWhitespace([
-            'throw EncodingException(',
-            "'Map with complex value types cannot be label-encoded.')",
-          ].join()),
+          collapseWhitespace(
+            [
+              'throw EncodingException(',
+              "'Map with complex value types cannot be label-encoded.')",
+            ].join(),
+          ),
         );
       },
     );
@@ -691,14 +696,17 @@ void main() {
         isDeprecated: false,
         context: context,
       );
-      final result =
-          emit(buildToLabelPathParameterExpression('fileData', parameter));
+      final result = emit(
+        buildToLabelPathParameterExpression('fileData', parameter),
+      );
       expect(
         collapseWhitespace(result),
-        collapseWhitespace([
-          'fileData.toBase64String()',
-          '.toLabel(explode: false, allowEmpty: false, )',
-        ].join()),
+        collapseWhitespace(
+          [
+            'fileData.toBase64String()',
+            '.toLabel(explode: false, allowEmpty: false, )',
+          ].join(),
+        ),
       );
     });
   });
@@ -737,11 +745,13 @@ void main() {
         collapseWhitespace(
           emit(buildToLabelPathParameterExpression('itemList', parameter)),
         ),
-        collapseWhitespace([
-          'throw EncodingException(',
-          "'Label encoding does not support ",
-          "arrays of complex types')",
-        ].join()),
+        collapseWhitespace(
+          [
+            'throw EncodingException(',
+            "'Label encoding does not support ",
+            "arrays of complex types')",
+          ].join(),
+        ),
       );
     });
 
@@ -767,18 +777,21 @@ void main() {
           isDeprecated: false,
           context: context,
         );
-        final result =
-            emit(buildToLabelPathParameterExpression('items', parameter));
+        final result = emit(
+          buildToLabelPathParameterExpression('items', parameter),
+        );
         expect(
           collapseWhitespace(result),
-          collapseWhitespace([
-            'items.map((e) => e.map((k, v, ) ',
-            '=> MapEntry(k, v.toString(), ))',
-            '.toLabel(explode: false, allowEmpty: false, ))',
-            '.toList()',
-            '.toLabel(explode: false, ',
-            'allowEmpty: false, alreadyEncoded: true, )',
-          ].join()),
+          collapseWhitespace(
+            [
+              'items.map((e) => e.map((k, v, ) ',
+              '=> MapEntry(k, v.toString(), ))',
+              '.toLabel(explode: false, allowEmpty: false, ))',
+              '.toList()',
+              '.toLabel(explode: false, ',
+              'allowEmpty: false, alreadyEncoded: true, )',
+            ].join(),
+          ),
         );
       },
     );
@@ -813,11 +826,13 @@ void main() {
           collapseWhitespace(
             emit(buildToLabelPathParameterExpression('items', parameter)),
           ),
-          collapseWhitespace([
-            'throw EncodingException(',
-            "'Label encoding does not support ",
-            "arrays of maps with complex values')",
-          ].join()),
+          collapseWhitespace(
+            [
+              'throw EncodingException(',
+              "'Label encoding does not support ",
+              "arrays of maps with complex values')",
+            ].join(),
+          ),
         );
       },
     );
@@ -838,15 +853,18 @@ void main() {
         isDeprecated: false,
         context: context,
       );
-      final result =
-          emit(buildToLabelPathParameterExpression('files', parameter));
+      final result = emit(
+        buildToLabelPathParameterExpression('files', parameter),
+      );
       expect(
         collapseWhitespace(result),
-        collapseWhitespace([
-          'files.map((e) => e.toBase64String()).toList()',
-          '.toLabel(explode: false, ',
-          'allowEmpty: false, alreadyEncoded: true, )',
-        ].join()),
+        collapseWhitespace(
+          [
+            'files.map((e) => e.toBase64String()).toList()',
+            '.toLabel(explode: false, ',
+            'allowEmpty: false, alreadyEncoded: true, )',
+          ].join(),
+        ),
       );
     });
   });

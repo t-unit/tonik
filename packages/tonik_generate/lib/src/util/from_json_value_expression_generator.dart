@@ -32,8 +32,7 @@ BuiltExpression buildFromJsonValueExpression(
   bool isNullable = false,
   bool useImmutableCollections = false,
 }) {
-  final ctx =
-      helperContext ?? InlineHelperContext(nameManager: nameManager);
+  final ctx = helperContext ?? InlineHelperContext(nameManager: nameManager);
   return _buildFromJson(
     value,
     model: model,
@@ -216,9 +215,9 @@ BuiltExpression _buildFromJson(
         'Cannot decode NeverModel - this type does not permit any value.',
       );
       final body = nullable
-          ? refer(value)
-                .equalTo(literalNull)
-                .conditional(literalNull, throwExpr)
+          ? refer(
+              value,
+            ).equalTo(literalNull).conditional(literalNull, throwExpr)
           : throwExpr;
       return BuiltExpression.simple(body);
     case AnyModel():
@@ -297,8 +296,9 @@ BuiltExpression _buildListFromJsonBody(
   // refer('IList', ficUrl) call inside _wrapImmutable still tracks the
   // import for the allocator.
   final effectiveNullable = !useImmutableCollections && isNullable;
-  final listDecoder =
-      effectiveNullable ? 'decodeJsonNullableList' : 'decodeJsonList';
+  final listDecoder = effectiveNullable
+      ? 'decodeJsonNullableList'
+      : 'decodeJsonList';
 
   final unwrappedContent = content is AliasModel ? content.model : content;
   final inlineFunctions = <InlineHelper>[];
@@ -593,8 +593,9 @@ BuiltExpression _buildMapFromJsonBody(
   ).closure;
 
   final effectiveNullable = !useImmutableCollections && isNullable;
-  final mapDecoder =
-      effectiveNullable ? 'decodeJsonNullableMap' : 'decodeJsonMap';
+  final mapDecoder = effectiveNullable
+      ? 'decodeJsonNullableMap'
+      : 'decodeJsonMap';
 
   var result = refer(value).property(mapDecoder).call(
     [decoderClosure],
@@ -767,11 +768,17 @@ BuiltExpression _buildTypedefHelperBody({
           ..requiredParameters.add(Parameter((p) => p..name = 'e'))
           ..body = inner.unsafeRawBody.code,
       ).closure;
-      var result = refer('v').property('decodeJsonList').call(
-        [],
-        contextParam,
-        [refer('Object?', 'dart:core')],
-      ).property('map').call([mapFunction]).property('toList').call([]);
+      var result = refer('v')
+          .property('decodeJsonList')
+          .call(
+            [],
+            contextParam,
+            [refer('Object?', 'dart:core')],
+          )
+          .property('map')
+          .call([mapFunction])
+          .property('toList')
+          .call([]);
       if (useImmutableCollections) {
         result = _wrapImmutable(
           'IList',

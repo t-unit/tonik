@@ -57,11 +57,8 @@ Expression _buildToLabelPathParameterExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer('e')
-                    .property('toBase64String')
-                    .call([])
-                    .code,
-          ).closure,
+                ..body = refer('e').property('toBase64String').call([]).code,
+            ).closure,
           ])
           .property('toList')
           .call([])
@@ -103,13 +100,10 @@ Expression _buildToLabelPathParameterExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = converted
-                    .property('toLabel')
-                    .call(
-                      [],
-                      {'explode': explode, 'allowEmpty': allowEmpty},
-                    )
-                    .code,
+                ..body = converted.property('toLabel').call(
+                  [],
+                  {'explode': explode, 'allowEmpty': allowEmpty},
+                ).code,
             ).closure,
           ])
           .property('toList')

@@ -182,8 +182,7 @@ void main() {
       'GetWithCancelTokenCookie call() sends cancelTokenCookie as Cookie '
       'header and threads built-in cancelToken through to Dio',
       () async {
-        final op =
-            GetWithCancelTokenCookie(Dio(BaseOptions(baseUrl: baseUrl)));
+        final op = GetWithCancelTokenCookie(Dio(BaseOptions(baseUrl: baseUrl)));
         final response = await op.call(
           cancelTokenCookie: 'myToken',
           cancelToken: CancelToken(),
@@ -203,8 +202,9 @@ void main() {
       'GetWithCancelTokenSanitized call() sends cancelTokenQuery under '
       'wire key Cancel-Token and threads built-in cancelToken through to Dio',
       () async {
-        final op =
-            GetWithCancelTokenSanitized(Dio(BaseOptions(baseUrl: baseUrl)));
+        final op = GetWithCancelTokenSanitized(
+          Dio(BaseOptions(baseUrl: baseUrl)),
+        );
         final response = await op.call(
           cancelTokenQuery: 'myToken',
           cancelToken: CancelToken(),
@@ -224,8 +224,9 @@ void main() {
       'PostWithCancelTokenAndBody call() sends cancelTokenQuery as query '
       'param, body as JSON, and threads built-in cancelToken through to Dio',
       () async {
-        final op =
-            PostWithCancelTokenAndBody(Dio(BaseOptions(baseUrl: baseUrl)));
+        final op = PostWithCancelTokenAndBody(
+          Dio(BaseOptions(baseUrl: baseUrl)),
+        );
         final response = await op.call(
           body: const SimpleResult(id: 'test'),
           cancelTokenQuery: 'myToken',

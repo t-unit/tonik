@@ -564,10 +564,9 @@ class OneOfGenerator {
         inlineHelpers.addAll(decodeBuilt.inlineFunctions);
         blocks.addAll([
           const Code('try {'),
-          refer(variantName)
-              .call([decodeBuilt.unsafeRawBody])
-              .returned
-              .statement,
+          refer(
+            variantName,
+          ).call([decodeBuilt.unsafeRawBody]).returned.statement,
           const Code('} on '),
           refer('Object', 'dart:core').code,
           const Code(' catch(_) {}'),
@@ -644,13 +643,14 @@ class OneOfGenerator {
             buildBoolParameter('explode', required: true),
           )
           ..lambda = true
-          ..body = (isForm
-                  ? generateFormDecodingExceptionExpression
-                  : generateSimpleDecodingExceptionExpression)(
-                '$className has no variants and cannot be decoded.',
-                raw: true,
-              )
-              .code,
+          ..body =
+              (isForm
+                      ? generateFormDecodingExceptionExpression
+                      : generateSimpleDecodingExceptionExpression)(
+                    '$className has no variants and cannot be decoded.',
+                    raw: true,
+                  )
+                  .code,
       );
     }
 
@@ -1017,15 +1017,12 @@ class OneOfGenerator {
         }
 
         caseCodes.addAll([
-          refer('value')
-              .property('toBase64String')
-              .call([])
-              .property('toSimple')
-              .call([], {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-              })
-              .code,
+          refer(
+            'value',
+          ).property('toBase64String').call([]).property('toSimple').call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
           const Code(','),
         ]);
       } else if (m.model.resolved is BinaryModel) {
@@ -1240,16 +1237,13 @@ class OneOfGenerator {
         }
 
         caseCodes.addAll([
-          refer('value')
-              .property('toBase64String')
-              .call([])
-              .property('toForm')
-              .call([], {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-                'useQueryComponent': refer('useQueryComponent'),
-              })
-              .code,
+          refer(
+            'value',
+          ).property('toBase64String').call([]).property('toForm').call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+            'useQueryComponent': refer('useQueryComponent'),
+          }).code,
           const Code(','),
         ]);
       } else if (m.model.resolved is BinaryModel) {
@@ -1743,15 +1737,12 @@ class OneOfGenerator {
         }
 
         caseCodes.addAll([
-          refer('value')
-              .property('toBase64String')
-              .call([])
-              .property('toLabel')
-              .call([], {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-              })
-              .code,
+          refer(
+            'value',
+          ).property('toBase64String').call([]).property('toLabel').call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
           const Code(','),
         ]);
       } else if (m.model.resolved is BinaryModel) {

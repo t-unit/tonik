@@ -250,16 +250,13 @@ Expression _buildListMapContentUriEncodeExpression(
             ..requiredParameters.add(
               Parameter((b) => b..name = 'e'),
             )
-            ..body = converted
-                .property('uriEncode')
-                .call(
-                  [],
-                  {
-                    'allowEmpty': allowEmpty,
-                    'useQueryComponent': ?useQueryComponent,
-                  },
-                )
-                .code,
+            ..body = converted.property('uriEncode').call(
+              [],
+              {
+                'allowEmpty': allowEmpty,
+                'useQueryComponent': ?useQueryComponent,
+              },
+            ).code,
         ).closure,
       ])
       .property('toList')

@@ -431,33 +431,37 @@ void main() {
       ]);
     });
 
-    test('reserves cancelToken for snake_case raw name that sanitizes to it',
-        () {
-      final result = normalizeRequestParameters(
-        pathParameters: {},
-        queryParameters: {createQueryParameter('cancel_token')},
-        headers: {},
-        reservedNames: {'cancelToken'},
-      );
+    test(
+      'reserves cancelToken for snake_case raw name that sanitizes to it',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {},
+          queryParameters: {createQueryParameter('cancel_token')},
+          headers: {},
+          reservedNames: {'cancelToken'},
+        );
 
-      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
-        'cancelTokenQuery',
-      ]);
-    });
+        expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+          'cancelTokenQuery',
+        ]);
+      },
+    );
 
-    test('reserves cancelToken for kebab-case raw name that sanitizes to it',
-        () {
-      final result = normalizeRequestParameters(
-        pathParameters: {},
-        queryParameters: {createQueryParameter('Cancel-Token')},
-        headers: {},
-        reservedNames: {'cancelToken'},
-      );
+    test(
+      'reserves cancelToken for kebab-case raw name that sanitizes to it',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {},
+          queryParameters: {createQueryParameter('Cancel-Token')},
+          headers: {},
+          reservedNames: {'cancelToken'},
+        );
 
-      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
-        'cancelTokenQuery',
-      ]);
-    });
+        expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+          'cancelTokenQuery',
+        ]);
+      },
+    );
 
     test('does not rename non-colliding token-like names', () {
       final result = normalizeRequestParameters(
@@ -517,8 +521,7 @@ void main() {
       );
     });
 
-    test('reserves both body and cancelToken when there is a request body',
-        () {
+    test('reserves both body and cancelToken when there is a request body', () {
       expect(
         operationReservedParameterNames(hasRequestBody: true),
         {'body', 'cancelToken'},

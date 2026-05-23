@@ -77,7 +77,8 @@ List<Code> _buildToFormQueryParameterCode(
     }
 
     // For StringModel values, converted == refer(parameterName) (identity).
-    final convertedSuffix = '.toForm(explode: $explode, '
+    final convertedSuffix =
+        '.toForm(explode: $explode, '
         'allowEmpty: $allowEmpty)';
 
     if (converted == refer(parameterName)) {
@@ -98,16 +99,13 @@ List<Code> _buildToFormQueryParameterCode(
       const Code(r'_$entries.add(('),
       Code('name: ${specLiteralStringCode(parameter.rawName)}, '),
       const Code('value: '),
-      converted
-          .property('toForm')
-          .call(
-            [],
-            {
-              'explode': literalBool(explode),
-              'allowEmpty': literalBool(allowEmpty),
-            },
-          )
-          .code,
+      converted.property('toForm').call(
+        [],
+        {
+          'explode': literalBool(explode),
+          'allowEmpty': literalBool(allowEmpty),
+        },
+      ).code,
       const Code(',),);'),
     ];
   }

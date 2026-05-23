@@ -469,8 +469,7 @@ void main() {
       );
     });
 
-    test('generates map and toLabel for MapModel with IntegerModel values',
-        () {
+    test('generates map and toLabel for MapModel with IntegerModel values', () {
       final model = MapModel(
         valueModel: IntegerModel(context: context),
         context: context,
@@ -485,9 +484,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -525,9 +524,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(scopedEmitter).toString());
@@ -557,9 +556,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -592,9 +591,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -635,9 +634,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -664,8 +663,7 @@ void main() {
       );
     });
 
-    test(
-        'generates runtime throw for List<Map<String, ClassModel>> '
+    test('generates runtime throw for List<Map<String, ClassModel>> '
         '(unsupported)', () {
       final model = ListModel(
         content: MapModel(
@@ -689,9 +687,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(scopedEmitter).toString());

@@ -491,13 +491,19 @@ class OptionsGenerator {
                         ..requiredParameters.add(
                           Parameter((b) => b..name = 'e'),
                         )
-                        ..body = refer(
-                          'encodeAnyToForm',
-                          'package:tonik_util/tonik_util.dart',
-                        ).call([refer('e')], {
-                          'explode': literalBool(explode),
-                          'allowEmpty': literalBool(true),
-                        }).code,
+                        ..body =
+                            refer(
+                                  'encodeAnyToForm',
+                                  'package:tonik_util/tonik_util.dart',
+                                )
+                                .call(
+                                  [refer('e')],
+                                  {
+                                    'explode': literalBool(explode),
+                                    'allowEmpty': literalBool(true),
+                                  },
+                                )
+                                .code,
                     ).closure,
                   ])
                   .property('toList')
@@ -584,13 +590,17 @@ class OptionsGenerator {
 
     // AnyModel: use encodeAnyToForm for runtime type dispatch.
     if (resolvedModel is AnyModel) {
-      final encodedValue = refer(
-        'encodeAnyToForm',
-        'package:tonik_util/tonik_util.dart',
-      ).call([refer(paramName)], {
-        'explode': literalBool(explode),
-        'allowEmpty': literalBool(true),
-      });
+      final encodedValue =
+          refer(
+            'encodeAnyToForm',
+            'package:tonik_util/tonik_util.dart',
+          ).call(
+            [refer(paramName)],
+            {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(true),
+            },
+          );
       bodyStatements.add(
         refer(r'_$cookieParts').property('add').call([
           literalList([

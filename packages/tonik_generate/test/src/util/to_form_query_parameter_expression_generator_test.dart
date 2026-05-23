@@ -176,31 +176,32 @@ void main() {
         );
       });
 
-      test('generates encoding exception for MapModel with ClassModel values',
-          () {
-        final parameter = createParameter(
-          name: 'mapParam',
-          rawName: 'mapParam',
-          model: MapModel(
-            valueModel: ClassModel(
-              isDeprecated: false,
-              name: 'User',
-              properties: [],
+      test(
+        'generates encoding exception for MapModel with ClassModel values',
+        () {
+          final parameter = createParameter(
+            name: 'mapParam',
+            rawName: 'mapParam',
+            model: MapModel(
+              valueModel: ClassModel(
+                isDeprecated: false,
+                name: 'User',
+                properties: [],
+                context: context,
+              ),
               context: context,
             ),
-            context: context,
-          ),
-          explode: false,
-          allowEmpty: true,
-        );
+            explode: false,
+            allowEmpty: true,
+          );
 
-        final codes = buildToFormQueryParameterCode(
-          'mapParam',
-          parameter,
-        );
+          final codes = buildToFormQueryParameterCode(
+            'mapParam',
+            parameter,
+          );
 
-        final generated = emitCodes(codes);
-        final expected = format('''
+          final generated = emitCodes(codes);
+          final expected = format('''
           test() {
             throw _i1.EncodingException(
               'Map with complex value types cannot be form query encoded.',
@@ -208,11 +209,12 @@ void main() {
           }
         ''');
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(expected),
-        );
-      });
+          expect(
+            collapseWhitespace(generated),
+            collapseWhitespace(expected),
+          );
+        },
+      );
     });
 
     group('unsupported model types generate runtime throws', () {

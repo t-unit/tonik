@@ -120,21 +120,22 @@ Expression _buildFormSerializationExpression(
       'Form encoding not supported for binary types.',
     ),
 
-    AnyModel() => refer(
-      'encodeAnyToForm',
-      'package:tonik_util/tonik_util.dart',
-    ).call(
-      [receiver],
-      {
-        'explode': explodeLiteral != null
-            ? literalBool(explodeLiteral)
-            : refer('explode'),
-        'allowEmpty': allowEmptyLiteral != null
-            ? literalBool(allowEmptyLiteral)
-            : refer('allowEmpty'),
-        if (useQueryComponent) 'useQueryComponent': literalBool(true),
-      },
-    ),
+    AnyModel() =>
+      refer(
+        'encodeAnyToForm',
+        'package:tonik_util/tonik_util.dart',
+      ).call(
+        [receiver],
+        {
+          'explode': explodeLiteral != null
+              ? literalBool(explodeLiteral)
+              : refer('explode'),
+          'allowEmpty': allowEmptyLiteral != null
+              ? literalBool(allowEmptyLiteral)
+              : refer('allowEmpty'),
+          if (useQueryComponent) 'useQueryComponent': literalBool(true),
+        },
+      ),
 
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for form encoding.',

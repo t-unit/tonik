@@ -3179,7 +3179,8 @@ void main() {
             operationId: 'withAliasStringListCookieExplodeTrue',
             context: context,
             summary: 'With alias string list cookie explode true',
-            description: 'Operation with alias-to-list-of-string cookie '
+            description:
+                'Operation with alias-to-list-of-string cookie '
                 'using explode true',
             tags: const {},
             isDeprecated: false,
@@ -3262,7 +3263,8 @@ void main() {
             operationId: 'withAliasUnsupportedMapCookie',
             context: context,
             summary: 'With alias unsupported map cookie',
-            description: 'Operation with alias-to-map cookie of complex '
+            description:
+                'Operation with alias-to-map cookie of complex '
                 'values',
             tags: const {},
             isDeprecated: false,

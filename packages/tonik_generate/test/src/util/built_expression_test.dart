@@ -5,8 +5,7 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 void main() {
   InlineHelper sampleHelper(String name) => InlineHelper(
     name: name,
-    forwardDeclaration:
-        Code('late final Object? Function(Object?) $name;'),
+    forwardDeclaration: Code('late final Object? Function(Object?) $name;'),
     assignment: Code('$name = (v) => v;'),
   );
 

@@ -2933,9 +2933,11 @@ factory TaggedItem.fromJson(Object? json) {
             (c) => c.name == 'fromJson',
           );
           final actual = format(
-            Class((b) => b
-              ..name = 'TwoTrees'
-              ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+            Class(
+              (b) => b
+                ..name = 'TwoTrees'
+                ..constructors.add(fromJsonCtor),
+            ).accept(emitter).toString(),
           );
 
           const expected = r'''

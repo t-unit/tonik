@@ -17,12 +17,12 @@ class BuiltExpression {
   BuiltExpression({
     required Expression body,
     List<InlineHelper> inlineFunctions = const [],
-  })  : _body = body,
-        inlineFunctions = List.unmodifiable(inlineFunctions);
+  }) : _body = body,
+       inlineFunctions = List.unmodifiable(inlineFunctions);
 
   const BuiltExpression.simple(Expression body)
-      : _body = body,
-        inlineFunctions = const [];
+    : _body = body,
+      inlineFunctions = const [];
 
   final Expression _body;
   final List<InlineHelper> inlineFunctions;
@@ -107,12 +107,12 @@ class BuiltStatements {
   BuiltStatements({
     required List<Code> statements,
     List<InlineHelper> inlineFunctions = const [],
-  })  : _statements = List.unmodifiable(statements),
-        inlineFunctions = List.unmodifiable(inlineFunctions);
+  }) : _statements = List.unmodifiable(statements),
+       inlineFunctions = List.unmodifiable(inlineFunctions);
 
   const BuiltStatements.simple(List<Code> statements)
-      : _statements = statements,
-        inlineFunctions = const [];
+    : _statements = statements,
+      inlineFunctions = const [];
 
   final List<Code> _statements;
   final List<InlineHelper> inlineFunctions;

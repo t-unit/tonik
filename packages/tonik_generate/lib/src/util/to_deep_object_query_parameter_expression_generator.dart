@@ -18,14 +18,13 @@ BuiltExpression buildToDeepObjectQueryParameterCode(
 
   if (model is AnyModel) {
     return BuiltExpression.simple(
-      refer('encodeAnyToDeepObject', 'package:tonik_util/tonik_util.dart')
-          .call(
-            [refer(parameterName), specLiteralString(rawName)],
-            {
-              'explode': literalBool(explode),
-              'allowEmpty': literalBool(allowEmpty),
-            },
-          ),
+      refer('encodeAnyToDeepObject', 'package:tonik_util/tonik_util.dart').call(
+        [refer(parameterName), specLiteralString(rawName)],
+        {
+          'explode': literalBool(explode),
+          'allowEmpty': literalBool(allowEmpty),
+        },
+      ),
     );
   }
 
@@ -60,14 +59,12 @@ BuiltExpression buildToDeepObjectQueryParameterCode(
   }
 
   return BuiltExpression.simple(
-    refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-        .call([
-          specLiteralString(
-            'deepObject encoding only supports object types. '
-            'Parameter "$rawName" is not supported.',
-          ),
-        ])
-        .thrown,
+    refer('EncodingException', 'package:tonik_util/tonik_util.dart').call([
+      specLiteralString(
+        'deepObject encoding only supports object types. '
+        'Parameter "$rawName" is not supported.',
+      ),
+    ]).thrown,
   );
 }
 
@@ -141,14 +138,12 @@ Expression _buildMapDeepObjectExpression(
 
   // Complex value types (ClassModel, ListModel, nested MapModel) can't be
   // flattened to a single string per entry.
-  return refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-      .call([
-        specLiteralString(
-          'deepObject encoding is not supported for Map types with '
-          'complex values. Parameter "$rawName" cannot be encoded.',
-        ),
-      ])
-      .thrown;
+  return refer('EncodingException', 'package:tonik_util/tonik_util.dart').call([
+    specLiteralString(
+      'deepObject encoding is not supported for Map types with '
+      'complex values. Parameter "$rawName" cannot be encoded.',
+    ),
+  ]).thrown;
 }
 
 /// Whether [model] can be converted to a single URI-encoded string.

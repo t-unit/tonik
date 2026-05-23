@@ -877,8 +877,7 @@ void main() {
         expect(
           predicate,
           isFalse,
-          reason:
-              '$label: predicate says supported but builder returned null',
+          reason: '$label: predicate says supported but builder returned null',
         );
       }
     }
@@ -982,11 +981,17 @@ void main() {
         label: 'ClassModel',
       );
       expectParity(
-        ListModel(content: StringModel(context: context), context: context),
+        ListModel(
+          content: StringModel(context: context),
+          context: context,
+        ),
         label: 'ListModel',
       );
       expectParity(
-        MapModel(valueModel: StringModel(context: context), context: context),
+        MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+        ),
         label: 'nested MapModel',
       );
       expectParity(

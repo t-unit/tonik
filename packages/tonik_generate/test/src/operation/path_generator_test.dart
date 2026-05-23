@@ -2510,150 +2510,154 @@ void main() {
       expectMethodMatches(method, expectedMethod);
     });
 
-    test('MapModel with OneOfModel of all-simple members and literal '
-        'suffix emits throw (composite has shape simple but encoder rejects)',
-        () {
-      final oneOfModel = OneOfModel(
-        isDeprecated: false,
-        name: 'StringOrIntSimple',
-        models: {
-          (discriminatorValue: null, model: StringModel(context: context)),
-          (discriminatorValue: null, model: IntegerModel(context: context)),
-        },
-        context: context,
-      );
-      final mapModel = MapModel(
-        context: context,
-        valueModel: oneOfModel,
-      );
+    test(
+      'MapModel with OneOfModel of all-simple members and literal '
+      'suffix emits throw (composite has shape simple but encoder rejects)',
+      () {
+        final oneOfModel = OneOfModel(
+          isDeprecated: false,
+          name: 'StringOrIntSimple',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+          },
+          context: context,
+        );
+        final mapModel = MapModel(
+          context: context,
+          valueModel: oneOfModel,
+        );
 
-      final pathParam = PathParameterObject(
-        name: 'm',
-        rawName: 'm',
-        description: 'Map with all-simple oneOf values',
-        isRequired: true,
-        isDeprecated: false,
-        allowEmptyValue: false,
-        explode: false,
-        model: mapModel,
-        encoding: PathParameterEncoding.simple,
-        context: context,
-      );
+        final pathParam = PathParameterObject(
+          name: 'm',
+          rawName: 'm',
+          description: 'Map with all-simple oneOf values',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: mapModel,
+          encoding: PathParameterEncoding.simple,
+          context: context,
+        );
 
-      final operation = Operation(
-        operationId: 'getR',
-        context: context,
-        summary: 'Get R',
-        description: 'Map of all-simple oneOf values with suffix',
-        tags: const {},
-        isDeprecated: false,
-        path: '/r/{m}.json',
-        method: HttpMethod.get,
-        headers: const {},
-        queryParameters: const {},
-        pathParameters: {pathParam},
-        responses: const {},
-        securitySchemes: const {},
-        cookieParameters: const {},
-      );
+        final operation = Operation(
+          operationId: 'getR',
+          context: context,
+          summary: 'Get R',
+          description: 'Map of all-simple oneOf values with suffix',
+          tags: const {},
+          isDeprecated: false,
+          path: '/r/{m}.json',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: {pathParam},
+          responses: const {},
+          securitySchemes: const {},
+          cookieParameters: const {},
+        );
 
-      nameManager.prime(
-        models: {pathParam.model, oneOfModel},
-        requestBodies: const [],
-        responses: const [],
-        operations: const [],
-        tags: const [],
-        servers: const [],
-      );
+        nameManager.prime(
+          models: {pathParam.model, oneOfModel},
+          requestBodies: const [],
+          responses: const [],
+          operations: const [],
+          tags: const [],
+          servers: const [],
+        );
 
-      const expectedMethod = '''
+        const expectedMethod = '''
         List<String> _path({required Map<String, StringOrIntSimple> m}) {
           throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
 
-      final pathParameters =
-          <({String normalizedName, PathParameterObject parameter})>[
-            (normalizedName: 'm', parameter: pathParam),
-          ];
+        final pathParameters =
+            <({String normalizedName, PathParameterObject parameter})>[
+              (normalizedName: 'm', parameter: pathParam),
+            ];
 
-      final method = generator.generatePathMethod(operation, pathParameters);
+        final method = generator.generatePathMethod(operation, pathParameters);
 
-      expectMethodMatches(method, expectedMethod);
-    });
+        expectMethodMatches(method, expectedMethod);
+      },
+    );
 
-    test('MapModel with AllOfModel of all-simple members and literal '
-        'suffix emits throw (composite has shape simple but encoder rejects)',
-        () {
-      final allOfModel = AllOfModel(
-        isDeprecated: false,
-        name: 'StringOnly',
-        models: {
-          StringModel(context: context),
-        },
-        context: context,
-      );
-      final mapModel = MapModel(
-        context: context,
-        valueModel: allOfModel,
-      );
+    test(
+      'MapModel with AllOfModel of all-simple members and literal '
+      'suffix emits throw (composite has shape simple but encoder rejects)',
+      () {
+        final allOfModel = AllOfModel(
+          isDeprecated: false,
+          name: 'StringOnly',
+          models: {
+            StringModel(context: context),
+          },
+          context: context,
+        );
+        final mapModel = MapModel(
+          context: context,
+          valueModel: allOfModel,
+        );
 
-      final pathParam = PathParameterObject(
-        name: 'm',
-        rawName: 'm',
-        description: 'Map with all-simple allOf values',
-        isRequired: true,
-        isDeprecated: false,
-        allowEmptyValue: false,
-        explode: false,
-        model: mapModel,
-        encoding: PathParameterEncoding.simple,
-        context: context,
-      );
+        final pathParam = PathParameterObject(
+          name: 'm',
+          rawName: 'm',
+          description: 'Map with all-simple allOf values',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: mapModel,
+          encoding: PathParameterEncoding.simple,
+          context: context,
+        );
 
-      final operation = Operation(
-        operationId: 'getR',
-        context: context,
-        summary: 'Get R',
-        description: 'Map of all-simple allOf values with suffix',
-        tags: const {},
-        isDeprecated: false,
-        path: '/r/{m}.json',
-        method: HttpMethod.get,
-        headers: const {},
-        queryParameters: const {},
-        pathParameters: {pathParam},
-        responses: const {},
-        securitySchemes: const {},
-        cookieParameters: const {},
-      );
+        final operation = Operation(
+          operationId: 'getR',
+          context: context,
+          summary: 'Get R',
+          description: 'Map of all-simple allOf values with suffix',
+          tags: const {},
+          isDeprecated: false,
+          path: '/r/{m}.json',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: {pathParam},
+          responses: const {},
+          securitySchemes: const {},
+          cookieParameters: const {},
+        );
 
-      nameManager.prime(
-        models: {pathParam.model, allOfModel},
-        requestBodies: const [],
-        responses: const [],
-        operations: const [],
-        tags: const [],
-        servers: const [],
-      );
+        nameManager.prime(
+          models: {pathParam.model, allOfModel},
+          requestBodies: const [],
+          responses: const [],
+          operations: const [],
+          tags: const [],
+          servers: const [],
+        );
 
-      const expectedMethod = '''
+        const expectedMethod = '''
         List<String> _path({required Map<String, StringOnly> m}) {
           throw EncodingException('Simple encoding does not support map with complex value types for path parameter m');
           return [r'r'];
         }
       ''';
 
-      final pathParameters =
-          <({String normalizedName, PathParameterObject parameter})>[
-            (normalizedName: 'm', parameter: pathParam),
-          ];
+        final pathParameters =
+            <({String normalizedName, PathParameterObject parameter})>[
+              (normalizedName: 'm', parameter: pathParam),
+            ];
 
-      final method = generator.generatePathMethod(operation, pathParameters);
+        final method = generator.generatePathMethod(operation, pathParameters);
 
-      expectMethodMatches(method, expectedMethod);
-    });
+        expectMethodMatches(method, expectedMethod);
+      },
+    );
 
     test('AliasModel wrapping MapModel with complex value type and literal '
         'suffix emits throw statement without concatenation', () {

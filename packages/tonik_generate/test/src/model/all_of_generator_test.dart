@@ -2817,7 +2817,11 @@ void main() {
       String emitMethodMember(Method method) {
         final library = Library(
           (b) => b.body.add(
-            Class((c) => c..name = 'Holder'..methods.add(method)),
+            Class(
+              (c) => c
+                ..name = 'Holder'
+                ..methods.add(method),
+            ),
           ),
         );
         return format(library.accept(emitter).toString());
@@ -2826,7 +2830,11 @@ void main() {
       String emitConstructorMember(Constructor ctor) {
         final library = Library(
           (b) => b.body.add(
-            Class((c) => c..name = 'Holder'..constructors.add(ctor)),
+            Class(
+              (c) => c
+                ..name = 'Holder'
+                ..constructors.add(ctor),
+            ),
           ),
         );
         return format(library.accept(emitter).toString());
@@ -2835,14 +2843,14 @@ void main() {
       test(
         r'splices _$decode helper into fromJson for recursive AP values',
         () {
-        final model = buildRecursiveTreeBag();
-        final clazz = generator.generateClass(model);
-        final fromJson = clazz.constructors.firstWhere(
-          (c) => c.name == 'fromJson',
-        );
-        final emittedClass = emitConstructorMember(fromJson);
+          final model = buildRecursiveTreeBag();
+          final clazz = generator.generateClass(model);
+          final fromJson = clazz.constructors.firstWhere(
+            (c) => c.name == 'fromJson',
+          );
+          final emittedClass = emitConstructorMember(fromJson);
 
-        const expected = r'''
+          const expected = r'''
 class Holder {
   factory Holder.fromJson(Object? json) {
     late final Tree Function(Object?) _$decodeTree;
@@ -2865,11 +2873,12 @@ class Holder {
   }
 }''';
 
-        expect(
-          collapseWhitespace(emittedClass),
-          collapseWhitespace(format(expected)),
-        );
-      });
+          expect(
+            collapseWhitespace(emittedClass),
+            collapseWhitespace(format(expected)),
+          );
+        },
+      );
 
       test(
         r'splices _$encode helper into toJson dynamic branch when a member has '

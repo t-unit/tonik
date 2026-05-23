@@ -47,15 +47,17 @@ void main() {
   }
 
   group('Simple style - throw-producing path parameters with suffix', () {
-    test('map with complex (object) value type returns encoding error',
-        () async {
-      final api = buildSimpleApi();
-      final response = await api.testSimpleMapComplexWithSuffix(
-        m: const {'k': SimpleObject(name: 'n', count: 1)},
-      );
+    test(
+      'map with complex (object) value type returns encoding error',
+      () async {
+        final api = buildSimpleApi();
+        final response = await api.testSimpleMapComplexWithSuffix(
+          m: const {'k': SimpleObject(name: 'n', count: 1)},
+        );
 
-      expectEncodingError(response, parameterName: 'm');
-    });
+        expectEncodingError(response, parameterName: 'm');
+      },
+    );
 
     test('map with list value type returns encoding error', () async {
       final api = buildSimpleApi();
@@ -68,19 +70,21 @@ void main() {
       expectEncodingError(response, parameterName: 'm');
     });
 
-    test('map with oneOf-of-simple-members value type returns encoding error',
-        () async {
-      final api = buildSimpleApi();
-      final response = await api.testSimpleMapOneOfSimpleWithSuffix(
-        m: const {
-          'k': SimpleThrowSuffixMapOneofSimpleMJsonParametersMapOneOfModelInt(
-            42,
-          ),
-        },
-      );
+    test(
+      'map with oneOf-of-simple-members value type returns encoding error',
+      () async {
+        final api = buildSimpleApi();
+        final response = await api.testSimpleMapOneOfSimpleWithSuffix(
+          m: const {
+            'k': SimpleThrowSuffixMapOneofSimpleMJsonParametersMapOneOfModelInt(
+              42,
+            ),
+          },
+        );
 
-      expectEncodingError(response, parameterName: 'm');
-    });
+        expectEncodingError(response, parameterName: 'm');
+      },
+    );
 
     test('binary path parameter returns encoding error', () async {
       final api = buildSimpleApi();
@@ -94,7 +98,9 @@ void main() {
     test('list of binary path parameter returns encoding error', () async {
       final api = buildSimpleApi();
       final response = await api.testSimpleListBinaryWithSuffix(
-        p: const [TonikFileBytes([1, 2, 3])],
+        p: const [
+          TonikFileBytes([1, 2, 3]),
+        ],
       );
 
       expectEncodingError(response, parameterName: 'p');

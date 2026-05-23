@@ -623,28 +623,29 @@ void main() {
       );
     });
 
-    test('generates map and uriEncode for MapModel with IntegerModel values',
-        () {
-      final model = MapModel(
-        valueModel: IntegerModel(context: context),
-        context: context,
-      );
-      final expression = buildUriEncodeExpression(
-        refer('value'),
-        model,
-        allowEmpty: refer('allowEmpty'),
-      );
+    test(
+      'generates map and uriEncode for MapModel with IntegerModel values',
+      () {
+        final model = MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+        );
+        final expression = buildUriEncodeExpression(
+          refer('value'),
+          model,
+          allowEmpty: refer('allowEmpty'),
+        );
 
-      final method = Method(
-        (b) => b
-          ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
-      );
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
 
-      final generated = format(method.accept(emitter).toString());
-      final expected = format('''
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
         test() {
           final result = value
               .map((k, v) => MapEntry(k, v.toString()))
@@ -652,11 +653,12 @@ void main() {
         }
       ''');
 
-      expect(
-        collapseWhitespace(generated),
-        collapseWhitespace(expected),
-      );
-    });
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expected),
+        );
+      },
+    );
 
     test('generates runtime throw for MapModel with ClassModel values', () {
       final model = MapModel(
@@ -677,9 +679,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(scopedEmitter).toString());
@@ -716,9 +718,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(emitter).toString());
@@ -741,8 +743,7 @@ void main() {
       );
     });
 
-    test(
-        'generates runtime throw for List<Map<String, ClassModel>> '
+    test('generates runtime throw for List<Map<String, ClassModel>> '
         '(unsupported)', () {
       final model = ListModel(
         content: MapModel(
@@ -765,9 +766,9 @@ void main() {
       final method = Method(
         (b) => b
           ..name = 'test'
-          ..body = declareFinal('result')
-              .assign(expression.expression)
-              .statement,
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
       );
 
       final generated = format(method.accept(scopedEmitter).toString());

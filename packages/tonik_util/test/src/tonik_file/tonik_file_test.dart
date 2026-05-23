@@ -169,9 +169,9 @@ void main() {
     });
 
     test('returns base64-encoded string for TonikFilePath', () {
-      final tempFile =
-          File('${Directory.systemTemp.path}/tonik_base64_test.txt')
-            ..writeAsBytesSync([72, 101, 108, 108, 111]);
+      final tempFile = File(
+        '${Directory.systemTemp.path}/tonik_base64_test.txt',
+      )..writeAsBytesSync([72, 101, 108, 108, 111]);
       addTearDown(() {
         if (tempFile.existsSync()) {
           tempFile.deleteSync();

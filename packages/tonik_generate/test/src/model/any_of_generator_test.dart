@@ -3753,9 +3753,11 @@ Object? toJson() {
           (c) => c.name == 'fromJson',
         );
         final actual = format(
-          Class((b) => b
-            ..name = 'TreeAndClassA'
-            ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+          Class(
+            (b) => b
+              ..name = 'TreeAndClassA'
+              ..constructors.add(fromJsonCtor),
+          ).accept(emitter).toString(),
         );
 
         const expected = r'''
@@ -3825,9 +3827,11 @@ Object? toJson() {
           (c) => c.name == 'fromJson',
         );
         final actual = format(
-          Class((b) => b
-            ..name = 'AAndB'
-            ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+          Class(
+            (b) => b
+              ..name = 'AAndB'
+              ..constructors.add(fromJsonCtor),
+          ).accept(emitter).toString(),
         );
 
         const expected = r'''

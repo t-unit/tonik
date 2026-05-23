@@ -370,28 +370,30 @@ void main() {
     });
 
     group('AnyModel', () {
-      test('generates encodeAnyToSimple call with literal explode/allowEmpty',
-          () {
-        final model = AnyModel(context: context);
-        final expression = buildSimpleValueExpression(
-          refer('value'),
-          model,
-          explode: true,
-          allowEmpty: false,
-        );
+      test(
+        'generates encodeAnyToSimple call with literal explode/allowEmpty',
+        () {
+          final model = AnyModel(context: context);
+          final expression = buildSimpleValueExpression(
+            refer('value'),
+            model,
+            explode: true,
+            allowEmpty: false,
+          );
 
-        final generated = format(
-          'final result = ${expression.accept(emitter)};',
-        );
-        const expected = '''
+          final generated = format(
+            'final result = ${expression.accept(emitter)};',
+          );
+          const expected = '''
           final result = encodeAnyToSimple(value, explode: true, allowEmpty: false);
         ''';
 
-        expect(
-          collapseWhitespace(generated),
-          collapseWhitespace(format(expected)),
-        );
-      });
+          expect(
+            collapseWhitespace(generated),
+            collapseWhitespace(format(expected)),
+          );
+        },
+      );
 
       test('passes through explode/allowEmpty unchanged when nullable', () {
         final model = AnyModel(context: context);
@@ -460,9 +462,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -498,9 +500,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -544,9 +546,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -587,9 +589,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(scopedEmitter).toString());
@@ -652,9 +654,9 @@ void main() {
         final method = Method(
           (b) => b
             ..name = 'test'
-            ..body = declareFinal('result')
-                .assign(expression.expression)
-                .statement,
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
         );
 
         final generated = format(method.accept(emitter).toString());
@@ -687,9 +689,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -727,9 +729,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -771,9 +773,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -819,9 +821,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -867,9 +869,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(emitter).toString());
@@ -922,9 +924,9 @@ void main() {
           final method = Method(
             (b) => b
               ..name = 'test'
-              ..body = declareFinal('result')
-                  .assign(expression.expression)
-                  .statement,
+              ..body = declareFinal(
+                'result',
+              ).assign(expression.expression).statement,
           );
 
           final generated = format(method.accept(scopedEmitter).toString());
@@ -1151,8 +1153,7 @@ void main() {
       expect(
         reason!.contains(containsText),
         isTrue,
-        reason:
-            '$label reason "$reason" should contain "$containsText"',
+        reason: '$label reason "$reason" should contain "$containsText"',
       );
     }
 

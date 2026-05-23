@@ -3880,9 +3880,11 @@ bool operator ==(Object other) {
           (c) => c.name == 'fromJson',
         );
         final actual = format(
-          Class((b) => b
-            ..name = 'TreeOrClassA'
-            ..constructors.add(fromJsonCtor)).accept(emitter).toString(),
+          Class(
+            (b) => b
+              ..name = 'TreeOrClassA'
+              ..constructors.add(fromJsonCtor),
+          ).accept(emitter).toString(),
         );
 
         const expected = r'''

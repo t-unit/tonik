@@ -51,10 +51,7 @@ String? _listContentThrowReason(Model content) {
     // _handleListExpression's AnyModel branch would emit
     // `list.toSimple(...)` which has no extension on `List<Object?>` — the
     // predicate intercepts before codegen so the bad code never lands.
-    NeverModel() ||
-    BinaryModel() ||
-    ListModel() ||
-    AnyModel() => unsupported,
+    NeverModel() || BinaryModel() || ListModel() || AnyModel() => unsupported,
     MapModel(:final valueModel)
         when !isMapValueTypeSimplyEncodable(valueModel) =>
       unsupported,
@@ -348,7 +345,6 @@ Expression _handleListExpression(
     ),
 
     AnyModel() => callToSimpleOnList(receiver), // Pass through list as-is
-
     // Base64Model: each element → toBase64String(), then list toSimple
     Base64Model() => () {
       final mapClosure = Method(
@@ -455,16 +451,13 @@ Expression _buildListMapContentSimpleExpression(
             ..requiredParameters.add(
               Parameter((b) => b..name = 'e'),
             )
-            ..body = converted
-                .property('toSimple')
-                .call(
-                  [],
-                  {
-                    'explode': literalBool(explode),
-                    'allowEmpty': literalBool(allowEmpty),
-                  },
-                )
-                .code,
+            ..body = converted.property('toSimple').call(
+              [],
+              {
+                'explode': literalBool(explode),
+                'allowEmpty': literalBool(allowEmpty),
+              },
+            ).code,
         ).closure,
       ])
       .property('toList')

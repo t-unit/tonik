@@ -115,8 +115,7 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   String toLabel({required bool explode, required bool allowEmpty}) =>
@@ -131,8 +130,7 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) =>
-      throw UnimplementedError();
+  }) => throw UnimplementedError();
 
   @override
   Object? toJson() => throw UnimplementedError();
@@ -1446,17 +1444,19 @@ void main() {
         );
       });
 
-      test('uses %20 for ParameterEncodable elements inside a list by default',
-          () {
-        expect(
-          encodeAnyToForm(
-            <dynamic>[const QueryComponentAwareEncodable('hello world')],
-            explode: false,
-            allowEmpty: true,
-          ),
-          'hello%20world',
-        );
-      });
+      test(
+        'uses %20 for ParameterEncodable elements inside a list by default',
+        () {
+          expect(
+            encodeAnyToForm(
+              <dynamic>[const QueryComponentAwareEncodable('hello world')],
+              explode: false,
+              allowEmpty: true,
+            ),
+            'hello%20world',
+          );
+        },
+      );
     });
 
     group('useQueryComponent on primitives', () {

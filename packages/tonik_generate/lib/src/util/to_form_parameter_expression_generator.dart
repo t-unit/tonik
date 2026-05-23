@@ -54,18 +54,19 @@ Expression _buildFormParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    Base64Model() => (isNullable
-            ? valueExpression.nullSafeProperty('toBase64String')
-            : valueExpression.property('toBase64String'))
-        .call([])
-        .property('toForm')
-        .call(
-          [],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
+    Base64Model() =>
+      (isNullable
+              ? valueExpression.nullSafeProperty('toBase64String')
+              : valueExpression.property('toBase64String'))
+          .call([])
+          .property('toForm')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+            },
+          ),
     MapModel() => _buildMapFormExpression(
       valueExpression,
       model,
@@ -172,30 +173,28 @@ Expression _buildListFormExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
     ),
-    Base64Model() => listMapAccess
-        .call([
-          Method(
-            (b) => b
-              ..requiredParameters.add(
-                Parameter((b) => b..name = 'e'),
-              )
-              ..body = refer('e')
-                  .property('toBase64String')
-                  .call([])
-                  .code,
-          ).closure,
-        ])
-        .property('toList')
-        .call([])
-        .property('toForm')
-        .call(
-          [],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalBool(true),
-          },
-        ),
+    Base64Model() =>
+      listMapAccess
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e').property('toBase64String').call([]).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toForm')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
     MapModel() => _buildListMapContentFormExpression(
       valueExpression,
       contentModel,
@@ -281,16 +280,13 @@ Expression _buildListMapContentFormExpression(
             ..requiredParameters.add(
               Parameter((b) => b..name = 'e'),
             )
-            ..body = converted
-                .property('toForm')
-                .call(
-                  [],
-                  {
-                    'explode': explode,
-                    'allowEmpty': allowEmpty,
-                  },
-                )
-                .code,
+            ..body = converted.property('toForm').call(
+              [],
+              {
+                'explode': explode,
+                'allowEmpty': allowEmpty,
+              },
+            ).code,
         ).closure,
       ])
       .property('toList')

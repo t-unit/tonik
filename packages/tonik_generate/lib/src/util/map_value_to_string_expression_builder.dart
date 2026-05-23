@@ -82,15 +82,14 @@ Expression? _buildConversion(
     BooleanModel() ||
     DecimalModel() ||
     UriModel() ||
-    DateModel() =>
-      _buildMapCall(
-        receiver,
-        _wrapNullable(
-          refer('v').property('toString').call([]),
-          valueIsNullable,
-        ),
-        isNullable: isNullable,
+    DateModel() => _buildMapCall(
+      receiver,
+      _wrapNullable(
+        refer('v').property('toString').call([]),
+        valueIsNullable,
       ),
+      isNullable: isNullable,
+    ),
     DateTimeModel() => _buildMapCall(
       receiver,
       _wrapNullable(
@@ -150,9 +149,9 @@ Expression? _buildConversion(
 
 Expression _wrapNullable(Expression conversion, bool valueIsNullable) {
   if (!valueIsNullable) return conversion;
-  return refer('v')
-      .equalTo(literalNull)
-      .conditional(literalString(''), conversion);
+  return refer(
+    'v',
+  ).equalTo(literalNull).conditional(literalString(''), conversion);
 }
 
 Expression _buildMapCall(

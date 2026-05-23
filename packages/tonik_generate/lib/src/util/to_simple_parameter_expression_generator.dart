@@ -76,18 +76,19 @@ Expression _buildSimpleParameterExpression(
           'allowEmpty': allowEmpty,
         },
       ),
-    Base64Model() => (isNullable
-            ? valueExpression.nullSafeProperty('toBase64String')
-            : valueExpression.property('toBase64String'))
-        .call([])
-        .property('toSimple')
-        .call(
-          [],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
+    Base64Model() =>
+      (isNullable
+              ? valueExpression.nullSafeProperty('toBase64String')
+              : valueExpression.property('toBase64String'))
+          .call([])
+          .property('toSimple')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+            },
+          ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be simple-encoded',
     ),
@@ -194,30 +195,28 @@ Expression _buildListSimpleExpression(
               'alreadyEncoded': literalBool(true),
             },
           ),
-    Base64Model() => listMapAccess
-        .call([
-          Method(
-            (b) => b
-              ..requiredParameters.add(
-                Parameter((b) => b..name = 'e'),
-              )
-              ..body = refer('e')
-                  .property('toBase64String')
-                  .call([])
-                  .code,
-          ).closure,
-        ])
-        .property('toList')
-        .call([])
-        .property('toSimple')
-        .call(
-          [],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalBool(true),
-          },
-        ),
+    Base64Model() =>
+      listMapAccess
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e').property('toBase64String').call([]).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toSimple')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalBool(true),
+            },
+          ),
     MapModel() => _buildListMapContentSimpleExpression(
       valueExpression,
       contentModel,
@@ -306,16 +305,13 @@ Expression _buildListMapContentSimpleExpression(
             ..requiredParameters.add(
               Parameter((b) => b..name = 'e'),
             )
-            ..body = converted
-                .property('toSimple')
-                .call(
-                  [],
-                  {
-                    'explode': explode,
-                    'allowEmpty': allowEmpty,
-                  },
-                )
-                .code,
+            ..body = converted.property('toSimple').call(
+              [],
+              {
+                'explode': explode,
+                'allowEmpty': allowEmpty,
+              },
+            ).code,
         ).closure,
       ])
       .property('toList')

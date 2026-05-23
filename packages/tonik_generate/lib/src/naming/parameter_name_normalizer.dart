@@ -10,8 +10,10 @@ const _cookieSuffix = 'Cookie';
 /// always declares a built-in `CancelToken? cancelToken` parameter.
 /// `body` is reserved only when a request body exists, since `call(...)`
 /// then also declares a `body` parameter.
-Set<String> operationReservedParameterNames({required bool hasRequestBody}) =>
-    {if (hasRequestBody) 'body', 'cancelToken'};
+Set<String> operationReservedParameterNames({required bool hasRequestBody}) => {
+  if (hasRequestBody) 'body',
+  'cancelToken',
+};
 
 /// Result of normalizing request parameters.
 class NormalizedRequestParameters {

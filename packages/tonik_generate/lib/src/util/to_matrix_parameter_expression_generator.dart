@@ -79,18 +79,19 @@ Expression _buildMatrixParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
     ),
-    Base64Model() => (isNullable
-            ? valueExpression.nullSafeProperty('toBase64String')
-            : valueExpression.property('toBase64String'))
-        .call([])
-        .property('toMatrix')
-        .call(
-          [paramName],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-          },
-        ),
+    Base64Model() =>
+      (isNullable
+              ? valueExpression.nullSafeProperty('toBase64String')
+              : valueExpression.property('toBase64String'))
+          .call([])
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+            },
+          ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be matrix-encoded',
     ),
@@ -257,34 +258,32 @@ Expression _buildListMatrixExpression(
               'alreadyEncoded': literalTrue,
             },
           ),
-    Base64Model() => listMapAccess
-        .call(
-          [
-            Method(
-              (b) => b
-                ..requiredParameters.add(
-                  Parameter((b) => b..name = 'e'),
-                )
-                ..body = refer('e')
-                    .property('toBase64String')
-                    .call([])
-                    .code,
-            ).closure,
-          ],
-          {},
-          [refer('String', 'dart:core')],
-        )
-        .property('toList')
-        .call([])
-        .property('toMatrix')
-        .call(
-          [paramName],
-          {
-            'explode': explode,
-            'allowEmpty': allowEmpty,
-            'alreadyEncoded': literalTrue,
-          },
-        ),
+    Base64Model() =>
+      listMapAccess
+          .call(
+            [
+              Method(
+                (b) => b
+                  ..requiredParameters.add(
+                    Parameter((b) => b..name = 'e'),
+                  )
+                  ..body = refer('e').property('toBase64String').call([]).code,
+              ).closure,
+            ],
+            {},
+            [refer('String', 'dart:core')],
+          )
+          .property('toList')
+          .call([])
+          .property('toMatrix')
+          .call(
+            [paramName],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          ),
     MapModel() => _buildListMapContentMatrixExpression(
       valueExpression,
       contentModel,

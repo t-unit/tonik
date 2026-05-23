@@ -2081,7 +2081,7 @@ void main() {
             buildToJsonPropertyExpression(
               'times',
               property,
-            nameManager: nameManager,
+              nameManager: nameManager,
               forceNonNullReceiver: true,
               useImmutableCollections: true,
             ),
@@ -2167,7 +2167,7 @@ void main() {
             buildToJsonPropertyExpression(
               'addrs',
               property,
-            nameManager: nameManager,
+              nameManager: nameManager,
               forceNonNullReceiver: true,
               useImmutableCollections: true,
             ),
