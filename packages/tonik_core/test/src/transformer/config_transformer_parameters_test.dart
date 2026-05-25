@@ -20,6 +20,7 @@ void main() {
           model: IntegerModel(context: ctx.push('petId')),
           encoding: QueryParameterEncoding.form,
           context: ctx.push('components').push('parameters').push('petId'),
+          examples: const [],
         );
 
         final limitParam = QueryParameterObject(
@@ -34,6 +35,7 @@ void main() {
           model: IntegerModel(context: ctx.push('limit')),
           encoding: QueryParameterEncoding.form,
           context: ctx.push('components').push('parameters').push('limit'),
+          examples: const [],
         );
 
         final tag = Tag(name: 'pet', description: 'Pet tag');

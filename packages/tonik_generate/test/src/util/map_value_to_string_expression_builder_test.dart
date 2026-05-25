@@ -33,6 +33,7 @@ void main() {
         final model = MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -51,6 +52,7 @@ void main() {
         final model = MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -75,6 +77,7 @@ void main() {
         final model = MapModel(
           valueModel: DoubleModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -99,6 +102,7 @@ void main() {
         final model = MapModel(
           valueModel: NumberModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -123,6 +127,7 @@ void main() {
         final model = MapModel(
           valueModel: BooleanModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -147,6 +152,7 @@ void main() {
         final model = MapModel(
           valueModel: DateTimeModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -173,6 +179,7 @@ void main() {
         final model = MapModel(
           valueModel: DateModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -197,6 +204,7 @@ void main() {
         final model = MapModel(
           valueModel: DecimalModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -221,6 +229,7 @@ void main() {
         final model = MapModel(
           valueModel: UriModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -252,8 +261,10 @@ void main() {
             },
             isNullable: false,
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -285,8 +296,10 @@ void main() {
             },
             isNullable: false,
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -313,6 +326,7 @@ void main() {
         final model = MapModel(
           valueModel: Base64Model(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -339,6 +353,7 @@ void main() {
         final model = MapModel(
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -369,8 +384,10 @@ void main() {
             name: 'MyString',
             model: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -389,8 +406,10 @@ void main() {
             name: 'MyInt',
             model: IntegerModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -418,8 +437,10 @@ void main() {
             name: 'User',
             properties: [],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -436,8 +457,10 @@ void main() {
           valueModel: ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -454,8 +477,10 @@ void main() {
           valueModel: MapModel(
             valueModel: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -471,6 +496,7 @@ void main() {
         final model = MapModel(
           valueModel: BinaryModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -486,6 +512,7 @@ void main() {
         final model = MapModel(
           valueModel: NeverModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -504,6 +531,7 @@ void main() {
           valueModel: IntegerModel(context: context),
           context: context,
           isNullable: true,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -531,8 +559,10 @@ void main() {
             model: IntegerModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -560,8 +590,10 @@ void main() {
             model: DateTimeModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final result = buildMapToStringMapExpression(
@@ -660,6 +692,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isTrue);
     });
@@ -674,6 +707,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isTrue);
     });
@@ -697,6 +731,7 @@ void main() {
         name: 'MyString',
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isTrue);
     });
@@ -706,6 +741,7 @@ void main() {
         name: 'MyInt',
         model: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isTrue);
     });
@@ -718,8 +754,10 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -730,8 +768,10 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -747,10 +787,13 @@ void main() {
             name: 'User',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -761,6 +804,7 @@ void main() {
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -769,6 +813,7 @@ void main() {
       final model = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -777,6 +822,7 @@ void main() {
       final model = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -804,6 +850,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -821,10 +868,12 @@ void main() {
               name: 'User',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -835,6 +884,7 @@ void main() {
         name: 'StringOnly',
         models: {StringModel(context: context)},
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -849,6 +899,7 @@ void main() {
           (discriminatorValue: null, model: BooleanModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -858,7 +909,11 @@ void main() {
     /// Drift guard: predicate and builder must agree on every model.
     /// Anything else re-introduces the path-suffix throw bug.
     void expectParity(Model valueModel, {required String label}) {
-      final mapModel = MapModel(valueModel: valueModel, context: context);
+      final mapModel = MapModel(
+        valueModel: valueModel,
+        context: context,
+        examples: const [],
+      );
       final built = buildMapToStringMapExpression(
         refer('x'),
         mapModel,
@@ -904,6 +959,7 @@ void main() {
           values: {const EnumEntry(value: 'a')},
           isNullable: false,
           context: context,
+          examples: const [],
         ),
         label: 'EnumModel<String>',
       );
@@ -914,6 +970,7 @@ void main() {
           values: {const EnumEntry(value: 1)},
           isNullable: false,
           context: context,
+          examples: const [],
         ),
         label: 'EnumModel<int>',
       );
@@ -923,6 +980,7 @@ void main() {
           name: 'AliasOfString',
           model: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(StringModel)',
       );
@@ -934,8 +992,10 @@ void main() {
             name: 'User',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(ClassModel)',
       );
@@ -947,8 +1007,10 @@ void main() {
             name: 'InnerAlias',
             model: IntegerModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(AliasModel(IntegerModel))',
       );
@@ -963,10 +1025,13 @@ void main() {
               name: 'User2',
               properties: const [],
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(AliasModel(ClassModel))',
       );
@@ -977,6 +1042,7 @@ void main() {
           name: 'User2',
           properties: const [],
           context: context,
+          examples: const [],
         ),
         label: 'ClassModel',
       );
@@ -984,6 +1050,7 @@ void main() {
         ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel',
       );
@@ -991,6 +1058,7 @@ void main() {
         MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'nested MapModel',
       );
@@ -1003,6 +1071,7 @@ void main() {
             (discriminatorValue: null, model: IntegerModel(context: context)),
           },
           context: context,
+          examples: const [],
         ),
         label: 'OneOfModel(all-simple)',
       );
@@ -1012,6 +1081,7 @@ void main() {
           name: 'AllOfAllSimple',
           models: {StringModel(context: context)},
           context: context,
+          examples: const [],
         ),
         label: 'AllOfModel(all-simple)',
       );
@@ -1024,6 +1094,7 @@ void main() {
             (discriminatorValue: null, model: BooleanModel(context: context)),
           },
           context: context,
+          examples: const [],
         ),
         label: 'AnyOfModel(all-simple)',
       );

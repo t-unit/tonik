@@ -150,6 +150,7 @@ void main() {
             model: StringModel(context: context),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
           CookieParameterObject(
             name: 'optionalCookie',
@@ -161,6 +162,7 @@ void main() {
             model: StringModel(context: context),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -210,6 +212,7 @@ void main() {
             model: StringModel(context: context),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -259,6 +262,7 @@ void main() {
             model: StringModel(context: context),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -323,6 +327,7 @@ void main() {
             model: StringModel(context: context),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
           CookieParameterObject(
             name: 'userId',
@@ -334,6 +339,7 @@ void main() {
             model: StringModel(context: context),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -414,6 +420,7 @@ void main() {
             model: StringModel(context: context),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -483,6 +490,7 @@ void main() {
             model: IntegerModel(context: context),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -547,9 +555,11 @@ void main() {
             model: ListModel(
               context: context,
               content: StringModel(context: context),
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -601,6 +611,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'name',
@@ -608,8 +619,10 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
+        examples: const [],
       );
 
       final operation = Operation(
@@ -633,6 +646,7 @@ void main() {
             model: classModel,
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -673,6 +687,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
+        examples: const [],
       );
 
       final operation = Operation(
@@ -696,6 +711,7 @@ void main() {
             model: oneOfModel,
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -739,6 +755,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
+        examples: const [],
       );
 
       final operation = Operation(
@@ -762,6 +779,7 @@ void main() {
             model: anyOfModel,
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -810,8 +828,10 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
+            examples: const [],
           ),
           ClassModel(
             name: 'EntityName',
@@ -824,10 +844,13 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
+            examples: const [],
           ),
         },
+        examples: const [],
       );
 
       final operation = Operation(
@@ -851,6 +874,7 @@ void main() {
             model: allOfModel,
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -895,14 +919,18 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
+        examples: const [],
       );
 
       final operation = Operation(
@@ -926,6 +954,7 @@ void main() {
             model: nestedClassModel,
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -974,9 +1003,11 @@ void main() {
             model: ListModel(
               context: context,
               content: IntegerModel(context: context),
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           ),
         },
         responses: const {},
@@ -1040,6 +1071,7 @@ CookieParameterObject createCookieParameter(
     model: StringModel(context: context),
     encoding: CookieParameterEncoding.form,
     context: context,
+    examples: const [],
   );
 }
 
@@ -1060,6 +1092,7 @@ PathParameterObject createPathParameter(
     model: StringModel(context: context),
     encoding: PathParameterEncoding.simple,
     context: context,
+    examples: const [],
   );
 }
 
@@ -1081,6 +1114,7 @@ QueryParameterObject createQueryParameter(
     model: StringModel(context: context),
     encoding: QueryParameterEncoding.form,
     context: context,
+    examples: const [],
   );
 }
 
@@ -1101,5 +1135,6 @@ RequestHeaderObject createHeader(
     model: StringModel(context: context),
     encoding: HeaderParameterEncoding.simple,
     context: context,
+    examples: const [],
   );
 }

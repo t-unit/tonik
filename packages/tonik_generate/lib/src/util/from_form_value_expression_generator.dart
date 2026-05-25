@@ -351,6 +351,7 @@ Expression _buildListFromFormExpression(
         content: content.model,
         isNullable: model.isEffectivelyNullable,
         context: model.context,
+        examples: const [],
       ),
       isRequired,
       nameManager,

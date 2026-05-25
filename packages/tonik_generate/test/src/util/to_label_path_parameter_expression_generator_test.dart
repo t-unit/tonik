@@ -29,6 +29,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('userId', parameter)),
@@ -47,6 +48,7 @@ void main() {
           model: ListModel(
             context: context,
             content: StringModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -54,6 +56,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('ids', parameter)),
@@ -72,6 +75,7 @@ void main() {
           model: ListModel(
             context: context,
             content: StringModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: true,
@@ -79,6 +83,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('ids', parameter)),
@@ -99,6 +104,7 @@ void main() {
         isRequired: false,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('filter', parameter)),
@@ -120,6 +126,7 @@ void main() {
             const EnumEntry(value: 'inactive'),
           },
           isNullable: false,
+          examples: const [],
         ),
         encoding: PathParameterEncoding.label,
         explode: false,
@@ -127,6 +134,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('status', parameter)),
@@ -146,6 +154,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('id', parameter)),
@@ -165,6 +174,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('price', parameter)),
@@ -184,6 +194,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('enabled', parameter)),
@@ -203,6 +214,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('timestamp', parameter)),
@@ -226,6 +238,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'value',
@@ -233,8 +246,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         ),
         encoding: PathParameterEncoding.label,
         explode: false,
@@ -242,6 +257,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('filter', parameter)),
@@ -260,6 +276,7 @@ void main() {
           model: ListModel(
             context: context,
             content: StringModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: true,
@@ -267,6 +284,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(
@@ -300,7 +318,9 @@ void main() {
                 const EnumEntry(value: 'pending'),
               },
               isNullable: false,
+              examples: const [],
             ),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -308,6 +328,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('statuses', parameter)),
@@ -327,6 +348,7 @@ void main() {
           model: ListModel(
             context: context,
             content: IntegerModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -334,6 +356,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('ids', parameter)),
@@ -361,7 +384,9 @@ void main() {
                 const EnumEntry(value: 'pending'),
               },
               isNullable: false,
+              examples: const [],
             ),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: true,
@@ -369,6 +394,7 @@ void main() {
           isRequired: false,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('statuses', parameter)),
@@ -388,6 +414,7 @@ void main() {
           model: ListModel(
             context: context,
             content: DoubleModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -395,6 +422,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('prices', parameter)),
@@ -414,6 +442,7 @@ void main() {
           model: ListModel(
             context: context,
             content: BooleanModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -421,6 +450,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('flags', parameter)),
@@ -440,6 +470,7 @@ void main() {
           model: ListModel(
             context: context,
             content: DateTimeModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -447,6 +478,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('timestamps', parameter)),
@@ -479,7 +511,9 @@ void main() {
                   model: IntegerModel(context: context),
                 ),
               },
+              examples: const [],
             ),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -487,6 +521,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('values', parameter)),
@@ -519,7 +554,9 @@ void main() {
                   model: IntegerModel(context: context),
                 ),
               },
+              examples: const [],
             ),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -527,6 +564,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('values', parameter)),
@@ -546,6 +584,7 @@ void main() {
           model: ListModel(
             context: context,
             content: NumberModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -553,6 +592,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('amounts', parameter)),
@@ -572,6 +612,7 @@ void main() {
           model: ListModel(
             context: context,
             content: AnyModel(context: context),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -579,6 +620,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('anyValues', parameter)),
@@ -597,6 +639,7 @@ void main() {
         model: MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         encoding: PathParameterEncoding.label,
         explode: false,
@@ -604,6 +647,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('tags', parameter)),
@@ -621,6 +665,7 @@ void main() {
           model: MapModel(
             valueModel: IntegerModel(context: context),
             context: context,
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -628,6 +673,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         final result = emit(
           buildToLabelPathParameterExpression('counts', parameter),
@@ -657,8 +703,10 @@ void main() {
               context: context,
               name: 'Obj',
               properties: [],
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -666,6 +714,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           collapseWhitespace(
@@ -695,6 +744,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       final result = emit(
         buildToLabelPathParameterExpression('fileData', parameter),
@@ -730,9 +780,12 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
+            examples: const [],
           ),
+          examples: const [],
         ),
         encoding: PathParameterEncoding.label,
         explode: false,
@@ -740,6 +793,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         collapseWhitespace(
@@ -768,7 +822,9 @@ void main() {
             content: MapModel(
               valueModel: IntegerModel(context: context),
               context: context,
+              examples: const [],
             ),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -776,6 +832,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         final result = emit(
           buildToLabelPathParameterExpression('items', parameter),
@@ -811,9 +868,12 @@ void main() {
                 context: context,
                 name: 'Obj',
                 properties: [],
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -821,6 +881,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           collapseWhitespace(
@@ -845,6 +906,7 @@ void main() {
         model: ListModel(
           context: context,
           content: Base64Model(context: context),
+          examples: const [],
         ),
         encoding: PathParameterEncoding.label,
         explode: false,
@@ -852,6 +914,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       final result = emit(
         buildToLabelPathParameterExpression('files', parameter),
@@ -883,6 +946,7 @@ void main() {
             model: StringModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -890,6 +954,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(
@@ -912,6 +977,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToLabelPathParameterExpression('userId', parameter)),
@@ -931,6 +997,7 @@ void main() {
             content: StringModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -938,6 +1005,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(buildToLabelPathParameterExpression('tags', parameter)),

@@ -19,12 +19,14 @@ void main() {
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         final modelB = ClassModel(
           name: 'B',
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         // A → B → A
         modelA.properties = [
@@ -34,6 +36,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
         modelB.properties = [
@@ -43,6 +46,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
 
@@ -57,6 +61,7 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       // A → A
       modelA.properties = [
@@ -66,6 +71,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -81,18 +87,21 @@ void main() {
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         final modelB = ClassModel(
           name: 'B',
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         final modelC = ClassModel(
           name: 'C',
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         modelA.properties = [
           Property(
@@ -101,6 +110,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
         modelB.properties = [
@@ -110,6 +120,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
         modelC.properties = [
@@ -119,6 +130,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
 
@@ -135,12 +147,14 @@ void main() {
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         final modelB = ClassModel(
           name: 'B',
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         modelA.properties = [
           Property(
@@ -149,6 +163,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
         modelB.properties = [
@@ -158,6 +173,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
 
@@ -211,6 +227,7 @@ void main() {
           },
           context: sharedContext,
           isDeprecated: false,
+          examples: const [],
         );
 
         final model2 = AllOfModel(
@@ -221,6 +238,7 @@ void main() {
           },
           context: sharedContext,
           isDeprecated: false,
+          examples: const [],
         );
 
         final key1 = sorter.stableKeyOf(model1);
@@ -244,6 +262,7 @@ void main() {
           },
           context: sharedContext,
           isDeprecated: false,
+          examples: const [],
         );
 
         final model2 = AllOfModel(
@@ -252,6 +271,7 @@ void main() {
           },
           context: sharedContext,
           isDeprecated: false,
+          examples: const [],
         );
 
         expect(
@@ -280,6 +300,7 @@ void main() {
           },
           discriminator: 'type',
           context: sharedContext,
+          examples: const [],
         );
 
         final model2 = OneOfModel(
@@ -296,6 +317,7 @@ void main() {
           },
           discriminator: 'type',
           context: sharedContext,
+          examples: const [],
         );
 
         expect(
@@ -321,6 +343,7 @@ void main() {
           ),
         },
         context: sharedContext,
+        examples: const [],
       );
 
       final model2 = AnyOfModel(
@@ -336,6 +359,7 @@ void main() {
           ),
         },
         context: sharedContext,
+        examples: const [],
       );
 
       expect(
@@ -349,12 +373,14 @@ void main() {
         name: 'TestList',
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final model2 = ListModel(
         name: 'TestList',
         content: StringModel(context: context.push('other')),
         context: context.push('different'),
+        examples: const [],
       );
 
       expect(
@@ -380,6 +406,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'count',
@@ -387,9 +414,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final key = sorter.stableKeyOf(model1);
@@ -410,6 +439,7 @@ void main() {
         isNullable: false,
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
 
       final model2 = EnumModel<String>(
@@ -422,6 +452,7 @@ void main() {
         isNullable: false,
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(
@@ -438,6 +469,7 @@ void main() {
         },
         context: context.push('inner'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final outerAllOf = AllOfModel(
@@ -447,6 +479,7 @@ void main() {
         },
         context: context.push('outer'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final key = sorter.stableKeyOf(outerAllOf);
@@ -470,6 +503,7 @@ void main() {
               properties: [],
               context: sharedContext,
               isDeprecated: false,
+              examples: const [],
             ),
           );
         }
@@ -484,6 +518,7 @@ void main() {
                 isRequired: false,
                 isNullable: true,
                 isDeprecated: false,
+                examples: const [],
               ),
           ];
         }
@@ -569,6 +604,7 @@ void main() {
               properties: [],
               context: sharedContext.push('Model$i'),
               isDeprecated: false,
+              examples: const [],
             ),
           );
         }
@@ -583,6 +619,7 @@ void main() {
                 isRequired: false,
                 isNullable: true,
                 isDeprecated: false,
+                examples: const [],
               ),
           ];
         }
@@ -636,6 +673,7 @@ void main() {
             name: 'Alias$i',
             model: current,
             context: context.push('Alias$i'),
+            examples: const [],
           );
           aliases.insert(0, alias);
           current = alias;
@@ -673,12 +711,14 @@ void main() {
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         final modelB = ClassModel(
           name: 'B',
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
         modelA.properties = [
           Property(
@@ -687,6 +727,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
         modelB.properties = [
@@ -696,6 +737,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ];
 
@@ -711,6 +753,7 @@ void main() {
         name: 'Tags',
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final key = sorter.stableKeyOf(mapModel);
@@ -721,6 +764,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final key = sorter.stableKeyOf(mapModel);
@@ -734,11 +778,13 @@ void main() {
           name: 'StringMap',
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         final intMap = MapModel(
           name: 'IntMap',
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
 
         expect(

@@ -65,6 +65,7 @@ void main() {
                 model: StringModel(context: context),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -102,6 +103,7 @@ String _parseResponse(Response<List<int>> response) {
           const EnumEntry(value: 'C'),
         },
         isNullable: false,
+        examples: const [],
       );
       final operation = Operation(
         operationId: 'enumOp',
@@ -127,6 +129,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: enumModel,
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -165,9 +168,11 @@ String _parseResponse(Response<List<int>> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final operation = Operation(
         operationId: 'classOp',
@@ -193,6 +198,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: classModel,
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -245,9 +251,11 @@ String _parseResponse(Response<List<int>> response) {
                 model: ListModel(
                   content: IntegerModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -286,9 +294,11 @@ String _parseResponse(Response<List<int>> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final operation = Operation(
         operationId: 'listClassOp',
@@ -311,9 +321,14 @@ String _parseResponse(Response<List<int>> response) {
             description: '',
             bodies: {
               ResponseBody(
-                model: ListModel(content: classModel, context: context),
+                model: ListModel(
+                  content: classModel,
+                  context: context,
+                  examples: const [],
+                ),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -356,6 +371,7 @@ String _parseResponse(Response<List<int>> response) {
               name: 'Cat',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -365,11 +381,13 @@ String _parseResponse(Response<List<int>> response) {
               name: 'Dog',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
       final operation = Operation(
         operationId: 'oneOfOp',
@@ -395,6 +413,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: oneOfModel,
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -447,6 +466,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: StringModel(context: context),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -499,6 +519,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: StringModel(context: context),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -537,9 +558,11 @@ String _parseResponse(Response<List<int>> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final operation = Operation(
         operationId: 'multiStatusOp',
@@ -565,6 +588,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: classModel,
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -612,9 +636,11 @@ String _parseResponse(Response<List<int>> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final responseHeaders = {
         'x-rate-limit': ResponseHeaderObject(
@@ -626,6 +652,7 @@ String _parseResponse(Response<List<int>> response) {
           model: IntegerModel(context: context),
           explode: false,
           encoding: ResponseHeaderEncoding.simple,
+          examples: const [],
         ),
         'x-expires-after': ResponseHeaderObject(
           name: 'x-expires-after',
@@ -636,6 +663,7 @@ String _parseResponse(Response<List<int>> response) {
           model: DateTimeModel(context: context),
           explode: false,
           encoding: ResponseHeaderEncoding.simple,
+          examples: const [],
         ),
       };
       final operation = Operation(
@@ -662,6 +690,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: classModel,
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -710,9 +739,11 @@ String _parseResponse(Response<List<int>> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final enumModel = EnumModel(
         isDeprecated: false,
@@ -723,6 +754,7 @@ String _parseResponse(Response<List<int>> response) {
           const EnumEntry(value: 'C'),
         },
         isNullable: false,
+        examples: const [],
       );
       final operation = Operation(
         operationId: 'combinedOp',
@@ -751,6 +783,7 @@ String _parseResponse(Response<List<int>> response) {
                 isRequired: false,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
             description: '',
@@ -759,6 +792,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: classModel,
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -772,6 +806,7 @@ String _parseResponse(Response<List<int>> response) {
                 model: enumModel,
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -826,9 +861,11 @@ String _parseResponse(Response<List<int>> response) {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       // Create the base response object
@@ -846,6 +883,7 @@ String _parseResponse(Response<List<int>> response) {
             isDeprecated: false,
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
           ),
         },
         bodies: {
@@ -853,6 +891,7 @@ String _parseResponse(Response<List<int>> response) {
             model: classModel,
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -919,6 +958,7 @@ String _parseResponse(Response<List<int>> response) {
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       // The actual header object
@@ -931,6 +971,7 @@ String _parseResponse(Response<List<int>> response) {
         isDeprecated: false,
         explode: false,
         encoding: ResponseHeaderEncoding.simple,
+        examples: const [],
       );
 
       // The alias header
@@ -950,6 +991,7 @@ String _parseResponse(Response<List<int>> response) {
             model: classModel,
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -1007,6 +1049,7 @@ String _parseResponse(Response<List<int>> response) {
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final response = ResponseObject(
@@ -1023,6 +1066,7 @@ String _parseResponse(Response<List<int>> response) {
             isDeprecated: false,
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
           ),
         },
         bodies: {
@@ -1030,6 +1074,7 @@ String _parseResponse(Response<List<int>> response) {
             model: classModel,
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -1094,11 +1139,13 @@ String _parseResponse(Response<List<int>> response) {
               model: StringModel(context: context),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
             ResponseBody(
               model: IntegerModel(context: context),
               rawContentType: 'application/xml',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -1159,6 +1206,7 @@ String _parseResponse(Response<List<int>> response) {
             model: StringModel(context: context),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -1173,6 +1221,7 @@ String _parseResponse(Response<List<int>> response) {
             model: IntegerModel(context: context),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -1297,6 +1346,7 @@ String _parseResponse(Response<List<int>> response) {
                   isDeprecated: false,
                   explode: false,
                   encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
               },
             ),
@@ -1337,6 +1387,7 @@ String _parseResponse(Response<List<int>> response) {
                   model: StringModel(context: context),
                   rawContentType: 'text/plain',
                   contentType: ContentType.text,
+                  examples: const [],
                 ),
               },
             ),
@@ -1390,6 +1441,7 @@ String _parseResponse(Response<List<int>> response) {
                   model: BinaryModel(context: context),
                   rawContentType: 'application/octet-stream',
                   contentType: ContentType.bytes,
+                  examples: const [],
                 ),
               },
             ),
@@ -1441,6 +1493,7 @@ TonikFile _parseResponse(Response<List<int>> response) {
                   model: BinaryModel(context: context),
                   rawContentType: 'image/png',
                   contentType: ContentType.bytes,
+                  examples: const [],
                 ),
               },
             ),
@@ -1494,16 +1547,19 @@ TonikFile _parseResponse(Response<List<int>> response) {
                   model: StringModel(context: context),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
                   rawContentType: 'text/plain',
                   contentType: ContentType.text,
+                  examples: const [],
                 ),
                 ResponseBody(
                   model: BinaryModel(context: context),
                   rawContentType: 'application/octet-stream',
                   contentType: ContentType.bytes,
+                  examples: const [],
                 ),
               },
             ),
@@ -1564,6 +1620,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                   model: StringModel(context: context),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
+                  examples: const [],
                 ),
               },
             ),
@@ -1602,6 +1659,7 @@ String _parseResponse(Response<List<int>> response) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'age',
@@ -1609,9 +1667,11 @@ String _parseResponse(Response<List<int>> response) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1638,6 +1698,7 @@ String _parseResponse(Response<List<int>> response) {
                   model: classModel,
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
+                  examples: const [],
                 ),
               },
             ),
@@ -1690,6 +1751,7 @@ FormData _parseResponse(Response<List<int>> response) {
                   model: IntegerModel(context: context),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
+                  examples: const [],
                 ),
               },
             ),
@@ -1742,6 +1804,7 @@ int _parseResponse(Response<List<int>> response) {
                   model: DateTimeModel(context: context),
                   rawContentType: 'application/x-www-form-urlencoded',
                   contentType: ContentType.form,
+                  examples: const [],
                 ),
               },
             ),
@@ -1782,9 +1845,11 @@ DateTime _parseResponse(Response<List<int>> response) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
         final responseHeaders = {
           'X-Any-Header': ResponseHeaderObject(
@@ -1796,6 +1861,7 @@ DateTime _parseResponse(Response<List<int>> response) {
             model: AnyModel(context: context),
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
           ),
           'X-Never-Header': ResponseHeaderObject(
             name: 'X-Never-Header',
@@ -1806,6 +1872,7 @@ DateTime _parseResponse(Response<List<int>> response) {
             model: NeverModel(context: context),
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
           ),
         };
         final operation = Operation(
@@ -1832,6 +1899,7 @@ DateTime _parseResponse(Response<List<int>> response) {
                   model: classModel,
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -1885,9 +1953,11 @@ DateTime _parseResponse(Response<List<int>> response) {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
           final responseHeaders = {
             'X-Never-Header': ResponseHeaderObject(
@@ -1899,6 +1969,7 @@ DateTime _parseResponse(Response<List<int>> response) {
               model: NeverModel(context: context),
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           };
           final operation = Operation(
@@ -1925,6 +1996,7 @@ DateTime _parseResponse(Response<List<int>> response) {
                     model: classModel,
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -1938,6 +2010,7 @@ DateTime _parseResponse(Response<List<int>> response) {
                     model: StringModel(context: context),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2006,9 +2079,11 @@ DateTime _parseResponse(Response<List<int>> response) {
                   model: ListModel(
                     content: NeverModel(context: context),
                     context: context,
+                    examples: const [],
                   ),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -2061,6 +2136,7 @@ List<Never> _parseResponse(Response<List<int>> response) {
                   model: NeverModel(context: context),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -2116,9 +2192,11 @@ Never _parseResponse(Response<List<int>> response) {
                       name: 'NeverAlias',
                       model: NeverModel(context: context),
                       context: context,
+                      examples: const [],
                     ),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2175,6 +2253,7 @@ NeverAlias _parseResponse(Response<List<int>> response) {
                     model: NeverModel(context: context),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2188,6 +2267,7 @@ NeverAlias _parseResponse(Response<List<int>> response) {
                     model: StringModel(context: context),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2235,6 +2315,7 @@ MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
               model: NeverModel(context: context),
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           };
           final operation = Operation(
@@ -2261,6 +2342,7 @@ MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
                     model: NeverModel(context: context),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2310,6 +2392,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
               model: NeverModel(context: context),
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           };
           final operation = Operation(
@@ -2336,6 +2419,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                     model: NeverModel(context: context),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2349,6 +2433,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                     model: StringModel(context: context),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2417,9 +2502,11 @@ MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
                       name: 'NeverFormAlias',
                       model: NeverModel(context: context),
                       context: context,
+                      examples: const [],
                     ),
                     rawContentType: 'application/x-www-form-urlencoded',
                     contentType: ContentType.form,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2477,6 +2564,7 @@ NeverFormAlias _parseResponse(Response<List<int>> response) {
                     model: NeverModel(context: context),
                     rawContentType: 'application/x-www-form-urlencoded',
                     contentType: ContentType.form,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2535,9 +2623,11 @@ Never _parseResponse(Response<List<int>> response) {
                     model: ListModel(
                       content: NeverModel(context: context),
                       context: context,
+                      examples: const [],
                     ),
                     rawContentType: 'application/x-www-form-urlencoded',
                     contentType: ContentType.form,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2597,9 +2687,11 @@ List<Never> _parseResponse(Response<List<int>> response) {
                       content: NeverModel(context: context),
                       isNullable: true,
                       context: context,
+                      examples: const [],
                     ),
                     rawContentType: 'application/x-www-form-urlencoded',
                     contentType: ContentType.form,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2660,6 +2752,7 @@ List<Never>? _parseResponse(Response<List<int>> response) {
                     model: StringModel(context: context),
                     rawContentType: 'multipart/form-data',
                     contentType: ContentType.multipart,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2714,6 +2807,7 @@ List<Never>? _parseResponse(Response<List<int>> response) {
                     model: StringModel(context: context),
                     rawContentType: 'multipart/form-data',
                     contentType: ContentType.multipart,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2770,6 +2864,7 @@ String _parseResponse(Response<List<int>> response) {
                     model: StringModel(context: context),
                     rawContentType: 'multipart/form-data',
                     contentType: ContentType.multipart,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2783,6 +2878,7 @@ String _parseResponse(Response<List<int>> response) {
                     model: StringModel(context: context),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2837,6 +2933,7 @@ String _parseResponse(Response<List<int>> response) {
                     model: StringModel(context: context),
                     rawContentType: "application/vnd.it's+json",
                     contentType: ContentType.json,
+                    examples: const [],
                   ),
                 },
               ),
@@ -2899,9 +2996,11 @@ String _parseResponse(Response<List<int>> response) {
                     properties: const [],
                     context: context,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                   rawContentType: 'multipart/form-data',
                   contentType: ContentType.multipart,
+                  examples: const [],
                 ),
               },
             ),
@@ -2958,9 +3057,11 @@ String _parseResponse(Response<List<int>> response) {
                   model: ListModel(
                     content: StringModel(context: context),
                     context: context,
+                    examples: const [],
                   ),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -3015,9 +3116,11 @@ IList<String> _parseResponse(Response<List<int>> response) {
                   model: MapModel(
                     valueModel: IntegerModel(context: context),
                     context: context,
+                    examples: const [],
                   ),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -3056,6 +3159,7 @@ IMap<String, int> _parseResponse(Response<List<int>> response) {
           name: 'Tree',
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         tree.valueModel = tree;
 
@@ -3083,6 +3187,7 @@ IMap<String, int> _parseResponse(Response<List<int>> response) {
                   model: tree,
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),

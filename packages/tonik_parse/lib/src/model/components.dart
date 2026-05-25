@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/path_item.dart';
@@ -20,6 +21,7 @@ class Components {
     required this.headers,
     required this.securitySchemes,
     required this.pathItems,
+    required this.examples,
   });
 
   factory Components.fromJson(Map<String, dynamic> json) =>
@@ -33,13 +35,14 @@ class Components {
   final Map<String, ReferenceWrapper<Header>>? headers;
   final Map<String, ReferenceWrapper<SecurityScheme>>? securitySchemes;
   final Map<String, ReferenceWrapper<PathItem>>? pathItems;
+  final Map<String, ReferenceWrapper<Example>>? examples;
 
-  // We ignore the examples, links and callbacks properties.
+  // We ignore the links and callbacks properties.
 
   @override
   String toString() =>
       'Components{schemas: $schemas, responses: $responses, '
       'parameters: $parameters, requestBodies: $requestBodies, '
       'headers: $headers, securitySchemes: $securitySchemes, '
-      'pathItems: $pathItems}';
+      'pathItems: $pathItems, examples: $examples}';
 }

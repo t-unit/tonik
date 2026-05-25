@@ -77,9 +77,11 @@ void main() {
                 name: 'TestModel',
                 properties: const [],
                 context: testContext,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         ),
@@ -125,9 +127,11 @@ void main() {
                 name: 'JsonModel',
                 properties: const [],
                 context: testContext,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: ClassModel(
@@ -135,9 +139,11 @@ void main() {
                 name: 'FormModel',
                 properties: const [],
                 context: testContext,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json+problem',
+              examples: const [],
             ),
           },
         ),
@@ -177,6 +183,7 @@ void main() {
           name: 'Tree',
           valueModel: AnyModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
         tree.valueModel = tree;
 
@@ -194,6 +201,7 @@ void main() {
                 model: tree,
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
             },
           ),
@@ -241,6 +249,7 @@ void main() {
           name: 'Tree',
           valueModel: AnyModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
         tree.valueModel = tree;
 
@@ -258,6 +267,7 @@ void main() {
                 model: tree,
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: ClassModel(
@@ -265,9 +275,11 @@ void main() {
                   name: 'Plain',
                   properties: const [],
                   context: testContext,
+                  examples: const [],
                 ),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
+                examples: const [],
               ),
             },
           ),
@@ -326,6 +338,7 @@ void main() {
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         ),
@@ -369,6 +382,7 @@ void main() {
               model: DateModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         ),
@@ -412,6 +426,7 @@ void main() {
               model: DecimalModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         ),
@@ -455,6 +470,7 @@ void main() {
               model: IntegerModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: EnumModel(
@@ -466,9 +482,11 @@ void main() {
                 },
                 context: testContext,
                 isNullable: false,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json+problem',
+              examples: const [],
             ),
           },
         ),
@@ -517,9 +535,11 @@ void main() {
                 name: 'TestModel',
                 properties: const [],
                 context: testContext,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         ),
@@ -563,6 +583,7 @@ void main() {
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain',
+              examples: const [],
             ),
           },
         ),
@@ -608,6 +629,7 @@ void main() {
                 model: StringModel(context: testContext),
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
+                examples: const [],
               ),
             },
           ),
@@ -656,6 +678,7 @@ void main() {
                 model: BinaryModel(context: testContext),
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
+                examples: const [],
               ),
             },
           ),
@@ -702,6 +725,7 @@ void main() {
                 model: BinaryModel(context: testContext),
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
+                examples: const [],
               ),
             },
           ),
@@ -748,14 +772,17 @@ void main() {
                 name: 'JsonModel',
                 properties: const [],
                 context: testContext,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain',
+              examples: const [],
             ),
           },
         ),
@@ -804,14 +831,17 @@ void main() {
                 name: 'JsonModel',
                 properties: const [],
                 context: testContext,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
+              examples: const [],
             ),
           },
         ),
@@ -860,14 +890,17 @@ void main() {
                 name: 'JsonModel',
                 properties: const [],
                 context: testContext,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: BinaryModel(context: testContext),
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
+              examples: const [],
             ),
           },
         ),
@@ -914,6 +947,7 @@ void main() {
               model: StringModel(context: testContext),
               contentType: ContentType.text,
               rawContentType: 'text/plain',
+              examples: const [],
             ),
           },
         ),
@@ -954,6 +988,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'age',
@@ -961,9 +996,11 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -980,6 +1017,7 @@ void main() {
                 model: petModel,
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
+                examples: const [],
               ),
             },
           ),
@@ -1019,9 +1057,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1038,6 +1078,7 @@ void main() {
                 model: petModel,
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
+                examples: const [],
               ),
             },
           ),
@@ -1080,6 +1121,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'nickname',
@@ -1087,9 +1129,11 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1122,6 +1166,7 @@ void main() {
                     allowReserved: false,
                   ),
                 },
+                examples: const [],
               ),
             },
           ),
@@ -1168,9 +1213,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -1201,10 +1248,12 @@ void main() {
                           isRequired: true,
                           isDeprecated: false,
                           encoding: ResponseHeaderEncoding.simple,
+                          examples: const [],
                         ),
                       },
                     ),
                   },
+                  examples: const [],
                 ),
               },
             ),
@@ -1245,9 +1294,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final formModel = ClassModel(
@@ -1260,9 +1311,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1279,6 +1332,7 @@ void main() {
                 model: jsonModel,
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: formModel,
@@ -1293,6 +1347,7 @@ void main() {
                     allowReserved: false,
                   ),
                 },
+                examples: const [],
               ),
             },
           ),
@@ -1333,6 +1388,7 @@ void main() {
           isDeprecated: false,
           properties: const [],
           context: testContext,
+          examples: const [],
         );
 
         final formModel = ClassModel(
@@ -1345,9 +1401,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1364,11 +1422,13 @@ void main() {
                 model: jsonModel,
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: formModel,
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
+                examples: const [],
               ),
             },
           ),
@@ -1408,6 +1468,7 @@ void main() {
             isDeprecated: false,
             properties: const [],
             context: testContext,
+            examples: const [],
           );
 
           final formModel = ClassModel(
@@ -1415,6 +1476,7 @@ void main() {
             isDeprecated: false,
             properties: const [],
             context: testContext,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -1431,11 +1493,13 @@ void main() {
                   model: jsonModel,
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
+                  examples: const [],
                 ),
                 RequestContent(
                   model: formModel,
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
+                  examples: const [],
                 ),
               },
             ),
@@ -1482,9 +1546,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -1510,6 +1576,7 @@ void main() {
                       allowReserved: false,
                     ),
                   },
+                  examples: const [],
                 ),
               },
             ),
@@ -1550,6 +1617,7 @@ void main() {
             isDeprecated: false,
             properties: const [],
             context: testContext,
+            examples: const [],
           );
 
           final uploadModel = ClassModel(
@@ -1562,9 +1630,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -1581,6 +1651,7 @@ void main() {
                   model: jsonModel,
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
+                  examples: const [],
                 ),
                 RequestContent(
                   model: uploadModel,
@@ -1600,10 +1671,12 @@ void main() {
                           isRequired: true,
                           isDeprecated: false,
                           encoding: ResponseHeaderEncoding.simple,
+                          examples: const [],
                         ),
                       },
                     ),
                   },
+                  examples: const [],
                 ),
               },
             ),
@@ -1645,6 +1718,7 @@ void main() {
             name: 'AssetMap',
             valueModel: StringModel(context: testContext),
             context: testContext,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -1661,6 +1735,7 @@ void main() {
                   model: mapModel,
                   contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
+                  examples: const [],
                 ),
               },
             ),
@@ -1716,9 +1791,11 @@ void main() {
                     context: testContext,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                   contentType: ContentType.bytes,
                   rawContentType: 'application/octet-stream',
+                  examples: const [],
                 ),
               },
             ),
@@ -1762,9 +1839,11 @@ void main() {
                     name: 'JsonModel',
                     properties: const [],
                     context: testContext,
+                    examples: const [],
                   ),
                   contentType: ContentType.json,
                   rawContentType: 'application/json',
+                  examples: const [],
                 ),
                 RequestContent(
                   model: EnumModel<String>(
@@ -1773,9 +1852,11 @@ void main() {
                     context: testContext,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                   contentType: ContentType.bytes,
                   rawContentType: 'application/octet-stream',
+                  examples: const [],
                 ),
               },
             ),
@@ -1821,12 +1902,14 @@ void main() {
               isDeprecated: false,
               properties: const [],
               context: testContext,
+              examples: const [],
             );
 
             final mapModel = MapModel(
               name: 'AssetMap',
               valueModel: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             );
 
             final operation = Operation(
@@ -1843,11 +1926,13 @@ void main() {
                     model: jsonModel,
                     contentType: ContentType.json,
                     rawContentType: 'application/json',
+                    examples: const [],
                   ),
                   RequestContent(
                     model: mapModel,
                     contentType: ContentType.multipart,
                     rawContentType: 'multipart/form-data',
+                    examples: const [],
                   ),
                 },
               ),

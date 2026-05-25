@@ -11,4 +11,8 @@ MediaType _$MediaTypeFromJson(Map<String, dynamic> json) => MediaType(
   encoding: (json['encoding'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, Encoding.fromJson(e as Map<String, dynamic>)),
   ),
+  example: json['example'],
+  examples: (json['examples'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
+  ),
 );

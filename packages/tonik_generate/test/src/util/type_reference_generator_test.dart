@@ -183,6 +183,7 @@ void main() {
           final model = ListModel(
             content: binaryModel,
             context: context,
+            examples: const [],
           );
 
           final result = typeReference(model, nameManager, package);
@@ -235,6 +236,7 @@ void main() {
           final model = ListModel(
             content: base64Model,
             context: context,
+            examples: const [],
           );
 
           final result = typeReference(model, nameManager, package);
@@ -258,6 +260,7 @@ void main() {
             content: StringModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           );
 
           final result = typeReference(model, nameManager, package);
@@ -276,10 +279,12 @@ void main() {
             content: StringModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           );
           final model = MapModel(
             valueModel: listModel,
             context: context,
+            examples: const [],
           );
 
           final result = typeReference(model, nameManager, package);
@@ -303,6 +308,7 @@ void main() {
             valueModel: StringModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           );
 
           final result = typeReference(model, nameManager, package);
@@ -334,6 +340,7 @@ void main() {
         final model = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = typeReference(
@@ -355,6 +362,7 @@ void main() {
           content: StringModel(context: context),
           context: context,
           isNullable: true,
+          examples: const [],
         );
 
         final result = typeReference(
@@ -373,6 +381,7 @@ void main() {
         final model = MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = typeReference(
@@ -395,6 +404,7 @@ void main() {
           valueModel: StringModel(context: context),
           context: context,
           isNullable: true,
+          examples: const [],
         );
 
         final result = typeReference(
@@ -413,10 +423,12 @@ void main() {
         final nestedList = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         final model = ListModel(
           content: nestedList,
           context: context,
+          examples: const [],
         );
 
         final result = typeReference(
@@ -437,10 +449,12 @@ void main() {
         final listModel = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         final model = MapModel(
           valueModel: listModel,
           context: context,
+          examples: const [],
         );
 
         final result = typeReference(
@@ -461,6 +475,7 @@ void main() {
         final model = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final result = typeReference(
@@ -477,10 +492,12 @@ void main() {
         final listModel = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         final alias = AliasModel(
           model: listModel,
           context: context,
+          examples: const [],
         );
 
         final result = typeReference(
@@ -560,6 +577,7 @@ void main() {
           final model = ListModel(
             content: anyModel,
             context: context,
+            examples: const [],
           );
 
           final result = typeReference(model, nameManager, package);

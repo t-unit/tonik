@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/discriminator.dart' as parse;
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/schema.dart';
@@ -8,12 +9,14 @@ import 'package:tonik_parse/src/model/schema.dart';
 class ModelImporter {
   ModelImporter(
     OpenApiObject openApiObject, {
+    required this.exampleImporter,
     Map<String, SchemaContentType> contentMediaTypes = const {},
   }) : _schemas = openApiObject.components?.schemas ?? {},
        _contentMediaTypes = contentMediaTypes;
 
   final Map<String, Schema> _schemas;
   final Map<String, SchemaContentType> _contentMediaTypes;
+  final ExampleImporter exampleImporter;
   final Map<String, Schema> _defs = {};
   final Set<String> _resolving = {};
   final Map<String, AliasModel> _placeholders = {};
@@ -93,6 +96,7 @@ class ModelImporter {
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.isNullable ?? schema.type.contains('null'),
+        examples: const [],
       );
       _logModelAdded(aliasModel);
       models.add(aliasModel);
@@ -107,6 +111,7 @@ class ModelImporter {
         name: name,
         model: model,
         context: context,
+        examples: const [],
       );
       _logModelAdded(aliasModel);
       models.add(aliasModel);
@@ -124,6 +129,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? false,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        examples: const [],
       );
       _logModelAdded(allOfModel);
       models.add(allOfModel);
@@ -140,6 +146,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? false,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        examples: const [],
       );
       _logModelAdded(oneOfModel);
       models.add(oneOfModel);
@@ -156,6 +163,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? false,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        examples: const [],
       );
       _logModelAdded(anyOfModel);
       models.add(anyOfModel);
@@ -176,6 +184,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? hasNullType,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        examples: const [],
       );
       _logModelAdded(oneOfModel);
       models.add(oneOfModel);
@@ -193,6 +202,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? hasNullType,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        examples: const [],
       );
       _logModelAdded(model);
       models.add(model);
@@ -212,6 +222,7 @@ class ModelImporter {
           isNullable: schema.isNullable ?? hasNullType,
           isReadOnly: schema.isReadOnly ?? false,
           isWriteOnly: schema.isWriteOnly ?? false,
+          examples: const [],
         );
         _logModelAdded(aliasModel);
         models.add(aliasModel);
@@ -237,6 +248,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? false,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        examples: const [],
       );
       _logModelAdded(listModel);
       models.add(listModel);
@@ -253,6 +265,7 @@ class ModelImporter {
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
+      examples: const [],
     );
     _logModelAdded(model);
     models.add(model);
@@ -325,6 +338,7 @@ class ModelImporter {
           name: name,
           model: model,
           context: context,
+          examples: const [],
         );
       }
 
@@ -333,6 +347,8 @@ class ModelImporter {
           model.nameOverride = schema.xDartName;
         }
       }
+
+      applyExamples(model, exampleImporter.fromSchema(schema));
 
       if (models.none((m) => m is NamedModel && m.name == name)) {
         log.fine('Adding model $name');
@@ -348,14 +364,18 @@ class ModelImporter {
       }
     }
 
+    final examples = exampleImporter.fromSchema(schema);
+
     // Populate based on model type.
     if (schema.ref != null) {
       _populateAliasShell(name, schema, context, existingModel as AliasModel);
+      applyExamples(existingModel, examples);
       return;
     }
 
     if (schema.isBooleanSchema != null) {
       // Already fully populated in pass 1.
+      applyExamples(existingModel, examples);
       return;
     }
 
@@ -366,6 +386,7 @@ class ModelImporter {
         context,
         existingModel as AllOfModel,
       );
+      applyExamples(existingModel, examples);
       return;
     }
 
@@ -376,6 +397,7 @@ class ModelImporter {
         context,
         existingModel as OneOfModel,
       );
+      applyExamples(existingModel, examples);
       return;
     }
 
@@ -386,6 +408,7 @@ class ModelImporter {
         context,
         existingModel as AnyOfModel,
       );
+      applyExamples(existingModel, examples);
       return;
     }
 
@@ -400,6 +423,7 @@ class ModelImporter {
         context,
         existingModel as OneOfModel,
       );
+      applyExamples(existingModel, examples);
       return;
     }
 
@@ -408,6 +432,7 @@ class ModelImporter {
         schema.additionalProperties != null &&
         schema.additionalProperties != false) {
       _populateMapShell(name, schema, context, existingModel as MapModel);
+      applyExamples(existingModel, examples);
       return;
     }
 
@@ -415,18 +440,21 @@ class ModelImporter {
 
     // Primitives are already fully populated.
     if (_isPrimitiveType(firstType, schema)) {
+      applyExamples(existingModel, examples);
       return;
     }
 
     // Array type.
     if (firstType == 'array') {
       _populateArrayShell(name, schema, context, existingModel as ListModel);
+      applyExamples(existingModel, examples);
       return;
     }
 
     // Default: ClassModel.
     if (existingModel is ClassModel) {
       _populateClassShell(name, schema, context, existingModel);
+      applyExamples(existingModel, examples);
     }
   }
 
@@ -499,6 +527,9 @@ class ModelImporter {
         schema,
         context,
       );
+      // Carry any examples assigned to the shell over to the replacement so
+      // they survive the swap.
+      applyExamples(allOfModel, shell.examples);
       // Update shell to point to the allOf so existing references still work.
       shell.model = allOfModel;
       // The allOfModel is already registered by
@@ -525,6 +556,38 @@ class ModelImporter {
       ..description = schema.description
       ..isDeprecated = (schema.isDeprecated ?? false)
       ..isNullable = (schema.isNullable ?? schema.type.contains('null'));
+  }
+
+  /// Attaches schema-level [examples] to an already-constructed [model].
+  ///
+  /// Models that cannot carry examples (primitives, AnyModel, NeverModel)
+  /// are silent no-ops. Models that already have examples are left alone
+  /// so callers cannot overwrite earlier population.
+  void applyExamples(Model model, List<Example> examples) {
+    if (examples.isEmpty) return;
+    switch (model) {
+      case final ClassModel m when m.examples.isEmpty:
+        m.examples = examples;
+      case final AliasModel m when m.examples.isEmpty:
+        m.examples = examples;
+      case final ListModel m when m.examples.isEmpty:
+        m.examples = examples;
+      case final MapModel m when m.examples.isEmpty:
+        m.examples = examples;
+      case final EnumModel<dynamic> m when m.examples.isEmpty:
+        m.examples = examples;
+      case final AllOfModel m when m.examples.isEmpty:
+        m.examples = examples;
+      case final OneOfModel m when m.examples.isEmpty:
+        m.examples = examples;
+      case final AnyOfModel m when m.examples.isEmpty:
+        m.examples = examples;
+      case PrimitiveModel():
+      case AnyModel():
+      case NeverModel():
+      default:
+        break;
+    }
   }
 
   /// Returns true if setting the shell's model to [target] would create
@@ -766,6 +829,7 @@ class ModelImporter {
           model: valueModel,
           context: mapContext,
           isNullable: true,
+          examples: const [],
         );
       }
       shell.valueModel = valueModel;
@@ -833,6 +897,7 @@ class ModelImporter {
         isReadOnly: isReadOnly,
         isWriteOnly: isWriteOnly,
         description: description,
+        examples: exampleImporter.fromSchema(propertySchema),
       );
 
       if (nameOverride != null) {
@@ -932,6 +997,7 @@ class ModelImporter {
       models: modelsToMerge.toSet(),
       context: modelContext,
       isDeprecated: false,
+      examples: const [],
     );
 
     _addModelToSet(allOfModel);
@@ -1002,6 +1068,7 @@ class ModelImporter {
         name: defName,
         model: AnyModel(context: _contextFromDefsPath(ref)),
         context: _contextFromDefsPath(ref),
+        examples: const [],
       );
       _placeholders[ref] = placeholder;
       return placeholder;
@@ -1049,6 +1116,7 @@ class ModelImporter {
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.isNullable ?? schema.type.contains('null'),
+        examples: exampleImporter.fromSchema(schema),
       );
 
       _logModelAdded(aliasModel);
@@ -1094,6 +1162,7 @@ class ModelImporter {
         name: refName,
         model: AnyModel(context: rootContext),
         context: rootContext,
+        examples: const [],
       );
       _placeholders[refName] = placeholder;
       return placeholder;
@@ -1198,6 +1267,7 @@ class ModelImporter {
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.isNullable ?? schema.type.contains('null'),
+        examples: exampleImporter.fromSchema(schema),
       );
 
       _logModelAdded(aliasModel);
@@ -1248,6 +1318,7 @@ class ModelImporter {
       isNullable: schema.isNullable ?? schema.type.contains('null'),
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
     );
 
     _addModelToSet(allOfModel);
@@ -1308,6 +1379,7 @@ class ModelImporter {
             model: valueModel,
             context: mapContext,
             isNullable: true,
+            examples: const [],
           );
         }
       }
@@ -1318,6 +1390,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? hasNullType,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        examples: exampleImporter.fromSchema(schema),
       );
       if (name != null) {
         _logModelAdded(model);
@@ -1355,6 +1428,7 @@ class ModelImporter {
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         xDartEnum: schema.xDartEnum,
+        examples: exampleImporter.fromSchema(schema),
       ),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
@@ -1370,6 +1444,7 @@ class ModelImporter {
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         xDartEnum: schema.xDartEnum,
+        examples: exampleImporter.fromSchema(schema),
       ),
       'integer' => IntegerModel(context: context),
       'boolean' => BooleanModel(context: context),
@@ -1385,6 +1460,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? hasNullType,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        examples: exampleImporter.fromSchema(schema),
       );
       _logModelAdded(model);
       models.add(model);
@@ -1439,6 +1515,8 @@ class ModelImporter {
         additionalProperties: schema.additionalProperties,
         isReadOnly: schema.isReadOnly,
         isWriteOnly: schema.isWriteOnly,
+        example: schema.example,
+        examples: schema.examples,
       );
       return (
         discriminatorValue: null,
@@ -1454,6 +1532,7 @@ class ModelImporter {
       isDeprecated: schema.isDeprecated ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
     );
 
     _addModelToSet(oneOfModel);
@@ -1476,6 +1555,7 @@ class ModelImporter {
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
     );
 
     if (name != null && models.none((m) => m is NamedModel && m.name == name)) {
@@ -1505,6 +1585,7 @@ class ModelImporter {
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
     );
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
@@ -1555,6 +1636,7 @@ class ModelImporter {
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
     );
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
@@ -1601,6 +1683,7 @@ class ModelImporter {
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
     );
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
@@ -1727,6 +1810,7 @@ class ModelImporter {
           model: valueModel,
           context: context,
           isNullable: true,
+          examples: const [],
         );
       }
       return TypedAdditionalProperties(valueModel: valueModel);
@@ -1766,6 +1850,7 @@ class ModelImporter {
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
+      examples: exampleImporter.fromSchema(schema),
     );
 
     if (schema.not != null) {
@@ -1812,6 +1897,7 @@ class ModelImporter {
         isReadOnly: isReadOnly,
         isWriteOnly: isWriteOnly,
         description: description,
+        examples: exampleImporter.fromSchema(propertySchema),
       );
 
       // Apply x-dart-name vendor extension to property.
@@ -1832,6 +1918,7 @@ class ModelImporter {
     Context context, {
     required String? description,
     required bool isDeprecated,
+    required List<Example> examples,
     bool isReadOnly = false,
     bool isWriteOnly = false,
     List<String>? xDartEnum,
@@ -1875,6 +1962,7 @@ class ModelImporter {
       description: description,
       isReadOnly: isReadOnly,
       isWriteOnly: isWriteOnly,
+      examples: examples,
     );
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {

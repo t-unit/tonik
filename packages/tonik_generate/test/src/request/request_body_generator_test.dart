@@ -53,6 +53,7 @@ void main() {
             model: StringModel(context: testContext),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
         },
       );
@@ -75,11 +76,13 @@ void main() {
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
             },
           ),
@@ -104,11 +107,13 @@ void main() {
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         );
@@ -137,11 +142,13 @@ void main() {
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: StringModel(context: testContext),
               contentType: ContentType.json,
               rawContentType: 'application/json+problem',
+              examples: const [],
             ),
           },
         );
@@ -178,11 +185,13 @@ void main() {
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
+                examples: const [],
               ),
             },
           );
@@ -215,14 +224,17 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
+                examples: const [],
               ),
             },
           );
@@ -258,11 +270,13 @@ void main() {
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
+                examples: const [],
               ),
             },
           );
@@ -292,14 +306,17 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: StringModel(context: testContext),
                 contentType: ContentType.json,
                 rawContentType: 'application/json+problem',
+                examples: const [],
               ),
             },
           );

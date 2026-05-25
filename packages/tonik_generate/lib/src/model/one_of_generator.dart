@@ -339,6 +339,7 @@ class OneOfGenerator {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
         final jsonValueBuilt = buildToJsonPropertyExpression(
           'value',

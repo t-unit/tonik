@@ -33,6 +33,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -77,6 +78,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -120,6 +122,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -167,6 +170,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -205,6 +209,7 @@ void main() {
         model: IntegerModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -247,6 +252,7 @@ void main() {
         model: BooleanModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -290,6 +296,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final cookieParam = CookieParameterObject(
@@ -302,6 +309,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -344,6 +352,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final queryParam = QueryParameterObject(
@@ -358,6 +367,7 @@ void main() {
         model: StringModel(context: context),
         encoding: QueryParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final headerParam = RequestHeaderObject(
@@ -371,6 +381,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final cookieParam = CookieParameterObject(
@@ -383,6 +394,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -434,10 +446,12 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
               isDeprecated: false,
+              examples: const [],
             ),
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
@@ -455,10 +469,12 @@ void main() {
                     isRequired: true,
                     isDeprecated: false,
                     encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
                   ),
                 },
               ),
             },
+            examples: const [],
           ),
         },
       );
@@ -512,10 +528,12 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
               isDeprecated: false,
+              examples: const [],
             ),
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
@@ -533,6 +551,7 @@ void main() {
                     isRequired: true,
                     isDeprecated: false,
                     encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
                   ),
                   'X-Custom-Tag': ResponseHeaderObject(
                     name: 'X-Custom-Tag',
@@ -543,10 +562,12 @@ void main() {
                     isRequired: false,
                     isDeprecated: false,
                     encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
                   ),
                 },
               ),
             },
+            examples: const [],
           ),
         },
       );
@@ -608,10 +629,12 @@ void main() {
                     isRequired: false,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               contentType: ContentType.multipart,
               rawContentType: 'multipart/form-data',
@@ -629,10 +652,12 @@ void main() {
                       isRequired: true,
                       isDeprecated: false,
                       encoding: ResponseHeaderEncoding.simple,
+                      examples: const [],
                     ),
                   },
                 ),
               },
+              examples: const [],
             ),
           },
         );
@@ -685,10 +710,12 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
               isDeprecated: false,
+              examples: const [],
             ),
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
@@ -706,6 +733,7 @@ void main() {
                     isRequired: false,
                     isDeprecated: false,
                     encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
                   ),
                   'X-Custom': ResponseHeaderObject(
                     name: 'X-Custom',
@@ -716,10 +744,12 @@ void main() {
                     isRequired: false,
                     isDeprecated: false,
                     encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
                   ),
                 },
               ),
             },
+            examples: const [],
           ),
         },
       );
@@ -771,10 +801,12 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
               isDeprecated: false,
+              examples: const [],
             ),
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
@@ -784,6 +816,7 @@ void main() {
                 rawContentType: 'text/plain',
               ),
             },
+            examples: const [],
           ),
         },
       );
@@ -836,10 +869,12 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
               isDeprecated: false,
+              examples: const [],
             ),
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
@@ -857,10 +892,12 @@ void main() {
                     isRequired: true,
                     isDeprecated: false,
                     encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
                   ),
                 },
               ),
             },
+            examples: const [],
           ),
         },
       );
@@ -877,6 +914,7 @@ void main() {
         model: StringModel(context: context),
         encoding: QueryParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -930,10 +968,12 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
               isDeprecated: false,
+              examples: const [],
             ),
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
@@ -951,10 +991,12 @@ void main() {
                     isRequired: false,
                     isDeprecated: true,
                     encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
                   ),
                 },
               ),
             },
+            examples: const [],
           ),
         },
       );
@@ -999,6 +1041,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         encoding: ResponseHeaderEncoding.simple,
+        examples: const [],
       );
 
       final bodyModel = ClassModel(
@@ -1011,9 +1054,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final requestBody = RequestBodyObject(
@@ -1039,6 +1084,7 @@ void main() {
                 },
               ),
             },
+            examples: const [],
           ),
         },
       );
@@ -1096,6 +1142,7 @@ void main() {
           model: StringModel(context: context),
           encoding: QueryParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final requestBody = RequestBodyObject(
@@ -1110,9 +1157,11 @@ void main() {
                 properties: const [],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         );
@@ -1165,6 +1214,7 @@ void main() {
           model: StringModel(context: context),
           encoding: HeaderParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final requestBody = RequestBodyObject(
@@ -1179,9 +1229,11 @@ void main() {
                 properties: const [],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         );
@@ -1233,6 +1285,7 @@ void main() {
           model: StringModel(context: context),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final requestBody = RequestBodyObject(
@@ -1247,9 +1300,11 @@ void main() {
                 properties: const [],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         );
@@ -1302,6 +1357,7 @@ void main() {
           model: StringModel(context: context),
           encoding: QueryParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1345,6 +1401,7 @@ void main() {
         model: StringModel(context: context),
         encoding: QueryParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1390,6 +1447,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1435,6 +1493,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1479,6 +1538,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1528,6 +1588,7 @@ void main() {
           model: StringModel(context: context),
           encoding: QueryParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final requestBody = RequestBodyObject(
@@ -1542,9 +1603,11 @@ void main() {
                 properties: const [],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         );
@@ -1599,6 +1662,7 @@ void main() {
           model: StringModel(context: context),
           encoding: QueryParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(

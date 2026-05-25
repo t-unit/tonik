@@ -164,6 +164,7 @@ void main() {
           ),
         },
         isNullable: false,
+        examples: const [],
       );
 
       expect(
@@ -202,6 +203,7 @@ void main() {
           const EnumEntry(value: 'user'),
         },
         isNullable: false,
+        examples: const [],
       );
 
       expect(
@@ -236,6 +238,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        examples: const [],
       );
 
       expect(
@@ -270,6 +273,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        examples: const [],
       );
 
       expect(
@@ -302,6 +306,7 @@ void main() {
       final stringListModel = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       expect(
@@ -331,6 +336,7 @@ void main() {
       final intListModel = ListModel(
         content: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
 
       expect(
@@ -366,6 +372,7 @@ void main() {
         context: context,
         name: 'UserId',
         model: StringModel(context: context),
+        examples: const [],
       );
 
       expect(
@@ -426,6 +433,7 @@ void main() {
       final intListModel = ListModel(
         content: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
 
       expect(
@@ -455,6 +463,7 @@ void main() {
             const EnumEntry(value: 'user'),
           },
           isNullable: false,
+          examples: const [],
         );
 
         expect(
@@ -477,6 +486,7 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          examples: const [],
         );
 
         expect(
@@ -503,8 +513,13 @@ void main() {
             const EnumEntry(value: 'user'),
           },
           isNullable: false,
+          examples: const [],
         );
-        final listModel = ListModel(content: enumModel, context: context);
+        final listModel = ListModel(
+          content: enumModel,
+          context: context,
+          examples: const [],
+        );
 
         expect(
           buildSimpleValueExpression(
@@ -534,8 +549,13 @@ void main() {
             const EnumEntry(value: 'user'),
           },
           isNullable: false,
+          examples: const [],
         );
-        final listModel = ListModel(content: enumModel, context: context);
+        final listModel = ListModel(
+          content: enumModel,
+          context: context,
+          examples: const [],
+        );
 
         expect(
           buildSimpleValueExpression(
@@ -596,6 +616,7 @@ void main() {
           final listModel = ListModel(
             content: BinaryModel(context: context),
             context: context,
+            examples: const [],
           );
           expect(
             buildSimpleValueExpression(
@@ -618,6 +639,7 @@ void main() {
         final listModel = ListModel(
           content: BinaryModel(context: context),
           context: context,
+          examples: const [],
         );
         expect(
           buildSimpleValueExpression(
@@ -676,6 +698,7 @@ void main() {
           final listModel = ListModel(
             content: Base64Model(context: context),
             context: context,
+            examples: const [],
           );
           expect(
             buildSimpleValueExpression(
@@ -698,6 +721,7 @@ void main() {
         final listModel = ListModel(
           content: Base64Model(context: context),
           context: context,
+          examples: const [],
         );
         expect(
           buildSimpleValueExpression(
@@ -725,10 +749,12 @@ void main() {
             context: context,
             name: 'User',
             properties: const [],
+            examples: const [],
           );
           final listModel = ListModel(
             content: classModel,
             context: context,
+            examples: const [],
           );
           expect(
             buildSimpleValueExpression(
@@ -754,10 +780,12 @@ void main() {
             context: context,
             name: 'User',
             properties: const [],
+            examples: const [],
           );
           final listModel = ListModel(
             content: classModel,
             context: context,
+            examples: const [],
           );
           expect(
             buildSimpleValueExpression(
@@ -815,8 +843,10 @@ void main() {
             properties: [],
             context: context,
             isDeprecated: false,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
         expect(
           buildSimpleValueExpression(
@@ -837,8 +867,10 @@ void main() {
           content: ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
         expect(
           buildSimpleValueExpression(
@@ -861,8 +893,10 @@ void main() {
             content: MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           );
           expect(
             buildSimpleValueExpression(

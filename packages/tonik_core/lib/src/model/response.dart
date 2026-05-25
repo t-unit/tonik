@@ -132,12 +132,16 @@ class ResponseBody {
     required this.model,
     required this.rawContentType,
     required this.contentType,
+    required this.examples,
   });
 
   Model model;
   String rawContentType;
   ContentType contentType;
+  List<Example> examples;
 
   @override
-  String toString() => 'ResponseBody(model: $model, contentType: $contentType)';
+  String toString() =>
+      'ResponseBody(model: $model, contentType: $contentType, '
+      'examples: $examples)';
 }

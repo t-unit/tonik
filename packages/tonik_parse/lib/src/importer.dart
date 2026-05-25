@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/contact_importer.dart';
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/external_documentation_importer.dart';
 import 'package:tonik_parse/src/license_importer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
@@ -36,30 +37,36 @@ class Importer {
     // Detect and log OpenAPI version (permissive, no validation)
     _detectAndLogVersion(openApiObject.openapi);
 
+    final exampleImporter = ExampleImporter(openApiObject: openApiObject);
     final modelImporter = ModelImporter(
       openApiObject,
       contentMediaTypes: contentMediaTypes,
+      exampleImporter: exampleImporter,
     );
     final securitySchemeImporter = SecuritySchemeImporter(openApiObject);
     final responseHeaderImporter = ResponseHeaderImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
+      exampleImporter: exampleImporter,
     );
     final responseImporter = ResponseImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
       headerImporter: responseHeaderImporter,
       contentTypes: contentTypes,
+      exampleImporter: exampleImporter,
     );
     final parameterImporter = RequestParameterImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
+      exampleImporter: exampleImporter,
     );
     final requestBodyImporter = RequestBodyImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
       contentTypes: contentTypes,
       responseHeaderImporter: responseHeaderImporter,
+      exampleImporter: exampleImporter,
     );
     final operationImporter = OperationImporter(
       openApiObject: openApiObject,

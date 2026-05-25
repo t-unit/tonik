@@ -42,6 +42,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'count',
@@ -49,6 +50,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'label',
@@ -56,6 +58,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'created',
@@ -63,6 +66,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'amount',
@@ -70,6 +74,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'thumbnail',
@@ -77,9 +82,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final generatedClass = generator.generateClass(model);
       final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -154,6 +161,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       final model = ClassModel(
         isDeprecated: false,
@@ -165,9 +173,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final generatedClass = generator.generateClass(model);
       final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -225,6 +235,7 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'count',
@@ -232,6 +243,7 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'label',
@@ -239,6 +251,7 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'created',
@@ -246,6 +259,7 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'amount',
@@ -253,9 +267,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final generatedClass = generator.generateClass(model);
       final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -330,6 +346,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
         final model = ClassModel(
           isDeprecated: false,
@@ -341,9 +358,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
         final generatedClass = generator.generateClass(model);
         final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -406,11 +425,13 @@ void main() {
                 name: 'Address',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
         final model = ClassModel(
           isDeprecated: false,
@@ -422,9 +443,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
         final generatedClass = generator.generateClass(model);
         final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -479,14 +502,17 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
         final model = ClassModel(
           isDeprecated: false,
@@ -498,9 +524,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -534,6 +562,7 @@ void main() {
         name: 'UserId',
         model: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
       final model = ClassModel(
         isDeprecated: false,
@@ -545,9 +574,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final generatedClass = generator.generateClass(model);
       final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -604,11 +635,13 @@ void main() {
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'MyAlias',
         model: oneOfModel,
         context: context,
+        examples: const [],
       );
       final model = ClassModel(
         isDeprecated: false,
@@ -620,9 +653,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final generatedClass = generator.generateClass(model);
       final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -684,11 +719,14 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
         final model = ClassModel(
           isDeprecated: false,
@@ -700,9 +738,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
         final generatedClass = generator.generateClass(model);
         final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -738,8 +778,10 @@ void main() {
           model: ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
         final model = ClassModel(
           isDeprecated: false,
@@ -751,9 +793,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
         final generatedClass = generator.generateClass(model);
         final fromSimpleConstructor = generatedClass.constructors.firstWhere(
@@ -787,6 +831,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final model = ClassModel(
         isDeprecated: false,
@@ -798,6 +843,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'address',
@@ -805,9 +851,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -846,9 +894,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -910,9 +960,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -974,6 +1026,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'endpoint',
@@ -981,6 +1034,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'port',
@@ -988,6 +1042,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'callback',
@@ -995,9 +1050,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -1066,6 +1123,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'age',
@@ -1073,9 +1131,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -1122,6 +1182,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'address',
@@ -1130,13 +1191,16 @@ void main() {
                 name: 'Address',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -1168,6 +1232,7 @@ void main() {
         name: 'EmptyClass',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);

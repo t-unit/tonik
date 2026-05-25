@@ -87,6 +87,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -142,9 +143,11 @@ void main() {
       model: ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       ),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -205,9 +208,11 @@ void main() {
       model: ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       ),
       encoding: PathParameterEncoding.label,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -268,9 +273,11 @@ void main() {
       model: ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       ),
       encoding: PathParameterEncoding.matrix,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -335,9 +342,11 @@ void main() {
           model: StringModel(context: context),
           context: context,
           isNullable: true,
+          examples: const [],
         ),
         encoding: PathParameterEncoding.matrix,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -399,9 +408,11 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       ),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -463,9 +474,11 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       ),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -526,6 +539,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final labelParam = PathParameterObject(
@@ -539,6 +553,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.label,
       context: context,
+      examples: const [],
     );
 
     final matrixParam = PathParameterObject(
@@ -552,9 +567,11 @@ void main() {
       model: ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       ),
       encoding: PathParameterEncoding.matrix,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -615,12 +632,14 @@ void main() {
         const EnumEntry(value: 'guest'),
       },
       isNullable: false,
+      examples: const [],
     );
 
     final classModel = ClassModel(
       isDeprecated: false,
       context: context,
       properties: const [],
+      examples: const [],
     );
 
     final oneOfModel = OneOfModel(
@@ -635,6 +654,7 @@ void main() {
       },
       name: 'OneOfValue',
       discriminator: 'type',
+      examples: const [],
     );
 
     final enumParam = PathParameterObject(
@@ -648,6 +668,7 @@ void main() {
       model: enumModel,
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final classParam = PathParameterObject(
@@ -661,6 +682,7 @@ void main() {
       model: classModel,
       encoding: PathParameterEncoding.matrix,
       context: context,
+      examples: const [],
     );
 
     final oneOfParam = PathParameterObject(
@@ -674,6 +696,7 @@ void main() {
       model: oneOfModel,
       encoding: PathParameterEncoding.label,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -736,6 +759,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final animalIdParam = PathParameterObject(
@@ -749,6 +773,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -810,6 +835,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -868,9 +894,14 @@ void main() {
         const EnumEntry(value: 'BLUE'),
       },
       isNullable: false,
+      examples: const [],
     );
 
-    final listModel = ListModel(context: context, content: enumModel);
+    final listModel = ListModel(
+      context: context,
+      content: enumModel,
+      examples: const [],
+    );
 
     final pathParam = PathParameterObject(
       name: 'colors',
@@ -883,6 +914,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       model: listModel,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -938,9 +970,18 @@ void main() {
       isDeprecated: false,
       context: context,
       properties: const [],
+      examples: const [],
     );
-    final innerListModel = ListModel(context: context, content: innerModel);
-    final outerListModel = ListModel(context: context, content: innerListModel);
+    final innerListModel = ListModel(
+      context: context,
+      content: innerModel,
+      examples: const [],
+    );
+    final outerListModel = ListModel(
+      context: context,
+      content: innerListModel,
+      examples: const [],
+    );
 
     final pathParam = PathParameterObject(
       name: 'matrix',
@@ -953,6 +994,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       model: outerListModel,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1008,6 +1050,7 @@ void main() {
     final listModel = ListModel(
       context: context,
       content: StringModel(context: context),
+      examples: const [],
     );
 
     final pathParam = PathParameterObject(
@@ -1021,6 +1064,7 @@ void main() {
       encoding: PathParameterEncoding.matrix,
       model: listModel,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1073,6 +1117,7 @@ void main() {
     final listModel = ListModel(
       context: context,
       content: IntegerModel(context: context),
+      examples: const [],
     );
 
     final pathParam = PathParameterObject(
@@ -1086,6 +1131,7 @@ void main() {
       encoding: PathParameterEncoding.matrix,
       model: listModel,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1144,9 +1190,14 @@ void main() {
         const EnumEntry(value: 'PENDING'),
       },
       isNullable: false,
+      examples: const [],
     );
 
-    final listModel = ListModel(context: context, content: enumModel);
+    final listModel = ListModel(
+      context: context,
+      content: enumModel,
+      examples: const [],
+    );
 
     final pathParam = PathParameterObject(
       name: 'statuses',
@@ -1159,6 +1210,7 @@ void main() {
       encoding: PathParameterEncoding.matrix,
       model: listModel,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1214,8 +1266,13 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
-      final listModel = ListModel(context: context, content: classModel);
+      final listModel = ListModel(
+        context: context,
+        content: classModel,
+        examples: const [],
+      );
 
       final pathParam = PathParameterObject(
         name: 'filters',
@@ -1228,6 +1285,7 @@ void main() {
         encoding: PathParameterEncoding.matrix,
         model: listModel,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1281,8 +1339,13 @@ void main() {
     final innerListModel = ListModel(
       context: context,
       content: StringModel(context: context),
+      examples: const [],
     );
-    final outerListModel = ListModel(context: context, content: innerListModel);
+    final outerListModel = ListModel(
+      context: context,
+      content: innerListModel,
+      examples: const [],
+    );
 
     final pathParam = PathParameterObject(
       name: 'matrix',
@@ -1295,6 +1358,7 @@ void main() {
       encoding: PathParameterEncoding.matrix,
       model: outerListModel,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1356,6 +1420,7 @@ void main() {
       model: IntegerModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final param2 = PathParameterObject(
@@ -1369,6 +1434,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final param3 = PathParameterObject(
@@ -1382,6 +1448,7 @@ void main() {
       model: BooleanModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1477,6 +1544,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1528,6 +1596,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1580,6 +1649,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1633,6 +1703,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final bParam = PathParameterObject(
@@ -1646,6 +1717,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1699,6 +1771,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1750,6 +1823,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1801,6 +1875,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.label,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1852,6 +1927,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.matrix,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1903,6 +1979,7 @@ void main() {
       model: StringModel(context: context),
       encoding: PathParameterEncoding.simple,
       context: context,
+      examples: const [],
     );
 
     final operation = Operation(
@@ -1990,6 +2067,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2076,6 +2154,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2130,10 +2209,12 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2147,6 +2228,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2188,10 +2270,12 @@ void main() {
       final listValueModel = ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: listValueModel,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2205,6 +2289,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2254,14 +2339,17 @@ void main() {
               isDeprecated: false,
               context: context,
               properties: const [],
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: oneOfModel,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2275,6 +2363,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2330,13 +2419,16 @@ void main() {
             isDeprecated: false,
             context: context,
             properties: const [],
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: allOfModel,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2350,6 +2442,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2400,6 +2493,7 @@ void main() {
       final mapModel = MapModel(
         context: context,
         valueModel: StringModel(context: context),
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2413,6 +2507,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2453,6 +2548,7 @@ void main() {
       final mapModel = MapModel(
         context: context,
         valueModel: AnyModel(context: context),
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2466,6 +2562,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2522,10 +2619,12 @@ void main() {
             (discriminatorValue: null, model: IntegerModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
         final mapModel = MapModel(
           context: context,
           valueModel: oneOfModel,
+          examples: const [],
         );
 
         final pathParam = PathParameterObject(
@@ -2539,6 +2638,7 @@ void main() {
           model: mapModel,
           encoding: PathParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2596,10 +2696,12 @@ void main() {
             StringModel(context: context),
           },
           context: context,
+          examples: const [],
         );
         final mapModel = MapModel(
           context: context,
           valueModel: allOfModel,
+          examples: const [],
         );
 
         final pathParam = PathParameterObject(
@@ -2613,6 +2715,7 @@ void main() {
           model: mapModel,
           encoding: PathParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2665,15 +2768,18 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'MyMap',
         model: mapModel,
         context: context,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2687,6 +2793,7 @@ void main() {
         model: aliasModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2737,15 +2844,18 @@ void main() {
       final innerListModel = ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       );
       final listModel = ListModel(
         context: context,
         content: innerListModel,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'MyList',
         model: listModel,
         context: context,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2759,6 +2869,7 @@ void main() {
         model: aliasModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2809,10 +2920,12 @@ void main() {
       final innerListModel = ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2826,6 +2939,7 @@ void main() {
         encoding: PathParameterEncoding.matrix,
         model: outerListModel,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2867,15 +2981,18 @@ void main() {
       final innerListModel = ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'NestedListAlias',
         model: outerListModel,
         context: context,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2889,6 +3006,7 @@ void main() {
         encoding: PathParameterEncoding.matrix,
         model: aliasModel,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2930,15 +3048,18 @@ void main() {
       final innerListModel = ListModel(
         context: context,
         content: StringModel(context: context),
+        examples: const [],
       );
       final innerAlias = AliasModel(
         name: 'InnerListAlias',
         model: innerListModel,
         context: context,
+        examples: const [],
       );
       final outerListModel = ListModel(
         context: context,
         content: innerAlias,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -2952,6 +3073,7 @@ void main() {
         encoding: PathParameterEncoding.matrix,
         model: outerListModel,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2994,10 +3116,12 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -3011,6 +3135,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3060,6 +3185,7 @@ void main() {
         model: NeverModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3109,6 +3235,7 @@ void main() {
         model: BinaryModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3150,6 +3277,7 @@ void main() {
       final listModel = ListModel(
         context: context,
         content: NeverModel(context: context),
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -3163,6 +3291,7 @@ void main() {
         model: listModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3204,6 +3333,7 @@ void main() {
       final listModel = ListModel(
         context: context,
         content: BinaryModel(context: context),
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -3217,6 +3347,7 @@ void main() {
         model: listModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3259,6 +3390,7 @@ void main() {
         name: 'NeverAlias',
         model: NeverModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -3272,6 +3404,7 @@ void main() {
         model: aliasModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3323,11 +3456,13 @@ void main() {
         name: 'NeverInner',
         model: NeverModel(context: context),
         context: context,
+        examples: const [],
       );
       final outerAlias = AliasModel(
         name: 'NeverOuter',
         model: innerAlias,
         context: context,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -3341,6 +3476,7 @@ void main() {
         model: outerAlias,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3392,20 +3528,24 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
+        examples: const [],
       );
       final innerAlias = AliasModel(
         name: 'MapInner',
         model: mapModel,
         context: context,
+        examples: const [],
       );
       final outerAlias = AliasModel(
         name: 'MapOuter',
         model: innerAlias,
         context: context,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -3419,6 +3559,7 @@ void main() {
         model: outerAlias,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3477,16 +3618,19 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final classModel = ClassModel(
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
+        examples: const [],
       );
       final badParam = PathParameterObject(
         name: 'badMap',
@@ -3499,6 +3643,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -3544,10 +3689,12 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
       final mapModel = MapModel(
         context: context,
         valueModel: classModel,
+        examples: const [],
       );
 
       final pathParam = PathParameterObject(
@@ -3561,6 +3708,7 @@ void main() {
         model: mapModel,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(

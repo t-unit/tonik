@@ -73,6 +73,7 @@ class ClassGenerator {
               name: '\$Raw$className',
               model: model,
               context: model.context,
+              examples: const [],
             ),
           )
         : className;

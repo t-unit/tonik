@@ -31,6 +31,7 @@ void main() {
         },
         isNullable: false,
         context: Context.initial().push('test'),
+        examples: const [],
       );
 
       final generated = generator.generateEnum(model, 'Color');
@@ -63,6 +64,7 @@ void main() {
         },
         isNullable: false,
         context: Context.initial().push('test'),
+        examples: const [],
       );
 
       final result = generator.generate(model);
@@ -130,6 +132,7 @@ void main() {
         },
         isNullable: true,
         context: Context.initial(),
+        examples: const [],
       );
 
       final result = generator.generate(model);
@@ -164,6 +167,7 @@ void main() {
         },
         isNullable: true,
         context: Context.initial(),
+        examples: const [],
       );
 
       final generated = generator.generateEnum(model, 'Status');
@@ -191,6 +195,7 @@ void main() {
         },
         isNullable: false,
         context: Context.initial(),
+        examples: const [],
       );
 
       final result = generator.generate(model);
@@ -221,6 +226,7 @@ void main() {
         },
         isNullable: false,
         context: Context.initial().push('test'),
+        examples: const [],
       );
 
       final result = generator.generate(model);
@@ -291,6 +297,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Placeholder');
@@ -359,6 +366,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final result = generator.generate(model);
@@ -385,6 +393,7 @@ void main() {
         },
         isNullable: false,
         context: Context.initial().push('test'),
+        examples: const [],
       );
 
       expect(() => generator.generate(model), throwsA(isA<ArgumentError>()));
@@ -402,6 +411,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         expect(
@@ -424,6 +434,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -442,6 +453,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -463,6 +475,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -482,6 +495,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -501,6 +515,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -519,6 +534,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -540,6 +556,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -563,6 +580,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -600,6 +618,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -636,6 +655,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -675,6 +695,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -724,6 +745,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -772,6 +794,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -797,6 +820,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -833,6 +857,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -876,6 +901,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -904,6 +930,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -933,6 +960,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -964,6 +992,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1013,6 +1042,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1061,6 +1091,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1086,6 +1117,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1122,6 +1154,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1179,6 +1212,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1207,6 +1241,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1236,6 +1271,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1267,6 +1303,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1309,6 +1346,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1337,6 +1375,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Priority');
@@ -1367,6 +1406,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1419,6 +1459,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1456,6 +1497,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1494,6 +1536,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1534,6 +1577,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -1585,6 +1629,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1628,6 +1673,7 @@ void main() {
           },
           isNullable: true,
           context: Context.initial(),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1677,6 +1723,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1708,6 +1755,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1749,6 +1797,7 @@ void main() {
             value: -1,
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Code');
@@ -1787,6 +1836,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1818,6 +1868,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1850,6 +1901,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1882,6 +1934,7 @@ void main() {
             value: 'fallback',
             nameOverride: 'fallback',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1906,6 +1959,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1926,6 +1980,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -1958,6 +2013,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2011,6 +2067,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2042,6 +2099,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2072,6 +2130,7 @@ void main() {
             value: 'unknown',
             nameOverride: 'unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2098,6 +2157,7 @@ void main() {
               value: 'fallback',
               nameOverride: 'fallback',
             ),
+            examples: const [],
           );
 
           final generated = generator.generateEnum(model, 'Status');
@@ -2138,6 +2198,7 @@ void main() {
               value: 'unknown',
               nameOverride: 'unknown',
             ),
+            examples: const [],
           );
 
           final generated = generator.generateEnum(model, 'Status');
@@ -2179,6 +2240,7 @@ void main() {
               value: 'fallback',
               nameOverride: 'fallback',
             ),
+            examples: const [],
           );
 
           final generated = generator.generateEnum(model, 'Status');
@@ -2215,6 +2277,7 @@ void main() {
               value: 'unknown',
               nameOverride: 'fallbackUnknown',
             ),
+            examples: const [],
           );
 
           final generated = generator.generateEnum(model, 'Status');
@@ -2270,6 +2333,7 @@ void main() {
               value: 'unknown',
               nameOverride: 'unknown',
             ),
+            examples: const [],
           );
 
           final generated = generator.generateEnum(model, 'Status');
@@ -2302,6 +2366,7 @@ void main() {
             value: 'enum',
             nameOverride: 'enum',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Type');
@@ -2330,6 +2395,7 @@ void main() {
             value: r'$unknown',
             nameOverride: r'$unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2358,6 +2424,7 @@ void main() {
             value: '123unknown',
             nameOverride: '123unknown',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2386,6 +2453,7 @@ void main() {
             value: 'un-known',
             nameOverride: 'un-known',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2414,6 +2482,7 @@ void main() {
             value: 'un known',
             nameOverride: 'un known',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2442,6 +2511,7 @@ void main() {
             value: 'un.known',
             nameOverride: 'un.known',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2470,6 +2540,7 @@ void main() {
             value: '',
             nameOverride: 'empty',
           ),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Status');
@@ -2500,6 +2571,7 @@ void main() {
               value: 'un-known',
               nameOverride: 'un-known',
             ),
+            examples: const [],
           );
 
           final generated = generator.generateEnum(model, 'Status');
@@ -2532,6 +2604,7 @@ void main() {
           },
           isNullable: false,
           context: Context.initial().push('test'),
+          examples: const [],
         );
 
         final generated = generator.generateEnum(model, 'Color');
@@ -2562,6 +2635,7 @@ void main() {
         },
         isNullable: false,
         context: Context.initial().push('test'),
+        examples: const [],
       );
 
       final generated = generator.generateEnum(model, 'Color');

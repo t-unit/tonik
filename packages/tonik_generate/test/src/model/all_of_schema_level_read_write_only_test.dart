@@ -50,9 +50,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         ),
         ClassModel(
           name: 'EventMeta',
@@ -64,12 +66,15 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         ),
       },
       context: context,
+      examples: const [],
     );
   }
 
@@ -91,9 +96,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         ),
         ClassModel(
           name: 'CommandPayload',
@@ -105,12 +112,15 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         ),
       },
       context: context,
+      examples: const [],
     );
   }
 

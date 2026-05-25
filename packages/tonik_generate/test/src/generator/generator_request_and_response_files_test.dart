@@ -30,11 +30,13 @@ void main() {
             model: StringModel(context: ctx),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
           RequestContent(
             model: StringModel(context: ctx),
             contentType: ContentType.json,
             rawContentType: 'application/problem+json',
+            examples: const [],
           ),
         },
       );
@@ -48,11 +50,13 @@ void main() {
             model: StringModel(context: ctx),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
           ResponseBody(
             model: StringModel(context: ctx),
             rawContentType: 'application/problem+json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
         headers: const {},
@@ -67,6 +71,7 @@ void main() {
             model: StringModel(context: ctx),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
         headers: {
@@ -79,6 +84,7 @@ void main() {
             isDeprecated: false,
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
           ),
         },
       );

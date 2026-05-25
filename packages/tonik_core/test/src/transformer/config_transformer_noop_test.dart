@@ -13,6 +13,7 @@ void main() {
         isNullable: false,
         context: ctx.push('Status'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final idProperty = Property(
@@ -21,6 +22,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       final petModel = ClassModel(
@@ -28,6 +30,7 @@ void main() {
         properties: [idProperty],
         context: ctx.push('Pet'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final petTag = Tag(name: 'pet', description: 'Pet tag');
@@ -44,6 +47,7 @@ void main() {
         model: IntegerModel(context: ctx.push('petId')),
         encoding: QueryParameterEncoding.form,
         context: ctx.push('components').push('parameters').push('petId'),
+        examples: const [],
       );
 
       final getPet = Operation(

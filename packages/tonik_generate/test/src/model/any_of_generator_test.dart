@@ -48,10 +48,12 @@ void main() {
               name: 'Details',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -96,6 +98,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -118,6 +121,7 @@ void main() {
             (discriminatorValue: null, model: StringModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -138,6 +142,7 @@ void main() {
             (discriminatorValue: null, model: StringModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -157,6 +162,7 @@ void main() {
             (discriminatorValue: null, model: StringModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -174,6 +180,7 @@ void main() {
             (discriminatorValue: null, model: StringModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -196,12 +203,14 @@ void main() {
                 name: 'User',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
             (discriminatorValue: null, model: StringModel(context: context)),
             (discriminatorValue: null, model: IntegerModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -245,6 +254,7 @@ void main() {
           },
           isNullable: false,
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -258,6 +268,7 @@ void main() {
             (discriminatorValue: null, model: DecimalModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -342,6 +353,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -395,6 +407,7 @@ void main() {
             (discriminatorValue: null, model: IntegerModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -423,6 +436,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -457,12 +471,14 @@ void main() {
         name: 'UserProfile',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final classB = ClassModel(
         isDeprecated: false,
         name: 'AdminProfile',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -473,6 +489,7 @@ void main() {
           (discriminatorValue: null, model: classB),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -512,9 +529,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -525,6 +544,7 @@ void main() {
           (discriminatorValue: null, model: classModel),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -568,9 +588,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final companyModel = ClassModel(
@@ -583,9 +605,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -603,6 +627,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -676,9 +701,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final companyModel = ClassModel(
@@ -691,9 +718,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -711,6 +740,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -797,6 +827,7 @@ String toForm({
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -854,9 +885,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -871,6 +904,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -952,6 +986,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
               name: 'User',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -961,10 +996,12 @@ String toSimple({required bool explode, required bool allowEmpty}) {
               name: 'Admin',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1003,6 +1040,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1012,6 +1050,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
           (discriminatorValue: 'user', model: userModel),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1047,6 +1086,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final admin = ClassModel(
@@ -1054,6 +1094,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         name: 'Admin',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1064,6 +1105,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           (discriminatorValue: 'admin', model: admin),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1107,9 +1149,11 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1123,6 +1167,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1171,10 +1216,12 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
               name: 'Data',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1184,6 +1231,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           (discriminatorValue: 'inner', model: anyOfModel),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1246,10 +1294,12 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
                 name: 'Data',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -1260,6 +1310,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -1331,6 +1382,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final classModel = ClassModel(
@@ -1338,6 +1390,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           name: 'ComplexData',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -1348,6 +1401,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
             (discriminatorValue: 'complex', model: classModel),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -1395,6 +1449,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           name: 'ComplexData',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -1408,6 +1463,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
             (discriminatorValue: 'complex', model: classModel),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -1455,6 +1511,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           (discriminatorValue: 'number', model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1484,12 +1541,14 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final admin = ClassModel(
         isDeprecated: false,
         name: 'Admin',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1500,6 +1559,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
           (discriminatorValue: 'admin', model: admin),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1552,10 +1612,12 @@ Map<String, String> parameterProperties({
             model: ListModel(
               content: IntegerModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1603,6 +1665,7 @@ Map<String, String> parameterProperties({
               name: 'Data',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -1611,6 +1674,7 @@ Map<String, String> parameterProperties({
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1620,6 +1684,7 @@ Map<String, String> parameterProperties({
           (discriminatorValue: 'inner', model: innerAnyOf),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1685,9 +1750,11 @@ Map<String, String> parameterProperties({
             },
             isNullable: false,
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1699,6 +1766,7 @@ Map<String, String> parameterProperties({
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1739,15 +1807,18 @@ Map<String, String> parameterProperties({
             name: 'Model1',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
             name: 'Model2',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1759,6 +1830,7 @@ Map<String, String> parameterProperties({
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1800,9 +1872,11 @@ Map<String, String> parameterProperties({
             name: 'Model1',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1814,6 +1888,7 @@ Map<String, String> parameterProperties({
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1854,6 +1929,7 @@ Map<String, String> parameterProperties({
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1865,6 +1941,7 @@ Map<String, String> parameterProperties({
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1907,6 +1984,7 @@ Map<String, String> parameterProperties({
               name: 'Model1',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -1914,11 +1992,13 @@ Map<String, String> parameterProperties({
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -1930,6 +2010,7 @@ Map<String, String> parameterProperties({
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -1974,6 +2055,7 @@ Map<String, String> parameterProperties({
               name: 'Cat',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -1983,11 +2065,13 @@ Map<String, String> parameterProperties({
               name: 'Dog',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
         isNullable: true,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2017,6 +2101,7 @@ Map<String, String> parameterProperties({
               name: 'Cat',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -2026,10 +2111,12 @@ Map<String, String> parameterProperties({
               name: 'Dog',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2057,6 +2144,7 @@ Map<String, String> parameterProperties({
         },
         context: context,
         isNullable: true,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2087,6 +2175,7 @@ Map<String, String> parameterProperties({
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2113,6 +2202,7 @@ Map<String, String> parameterProperties({
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2154,6 +2244,7 @@ Map<String, String> parameterProperties({
           (discriminatorValue: 'number', model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2204,6 +2295,7 @@ Map<String, String> parameterProperties({
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2255,6 +2347,7 @@ Map<String, String> parameterProperties({
             model: MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -2263,6 +2356,7 @@ Map<String, String> parameterProperties({
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2292,6 +2386,7 @@ Map<String, String> parameterProperties({
             model: MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -2300,6 +2395,7 @@ Map<String, String> parameterProperties({
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2329,6 +2425,7 @@ Map<String, String> parameterProperties({
             model: MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -2337,6 +2434,7 @@ Map<String, String> parameterProperties({
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2367,10 +2465,12 @@ Map<String, String> parameterProperties({
             model: MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2400,6 +2500,7 @@ Map<String, String> parameterProperties({
             model: MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -2408,6 +2509,7 @@ Map<String, String> parameterProperties({
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2438,6 +2540,7 @@ Map<String, String> parameterProperties({
               name: 'Tags',
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -2446,6 +2549,7 @@ Map<String, String> parameterProperties({
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2470,6 +2574,7 @@ Map<String, String> parameterProperties({
             model: MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -2478,6 +2583,7 @@ Map<String, String> parameterProperties({
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2508,9 +2614,11 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -2521,6 +2629,7 @@ Map<String, String> parameterProperties({
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -2589,9 +2698,11 @@ Object? toJson() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -2602,6 +2713,7 @@ Object? toJson() {
           },
           discriminator: "it's-a-type",
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -2645,6 +2757,7 @@ Object? toJson() {
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -2653,6 +2766,7 @@ Object? toJson() {
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = immutableGenerator.generateClass(model);
@@ -2705,9 +2819,11 @@ bool operator ==(Object other) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -2718,6 +2834,7 @@ bool operator ==(Object other) {
             (discriminatorValue: null, model: Base64Model(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -2786,9 +2903,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -2799,6 +2918,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
             (discriminatorValue: null, model: Base64Model(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -2873,9 +2993,11 @@ String toForm({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -2886,6 +3008,7 @@ String toForm({
             (discriminatorValue: null, model: Base64Model(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -2953,9 +3076,11 @@ String toLabel({required bool explode, required bool allowEmpty}) {
           isRequired: false,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ],
       context: context,
+      examples: const [],
     );
 
     AnyOfModel makeMixedFilter() => AnyOfModel(
@@ -2966,6 +3091,7 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         (discriminatorValue: null, model: AnyModel(context: context)),
       },
       context: context,
+      examples: const [],
     );
 
     test('generates Object? field for AnyModel variant', () {
@@ -3462,9 +3588,11 @@ void wrap() {
             isRequired: false,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -3475,6 +3603,7 @@ void wrap() {
           (discriminatorValue: null, model: NeverModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -3494,6 +3623,7 @@ void wrap() {
           (discriminatorValue: null, model: AnyModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -3511,6 +3641,7 @@ void wrap() {
           (discriminatorValue: null, model: AnyModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -3546,6 +3677,7 @@ void wrap() {
           (discriminatorValue: null, model: AnyModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -3581,6 +3713,7 @@ EncodingShape get currentEncodingShape {
           (discriminatorValue: null, model: AnyModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -3637,6 +3770,7 @@ Object? toJson() {
           name: 'Tree',
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         tree.valueModel = tree;
         final classA = ClassModel(
@@ -3644,6 +3778,7 @@ Object? toJson() {
           name: 'ClassA',
           properties: const [],
           context: context,
+          examples: const [],
         );
         final model = AnyOfModel(
           isDeprecated: false,
@@ -3653,6 +3788,7 @@ Object? toJson() {
             (discriminatorValue: null, model: classA),
           },
           context: context,
+          examples: const [],
         );
 
         final clazz = generator.generateClass(model);
@@ -3730,6 +3866,7 @@ Object? toJson() {
           name: 'Tree',
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         tree.valueModel = tree;
         final classA = ClassModel(
@@ -3737,6 +3874,7 @@ Object? toJson() {
           name: 'ClassA',
           properties: const [],
           context: context,
+          examples: const [],
         );
         final model = AnyOfModel(
           isDeprecated: false,
@@ -3746,6 +3884,7 @@ Object? toJson() {
             (discriminatorValue: null, model: classA),
           },
           context: context,
+          examples: const [],
         );
 
         final clazz = generator.generateClass(model);
@@ -3803,11 +3942,13 @@ Object? toJson() {
           name: 'A',
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         final b = MapModel(
           name: 'B',
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         a.valueModel = b;
         b.valueModel = a;
@@ -3820,6 +3961,7 @@ Object? toJson() {
             (discriminatorValue: null, model: b),
           },
           context: context,
+          examples: const [],
         );
 
         final clazz = generator.generateClass(model);

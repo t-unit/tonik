@@ -38,6 +38,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('name', property);
@@ -54,6 +55,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('name', property);
@@ -70,6 +72,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('count', property);
@@ -86,6 +89,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('count', property);
@@ -102,6 +106,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('price', property);
@@ -118,6 +123,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('price', property);
@@ -134,6 +140,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('value', property);
@@ -150,6 +157,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('active', property);
@@ -166,6 +174,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('active', property);
@@ -182,6 +191,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('timestamp', property);
@@ -198,6 +208,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('timestamp', property);
@@ -214,6 +225,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -230,6 +242,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -246,6 +259,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('amount', property);
@@ -262,6 +276,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('amount', property);
@@ -278,6 +293,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -294,6 +310,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -314,6 +331,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           );
 
           final result = buildToFormPropertyExpression('name', property);
@@ -335,6 +353,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           );
 
           final result = buildToFormPropertyExpression('count', property);
@@ -356,6 +375,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           );
 
           final result = buildToFormPropertyExpression('price', property);
@@ -377,6 +397,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           );
 
           final result = buildToFormPropertyExpression('active', property);
@@ -398,6 +419,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           );
 
           final result = buildToFormPropertyExpression('timestamp', property);
@@ -418,6 +440,7 @@ void main() {
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -438,6 +461,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           );
 
           final result = buildToFormPropertyExpression('amount', property);
@@ -457,6 +481,7 @@ void main() {
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -476,10 +501,12 @@ void main() {
           model: ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('items', property);
@@ -497,10 +524,12 @@ void main() {
             name: 'NestedClass',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('nested', property);
@@ -522,10 +551,12 @@ void main() {
             },
             isNullable: false,
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('status', property);
@@ -544,10 +575,12 @@ void main() {
             name: 'UserId',
             model: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('userId', property);
@@ -564,10 +597,12 @@ void main() {
             name: 'UserId',
             model: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('userId', property);
@@ -585,12 +620,15 @@ void main() {
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('users', property);
@@ -609,6 +647,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -625,6 +664,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -671,6 +711,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -687,6 +728,7 @@ void main() {
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -706,10 +748,12 @@ void main() {
             name: 'AnyAlias',
             model: AnyModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -730,6 +774,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression('name', property);
@@ -746,6 +791,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression(
@@ -767,6 +813,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression(
@@ -790,6 +837,7 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           );
 
           final result = buildToFormPropertyExpression(
@@ -812,6 +860,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression(
@@ -833,6 +882,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression(
@@ -852,6 +902,7 @@ void main() {
           name: 'UserID',
           model: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         final property = Property(
           name: 'userId',
@@ -859,6 +910,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression(
@@ -882,6 +934,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression(
@@ -902,6 +955,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
 
         final result = buildToFormPropertyExpression(

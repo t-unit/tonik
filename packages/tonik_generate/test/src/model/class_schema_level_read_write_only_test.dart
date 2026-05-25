@@ -44,6 +44,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
         Property(
           name: 'version',
@@ -51,6 +52,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
         Property(
           name: 'region',
@@ -58,9 +60,11 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         ),
       ],
       context: context,
+      examples: const [],
     );
   }
 
@@ -77,6 +81,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
         Property(
           name: 'confirmPassword',
@@ -84,6 +89,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
         Property(
           name: 'hint',
@@ -91,9 +97,11 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         ),
       ],
       context: context,
+      examples: const [],
     );
   }
 
@@ -356,6 +364,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'token',
@@ -364,9 +373,11 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             isWriteOnly: true,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);

@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 
@@ -18,7 +19,10 @@ void main() {
       };
 
       final openApiDoc = OpenApiObject.fromJson(fileContent);
-      final modelImporter = ModelImporter(openApiDoc)..import();
+      final modelImporter = ModelImporter(
+        openApiDoc,
+        exampleImporter: ExampleImporter(openApiObject: openApiDoc),
+      )..import();
 
       final model = modelImporter.models.whereType<NamedModel>().firstWhere(
         (m) => m.name == 'AnyValue',
@@ -42,7 +46,10 @@ void main() {
       };
 
       final openApiDoc = OpenApiObject.fromJson(fileContent);
-      final modelImporter = ModelImporter(openApiDoc)..import();
+      final modelImporter = ModelImporter(
+        openApiDoc,
+        exampleImporter: ExampleImporter(openApiObject: openApiDoc),
+      )..import();
 
       final model = modelImporter.models.whereType<NamedModel>().firstWhere(
         (m) => m.name == 'NeverValid',
@@ -72,7 +79,10 @@ void main() {
       };
 
       final openApiDoc = OpenApiObject.fromJson(fileContent);
-      final modelImporter = ModelImporter(openApiDoc)..import();
+      final modelImporter = ModelImporter(
+        openApiDoc,
+        exampleImporter: ExampleImporter(openApiObject: openApiDoc),
+      )..import();
 
       final model = modelImporter.models.whereType<ClassModel>().firstWhere(
         (m) => m.name == 'FlexibleObject',
@@ -105,7 +115,10 @@ void main() {
       };
 
       final openApiDoc = OpenApiObject.fromJson(fileContent);
-      final modelImporter = ModelImporter(openApiDoc)..import();
+      final modelImporter = ModelImporter(
+        openApiDoc,
+        exampleImporter: ExampleImporter(openApiObject: openApiDoc),
+      )..import();
 
       final model = modelImporter.models.whereType<NamedModel>().firstWhere(
         (m) => m.name == 'FlexibleArray',

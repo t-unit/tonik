@@ -44,4 +44,6 @@ Schema _$SchemaFromJson(Map<String, dynamic> json) => Schema(
   ),
   isReadOnly: json['readOnly'] as bool?,
   isWriteOnly: json['writeOnly'] as bool?,
+  example: json['example'],
+  examples: json['examples'] as List<dynamic>?,
 );

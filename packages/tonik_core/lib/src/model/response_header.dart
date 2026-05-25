@@ -30,6 +30,7 @@ sealed class ResponseHeader {
           isDeprecated: header.isDeprecated,
           encoding: header.encoding,
           context: context,
+          examples: header.examples,
         );
       case final ResponseHeaderAlias alias:
         return alias.header.resolve(name: name ?? alias.name);
@@ -79,6 +80,7 @@ class ResponseHeaderObject extends ResponseHeader {
     required this.isRequired,
     required this.isDeprecated,
     required this.encoding,
+    required this.examples,
   });
 
   @override
@@ -89,10 +91,12 @@ class ResponseHeaderObject extends ResponseHeader {
   bool isRequired;
   bool isDeprecated;
   ResponseHeaderEncoding encoding;
+  List<Example> examples;
 
   @override
   String toString() =>
       'HeaderObject{name: $name, description: $description, '
       'explode: $explode, model: $model, isRequired: $isRequired, '
-      'isDeprecated: $isDeprecated, encoding: $encoding, context: $context}';
+      'isDeprecated: $isDeprecated, encoding: $encoding, context: $context, '
+      'examples: $examples}';
 }

@@ -129,6 +129,7 @@ void main() {
         isNullable: false,
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -261,6 +262,7 @@ void main() {
         name: 'StringAlias',
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -285,6 +287,7 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
 
       final expression = buildUriEncodeExpression(
@@ -305,6 +308,7 @@ void main() {
       final model = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -327,6 +331,7 @@ void main() {
       final model = ListModel(
         content: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -352,6 +357,7 @@ void main() {
       final model = ListModel(
         content: BooleanModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -377,6 +383,7 @@ void main() {
       final model = ListModel(
         content: DateTimeModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -408,10 +415,12 @@ void main() {
         isNullable: false,
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final model = ListModel(
         content: enumModel,
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -437,6 +446,7 @@ void main() {
       final model = ListModel(
         content: BinaryModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -462,6 +472,7 @@ void main() {
       final model = ListModel(
         content: Base64Model(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -487,6 +498,7 @@ void main() {
       final model = ListModel(
         content: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -514,6 +526,7 @@ void main() {
         final model = ListModel(
           content: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         final expression = buildUriEncodeExpression(
           refer('value'),
@@ -551,10 +564,12 @@ void main() {
         name: 'IntAlias',
         model: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
       final model = ListModel(
         content: aliasModel,
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -583,8 +598,10 @@ void main() {
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final expression = buildUriEncodeExpression(
@@ -605,6 +622,7 @@ void main() {
       final model = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -629,6 +647,7 @@ void main() {
         final model = MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
         final expression = buildUriEncodeExpression(
           refer('value'),
@@ -667,8 +686,10 @@ void main() {
           name: 'TestClass',
           properties: [],
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -706,8 +727,10 @@ void main() {
         content: MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -752,10 +775,13 @@ void main() {
             name: 'TestClass',
             properties: [],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final expression = buildUriEncodeExpression(
         refer('value'),

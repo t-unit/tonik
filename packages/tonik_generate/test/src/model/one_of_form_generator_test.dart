@@ -48,6 +48,7 @@ void main() {
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -79,9 +80,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -99,6 +102,7 @@ void main() {
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -134,6 +138,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -168,6 +173,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -211,6 +217,7 @@ void main() {
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -245,9 +252,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -258,6 +267,7 @@ void main() {
           (discriminatorValue: 'msg', model: StringModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -294,9 +304,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final classB = ClassModel(
@@ -309,9 +321,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -323,6 +337,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -385,13 +400,16 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -401,6 +419,7 @@ void main() {
           (discriminatorValue: null, model: innerOneOf),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -438,13 +457,16 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -455,6 +477,7 @@ void main() {
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -503,13 +526,16 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final innerOneOfB = OneOfModel(
@@ -529,13 +555,16 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -547,6 +576,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -601,6 +631,7 @@ void main() {
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -626,6 +657,7 @@ void main() {
         name: 'ErrorCode',
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -636,6 +668,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);

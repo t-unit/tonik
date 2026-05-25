@@ -41,6 +41,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -75,9 +76,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final class2 = ClassModel(
@@ -90,9 +93,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -100,6 +105,7 @@ void main() {
         name: 'AllOfComplex',
         models: {class1, class2},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -135,6 +141,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -192,14 +199,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
           ),
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final classModel = ClassModel(
@@ -212,9 +222,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -222,6 +234,7 @@ void main() {
         name: 'AllOfWithDynamic',
         models: {anyOfModel, classModel},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -259,6 +272,7 @@ void main() {
         name: 'AllOfEmpty',
         models: const {},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -290,6 +304,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -300,6 +315,7 @@ void main() {
           StringModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -348,6 +364,7 @@ void main() {
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classModel = ClassModel(
@@ -360,9 +377,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -370,6 +389,7 @@ void main() {
         name: 'AllOfNested',
         models: {oneOfModel, classModel},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -410,16 +430,20 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -427,6 +451,7 @@ void main() {
         name: 'AllOfComplex',
         models: {classModel},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -458,6 +483,7 @@ void main() {
         final listModel = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -465,6 +491,7 @@ void main() {
           name: 'AllOfList',
           models: {listModel},
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -501,6 +528,7 @@ void main() {
         final listModel = ListModel(
           content: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -508,6 +536,7 @@ void main() {
           name: 'AllOfIntList',
           models: {listModel},
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -559,11 +588,14 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           );
 
           final model = AllOfModel(
@@ -571,6 +603,7 @@ void main() {
             name: 'AllOfComplexList',
             models: {complexListModel},
             context: context,
+            examples: const [],
           );
 
           final generatedClass = generator.generateClass(model);
@@ -603,6 +636,7 @@ void main() {
           final mapModel = MapModel(
             valueModel: StringModel(context: context),
             context: context,
+            examples: const [],
           );
 
           final model = AllOfModel(
@@ -610,6 +644,7 @@ void main() {
             name: 'AllOfMap',
             models: {mapModel},
             context: context,
+            examples: const [],
           );
 
           final generatedClass = generator.generateClass(model);
@@ -640,10 +675,12 @@ void main() {
         final listStringModel = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         final listIntModel = ListModel(
           content: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -651,6 +688,7 @@ void main() {
           name: 'AllOfMultipleLists',
           models: {listStringModel, listIntModel},
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);

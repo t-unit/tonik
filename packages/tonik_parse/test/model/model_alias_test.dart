@@ -83,6 +83,7 @@ void main() {
         name: 'TestAlias',
         model: stringModel,
         context: context,
+        examples: const [],
       );
 
       expect(alias.resolved, stringModel);
@@ -95,11 +96,13 @@ void main() {
         name: 'InnerAlias',
         model: stringModel,
         context: context,
+        examples: const [],
       );
       final outerAlias = AliasModel(
         name: 'OuterAlias',
         model: innerAlias,
         context: context,
+        examples: const [],
       );
 
       expect(outerAlias.resolved, stringModel);
@@ -112,16 +115,19 @@ void main() {
         name: 'Level3',
         model: stringModel,
         context: context,
+        examples: const [],
       );
       final level2 = AliasModel(
         name: 'Level2',
         model: level3,
         context: context,
+        examples: const [],
       );
       final level1 = AliasModel(
         name: 'Level1',
         model: level2,
         context: context,
+        examples: const [],
       );
 
       expect(level1.resolved, stringModel);

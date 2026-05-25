@@ -2,6 +2,7 @@ import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart' as parse;
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/request_body.dart' as parse;
@@ -337,17 +338,23 @@ void main() {
 
   test('adds request body when importing a single one', () {
     final openApiObject = parse.OpenApiObject.fromJson(fileContent);
-    final modelImporter = ModelImporter(openApiObject)..import();
+    final exampleImporter = ExampleImporter(openApiObject: openApiObject);
+    final modelImporter = ModelImporter(
+      openApiObject,
+      exampleImporter: exampleImporter,
+    )..import();
 
     final responseHeaderImporter = ResponseHeaderImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
+      exampleImporter: exampleImporter,
     )..import();
     final importer = RequestBodyImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
       contentTypes: {},
       responseHeaderImporter: responseHeaderImporter,
+      exampleImporter: exampleImporter,
     )..import();
 
     final imported = importer.importRequestBody(

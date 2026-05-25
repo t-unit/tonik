@@ -42,6 +42,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'age',
@@ -49,9 +50,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -100,15 +103,19 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -140,6 +147,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'age',
@@ -147,9 +155,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -181,6 +191,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'value',
@@ -199,13 +210,16 @@ void main() {
                     model: IntegerModel(context: context),
                   ),
                 },
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -238,6 +252,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'optionalValue',
@@ -256,13 +271,16 @@ void main() {
                     model: DecimalModel(context: context),
                   ),
                 },
+                examples: const [],
               ),
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -287,6 +305,7 @@ void main() {
         name: 'EmptyClass',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);

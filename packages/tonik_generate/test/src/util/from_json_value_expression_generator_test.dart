@@ -141,6 +141,7 @@ void main() {
           context: context,
           name: 'UserId',
           model: StringModel(context: context),
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -159,11 +160,13 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          examples: const [],
         );
         final userAlias = AliasModel(
           context: context,
           name: 'UserReference',
           model: userModel,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -180,11 +183,13 @@ void main() {
         final listModel = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         final listAlias = AliasModel(
           context: context,
           name: 'StringList',
           model: listModel,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -203,16 +208,19 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          examples: const [],
         );
         final userAlias = AliasModel(
           context: context,
           name: 'UserReference',
           model: userModel,
+          examples: const [],
         );
         final nestedAlias = AliasModel(
           context: context,
           name: 'NestedAlias',
           model: userAlias,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -231,12 +239,18 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          examples: const [],
         );
-        final userListModel = ListModel(content: userModel, context: context);
+        final userListModel = ListModel(
+          content: userModel,
+          context: context,
+          examples: const [],
+        );
         final userListAlias = AliasModel(
           context: context,
           name: 'UserList',
           model: userListModel,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -258,15 +272,18 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          examples: const [],
         );
         final userAlias = AliasModel(
           context: context,
           name: 'UserReference',
           model: userModel,
+          examples: const [],
         );
         final userAliasListModel = ListModel(
           content: userAlias,
           context: context,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -293,6 +310,7 @@ void main() {
           const EnumEntry(value: 'user'),
         },
         isNullable: false,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -311,6 +329,7 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -327,6 +346,7 @@ void main() {
       final listModel = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -342,6 +362,7 @@ void main() {
       final boolListModel = ListModel(
         content: BooleanModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -357,6 +378,7 @@ void main() {
       final dateListModel = ListModel(
         content: DateModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -375,6 +397,7 @@ void main() {
       final dateTimeListModel = ListModel(
         content: DateTimeModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -393,6 +416,7 @@ void main() {
       final decimalListModel = ListModel(
         content: DecimalModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -411,6 +435,7 @@ void main() {
       final binaryListModel = ListModel(
         content: BinaryModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -429,6 +454,7 @@ void main() {
       final base64ListModel = ListModel(
         content: Base64Model(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -448,6 +474,7 @@ void main() {
       final uriListModel = ListModel(
         content: UriModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -471,6 +498,7 @@ void main() {
           content: StringModel(context: context),
           isNullable: true,
           context: context,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -490,12 +518,18 @@ void main() {
         context: context,
         name: 'Address',
         properties: const [],
+        examples: const [],
       );
       final mapModel = MapModel(
         valueModel: addressModel,
         context: context,
+        examples: const [],
       );
-      final listModel = ListModel(content: mapModel, context: context);
+      final listModel = ListModel(
+        content: mapModel,
+        context: context,
+        examples: const [],
+      );
       expect(
         buildFromJsonValueExpression(
           'value',
@@ -516,8 +550,13 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        examples: const [],
       );
-      final listModel = ListModel(content: classModel, context: context);
+      final listModel = ListModel(
+        content: classModel,
+        context: context,
+        examples: const [],
+      );
       expect(
         buildFromJsonValueExpression(
           'value',
@@ -538,11 +577,17 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        examples: const [],
       );
-      final innerListModel = ListModel(content: classModel, context: context);
+      final innerListModel = ListModel(
+        content: classModel,
+        context: context,
+        examples: const [],
+      );
       final outerListModel = ListModel(
         content: innerListModel,
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -563,15 +608,22 @@ void main() {
         context: context,
         name: 'User',
         properties: const [],
+        examples: const [],
       );
-      final innerListModel = ListModel(content: classModel, context: context);
+      final innerListModel = ListModel(
+        content: classModel,
+        context: context,
+        examples: const [],
+      );
       final middleListModel = ListModel(
         content: innerListModel,
         context: context,
+        examples: const [],
       );
       final outerListModel = ListModel(
         content: middleListModel,
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -596,8 +648,13 @@ void main() {
           const EnumEntry(value: 'user'),
         },
         isNullable: false,
+        examples: const [],
       );
-      final enumListModel = ListModel(content: enumModel, context: context);
+      final enumListModel = ListModel(
+        content: enumModel,
+        context: context,
+        examples: const [],
+      );
       expect(
         buildFromJsonValueExpression(
           'value',
@@ -643,6 +700,7 @@ void main() {
         final intListModel = ListModel(
           content: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -661,10 +719,12 @@ void main() {
         final intListModel = ListModel(
           content: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
         final nestedListModel = ListModel(
           content: intListModel,
           context: context,
+          examples: const [],
         );
 
         final expression = buildFromJsonValueExpression(
@@ -694,6 +754,7 @@ void main() {
             const EnumEntry(value: 'user'),
           },
           isNullable: false,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -716,10 +777,12 @@ void main() {
             const EnumEntry(value: 'user'),
           },
           isNullable: false,
+          examples: const [],
         );
         final enumListModel = ListModel(
           content: enumModel,
           context: context,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -826,6 +889,7 @@ void main() {
           context: context,
           name: 'User',
           properties: const [],
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -849,6 +913,7 @@ void main() {
             const EnumEntry(value: 'user'),
           },
           isNullable: false,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -867,6 +932,7 @@ void main() {
           final stringListModel = ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -886,10 +952,12 @@ void main() {
             context: context,
             name: 'User',
             properties: const [],
+            examples: const [],
           );
           final classListModel = ListModel(
             content: classModel,
             context: context,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -910,6 +978,7 @@ void main() {
           final binaryListModel = ListModel(
             content: BinaryModel(context: context),
             context: context,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -930,6 +999,7 @@ void main() {
           final base64ListModel = ListModel(
             content: Base64Model(context: context),
             context: context,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -956,10 +1026,12 @@ void main() {
               const EnumEntry(value: 'user'),
             },
             isNullable: false,
+            examples: const [],
           );
           final enumListModel = ListModel(
             content: enumModel,
             context: context,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -987,12 +1059,14 @@ void main() {
             context: context,
             name: 'License',
             properties: const [],
+            examples: const [],
           );
           final nullableAlias = AliasModel(
             context: context,
             name: 'NullableLicense',
             model: classModel,
             isNullable: true,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -1014,17 +1088,20 @@ void main() {
             context: context,
             name: 'License',
             properties: const [],
+            examples: const [],
           );
           final innerAlias = AliasModel(
             context: context,
             name: 'InnerAlias',
             model: classModel,
             isNullable: true,
+            examples: const [],
           );
           final outerAlias = AliasModel(
             context: context,
             name: 'OuterAlias',
             model: innerAlias,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -1046,6 +1123,7 @@ void main() {
             name: 'NullableString',
             model: StringModel(context: context),
             isNullable: true,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -1068,6 +1146,7 @@ void main() {
             name: 'License',
             properties: const [],
             isNullable: true,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -1093,6 +1172,7 @@ void main() {
               const EnumEntry(value: 'inactive'),
             },
             isNullable: true,
+            examples: const [],
           );
           expect(
             buildFromJsonValueExpression(
@@ -1113,6 +1193,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1130,6 +1211,7 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         isNullable: true,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1146,6 +1228,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1165,10 +1248,12 @@ void main() {
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1185,6 +1270,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1201,6 +1287,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final result = buildFromJsonValueExpression(
         'value',
@@ -1229,10 +1316,12 @@ void main() {
           const EnumEntry(value: 'inactive'),
         },
         isNullable: false,
+        examples: const [],
       );
       final mapModel = MapModel(
         valueModel: enumModel,
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1295,6 +1384,7 @@ void main() {
         name: 'ForbiddenAlias',
         model: NeverModel(context: context),
         context: context,
+        examples: const [],
       );
       final result = buildFromJsonValueExpression(
         'value',
@@ -1312,6 +1402,7 @@ void main() {
       final listModel = ListModel(
         content: NeverModel(context: context),
         context: context,
+        examples: const [],
       );
       final result = buildFromJsonValueExpression(
         'value',
@@ -1331,6 +1422,7 @@ void main() {
         final listModel = ListModel(
           content: NeverModel(context: context),
           context: context,
+          examples: const [],
         );
         final result = buildFromJsonValueExpression(
           'value',
@@ -1353,6 +1445,7 @@ void main() {
           content: NeverModel(context: context),
           isNullable: true,
           context: context,
+          examples: const [],
         );
         final result = buildFromJsonValueExpression(
           'value',
@@ -1373,6 +1466,7 @@ void main() {
       final listModel = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1390,6 +1484,7 @@ void main() {
       final listModel = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1408,6 +1503,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1426,6 +1522,7 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         isNullable: true,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1443,10 +1540,12 @@ void main() {
       final innerList = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final outerList = ListModel(
         content: innerList,
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1466,10 +1565,12 @@ void main() {
       final listModel = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final mapModel = MapModel(
         valueModel: listModel,
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1489,6 +1590,7 @@ void main() {
       final listModel = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         buildFromJsonValueExpression(
@@ -1509,6 +1611,7 @@ void main() {
           content: NeverModel(context: context),
           isNullable: true,
           context: context,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(
@@ -1530,6 +1633,7 @@ void main() {
         final listModel = ListModel(
           content: NeverModel(context: context),
           context: context,
+          examples: const [],
         );
         expect(
           buildFromJsonValueExpression(

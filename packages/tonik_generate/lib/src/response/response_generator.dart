@@ -286,6 +286,7 @@ class ResponseGenerator {
               model: body.model,
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         ),

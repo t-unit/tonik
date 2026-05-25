@@ -21,11 +21,13 @@ void main() {
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/vnd.api+json',
+              examples: const [],
             ),
           },
         );
@@ -56,6 +58,7 @@ void main() {
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         );
@@ -77,6 +80,7 @@ void main() {
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
         };
 
@@ -97,6 +101,7 @@ void main() {
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
         };
 

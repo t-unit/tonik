@@ -34,6 +34,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: ctx,
+          examples: const [],
         ),
       };
 

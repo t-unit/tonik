@@ -16,6 +16,10 @@ Header _$HeaderFromJson(Map<String, dynamic> json) => Header(
   content: (json['content'] as Map<String, dynamic>?)?.map(
     (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
   ),
+  example: json['example'],
+  examples: (json['examples'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
+  ),
 );
 
 const _$SerializationStyleEnumMap = {

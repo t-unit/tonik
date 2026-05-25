@@ -22,6 +22,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
       expect(ctx.helperName(tree, r'_$decode'), r'_$decodeTree');
@@ -33,11 +34,13 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final forest = ListModel(
         name: 'Forest',
         content: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
       expect(ctx.helperName(tree, r'_$decode'), r'_$decodeTree');
@@ -51,6 +54,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
       expect(ctx.isHelperEmitted(tree, r'_$decode'), isFalse);
@@ -61,6 +65,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final ctx = InlineHelperContext(nameManager: nameManager)
         ..markHelperEmitted(tree, r'_$decode');
@@ -75,6 +80,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
       expect(ctx.isOnStack(tree), isFalse);
@@ -85,6 +91,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
 
@@ -102,11 +109,13 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final forest = ListModel(
         name: 'Forest',
         content: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final ctx = InlineHelperContext(nameManager: nameManager);
 

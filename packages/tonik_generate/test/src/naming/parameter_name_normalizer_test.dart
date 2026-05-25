@@ -547,6 +547,7 @@ PathParameterObject createPathParameter(
     model: StringModel(context: context),
     encoding: PathParameterEncoding.simple,
     context: context,
+    examples: const [],
   );
 }
 
@@ -568,6 +569,7 @@ QueryParameterObject createQueryParameter(
     model: StringModel(context: context),
     encoding: QueryParameterEncoding.form,
     context: context,
+    examples: const [],
   );
 }
 
@@ -588,6 +590,7 @@ RequestHeaderObject createHeader(
     model: StringModel(context: context),
     encoding: HeaderParameterEncoding.simple,
     context: context,
+    examples: const [],
   );
 }
 
@@ -607,5 +610,6 @@ CookieParameterObject createCookieParameter(
     model: StringModel(context: context),
     encoding: CookieParameterEncoding.form,
     context: context,
+    examples: const [],
   );
 }

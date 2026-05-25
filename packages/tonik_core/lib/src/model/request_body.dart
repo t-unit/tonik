@@ -120,12 +120,14 @@ class RequestContent {
     required this.model,
     required this.contentType,
     required this.rawContentType,
+    required this.examples,
     this.encoding,
   });
 
   Model model;
   ContentType contentType;
   String rawContentType;
+  List<Example> examples;
 
   /// Per-property encoding metadata for multipart/form-data requests.
   /// Null for all non-multipart content types.
@@ -134,5 +136,5 @@ class RequestContent {
   @override
   String toString() =>
       'RequestContent(model: $model, contentType: $contentType, '
-      'rawContentType: $rawContentType)';
+      'rawContentType: $rawContentType, examples: $examples)';
 }

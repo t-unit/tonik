@@ -31,9 +31,11 @@ void main() {
                   properties: const [],
                   context: context,
                   isDeprecated: false,
+                  examples: const [],
                 ),
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
+                examples: const [],
               ),
             }),
           );
@@ -77,6 +79,7 @@ void main() {
                 model: IntegerModel(context: context),
                 rawContentType: 'text/plain',
                 contentType: ContentType.text,
+                examples: const [],
               ),
             }),
           );
@@ -111,6 +114,7 @@ void main() {
           properties: const [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
 
         final response = ResponseObject(
@@ -123,6 +127,7 @@ void main() {
               model: originalModel,
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -157,6 +162,7 @@ void main() {
           properties: const [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
 
         final response = ResponseObject(
@@ -169,6 +175,7 @@ void main() {
               model: originalModel,
               rawContentType: 'application/x-www-form-urlencoded',
               contentType: ContentType.form,
+              examples: const [],
             ),
           },
         );
@@ -212,6 +219,7 @@ void main() {
                 model: binaryModel,
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           );
@@ -253,9 +261,11 @@ void main() {
                 properties: const [],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               rawContentType: 'application/octet-stream',
               contentType: ContentType.bytes,
+              examples: const [],
             ),
           },
         );
@@ -300,6 +310,7 @@ void main() {
               model: IntegerModel(context: context),
               rawContentType: 'application/octet-stream',
               contentType: ContentType.bytes,
+              examples: const [],
             ),
           },
         );
@@ -348,9 +359,11 @@ void main() {
                 properties: const [],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -402,6 +415,7 @@ void main() {
                 model: IntegerModel(context: context),
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
+                examples: const [],
               ),
             },
           );
@@ -458,6 +472,7 @@ void main() {
                 model: IntegerModel(context: context),
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
+                examples: const [],
               ),
             },
           );
@@ -523,6 +538,7 @@ void main() {
                 model: StringModel(context: context),
                 rawContentType: 'application/octet-stream',
                 contentType: ContentType.bytes,
+                examples: const [],
               ),
             }),
           );
@@ -564,6 +580,7 @@ void main() {
               model: BooleanModel(context: context),
               rawContentType: 'text/plain',
               contentType: ContentType.text,
+              examples: const [],
             ),
           }),
         );
@@ -597,6 +614,7 @@ void main() {
           properties: const [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
 
         final requestBody = RequestBodyObject(
@@ -609,6 +627,7 @@ void main() {
               model: originalModel,
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -643,6 +662,7 @@ void main() {
           properties: const [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
 
         final requestBody = RequestBodyObject(
@@ -655,6 +675,7 @@ void main() {
               model: originalModel,
               rawContentType: 'application/x-www-form-urlencoded',
               contentType: ContentType.form,
+              examples: const [],
             ),
           },
         );
@@ -696,9 +717,11 @@ void main() {
                 properties: const [],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -750,6 +773,7 @@ void main() {
                 model: DoubleModel(context: context),
                 rawContentType: 'text/plain',
                 contentType: ContentType.text,
+                examples: const [],
               ),
             },
           );
@@ -807,6 +831,7 @@ void main() {
                 model: DoubleModel(context: context),
                 rawContentType: 'text/plain',
                 contentType: ContentType.text,
+                examples: const [],
               ),
             },
           );
@@ -871,6 +896,7 @@ void main() {
               model: DoubleModel(context: context),
               rawContentType: 'text/plain',
               contentType: ContentType.text,
+              examples: const [],
             ),
           },
         );
@@ -912,6 +938,7 @@ void main() {
           properties: const [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
 
         final requestBody = RequestBodyObject(
@@ -924,6 +951,7 @@ void main() {
               model: originalModel,
               rawContentType: 'multipart/form-data',
               contentType: ContentType.multipart,
+              examples: const [],
             ),
           },
         );
@@ -974,10 +1002,12 @@ void main() {
                 properties: const [],
                 context: context,
                 isDeprecated: false,
+                examples: const [],
               ),
               rawContentType: 'multipart/form-data',
               contentType: ContentType.multipart,
               encoding: encoding,
+              examples: const [],
             ),
           },
         );
@@ -1017,6 +1047,7 @@ void main() {
               model: IntegerModel(context: context),
               rawContentType: 'text/plain',
               contentType: ContentType.text,
+              examples: const [],
             ),
           },
         );
@@ -1085,16 +1116,19 @@ void main() {
               model: IntegerModel(context: context),
               rawContentType: 'application/octet-stream',
               contentType: ContentType.bytes,
+              examples: const [],
             ),
             ResponseBody(
               model: BooleanModel(context: context),
               rawContentType: 'text/plain',
               contentType: ContentType.text,
+              examples: const [],
             ),
             ResponseBody(
               model: StringModel(context: context),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );

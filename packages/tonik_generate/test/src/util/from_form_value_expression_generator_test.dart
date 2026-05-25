@@ -432,6 +432,7 @@ void main() {
           model: ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -455,6 +456,7 @@ void main() {
           model: ListModel(
             content: IntegerModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -480,6 +482,7 @@ void main() {
             name: 'NestedClass',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -505,6 +508,7 @@ void main() {
             },
             isNullable: false,
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -525,6 +529,7 @@ void main() {
           name: 'UserId',
           model: StringModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final expression = buildFromFormValueExpression(
@@ -553,8 +558,10 @@ void main() {
           model: ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
 
         final expression = buildFromFormValueExpression(
@@ -629,6 +636,7 @@ void main() {
             model: ListModel(
               content: BinaryModel(context: context),
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             nameManager: nameManager,
@@ -655,6 +663,7 @@ void main() {
           model: ListModel(
             content: BinaryModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: false,
           nameManager: nameManager,
@@ -726,6 +735,7 @@ void main() {
             model: ListModel(
               content: Base64Model(context: context),
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             nameManager: nameManager,
@@ -752,6 +762,7 @@ void main() {
           model: ListModel(
             content: Base64Model(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: false,
           nameManager: nameManager,
@@ -817,6 +828,7 @@ void main() {
           model: ListModel(
             content: NeverModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -840,6 +852,7 @@ void main() {
               content: NeverModel(context: context),
               isNullable: true,
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             nameManager: nameManager,
@@ -860,6 +873,7 @@ void main() {
           model: ListModel(
             content: NeverModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: false,
           nameManager: nameManager,
@@ -884,9 +898,11 @@ void main() {
                 name: 'ForbiddenAlias',
                 model: NeverModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isNullable: true,
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             nameManager: nameManager,
@@ -912,8 +928,10 @@ void main() {
               properties: [],
               context: context,
               isDeprecated: false,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -933,8 +951,10 @@ void main() {
             content: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           nameManager: nameManager,
@@ -956,8 +976,10 @@ void main() {
               content: MapModel(
                 valueModel: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             nameManager: nameManager,

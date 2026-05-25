@@ -158,6 +158,7 @@ void main() {
         context: ctx.push('components').push('schemas').push('Pet'),
         isDeprecated: false,
         properties: const [],
+        examples: const [],
       );
 
       userModel = ClassModel(
@@ -165,6 +166,7 @@ void main() {
         context: ctx.push('components').push('schemas').push('User'),
         isDeprecated: false,
         properties: const [],
+        examples: const [],
       );
 
       statusEnum = EnumModel<String>(
@@ -173,6 +175,7 @@ void main() {
         isDeprecated: false,
         isNullable: false,
         values: const {},
+        examples: const [],
       );
 
       final stringModel = ClassModel(
@@ -180,12 +183,14 @@ void main() {
         context: ctx.push('String'),
         isDeprecated: false,
         properties: const [],
+        examples: const [],
       );
 
       idAlias = AliasModel(
         name: 'Id',
         context: ctx.push('components').push('schemas').push('Id'),
         model: stringModel,
+        examples: const [],
       );
     });
 

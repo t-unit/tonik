@@ -40,6 +40,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -60,6 +61,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -80,6 +82,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -100,6 +103,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -120,6 +124,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -140,6 +145,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -160,6 +166,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -180,6 +187,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       // Binary data: toBytes() then decode to String for JSON.
       expect(
@@ -201,6 +209,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -221,6 +230,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       // Base64 data: toBytes() then encode to base64 string for JSON.
       expect(
@@ -242,6 +252,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -265,6 +276,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'status',
@@ -272,6 +284,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -295,6 +308,7 @@ void main() {
         },
         isNullable: true,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'priority',
@@ -302,6 +316,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -325,6 +340,7 @@ void main() {
         },
         isNullable: true,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'priority',
@@ -332,6 +348,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(
@@ -353,6 +370,7 @@ void main() {
         properties: const [],
         isNullable: true,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'metadata',
@@ -360,6 +378,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(
@@ -381,6 +400,7 @@ void main() {
         models: const {},
         isNullable: true,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'combined',
@@ -388,6 +408,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(
@@ -410,6 +431,7 @@ void main() {
         discriminator: 'petType',
         isNullable: true,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'pet',
@@ -417,6 +439,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(
@@ -439,6 +462,7 @@ void main() {
         discriminator: 'contentType',
         isNullable: true,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'content',
@@ -446,6 +470,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(
@@ -466,10 +491,12 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       // List<primitive> is handled directly
       expect(
@@ -490,10 +517,12 @@ void main() {
         model: ListModel(
           content: DateTimeModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -513,10 +542,12 @@ void main() {
         model: ListModel(
           content: BinaryModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       // List of binary needs each element's bytes decoded to string
       expect(
@@ -537,10 +568,12 @@ void main() {
         model: ListModel(
           content: Base64Model(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       // List of base64 needs each element's bytes base64-encoded
       expect(
@@ -561,13 +594,19 @@ void main() {
         isDeprecated: false,
         properties: const [],
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'addresses',
-        model: ListModel(content: addressModel, context: context),
+        model: ListModel(
+          content: addressModel,
+          context: context,
+          examples: const [],
+        ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -587,10 +626,12 @@ void main() {
         model: ListModel(
           content: DecimalModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -609,6 +650,7 @@ void main() {
         name: 'UserID',
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'id',
@@ -616,6 +658,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -634,6 +677,7 @@ void main() {
         name: 'Timestamp',
         model: DateTimeModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'createdAt',
@@ -641,6 +685,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -659,6 +704,7 @@ void main() {
         name: 'Timestamp',
         model: DateTimeModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'updatedAt',
@@ -666,6 +712,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -685,11 +732,13 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'PrimaryAddress',
         model: addressModel,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'address',
@@ -697,6 +746,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -716,11 +766,13 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'PrimaryAddress',
         model: addressModel,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'address',
@@ -728,6 +780,7 @@ void main() {
         isRequired: false, // optional
         isNullable: true, // nullable
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -747,6 +800,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'homeAddress',
@@ -754,6 +808,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -773,6 +828,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'workAddress',
@@ -780,6 +836,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -799,6 +856,7 @@ void main() {
         name: 'Combined',
         models: const {},
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'combinedData',
@@ -806,6 +864,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -825,6 +884,7 @@ void main() {
         name: 'Combined',
         models: const {},
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'combinedData',
@@ -832,6 +892,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -852,6 +913,7 @@ void main() {
         models: const {},
         discriminator: 'petType',
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'pet',
@@ -859,6 +921,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -879,6 +942,7 @@ void main() {
         models: const {},
         discriminator: 'petType',
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'pet',
@@ -886,6 +950,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -906,6 +971,7 @@ void main() {
         models: const {},
         discriminator: 'contentType',
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'content',
@@ -913,6 +979,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -932,6 +999,7 @@ void main() {
         models: const {},
         discriminator: 'contentType',
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'content',
@@ -939,6 +1007,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -958,12 +1027,14 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'PrimaryAddress',
         model: classModel,
         isNullable: true,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'address',
@@ -971,6 +1042,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(
@@ -991,6 +1063,7 @@ void main() {
         model: DateTimeModel(context: context),
         isNullable: true,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'createdAt',
@@ -998,6 +1071,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(
@@ -1018,8 +1092,10 @@ void main() {
         model: ListModel(
           content: DateTimeModel(context: context),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'meetingTimes',
@@ -1027,6 +1103,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1046,8 +1123,10 @@ void main() {
         model: ListModel(
           content: DateTimeModel(context: context),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'meetingTimes',
@@ -1055,6 +1134,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1074,11 +1154,17 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'AddressList',
-        model: ListModel(content: addressModel, context: context),
+        model: ListModel(
+          content: addressModel,
+          context: context,
+          examples: const [],
+        ),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'addresses',
@@ -1086,6 +1172,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1105,11 +1192,17 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final aliasModel = AliasModel(
         name: 'AddressList',
-        model: ListModel(content: addressModel, context: context),
+        model: ListModel(
+          content: addressModel,
+          context: context,
+          examples: const [],
+        ),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'addresses',
@@ -1117,6 +1210,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1136,6 +1230,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'metadata',
@@ -1143,6 +1238,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1160,6 +1256,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'counts',
@@ -1167,6 +1264,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1186,10 +1284,12 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'addresses',
@@ -1197,6 +1297,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1217,10 +1318,12 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'addresses',
@@ -1228,6 +1331,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1248,11 +1352,13 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final mapModel = MapModel(
         valueModel: classModel,
         context: context,
         isNullable: true,
+        examples: const [],
       );
       final property = Property(
         name: 'addresses',
@@ -1260,6 +1366,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1278,6 +1385,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: DateTimeModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'timestamps',
@@ -1285,6 +1393,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1310,10 +1419,12 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       final mapModel = MapModel(
         valueModel: enumModel,
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'statuses',
@@ -1321,6 +1432,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1343,10 +1455,12 @@ void main() {
           name: 'Address',
           properties: const [],
           context: context,
+          examples: const [],
         );
         final mapModel = MapModel(
           valueModel: classModel,
           context: context,
+          examples: const [],
         );
         final property = Property(
           name: 'addresses',
@@ -1354,6 +1468,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         );
         final result = emit(
           buildToJsonPropertyExpression(
@@ -1384,6 +1499,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -1409,6 +1525,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -1434,6 +1551,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -1457,6 +1575,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       final parameter = PathParameterObject(
         name: 'status',
@@ -1469,6 +1588,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -1497,6 +1617,7 @@ void main() {
         isDeprecated: false,
         context: context,
         allowReserved: true,
+        examples: const [],
       );
       expect(
         emit(
@@ -1523,6 +1644,7 @@ void main() {
         isDeprecated: false,
         context: context,
         allowReserved: true,
+        examples: const [],
       );
       expect(
         emit(
@@ -1549,6 +1671,7 @@ void main() {
         isDeprecated: false,
         context: context,
         allowReserved: true,
+        examples: const [],
       );
       expect(
         emit(
@@ -1572,6 +1695,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       final parameter = QueryParameterObject(
         name: 'status',
@@ -1585,6 +1709,7 @@ void main() {
         isDeprecated: false,
         context: context,
         allowReserved: true,
+        examples: const [],
       );
       expect(
         emit(
@@ -1607,6 +1732,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         scopedEmit(
@@ -1627,6 +1753,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         scopedEmit(
@@ -1644,6 +1771,7 @@ void main() {
       final listModel = ListModel(
         content: NeverModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'forbiddenList',
@@ -1651,6 +1779,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         scopedEmit(
@@ -1669,6 +1798,7 @@ void main() {
         name: 'ForbiddenAlias',
         model: NeverModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'forbiddenAlias',
@@ -1676,6 +1806,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         scopedEmit(
@@ -1703,6 +1834,7 @@ void main() {
         isRequired: true,
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         scopedEmit(
@@ -1731,6 +1863,7 @@ void main() {
         isDeprecated: false,
         context: context,
         allowReserved: true,
+        examples: const [],
       );
       expect(
         scopedEmit(
@@ -1753,6 +1886,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1776,6 +1910,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1799,6 +1934,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1819,6 +1955,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1840,10 +1977,12 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1864,10 +2003,12 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1888,10 +2029,12 @@ void main() {
         model: ListModel(
           content: DateTimeModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1912,10 +2055,12 @@ void main() {
         model: MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1936,10 +2081,12 @@ void main() {
         model: MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1960,16 +2107,19 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'addresses',
         model: MapModel(
           valueModel: classModel,
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -1988,16 +2138,19 @@ void main() {
       final innerList = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'matrix',
         model: ListModel(
           content: innerList,
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -2018,10 +2171,12 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -2041,11 +2196,13 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         isWriteOnly: true,
+        examples: const [],
       );
       expect(
         emit(
@@ -2070,11 +2227,13 @@ void main() {
           model: ListModel(
             content: DateTimeModel(context: context),
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
           isWriteOnly: true,
+          examples: const [],
         );
         expect(
           emit(
@@ -2097,10 +2256,12 @@ void main() {
         model: ListModel(
           content: DateTimeModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -2121,11 +2282,13 @@ void main() {
         model: MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
         isWriteOnly: true,
+        examples: const [],
       );
       expect(
         emit(
@@ -2150,17 +2313,20 @@ void main() {
           name: 'Addr',
           properties: const [],
           context: context,
+          examples: const [],
         );
         final property = Property(
           name: 'addrs',
           model: MapModel(
             valueModel: classModel,
             context: context,
+            examples: const [],
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
           isWriteOnly: true,
+          examples: const [],
         );
         expect(
           emit(
@@ -2183,16 +2349,19 @@ void main() {
         name: 'Addr',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'addrs',
         model: MapModel(
           valueModel: classModel,
           context: context,
+          examples: const [],
         ),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(
@@ -2213,8 +2382,10 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final property = Property(
         name: 'tags',
@@ -2222,6 +2393,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       expect(
         emit(

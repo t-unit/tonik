@@ -1,3 +1,4 @@
+import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/path_item.dart';
@@ -35,6 +36,8 @@ sealed class ReferenceWrapper<T> {
       return InlinedObject(Header.fromJson(map) as T);
     } else if (T == SecurityScheme) {
       return InlinedObject(SecurityScheme.fromJson(map) as T);
+    } else if (T == Example) {
+      return InlinedObject(Example.fromJson(map) as T);
     }
 
     throw UnimplementedError();

@@ -41,6 +41,7 @@ void main() {
         name: 'LegacyUser',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -64,6 +65,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -94,6 +96,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateEnum(model, 'LegacyStatus');
@@ -121,6 +124,7 @@ void main() {
           },
           isNullable: false,
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateEnum(model, 'Status');
@@ -154,6 +158,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClasses(model);
@@ -181,6 +186,7 @@ void main() {
             (discriminatorValue: null, model: IntegerModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClasses(model);
@@ -215,6 +221,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -241,6 +248,7 @@ void main() {
             (discriminatorValue: null, model: IntegerModel(context: context)),
           },
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -271,6 +279,7 @@ void main() {
         name: 'LegacyCombined',
         models: {StringModel(context: context)},
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -294,6 +303,7 @@ void main() {
           name: 'Combined',
           models: {StringModel(context: context)},
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -331,6 +341,7 @@ void main() {
               isNullable: false,
               isDeprecated: true,
               description: 'This field is deprecated',
+              examples: const [],
             ),
             Property(
               name: 'newField',
@@ -339,9 +350,11 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               description: 'This field is current',
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -373,9 +386,11 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               description: 'This field is current',
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);

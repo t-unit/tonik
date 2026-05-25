@@ -202,6 +202,7 @@ void main() {
         description: 'A deprecated class',
         isDeprecated: true,
         properties: const [],
+        examples: const [],
       );
 
       nonDeprecatedClass = ClassModel(
@@ -210,6 +211,7 @@ void main() {
         description: 'A normal class',
         isDeprecated: false,
         properties: const [],
+        examples: const [],
       );
 
       deprecatedEnum = EnumModel<String>(
@@ -219,6 +221,7 @@ void main() {
         isDeprecated: true,
         isNullable: false,
         values: const {},
+        examples: const [],
       );
 
       nonDeprecatedEnum = EnumModel<String>(
@@ -228,6 +231,7 @@ void main() {
         isDeprecated: false,
         isNullable: false,
         values: const {},
+        examples: const [],
       );
 
       document = ApiDocument(
@@ -322,6 +326,7 @@ void main() {
         description: 'A composite model',
         isDeprecated: true,
         models: {nonDeprecatedClass},
+        examples: const [],
       );
 
       final docWithComposite = ApiDocument(
@@ -424,6 +429,7 @@ void main() {
         context: ctx,
         isDeprecated: false,
         properties: const [],
+        examples: const [],
       );
 
       deprecatedQuery = QueryParameterObject(
@@ -438,6 +444,7 @@ void main() {
         model: stringModel,
         encoding: QueryParameterEncoding.form,
         context: ctx.push('parameters').push('deprecatedFilter'),
+        examples: const [],
       );
 
       normalQuery = QueryParameterObject(
@@ -452,6 +459,7 @@ void main() {
         model: stringModel,
         encoding: QueryParameterEncoding.form,
         context: ctx.push('parameters').push('normalFilter'),
+        examples: const [],
       );
 
       deprecatedPath = PathParameterObject(
@@ -465,6 +473,7 @@ void main() {
         model: stringModel,
         encoding: PathParameterEncoding.simple,
         context: ctx.push('parameters').push('deprecatedId'),
+        examples: const [],
       );
 
       normalPath = PathParameterObject(
@@ -478,6 +487,7 @@ void main() {
         model: stringModel,
         encoding: PathParameterEncoding.simple,
         context: ctx.push('parameters').push('normalId'),
+        examples: const [],
       );
 
       deprecatedHeader = RequestHeaderObject(
@@ -491,6 +501,7 @@ void main() {
         model: stringModel,
         encoding: HeaderParameterEncoding.simple,
         context: ctx.push('headers').push('X-Deprecated-Header'),
+        examples: const [],
       );
 
       normalHeader = RequestHeaderObject(
@@ -504,6 +515,7 @@ void main() {
         model: stringModel,
         encoding: HeaderParameterEncoding.simple,
         context: ctx.push('headers').push('X-Normal-Header'),
+        examples: const [],
       );
 
       operation = Operation(
@@ -615,6 +627,7 @@ void main() {
         context: ctx,
         isDeprecated: false,
         properties: const [],
+        examples: const [],
       );
 
       final deprecatedProp = Property(
@@ -624,6 +637,7 @@ void main() {
         isNullable: true,
         isDeprecated: true,
         description: 'A deprecated property',
+        examples: const [],
       );
 
       final normalProp = Property(
@@ -633,6 +647,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         description: 'A normal property',
+        examples: const [],
       );
 
       final anotherNormalProp = Property(
@@ -641,6 +656,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
 
       modelWithDeprecatedProps = ClassModel(
@@ -652,6 +668,7 @@ void main() {
         description: 'Has deprecated properties',
         isDeprecated: false,
         properties: [deprecatedProp, normalProp, anotherNormalProp],
+        examples: const [],
       );
 
       modelWithoutDeprecatedProps = ClassModel(
@@ -660,6 +677,7 @@ void main() {
         description: 'Only normal properties',
         isDeprecated: false,
         properties: [normalProp],
+        examples: const [],
       );
 
       document = ApiDocument(

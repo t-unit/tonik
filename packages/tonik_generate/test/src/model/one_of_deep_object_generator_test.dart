@@ -42,6 +42,7 @@ void main() {
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -81,6 +82,7 @@ void main() {
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -128,9 +130,11 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -145,13 +149,16 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -191,6 +198,7 @@ void main() {
           (discriminatorValue: 'int', model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -229,6 +237,7 @@ void main() {
           (discriminatorValue: 'string', model: StringModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -276,9 +285,11 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
           ),
           (
@@ -293,14 +304,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
           ),
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);

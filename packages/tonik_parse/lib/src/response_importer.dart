@@ -1,6 +1,7 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/content_type_resolver.dart';
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/response.dart';
@@ -12,12 +13,14 @@ class ResponseImporter {
     required this.openApiObject,
     required this.modelImporter,
     required this.headerImporter,
+    required this.exampleImporter,
     this.contentTypes = const {},
   });
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;
   final ResponseHeaderImporter headerImporter;
+  final ExampleImporter exampleImporter;
   final log = Logger('ResponseImporter');
 
   final Map<String, core.ContentType> contentTypes;
@@ -124,6 +127,7 @@ class ResponseImporter {
                   model: model,
                   rawContentType: rawContentType,
                   contentType: contentType,
+                  examples: exampleImporter.fromMediaType(entry.value),
                 ),
               );
             } else {
@@ -153,6 +157,7 @@ class ResponseImporter {
                   model: model,
                   rawContentType: rawContentType,
                   contentType: contentType,
+                  examples: exampleImporter.fromMediaType(entry.value),
                 ),
               );
             }

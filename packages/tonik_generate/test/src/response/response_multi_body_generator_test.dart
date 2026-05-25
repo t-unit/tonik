@@ -40,6 +40,7 @@ void main() {
           isDeprecated: false,
           explode: false,
           encoding: ResponseHeaderEncoding.simple,
+          examples: const [],
         ),
         'body': ResponseHeaderObject(
           name: 'body',
@@ -50,6 +51,7 @@ void main() {
           isDeprecated: false,
           explode: false,
           encoding: ResponseHeaderEncoding.simple,
+          examples: const [],
         ),
       },
       bodies: {
@@ -57,11 +59,13 @@ void main() {
           model: StringModel(context: testContext),
           rawContentType: 'text/plain',
           contentType: ContentType.json,
+          examples: const [],
         ),
         ResponseBody(
           model: IntegerModel(context: testContext),
           rawContentType: 'application/json',
           contentType: ContentType.json,
+          examples: const [],
         ),
       },
     );
@@ -80,11 +84,13 @@ void main() {
           model: StringModel(context: testContext),
           rawContentType: 'application/json',
           contentType: ContentType.json,
+          examples: const [],
         ),
         ResponseBody(
           model: StringModel(context: testContext),
           rawContentType: 'application/problem+json',
           contentType: ContentType.json,
+          examples: const [],
         ),
       },
     );

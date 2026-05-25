@@ -43,9 +43,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -70,6 +72,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'age',
@@ -77,6 +80,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'isActive',
@@ -84,9 +88,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -111,6 +117,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'bio',
@@ -118,9 +125,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -145,6 +154,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'nickname',
@@ -152,9 +162,11 @@ void main() {
             isRequired: false,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -182,6 +194,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'user-name',
@@ -189,9 +202,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -215,6 +230,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
 
       final addressModel = ClassModel(
@@ -227,9 +243,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -242,6 +260,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'createdAt',
@@ -249,6 +268,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'status',
@@ -256,6 +276,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'homeAddress',
@@ -263,9 +284,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -295,9 +318,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -309,30 +334,40 @@ void main() {
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'meetingTimes',
             model: ListModel(
               content: DateTimeModel(context: context),
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'addresses',
-            model: ListModel(content: addressModel, context: context),
+            model: ListModel(
+              content: addressModel,
+              context: context,
+              examples: const [],
+            ),
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -358,12 +393,14 @@ void main() {
         name: 'Base',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final mixinModel = ClassModel(
         isDeprecated: false,
         name: 'Mixin',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final allOfModel = AllOfModel(
@@ -371,6 +408,7 @@ void main() {
         name: 'Combined',
         models: {baseModel, mixinModel},
         context: context,
+        examples: const [],
       );
 
       final catModel = ClassModel(
@@ -378,12 +416,14 @@ void main() {
         name: 'Cat',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final dogModel = ClassModel(
         isDeprecated: false,
         name: 'Dog',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final oneOfModel = OneOfModel(
@@ -395,6 +435,7 @@ void main() {
         },
         discriminator: 'petType',
         context: context,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -407,6 +448,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'pet',
@@ -414,9 +456,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -439,12 +483,14 @@ void main() {
         name: 'Base',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final mixinModel = ClassModel(
         isDeprecated: false,
         name: 'Mixin',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final allOfModel = AllOfModel(
@@ -452,6 +498,7 @@ void main() {
         name: 'Combined',
         models: {baseModel, mixinModel},
         context: context,
+        examples: const [],
       );
 
       final catModel = ClassModel(
@@ -459,12 +506,14 @@ void main() {
         name: 'Cat',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final dogModel = ClassModel(
         isDeprecated: false,
         name: 'Dog',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final oneOfModel = OneOfModel(
@@ -476,6 +525,7 @@ void main() {
         },
         discriminator: 'petType',
         context: context,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -488,6 +538,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'pet',
@@ -495,9 +546,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -525,9 +578,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -552,9 +607,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -579,6 +636,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'callback',
@@ -586,6 +644,7 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'webhook',
@@ -593,9 +652,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -629,6 +690,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'age',
@@ -636,8 +698,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -669,6 +733,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'bio',
@@ -676,8 +741,10 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
+        examples: const [],
       );
 
       const expectedMethod = r'''
@@ -708,8 +775,10 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
+        examples: const [],
       );
 
       const expectedMethod = r'''
@@ -739,6 +808,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: '_id',
@@ -746,8 +816,10 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
+        examples: const [],
       );
 
       const expectedMethod = r'''
@@ -780,6 +852,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'map',
@@ -787,8 +860,10 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
+        examples: const [],
       );
 
       const expectedMethod = r'''
@@ -813,6 +888,7 @@ void main() {
         context: context,
         name: 'EmptyClass',
         properties: const [],
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -843,10 +919,12 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           isNullable: true,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -860,8 +938,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -892,6 +972,7 @@ void main() {
           model: StringModel(context: context),
           isNullable: true,
           context: context,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -905,8 +986,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -933,6 +1016,7 @@ void main() {
         context: context,
         name: 'EmptyClass',
         properties: const [],
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -963,10 +1047,12 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           additionalProperties: const UnrestrictedAdditionalProperties(),
+          examples: const [],
         );
       });
 
@@ -1121,12 +1207,14 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           additionalProperties: TypedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
+          examples: const [],
         );
       });
 
@@ -1256,6 +1344,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
@@ -1265,8 +1354,10 @@ void main() {
               name: 'Widget',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
+          examples: const [],
         );
       });
 
@@ -1352,10 +1443,12 @@ void main() {
               model: ListModel(
                 content: DateTimeModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
@@ -1363,8 +1456,10 @@ void main() {
             valueModel: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
+          examples: const [],
         );
       });
 
@@ -1399,6 +1494,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
@@ -1409,10 +1505,13 @@ void main() {
                 name: 'Widget',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
           ),
+          examples: const [],
         );
       });
 
@@ -1447,10 +1546,12 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           additionalProperties: const NoAdditionalProperties(),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -1483,10 +1584,12 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           additionalProperties: const UnrestrictedAdditionalProperties(),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -1529,6 +1632,7 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
@@ -1538,8 +1642,10 @@ void main() {
               model: StringModel(context: context),
               context: context,
               isNullable: true,
+              examples: const [],
             ),
           ),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -1584,12 +1690,14 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           additionalProperties: TypedAdditionalProperties(
             valueModel: IntegerModel(context: context),
           ),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -1637,12 +1745,14 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           additionalProperties: TypedAdditionalProperties(
             valueModel: IntegerModel(context: context),
           ),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -1690,12 +1800,14 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           additionalProperties: TypedAdditionalProperties(
             valueModel: BooleanModel(context: context),
           ),
+          examples: const [],
         );
 
         const expectedMethod = r'''

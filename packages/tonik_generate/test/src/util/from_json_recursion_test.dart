@@ -44,6 +44,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       tree.valueModel = tree;
 
@@ -80,6 +81,7 @@ void main() {
         name: 'Forest',
         content: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       forest.content = forest;
 
@@ -103,6 +105,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       tree.valueModel = tree;
 
@@ -134,11 +137,13 @@ void main() {
         name: 'A',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       a.valueModel = b;
       b.valueModel = a;
@@ -174,6 +179,7 @@ void main() {
         valueModel: AnyModel(context: context),
         context: context,
         isNullable: true,
+        examples: const [],
       );
       tree.valueModel = tree;
 
@@ -207,11 +213,13 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final alias = AliasModel(
         name: 'TreeAlias',
         model: tree,
         context: context,
+        examples: const [],
       );
       tree.valueModel = alias;
 
@@ -247,16 +255,19 @@ void main() {
         name: 'A',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final c = MapModel(
         name: 'C',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       a.valueModel = b;
       b.valueModel = c;

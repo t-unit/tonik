@@ -48,6 +48,7 @@ void main() {
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -82,9 +83,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -102,6 +105,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -144,9 +148,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final company = ClassModel(
@@ -159,9 +165,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -173,6 +181,7 @@ void main() {
           },
           discriminator: 'entity_type',
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -218,9 +227,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -232,6 +243,7 @@ void main() {
           discriminator: 'type',
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -269,9 +281,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final company = ClassModel(
@@ -284,9 +298,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -297,6 +313,7 @@ void main() {
           (discriminatorValue: 'company', model: company),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -335,6 +352,7 @@ void main() {
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -371,9 +389,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final company = ClassModel(
@@ -386,9 +406,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -400,6 +422,7 @@ void main() {
           },
           discriminator: 'entity_type',
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -457,9 +480,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -471,6 +496,7 @@ void main() {
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -525,9 +551,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final company = ClassModel(
@@ -540,9 +568,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -553,6 +583,7 @@ void main() {
             (discriminatorValue: null, model: company),
           },
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -587,12 +618,14 @@ void main() {
         name: 'Person',
         properties: const [],
         context: context,
+        examples: const [],
       );
       final company = ClassModel(
         isDeprecated: false,
         name: 'Company',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       model = OneOfModel(
@@ -604,6 +637,7 @@ void main() {
         },
         context: context,
         isNullable: true,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -645,6 +679,7 @@ void main() {
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -670,6 +705,7 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         name: 'Tags',
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -680,6 +716,7 @@ void main() {
           (discriminatorValue: null, model: mapVariant),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -711,15 +748,18 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final listVariant = ListModel(
         content: innerClass,
         context: context,
         name: 'Items',
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -730,6 +770,7 @@ void main() {
           (discriminatorValue: null, model: listVariant),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -759,6 +800,7 @@ void main() {
         context: context,
         name: 'Tags',
         isNullable: true,
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -769,6 +811,7 @@ void main() {
           (discriminatorValue: null, model: listVariant),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);
@@ -807,14 +850,17 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           discriminator: 'type',
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -872,14 +918,17 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           discriminator: "it's-type",
           context: context,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -925,6 +974,7 @@ void main() {
         name: 'ErrorCode',
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final model = OneOfModel(
@@ -935,6 +985,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final classes = generator.generateClasses(model);

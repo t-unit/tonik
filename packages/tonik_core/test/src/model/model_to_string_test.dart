@@ -15,12 +15,14 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final modelB = ClassModel(
         name: 'B',
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       modelA.properties = [
         Property(
@@ -29,6 +31,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
       modelB.properties = [
@@ -38,6 +41,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -51,6 +55,7 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       model.properties = [
         Property(
@@ -59,6 +64,7 @@ void main() {
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -72,18 +78,21 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final modelB = ClassModel(
         name: 'B',
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final modelC = ClassModel(
         name: 'C',
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       modelA.properties = [
         Property(
@@ -92,6 +101,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
       modelB.properties = [
@@ -101,6 +111,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
       modelC.properties = [
@@ -110,6 +121,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -124,12 +136,14 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final anyOf = AnyOfModel(
         name: 'Outer',
         models: {(discriminatorValue: null, model: classModel)},
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       classModel.properties = [
         Property(
@@ -138,6 +152,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -151,12 +166,14 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final oneOf = OneOfModel(
         name: 'Outer',
         models: {(discriminatorValue: null, model: classModel)},
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       classModel.properties = [
         Property(
@@ -165,6 +182,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -177,12 +195,14 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final allOf = AllOfModel(
         name: 'Outer',
         models: {classModel},
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       classModel.properties = [
         Property(
@@ -191,6 +211,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -203,11 +224,13 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final alias = AliasModel(
         name: 'Wrapper',
         model: classModel,
         context: context,
+        examples: const [],
       );
       classModel.properties = [
         Property(
@@ -216,6 +239,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -229,11 +253,13 @@ void main() {
         properties: [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
       final listModel = ListModel(
         name: 'Items',
         content: classModel,
         context: context,
+        examples: const [],
       );
       classModel.properties = [
         Property(
@@ -242,6 +268,7 @@ void main() {
           isRequired: false,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
       ];
 
@@ -261,6 +288,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'email',
@@ -268,10 +296,12 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
 
       final result = model.toString();
@@ -285,6 +315,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       final result = prop.toString();
@@ -296,6 +327,7 @@ void main() {
         name: 'MyAlias',
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final result = alias.toString();
@@ -310,8 +342,10 @@ void main() {
           properties: [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final result = list.toString();
@@ -327,10 +361,12 @@ void main() {
             properties: [],
             context: context,
             isDeprecated: false,
+            examples: const [],
           ),
         },
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
 
       final result = allOf.toString();

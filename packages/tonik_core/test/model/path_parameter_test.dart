@@ -18,6 +18,7 @@ void main() {
         model: model,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final resolved = param.resolve(name: 'newName');
@@ -49,6 +50,7 @@ void main() {
         model: model,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final resolved = param.resolve();
@@ -71,6 +73,7 @@ void main() {
         model: model,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final alias = PathParameterAlias(
@@ -102,6 +105,7 @@ void main() {
           model: model,
           encoding: PathParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final alias = PathParameterAlias(
@@ -131,6 +135,7 @@ void main() {
         model: model,
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final firstAlias = PathParameterAlias(
@@ -167,6 +172,7 @@ void main() {
           model: model,
           encoding: PathParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final alias = PathParameterAlias(
@@ -195,6 +201,7 @@ void main() {
           model: model,
           encoding: PathParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final alias = PathParameterAlias(
