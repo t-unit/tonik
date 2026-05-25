@@ -34,7 +34,7 @@ The four preloaded skills (code-builder, testing, integration-tests, openapi-spe
 9. **Tests use `isTrue` / `isFalse`, never bare `true` / `false`.**
 10. **When testing an `Expression`, wrap it in a `Method` to produce a formattable body** before comparing.
 11. **Never edit generated integration-test files manually.** Regenerate via `./scripts/setup_integration_tests.sh`.
-12. **Never use `melos run analyze` per-package loops.** Run `fvm dart analyze` ONCE from the project root.
+12. **Never use `melos run analyze` per-package loops.** Run `fvm dart analyze packages/` ONCE. **Never** scope to the project root (`fvm dart analyze` / `fvm dart analyze .`) — that pulls in `integration_test/*/` packages whose generated client SDKs drift between regen passes and surface hundreds of unrelated "issues". The `packages/` scope is the canonical verification target.
 13. **Never chain bash commands with `&&` or `;`.** Run them one at a time.
 14. **No infrastructure / script changes mixed into a feature commit.** Bug-fix and feature PRs touch only the feature scope.
 15. **Comments explain WHY, never WHAT.** Default to no comments. Do not narrate code lines, restate type signatures, summarise switch cases, or describe what a function does when its name and parameters already make that clear. Only write a comment when a reader of the code could not infer the reasoning — a hidden constraint, a non-obvious invariant, an operator-precedence trap, a workaround for a specific bug. If removing the comment would not confuse a future reader, do not write it. This applies to inline comments AND doc comments — a one-line doc on a helper whose name already explains it is noise. Apply this in Phase 5 cleanup: re-read every comment in your diff and delete the ones that explain WHAT.
@@ -81,7 +81,7 @@ Before declaring done, re-read every file you changed and verify:
 - Every error return is handled
 - Every null check is in place
 - All HARD RULES above are satisfied
-- Analysis passes with zero issues: `fvm dart analyze` (run ONCE from project root)
+- Analysis passes with zero issues: `fvm dart analyze packages/` (run ONCE; never project root — see HARD RULE 12)
 - All tests pass: `melos run test`
 - Patch coverage >= 90%: `bash scripts/coverage.sh --diff main`
 
@@ -107,7 +107,7 @@ Before reporting completion, run two built-in skills against your diff and addre
 
 **5c. Re-verify**
 After applying all `/simplify` and `/security-review` fixes:
-- `fvm dart analyze` — must pass with zero issues
+- `fvm dart analyze packages/` — must pass with zero issues (never project root)
 - `melos run test` — all tests pass
 - If integration tests apply: `./scripts/setup_integration_tests.sh && melos run test` — all pass
 

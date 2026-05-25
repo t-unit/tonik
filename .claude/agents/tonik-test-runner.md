@@ -11,11 +11,15 @@ You are a test execution agent. Your job is to run analysis and every test suite
 
 ## Step 1: Analysis
 
-Run static analysis across all packages:
+Run static analysis across the source packages only:
 
 ```sh
-fvm dart analyze
+fvm dart analyze packages/
 ```
+
+**Never** run `fvm dart analyze` (project root) or `fvm dart analyze .` — those scan `integration_test/` packages too. Those packages contain regenerated client SDKs whose `pubspec.yaml` deps are only resolved after `./scripts/setup_integration_tests.sh`, and they drift between regen passes. Project-root analyze produces hundreds of "issues" from stale `integration_test/` code that have nothing to do with the PR. `packages/` is the canonical scope for verification analyze.
+
+The exception is when integration tests have just been regenerated in Step 3 — at that point `melos exec -- "fvm dart analyze"` (run inside each integration package) is meaningful, but Step 1 is not the place for it.
 
 If analysis produces errors, report them immediately with the full output.
 
@@ -65,7 +69,7 @@ Report the patch coverage percentage and any files below 90%.
 ## Test Results
 
 ### Analysis
-- `fvm dart analyze`: PASS/FAIL
+- `fvm dart analyze packages/`: PASS/FAIL
   (include any errors or warnings)
 
 ### Unit Tests
