@@ -24,7 +24,14 @@ void main() {
       final schema = api.components!.schemas!['Item']!;
       final result = importer.fromSchema(schema);
 
-      expect(result, const [core.Example(value: 'hello')]);
+      expect(result, const [
+        core.Example(
+          name: null,
+          summary: null,
+          description: null,
+          value: 'hello',
+        ),
+      ]);
     });
 
     test('extracts OAS 3.1 examples array entries', () {
@@ -47,9 +54,9 @@ void main() {
       final result = importer.fromSchema(schema);
 
       expect(result, const [
-        core.Example(value: 'a'),
-        core.Example(value: 'b'),
-        core.Example(value: 'c'),
+        core.Example(name: null, summary: null, description: null, value: 'a'),
+        core.Example(name: null, summary: null, description: null, value: 'b'),
+        core.Example(name: null, summary: null, description: null, value: 'c'),
       ]);
     });
   });
@@ -78,6 +85,9 @@ void main() {
 
       expect(result, const [
         core.Example(
+          name: null,
+          summary: null,
+          description: null,
           value: {'k': 1},
         ),
       ]);
@@ -107,7 +117,12 @@ void main() {
           description: 'desc',
           value: {'k': 1},
         ),
-        core.Example(name: 'second', value: 42),
+        core.Example(
+          name: 'second',
+          summary: null,
+          description: null,
+          value: 42,
+        ),
       ]);
     });
 
@@ -125,8 +140,8 @@ void main() {
       );
 
       expect(result, const [
-        core.Example(value: 'a'),
-        core.Example(value: 'b'),
+        core.Example(name: null, summary: null, description: null, value: 'a'),
+        core.Example(name: null, summary: null, description: null, value: 'b'),
       ]);
     });
 
@@ -141,7 +156,14 @@ void main() {
         }),
       );
 
-      expect(result, const [core.Example(value: 'media-level')]);
+      expect(result, const [
+        core.Example(
+          name: null,
+          summary: null,
+          description: null,
+          value: 'media-level',
+        ),
+      ]);
     });
 
     test('drops examples that only carry externalValue', () {
@@ -157,7 +179,14 @@ void main() {
         }),
       );
 
-      expect(result, const [core.Example(name: 'inline', value: 1)]);
+      expect(result, const [
+        core.Example(
+          name: 'inline',
+          summary: null,
+          description: null,
+          value: 1,
+        ),
+      ]);
     });
 
     test('preserves examples whose value is explicitly null', () {
@@ -173,7 +202,12 @@ void main() {
       );
 
       expect(result, const [
-        core.Example(name: 'nullValue', summary: 'null is valid JSON'),
+        core.Example(
+          name: 'nullValue',
+          summary: 'null is valid JSON',
+          description: null,
+          value: null,
+        ),
       ]);
     });
 
@@ -240,6 +274,46 @@ void main() {
         throwsArgumentError,
       );
     });
+
+    test(r'throws ArgumentError on cyclic example $ref chain', () {
+      final api = loadApi(
+        components: {
+          'examples': {
+            'A': {r'$ref': '#/components/examples/B'},
+            'B': {r'$ref': '#/components/examples/A'},
+          },
+        },
+      );
+      final importer = ExampleImporter(openApiObject: api);
+
+      expect(
+        () => importer.fromMediaType(
+          media({
+            'examples': {
+              'start': {r'$ref': '#/components/examples/A'},
+            },
+          }),
+        ),
+        throwsA(
+          isA<ArgumentError>()
+              .having(
+                (e) => e.message,
+                'message',
+                startsWith('Cyclic example reference:'),
+              )
+              .having(
+                (e) => e.message,
+                'message',
+                contains('#/components/examples/A'),
+              )
+              .having(
+                (e) => e.message,
+                'message',
+                contains('#/components/examples/B'),
+              ),
+        ),
+      );
+    });
   });
 
   group('ExampleImporter.fromParameter', () {
@@ -263,7 +337,14 @@ void main() {
       final parameter = buildParameter({'example': 'value'});
       final result = importer.fromParameter(parameter);
 
-      expect(result, const [core.Example(value: 'value')]);
+      expect(result, const [
+        core.Example(
+          name: null,
+          summary: null,
+          description: null,
+          value: 'value',
+        ),
+      ]);
     });
 
     test('normalizes parameter examples map', () {
@@ -282,7 +363,12 @@ void main() {
       final result = importer.fromParameter(parameter);
 
       expect(result, const [
-        core.Example(name: 'one', summary: 'first', value: 1),
+        core.Example(
+          name: 'one',
+          summary: 'first',
+          description: null,
+          value: 1,
+        ),
       ]);
     });
   });
@@ -306,7 +392,14 @@ void main() {
       final header = buildHeader({'example': 'hv'});
       final result = importer.fromHeader(header);
 
-      expect(result, const [core.Example(value: 'hv')]);
+      expect(result, const [
+        core.Example(
+          name: null,
+          summary: null,
+          description: null,
+          value: 'hv',
+        ),
+      ]);
     });
 
     test('normalizes header examples map', () {
@@ -324,7 +417,14 @@ void main() {
       });
       final result = importer.fromHeader(header);
 
-      expect(result, const [core.Example(name: 'ok', value: 'ok-value')]);
+      expect(result, const [
+        core.Example(
+          name: 'ok',
+          summary: null,
+          description: null,
+          value: 'ok-value',
+        ),
+      ]);
     });
   });
 }

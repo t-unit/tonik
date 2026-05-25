@@ -17,11 +17,25 @@ class ExampleImporter {
 
     final result = <core.Example>[];
     if (schema.example != null) {
-      result.add(core.Example(value: schema.example));
+      result.add(
+        core.Example(
+          name: null,
+          summary: null,
+          description: null,
+          value: schema.example,
+        ),
+      );
     }
     if (schema.examples != null) {
       for (final value in schema.examples!) {
-        result.add(core.Example(value: value));
+        result.add(
+          core.Example(
+            name: null,
+            summary: null,
+            description: null,
+            value: value,
+          ),
+        );
       }
     }
     return result;
@@ -60,11 +74,18 @@ class ExampleImporter {
   }) {
     final result = <core.Example>[];
     if (example != null) {
-      result.add(core.Example(value: example));
+      result.add(
+        core.Example(
+          name: null,
+          summary: null,
+          description: null,
+          value: example,
+        ),
+      );
     }
     if (examples != null) {
       for (final entry in examples.entries) {
-        final resolved = _resolveExample(entry.value);
+        final resolved = _resolveExample(entry.value, <String>[]);
         final converted = _convert(name: entry.key, example: resolved);
         if (converted != null) {
           result.add(converted);
@@ -74,7 +95,10 @@ class ExampleImporter {
     return result;
   }
 
-  Example _resolveExample(ReferenceWrapper<Example> wrapper) {
+  Example _resolveExample(
+    ReferenceWrapper<Example> wrapper,
+    List<String> chain,
+  ) {
     switch (wrapper) {
       case Reference<Example>():
         if (!wrapper.ref.startsWith('#/components/examples/')) {
@@ -84,12 +108,19 @@ class ExampleImporter {
           );
         }
 
+        if (chain.contains(wrapper.ref)) {
+          final cycleChain = [...chain, wrapper.ref];
+          throw ArgumentError(
+            'Cyclic example reference: ${cycleChain.join(" -> ")}',
+          );
+        }
+
         final refName = wrapper.ref.split('/').last;
         final refExample = openApiObject.components?.examples?[refName];
         if (refExample == null) {
           throw ArgumentError('Example $refName not found');
         }
-        return _resolveExample(refExample);
+        return _resolveExample(refExample, [...chain, wrapper.ref]);
 
       case InlinedObject<Example>():
         return wrapper.object;

@@ -4,10 +4,10 @@ import 'package:meta/meta.dart';
 @immutable
 class Example {
   const Example({
-    this.name,
-    this.summary,
-    this.description,
-    this.value,
+    required this.name,
+    required this.summary,
+    required this.description,
+    required this.value,
   });
 
   final String? name;
