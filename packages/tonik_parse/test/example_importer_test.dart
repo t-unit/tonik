@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/example_importer.dart';
@@ -188,6 +189,32 @@ void main() {
         ),
       ]);
     });
+
+    test(
+      'drops Example with neither value nor externalValue and logs warning',
+      () {
+        final api = loadApi();
+        final importer = ExampleImporter(openApiObject: api);
+
+        final logs = <LogRecord>[];
+        final sub = Logger.root.onRecord.listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final result = importer.fromMediaType(
+          media({
+            'examples': {
+              'empty': {'summary': 'no payload'},
+            },
+          }),
+        );
+
+        expect(result, isEmpty);
+        expect(
+          logs.where((r) => r.level == Level.WARNING),
+          hasLength(1),
+        );
+      },
+    );
 
     test('preserves examples whose value is explicitly null', () {
       final api = loadApi();

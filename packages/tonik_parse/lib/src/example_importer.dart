@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/header.dart';
@@ -11,6 +12,7 @@ class ExampleImporter {
   ExampleImporter({required this.openApiObject});
 
   final OpenApiObject openApiObject;
+  final log = Logger('ExampleImporter');
 
   List<core.Example> fromSchema(Schema? schema) {
     if (schema == null) return const [];
@@ -129,6 +131,13 @@ class ExampleImporter {
 
   core.Example? _convert({required String name, required Example example}) {
     if (example.value == null && example.externalValue != null) {
+      return null;
+    }
+    if (!example.hasExplicitValue && example.externalValue == null) {
+      log.warning(
+        'Skipping Example "$name" - neither `value` nor `externalValue` '
+        'is set.',
+      );
       return null;
     }
     return core.Example(

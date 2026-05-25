@@ -568,26 +568,54 @@ class ModelImporter {
     switch (model) {
       case final ClassModel m when m.examples.isEmpty:
         m.examples = examples;
+      case final ClassModel m:
+        _logSkippedExamples('ClassModel', m.name, m.examples, examples);
       case final AliasModel m when m.examples.isEmpty:
         m.examples = examples;
+      case final AliasModel m:
+        _logSkippedExamples('AliasModel', m.name, m.examples, examples);
       case final ListModel m when m.examples.isEmpty:
         m.examples = examples;
+      case final ListModel m:
+        _logSkippedExamples('ListModel', m.name, m.examples, examples);
       case final MapModel m when m.examples.isEmpty:
         m.examples = examples;
+      case final MapModel m:
+        _logSkippedExamples('MapModel', m.name, m.examples, examples);
       case final EnumModel<dynamic> m when m.examples.isEmpty:
         m.examples = examples;
+      case final EnumModel<dynamic> m:
+        _logSkippedExamples('EnumModel', m.name, m.examples, examples);
       case final AllOfModel m when m.examples.isEmpty:
         m.examples = examples;
+      case final AllOfModel m:
+        _logSkippedExamples('AllOfModel', m.name, m.examples, examples);
       case final OneOfModel m when m.examples.isEmpty:
         m.examples = examples;
+      case final OneOfModel m:
+        _logSkippedExamples('OneOfModel', m.name, m.examples, examples);
       case final AnyOfModel m when m.examples.isEmpty:
         m.examples = examples;
+      case final AnyOfModel m:
+        _logSkippedExamples('AnyOfModel', m.name, m.examples, examples);
       case PrimitiveModel():
       case AnyModel():
       case NeverModel():
       default:
         break;
     }
+  }
+
+  void _logSkippedExamples(
+    String modelKind,
+    String? modelName,
+    List<Example> existing,
+    List<Example> dropped,
+  ) {
+    log.fine(
+      'Skipping applyExamples on $modelKind ${modelName ?? '(unnamed)'} '
+      '(${existing.length} existing, ${dropped.length} new dropped).',
+    );
   }
 
   /// Returns true if setting the shell's model to [target] would create
