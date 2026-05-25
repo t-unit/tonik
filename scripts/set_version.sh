@@ -1,10 +1,22 @@
 #!/bin/bash
 
-set -e
+set -eE
 
 # Version update script for Tonik monorepo
 # Usage: ./scripts/set_version.sh 0.0.9
 # Usage (dry-run): ./scripts/set_version.sh 0.0.9 --dry-run
+
+# Without this, set -e aborts mid-release leaving a commit with no tags.
+rollback_release() {
+  local exit_code=$?
+  echo ""
+  echo "❌ Release step failed (exit $exit_code) - rolling back commit and tags"
+  for tag in tonik-v$VERSION tonik_util-v$VERSION tonik_core-v$VERSION tonik_parse-v$VERSION tonik_generate-v$VERSION; do
+    git tag -d $tag 2>/dev/null || true
+  done
+  git reset --hard HEAD~1
+  exit 1
+}
 
 DRY_RUN=false
 if [ "$2" = "--dry-run" ]; then
@@ -51,10 +63,6 @@ fi
 
 echo "📦 Running tests before versioning..."
 melos run test
-if [ $? -ne 0 ]; then
-  echo "❌ Tests failed. Aborting version update."
-  exit 1
-fi
 echo "✅ Tests passed"
 echo ""
 
@@ -70,13 +78,11 @@ if [ "$DRY_RUN" = false ]; then
     --manual-version="tonik_generate:$VERSION" \
     --manual-version="tonik:$VERSION"
 
-  if [ $? -ne 0 ]; then
-    echo "❌ Melos version command failed"
-    exit 1
-  fi
   echo "✅ Packages versioned"
   echo ""
-  
+
+  trap rollback_release ERR
+
   echo "🔗 Adding full changelog link to tonik package..."
   # Add link to root changelog after the version header
   TONIK_CHANGELOG="packages/tonik/CHANGELOG.md"
@@ -149,29 +155,13 @@ echo "🧪 Bootstrapping and testing..."
 fvm dart run melos bootstrap
 melos run test
 fvm dart analyze
-
-if [ $? -ne 0 ]; then
-  echo "❌ Tests or analysis failed after versioning"
-  if [ "$DRY_RUN" = false ]; then
-    echo "Rolling back..."
-    git reset --hard HEAD~1
-  fi
-  exit 1
-fi
 echo "✅ All checks passed"
 echo ""
 
 if [ "$DRY_RUN" = false ]; then
   echo "🔄 Regenerating integration test packages with new version..."
   "$PWD/scripts/setup_integration_tests.sh"
-  if [ $? -ne 0 ]; then
-    echo "❌ Integration test regeneration failed"
-    echo "Rolling back..."
-    git reset --hard HEAD~1
-    exit 1
-  fi
 
-  # Check if there were changes
   if [ -n "$(git status --porcelain integration_test)" ]; then
     echo "✅ Integration test packages regenerated"
     git add integration_test
@@ -187,6 +177,7 @@ if [ "$DRY_RUN" = false ]; then
     git tag $tag
     echo "  ✅ Created $tag"
   done
+  trap - ERR
   echo ""
 else
   echo "🔄 Skipping integration test regeneration (dry-run mode)"
