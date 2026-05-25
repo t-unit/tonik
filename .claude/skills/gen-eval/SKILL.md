@@ -27,7 +27,7 @@ Default max iterations: 3.
 | Agent | Purpose |
 |-------|---------|
 | `tonik-generator` | Implements the feature, then runs `/simplify` + `/security-review` as a Phase 5 cleanup pass before declaring done. Skills (`code-builder`, `testing`, `integration-tests`, `openapi-spec`) preloaded via frontmatter. |
-| `tonik-test-runner` | Runs `fvm dart analyze`, all unit tests per package, integration tests, and patch coverage. Read-only + Bash. |
+| `tonik-test-runner` | Runs `fvm dart analyze packages/` (scoped — never project root), all unit tests per package, integration tests, and patch coverage. Read-only + Bash. |
 
 **Specialist reviewers (fan out in parallel — Step 4b):**
 
@@ -99,7 +99,7 @@ Based on the task's acceptance criteria, write a numbered list of **concrete, te
 - [ ] Every test category the task mentions (unit per package, integration) is an explicit criterion
 - [ ] Test criteria are specific about coverage scope (which cases, which error conditions, which scenarios)
 - [ ] Test criteria are explicit about test layer (unit in package X, integration test in `integration_test/`)
-- [ ] There is a criterion for analysis passing (`fvm dart analyze`)
+- [ ] There is a criterion for analysis passing (`fvm dart analyze packages/` — never project root, integration_test/ packages drift between regens)
 - [ ] If generator changes are involved, there is a criterion for integration tests passing
 - [ ] There is a criterion for patch coverage >= 90% (`bash scripts/coverage.sh --diff main`)
 - [ ] Any criterion that produces emitted Dart code mentions explicitly that tests must be **full method body comparisons** with `collapseWhitespace()` + `DartFormatter` — not fragments
