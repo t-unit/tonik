@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:tonik_core/src/model/example.dart';
 import 'package:tonik_core/src/util/context.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -127,6 +128,7 @@ class MapModel extends Model with NamedModel {
   MapModel({
     required this.valueModel,
     required super.context,
+    required this.examples,
     this.name,
     this.nameOverride,
     this.isNullable = false,
@@ -142,6 +144,7 @@ class MapModel extends Model with NamedModel {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
+  List<Example> examples;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -149,13 +152,14 @@ class MapModel extends Model with NamedModel {
   @override
   String toString() =>
       'MapModel{name: $name, nameOverride: $nameOverride, '
-      'valueModel: ${valueModel._ref}}';
+      'valueModel: ${valueModel._ref}, examples: $examples}';
 }
 
 class AliasModel extends Model with NamedModel {
   AliasModel({
     required this.model,
     required super.context,
+    required this.examples,
     this.name,
     this.nameOverride,
     this.description,
@@ -175,6 +179,7 @@ class AliasModel extends Model with NamedModel {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
+  List<Example> examples;
 
   @override
   Model get resolved => switch (model) {
@@ -189,13 +194,14 @@ class AliasModel extends Model with NamedModel {
   String toString() =>
       'AliasModel{name: $name, nameOverride: $nameOverride, '
       'model: ${model._ref}, description: $description, '
-      'isDeprecated: $isDeprecated}';
+      'isDeprecated: $isDeprecated, examples: $examples}';
 }
 
 class ListModel extends Model with NamedModel {
   ListModel({
     required this.content,
     required super.context,
+    required this.examples,
     this.name,
     this.nameOverride,
     this.isNullable = false,
@@ -212,6 +218,7 @@ class ListModel extends Model with NamedModel {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
+  List<Example> examples;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -221,7 +228,7 @@ class ListModel extends Model with NamedModel {
   @override
   String toString() =>
       'ListModel{name: $name, nameOverride: $nameOverride, '
-      'content: ${content._ref}}';
+      'content: ${content._ref}, examples: $examples}';
 }
 
 class ClassModel extends Model with NamedModel {
@@ -229,6 +236,7 @@ class ClassModel extends Model with NamedModel {
     required this.properties,
     required super.context,
     required this.isDeprecated,
+    required this.examples,
     this.name,
     this.nameOverride,
     this.description,
@@ -250,6 +258,7 @@ class ClassModel extends Model with NamedModel {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
+  List<Example> examples;
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -259,7 +268,8 @@ class ClassModel extends Model with NamedModel {
       'ClassModel{name: $name, nameOverride: $nameOverride, '
       'properties: [${properties.map((p) => p.name).join(', ')}], '
       'additionalProperties: $additionalProperties, '
-      'description: $description, isDeprecated: $isDeprecated}';
+      'description: $description, isDeprecated: $isDeprecated, '
+      'examples: $examples}';
 }
 
 /// Represents an individual value within an enum, with optional name override.
@@ -293,6 +303,7 @@ class EnumModel<T> extends Model with NamedModel {
     required this.isNullable,
     required super.context,
     required this.isDeprecated,
+    required this.examples,
     this.name,
     this.nameOverride,
     this.description,
@@ -315,6 +326,7 @@ class EnumModel<T> extends Model with NamedModel {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
+  List<Example> examples;
 
   @override
   EncodingShape get encodingShape => EncodingShape.simple;
@@ -323,7 +335,8 @@ class EnumModel<T> extends Model with NamedModel {
   String toString() =>
       'EnumModel<$T>{name: $name, nameOverride: $nameOverride, '
       'values: $values, isNullable: $isNullable, description: $description, '
-      'isDeprecated: $isDeprecated, fallbackValue: $fallbackValue}';
+      'isDeprecated: $isDeprecated, fallbackValue: $fallbackValue, '
+      'examples: $examples}';
 }
 
 class AllOfModel extends Model with NamedModel, CompositeModel {
@@ -331,6 +344,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     required this.models,
     required super.context,
     required this.isDeprecated,
+    required this.examples,
     this.name,
     this.nameOverride,
     this.description,
@@ -352,6 +366,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   bool isReadOnly;
   bool isWriteOnly;
   Set<Model> models;
+  List<Example> examples;
 
   @override
   Set<Model> get containedModels => models;
@@ -361,7 +376,8 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
       'AllOfModel{name: $name, nameOverride: $nameOverride, '
       'models: {${models.map((m) => m._ref).join(', ')}}, '
       'additionalProperties: $additionalProperties, '
-      'description: $description, isDeprecated: $isDeprecated}';
+      'description: $description, isDeprecated: $isDeprecated, '
+      'examples: $examples}';
 }
 
 typedef DiscriminatedModel = ({String? discriminatorValue, Model model});
@@ -371,6 +387,7 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
     required this.models,
     required super.context,
     required this.isDeprecated,
+    required this.examples,
     this.name,
     this.nameOverride,
     this.description,
@@ -392,6 +409,7 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
   bool isWriteOnly;
   Set<DiscriminatedModel> models;
   String? discriminator;
+  List<Example> examples;
 
   @override
   Set<Model> get containedModels => models.map((m) => m.model).toSet();
@@ -401,7 +419,7 @@ class OneOfModel extends Model with NamedModel, CompositeModel {
       'OneOfModel{name: $name, nameOverride: $nameOverride, '
       'models: {${models.map((m) => m.model._ref).join(', ')}}, '
       'discriminator: $discriminator, description: $description, '
-      'isDeprecated: $isDeprecated}';
+      'isDeprecated: $isDeprecated, examples: $examples}';
 }
 
 class AnyOfModel extends Model with NamedModel, CompositeModel {
@@ -409,6 +427,7 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
     required this.models,
     required super.context,
     required this.isDeprecated,
+    required this.examples,
     this.name,
     this.nameOverride,
     this.description,
@@ -430,6 +449,7 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
   bool isWriteOnly;
   Set<DiscriminatedModel> models;
   String? discriminator;
+  List<Example> examples;
 
   @override
   Set<Model> get containedModels => models.map((m) => m.model).toSet();
@@ -439,7 +459,7 @@ class AnyOfModel extends Model with NamedModel, CompositeModel {
       'AnyOfModel{name: $name, nameOverride: $nameOverride, '
       'models: {${models.map((m) => m.model._ref).join(', ')}}, '
       'discriminator: $discriminator, description: $description, '
-      'isDeprecated: $isDeprecated}';
+      'isDeprecated: $isDeprecated, examples: $examples}';
 }
 
 sealed class PrimitiveModel extends Model {
@@ -553,6 +573,7 @@ class Property {
     required this.isRequired,
     required this.isNullable,
     required this.isDeprecated,
+    required this.examples,
     this.isReadOnly = false,
     this.isWriteOnly = false,
     this.nameOverride,
@@ -569,6 +590,7 @@ class Property {
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
+  List<Example> examples;
 
   @override
   String toString() =>
@@ -576,5 +598,5 @@ class Property {
       'model: ${model._ref}, isRequired: $isRequired, '
       'isNullable: $isNullable, isDeprecated: $isDeprecated, '
       'isReadOnly: $isReadOnly, isWriteOnly: $isWriteOnly, '
-      'description: $description}';
+      'description: $description, examples: $examples}';
 }

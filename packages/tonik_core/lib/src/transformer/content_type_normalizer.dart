@@ -164,6 +164,7 @@ class ContentTypeNormalizer {
       model: normalizedModel,
       rawContentType: body.rawContentType,
       contentType: body.contentType,
+      examples: body.examples,
     );
   }
 
@@ -238,6 +239,7 @@ class ContentTypeNormalizer {
       contentType: content.contentType,
       rawContentType: content.rawContentType,
       encoding: content.encoding,
+      examples: content.examples,
     );
   }
 

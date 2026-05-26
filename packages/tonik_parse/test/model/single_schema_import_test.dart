@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/components.dart';
 import 'package:tonik_parse/src/model/info.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
@@ -53,6 +54,7 @@ void main() {
       headers: {},
       securitySchemes: {},
       pathItems: {},
+      examples: null,
     ),
     tags: [],
   );
@@ -185,7 +187,10 @@ void main() {
   late ModelImporter importer;
 
   setUp(() {
-    importer = ModelImporter(openApiObject)..import();
+    importer = ModelImporter(
+      openApiObject,
+      exampleImporter: ExampleImporter(openApiObject: openApiObject),
+    )..import();
   });
 
   test('returns parsed model', () {
@@ -219,7 +224,10 @@ void main() {
   });
 
   test('does not add referenced schema to models', () {
-    final importer = ModelImporter(openApiObject)..import();
+    final importer = ModelImporter(
+      openApiObject,
+      exampleImporter: ExampleImporter(openApiObject: openApiObject),
+    )..import();
     final models = Set.of(importer.models);
 
     final _ = importer.importSchema(reference, Context.initial());

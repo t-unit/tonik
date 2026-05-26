@@ -114,6 +114,7 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -144,9 +145,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -170,6 +173,7 @@ void main() {
       final model = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -193,6 +197,7 @@ void main() {
       final model = ListModel(
         content: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -222,10 +227,12 @@ void main() {
         },
         isNullable: false,
         context: context,
+        examples: const [],
       );
       final model = ListModel(
         content: enumModel,
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -256,13 +263,16 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
       final model = ListModel(
         content: classModel,
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -286,10 +296,12 @@ void main() {
       final innerList = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final model = ListModel(
         content: innerList,
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -318,6 +330,7 @@ void main() {
           (discriminatorValue: 's', model: StringModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -342,6 +355,7 @@ void main() {
         name: 'MyString',
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -370,10 +384,12 @@ void main() {
           (discriminatorValue: 's', model: StringModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
       final model = ListModel(
         content: oneOfModel,
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -417,6 +433,7 @@ void main() {
       final model = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -442,6 +459,7 @@ void main() {
         final model = MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
         final expression = buildSimpleParameterExpression(
           refer('value'),
@@ -480,6 +498,7 @@ void main() {
         final model = MapModel(
           valueModel: DateTimeModel(context: context),
           context: context,
+          examples: const [],
         );
         final expression = buildSimpleParameterExpression(
           refer('value'),
@@ -522,8 +541,10 @@ void main() {
           },
           isNullable: false,
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -562,8 +583,10 @@ void main() {
           name: 'User',
           properties: [],
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -631,6 +654,7 @@ void main() {
       final model = ListModel(
         content: Base64Model(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -672,8 +696,10 @@ void main() {
         content: MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -723,10 +749,13 @@ void main() {
             name: 'User',
             properties: [],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -777,6 +806,7 @@ void main() {
       final model = ListModel(
         content: NeverModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -823,6 +853,7 @@ void main() {
         properties: [],
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -850,6 +881,7 @@ void main() {
       final model = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),
@@ -880,6 +912,7 @@ void main() {
         final model = ListModel(
           content: IntegerModel(context: context),
           context: context,
+          examples: const [],
         );
         final expression = buildSimpleParameterExpression(
           refer('value'),
@@ -927,6 +960,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         isNullable: true,
+        examples: const [],
       );
       final expression = buildSimpleParameterExpression(
         refer('value'),

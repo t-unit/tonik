@@ -20,6 +20,7 @@ void main() {
           isNullable: false,
           context: ctx.push('Status'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final apiDocument = ApiDocument(
@@ -81,6 +82,7 @@ void main() {
           isNullable: false,
           context: ctx.push('Status'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final apiDocument = ApiDocument(
@@ -130,6 +132,7 @@ void main() {
           isNullable: false,
           context: ctx.push('Code'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final apiDocument = ApiDocument(
@@ -176,6 +179,7 @@ void main() {
         isNullable: false,
         context: ctx.push('Status'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final apiDocument = ApiDocument(
@@ -223,6 +227,7 @@ void main() {
         isNullable: false,
         context: ctx.push('Status'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final apiDocument = ApiDocument(
@@ -261,6 +266,7 @@ void main() {
         isNullable: false,
         context: ctx.push('Status'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final roleModel = EnumModel<String>(
@@ -269,6 +275,7 @@ void main() {
         isNullable: false,
         context: ctx.push('Role'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final apiDocument = ApiDocument(

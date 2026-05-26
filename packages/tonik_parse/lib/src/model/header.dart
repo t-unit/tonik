@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
+import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 
@@ -15,6 +17,8 @@ class Header {
     required this.explode,
     required this.schema,
     required this.content,
+    this.example,
+    this.examples,
   });
 
   factory Header.fromJson(Map<String, dynamic> json) => _$HeaderFromJson(json);
@@ -30,11 +34,16 @@ class Header {
   final Schema? schema;
   final Map<String, MediaType>? content;
 
-  // We ignore the example and examples parameter.
+  /// Single example inline value.
+  final Object? example;
+
+  /// Multiple named examples; each value may be inline or a `$ref`.
+  final Map<String, ReferenceWrapper<Example>>? examples;
 
   @override
   String toString() =>
       'Header{description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, style: $style, explode: $explode, '
-      'schema: $schema, content: $content}';
+      'schema: $schema, content: $content, '
+      'example: $example, examples: $examples}';
 }

@@ -37,6 +37,7 @@ void main() {
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -49,6 +50,7 @@ void main() {
         name: 'User',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -67,6 +69,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -92,6 +95,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'age',
@@ -99,9 +103,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -128,6 +134,7 @@ void main() {
           name: 'Empty',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -159,9 +166,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -207,6 +216,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -221,6 +231,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -237,6 +248,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -251,6 +263,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -270,9 +283,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -293,9 +308,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -318,9 +335,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -343,9 +362,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: true,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -368,9 +389,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -390,6 +413,7 @@ void main() {
         name: 'Empty',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -409,6 +433,7 @@ void main() {
         name: 'Address',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -421,9 +446,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -448,6 +475,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'name',
@@ -455,9 +483,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -492,6 +522,7 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'id',
@@ -499,6 +530,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'name',
@@ -506,6 +538,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'bio',
@@ -513,9 +546,11 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -559,6 +594,7 @@ void main() {
         name: 'UserProfile',
         properties: const [],
         context: Context.initial(),
+        examples: const [],
       );
 
       final result = generator.generate(model);
@@ -577,9 +613,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -601,9 +639,11 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -625,9 +665,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -648,13 +690,16 @@ void main() {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -677,13 +722,16 @@ void main() {
                 name: 'Address',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -705,9 +753,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: true,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -733,9 +783,11 @@ void main() {
               isRequired: false,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -757,9 +809,11 @@ void main() {
               isRequired: true,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -782,9 +836,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -810,9 +866,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -837,6 +895,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'callback',
@@ -844,9 +903,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -877,6 +938,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'count',
@@ -884,9 +946,11 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -923,13 +987,16 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -974,15 +1041,19 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
                     isDeprecated: false,
                     properties: const [],
                     context: context,
+                    examples: const [],
                   ),
                   context: context,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -1018,13 +1089,16 @@ factory ModelWithSimpleList.fromForm(String? value, {required bool explode}) {
                 model: ListModel(
                   content: StringModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -1109,6 +1183,7 @@ Map<String, String> parameterProperties({
           name: 'EmptyModel',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1136,6 +1211,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'count',
@@ -1143,9 +1219,11 @@ Map<String, String> parameterProperties({
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1177,13 +1255,16 @@ Map<String, String> parameterProperties({
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1206,6 +1287,7 @@ Map<String, String> parameterProperties({
           name: 'EmptyModel',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1235,6 +1317,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
               Property(
                 name: 'age',
@@ -1242,6 +1325,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
               Property(
                 name: 'email',
@@ -1249,9 +1333,11 @@ Map<String, String> parameterProperties({
                 isRequired: false,
                 isNullable: true,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -1301,6 +1387,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
               Property(
                 name: 'optional',
@@ -1308,9 +1395,11 @@ Map<String, String> parameterProperties({
                 isRequired: false,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -1352,23 +1441,28 @@ Map<String, String> parameterProperties({
                 model: ListModel(
                   content: IntegerModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
               Property(
                 name: 'optional',
                 model: ListModel(
                   content: IntegerModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 isRequired: false,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -1411,6 +1505,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
               Property(
                 name: 'age',
@@ -1418,6 +1513,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
               Property(
                 name: 'email',
@@ -1425,9 +1521,11 @@ Map<String, String> parameterProperties({
                 isRequired: false,
                 isNullable: true,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -1456,6 +1554,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'number',
@@ -1463,6 +1562,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'decimal',
@@ -1470,6 +1570,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'flag',
@@ -1477,6 +1578,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'timestamp',
@@ -1484,6 +1586,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'date_only',
@@ -1491,6 +1594,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'precise_amount',
@@ -1498,6 +1602,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'website',
@@ -1505,9 +1610,11 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1542,6 +1649,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: true,
                 isDeprecated: false,
+                examples: const [],
               ),
               Property(
                 name: 'required_nullable_count',
@@ -1549,9 +1657,11 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: true,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -1587,6 +1697,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'count',
@@ -1594,9 +1705,11 @@ Map<String, String> parameterProperties({
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1657,6 +1770,7 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'complexProp',
@@ -1670,16 +1784,20 @@ Map<String, String> parameterProperties({
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1714,6 +1832,7 @@ Map<String, String> parameterProperties({
           name: 'EmptyModel',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1754,9 +1873,11 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -1796,9 +1917,11 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -1863,6 +1986,7 @@ Map<String, String> parameterProperties({
           context: context,
           isDeprecated: false,
           isNullable: true,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -1882,6 +2006,7 @@ Map<String, String> parameterProperties({
           context: context,
           isDeprecated: false,
           isNullable: true,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -1900,6 +2025,7 @@ Map<String, String> parameterProperties({
           properties: const [],
           context: context,
           isDeprecated: false,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -1920,6 +2046,7 @@ Map<String, String> parameterProperties({
           context: context,
           isDeprecated: false,
           isNullable: true,
+          examples: const [],
         );
 
         final result = generator.generate(model);
@@ -1936,11 +2063,13 @@ Map<String, String> parameterProperties({
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
           isDeprecated: false,
           isNullable: true,
+          examples: const [],
         );
 
         final classes = generator.generateClasses(model);
@@ -1975,10 +2104,12 @@ Map<String, String> parameterProperties({
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
               additionalProperties: const UnrestrictedAdditionalProperties(),
+              examples: const [],
             );
 
             final result = generator.generateClass(model);
@@ -2008,12 +2139,14 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: TypedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -2042,10 +2175,12 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: const NoAdditionalProperties(),
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -2068,9 +2203,11 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -2095,10 +2232,12 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: const UnrestrictedAdditionalProperties(),
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -2124,12 +2263,14 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: TypedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -2154,6 +2295,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
@@ -2163,8 +2305,10 @@ Map<String, String> parameterProperties({
                 name: 'Widget',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -2189,10 +2333,12 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: const NoAdditionalProperties(),
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -2217,10 +2363,12 @@ Map<String, String> parameterProperties({
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
               additionalProperties: const UnrestrictedAdditionalProperties(),
+              examples: const [],
             );
 
             final result = generator.generateClass(model);
@@ -2256,10 +2404,12 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: const UnrestrictedAdditionalProperties(),
+            examples: const [],
           );
 
           final result = generator.generateClass(model);
@@ -2286,10 +2436,12 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: const UnrestrictedAdditionalProperties(),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -2325,10 +2477,12 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: const UnrestrictedAdditionalProperties(),
+            examples: const [],
           );
 
           const expectedMethod = '''
@@ -2358,10 +2512,12 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: const NoAdditionalProperties(),
+            examples: const [],
           );
 
           const expectedMethod = '''
@@ -2391,10 +2547,12 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: const NoAdditionalProperties(),
+            examples: const [],
           );
 
           const expectedMethod = '''
@@ -2423,12 +2581,14 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: TypedAdditionalProperties(
               valueModel: IntegerModel(context: context),
             ),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -2473,6 +2633,7 @@ Map<String, String> parameterProperties({
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
@@ -2482,8 +2643,10 @@ Map<String, String> parameterProperties({
                   name: 'Widget',
                   properties: const [],
                   context: context,
+                  examples: const [],
                 ),
               ),
+              examples: const [],
             );
 
             const expectedMethod = r"""
@@ -2528,12 +2691,14 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: TypedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -2581,6 +2746,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
@@ -2590,8 +2756,10 @@ Map<String, String> parameterProperties({
                 name: 'Widget',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -2632,12 +2800,14 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: TypedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -2685,12 +2855,14 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
             additionalProperties: TypedAdditionalProperties(
               valueModel: BooleanModel(context: context),
             ),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -2738,6 +2910,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
@@ -2747,8 +2920,10 @@ Map<String, String> parameterProperties({
                 name: 'Widget',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -2792,6 +2967,7 @@ Map<String, String> parameterProperties({
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
               Property(
                 name: "it's-field",
@@ -2799,9 +2975,11 @@ Map<String, String> parameterProperties({
                 isRequired: false,
                 isNullable: true,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           );
 
           final generatedClass = generator.generateClass(model);
@@ -2847,6 +3025,7 @@ Map<String, String> parameterProperties({
                   isRequired: false,
                   isNullable: true,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
@@ -2854,8 +3033,10 @@ Map<String, String> parameterProperties({
                 valueModel: ListModel(
                   content: StringModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
               ),
+              examples: const [],
             );
 
             final result = immutableGenerator.generateClass(model);
@@ -2899,6 +3080,7 @@ factory TaggedItem.fromJson(Object? json) {
           name: 'Tree',
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         tree.valueModel = tree;
         return ClassModel(
@@ -2911,6 +3093,7 @@ factory TaggedItem.fromJson(Object? json) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'right',
@@ -2918,9 +3101,11 @@ factory TaggedItem.fromJson(Object? json) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
       }
 

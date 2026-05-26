@@ -20,6 +20,7 @@ void main() {
             .push('components')
             .push('schemas')
             .push('User'),
+        examples: const [],
       );
 
       final variantName = nameManager.generateVariantName(
@@ -68,6 +69,7 @@ void main() {
             .push('components')
             .push('schemas')
             .push('Anonymous'),
+        examples: const [],
       );
 
       final variantName = nameManager.generateVariantName(
@@ -93,6 +95,7 @@ void main() {
             .push('components')
             .push('schemas')
             .push('Anonymous'),
+        examples: const [],
       );
 
       final variantName = nameManager.generateVariantName(
@@ -119,6 +122,7 @@ void main() {
             .push('components')
             .push('schemas')
             .push('User'),
+        examples: const [],
       );
 
       // Generate the same variant name twice
@@ -154,6 +158,7 @@ void main() {
             .push('components')
             .push('schemas')
             .push('User'),
+        examples: const [],
       );
 
       // Generate variant names for different parent classes

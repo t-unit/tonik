@@ -43,6 +43,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'age',
@@ -50,9 +51,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -82,9 +85,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -97,6 +102,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'address',
@@ -104,9 +110,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -136,19 +144,23 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'tags',
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = r'''
@@ -180,6 +192,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'last_name',
@@ -187,9 +200,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -219,6 +234,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'nestedList',
@@ -226,15 +242,19 @@ void main() {
               content: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = r'''
@@ -267,6 +287,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'value',
@@ -274,9 +295,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''
@@ -301,6 +324,7 @@ void main() {
         name: 'Empty',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       const expectedMethod = '''

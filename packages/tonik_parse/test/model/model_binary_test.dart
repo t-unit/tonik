@@ -1,5 +1,6 @@
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/components.dart';
 import 'package:tonik_parse/src/model/info.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
@@ -29,6 +30,7 @@ void main() {
         headers: {},
         securitySchemes: {},
         pathItems: {},
+        examples: null,
       ),
       tags: [],
     );
@@ -111,7 +113,10 @@ void main() {
     late ModelImporter importer;
 
     setUp(() {
-      importer = ModelImporter(openApiObject)..import();
+      importer = ModelImporter(
+        openApiObject,
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
+      )..import();
     });
 
     test('returns BinaryModel for format: binary', () {
@@ -245,6 +250,7 @@ void main() {
         headers: {},
         securitySchemes: {},
         pathItems: {},
+        examples: null,
       ),
       tags: [],
     );
@@ -252,7 +258,10 @@ void main() {
     late ModelImporter importer;
 
     setUp(() {
-      importer = ModelImporter(openApiObject)..import();
+      importer = ModelImporter(
+        openApiObject,
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
+      )..import();
     });
 
     test('creates AliasModel wrapping BinaryModel for named binary schema', () {
@@ -296,6 +305,7 @@ void main() {
         headers: {},
         securitySchemes: {},
         pathItems: {},
+        examples: null,
       ),
       tags: [],
     );
@@ -356,7 +366,10 @@ void main() {
     test(
       'returns BinaryModel when contentEncoding present (fallback, no config)',
       () {
-        final importer = ModelImporter(openApiObject)..import();
+        final importer = ModelImporter(
+          openApiObject,
+          exampleImporter: ExampleImporter(openApiObject: openApiObject),
+        )..import();
         final context = Context.initial().pushAll(['components', 'schemas']);
 
         final result = importer.importSchema(
@@ -370,7 +383,10 @@ void main() {
 
     test('returns BinaryModel when contentEncoding present but no '
         'contentMediaType (fallback)', () {
-      final importer = ModelImporter(openApiObject)..import();
+      final importer = ModelImporter(
+        openApiObject,
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
+      )..import();
       final context = Context.initial().pushAll(['components', 'schemas']);
 
       final result = importer.importSchema(
@@ -387,6 +403,7 @@ void main() {
         contentMediaTypes: {
           'image/png': SchemaContentType.binary,
         },
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
       )..import();
 
       final context = Context.initial().pushAll(['components', 'schemas']);
@@ -429,6 +446,7 @@ void main() {
         contentMediaTypes: {
           'text/plain': SchemaContentType.text,
         },
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
       )..import();
 
       final context = Context.initial().pushAll(['components', 'schemas']);
@@ -443,6 +461,7 @@ void main() {
         contentMediaTypes: {
           'image/png': SchemaContentType.text,
         },
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
       )..import();
 
       final context = Context.initial().pushAll(['components', 'schemas']);

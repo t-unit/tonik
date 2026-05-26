@@ -1,5 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
+import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 
@@ -20,6 +22,8 @@ class Parameter {
     required this.schema,
     required this.content,
     required this.xDartName,
+    this.example,
+    this.examples,
   });
 
   factory Parameter.fromJson(Map<String, dynamic> json) =>
@@ -43,7 +47,11 @@ class Parameter {
   @JsonKey(name: 'x-dart-name')
   final String? xDartName;
 
-  // We ignore the example and examples parameter.
+  /// Single example inline value.
+  final Object? example;
+
+  /// Multiple named examples; each value may be inline or a `$ref`.
+  final Map<String, ReferenceWrapper<Example>>? examples;
 
   @override
   String toString() =>
@@ -51,7 +59,7 @@ class Parameter {
       'isRequired: $isRequired, isDeprecated: $isDeprecated, '
       'allowEmptyValue: $allowEmptyValue, style: $style, explode: $explode, '
       'allowReserved: $allowReserved, schema: $schema, content: $content, '
-      'xDartName: $xDartName}';
+      'xDartName: $xDartName, example: $example, examples: $examples}';
 }
 
 enum ParameterLocation { query, header, path, cookie }

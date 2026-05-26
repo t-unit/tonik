@@ -16,6 +16,7 @@ normalizeResponseProperties(ResponseObject response) {
       isRequired: header.value.resolve(name: header.key).isRequired,
       isNullable: false,
       isDeprecated: header.value.resolve(name: header.key).isDeprecated,
+      examples: const [],
     );
 
     headerMap[property] = header.value;
@@ -31,6 +32,7 @@ normalizeResponseProperties(ResponseObject response) {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       ),
   ];
 

@@ -49,6 +49,7 @@ void main() {
         allowEmptyValue: allowEmpty,
         allowReserved: false,
         context: context,
+        examples: const [],
       );
     }
 
@@ -63,6 +64,7 @@ void main() {
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             explode: false,
             allowEmpty: true,
@@ -103,6 +105,7 @@ void main() {
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             explode: true,
             allowEmpty: true,

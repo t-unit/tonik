@@ -38,6 +38,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'count',
@@ -45,9 +46,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -94,6 +97,7 @@ void main() {
         name: 'EmptyModel',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final result = generator.generateClass(model);
@@ -137,9 +141,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -185,6 +191,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'age',
@@ -192,6 +199,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'email',
@@ -199,9 +207,11 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -232,13 +242,16 @@ void main() {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -270,9 +283,11 @@ void main() {
               isRequired: true,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -304,9 +319,11 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -338,6 +355,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'nested',
@@ -351,16 +369,20 @@ void main() {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
+                examples: const [],
               ),
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);
@@ -392,9 +414,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final result = generator.generateClass(model);

@@ -13,12 +13,14 @@ void main() {
           properties: const [],
           context: ctx.push('Pet'),
           isDeprecated: false,
+          examples: const [],
         );
         final userModel = ClassModel(
           name: 'User',
           properties: const [],
           context: ctx.push('User'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final apiDocument = ApiDocument(

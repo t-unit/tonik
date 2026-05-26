@@ -24,6 +24,7 @@ void main() {
               '200',
               'content',
             ]),
+            examples: const [],
           );
           expect(
             nameGenerator.generateModelName(model),
@@ -43,6 +44,7 @@ void main() {
               '404',
               'content',
             ]),
+            examples: const [],
           );
           expect(
             nameGenerator.generateModelName(model),
@@ -62,6 +64,7 @@ void main() {
               '200',
               'content',
             ]),
+            examples: const [],
           );
           expect(
             nameGenerator.generateModelName(model),
@@ -78,6 +81,7 @@ void main() {
               'schemas',
               'Blub',
             ]),
+            examples: const [],
           );
 
           final oneOfModel = OneOfModel(
@@ -85,6 +89,7 @@ void main() {
             name: 'Blub',
             models: {(discriminatorValue: null, model: inlineClassModel)},
             context: Context.initial().pushAll(['components', 'schemas']),
+            examples: const [],
           );
 
           // First name the oneOf model
@@ -110,6 +115,7 @@ void main() {
               'pet-findByTags',
               'parameter',
             ]),
+            examples: const [],
           );
 
           expect(
@@ -125,6 +131,7 @@ void main() {
           name: 'UserProfile',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile');
       });
@@ -135,6 +142,7 @@ void main() {
           name: 'user_profile',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile');
       });
@@ -145,18 +153,21 @@ void main() {
           name: 'User',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         final model2 = ClassModel(
           isDeprecated: false,
           name: 'User',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         final model3 = ClassModel(
           isDeprecated: false,
           name: 'User',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
 
         final name1 = nameGenerator.generateModelName(model1);
@@ -174,6 +185,7 @@ void main() {
           name: 'User-Profile!123',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         expect(nameGenerator.generateModelName(model), 'UserProfile123');
       });
@@ -184,6 +196,7 @@ void main() {
           name: r'$UserProfile',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         expect(nameGenerator.generateModelName(model), r'$UserProfile');
       });
@@ -194,6 +207,7 @@ void main() {
           name: r'$raw_user_data',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         expect(nameGenerator.generateModelName(model), r'$RawUserData');
       });
@@ -203,6 +217,7 @@ void main() {
           isDeprecated: false,
           properties: const [],
           context: Context.initial().pushAll(['api', 'models', 'user']),
+          examples: const [],
         );
 
         expect(nameGenerator.generateModelName(model), 'ApiModelsUserModel');
@@ -216,6 +231,7 @@ void main() {
             'user_management',
             'active_users',
           ]),
+          examples: const [],
         );
 
         expect(
@@ -230,6 +246,7 @@ void main() {
           name: 'my_class_name',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
 
         expect(nameGenerator.generateModelName(model), 'MyClassName');
@@ -241,6 +258,7 @@ void main() {
           name: '_my_class_name',
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
 
         expect(nameGenerator.generateModelName(model), 'MyClassName');
@@ -251,6 +269,7 @@ void main() {
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
 
         expect(nameGenerator.generateModelName(model), 'AnonymousModel');
@@ -261,16 +280,19 @@ void main() {
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         final model2 = ClassModel(
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
         final model3 = ClassModel(
           isDeprecated: false,
           properties: const [],
           context: Context.initial(),
+          examples: const [],
         );
 
         final name1 = nameGenerator.generateModelName(model1);
@@ -289,6 +311,7 @@ void main() {
             name: 'Model23',
             properties: const [],
             context: Context.initial(),
+            examples: const [],
           );
           expect(nameGenerator.generateModelName(model), 'Model23');
         });
@@ -299,6 +322,7 @@ void main() {
             name: '2Model',
             properties: const [],
             context: Context.initial(),
+            examples: const [],
           );
           expect(nameGenerator.generateModelName(model), 'Model');
         });
@@ -309,6 +333,7 @@ void main() {
             name: '2_Model12String33',
             properties: const [],
             context: Context.initial(),
+            examples: const [],
           );
           expect(nameGenerator.generateModelName(model), 'Model12String33');
         });
@@ -319,6 +344,7 @@ void main() {
             name: 'user2_profile3_data4',
             properties: const [],
             context: Context.initial(),
+            examples: const [],
           );
           expect(nameGenerator.generateModelName(model), 'User2Profile3Data4');
         });
@@ -329,6 +355,7 @@ void main() {
             name: '123',
             properties: const [],
             context: Context.initial(),
+            examples: const [],
           );
           expect(nameGenerator.generateModelName(model), 'Anonymous');
         });
@@ -342,6 +369,7 @@ void main() {
                 name: 'hello_world_test',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'HelloWorldTest',
@@ -356,6 +384,7 @@ void main() {
                 name: '_hello_world',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'HelloWorld',
@@ -370,6 +399,7 @@ void main() {
                 name: 'Hello-World_Test!123',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'HelloWorldTest123',
@@ -384,6 +414,7 @@ void main() {
                 name: '___hello_world_test',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'HelloWorldTest',
@@ -398,6 +429,7 @@ void main() {
                 name: 'My_Class_NAME',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'MyClassName',
@@ -412,6 +444,7 @@ void main() {
                 name: 'billing.credit_balance_transaction',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'BillingCreditBalanceTransaction',
@@ -428,6 +461,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'Test',
@@ -441,6 +475,7 @@ void main() {
               name: 'Test',
               properties: const [],
               context: Context.initial(),
+              examples: const [],
             ),
           );
 
@@ -451,6 +486,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'TestModel',
@@ -465,6 +501,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             )
             ..generateModelName(
@@ -473,6 +510,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             );
 
@@ -483,6 +521,7 @@ void main() {
                 name: 'Test',
                 properties: const [],
                 context: Context.initial(),
+                examples: const [],
               ),
             ),
             'TestModel2',
@@ -495,12 +534,14 @@ void main() {
             name: 'UserModel',
             properties: const [],
             context: Context.initial(),
+            examples: const [],
           );
           final model2 = ClassModel(
             isDeprecated: false,
             name: 'UserModel',
             properties: const [],
             context: Context.initial(),
+            examples: const [],
           );
 
           final name1 = nameGenerator.generateModelName(model1);
@@ -634,6 +675,7 @@ void main() {
             name: 'User',
             properties: const [],
             context: Context.initial(),
+            examples: const [],
           );
           final response = ResponseObject(
             name: 'User',
@@ -698,6 +740,7 @@ void main() {
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         );
@@ -721,11 +764,13 @@ void main() {
                 model: StringModel(context: Context.initial()),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: StringModel(context: Context.initial()),
                 contentType: ContentType.json,
                 rawContentType: 'application/x-www-form-urlencoded',
+                examples: const [],
               ),
             },
           );
@@ -751,11 +796,13 @@ void main() {
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json+v2',
+              examples: const [],
             ),
           },
         );
@@ -790,11 +837,13 @@ void main() {
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: StringModel(context: Context.initial()),
               contentType: ContentType.json,
               rawContentType: 'application/x-www-form-urlencoded',
+              examples: const [],
             ),
           },
         );
@@ -825,11 +874,13 @@ void main() {
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
               ResponseBody(
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -843,6 +894,7 @@ void main() {
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'text/plain',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -890,6 +942,7 @@ void main() {
                   model: StringModel(context: Context.initial()),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -903,6 +956,7 @@ void main() {
                   model: StringModel(context: Context.initial()),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -936,6 +990,7 @@ void main() {
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -949,6 +1004,7 @@ void main() {
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -982,11 +1038,13 @@ void main() {
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
               ResponseBody(
                 model: StringModel(context: Context.initial()),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -1019,11 +1077,13 @@ void main() {
               model: StringModel(context: Context.initial()),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
             ResponseBody(
               model: StringModel(context: Context.initial()),
               rawContentType: 'application/xml',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -1035,6 +1095,7 @@ void main() {
             model: StringModel(context: Context.initial()),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         );
         final xmlName = nameGenerator.generateResponseImplementationName(
@@ -1043,6 +1104,7 @@ void main() {
             model: StringModel(context: Context.initial()),
             rawContentType: 'application/xml',
             contentType: ContentType.json,
+            examples: const [],
           ),
         );
 
@@ -1061,11 +1123,13 @@ void main() {
               model: StringModel(context: Context.initial()),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
             ResponseBody(
               model: StringModel(context: Context.initial()),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -1077,6 +1141,7 @@ void main() {
             model: StringModel(context: Context.initial()),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         );
         final name2 = nameGenerator.generateResponseImplementationName(
@@ -1085,6 +1150,7 @@ void main() {
             model: StringModel(context: Context.initial()),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         );
 
@@ -1103,6 +1169,7 @@ void main() {
               model: StringModel(context: Context.initial()),
               rawContentType: 'application/json+v2',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -1114,6 +1181,7 @@ void main() {
             model: StringModel(context: Context.initial()),
             rawContentType: 'application/json+v2',
             contentType: ContentType.json,
+            examples: const [],
           ),
         );
 
@@ -1131,6 +1199,7 @@ void main() {
               model: StringModel(context: Context.initial()),
               rawContentType: 'application',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -1142,6 +1211,7 @@ void main() {
             model: StringModel(context: Context.initial()),
             rawContentType: 'application',
             contentType: ContentType.json,
+            examples: const [],
           ),
         );
 
@@ -1303,6 +1373,7 @@ void main() {
             'schemas',
             'Function',
           ]),
+          examples: const [],
         );
         expect(nameGenerator.generateModelName(model), r'$Function');
       });
@@ -1317,6 +1388,7 @@ void main() {
             'schemas',
             'function',
           ]),
+          examples: const [],
         );
         // _sanitizeName('function') → 'Function' (PascalCase)
         // ensureValidClassName('Function') matches exactly → '$Function'
@@ -1334,6 +1406,7 @@ void main() {
             'schemas',
             'dynamic',
           ]),
+          examples: const [],
         );
         // _sanitizeName('dynamic') → 'Dynamic' (PascalCase)
         // 'Dynamic' is not in allKeywords (only 'dynamic' is)
@@ -1350,6 +1423,7 @@ void main() {
             'schemas',
             'User',
           ]),
+          examples: const [],
         );
         expect(nameGenerator.generateModelName(model), 'User');
       });
@@ -1365,6 +1439,7 @@ void main() {
               'schemas',
               name,
             ]),
+            examples: const [],
           );
           expect(
             nameGenerator.generateModelName(model),

@@ -21,6 +21,10 @@ Parameter _$ParameterFromJson(Map<String, dynamic> json) => Parameter(
     (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
   ),
   xDartName: json['x-dart-name'] as String?,
+  example: json['example'],
+  examples: (json['examples'] as Map<String, dynamic>?)?.map(
+    (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
+  ),
 );
 
 const _$ParameterLocationEnumMap = {

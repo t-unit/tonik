@@ -25,6 +25,7 @@ void main() {
           model: StringModel(context: context),
           encoding: QueryParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final resolved = param.resolve();
@@ -47,6 +48,7 @@ void main() {
         model: StringModel(context: context),
         encoding: QueryParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final resolved = param.resolve(nameOverride: 'newOverride');
@@ -68,6 +70,7 @@ void main() {
         model: StringModel(context: context),
         encoding: QueryParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final alias = QueryParameterAlias(
@@ -94,6 +97,7 @@ void main() {
         model: StringModel(context: context),
         encoding: QueryParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final alias = QueryParameterAlias(
@@ -124,6 +128,7 @@ void main() {
           model: StringModel(context: context),
           encoding: PathParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final resolved = param.resolve();
@@ -145,6 +150,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final resolved = param.resolve(nameOverride: 'newOverride');
@@ -165,6 +171,7 @@ void main() {
         model: StringModel(context: context),
         encoding: PathParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final alias = PathParameterAlias(
@@ -193,6 +200,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final resolved = header.resolve();
@@ -213,6 +221,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final resolved = header.resolve(nameOverride: 'newOverride');
@@ -233,6 +242,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final alias = RequestHeaderAlias(

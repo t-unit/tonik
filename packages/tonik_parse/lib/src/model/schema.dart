@@ -32,6 +32,8 @@ class Schema {
     this.isReadOnly,
     this.isWriteOnly,
     this.isBooleanSchema,
+    this.example,
+    this.examples,
   });
 
   factory Schema.fromJson(Object? json) {
@@ -143,6 +145,12 @@ class Schema {
   @JsonKey(name: 'writeOnly')
   final bool? isWriteOnly;
 
+  /// OpenAPI 3.0 singular example value.
+  final Object? example;
+
+  /// OpenAPI 3.1 array of inline example values.
+  final List<Object?>? examples;
+
   /// Indicates if this schema is a boolean schema (true/false).
   ///
   /// - `true`: Always validates (accepts any value)
@@ -151,7 +159,7 @@ class Schema {
   @JsonKey(includeFromJson: false)
   final bool? isBooleanSchema;
 
-  // We ignore example, externalDocs, xml, default, title, multipleOf, maximum,
+  // We ignore externalDocs, xml, default, title, multipleOf, maximum,
   // exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern,
   // maxItems, minItems, maxProperties, minProperties.
   @override
@@ -166,7 +174,8 @@ class Schema {
       'contentSchema: $contentSchema, '
       'additionalProperties: $additionalProperties, '
       'isReadOnly: $isReadOnly, '
-      'isWriteOnly: $isWriteOnly, isBooleanSchema: $isBooleanSchema}';
+      'isWriteOnly: $isWriteOnly, isBooleanSchema: $isBooleanSchema, '
+      'example: $example, examples: $examples}';
 }
 
 class _AdditionalPropertiesConverter

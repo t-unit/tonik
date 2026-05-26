@@ -12,6 +12,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       final nameProperty = Property(
@@ -20,6 +21,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       final petModel = ClassModel(
@@ -27,6 +29,7 @@ void main() {
         properties: [idProperty, nameProperty],
         context: ctx.push('Pet'),
         isDeprecated: false,
+        examples: const [],
       );
 
       final apiDocument = ApiDocument(

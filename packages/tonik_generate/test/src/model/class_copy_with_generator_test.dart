@@ -33,6 +33,7 @@ void main() {
         name: 'Empty',
         properties: const [],
         context: context,
+        examples: const [],
       );
 
       final generatedSpecs = generator.generateClasses(model);
@@ -57,6 +58,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'age',
@@ -64,9 +66,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedSpecs = generator.generateClasses(model);
@@ -191,6 +195,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'bio',
@@ -198,9 +203,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedSpecs = generator.generateClasses(model);
@@ -243,9 +250,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -258,6 +267,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'homeAddress',
@@ -265,6 +275,7 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'workAddress',
@@ -272,9 +283,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedSpecs = generator.generateClasses(model);
@@ -324,23 +337,28 @@ void main() {
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'optionalTags',
             model: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedSpecs = generator.generateClasses(model);
@@ -392,6 +410,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: 'last_name',
@@ -399,6 +418,7 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           Property(
             name: '_id',
@@ -406,9 +426,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedSpecs = generator.generateClasses(model);

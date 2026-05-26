@@ -18,6 +18,7 @@ void main() {
           properties: const [],
           context: context.push('BaseModel'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final allOfModel = AllOfModel(
@@ -26,6 +27,7 @@ void main() {
           context: context.push('ExtendedModel'),
           description: 'Additional documentation',
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -66,6 +68,7 @@ void main() {
           context: context.push('DeprecatedAlias'),
           description: 'This is deprecated',
           isDeprecated: true,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -99,6 +102,7 @@ void main() {
           context: context.push('NullableAlias'),
           isDeprecated: false,
           isNullable: true,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -129,6 +133,7 @@ void main() {
           models: {baseModel},
           context: context.push('allOf'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -162,6 +167,7 @@ void main() {
           properties: const [],
           context: context.push('Model1'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final model2 = ClassModel(
@@ -169,6 +175,7 @@ void main() {
           properties: const [],
           context: context.push('Model2'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final allOfModel = AllOfModel(
@@ -176,6 +183,7 @@ void main() {
           models: {model1, model2},
           context: context.push('CompositeModel'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -209,6 +217,7 @@ void main() {
           properties: const [],
           context: context.push('RegularModel'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -240,6 +249,7 @@ void main() {
           model: baseModel,
           context: context.push('ExistingAlias'),
           description: 'Already an alias',
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -276,6 +286,7 @@ void main() {
           name: 'InnerAlias',
           model: baseModel,
           context: context.push('InnerAlias'),
+          examples: const [],
         );
 
         final outerAllOf = AllOfModel(
@@ -284,6 +295,7 @@ void main() {
           context: context.push('OuterAllOf'),
           description: 'Wraps an alias',
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -369,6 +381,7 @@ void main() {
           properties: const [],
           context: context.push('ExternalUrlObject'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final allOfModel = AllOfModel(
@@ -377,6 +390,7 @@ void main() {
           context: context.push('ArtistObjectExternalUrlsAllOfModel'),
           description: 'Known external URLs for this artist.',
           isDeprecated: false,
+          examples: const [],
         );
 
         final classModel = ClassModel(
@@ -388,10 +402,12 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context.push('ArtistObject'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -451,6 +467,7 @@ void main() {
           properties: const [],
           context: context.push('ItemModel'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final allOfModel = AllOfModel(
@@ -459,12 +476,14 @@ void main() {
           context: context.push('ItemsAllOfModel'),
           description: 'Collection items',
           isDeprecated: false,
+          examples: const [],
         );
 
         final listModel = ListModel(
           content: allOfModel,
           context: context.push('ItemList'),
           name: 'ItemList',
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -508,6 +527,7 @@ void main() {
           properties: const [],
           context: context.push('BaseModel'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final innerAllOf = AllOfModel(
@@ -516,6 +536,7 @@ void main() {
           context: context.push('InnerAllOf'),
           description: 'Inner model',
           isDeprecated: false,
+          examples: const [],
         );
 
         final outerAllOf = AllOfModel(
@@ -524,6 +545,7 @@ void main() {
           context: context.push('OuterAllOf'),
           description: 'Outer model',
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -570,6 +592,7 @@ void main() {
           properties: const [],
           context: context.push('BaseModel1'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final baseModel2 = ClassModel(
@@ -577,6 +600,7 @@ void main() {
           properties: const [],
           context: context.push('BaseModel2'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final multiAllOf = AllOfModel(
@@ -585,6 +609,7 @@ void main() {
           context: context.push('MultiAllOf'),
           description: 'Composition of multiple models',
           isDeprecated: false,
+          examples: const [],
         );
 
         final classModel = ClassModel(
@@ -596,10 +621,12 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context.push('ContainerModel'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(
@@ -638,6 +665,7 @@ void main() {
           properties: const [],
           context: context.push('SharedModel'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final allOf1 = AllOfModel(
@@ -645,6 +673,7 @@ void main() {
           models: {sharedModel},
           context: context.push('Wrapper1'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final allOf2 = AllOfModel(
@@ -652,6 +681,7 @@ void main() {
           models: {sharedModel},
           context: context.push('Wrapper2'),
           isDeprecated: false,
+          examples: const [],
         );
 
         final document = ApiDocument(

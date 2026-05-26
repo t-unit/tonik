@@ -42,9 +42,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -56,6 +58,7 @@ void main() {
             (discriminatorValue: null, model: complex),
           },
           context: context,
+          examples: const [],
         );
 
         final klass = generator.generateClass(model);
@@ -127,9 +130,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final modelB = ClassModel(
@@ -142,9 +147,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -156,6 +163,7 @@ void main() {
         },
         discriminator: 'disc',
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -243,9 +251,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final modelB = ClassModel(
@@ -258,9 +268,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -271,6 +283,7 @@ void main() {
           (discriminatorValue: 'b', model: modelB),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -349,6 +362,7 @@ void main() {
       },
       discriminator: 'type',
       context: context,
+      examples: const [],
     );
 
     final klass = generator.generateClass(model);
@@ -441,9 +455,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AnyOfModel(
@@ -455,6 +471,7 @@ void main() {
         },
         discriminator: 'disc',
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);

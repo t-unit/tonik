@@ -86,6 +86,7 @@ void main() {
         allowReserved: false,
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -138,8 +139,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -207,8 +210,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -274,8 +279,10 @@ void main() {
         model: ListModel(
           context: context,
           content: StringModel(context: context),
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -345,8 +352,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -413,8 +422,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final tagsParam = QueryParameterObject(
@@ -430,8 +441,10 @@ void main() {
         model: ListModel(
           context: context,
           content: StringModel(context: context),
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final sortParam = QueryParameterObject(
@@ -447,8 +460,10 @@ void main() {
         model: ListModel(
           context: context,
           content: StringModel(context: context),
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -537,8 +552,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final tagsParam = QueryParameterObject(
@@ -554,8 +571,10 @@ void main() {
         model: ListModel(
           context: context,
           content: StringModel(context: context),
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -632,8 +651,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -699,8 +720,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -766,6 +789,7 @@ void main() {
         allowReserved: false,
         model: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final listParam = QueryParameterObject(
@@ -781,8 +805,10 @@ void main() {
         model: ListModel(
           context: context,
           content: StringModel(context: context),
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final numberParam = QueryParameterObject(
@@ -797,6 +823,7 @@ void main() {
         allowReserved: false,
         model: IntegerModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final boolParam = QueryParameterObject(
@@ -811,6 +838,7 @@ void main() {
         allowReserved: false,
         model: BooleanModel(context: context),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -904,8 +932,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final classWithNumberParam = QueryParameterObject(
@@ -922,8 +952,10 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         ),
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -993,6 +1025,7 @@ void main() {
           const EnumEntry(value: 'blue'),
         },
         isNullable: false,
+        examples: const [],
       );
 
       final stringModel = StringModel(context: context);
@@ -1007,11 +1040,13 @@ void main() {
         },
         name: 'OneOfValue',
         discriminator: 'type',
+        examples: const [],
       );
 
       final intListModel = ListModel(
         context: context,
         content: IntegerModel(context: context),
+        examples: const [],
       );
 
       final enumListModel = ListModel(
@@ -1025,7 +1060,9 @@ void main() {
             const EnumEntry(value: 'C'),
           },
           isNullable: false,
+          examples: const [],
         ),
+        examples: const [],
       );
 
       final enumParam = QueryParameterObject(
@@ -1040,6 +1077,7 @@ void main() {
         allowReserved: false,
         model: enumModel,
         context: context,
+        examples: const [],
       );
 
       final oneOfParam = QueryParameterObject(
@@ -1054,6 +1092,7 @@ void main() {
         allowReserved: false,
         model: oneOfModel,
         context: context,
+        examples: const [],
       );
 
       final intListParam = QueryParameterObject(
@@ -1068,6 +1107,7 @@ void main() {
         allowReserved: false,
         model: intListModel,
         context: context,
+        examples: const [],
       );
 
       final enumListParam = QueryParameterObject(
@@ -1082,6 +1122,7 @@ void main() {
         allowReserved: false,
         model: enumListModel,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1177,9 +1218,14 @@ void main() {
           const EnumEntry(value: 'BLUE'),
         },
         isNullable: false,
+        examples: const [],
       );
 
-      final listModel = ListModel(context: context, content: enumModel);
+      final listModel = ListModel(
+        context: context,
+        content: enumModel,
+        examples: const [],
+      );
 
       final queryParam = QueryParameterObject(
         name: 'colors',
@@ -1193,6 +1239,7 @@ void main() {
         allowReserved: false,
         model: listModel,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1251,11 +1298,17 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
-      final innerListModel = ListModel(context: context, content: innerModel);
+      final innerListModel = ListModel(
+        context: context,
+        content: innerModel,
+        examples: const [],
+      );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
+        examples: const [],
       );
 
       final queryParam = QueryParameterObject(
@@ -1270,6 +1323,7 @@ void main() {
         allowReserved: false,
         model: outerListModel,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1341,6 +1395,7 @@ void main() {
           allowReserved: false,
           model: stringModel,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1402,6 +1457,7 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         );
 
         final oneOfModel = OneOfModel(
@@ -1413,11 +1469,13 @@ void main() {
           },
           name: 'MixedOneOf',
           discriminator: 'type',
+          examples: const [],
         );
 
         final oneOfListModel = ListModel(
           context: context,
           content: oneOfModel,
+          examples: const [],
         );
 
         final oneOfListParam = QueryParameterObject(
@@ -1432,6 +1490,7 @@ void main() {
           allowReserved: false,
           model: oneOfListModel,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1513,11 +1572,13 @@ void main() {
           },
           name: 'SimpleOneOf',
           discriminator: 'type',
+          examples: const [],
         );
 
         final oneOfListModel = ListModel(
           context: context,
           content: oneOfModel,
+          examples: const [],
         );
 
         final oneOfListParam = QueryParameterObject(
@@ -1532,6 +1593,7 @@ void main() {
           allowReserved: false,
           model: oneOfListModel,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1597,10 +1659,12 @@ void main() {
           isDeprecated: false,
           context: context,
           properties: const [],
+          examples: const [],
         );
         final classListModel = ListModel(
           context: context,
           content: classModel,
+          examples: const [],
         );
 
         final classListParam = QueryParameterObject(
@@ -1615,6 +1679,7 @@ void main() {
           allowReserved: false,
           model: classListModel,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1674,6 +1739,7 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isDeprecated: false,
@@ -1683,6 +1749,7 @@ void main() {
         encoding: QueryParameterEncoding.spaceDelimited,
         allowReserved: false,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1751,8 +1818,10 @@ void main() {
             },
             isNullable: false,
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isDeprecated: false,
@@ -1762,6 +1831,7 @@ void main() {
         encoding: QueryParameterEncoding.pipeDelimited,
         allowReserved: false,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1834,6 +1904,7 @@ void main() {
         encoding: QueryParameterEncoding.spaceDelimited,
         allowReserved: false,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1894,8 +1965,10 @@ void main() {
             name: 'SomeClass',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isDeprecated: false,
@@ -1905,6 +1978,7 @@ void main() {
         encoding: QueryParameterEncoding.pipeDelimited,
         allowReserved: false,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1962,6 +2036,7 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         isRequired: true,
         isDeprecated: false,
@@ -1971,6 +2046,7 @@ void main() {
         encoding: QueryParameterEncoding.spaceDelimited,
         allowReserved: false,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(

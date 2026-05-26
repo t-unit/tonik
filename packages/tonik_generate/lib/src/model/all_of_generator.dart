@@ -71,6 +71,7 @@ class AllOfGenerator {
         isRequired: !isNullable,
         isNullable: isNullable,
         isDeprecated: false,
+        examples: const [],
       );
     }).toList();
 
@@ -108,6 +109,7 @@ class AllOfGenerator {
                   name: '\$Raw$publicClassName',
                   model: model,
                   context: model.context,
+                  examples: const [],
                 ),
               )
             : publicClassName);
@@ -128,6 +130,7 @@ class AllOfGenerator {
         isRequired: !isNullable,
         isNullable: isNullable,
         isDeprecated: false,
+        examples: const [],
       );
     }).toList();
 
@@ -935,6 +938,7 @@ class AllOfGenerator {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
           nameManager: nameManager,
           package: package,

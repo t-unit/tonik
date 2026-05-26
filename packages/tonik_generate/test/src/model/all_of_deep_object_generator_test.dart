@@ -37,6 +37,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -72,6 +73,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -104,9 +106,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -118,12 +122,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -147,6 +154,7 @@ void main() {
         name: 'AllOfEmpty',
         models: const {},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -173,6 +181,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -198,6 +207,7 @@ void main() {
           StringModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);

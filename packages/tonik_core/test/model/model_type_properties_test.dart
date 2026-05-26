@@ -53,6 +53,7 @@ void main() {
           isNullable: false,
           context: Context.initial(),
           isDeprecated: false,
+          examples: const [],
         ).encodingShape,
         EncodingShape.simple,
       );
@@ -64,6 +65,7 @@ void main() {
           properties: const [],
           context: Context.initial(),
           isDeprecated: false,
+          examples: const [],
         ).encodingShape,
         EncodingShape.complex,
       );
@@ -71,6 +73,7 @@ void main() {
         ListModel(
           content: StringModel(context: Context.initial()),
           context: Context.initial(),
+          examples: const [],
         ).encodingShape,
         EncodingShape.complex,
       );
@@ -89,6 +92,7 @@ void main() {
           name: 'Alias',
           model: StringModel(context: Context.initial()),
           context: Context.initial(),
+          examples: const [],
         ).encodingShape,
         EncodingShape.simple,
       );
@@ -99,8 +103,10 @@ void main() {
             properties: const [],
             context: Context.initial(),
             isDeprecated: false,
+            examples: const [],
           ),
           context: Context.initial(),
+          examples: const [],
         ).encodingShape,
         EncodingShape.complex,
       );
@@ -124,6 +130,7 @@ void main() {
             },
             context: Context.initial(),
             isDeprecated: false,
+            examples: const [],
           );
           expect(simpleOneOf.encodingShape, EncodingShape.simple);
 
@@ -136,11 +143,13 @@ void main() {
                   properties: [],
                   context: Context.initial(),
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ),
             },
             context: Context.initial(),
             isDeprecated: false,
+            examples: const [],
           );
           expect(complexOneOf.encodingShape, EncodingShape.complex);
 
@@ -157,11 +166,13 @@ void main() {
                   properties: [],
                   context: Context.initial(),
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ),
             },
             context: Context.initial(),
             isDeprecated: false,
+            examples: const [],
           );
           expect(mixedOneOf.encodingShape, EncodingShape.mixed);
         },
@@ -177,6 +188,7 @@ void main() {
         },
         context: Context.initial(),
         isDeprecated: false,
+        examples: const [],
       );
       expect(simpleAllOf.encodingShape, EncodingShape.simple);
 
@@ -187,14 +199,17 @@ void main() {
             properties: const [],
             context: Context.initial(),
             isDeprecated: false,
+            examples: const [],
           ),
           ListModel(
             content: StringModel(context: Context.initial()),
             context: Context.initial(),
+            examples: const [],
           ),
         },
         context: Context.initial(),
         isDeprecated: false,
+        examples: const [],
       );
       expect(complexAllOf.encodingShape, EncodingShape.complex);
 
@@ -206,10 +221,12 @@ void main() {
             properties: const [],
             context: Context.initial(),
             isDeprecated: false,
+            examples: const [],
           ),
         },
         context: Context.initial(),
         isDeprecated: false,
+        examples: const [],
       );
       expect(mixedAllOf.encodingShape, EncodingShape.mixed);
     });

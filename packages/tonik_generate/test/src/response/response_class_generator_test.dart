@@ -45,6 +45,7 @@ void main() {
             isDeprecated: false,
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
           ),
           'X-Optional': ResponseHeaderObject(
             name: 'X-Optional',
@@ -55,6 +56,7 @@ void main() {
             isDeprecated: false,
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
           ),
         },
         bodies: {
@@ -62,6 +64,7 @@ void main() {
             model: StringModel(context: testContext),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -141,6 +144,7 @@ void main() {
             isDeprecated: false,
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
           ),
         },
         bodies: {
@@ -148,6 +152,7 @@ void main() {
             model: IntegerModel(context: testContext),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -204,6 +209,7 @@ void main() {
               isDeprecated: false,
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           },
           bodies: {
@@ -211,6 +217,7 @@ void main() {
               model: IntegerModel(context: testContext),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -247,11 +254,13 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isDeprecated: false,
                 explode: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
             bodies: {
@@ -259,6 +268,7 @@ void main() {
                 model: StringModel(context: testContext),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           );
@@ -299,6 +309,7 @@ void main() {
               isDeprecated: false,
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           },
           bodies: {
@@ -306,6 +317,7 @@ void main() {
               model: StringModel(context: testContext),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -339,6 +351,7 @@ void main() {
               isDeprecated: false,
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
             'X-Other': ResponseHeaderObject(
               name: 'X-Other',
@@ -349,6 +362,7 @@ void main() {
               isDeprecated: false,
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           },
           bodies: {
@@ -356,6 +370,7 @@ void main() {
               model: StringModel(context: testContext),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -388,11 +403,13 @@ void main() {
               model: ListModel(
                 content: StringModel(context: testContext),
                 context: testContext,
+                examples: const [],
               ),
               isRequired: true,
               isDeprecated: false,
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           },
           bodies: {
@@ -400,6 +417,7 @@ void main() {
               model: StringModel(context: testContext),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -436,6 +454,7 @@ void main() {
               isDeprecated: false,
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
             'X-Optional': ResponseHeaderObject(
               name: 'X-Optional',
@@ -446,6 +465,7 @@ void main() {
               isDeprecated: false,
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           },
           bodies: {
@@ -453,6 +473,7 @@ void main() {
               model: StringModel(context: testContext),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );
@@ -483,6 +504,7 @@ void main() {
               isDeprecated: false,
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
             ),
           },
           bodies: {
@@ -490,6 +512,7 @@ void main() {
               model: StringModel(context: testContext),
               rawContentType: 'application/json',
               contentType: ContentType.json,
+              examples: const [],
             ),
           },
         );

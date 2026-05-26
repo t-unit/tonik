@@ -41,6 +41,7 @@ void main() {
           StringModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -70,9 +71,11 @@ void main() {
             name: 'Base',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -102,9 +105,11 @@ void main() {
             name: 'Base',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -128,6 +133,7 @@ void main() {
             StringModel(context: context),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -147,6 +153,7 @@ void main() {
             StringModel(context: context),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -165,6 +172,7 @@ void main() {
             StringModel(context: context),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -181,6 +189,7 @@ void main() {
             StringModel(context: context),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -200,9 +209,11 @@ void main() {
             name: 'Base',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -231,6 +242,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -261,9 +273,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -275,12 +289,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -312,12 +329,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -346,10 +366,12 @@ void main() {
               name: 'Data',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -360,6 +382,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -398,9 +421,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -412,12 +437,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -458,9 +486,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -472,12 +502,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -524,9 +557,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -538,12 +573,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -577,13 +615,16 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -601,19 +642,24 @@ void main() {
                       isRequired: true,
                       isNullable: false,
                       isDeprecated: false,
+                      examples: const [],
                     ),
                   ],
                   context: context,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -649,13 +695,16 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -667,12 +716,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -714,6 +766,7 @@ void main() {
           DecimalModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -772,10 +825,12 @@ void main() {
             },
             isNullable: false,
             context: context,
+            examples: const [],
           ),
           StringModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -854,6 +909,7 @@ void main() {
           StringModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -910,6 +966,7 @@ void main() {
             IntegerModel(context: context),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -979,12 +1036,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1017,6 +1077,7 @@ void main() {
             DateModel(context: context),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -1049,9 +1110,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -1063,12 +1126,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1101,9 +1167,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
@@ -1115,12 +1183,15 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1146,6 +1217,7 @@ void main() {
           DecimalModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1166,9 +1238,11 @@ void main() {
           ListModel(
             content: DateTimeModel(context: context),
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1199,9 +1273,11 @@ void main() {
           ListModel(
             content: DateTimeModel(context: context),
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1248,9 +1324,11 @@ void main() {
             content: IntegerModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1300,9 +1378,11 @@ void main() {
             content: IntegerModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1356,9 +1436,11 @@ void main() {
             content: IntegerModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1408,9 +1490,11 @@ void main() {
             content: IntegerModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1464,9 +1548,11 @@ void main() {
           ListModel(
             content: DateTimeModel(context: context),
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1504,6 +1590,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -1513,13 +1600,16 @@ void main() {
           ListModel(
             content: DateTimeModel(context: context),
             context: context,
+            examples: const [],
           ),
           ListModel(
             content: oneOfModel,
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1558,9 +1648,11 @@ void main() {
           ListModel(
             content: IntegerModel(context: context),
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1593,9 +1685,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -1605,10 +1699,12 @@ void main() {
           ListModel(
             content: IntegerModel(context: context),
             context: context,
+            examples: const [],
           ),
           classModel,
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1649,10 +1745,12 @@ void main() {
           ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1696,9 +1794,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -1708,14 +1808,17 @@ void main() {
           ListModel(
             content: IntegerModel(context: context),
             context: context,
+            examples: const [],
           ),
           ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           classModel,
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -1748,9 +1851,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final classModel2 = ClassModel(
@@ -1763,9 +1868,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -1776,6 +1883,7 @@ void main() {
             classModel2,
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -1820,9 +1928,11 @@ void main() {
             ListModel(
               content: IntegerModel(context: context),
               context: context,
+              examples: const [],
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -1855,9 +1965,11 @@ void main() {
             MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -1894,9 +2006,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -1906,10 +2020,12 @@ void main() {
             MapModel(
               valueModel: IntegerModel(context: context),
               context: context,
+              examples: const [],
             ),
             classModel,
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -1940,6 +2056,7 @@ void main() {
         model: IntegerModel(context: context),
         context: context,
         isNullable: true,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -1947,6 +2064,7 @@ void main() {
         name: 'AllOfNullablePrimitive',
         models: {nullableAlias},
         context: context,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2009,16 +2127,19 @@ void main() {
             name: 'Cat',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
             name: 'Dog',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
         isNullable: true,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2046,15 +2167,18 @@ void main() {
             name: 'Cat',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
             name: 'Dog',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2082,10 +2206,12 @@ void main() {
             name: 'Base',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
         isNullable: true,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2117,9 +2243,11 @@ void main() {
             name: 'Base',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2146,6 +2274,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -2187,6 +2316,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       nameManager.prime(
@@ -2234,6 +2364,7 @@ void main() {
           model: IntegerModel(context: context),
           context: context,
           isNullable: true,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -2241,6 +2372,7 @@ void main() {
           name: 'AllOfNullablePrimitive',
           models: {nullableAlias},
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -2298,6 +2430,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final klass = generator.generateClass(model);
@@ -2353,11 +2486,13 @@ void main() {
                 name: 'State',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           context: context,
           isNullable: true,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -2368,6 +2503,7 @@ void main() {
             statusOneOf,
           },
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -2440,6 +2576,7 @@ void main() {
               name: 'Base',
               properties: const [],
               context: context,
+              examples: const [],
             ),
             ClassModel(
               isDeprecated: false,
@@ -2447,9 +2584,11 @@ void main() {
               properties: const [],
               context: context,
               isNullable: true,
+              examples: const [],
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -2476,6 +2615,7 @@ void main() {
           properties: const [],
           context: context,
           isNullable: true,
+          examples: const [],
         );
         final statusOneOf = OneOfModel(
           isDeprecated: false,
@@ -2489,16 +2629,19 @@ void main() {
                 name: 'State',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           context: context,
+          examples: const [],
         );
         final model = AllOfModel(
           isDeprecated: false,
           name: 'Combined',
           models: {statusOneOf, nullableClass},
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -2527,6 +2670,7 @@ void main() {
               name: 'Base',
               properties: const [],
               context: context,
+              examples: const [],
             ),
             ClassModel(
               isDeprecated: false,
@@ -2534,9 +2678,11 @@ void main() {
               properties: const [],
               context: context,
               isNullable: true,
+              examples: const [],
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -2571,12 +2717,15 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: const UnrestrictedAdditionalProperties(),
+          examples: const [],
         );
       });
 
@@ -2651,14 +2800,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: TypedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
+          examples: const [],
         );
       });
 
@@ -2710,8 +2862,10 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
@@ -2721,8 +2875,10 @@ void main() {
               name: 'Widget',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
+          examples: const [],
         );
       });
 
@@ -2786,6 +2942,7 @@ void main() {
           name: 'Tree',
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         tree.valueModel = tree;
         return AllOfModel(
@@ -2803,14 +2960,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties:
               overrideAdditionalProperties ??
               TypedAdditionalProperties(valueModel: tree),
+          examples: const [],
         );
       }
 
@@ -2903,16 +3063,19 @@ class Holder {
                   name: 'User',
                   properties: const [],
                   context: context,
+                  examples: const [],
                 ),
               ),
             },
             context: context,
             isDeprecated: false,
+            examples: const [],
           );
           final tree = MapModel(
             name: 'Tree',
             valueModel: AnyModel(context: context),
             context: context,
+            examples: const [],
           );
           tree.valueModel = tree;
 
@@ -2922,6 +3085,7 @@ class Holder {
             models: {mixedOneOf},
             context: context,
             additionalProperties: TypedAdditionalProperties(valueModel: tree),
+            examples: const [],
           );
 
           final clazz = generator.generateClass(model);
@@ -3018,11 +3182,13 @@ class Holder {
             name: 'A',
             valueModel: AnyModel(context: context),
             context: context,
+            examples: const [],
           );
           final b = MapModel(
             name: 'B',
             valueModel: AnyModel(context: context),
             context: context,
+            examples: const [],
           );
           a.valueModel = b;
           b.valueModel = a;
@@ -3042,12 +3208,15 @@ class Holder {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
+                examples: const [],
               ),
             },
             context: context,
             additionalProperties: TypedAdditionalProperties(valueModel: a),
+            examples: const [],
           );
 
           final clazz = generator.generateClass(model);
@@ -3107,12 +3276,15 @@ class Holder {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: const NoAdditionalProperties(),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -3147,8 +3319,10 @@ class Holder {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
             ClassModel(
               isDeprecated: false,
@@ -3161,12 +3335,15 @@ class Holder {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: const UnrestrictedAdditionalProperties(),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -3213,12 +3390,15 @@ class Holder {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: const UnrestrictedAdditionalProperties(),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -3271,14 +3451,17 @@ class Holder {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: TypedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -3331,8 +3514,10 @@ class Holder {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
@@ -3342,8 +3527,10 @@ class Holder {
               name: 'Widget',
               properties: const [],
               context: context,
+              examples: const [],
             ),
           ),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -3378,8 +3565,10 @@ class Holder {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
+                examples: const [],
               ),
               ClassModel(
                 isDeprecated: false,
@@ -3392,12 +3581,15 @@ class Holder {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
+                examples: const [],
               ),
             },
             context: context,
             additionalProperties: const UnrestrictedAdditionalProperties(),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -3454,12 +3646,15 @@ class Holder {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: const UnrestrictedAdditionalProperties(),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -3514,12 +3709,15 @@ class Holder {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: const UnrestrictedAdditionalProperties(),
+          examples: const [],
         );
 
         const expectedMethod = r'''
@@ -3564,14 +3762,17 @@ class Holder {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
+                examples: const [],
               ),
             },
             context: context,
             additionalProperties: TypedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -3617,8 +3818,10 @@ class Holder {
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
+                examples: const [],
               ),
             },
             context: context,
@@ -3628,8 +3831,10 @@ class Holder {
                 name: 'Widget',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
+            examples: const [],
           );
 
           const expectedMethod = r'''
@@ -3681,9 +3886,11 @@ class Holder {
           ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = immutableGenerator.generateClass(model);
@@ -3736,12 +3943,15 @@ bool operator ==(Object other) {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
           additionalProperties: const UnrestrictedAdditionalProperties(),
+          examples: const [],
         );
 
         final combinedClass = immutableGenerator.generateClass(model);
@@ -3838,8 +4048,10 @@ Object? toJson() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
+              examples: const [],
             ),
           },
           context: context,
@@ -3847,8 +4059,10 @@ Object? toJson() {
             valueModel: ListModel(
               content: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
           ),
+          examples: const [],
         );
 
         final combinedClass = immutableGenerator.generateClass(model);
@@ -3900,14 +4114,17 @@ factory ExtendedItem.fromJson(Object? json) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final mapModel = MapModel(
           valueModel: NumberModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -3915,6 +4132,7 @@ factory ExtendedItem.fromJson(Object? json) {
           name: 'CombinedWithMap',
           models: {classModel, mapModel},
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -3957,15 +4175,18 @@ factory ExtendedItem.fromJson(Object? json) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final mapModel = MapModel(
           valueModel: StringModel(context: context),
           context: context,
           isNullable: true,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -3973,6 +4194,7 @@ factory ExtendedItem.fromJson(Object? json) {
           name: 'CombinedWithNullableMap',
           models: {classModel, mapModel},
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -4021,15 +4243,18 @@ factory ExtendedItem.fromJson(Object? json) {
                 name: 'State',
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final mapModel = MapModel(
           valueModel: NumberModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -4037,6 +4262,7 @@ factory ExtendedItem.fromJson(Object? json) {
           name: 'DynamicWithMap',
           models: {statusOneOf, mapModel},
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -4105,15 +4331,18 @@ factory ExtendedItem.fromJson(Object? json) {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final mapModel = MapModel(
           name: 'ExtraData',
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -4121,6 +4350,7 @@ factory ExtendedItem.fromJson(Object? json) {
           name: 'Combined',
           models: {classModel, mapModel},
           context: context,
+          examples: const [],
         );
 
         final combinedClass = immutableGenerator.generateClass(model);

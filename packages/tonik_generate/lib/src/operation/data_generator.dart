@@ -109,6 +109,7 @@ class DataGenerator {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
               nameManager: nameManager,
               package: package,
@@ -223,6 +224,7 @@ class DataGenerator {
       isRequired: isRequired,
       isNullable: !isRequired,
       isDeprecated: false,
+      examples: const [],
     );
 
     // Build return expression based on content type

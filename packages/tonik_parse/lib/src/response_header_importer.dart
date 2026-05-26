@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -10,10 +11,12 @@ class ResponseHeaderImporter {
   ResponseHeaderImporter({
     required this.openApiObject,
     required this.modelImporter,
+    required this.exampleImporter,
   });
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;
+  final ExampleImporter exampleImporter;
   final log = Logger('HeaderImporter');
 
   late Set<core.ResponseHeader> headers;
@@ -128,6 +131,7 @@ class ResponseHeaderImporter {
           isDeprecated: header.isDeprecated ?? false,
           encoding: core.ResponseHeaderEncoding.simple,
           context: context,
+          examples: exampleImporter.fromHeader(header),
         );
     }
   }

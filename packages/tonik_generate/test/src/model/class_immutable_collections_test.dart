@@ -48,13 +48,16 @@ void main() {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -153,13 +156,16 @@ int get hashCode => tags.hashCode;
               model: MapModel(
                 valueModel: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -237,15 +243,19 @@ Object? toJson() => {r'settings': settings.unlock};
                 content: ListModel(
                   content: StringModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -325,15 +335,19 @@ Object? toJson() => {r'rows': rows.unlock.map((e) => e.unlock).toList()};
                 valueModel: ListModel(
                   content: StringModel(context: context),
                   context: context,
+                  examples: const [],
                 ),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -400,13 +414,16 @@ Object? toJson() => {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -442,13 +459,16 @@ Object? toJson() => {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -491,13 +511,16 @@ factory User.fromJson(Object? json) {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -535,10 +558,12 @@ Object? toJson() => {r'tags': tags};
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           additionalProperties: const UnrestrictedAdditionalProperties(),
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -629,13 +654,16 @@ Object? toJson() => {r'name': name, ...additionalProperties.unlock};
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(
@@ -683,13 +711,16 @@ factory Tags.fromSimple(String? value, {required bool explode}) {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         nameManager.prime(

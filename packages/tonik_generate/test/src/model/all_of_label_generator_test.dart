@@ -43,9 +43,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final class2 = ClassModel(
@@ -58,9 +60,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -68,6 +72,7 @@ void main() {
         name: 'AllOfComplex',
         models: {class1, class2},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -105,6 +110,7 @@ void main() {
           IntegerModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -138,14 +144,17 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
           ),
         },
         discriminator: 'type',
         context: context,
+        examples: const [],
       );
 
       final classModel = ClassModel(
@@ -158,9 +167,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -168,6 +179,7 @@ void main() {
         name: 'AllOfWithDynamic',
         models: {anyOfModel, classModel},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -205,16 +217,20 @@ void main() {
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final model = AllOfModel(
@@ -222,6 +238,7 @@ void main() {
         name: 'AllOfComplex',
         models: {classModel},
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);

@@ -220,6 +220,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -290,6 +291,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       // Required date header that allows empty values
@@ -304,6 +306,7 @@ void main() {
         model: DateTimeModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       // Optional boolean header
@@ -318,6 +321,7 @@ void main() {
         model: BooleanModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       // Optional list header
@@ -332,9 +336,11 @@ void main() {
         model: ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -439,9 +445,11 @@ void main() {
             context: context,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           encoding: HeaderParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -508,6 +516,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -564,9 +573,14 @@ void main() {
           const EnumEntry(value: 'BLUE'),
         },
         isNullable: false,
+        examples: const [],
       );
 
-      final listModel = ListModel(context: context, content: enumModel);
+      final listModel = ListModel(
+        context: context,
+        content: enumModel,
+        examples: const [],
+      );
 
       final headerParam = RequestHeaderObject(
         name: 'X-Colors',
@@ -579,6 +593,7 @@ void main() {
         model: listModel,
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -636,11 +651,17 @@ void main() {
         isDeprecated: false,
         context: context,
         properties: const [],
+        examples: const [],
       );
-      final innerListModel = ListModel(context: context, content: innerModel);
+      final innerListModel = ListModel(
+        context: context,
+        content: innerModel,
+        examples: const [],
+      );
       final outerListModel = ListModel(
         context: context,
         content: innerListModel,
+        examples: const [],
       );
 
       final headerParam = RequestHeaderObject(
@@ -654,6 +675,7 @@ void main() {
         model: outerListModel,
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -755,6 +777,7 @@ void main() {
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
           },
         );
@@ -813,11 +836,13 @@ void main() {
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              examples: const [],
             ),
             RequestContent(
               model: StringModel(context: context),
               contentType: ContentType.json,
               rawContentType: 'multipart/form-data',
+              examples: const [],
             ),
           },
         );
@@ -892,11 +917,13 @@ void main() {
                 model: StringModel(context: context),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
               ResponseBody(
                 model: StringModel(context: context),
                 rawContentType: 'application/xml',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -984,6 +1011,7 @@ void main() {
         model: StringModel(context: context),
         encoding: HeaderParameterEncoding.simple,
         context: context,
+        examples: const [],
       );
       final operation = Operation(
         operationId: 'explicitAccept',
@@ -1009,6 +1037,7 @@ void main() {
                 model: StringModel(context: context),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -1053,6 +1082,7 @@ void main() {
           model: StringModel(context: context),
           encoding: HeaderParameterEncoding.simple,
           context: context,
+          examples: const [],
         );
         final operation = Operation(
           operationId: 'optionalAccept',
@@ -1078,11 +1108,13 @@ void main() {
                   model: StringModel(context: context),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
                 ResponseBody(
                   model: StringModel(context: context),
                   rawContentType: 'application/xml',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -1131,6 +1163,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1190,6 +1223,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1254,6 +1288,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final cookie2 = CookieParameterObject(
@@ -1266,6 +1301,7 @@ void main() {
         model: StringModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1337,6 +1373,7 @@ void main() {
         model: IntegerModel(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1396,9 +1433,11 @@ void main() {
         model: MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1461,9 +1500,11 @@ void main() {
         model: MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1531,9 +1572,11 @@ void main() {
         model: MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1606,11 +1649,14 @@ void main() {
             properties: const [],
             context: context,
             isDeprecated: false,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1660,6 +1706,7 @@ void main() {
           model: AnyModel(context: context),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1734,9 +1781,11 @@ void main() {
           model: ListModel(
             content: AnyModel(context: context),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1821,6 +1870,7 @@ void main() {
           model: AnyModel(context: context),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -1895,6 +1945,7 @@ void main() {
         model: Base64Model(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -1967,6 +2018,7 @@ void main() {
           model: BinaryModel(context: context),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2037,9 +2089,11 @@ void main() {
           model: ListModel(
             content: Base64Model(context: context),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2117,9 +2171,11 @@ void main() {
           model: ListModel(
             content: BinaryModel(context: context),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2188,6 +2244,7 @@ void main() {
         model: Base64Model(context: context),
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final operation = Operation(
@@ -2262,6 +2319,7 @@ void main() {
           model: BinaryModel(context: context),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2334,9 +2392,11 @@ void main() {
           model: ListModel(
             content: Base64Model(context: context),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2416,9 +2476,11 @@ void main() {
           model: ListModel(
             content: BinaryModel(context: context),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2492,6 +2554,7 @@ void main() {
           model: BinaryModel(context: context),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final stringCookie = CookieParameterObject(
@@ -2504,6 +2567,7 @@ void main() {
           model: StringModel(context: context),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -2578,11 +2642,14 @@ void main() {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -2655,11 +2722,14 @@ void main() {
               model: ListModel(
                 content: IntegerModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -2735,13 +2805,16 @@ void main() {
             model: ListModel(
               content: BooleanModel(context: context),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           );
           final flagList = AliasModel(
             name: 'FlagList',
             model: boolArray,
             context: context,
+            examples: const [],
           );
 
           final cookieParam = CookieParameterObject(
@@ -2754,6 +2827,7 @@ void main() {
             model: flagList,
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -2836,11 +2910,14 @@ void main() {
               model: ListModel(
                 content: IntegerModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -2923,11 +3000,14 @@ void main() {
             model: MapModel(
               valueModel: IntegerModel(context: context),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -3001,9 +3081,11 @@ void main() {
             name: 'AnyData',
             model: AnyModel(context: context),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -3078,11 +3160,14 @@ void main() {
               model: ListModel(
                 content: AnyModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3168,11 +3253,14 @@ void main() {
               model: ListModel(
                 content: StringModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3250,13 +3338,17 @@ void main() {
                   properties: const [],
                   context: context,
                   isDeprecated: false,
+                  examples: const [],
                 ),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3329,11 +3421,14 @@ void main() {
             model: MapModel(
               valueModel: IntegerModel(context: context),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -3409,9 +3504,11 @@ void main() {
             name: 'AnyData',
             model: AnyModel(context: context),
             context: context,
+            examples: const [],
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final operation = Operation(
@@ -3487,9 +3584,11 @@ void main() {
               name: 'BinaryToken',
               model: Base64Model(context: context),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3564,9 +3663,11 @@ void main() {
               name: 'BinaryBlob',
               model: BinaryModel(context: context),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3640,11 +3741,14 @@ void main() {
               model: ListModel(
                 content: Base64Model(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3724,11 +3828,14 @@ void main() {
               model: ListModel(
                 content: BinaryModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3801,9 +3908,11 @@ void main() {
               name: 'BinaryToken',
               model: Base64Model(context: context),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3882,9 +3991,11 @@ void main() {
               name: 'BinaryBlob',
               model: BinaryModel(context: context),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -3961,11 +4072,14 @@ void main() {
               model: ListModel(
                 content: Base64Model(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -4049,11 +4163,14 @@ void main() {
               model: ListModel(
                 content: BinaryModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final operation = Operation(
@@ -4130,9 +4247,11 @@ void main() {
                 isDeprecated: false,
                 properties: const [],
                 context: context,
+                examples: const [],
               ),
               contentType: ContentType.multipart,
               rawContentType: 'multipart/form-data',
+              examples: const [],
             ),
           },
         );
@@ -4190,6 +4309,7 @@ void main() {
                 model: StringModel(context: context),
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                examples: const [],
               ),
               RequestContent(
                 model: ClassModel(
@@ -4197,9 +4317,11 @@ void main() {
                   isDeprecated: false,
                   properties: const [],
                   context: context,
+                  examples: const [],
                 ),
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
+                examples: const [],
               ),
             },
           );

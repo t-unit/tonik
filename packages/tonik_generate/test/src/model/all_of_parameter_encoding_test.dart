@@ -41,6 +41,7 @@ void main() {
           StringModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -69,6 +70,7 @@ void main() {
           StringModel(context: context),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -101,9 +103,11 @@ Map<String, String> parameterProperties({
             name: 'Base',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -139,9 +143,11 @@ Map<String, String> parameterProperties({
             name: 'Base',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -174,15 +180,18 @@ Map<String, String> parameterProperties({
             name: 'FirstModel',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           ClassModel(
             isDeprecated: false,
             name: 'SecondModel',
             properties: const [],
             context: context,
+            examples: const [],
           ),
         },
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);
@@ -236,13 +245,16 @@ Map<String, String> parameterProperties({
                     isRequired: true,
                     isNullable: false,
                     isDeprecated: false,
+                    examples: const [],
                   ),
                 ],
                 context: context,
+                examples: const [],
               ),
             ),
           },
           context: context,
+          examples: const [],
         );
 
         final model = AllOfModel(
@@ -259,13 +271,16 @@ Map<String, String> parameterProperties({
                   isRequired: true,
                   isNullable: false,
                   isDeprecated: false,
+                  examples: const [],
                 ),
               ],
               context: context,
+              examples: const [],
             ),
             anyOfModel,
           },
           context: context,
+          examples: const [],
         );
 
         final combinedClass = generator.generateClass(model);
@@ -306,6 +321,7 @@ Map<String, String> parameterProperties({
         name: 'Empty',
         models: const {},
         context: context,
+        examples: const [],
       );
 
       final combinedClass = generator.generateClass(model);

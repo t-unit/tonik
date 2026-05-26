@@ -16,6 +16,7 @@ void main() {
         model: model,
         encoding: ResponseHeaderEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final resolved = header.resolve(name: 'newName');
@@ -43,6 +44,7 @@ void main() {
         model: model,
         encoding: ResponseHeaderEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final resolved = header.resolve();
@@ -63,6 +65,7 @@ void main() {
         model: model,
         encoding: ResponseHeaderEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final alias = ResponseHeaderAlias(
@@ -92,6 +95,7 @@ void main() {
           model: model,
           encoding: ResponseHeaderEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final alias = ResponseHeaderAlias(
@@ -119,6 +123,7 @@ void main() {
         model: model,
         encoding: ResponseHeaderEncoding.simple,
         context: context,
+        examples: const [],
       );
 
       final firstAlias = ResponseHeaderAlias(
@@ -153,6 +158,7 @@ void main() {
           model: model,
           encoding: ResponseHeaderEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final alias = ResponseHeaderAlias(
@@ -179,6 +185,7 @@ void main() {
           model: model,
           encoding: ResponseHeaderEncoding.simple,
           context: context,
+          examples: const [],
         );
 
         final alias = ResponseHeaderAlias(

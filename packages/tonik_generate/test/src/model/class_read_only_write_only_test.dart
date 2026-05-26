@@ -49,6 +49,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           isReadOnly: true,
+          examples: const [],
         ),
         Property(
           name: 'name',
@@ -56,6 +57,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         ),
         Property(
           name: 'password',
@@ -64,6 +66,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           isWriteOnly: true,
+          examples: const [],
         ),
         Property(
           name: 'createdAt',
@@ -72,9 +75,11 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           isReadOnly: true,
+          examples: const [],
         ),
       ],
       context: context,
+      examples: const [],
     );
   }
 
@@ -126,6 +131,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             isReadOnly: true,
+            examples: const [],
           ),
           Property(
             name: 'createdAt',
@@ -134,9 +140,11 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             isReadOnly: true,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -193,6 +201,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               isWriteOnly: true,
+              examples: const [],
             ),
             Property(
               name: 'secret',
@@ -201,9 +210,11 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               isWriteOnly: true,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -269,9 +280,11 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               isWriteOnly: true,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);
@@ -335,9 +348,11 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             isWriteOnly: true,
+            examples: const [],
           ),
         ],
         context: context,
+        examples: const [],
       );
 
       final generatedClass = generator.generateClass(model);
@@ -604,6 +619,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'age',
@@ -611,9 +627,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: context,
+          examples: const [],
         );
 
         final generatedClass = generator.generateClass(model);

@@ -18,6 +18,7 @@ ApiDocument _createTestDocument() {
         context: ctx.push('components').push('schemas').push('UserDTO'),
         properties: const [],
         isDeprecated: false,
+        examples: const [],
       ),
     },
     operations: {
@@ -263,6 +264,7 @@ nameOverrides:
               context: ctx.push('components').push('schemas').push('User'),
               properties: const [],
               isDeprecated: false,
+              examples: const [],
             ),
             ClassModel(
               name: 'Deprecated',
@@ -272,6 +274,7 @@ nameOverrides:
                   .push('Deprecated'),
               properties: const [],
               isDeprecated: false,
+              examples: const [],
             ),
           },
           operations: {
@@ -342,12 +345,14 @@ nameOverrides:
               context: ctx.push('components').push('schemas').push('User'),
               properties: const [],
               isDeprecated: true,
+              examples: const [],
             ),
             ClassModel(
               name: 'Active',
               context: ctx.push('components').push('schemas').push('Active'),
               properties: const [],
               isDeprecated: false,
+              examples: const [],
             ),
           },
           operations: {
@@ -422,6 +427,7 @@ nameOverrides:
                 const EnumEntry(value: 'active'),
                 const EnumEntry(value: 'inactive'),
               },
+              examples: const [],
             ),
           },
           operations: const {},

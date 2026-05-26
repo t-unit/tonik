@@ -63,9 +63,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -81,6 +83,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -116,9 +119,11 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -134,6 +139,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -171,9 +177,11 @@ void main() {
             isRequired: false,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -189,6 +197,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -226,9 +235,11 @@ void main() {
             isRequired: false,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -244,6 +255,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -276,6 +288,7 @@ void main() {
         isDeprecated: false,
         properties: const [],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -283,6 +296,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: const {},
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -311,6 +325,7 @@ void main() {
         model: BinaryModel(context: testContext),
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -342,9 +357,11 @@ void main() {
           name: 'BinaryAlias',
           model: BinaryModel(context: testContext),
           context: testContext,
+          examples: const [],
         ),
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -380,9 +397,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -390,6 +409,7 @@ void main() {
           name: 'FormAlias',
           model: classModel,
           context: testContext,
+          examples: const [],
         ),
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
@@ -402,6 +422,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -438,6 +459,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             isReadOnly: true,
+            examples: const [],
           ),
           Property(
             name: 'name',
@@ -445,9 +467,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -463,6 +487,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -499,9 +524,11 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             isWriteOnly: true,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -517,6 +544,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -552,9 +580,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -570,6 +600,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -605,9 +636,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -623,6 +656,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -662,9 +696,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -680,6 +716,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -715,9 +752,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -733,6 +772,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -768,9 +808,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -786,6 +828,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -821,9 +864,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -839,6 +884,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -874,9 +920,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -892,6 +940,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -927,9 +976,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -945,6 +996,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -980,9 +1032,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -998,6 +1052,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -1035,9 +1090,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1053,6 +1110,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1091,9 +1149,11 @@ void main() {
               isRequired: true,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1109,6 +1169,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1148,9 +1209,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -1166,6 +1229,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -1202,9 +1266,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -1220,6 +1286,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -1256,9 +1323,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -1274,6 +1343,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -1310,9 +1380,11 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -1328,6 +1400,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -1369,9 +1442,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1384,6 +1459,7 @@ void main() {
               explode: true,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1422,9 +1498,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1437,6 +1515,7 @@ void main() {
               explode: true,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1475,9 +1554,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1489,6 +1570,7 @@ void main() {
               allowReserved: true,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1527,9 +1609,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1542,6 +1626,7 @@ void main() {
               explode: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1580,9 +1665,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1595,6 +1682,7 @@ void main() {
               explode: true,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1632,6 +1720,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -1644,9 +1733,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1659,6 +1750,7 @@ void main() {
               explode: true,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1698,6 +1790,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -1710,9 +1803,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1728,6 +1823,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1765,6 +1861,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -1777,9 +1874,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1795,6 +1894,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1832,6 +1932,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -1844,9 +1945,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1862,6 +1965,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1899,6 +2003,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -1911,9 +2016,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -1929,6 +2036,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -1964,6 +2072,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -1976,9 +2085,11 @@ void main() {
             isRequired: false,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -1994,6 +2105,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2030,6 +2142,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -2042,9 +2155,11 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2060,6 +2175,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2099,9 +2215,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2117,6 +2235,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2163,9 +2282,11 @@ void main() {
             isRequired: false,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2181,6 +2302,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2229,9 +2351,11 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2247,6 +2371,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2295,9 +2420,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2313,6 +2440,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2367,9 +2495,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2385,6 +2515,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2433,9 +2564,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -2448,6 +2581,7 @@ void main() {
               rawContentType: 'application/octet-stream',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -2494,6 +2628,7 @@ void main() {
           isDeprecated: false,
           properties: [],
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -2506,9 +2641,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -2524,6 +2661,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -2563,6 +2701,7 @@ void main() {
           StringModel(context: testContext),
         },
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -2575,9 +2714,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2593,6 +2734,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2631,6 +2773,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: testContext)),
         },
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -2643,9 +2786,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2661,6 +2806,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2699,6 +2845,7 @@ void main() {
           (discriminatorValue: null, model: StringModel(context: testContext)),
         },
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -2711,9 +2858,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2729,6 +2878,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2765,6 +2915,7 @@ void main() {
         isDeprecated: false,
         properties: [],
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -2777,9 +2928,11 @@ void main() {
             isRequired: false,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2795,6 +2948,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2833,6 +2987,7 @@ void main() {
         isDeprecated: false,
         properties: [],
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -2845,9 +3000,11 @@ void main() {
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2863,6 +3020,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2901,6 +3059,7 @@ void main() {
         isDeprecated: false,
         properties: [],
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -2913,9 +3072,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -2931,6 +3092,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -2969,6 +3131,7 @@ void main() {
           isDeprecated: false,
           properties: [],
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -2981,9 +3144,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -2999,6 +3164,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -3035,6 +3201,7 @@ void main() {
           isDeprecated: false,
           properties: [],
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -3047,9 +3214,11 @@ void main() {
               isRequired: false,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -3065,6 +3234,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -3105,6 +3275,7 @@ void main() {
             StringModel(context: testContext),
           },
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -3117,9 +3288,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -3135,6 +3308,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -3176,6 +3350,7 @@ void main() {
             ),
           },
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -3188,9 +3363,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -3206,6 +3383,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -3247,6 +3425,7 @@ void main() {
             ),
           },
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -3259,9 +3438,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -3277,6 +3458,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -3311,12 +3493,14 @@ void main() {
         isDeprecated: false,
         properties: [],
         context: testContext,
+        examples: const [],
       );
 
       final aliasModel = AliasModel(
         name: 'AddressAlias',
         model: innerClass,
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -3329,9 +3513,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -3347,6 +3533,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -3386,6 +3573,7 @@ void main() {
             isDeprecated: false,
             properties: [],
             context: testContext,
+            examples: const [],
           );
 
           final model = ClassModel(
@@ -3398,9 +3586,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -3414,6 +3604,7 @@ void main() {
                 // No style/explode/allowReserved → content-based mode
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -3471,6 +3662,7 @@ void main() {
             isDeprecated: false,
             models: {StringModel(context: testContext)},
             context: testContext,
+            examples: const [],
           );
 
           final model = ClassModel(
@@ -3483,9 +3675,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -3498,6 +3692,7 @@ void main() {
                 rawContentType: 'application/x-www-form-urlencoded',
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -3553,6 +3748,7 @@ void main() {
           isDeprecated: false,
           properties: [],
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -3565,9 +3761,11 @@ void main() {
               isRequired: false,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -3580,6 +3778,7 @@ void main() {
               rawContentType: 'application/x-www-form-urlencoded',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -3638,6 +3837,7 @@ void main() {
             isDeprecated: false,
             properties: [],
             context: testContext,
+            examples: const [],
           );
 
           final model = ClassModel(
@@ -3650,9 +3850,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -3669,6 +3871,7 @@ void main() {
                 allowReserved: false,
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -3711,6 +3914,7 @@ void main() {
             isDeprecated: false,
             properties: [],
             context: testContext,
+            examples: const [],
           );
 
           final model = ClassModel(
@@ -3723,9 +3927,11 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -3746,10 +3952,12 @@ void main() {
                     model: StringModel(context: testContext),
                     context: testContext,
                     encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
                   ),
                 },
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -3813,6 +4021,7 @@ void main() {
         final mapModel = MapModel(
           valueModel: StringModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -3825,9 +4034,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -3843,6 +4054,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -3880,6 +4092,7 @@ void main() {
         final mapModel = MapModel(
           valueModel: StringModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -3892,9 +4105,11 @@ void main() {
               isRequired: false,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -3910,6 +4125,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -3949,6 +4165,7 @@ void main() {
         final mapModel = MapModel(
           valueModel: StringModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -3961,15 +4178,18 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -4007,6 +4227,7 @@ void main() {
         final mapModel = MapModel(
           valueModel: StringModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -4019,9 +4240,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -4037,6 +4260,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -4070,6 +4294,7 @@ void main() {
         final mapModel = MapModel(
           valueModel: StringModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -4082,9 +4307,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -4097,6 +4324,7 @@ void main() {
               rawContentType: 'application/x-www-form-urlencoded',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -4152,6 +4380,7 @@ void main() {
         final mapModel = MapModel(
           valueModel: StringModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -4164,9 +4393,11 @@ void main() {
               isRequired: false,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -4179,6 +4410,7 @@ void main() {
               rawContentType: 'application/x-www-form-urlencoded',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -4236,12 +4468,14 @@ void main() {
         final mapModel = MapModel(
           valueModel: StringModel(context: testContext),
           context: testContext,
+          examples: const [],
         );
 
         final aliasModel = AliasModel(
           name: 'MetadataAlias',
           model: mapModel,
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -4254,9 +4488,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -4272,6 +4508,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -4317,13 +4554,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4339,6 +4579,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4375,13 +4616,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4397,6 +4641,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4433,13 +4678,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4455,6 +4703,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4491,13 +4740,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4513,6 +4765,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4549,13 +4802,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4571,6 +4827,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4608,13 +4865,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4630,6 +4890,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4668,6 +4929,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -4679,13 +4941,16 @@ void main() {
             model: ListModel(
               content: enumModel,
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4701,6 +4966,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4737,6 +5003,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -4748,13 +5015,16 @@ void main() {
             model: ListModel(
               content: enumModel,
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4770,6 +5040,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4808,13 +5079,16 @@ void main() {
             model: ListModel(
               content: IntegerModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4830,6 +5104,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4866,13 +5141,16 @@ void main() {
             model: ListModel(
               content: IntegerModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4888,6 +5166,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4924,13 +5203,16 @@ void main() {
             model: ListModel(
               content: IntegerModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -4946,6 +5228,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -4982,13 +5265,16 @@ void main() {
             model: ListModel(
               content: DateTimeModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -5004,6 +5290,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -5040,13 +5327,16 @@ void main() {
             model: ListModel(
               content: DateTimeModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -5062,6 +5352,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -5100,13 +5391,16 @@ void main() {
             model: ListModel(
               content: BinaryModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -5122,6 +5416,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -5163,13 +5458,16 @@ void main() {
             model: ListModel(
               content: BinaryModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -5185,6 +5483,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -5224,6 +5523,7 @@ void main() {
         isDeprecated: false,
         properties: [],
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -5235,13 +5535,16 @@ void main() {
             model: ListModel(
               content: innerClass,
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -5257,6 +5560,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -5289,6 +5593,7 @@ void main() {
         isDeprecated: false,
         properties: [],
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -5300,13 +5605,16 @@ void main() {
             model: ListModel(
               content: innerClass,
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -5322,6 +5630,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -5360,13 +5669,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: false,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -5382,6 +5694,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -5420,13 +5733,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -5442,6 +5758,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -5481,13 +5798,16 @@ void main() {
               model: ListModel(
                 content: StringModel(context: testContext),
                 context: testContext,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -5500,6 +5820,7 @@ void main() {
               rawContentType: 'application/json',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -5534,13 +5855,16 @@ void main() {
               model: ListModel(
                 content: IntegerModel(context: testContext),
                 context: testContext,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -5553,6 +5877,7 @@ void main() {
               rawContentType: 'application/json',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -5589,19 +5914,23 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -5635,6 +5964,7 @@ void main() {
           isDeprecated: false,
           properties: [],
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -5646,13 +5976,16 @@ void main() {
               model: ListModel(
                 content: innerClass,
                 context: testContext,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -5665,6 +5998,7 @@ void main() {
               rawContentType: 'application/json',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -5699,13 +6033,16 @@ void main() {
               model: ListModel(
                 content: DateTimeModel(context: testContext),
                 context: testContext,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -5718,6 +6055,7 @@ void main() {
               rawContentType: 'application/json',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -5752,13 +6090,16 @@ void main() {
               model: ListModel(
                 content: StringModel(context: testContext),
                 context: testContext,
+                examples: const [],
               ),
               isRequired: false,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -5771,6 +6112,7 @@ void main() {
               rawContentType: 'application/json',
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -5813,13 +6155,16 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -5833,6 +6178,7 @@ void main() {
                 // No style/explode/allowReserved → falls through to explode: true
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -5872,13 +6218,16 @@ void main() {
                 model: ListModel(
                   content: IntegerModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -5892,6 +6241,7 @@ void main() {
                 // No style/explode/allowReserved → repeated parts
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -5931,13 +6281,16 @@ void main() {
                 model: ListModel(
                   content: DateTimeModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -5951,6 +6304,7 @@ void main() {
                 // No style/explode/allowReserved → repeated parts
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -5990,6 +6344,7 @@ void main() {
               const EnumEntry(value: 'low'),
             },
             context: testContext,
+            examples: const [],
           );
 
           final model = ClassModel(
@@ -6001,13 +6356,16 @@ void main() {
                 model: ListModel(
                   content: enumModel,
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -6021,6 +6379,7 @@ void main() {
                 // No style/explode/allowReserved → repeated parts
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -6060,19 +6419,23 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: false,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -6112,6 +6475,7 @@ void main() {
             const EnumEntry(value: 'low'),
           },
           context: testContext,
+          examples: const [],
         );
 
         final model = ClassModel(
@@ -6123,13 +6487,16 @@ void main() {
               model: ListModel(
                 content: enumModel,
                 context: testContext,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -6143,6 +6510,7 @@ void main() {
               // No style fields → content-based mode
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -6183,13 +6551,16 @@ void main() {
                 model: ListModel(
                   content: BinaryModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -6203,6 +6574,7 @@ void main() {
                 // No style/explode/allowReserved → content-based mode
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -6249,15 +6621,19 @@ void main() {
                   content: ListModel(
                     content: IntegerModel(context: testContext),
                     context: testContext,
+                    examples: const [],
                   ),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -6271,6 +6647,7 @@ void main() {
                 // No style fields → content-based mode
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -6311,13 +6688,16 @@ void main() {
                 model: ListModel(
                   content: StringModel(context: testContext),
                   context: testContext,
+                  examples: const [],
                 ),
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
             context: testContext,
+            examples: const [],
           );
 
           final content = RequestContent(
@@ -6331,6 +6711,7 @@ void main() {
                 // No style fields → content-based mode
               ),
             },
+            examples: const [],
           );
 
           final result = buildMultipartBodyStatements(
@@ -6372,9 +6753,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -6390,6 +6773,7 @@ void main() {
             allowReserved: false,
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyExpression(
@@ -6421,6 +6805,7 @@ void main() {
         model: BinaryModel(context: testContext),
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
+        examples: const [],
       );
 
       final result = buildMultipartBodyExpression(
@@ -6461,9 +6846,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -6487,10 +6874,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -6539,9 +6928,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -6562,10 +6953,12 @@ void main() {
                 isRequired: false,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -6611,6 +7004,7 @@ void main() {
         isDeprecated: false,
         properties: [],
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -6623,9 +7017,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -6646,10 +7042,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -6694,9 +7092,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -6717,10 +7117,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -6763,9 +7165,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -6786,10 +7190,12 @@ void main() {
                   isRequired: true,
                   isDeprecated: false,
                   encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
               },
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -6830,6 +7236,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -6842,9 +7249,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -6865,10 +7274,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -6909,9 +7320,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -6932,10 +7345,12 @@ void main() {
                 isRequired: false,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -6983,9 +7398,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -7006,6 +7423,7 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
               'X-Tag': ResponseHeaderObject(
                 name: 'X-Tag',
@@ -7016,10 +7434,12 @@ void main() {
                 isRequired: false,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -7071,9 +7491,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -7086,6 +7508,7 @@ void main() {
             rawContentType: 'application/octet-stream',
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -7132,13 +7555,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -7161,10 +7587,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -7204,13 +7632,16 @@ void main() {
             model: ListModel(
               content: StringModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -7233,10 +7664,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -7276,13 +7709,16 @@ void main() {
             model: ListModel(
               content: BinaryModel(context: testContext),
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -7305,10 +7741,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -7349,6 +7787,7 @@ void main() {
         isDeprecated: false,
         properties: [],
         context: testContext,
+        examples: const [],
       );
 
       final model = ClassModel(
@@ -7360,13 +7799,16 @@ void main() {
             model: ListModel(
               content: innerClass,
               context: testContext,
+              examples: const [],
             ),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -7389,10 +7831,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -7432,9 +7876,11 @@ void main() {
             isRequired: false,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -7455,10 +7901,12 @@ void main() {
                 isRequired: true,
                 isDeprecated: false,
                 encoding: ResponseHeaderEncoding.simple,
+                examples: const [],
               ),
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -7513,9 +7961,11 @@ void main() {
               isRequired: true,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -7536,10 +7986,12 @@ void main() {
                   isRequired: true,
                   isDeprecated: false,
                   encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
               },
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -7593,9 +8045,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -7616,10 +8070,12 @@ void main() {
                   isRequired: true,
                   isDeprecated: false,
                   encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
               },
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -7664,9 +8120,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -7687,10 +8145,12 @@ void main() {
                   isRequired: true,
                   isDeprecated: false,
                   encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
               },
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -7735,9 +8195,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -7758,10 +8220,12 @@ void main() {
                   isRequired: true,
                   isDeprecated: false,
                   encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
               },
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -7805,13 +8269,16 @@ void main() {
               model: ListModel(
                 content: DateTimeModel(context: testContext),
                 context: testContext,
+                examples: const [],
               ),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -7834,10 +8301,12 @@ void main() {
                   isRequired: true,
                   isDeprecated: false,
                   encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
                 ),
               },
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -7878,9 +8347,11 @@ void main() {
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
+            examples: const [],
           ),
         ],
         context: testContext,
+        examples: const [],
       );
 
       // Create a header alias that wraps a real header object.
@@ -7893,6 +8364,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         encoding: ResponseHeaderEncoding.simple,
+        examples: const [],
       );
 
       final content = RequestContent(
@@ -7912,6 +8384,7 @@ void main() {
             },
           ),
         },
+        examples: const [],
       );
 
       final result = buildMultipartBodyStatements(
@@ -7965,9 +8438,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -7983,6 +8458,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(
@@ -8021,9 +8497,11 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
           context: testContext,
+          examples: const [],
         );
 
         final content = RequestContent(
@@ -8039,6 +8517,7 @@ void main() {
               allowReserved: false,
             ),
           },
+          examples: const [],
         );
 
         final result = buildMultipartBodyStatements(

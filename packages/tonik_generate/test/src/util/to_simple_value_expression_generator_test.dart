@@ -40,6 +40,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToSimplePathParameterExpression('userId', parameter)),
@@ -59,6 +60,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -85,6 +87,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToSimplePathParameterExpression('timestamp', parameter)),
@@ -104,6 +107,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(buildToSimplePathParameterExpression('neverParam', parameter)),
@@ -125,6 +129,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -146,6 +151,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -172,6 +178,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -238,6 +245,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -302,6 +310,7 @@ void main() {
       final model = ListModel(
         content: StringModel(context: context),
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -322,6 +331,7 @@ void main() {
         name: 'MyInt',
         model: underlying,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -342,8 +352,10 @@ void main() {
           content: ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         );
         expect(
           buildSimpleValueExpression(
@@ -424,6 +436,7 @@ void main() {
         final model = MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         final expression = buildSimpleValueExpression(
           refer('value'),
@@ -451,6 +464,7 @@ void main() {
           final model = MapModel(
             valueModel: IntegerModel(context: context),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -489,6 +503,7 @@ void main() {
           final model = MapModel(
             valueModel: DateTimeModel(context: context),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -533,8 +548,10 @@ void main() {
               },
               isNullable: false,
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -576,8 +593,10 @@ void main() {
               name: 'User',
               properties: [],
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -617,6 +636,7 @@ void main() {
           final model = MapModel(
             valueModel: StringModel(context: context),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -718,6 +738,7 @@ void main() {
           final model = ListModel(
             content: Base64Model(context: context),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -761,6 +782,7 @@ void main() {
           final model = ListModel(
             content: Base64Model(context: context),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -808,8 +830,10 @@ void main() {
             content: MapModel(
               valueModel: StringModel(context: context),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -856,8 +880,10 @@ void main() {
             content: MapModel(
               valueModel: IntegerModel(context: context),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -909,10 +935,13 @@ void main() {
                 name: 'User',
                 properties: [],
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           );
           final expression = buildSimpleValueExpression(
             refer('value'),
@@ -961,6 +990,7 @@ void main() {
             model: StringModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
           encoding: PathParameterEncoding.simple,
           explode: false,
@@ -968,6 +998,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(
@@ -990,6 +1021,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -1011,6 +1043,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           isNullable: true,
+          examples: const [],
         ),
         encoding: HeaderParameterEncoding.simple,
         explode: false,
@@ -1018,6 +1051,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         context: context,
+        examples: const [],
       );
       expect(
         emit(
@@ -1040,6 +1074,7 @@ void main() {
             model: StringModel(context: context),
             context: context,
             isNullable: true,
+            examples: const [],
           ),
           encoding: HeaderParameterEncoding.simple,
           explode: false,
@@ -1047,6 +1082,7 @@ void main() {
           isRequired: false,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(
@@ -1075,6 +1111,7 @@ void main() {
             context: context,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           encoding: HeaderParameterEncoding.simple,
           explode: false,
@@ -1082,6 +1119,7 @@ void main() {
           isRequired: false,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(
@@ -1109,6 +1147,7 @@ void main() {
             context: context,
             isNullable: true,
             isDeprecated: false,
+            examples: const [],
           ),
           encoding: HeaderParameterEncoding.simple,
           explode: false,
@@ -1116,6 +1155,7 @@ void main() {
           isRequired: true,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
         expect(
           emit(
@@ -1176,6 +1216,7 @@ void main() {
           values: {const EnumEntry(value: 'a')},
           isNullable: false,
           context: context,
+          examples: const [],
         ),
         label: 'EnumModel<String>',
       );
@@ -1185,6 +1226,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         ),
         label: 'ClassModel',
       );
@@ -1194,6 +1236,7 @@ void main() {
           name: 'AllOfX',
           models: {StringModel(context: context)},
           context: context,
+          examples: const [],
         ),
         label: 'AllOfModel',
       );
@@ -1205,6 +1248,7 @@ void main() {
             (discriminatorValue: null, model: StringModel(context: context)),
           },
           context: context,
+          examples: const [],
         ),
         label: 'OneOfModel',
       );
@@ -1216,6 +1260,7 @@ void main() {
             (discriminatorValue: null, model: StringModel(context: context)),
           },
           context: context,
+          examples: const [],
         ),
         label: 'AnyOfModel',
       );
@@ -1227,6 +1272,7 @@ void main() {
           name: 'A1',
           model: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(StringModel)',
       );
@@ -1237,8 +1283,10 @@ void main() {
             name: 'A1',
             model: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(AliasModel(StringModel))',
       );
@@ -1265,6 +1313,7 @@ void main() {
         ListModel(
           content: NeverModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<NeverModel>',
         containsText: 'lists with unsupported element types',
@@ -1276,6 +1325,7 @@ void main() {
         ListModel(
           content: BinaryModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<BinaryModel>',
         containsText: 'lists with unsupported element types',
@@ -1289,8 +1339,10 @@ void main() {
           content: ListModel(
             content: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<ListModel<String>>',
         containsText: 'lists with unsupported element types',
@@ -1305,8 +1357,10 @@ void main() {
             name: 'User',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'MapModel(ClassModel)',
         containsText: 'map with complex value types',
@@ -1320,6 +1374,7 @@ void main() {
           name: 'NA',
           model: NeverModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(NeverModel)',
         containsText: 'never-typed',
@@ -1335,8 +1390,10 @@ void main() {
             name: 'NA1',
             model: NeverModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(AliasModel(NeverModel))',
         containsText: 'never-typed',
@@ -1353,10 +1410,13 @@ void main() {
               name: 'User',
               properties: const [],
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'AliasModel(MapModel(ClassModel))',
         containsText: 'map with complex value types',
@@ -1368,6 +1428,7 @@ void main() {
         MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'MapModel<String>',
       );
@@ -1375,6 +1436,7 @@ void main() {
         MapModel(
           valueModel: IntegerModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'MapModel<Integer>',
       );
@@ -1387,6 +1449,7 @@ void main() {
         ListModel(
           content: AnyModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<AnyModel>',
         containsText: 'lists with unsupported element types',
@@ -1402,10 +1465,13 @@ void main() {
               name: 'User',
               properties: const [],
               context: context,
+              examples: const [],
             ),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<MapModel<ClassModel>>',
         containsText: 'lists with unsupported element types',
@@ -1419,8 +1485,10 @@ void main() {
             name: 'NA',
             model: NeverModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<AliasModel(NeverModel)>',
         containsText: 'lists with unsupported element types',
@@ -1437,8 +1505,10 @@ void main() {
             name: 'User',
             properties: const [],
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<ClassModel>',
       );
@@ -1450,8 +1520,10 @@ void main() {
             values: {const EnumEntry(value: 'a')},
             isNullable: false,
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<EnumModel<String>>',
       );
@@ -1462,8 +1534,10 @@ void main() {
             name: 'AllOfX',
             models: {StringModel(context: context)},
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<AllOfModel>',
       );
@@ -1476,8 +1550,10 @@ void main() {
               (discriminatorValue: null, model: StringModel(context: context)),
             },
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<OneOfModel>',
       );
@@ -1490,8 +1566,10 @@ void main() {
               (discriminatorValue: null, model: StringModel(context: context)),
             },
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<AnyOfModel>',
       );
@@ -1499,6 +1577,7 @@ void main() {
         ListModel(
           content: DateTimeModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<DateTimeModel>',
       );
@@ -1506,6 +1585,7 @@ void main() {
         ListModel(
           content: DateModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<DateModel>',
       );
@@ -1513,6 +1593,7 @@ void main() {
         ListModel(
           content: DecimalModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<DecimalModel>',
       );
@@ -1520,6 +1601,7 @@ void main() {
         ListModel(
           content: UriModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<UriModel>',
       );
@@ -1527,6 +1609,7 @@ void main() {
         ListModel(
           content: Base64Model(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<Base64Model>',
       );
@@ -1534,6 +1617,7 @@ void main() {
         ListModel(
           content: IntegerModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<IntegerModel>',
       );
@@ -1541,6 +1625,7 @@ void main() {
         ListModel(
           content: DoubleModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<DoubleModel>',
       );
@@ -1548,6 +1633,7 @@ void main() {
         ListModel(
           content: NumberModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<NumberModel>',
       );
@@ -1555,6 +1641,7 @@ void main() {
         ListModel(
           content: BooleanModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<BooleanModel>',
       );
@@ -1562,6 +1649,7 @@ void main() {
         ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<StringModel>',
       );
@@ -1570,8 +1658,10 @@ void main() {
           content: MapModel(
             valueModel: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           context: context,
+          examples: const [],
         ),
         label: 'ListModel<MapModel<String>>',
       );

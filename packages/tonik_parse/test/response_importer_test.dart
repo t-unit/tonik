@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model_importer.dart';
 import 'package:tonik_parse/src/response_header_importer.dart';
@@ -392,16 +393,22 @@ void main() {
 
   test('adds single imported response to responses set', () {
     final openApiObject = OpenApiObject.fromJson(fileContent);
-    final modelImporter = ModelImporter(openApiObject);
+    final exampleImporter = ExampleImporter(openApiObject: openApiObject);
+    final modelImporter = ModelImporter(
+      openApiObject,
+      exampleImporter: exampleImporter,
+    );
     final headerImporter = ResponseHeaderImporter(
       openApiObject: openApiObject,
       modelImporter: modelImporter,
+      exampleImporter: exampleImporter,
     );
     final responseImporter =
         ResponseImporter(
             openApiObject: openApiObject,
             modelImporter: modelImporter,
             headerImporter: headerImporter,
+            exampleImporter: exampleImporter,
           )
           // Initialize the responses set
           ..responses = {};

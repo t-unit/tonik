@@ -44,6 +44,7 @@ void main() {
         allowEmptyValue: allowEmpty,
         allowReserved: false,
         context: context,
+        examples: const [],
       );
     }
 
@@ -115,6 +116,7 @@ void main() {
           model: MapModel(
             valueModel: StringModel(context: context),
             context: context,
+            examples: const [],
           ),
           explode: false,
           allowEmpty: true,
@@ -148,6 +150,7 @@ void main() {
           model: MapModel(
             valueModel: IntegerModel(context: context),
             context: context,
+            examples: const [],
           ),
           explode: false,
           allowEmpty: true,
@@ -188,8 +191,10 @@ void main() {
                 name: 'User',
                 properties: [],
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             explode: false,
             allowEmpty: true,
@@ -312,6 +317,7 @@ void main() {
             model: ListModel(
               content: BinaryModel(context: context),
               context: context,
+              examples: const [],
             ),
             explode: false,
             allowEmpty: true,
@@ -344,6 +350,7 @@ void main() {
             model: ListModel(
               content: Base64Model(context: context),
               context: context,
+              examples: const [],
             ),
             explode: false,
             allowEmpty: true,
@@ -383,6 +390,7 @@ void main() {
             model: ListModel(
               content: NeverModel(context: context),
               context: context,
+              examples: const [],
             ),
             explode: false,
             allowEmpty: true,
@@ -416,6 +424,7 @@ void main() {
               name: 'MyAlias',
               model: BinaryModel(context: context),
               context: context,
+              examples: const [],
             ),
             explode: false,
             allowEmpty: true,
@@ -451,8 +460,10 @@ void main() {
               model: ListModel(
                 content: BinaryModel(context: context),
                 context: context,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             explode: false,
             allowEmpty: true,
@@ -494,11 +505,14 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   context: context,
+                  examples: const [],
                 ),
                 context: context,
                 isNullable: true,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             explode: true,
             allowEmpty: false,
@@ -543,6 +557,7 @@ void main() {
             model: ListModel(
               content: IntegerModel(context: context),
               context: context,
+              examples: const [],
             ),
             explode: true,
             allowEmpty: false,
@@ -590,8 +605,10 @@ void main() {
                 model: IntegerModel(context: context),
                 context: context,
                 isNullable: true,
+                examples: const [],
               ),
               context: context,
+              examples: const [],
             ),
             explode: false,
             allowEmpty: true,

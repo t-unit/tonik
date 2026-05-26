@@ -28,6 +28,7 @@ void main() {
           (discriminatorValue: null, model: IntegerModel(context: testContext)),
         },
         context: testContext,
+        examples: const [],
       );
 
       final apiDoc = ApiDocument(

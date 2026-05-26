@@ -19,7 +19,6 @@
   - `propertyNames` for property name validation
 - Default values
 - Supporting the `not` keyword
-- Example values generation from `example`/`examples`
 
 ## Non-goals
 
@@ -42,6 +41,9 @@
 
 **Advanced JSON Schema:**
 - `unevaluatedProperties`, `unevaluatedItems`
+
+**Examples:**
+- Example Object `externalValue` URL fetching - external example resolution requires network access at build time; only inline `value` examples are supported
 
 **Other:**
 - Direct security/authentication code generation - authentication must be handled through ServerConfig interceptors (see [Authentication Guide](authentication.md))

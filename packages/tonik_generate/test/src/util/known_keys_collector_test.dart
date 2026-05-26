@@ -23,6 +23,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'name',
@@ -30,6 +31,7 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
             Property(
               name: 'email',
@@ -37,8 +39,10 @@ void main() {
               isRequired: false,
               isNullable: true,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), {'id', 'name', 'email'});
@@ -50,6 +54,7 @@ void main() {
           name: 'Empty',
           context: context,
           properties: const [],
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), <String>{});
@@ -69,8 +74,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final extModel = ClassModel(
@@ -84,8 +91,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final allOf = AllOfModel(
@@ -93,6 +102,7 @@ void main() {
           name: 'Combined',
           context: context,
           models: {baseModel, extModel},
+          examples: const [],
         );
 
         expect(collectKnownKeys(allOf), {'id', 'extra'});
@@ -110,8 +120,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final innerAllOf = AllOfModel(
@@ -119,6 +131,7 @@ void main() {
           name: 'InnerAllOf',
           context: context,
           models: {innerClass},
+          examples: const [],
         );
 
         final outerClass = ClassModel(
@@ -132,8 +145,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final outerAllOf = AllOfModel(
@@ -141,6 +156,7 @@ void main() {
           name: 'OuterAllOf',
           context: context,
           models: {innerAllOf, outerClass},
+          examples: const [],
         );
 
         expect(collectKnownKeys(outerAllOf), {'a', 'b'});
@@ -152,6 +168,7 @@ void main() {
           name: 'EmptyAllOf',
           context: context,
           models: const {},
+          examples: const [],
         );
 
         expect(collectKnownKeys(allOf), <String>{});
@@ -166,6 +183,7 @@ void main() {
           context: context,
           models: const {},
           discriminator: 'petType',
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), {'petType'});
@@ -177,6 +195,7 @@ void main() {
           name: 'Pet',
           context: context,
           models: const {},
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), <String>{});
@@ -194,8 +213,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final dog = ClassModel(
@@ -209,8 +230,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -222,6 +245,7 @@ void main() {
             (discriminatorValue: 'dog', model: dog),
           },
           discriminator: 'petType',
+          examples: const [],
         );
 
         expect(
@@ -242,8 +266,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final model = OneOfModel(
@@ -253,6 +279,7 @@ void main() {
           models: {
             (discriminatorValue: null, model: cat),
           },
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), {'whiskerLength'});
@@ -267,6 +294,7 @@ void main() {
           context: context,
           models: const {},
           discriminator: 'contentType',
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), {'contentType'});
@@ -278,6 +306,7 @@ void main() {
           name: 'Content',
           context: context,
           models: const {},
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), <String>{});
@@ -295,8 +324,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final image = ClassModel(
@@ -310,8 +341,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -323,6 +356,7 @@ void main() {
             (discriminatorValue: 'image', model: image),
           },
           discriminator: 'kind',
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), {'kind', 'body', 'url'});
@@ -340,8 +374,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final model = AnyOfModel(
@@ -351,6 +387,7 @@ void main() {
           models: {
             (discriminatorValue: null, model: text),
           },
+          examples: const [],
         );
 
         expect(collectKnownKeys(model), {'body'});
@@ -370,14 +407,17 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final alias = AliasModel(
           name: 'UserRef',
           model: classModel,
           context: context,
+          examples: const [],
         );
 
         expect(collectKnownKeys(alias), {'name'});
@@ -395,20 +435,24 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final innerAlias = AliasModel(
           name: 'InnerAlias',
           model: classModel,
           context: context,
+          examples: const [],
         );
 
         final outerAlias = AliasModel(
           name: 'OuterAlias',
           model: innerAlias,
           context: context,
+          examples: const [],
         );
 
         expect(collectKnownKeys(outerAlias), {'id'});
@@ -434,6 +478,7 @@ void main() {
         final model = ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         expect(collectKnownKeys(model), <String>{});
       });
@@ -442,6 +487,7 @@ void main() {
         final model = MapModel(
           valueModel: StringModel(context: context),
           context: context,
+          examples: const [],
         );
         expect(collectKnownKeys(model), <String>{});
       });
@@ -453,6 +499,7 @@ void main() {
           context: context,
           values: {const EnumEntry(value: 'active')},
           isNullable: false,
+          examples: const [],
         );
         expect(collectKnownKeys(model), <String>{});
       });
@@ -471,8 +518,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final oneOfModel = OneOfModel(
@@ -481,6 +530,7 @@ void main() {
           context: context,
           models: const {},
           discriminator: 'type',
+          examples: const [],
         );
 
         final allOf = AllOfModel(
@@ -488,6 +538,7 @@ void main() {
           name: 'Combined',
           context: context,
           models: {classModel, oneOfModel},
+          examples: const [],
         );
 
         expect(collectKnownKeys(allOf), {'id', 'type'});
@@ -505,8 +556,10 @@ void main() {
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
+              examples: const [],
             ),
           ],
+          examples: const [],
         );
 
         final anyOfModel = AnyOfModel(
@@ -515,6 +568,7 @@ void main() {
           context: context,
           models: const {},
           discriminator: 'kind',
+          examples: const [],
         );
 
         final allOf = AllOfModel(
@@ -522,6 +576,7 @@ void main() {
           name: 'Combined',
           context: context,
           models: {classModel, anyOfModel},
+          examples: const [],
         );
 
         expect(collectKnownKeys(allOf), {'name', 'kind'});
@@ -541,8 +596,10 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
+            examples: const [],
           );
 
           final dog = ClassModel(
@@ -556,8 +613,10 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
+            examples: const [],
           );
 
           final oneOfModel = OneOfModel(
@@ -568,6 +627,7 @@ void main() {
               (discriminatorValue: 'cat', model: cat),
               (discriminatorValue: 'dog', model: dog),
             },
+            examples: const [],
           );
 
           final baseModel = ClassModel(
@@ -581,8 +641,10 @@ void main() {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                examples: const [],
               ),
             ],
+            examples: const [],
           );
 
           final allOf = AllOfModel(
@@ -590,6 +652,7 @@ void main() {
             name: 'MyModel',
             context: context,
             models: {oneOfModel, baseModel},
+            examples: const [],
           );
 
           expect(

@@ -363,7 +363,11 @@ Expression _buildListFromSimpleExpression(
     ),
     AliasModel() => _buildListFromSimpleExpression(
       value,
-      ListModel(content: content.model, context: model.context),
+      ListModel(
+        content: content.model,
+        context: model.context,
+        examples: const [],
+      ),
       isRequired,
       nameManager,
       package: package,

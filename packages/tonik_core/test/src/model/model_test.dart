@@ -15,6 +15,7 @@ void main() {
         name: 'Tags',
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       expect(mapModel.name, 'Tags');
@@ -28,6 +29,7 @@ void main() {
       final mapModel = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       expect(mapModel.encodingShape, EncodingShape.complex);
@@ -38,10 +40,12 @@ void main() {
         valueModel: StringModel(context: context),
         context: context,
         isNullable: true,
+        examples: const [],
       );
       final nonNullableMap = MapModel(
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       expect(nullableMap.isEffectivelyNullable, isTrue);
@@ -53,11 +57,13 @@ void main() {
         name: 'Tags',
         valueModel: StringModel(context: context),
         context: context,
+        examples: const [],
       );
 
       expect(
         mapModel.toString(),
-        'MapModel{name: Tags, nameOverride: null, valueModel: StringModel}',
+        'MapModel{name: Tags, nameOverride: null, '
+        'valueModel: StringModel, examples: []}',
       );
     });
   });
@@ -89,6 +95,7 @@ void main() {
         properties: const [],
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(model.additionalProperties, isNull);
@@ -101,13 +108,14 @@ void main() {
         context: context,
         isDeprecated: false,
         additionalProperties: const UnrestrictedAdditionalProperties(),
+        examples: const [],
       );
 
       expect(
         model.toString(),
         'ClassModel{name: Test, nameOverride: null, properties: [], '
         "additionalProperties: Instance of 'UnrestrictedAdditionalProperties', "
-        'description: null, isDeprecated: false}',
+        'description: null, isDeprecated: false, examples: []}',
       );
     });
   });
@@ -119,6 +127,7 @@ void main() {
         models: {StringModel(context: context)},
         context: context,
         isDeprecated: false,
+        examples: const [],
       );
 
       expect(model.additionalProperties, isNull);
@@ -131,13 +140,14 @@ void main() {
         context: context,
         isDeprecated: false,
         additionalProperties: const UnrestrictedAdditionalProperties(),
+        examples: const [],
       );
 
       expect(
         model.toString(),
         'AllOfModel{name: Test, nameOverride: null, models: {StringModel}, '
         "additionalProperties: Instance of 'UnrestrictedAdditionalProperties', "
-        'description: null, isDeprecated: false}',
+        'description: null, isDeprecated: false, examples: []}',
       );
     });
   });

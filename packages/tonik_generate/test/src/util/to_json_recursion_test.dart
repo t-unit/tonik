@@ -44,6 +44,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       tree.valueModel = tree;
 
@@ -54,6 +55,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       final built = buildToJsonPropertyExpression(
         'body',
@@ -92,6 +94,7 @@ void main() {
           name: 'Tree',
           valueModel: AnyModel(context: context),
           context: context,
+          examples: const [],
         );
         tree.valueModel = tree;
 
@@ -102,6 +105,7 @@ void main() {
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
+          examples: const [],
         );
         final built = buildToJsonPropertyExpression(
           'subtree',
@@ -142,6 +146,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       tree.valueModel = tree;
 
@@ -152,6 +157,7 @@ void main() {
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
+        examples: const [],
       );
       final built = buildToJsonPropertyExpression(
         'subtree',
@@ -187,6 +193,7 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       tree.valueModel = tree;
 
@@ -197,6 +204,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
 
       final first = buildToJsonPropertyExpression(
@@ -225,11 +233,13 @@ void main() {
         name: 'Tree',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final alias = AliasModel(
         name: 'TreeAlias',
         model: tree,
         context: context,
+        examples: const [],
       );
       tree.valueModel = alias;
 
@@ -240,6 +250,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       final built = buildToJsonPropertyExpression(
         'body',
@@ -278,16 +289,19 @@ void main() {
         name: 'A',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final c = MapModel(
         name: 'C',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       a.valueModel = b;
       b.valueModel = c;
@@ -300,6 +314,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       final built = buildToJsonPropertyExpression(
         'body',
@@ -358,11 +373,13 @@ void main() {
         name: 'A',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       final b = MapModel(
         name: 'B',
         valueModel: AnyModel(context: context),
         context: context,
+        examples: const [],
       );
       a.valueModel = b;
       b.valueModel = a;
@@ -374,6 +391,7 @@ void main() {
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
+        examples: const [],
       );
       final built = buildToJsonPropertyExpression(
         'body',

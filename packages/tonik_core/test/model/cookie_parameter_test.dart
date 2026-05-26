@@ -17,6 +17,7 @@ void main() {
         model: model,
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final resolved = param.resolve(name: 'newName');
@@ -46,6 +47,7 @@ void main() {
         model: model,
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final resolved = param.resolve();
@@ -67,6 +69,7 @@ void main() {
         model: model,
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final alias = CookieParameterAlias(
@@ -97,6 +100,7 @@ void main() {
           model: model,
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final alias = CookieParameterAlias(
@@ -125,6 +129,7 @@ void main() {
         model: model,
         encoding: CookieParameterEncoding.form,
         context: context,
+        examples: const [],
       );
 
       final firstAlias = CookieParameterAlias(
@@ -160,6 +165,7 @@ void main() {
           model: model,
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final alias = CookieParameterAlias(
@@ -187,6 +193,7 @@ void main() {
           model: model,
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final alias = CookieParameterAlias(
@@ -214,6 +221,7 @@ void main() {
           model: model,
           encoding: CookieParameterEncoding.form,
           context: context,
+          examples: const [],
         );
 
         final alias1 = CookieParameterAlias(
@@ -250,6 +258,7 @@ void main() {
             model: model,
             encoding: CookieParameterEncoding.form,
             context: context,
+            examples: const [],
           );
 
           final alias1 = CookieParameterAlias(

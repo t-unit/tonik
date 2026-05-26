@@ -28,6 +28,7 @@ void main() {
             name: 'User',
             properties: const [],
             context: ctx,
+            examples: const [],
           ),
           EnumModel<String>(
             isDeprecated: false,
@@ -35,6 +36,7 @@ void main() {
             values: {const EnumEntry(value: 'active')},
             isNullable: false,
             context: ctx,
+            examples: const [],
           ),
           OneOfModel(
             isDeprecated: false,
@@ -44,6 +46,7 @@ void main() {
               (discriminatorValue: null, model: IntegerModel(context: ctx)),
             },
             context: ctx,
+            examples: const [],
           ),
           AnyOfModel(
             isDeprecated: false,
@@ -53,6 +56,7 @@ void main() {
               (discriminatorValue: null, model: IntegerModel(context: ctx)),
             },
             context: ctx,
+            examples: const [],
           ),
           AllOfModel(
             isDeprecated: false,
@@ -62,11 +66,13 @@ void main() {
               IntegerModel(context: ctx),
             },
             context: ctx,
+            examples: const [],
           ),
           AliasModel(
             name: 'UserId',
             model: StringModel(context: ctx),
             context: ctx,
+            examples: const [],
           ),
           ListModel(
             name: 'UserList',
@@ -75,8 +81,10 @@ void main() {
               name: 'User',
               properties: const [],
               context: ctx,
+              examples: const [],
             ),
             context: ctx,
+            examples: const [],
           ),
         };
 

@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
+import 'package:tonik_parse/src/example_importer.dart';
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/reference.dart';
@@ -10,10 +11,12 @@ class RequestParameterImporter {
   RequestParameterImporter({
     required this.openApiObject,
     required this.modelImporter,
+    required this.exampleImporter,
   });
 
   final OpenApiObject openApiObject;
   final ModelImporter modelImporter;
+  final ExampleImporter exampleImporter;
   final log = Logger('RequestParameterImporter');
 
   late Set<core.RequestHeader> headers;
@@ -252,6 +255,7 @@ class RequestParameterImporter {
               isDeprecated: parameter.isDeprecated ?? false,
               allowEmptyValue: parameter.allowEmptyValue ?? false,
               context: context,
+              examples: exampleImporter.fromParameter(parameter),
             );
             // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
@@ -274,6 +278,7 @@ class RequestParameterImporter {
               allowEmptyValue: parameter.allowEmptyValue ?? false,
               allowReserved: parameter.allowReserved ?? false,
               context: context,
+              examples: exampleImporter.fromParameter(parameter),
             );
             // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
@@ -293,6 +298,7 @@ class RequestParameterImporter {
               isDeprecated: parameter.isDeprecated ?? false,
               allowEmptyValue: parameter.allowEmptyValue ?? false,
               context: context,
+              examples: exampleImporter.fromParameter(parameter),
             );
             // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
@@ -311,6 +317,7 @@ class RequestParameterImporter {
               isRequired: parameter.isRequired ?? false,
               isDeprecated: parameter.isDeprecated ?? false,
               context: context,
+              examples: exampleImporter.fromParameter(parameter),
             );
             // Apply x-dart-name vendor extension.
             if (parameter.xDartName != null) {

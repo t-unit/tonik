@@ -52,6 +52,7 @@ void main() {
                   model: StringModel(context: context),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -65,6 +66,7 @@ void main() {
                   model: StringModel(context: context),
                   rawContentType: 'text/plain',
                   contentType: ContentType.json,
+                  examples: const [],
                 ),
               },
             ),
@@ -98,10 +100,12 @@ void main() {
         ListModel(
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         ),
         ListModel(
           content: IntegerModel(context: context),
           context: context,
+          examples: const [],
         ),
       ];
       final responses = [
@@ -122,6 +126,7 @@ void main() {
                 model: StringModel(context: context),
                 encoding: ResponseHeaderEncoding.simple,
                 context: context,
+                examples: const [],
               ),
             },
             bodies: {
@@ -129,6 +134,7 @@ void main() {
                 model: StringModel(context: context),
                 rawContentType: 'application/json',
                 contentType: ContentType.json,
+                examples: const [],
               ),
             },
           ),
@@ -147,6 +153,7 @@ void main() {
               model: StringModel(context: context),
               encoding: ResponseHeaderEncoding.simple,
               context: context,
+              examples: const [],
             ),
           },
           bodies: const {},
@@ -184,11 +191,13 @@ void main() {
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
           RequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
+            examples: const [],
           ),
         },
       );
@@ -208,11 +217,13 @@ void main() {
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
           RequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
+            examples: const [],
           ),
         },
       );
@@ -230,11 +241,13 @@ void main() {
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
           RequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
+            examples: const [],
           ),
         },
       );
@@ -286,6 +299,7 @@ void main() {
             model: StringModel(context: context),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -303,6 +317,7 @@ void main() {
             model: StringModel(context: context),
             encoding: ResponseHeaderEncoding.simple,
             context: context,
+            examples: const [],
           ),
         },
         description: '',
@@ -322,6 +337,7 @@ void main() {
             model: StringModel(context: context),
             encoding: ResponseHeaderEncoding.simple,
             context: context,
+            examples: const [],
           ),
         },
         description: '',
@@ -330,6 +346,7 @@ void main() {
             model: StringModel(context: context),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -422,6 +439,7 @@ void main() {
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
         },
       );
@@ -436,11 +454,13 @@ void main() {
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/json',
+            examples: const [],
           ),
           RequestContent(
             model: StringModel(context: context),
             contentType: ContentType.json,
             rawContentType: 'application/vnd.api+json',
+            examples: const [],
           ),
         },
       );
@@ -518,11 +538,13 @@ void main() {
             model: StringModel(context: context),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
           ResponseBody(
             model: StringModel(context: context),
             rawContentType: 'application/xml',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -551,11 +573,13 @@ void main() {
             model: StringModel(context: context),
             rawContentType: 'application/json',
             contentType: ContentType.json,
+            examples: const [],
           ),
           ResponseBody(
             model: StringModel(context: context),
             rawContentType: 'application/xml',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -590,6 +614,7 @@ void main() {
             model: StringModel(context: context),
             rawContentType: 'application/json+v2',
             contentType: ContentType.json,
+            examples: const [],
           ),
         },
       );
@@ -630,11 +655,13 @@ void main() {
               name: 'User',
               properties: const [],
               context: userContext,
+              examples: const [],
             ),
             ClassModel(
               isDeprecated: false,
               properties: const [],
               context: userContext,
+              examples: const [],
             ),
           ];
 
@@ -660,12 +687,14 @@ void main() {
               isDeprecated: false,
               properties: const [],
               context: userContext,
+              examples: const [],
             ),
             ClassModel(
               isDeprecated: false,
               name: 'User',
               properties: const [],
               context: userContext,
+              examples: const [],
             ),
           ];
 
@@ -691,12 +720,14 @@ void main() {
         isDeprecated: false,
         models: {StringModel(context: sharedContext)},
         context: sharedContext,
+        examples: const [],
       );
 
       final model2 = AllOfModel(
         isDeprecated: false,
         models: {IntegerModel(context: sharedContext)},
         context: sharedContext,
+        examples: const [],
       );
 
       manager.prime(
@@ -843,6 +874,7 @@ void main() {
           nameOverride: 'CustomUser',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final name = manager.modelName(model);
@@ -857,6 +889,7 @@ void main() {
           nameOverride: 'special-name',
           properties: const [],
           context: context,
+          examples: const [],
         );
         final model2 = ClassModel(
           isDeprecated: false,
@@ -864,6 +897,7 @@ void main() {
           nameOverride: 'special_name',
           properties: const [],
           context: context.push('other'),
+          examples: const [],
         );
 
         final name1 = manager.modelName(model1);
@@ -879,6 +913,7 @@ void main() {
           name: 'User',
           properties: const [],
           context: context,
+          examples: const [],
         );
 
         final name = manager.modelName(model);
@@ -896,6 +931,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           context: context,
+          examples: const [],
         );
 
         final name = manager.modelName(model);
@@ -909,6 +945,7 @@ void main() {
           nameOverride: 'CustomId',
           model: StringModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final name = manager.modelName(model);
@@ -922,6 +959,7 @@ void main() {
           nameOverride: 'Users',
           content: StringModel(context: context),
           context: context,
+          examples: const [],
         );
 
         final name = manager.modelName(model);
