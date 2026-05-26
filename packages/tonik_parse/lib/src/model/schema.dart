@@ -1,9 +1,5 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/discriminator.dart';
 
-part 'schema.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Schema {
   Schema({
     required this.ref,
@@ -37,8 +33,8 @@ class Schema {
   });
 
   factory Schema.fromJson(Object? json) {
-    if (json is bool) {
-      return Schema(
+    return switch (json) {
+      final bool boolSchema => Schema(
         ref: null,
         type: [],
         format: null,
@@ -61,15 +57,12 @@ class Schema {
         contentEncoding: null,
         contentMediaType: null,
         contentSchema: null,
-        isBooleanSchema: json,
-      );
-    }
-
-    // Handle bare type strings (e.g., 'string' instead of {'type': 'string'}).
-    if (json is String) {
-      return Schema(
+        isBooleanSchema: boolSchema,
+      ),
+      // Bare type strings (e.g., 'string' instead of {'type': 'string'}).
+      final String typeString => Schema(
         ref: null,
-        type: [json],
+        type: [typeString],
         format: null,
         required: null,
         enumerated: null,
@@ -90,59 +83,79 @@ class Schema {
         contentEncoding: null,
         contentMediaType: null,
         contentSchema: null,
-      );
-    }
-
-    return _$SchemaFromJson(json! as Map<String, dynamic>);
+      ),
+      final Map<String, dynamic> map => Schema(
+        ref: map[r'$ref'] as String?,
+        type: const _SchemaTypeConverter().fromJson(map['type']),
+        format: map['format'] as String?,
+        required: (map['required'] as List<dynamic>?)
+            ?.map((e) => e as String)
+            .toList(),
+        enumerated: map['enum'] as List<dynamic>?,
+        allOf: const _SchemaListConverter().fromJson(map['allOf'] as List?),
+        anyOf: const _SchemaListConverter().fromJson(map['anyOf'] as List?),
+        oneOf: const _SchemaListConverter().fromJson(map['oneOf'] as List?),
+        not: const SchemaConverter().fromJson(map['not']),
+        items: const SchemaConverter().fromJson(map['items']),
+        properties: const SchemaMapConverter().fromJson(
+          map['properties'] as Map<String, dynamic>?,
+        ),
+        description: map['description'] as String?,
+        isNullable: map['nullable'] as bool?,
+        discriminator: map['discriminator'] == null
+            ? null
+            : Discriminator.fromJson(
+                map['discriminator'] as Map<String, dynamic>,
+              ),
+        isDeprecated: map['deprecated'] as bool?,
+        uniqueItems: map['uniqueItems'] as bool?,
+        xDartName: map['x-dart-name'] as String?,
+        xDartEnum: (map['x-dart-enum'] as List<dynamic>?)
+            ?.map((e) => e as String)
+            .toList(),
+        defs: const SchemaMapConverter().fromJson(
+          map[r'$defs'] as Map<String, dynamic>?,
+        ),
+        contentEncoding: map['contentEncoding'] as String?,
+        contentMediaType: map['contentMediaType'] as String?,
+        contentSchema: const SchemaConverter().fromJson(map['contentSchema']),
+        additionalProperties: const _AdditionalPropertiesConverter().fromJson(
+          map['additionalProperties'],
+        ),
+        isReadOnly: map['readOnly'] as bool?,
+        isWriteOnly: map['writeOnly'] as bool?,
+        example: map['example'],
+        examples: map['examples'] as List<dynamic>?,
+      ),
+      _ => throw const FormatException('Failed to load Schema.'),
+    };
   }
 
-  @JsonKey(name: r'$ref')
   final String? ref;
-  @_SchemaTypeConverter()
   final List<String> type;
   final String? format;
   final List<String>? required;
-  @JsonKey(name: 'enum')
   final List<dynamic>? enumerated;
-  @_SchemaListConverter()
   final List<Schema>? allOf;
-  @_SchemaListConverter()
   final List<Schema>? anyOf;
-  @_SchemaListConverter()
   final List<Schema>? oneOf;
-  @SchemaConverter()
   final Schema? not;
-  @SchemaConverter()
   final Schema? items;
-  @SchemaMapConverter()
   final Map<String, Schema>? properties;
   final String? description;
-  @JsonKey(name: 'nullable')
   final bool? isNullable;
   final Discriminator? discriminator;
-  @JsonKey(name: 'deprecated')
   final bool? isDeprecated;
   final bool? uniqueItems;
-  @JsonKey(name: 'x-dart-name')
   final String? xDartName;
-  @JsonKey(name: 'x-dart-enum')
   final List<String>? xDartEnum;
-  @JsonKey(name: r'$defs')
-  @SchemaMapConverter()
   final Map<String, Schema>? defs;
-  @JsonKey(name: 'contentEncoding')
   final String? contentEncoding;
-  @JsonKey(name: 'contentMediaType')
   final String? contentMediaType;
-  @SchemaConverter()
-  @JsonKey(name: 'contentSchema')
   final Schema? contentSchema;
-  @_AdditionalPropertiesConverter()
   final Object? additionalProperties; // bool | Schema | null
 
-  @JsonKey(name: 'readOnly')
   final bool? isReadOnly;
-  @JsonKey(name: 'writeOnly')
   final bool? isWriteOnly;
 
   /// OpenAPI 3.0 singular example value.
@@ -156,7 +169,6 @@ class Schema {
   /// - `true`: Always validates (accepts any value)
   /// - `false`: Never validates (rejects all values)
   /// - `null`: Not a boolean schema (standard object schema)
-  @JsonKey(includeFromJson: false)
   final bool? isBooleanSchema;
 
   // We ignore externalDocs, xml, default, title, multipleOf, maximum,
@@ -178,82 +190,54 @@ class Schema {
       'example: $example, examples: $examples}';
 }
 
-class _AdditionalPropertiesConverter
-    implements JsonConverter<Object?, Object?> {
+class _AdditionalPropertiesConverter {
   const _AdditionalPropertiesConverter();
 
-  @override
   Object? fromJson(Object? json) {
     if (json == null) return null;
     if (json is bool) return json;
     if (json is Map<String, dynamic>) return Schema.fromJson(json);
     throw FormatException('Invalid additionalProperties value: $json');
   }
-
-  @override
-  Object? toJson(Object? object) => throw UnimplementedError();
 }
 
-class _SchemaTypeConverter implements JsonConverter<List<String>, dynamic> {
+class _SchemaTypeConverter {
   const _SchemaTypeConverter();
 
-  @override
   List<String> fromJson(dynamic json) {
     if (json == null) return [];
     if (json is String) return [json];
     if (json is List) return json.cast<String>();
     throw FormatException('Invalid type value: $json');
   }
-
-  @override
-  dynamic toJson(List<String> types) {
-    if (types.isEmpty) return null;
-    if (types.length == 1) return types.first;
-    return types;
-  }
 }
 
 /// Converts a single schema from JSON, handling all schema representations.
-class SchemaConverter implements JsonConverter<Schema?, Object?> {
+class SchemaConverter {
   const SchemaConverter();
 
-  @override
   Schema? fromJson(Object? json) {
     if (json == null) return null;
     return Schema.fromJson(json);
   }
-
-  @override
-  Object? toJson(Schema? schema) => throw UnimplementedError();
 }
 
 /// Converts a list of schemas from JSON.
-class _SchemaListConverter
-    implements JsonConverter<List<Schema>?, List<dynamic>?> {
+class _SchemaListConverter {
   const _SchemaListConverter();
 
-  @override
   List<Schema>? fromJson(List<dynamic>? json) {
     if (json == null) return null;
     return json.map(Schema.fromJson).toList();
   }
-
-  @override
-  List<dynamic>? toJson(List<Schema>? schemas) => throw UnimplementedError();
 }
 
 /// Converts a map of schemas from JSON.
-class SchemaMapConverter
-    implements JsonConverter<Map<String, Schema>?, Map<String, dynamic>?> {
+class SchemaMapConverter {
   const SchemaMapConverter();
 
-  @override
   Map<String, Schema>? fromJson(Map<String, dynamic>? json) {
     if (json == null) return null;
     return json.map((k, e) => MapEntry(k, Schema.fromJson(e)));
   }
-
-  @override
-  Map<String, dynamic>? toJson(Map<String, Schema>? schemas) =>
-      throw UnimplementedError();
 }

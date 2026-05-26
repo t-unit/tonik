@@ -1,11 +1,7 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 
-part 'encoding.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Encoding {
   Encoding({
     required this.contentType,
@@ -15,8 +11,17 @@ class Encoding {
     required this.allowReserved,
   });
 
-  factory Encoding.fromJson(Map<String, dynamic> json) =>
-      _$EncodingFromJson(json);
+  factory Encoding.fromJson(Map<String, dynamic> json) => Encoding(
+    contentType: json['contentType'] as String?,
+    headers: (json['headers'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Header>.fromJson(e)),
+    ),
+    style: json['style'] == null
+        ? null
+        : SerializationStyle.fromJson(json['style']),
+    explode: json['explode'] as bool?,
+    allowReserved: json['allowReserved'] as bool?,
+  );
 
   final String? contentType;
   final Map<String, ReferenceWrapper<Header>>? headers;

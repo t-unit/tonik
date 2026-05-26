@@ -254,7 +254,7 @@ void main() {
       expect(importer.securitySchemes, isEmpty);
     });
 
-    test('throws ArgumentError for invalid security scheme type', () {
+    test('throws FormatException for invalid security scheme type', () {
       final invalidTypeContent = {
         'openapi': '3.1.0',
         'info': {'title': 'Test', 'version': '1.0.0'},
@@ -271,11 +271,11 @@ void main() {
 
       expect(
         () => OpenApiObject.fromJson(invalidTypeContent),
-        throwsA(isA<ArgumentError>()),
+        throwsA(isA<FormatException>()),
       );
     });
 
-    test('throws ArgumentError for invalid API key location', () {
+    test('throws FormatException for invalid API key location', () {
       final invalidLocationContent = {
         'openapi': '3.1.0',
         'info': {'title': 'Test', 'version': '1.0.0'},
@@ -293,7 +293,7 @@ void main() {
 
       expect(
         () => OpenApiObject.fromJson(invalidLocationContent),
-        throwsA(isA<ArgumentError>()),
+        throwsA(isA<FormatException>()),
       );
     });
   });

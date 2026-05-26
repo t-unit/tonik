@@ -1,10 +1,6 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/contact.dart';
 import 'package:tonik_parse/src/model/license.dart';
 
-part 'info.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Info {
   Info({
     required this.title,
@@ -16,7 +12,19 @@ class Info {
     required this.termsOfService,
   });
 
-  factory Info.fromJson(Map<String, dynamic> json) => _$InfoFromJson(json);
+  factory Info.fromJson(Map<String, dynamic> json) => Info(
+    title: json['title'] as String,
+    version: json['version'] as String,
+    summary: json['summary'] as String?,
+    description: json['description'] as String?,
+    contact: json['contact'] == null
+        ? null
+        : Contact.fromJson(json['contact'] as Map<String, dynamic>),
+    license: json['license'] == null
+        ? null
+        : License.fromJson(json['license'] as Map<String, dynamic>),
+    termsOfService: json['termsOfService'] as String?,
+  );
 
   final String title;
   final String? summary;

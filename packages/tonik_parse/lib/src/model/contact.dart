@@ -1,17 +1,13 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'contact.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Contact {
-  Contact({
-    required this.name,
-    required this.url,
-    required this.email,
-  });
+  Contact({required this.name, required this.url, required this.email});
 
-  factory Contact.fromJson(Map<String, dynamic> json) =>
-      _$ContactFromJson(json);
+  factory Contact.fromJson(Map<String, dynamic> json) {
+    return Contact(
+      name: json['name'] as String?,
+      url: json['url'] as String?,
+      email: json['email'] as String?,
+    );
+  }
 
   final String? name;
   final String? url;
