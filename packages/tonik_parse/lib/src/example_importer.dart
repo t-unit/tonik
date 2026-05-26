@@ -87,8 +87,21 @@ class ExampleImporter {
     }
     if (examples != null) {
       for (final entry in examples.entries) {
-        final resolved = _resolveExample(entry.value, <String>[]);
-        final converted = _convert(name: entry.key, example: resolved);
+        final wrapper = entry.value;
+        // OAS 3.1+: a Reference's summary/description override the target's.
+        final summaryOverride = wrapper is Reference<Example>
+            ? wrapper.summary
+            : null;
+        final descriptionOverride = wrapper is Reference<Example>
+            ? wrapper.description
+            : null;
+        final resolved = _resolveExample(wrapper, <String>[]);
+        final converted = _convert(
+          name: entry.key,
+          example: resolved,
+          summaryOverride: summaryOverride,
+          descriptionOverride: descriptionOverride,
+        );
         if (converted != null) {
           result.add(converted);
         }
@@ -129,22 +142,39 @@ class ExampleImporter {
     }
   }
 
-  core.Example? _convert({required String name, required Example example}) {
-    if (example.value == null && example.externalValue != null) {
+  core.Example? _convert({
+    required String name,
+    required Example example,
+    String? summaryOverride,
+    String? descriptionOverride,
+  }) {
+    final hasData = example.hasExplicitDataValue || example.hasExplicitValue;
+    final effectiveValue = example.hasExplicitDataValue
+        ? example.dataValue
+        : example.value;
+
+    // externalValue and serializedValue are non-native forms tonik can't
+    // consume; drop silently when one of them is the only payload.
+    if (!hasData &&
+        (example.externalValue != null || example.serializedValue != null)) {
       return null;
     }
-    if (!example.hasExplicitValue && example.externalValue == null) {
+
+    if (!hasData &&
+        example.externalValue == null &&
+        example.serializedValue == null) {
       log.warning(
-        'Skipping Example "$name" - neither `value` nor `externalValue` '
-        'is set.',
+        'Skipping Example "$name" - none of `value`, `dataValue`, '
+        '`serializedValue`, or `externalValue` is set.',
       );
       return null;
     }
+
     return core.Example(
       name: name,
-      summary: example.summary,
-      description: example.description,
-      value: example.value,
+      summary: summaryOverride ?? example.summary,
+      description: descriptionOverride ?? example.description,
+      value: effectiveValue,
     );
   }
 }

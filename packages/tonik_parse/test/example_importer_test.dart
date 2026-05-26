@@ -454,4 +454,257 @@ void main() {
       ]);
     });
   });
+
+  group(r'ExampleImporter - $ref Reference siblings (OAS 3.1+ §4.8.23)', () {
+    OpenApiObject loadApi({Map<String, dynamic> components = const {}}) {
+      return OpenApiObject.fromJson(<String, dynamic>{
+        'openapi': '3.1.0',
+        'info': {'title': 'T', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': components,
+      });
+    }
+
+    MediaType media(Map<String, dynamic> json) => MediaType.fromJson(json);
+
+    test(r'$ref summary and description siblings override target', () {
+      final api = loadApi(
+        components: {
+          'examples': {
+            'Shared': {
+              'summary': 'target summary',
+              'description': 'target desc',
+              'value': {'k': 'v'},
+            },
+          },
+        },
+      );
+      final importer = ExampleImporter(openApiObject: api);
+
+      final result = importer.fromMediaType(
+        media({
+          'examples': {
+            'shared': {
+              r'$ref': '#/components/examples/Shared',
+              'summary': 'site summary',
+              'description': 'site desc',
+            },
+          },
+        }),
+      );
+
+      expect(result, const [
+        core.Example(
+          name: 'shared',
+          summary: 'site summary',
+          description: 'site desc',
+          value: {'k': 'v'},
+        ),
+      ]);
+    });
+
+    test(r'$ref summary alone overrides; description falls through', () {
+      final api = loadApi(
+        components: {
+          'examples': {
+            'Shared': {
+              'summary': 'target summary',
+              'description': 'target desc',
+              'value': 1,
+            },
+          },
+        },
+      );
+      final importer = ExampleImporter(openApiObject: api);
+
+      final result = importer.fromMediaType(
+        media({
+          'examples': {
+            'shared': {
+              r'$ref': '#/components/examples/Shared',
+              'summary': 'site summary',
+            },
+          },
+        }),
+      );
+
+      expect(result, const [
+        core.Example(
+          name: 'shared',
+          summary: 'site summary',
+          description: 'target desc',
+          value: 1,
+        ),
+      ]);
+    });
+
+    test(r'$ref description alone overrides; summary falls through', () {
+      final api = loadApi(
+        components: {
+          'examples': {
+            'Shared': {
+              'summary': 'target summary',
+              'description': 'target desc',
+              'value': 1,
+            },
+          },
+        },
+      );
+      final importer = ExampleImporter(openApiObject: api);
+
+      final result = importer.fromMediaType(
+        media({
+          'examples': {
+            'shared': {
+              r'$ref': '#/components/examples/Shared',
+              'description': 'site desc',
+            },
+          },
+        }),
+      );
+
+      expect(result, const [
+        core.Example(
+          name: 'shared',
+          summary: 'target summary',
+          description: 'site desc',
+          value: 1,
+        ),
+      ]);
+    });
+
+    test(r'$ref without siblings falls through to target', () {
+      final api = loadApi(
+        components: {
+          'examples': {
+            'Shared': {
+              'summary': 'target summary',
+              'description': 'target desc',
+              'value': 1,
+            },
+          },
+        },
+      );
+      final importer = ExampleImporter(openApiObject: api);
+
+      final result = importer.fromMediaType(
+        media({
+          'examples': {
+            'shared': {r'$ref': '#/components/examples/Shared'},
+          },
+        }),
+      );
+
+      expect(result, const [
+        core.Example(
+          name: 'shared',
+          summary: 'target summary',
+          description: 'target desc',
+          value: 1,
+        ),
+      ]);
+    });
+  });
+
+  group('ExampleImporter - OAS 3.2 dataValue and serializedValue', () {
+    OpenApiObject loadApi({Map<String, dynamic> components = const {}}) {
+      return OpenApiObject.fromJson(<String, dynamic>{
+        'openapi': '3.2.0',
+        'info': {'title': 'T', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': components,
+      });
+    }
+
+    MediaType media(Map<String, dynamic> json) => MediaType.fromJson(json);
+
+    test('dataValue becomes the core Example value', () {
+      final api = loadApi();
+      final importer = ExampleImporter(openApiObject: api);
+
+      final result = importer.fromMediaType(
+        media({
+          'examples': {
+            'a': {
+              'summary': 's',
+              'dataValue': {'k': 1},
+            },
+          },
+        }),
+      );
+
+      expect(result, const [
+        core.Example(
+          name: 'a',
+          summary: 's',
+          description: null,
+          value: {'k': 1},
+        ),
+      ]);
+    });
+
+    test('dataValue takes precedence over legacy value when both present', () {
+      final api = loadApi();
+      final importer = ExampleImporter(openApiObject: api);
+
+      final result = importer.fromMediaType(
+        media({
+          'examples': {
+            'a': {'dataValue': 'data', 'value': 'legacy'},
+          },
+        }),
+      );
+
+      expect(result, const [
+        core.Example(
+          name: 'a',
+          summary: null,
+          description: null,
+          value: 'data',
+        ),
+      ]);
+    });
+
+    test('explicit dataValue: null is preserved', () {
+      final api = loadApi();
+      final importer = ExampleImporter(openApiObject: api);
+
+      final result = importer.fromMediaType(
+        media({
+          'examples': {
+            'nullData': {'dataValue': null, 'summary': 'explicit null'},
+          },
+        }),
+      );
+
+      expect(result, const [
+        core.Example(
+          name: 'nullData',
+          summary: 'explicit null',
+          description: null,
+          value: null,
+        ),
+      ]);
+    });
+
+    test('serializedValue alone is silently dropped (no warning)', () {
+      final api = loadApi();
+      final importer = ExampleImporter(openApiObject: api);
+
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+      addTearDown(sub.cancel);
+
+      final result = importer.fromMediaType(
+        media({
+          'examples': {
+            'wire': {'serializedValue': '"hello"'},
+          },
+        }),
+      );
+
+      expect(result, isEmpty);
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
+  });
 }
