@@ -1,13 +1,9 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/request_body.dart';
 import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model/server.dart';
 
-part 'operation.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Operation {
   Operation({
     required this.tags,
@@ -23,8 +19,36 @@ class Operation {
     required this.xDartName,
   });
 
-  factory Operation.fromJson(Map<String, dynamic> json) =>
-      _$OperationFromJson(json);
+  factory Operation.fromJson(Map<String, dynamic> json) => Operation(
+    tags: (json['tags'] as List<dynamic>?)?.map((e) => e as String).toList(),
+    summary: json['summary'] as String?,
+    description: json['description'] as String?,
+    operationId: json['operationId'] as String?,
+    parameters: (json['parameters'] as List<dynamic>?)
+        ?.map(ReferenceWrapper<Parameter>.fromJson)
+        .toList(),
+    requestBody: json['requestBody'] == null
+        ? null
+        : ReferenceWrapper<RequestBody>.fromJson(json['requestBody']),
+    responses: (json['responses'] as Map<String, dynamic>).map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Response>.fromJson(e)),
+    ),
+    isDeprecated: json['deprecated'] as bool?,
+    servers: (json['servers'] as List<dynamic>?)
+        ?.map((e) => Server.fromJson(e as Map<String, dynamic>))
+        .toList(),
+    security: (json['security'] as List<dynamic>?)
+        ?.map(
+          (e) => (e as Map<String, dynamic>).map(
+            (k, e) => MapEntry(
+              k,
+              (e as List<dynamic>).map((e) => e as String).toList(),
+            ),
+          ),
+        )
+        .toList(),
+    xDartName: json['x-dart-name'] as String?,
+  );
 
   final List<String>? tags;
   final String? summary;
@@ -33,11 +57,9 @@ class Operation {
   final List<ReferenceWrapper<Parameter>>? parameters;
   final ReferenceWrapper<RequestBody>? requestBody;
   final Map<String, ReferenceWrapper<Response>> responses;
-  @JsonKey(name: 'deprecated')
   final bool? isDeprecated;
   final List<Server>? servers;
   final List<Map<String, List<String>>>? security;
-  @JsonKey(name: 'x-dart-name')
   final String? xDartName;
 
   // We ignore the externalDocs and callbacks properties.

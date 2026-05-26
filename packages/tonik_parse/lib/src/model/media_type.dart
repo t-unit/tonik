@@ -1,12 +1,8 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/encoding.dart';
 import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 
-part 'media_type.g.dart';
-
-@JsonSerializable(createToJson: false)
 class MediaType {
   MediaType({
     required this.schema,
@@ -15,10 +11,17 @@ class MediaType {
     this.examples,
   });
 
-  factory MediaType.fromJson(Map<String, dynamic> json) =>
-      _$MediaTypeFromJson(json);
+  factory MediaType.fromJson(Map<String, dynamic> json) => MediaType(
+    schema: const SchemaConverter().fromJson(json['schema']),
+    encoding: (json['encoding'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, Encoding.fromJson(e as Map<String, dynamic>)),
+    ),
+    example: json['example'],
+    examples: (json['examples'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
+    ),
+  );
 
-  @SchemaConverter()
   final Schema? schema;
   final Map<String, Encoding>? encoding;
 

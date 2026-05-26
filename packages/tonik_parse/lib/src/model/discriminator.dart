@@ -1,13 +1,12 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'discriminator.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Discriminator {
   Discriminator({required this.propertyName, required this.mapping});
 
-  factory Discriminator.fromJson(Map<String, dynamic> json) =>
-      _$DiscriminatorFromJson(json);
+  factory Discriminator.fromJson(Map<String, dynamic> json) => Discriminator(
+    propertyName: json['propertyName'] as String,
+    mapping: (json['mapping'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, e as String),
+    ),
+  );
 
   final String propertyName;
   final Map<String, String>? mapping;

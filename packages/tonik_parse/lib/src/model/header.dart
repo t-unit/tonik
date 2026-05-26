@@ -1,13 +1,9 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/serialization_style.dart';
 
-part 'header.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Header {
   Header({
     required this.description,
@@ -21,16 +17,29 @@ class Header {
     this.examples,
   });
 
-  factory Header.fromJson(Map<String, dynamic> json) => _$HeaderFromJson(json);
+  factory Header.fromJson(Map<String, dynamic> json) => Header(
+    description: json['description'] as String?,
+    isRequired: json['required'] as bool?,
+    isDeprecated: json['deprecated'] as bool?,
+    style: json['style'] == null
+        ? null
+        : SerializationStyle.fromJson(json['style']),
+    explode: json['explode'] as bool?,
+    schema: const SchemaConverter().fromJson(json['schema']),
+    content: (json['content'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
+    ),
+    example: json['example'],
+    examples: (json['examples'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
+    ),
+  );
 
   final String? description;
-  @JsonKey(name: 'required')
   final bool? isRequired;
-  @JsonKey(name: 'deprecated')
   final bool? isDeprecated;
   final SerializationStyle? style;
   final bool? explode;
-  @SchemaConverter()
   final Schema? schema;
   final Map<String, MediaType>? content;
 

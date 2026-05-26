@@ -1,11 +1,7 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/media_type.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 
-part 'response.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Response {
   Response({
     required this.description,
@@ -13,8 +9,15 @@ class Response {
     required this.content,
   });
 
-  factory Response.fromJson(Map<String, dynamic> json) =>
-      _$ResponseFromJson(json);
+  factory Response.fromJson(Map<String, dynamic> json) => Response(
+    description: json['description'] as String,
+    headers: (json['headers'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Header>.fromJson(e)),
+    ),
+    content: (json['content'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, MediaType.fromJson(e as Map<String, dynamic>)),
+    ),
+  );
 
   final String description;
   final Map<String, ReferenceWrapper<Header>>? headers;

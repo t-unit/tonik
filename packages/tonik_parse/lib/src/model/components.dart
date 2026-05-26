@@ -1,4 +1,3 @@
-import 'package:json_annotation/json_annotation.dart';
 import 'package:tonik_parse/src/model/example.dart';
 import 'package:tonik_parse/src/model/header.dart';
 import 'package:tonik_parse/src/model/parameter.dart';
@@ -9,9 +8,6 @@ import 'package:tonik_parse/src/model/response.dart';
 import 'package:tonik_parse/src/model/schema.dart';
 import 'package:tonik_parse/src/model/security_scheme.dart';
 
-part 'components.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Components {
   Components({
     required this.schemas,
@@ -24,10 +20,33 @@ class Components {
     required this.examples,
   });
 
-  factory Components.fromJson(Map<String, dynamic> json) =>
-      _$ComponentsFromJson(json);
+  factory Components.fromJson(Map<String, dynamic> json) => Components(
+    schemas: const SchemaMapConverter().fromJson(
+      json['schemas'] as Map<String, dynamic>?,
+    ),
+    responses: (json['responses'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Response>.fromJson(e)),
+    ),
+    parameters: (json['parameters'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Parameter>.fromJson(e)),
+    ),
+    requestBodies: (json['requestBodies'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<RequestBody>.fromJson(e)),
+    ),
+    headers: (json['headers'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Header>.fromJson(e)),
+    ),
+    securitySchemes: (json['securitySchemes'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<SecurityScheme>.fromJson(e)),
+    ),
+    pathItems: (json['pathItems'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<PathItem>.fromJson(e)),
+    ),
+    examples: (json['examples'] as Map<String, dynamic>?)?.map(
+      (k, e) => MapEntry(k, ReferenceWrapper<Example>.fromJson(e)),
+    ),
+  );
 
-  @SchemaMapConverter()
   final Map<String, Schema>? schemas;
   final Map<String, ReferenceWrapper<Response>>? responses;
   final Map<String, ReferenceWrapper<Parameter>>? parameters;

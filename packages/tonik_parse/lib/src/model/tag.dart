@@ -1,20 +1,15 @@
-import 'package:json_annotation/json_annotation.dart';
-
-part 'tag.g.dart';
-
-@JsonSerializable(createToJson: false)
 class Tag {
   Tag({required this.name, required this.description, this.xDartName});
 
-  factory Tag.fromJson(Map<String, dynamic> json) => _$TagFromJson(json);
+  factory Tag.fromJson(Map<String, dynamic> json) => Tag(
+    name: json['name'] as String,
+    description: json['description'] as String?,
+    xDartName: json['x-dart-name'] as String?,
+  );
 
   final String name;
   final String? description;
-
-  @JsonKey(name: 'x-dart-name')
   final String? xDartName;
-
-  // We ignore externalDocs property.
 
   @override
   String toString() =>
