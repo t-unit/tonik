@@ -162,6 +162,7 @@ Code? _buildFieldCode(
     NeverModel() => generateEncodingExceptionExpression(
       "Cannot encode NeverModel property '$rawName' "
       '- this type does not permit any value.',
+      raw: true,
     ).statement,
 
     IntegerModel() ||
@@ -593,6 +594,7 @@ Code _buildListFieldAddition(
     return generateEncodingExceptionExpression(
       'deepObject style is not supported for array '
       'multipart properties (property: $rawName).',
+      raw: true,
     ).statement;
   }
 
@@ -728,6 +730,7 @@ Code _buildContentBasedListAddition(
     return generateEncodingExceptionExpression(
       'Arrays of arrays are not supported for multipart encoding '
       '(property: $rawName).',
+      raw: true,
     ).statement;
   }
 
@@ -745,6 +748,7 @@ Code _buildContentBasedListAddition(
       'Unsupported contentType "$explicitRaw" for array multipart '
       'property "$rawName". Only application/json is supported for '
       'content-based array serialization.',
+      raw: true,
     ).statement;
   }
 
@@ -1095,6 +1099,7 @@ Code _buildMapModelFileAddition(
       'deepObject style is not supported for map '
       'multipart properties (property: $rawName). '
       'Maps do not implement ParameterEncodable.toDeepObject().',
+      raw: true,
     ).statement;
   }
 

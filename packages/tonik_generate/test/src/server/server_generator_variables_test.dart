@@ -491,4 +491,26 @@ void main() {
       expect(code, contains(r'${$default}'));
     });
   });
+
+  group('ServerGenerator edge cases', () {
+    test('empty URL template with variables emits empty baseUrl literal', () {
+      // An empty url combined with any variables means no placeholders match
+      // and no literal segments are appended, so the helper falls back to ''.
+      final servers = [
+        const Server(
+          url: '',
+          description: 'Empty url',
+          variables: [
+            ServerVariable(name: 'env', defaultValue: 'prod'),
+          ],
+        ),
+      ];
+
+      final classes = generator.generateClasses(servers);
+      final serverClass = classes[1];
+      final initializer = serverClass.constructors.first.initializers.first;
+
+      expect(initializer.accept(emitter).toString(), "super(baseUrl: '')");
+    });
+  });
 }
