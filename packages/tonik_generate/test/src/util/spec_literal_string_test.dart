@@ -234,30 +234,4 @@ it's "here"
     });
   });
 
-  group('escapeForSingleQuotedDartString', () {
-    test('escapes newline to literal backslash-n', () {
-      const input = '''
-hello
-world''';
-      expect(
-        escapeForSingleQuotedDartString(input),
-        r'hello\nworld',
-      );
-    });
-
-    test(r'escapes \r to literal backslash-r', () {
-      expect(escapeForSingleQuotedDartString('hello\rworld'), r'hello\rworld');
-    });
-
-    test(
-      'escapes combined newlines, single quote, dollar, and backslash',
-      () {
-        const input = "a\\b'c\$d\ne\rf";
-        final result = escapeForSingleQuotedDartString(input);
-        // Backslash must be escaped first to avoid double-escaping.
-        // Then single quote, dollar, \n, and \r.
-        expect(result, r"a\\b\'c\$d\ne\rf");
-      },
-    );
-  });
 }

@@ -130,7 +130,7 @@ void main() {
           .toString();
       expect(
         initCode,
-        r"super(baseUrl: 'https://regional.example.com/${region.value}')",
+        r"super(baseUrl: r'https://regional.example.com/' '${region.value}')",
       );
     });
 
@@ -142,7 +142,7 @@ void main() {
             this.region = RegionalServerRegion.usEast,
             super.serverConfig = const ServerConfig(),
           }) : super(
-            baseUrl: 'https://regional.example.com/${region.value}',
+            baseUrl: r'https://regional.example.com/' '${region.value}',
           );
 
           final RegionalServerRegion region;
@@ -202,7 +202,7 @@ void main() {
           .toString();
       expect(
         initCode,
-        r"super(baseUrl: 'https://environment.example.com/${env}')",
+        r"super(baseUrl: r'https://environment.example.com/' '${env}')",
       );
     });
 
@@ -213,7 +213,7 @@ void main() {
           EnvironmentServer({
             this.env = r'prod',
             super.serverConfig = const ServerConfig(),
-          }) : super(baseUrl: 'https://environment.example.com/${env}');
+          }) : super(baseUrl: r'https://environment.example.com/' '${env}');
 
           final String env;
         }
@@ -306,7 +306,7 @@ void main() {
           .toString();
       expect(
         initCode,
-        r"super(baseUrl: 'https://configurable.example.com/${host}:${port.value}/api')",
+        r"super(baseUrl: r'https://configurable.example.com/' '${host}' r':' '${port.value}' r'/api')",
       );
     });
 
@@ -319,7 +319,7 @@ void main() {
             this.port = ConfigurableServerPort.eightThousandEighty,
             super.serverConfig = const ServerConfig(),
           }) : super(
-            baseUrl: 'https://configurable.example.com/${host}:${port.value}/api',
+            baseUrl: r'https://configurable.example.com/' '${host}' r':' '${port.value}' r'/api',
           );
 
           final String host;
@@ -435,8 +435,10 @@ void main() {
 
       // Verify URL interpolation.
       expect(
-        result.code,
-        contains(r'https://regional.example.com/${region.value}:${port}'),
+        collapseWhitespace(result.code),
+        contains(
+          r"r'https://regional.example.com/' '${region.value}' r':' '${port}'",
+        ),
       );
     });
   });

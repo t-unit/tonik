@@ -101,6 +101,69 @@ paths:
         '200':
           description: OK
 
+  # Multipart with URL-encoded complex-object property whose rawName
+  # contains a single quote. Without escaping, the property name leaks
+  # into a Dart single-quoted string literal in the generated source.
+  /upload-urlencoded-quoted-prop:
+    post:
+      operationId: uploadUrlencodedQuotedProp
+      tags:
+        - adversarial
+      summary: URL-encoded complex-object property with quote in name
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - "it's-form"
+              properties:
+                "it's-form":
+                  type: object
+                  required:
+                    - firstName
+                    - lastName
+                  properties:
+                    firstName:
+                      type: string
+                    lastName:
+                      type: string
+            encoding:
+              "it's-form":
+                contentType: application/x-www-form-urlencoded
+      responses:
+        '200':
+          description: OK
+
+  # Multipart with URL-encoded free-form map property whose rawName
+  # contains a single quote.
+  /upload-urlencoded-quoted-map:
+    post:
+      operationId: uploadUrlencodedQuotedMap
+      tags:
+        - adversarial
+      summary: URL-encoded free-form map property with quote in name
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - "it's-meta"
+              properties:
+                "it's-meta":
+                  type: object
+                  additionalProperties:
+                    type: string
+            encoding:
+              "it's-meta":
+                contentType: application/x-www-form-urlencoded
+      responses:
+        '200':
+          description: OK
+
   # 1j. Query parameters with adversarial rawName (delimited encoding)
   /search:
     get:

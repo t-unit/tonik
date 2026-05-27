@@ -1190,7 +1190,8 @@ Code _buildUrlEncodedMapFileAddition(
       refer('EncodingException', 'package:tonik_util/tonik_util.dart').code,
       Code(
         "('Standard URL encoding does not support nested values "
-        '(property: $rawName, key: \${entry.key}). '
+        "(property: ' ${specLiteralStringCode(rawName)} "
+        r"', key: ${entry.key}). "
         "Only flat key=value pairs are allowed.');",
       ),
     ]),
@@ -1343,7 +1344,8 @@ Code _buildUrlEncodedObjectFileAddition(
       refer('EncodingException', 'package:tonik_util/tonik_util.dart').code,
       Code(
         "('Standard URL encoding does not support nested values "
-        '(property: $rawName, key: \${entry.key}). '
+        "(property: ' ${specLiteralStringCode(rawName)} "
+        r"', key: ${entry.key}). "
         "Only flat key=value pairs are allowed.');",
       ),
     ]),
