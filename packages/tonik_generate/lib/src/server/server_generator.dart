@@ -400,31 +400,29 @@ class ServerGenerator {
       }
 
       if (earliestVariable == null) {
-        // No more placeholders — escape and append the rest.
-        parts.add(escapeForSingleQuotedDartString(remaining));
+        parts.add(specLiteralStringCode(remaining));
         break;
       }
 
-      // Escape the literal segment before this placeholder.
       final literal = remaining.substring(0, earliestIndex);
       if (literal.isNotEmpty) {
-        parts.add(escapeForSingleQuotedDartString(literal));
+        parts.add(specLiteralStringCode(literal));
       }
 
-      // Append the Dart interpolation expression (unescaped).
       final placeholder = '{${earliestVariable.name}}';
       final dartName = variableNameMap[earliestVariable.name]!;
       final hasEnum =
           earliestVariable.enumValues != null &&
           earliestVariable.enumValues!.isNotEmpty;
       parts.add(
-        hasEnum ? '\${$dartName.value}' : '\${$dartName}',
+        hasEnum ? "'\${$dartName.value}'" : "'\${$dartName}'",
       );
 
       remaining = remaining.substring(earliestIndex + placeholder.length);
     }
 
-    return "'${parts.join()}'";
+    if (parts.isEmpty) return "''";
+    return parts.join(' ');
   }
 
   Class _generateCustomServerClass(String className, String baseClassName) {

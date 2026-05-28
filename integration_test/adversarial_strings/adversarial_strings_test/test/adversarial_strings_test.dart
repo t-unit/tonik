@@ -228,6 +228,52 @@ void main() {
     });
   });
 
+  group('multipart URL-encoded complex-object with quoted property name', () {
+    test('constructs request body data class without throwing', () {
+      const body = UploadUrlencodedQuotedPropPostBodyBodyModel(
+        itsForm: UploadUrlencodedQuotedPropPostBodyBodyItsFormModel(
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+        ),
+      );
+
+      expect(body.itsForm.firstName, 'Ada');
+      expect(body.itsForm.lastName, 'Lovelace');
+    });
+
+    test('toJson preserves the quoted property key on the outer body', () {
+      const body = UploadUrlencodedQuotedPropPostBodyBodyModel(
+        itsForm: UploadUrlencodedQuotedPropPostBodyBodyItsFormModel(
+          firstName: 'Ada',
+          lastName: 'Lovelace',
+        ),
+      );
+
+      final json = body.toJson()! as Map<String, Object?>;
+      expect(json.containsKey("it's-form"), isTrue);
+    });
+  });
+
+  group('multipart URL-encoded free-form map with quoted property name', () {
+    test('constructs request body data class without throwing', () {
+      const body = UploadUrlencodedQuotedMapPostBodyBodyModel(
+        itsMeta: {'a': '1', 'b': '2'},
+      );
+
+      expect(body.itsMeta['a'], '1');
+      expect(body.itsMeta['b'], '2');
+    });
+
+    test('toJson preserves the quoted property key on the outer body', () {
+      const body = UploadUrlencodedQuotedMapPostBodyBodyModel(
+        itsMeta: {'a': '1'},
+      );
+
+      final json = body.toJson()! as Map<String, Object?>;
+      expect(json.containsKey("it's-meta"), isTrue);
+    });
+  });
+
   group('object with quoted property name', () {
     test('toJson uses quoted property key', () {
       const obj = ObjectWithQuotedProp(id: 'x');

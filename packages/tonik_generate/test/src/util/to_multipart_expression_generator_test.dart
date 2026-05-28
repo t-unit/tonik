@@ -674,7 +674,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             throw EncodingException(
-              'Cannot encode NeverModel property \'impossible\' - this type does not permit any value.',
+              r"Cannot encode NeverModel property 'impossible' - this type does not permit any value.",
             );
             return _$formData;
           }
@@ -682,6 +682,67 @@ void main() {
         ),
       );
     });
+
+    test(
+      'NeverModel property name with dollar sign emits raw literal',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: r'$total',
+              model: NeverModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            r'$total': const MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: MultipartEncodingStyle.form,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+          examples: const [],
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              throw EncodingException(
+                r"Cannot encode NeverModel property '$total' - this type does not permit any value.",
+              );
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
   });
 
   group('primitive types', () {
@@ -3627,7 +3688,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: ' r'address' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   addressParts.add(
@@ -3715,7 +3776,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: ' r'address' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   addressParts.add(
@@ -3729,6 +3790,274 @@ void main() {
                   r'address',
                   MultipartFile.fromString(
                     addressParts.join('&'),
+                    contentType: DioMediaType.parse(
+                      r'application/x-www-form-urlencoded',
+                    ),
+                  ),
+                ));
+                return _$formData;
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'URL-encoded ClassModel property with single quote in rawName escapes '
+        'rawName in the EncodingException literal',
+        () {
+          final innerClass = ClassModel(
+            name: 'PersonName',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+            examples: const [],
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: "it's-form",
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              "it's-form": const MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+            examples: const [],
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final _$formData = FormData();
+                final itsFormParts = <String>[];
+                for (final entry in ((body.itsForm.toJson() as Map)).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: ' r"it's-form" ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    );
+                  }
+                  itsFormParts.add(
+                    [
+                      Uri.encodeQueryComponent(entry.key.toString()),
+                      Uri.encodeQueryComponent(value.toString()),
+                    ].join('='),
+                  );
+                }
+                _$formData.files.add(MapEntry(
+                  r"it's-form",
+                  MultipartFile.fromString(
+                    itsFormParts.join('&'),
+                    contentType: DioMediaType.parse(
+                      r'application/x-www-form-urlencoded',
+                    ),
+                  ),
+                ));
+                return _$formData;
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'URL-encoded ClassModel property with backslash in rawName escapes '
+        'rawName in the EncodingException literal',
+        () {
+          final innerClass = ClassModel(
+            name: 'PathTo',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+            examples: const [],
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: r'path\form',
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              r'path\form': const MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+            examples: const [],
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final _$formData = FormData();
+                final pathBackslashFormParts = <String>[];
+                for (final entry
+                    in ((body.pathBackslashForm.toJson() as Map)).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: ' r'path\form' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    );
+                  }
+                  pathBackslashFormParts.add(
+                    [
+                      Uri.encodeQueryComponent(entry.key.toString()),
+                      Uri.encodeQueryComponent(value.toString()),
+                    ].join('='),
+                  );
+                }
+                _$formData.files.add(MapEntry(
+                  r'path\form',
+                  MultipartFile.fromString(
+                    pathBackslashFormParts.join('&'),
+                    contentType: DioMediaType.parse(
+                      r'application/x-www-form-urlencoded',
+                    ),
+                  ),
+                ));
+                return _$formData;
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'URL-encoded ClassModel property with dollar sign in rawName escapes '
+        'rawName in the EncodingException literal',
+        () {
+          final innerClass = ClassModel(
+            name: 'DollarForm',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+            examples: const [],
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: r'$total',
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              r'$total': const MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+            examples: const [],
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final _$formData = FormData();
+                final $totalParts = <String>[];
+                for (final entry in ((body.$total.toJson() as Map)).entries) {
+                  final value = entry.value;
+                  if (value == null) continue;
+                  if (value is Map || value is List) {
+                    throw EncodingException(
+                      'Standard URL encoding does not support nested values (property: ' r'$total' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    );
+                  }
+                  $totalParts.add(
+                    [
+                      Uri.encodeQueryComponent(entry.key.toString()),
+                      Uri.encodeQueryComponent(value.toString()),
+                    ].join('='),
+                  );
+                }
+                _$formData.files.add(MapEntry(
+                  r'$total',
+                  MultipartFile.fromString(
+                    $totalParts.join('&'),
                     contentType: DioMediaType.parse(
                       r'application/x-www-form-urlencoded',
                     ),
@@ -3802,7 +4131,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: ' r'address' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   addressParts.add(
@@ -3984,7 +4313,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: address, key: ${entry.key}). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: ' r'address' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   addressParts.add(
@@ -4278,7 +4607,75 @@ void main() {
             void test() {
               final _$formData = FormData();
               throw EncodingException(
-                'deepObject style is not supported for map multipart properties (property: metadata). Maps do not implement ParameterEncodable.toDeepObject().',
+                r'deepObject style is not supported for map multipart properties (property: metadata). Maps do not implement ParameterEncodable.toDeepObject().',
+              );
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'deepObject error for MapModel uses raw literal when property name '
+      'has special characters',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+          examples: const [],
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: "it's-meta",
+              model: mapModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            "it's-meta": const MultipartPropertyEncoding(
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              style: MultipartEncodingStyle.deepObject,
+              explode: true,
+              allowReserved: false,
+            ),
+          },
+          examples: const [],
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              throw EncodingException(
+                r"deepObject style is not supported for map multipart properties (property: it's-meta). Maps do not implement ParameterEncodable.toDeepObject().",
               );
               return _$formData;
             }
@@ -4347,7 +4744,7 @@ void main() {
                 if (value == null) continue;
                 if (value is Map || value is List) {
                   throw EncodingException(
-                    'Standard URL encoding does not support nested values (property: metadata, key: ${entry.key}). Only flat key=value pairs are allowed.',
+                    'Standard URL encoding does not support nested values (property: ' r'metadata' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
                   );
                 }
                 metadataParts.add(
@@ -4434,7 +4831,7 @@ void main() {
                   if (value == null) continue;
                   if (value is Map || value is List) {
                     throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: metadata, key: ${entry.key}). Only flat key=value pairs are allowed.',
+                      'Standard URL encoding does not support nested values (property: ' r'metadata' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
                     );
                   }
                   metadataParts.add(
@@ -4454,6 +4851,267 @@ void main() {
                   ),
                 ));
               }
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'URL-encoded MapModel property with single quote in rawName escapes '
+      'rawName in the EncodingException literal',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+          examples: const [],
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: "it's-meta",
+              model: mapModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            "it's-meta": const MultipartPropertyEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+            ),
+          },
+          examples: const [],
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              final itsMetaParts = <String>[];
+              for (final entry in ((body.itsMeta as Map)).entries) {
+                final value = entry.value;
+                if (value == null) continue;
+                if (value is Map || value is List) {
+                  throw EncodingException(
+                    'Standard URL encoding does not support nested values (property: ' r"it's-meta" ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                  );
+                }
+                itsMetaParts.add(
+                  [
+                    Uri.encodeQueryComponent(entry.key.toString()),
+                    Uri.encodeQueryComponent(value.toString()),
+                  ].join('='),
+                );
+              }
+              _$formData.files.add(MapEntry(
+                r"it's-meta",
+                MultipartFile.fromString(
+                  itsMetaParts.join('&'),
+                  contentType: DioMediaType.parse(
+                    r'application/x-www-form-urlencoded',
+                  ),
+                ),
+              ));
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'URL-encoded MapModel property with backslash in rawName escapes '
+      'rawName in the EncodingException literal',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+          examples: const [],
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: r'path\to',
+              model: mapModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            r'path\to': const MultipartPropertyEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+            ),
+          },
+          examples: const [],
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              final pathBackslashToParts = <String>[];
+              for (final entry in ((body.pathBackslashTo as Map)).entries) {
+                final value = entry.value;
+                if (value == null) continue;
+                if (value is Map || value is List) {
+                  throw EncodingException(
+                    'Standard URL encoding does not support nested values (property: ' r'path\to' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                  );
+                }
+                pathBackslashToParts.add(
+                  [
+                    Uri.encodeQueryComponent(entry.key.toString()),
+                    Uri.encodeQueryComponent(value.toString()),
+                  ].join('='),
+                );
+              }
+              _$formData.files.add(MapEntry(
+                r'path\to',
+                MultipartFile.fromString(
+                  pathBackslashToParts.join('&'),
+                  contentType: DioMediaType.parse(
+                    r'application/x-www-form-urlencoded',
+                  ),
+                ),
+              ));
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'URL-encoded MapModel property with dollar sign in rawName escapes '
+      'rawName in the EncodingException literal',
+      () {
+        final mapModel = MapModel(
+          valueModel: StringModel(context: testContext),
+          context: testContext,
+          examples: const [],
+        );
+
+        final model = ClassModel(
+          name: 'ResourceForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: r'$total',
+              model: mapModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            r'$total': const MultipartPropertyEncoding(
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+            ),
+          },
+          examples: const [],
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              final $totalParts = <String>[];
+              for (final entry in ((body.$total as Map)).entries) {
+                final value = entry.value;
+                if (value == null) continue;
+                if (value is Map || value is List) {
+                  throw EncodingException(
+                    'Standard URL encoding does not support nested values (property: ' r'$total' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
+                  );
+                }
+                $totalParts.add(
+                  [
+                    Uri.encodeQueryComponent(entry.key.toString()),
+                    Uri.encodeQueryComponent(value.toString()),
+                  ].join('='),
+                );
+              }
+              _$formData.files.add(MapEntry(
+                r'$total',
+                MultipartFile.fromString(
+                  $totalParts.join('&'),
+                  contentType: DioMediaType.parse(
+                    r'application/x-www-form-urlencoded',
+                  ),
+                ),
+              ));
               return _$formData;
             }
           '''),
@@ -4908,7 +5566,7 @@ void main() {
           void test() {
             final _$formData = FormData();
             throw EncodingException(
-              'deepObject style is not supported for array multipart properties (property: tags).',
+              r'deepObject style is not supported for array multipart properties (property: tags).',
             );
             return _$formData;
           }
@@ -4916,6 +5574,72 @@ void main() {
         ),
       );
     });
+
+    test(
+      'deepObject error for list uses raw literal when property name '
+      'has special characters',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: "it's-tags",
+              model: ListModel(
+                content: StringModel(context: testContext),
+                context: testContext,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          encoding: {
+            "it's-tags": const MultipartPropertyEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: MultipartEncodingStyle.deepObject,
+              explode: false,
+              allowReserved: false,
+            ),
+          },
+          examples: const [],
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+            void test() {
+              final _$formData = FormData();
+              throw EncodingException(
+                r"deepObject style is not supported for array multipart properties (property: it's-tags).",
+              );
+              return _$formData;
+            }
+          '''),
+          ),
+        );
+      },
+    );
 
     // --- Enum tests ---
 
@@ -6665,7 +7389,74 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 throw EncodingException(
-                  'Arrays of arrays are not supported for multipart encoding (property: matrix).',
+                  r'Arrays of arrays are not supported for multipart encoding (property: matrix).',
+                );
+                return _$formData;
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'arrays-of-arrays error uses raw literal when property name '
+        'has special characters',
+        () {
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: r'$matrix',
+                model: ListModel(
+                  content: ListModel(
+                    content: IntegerModel(context: testContext),
+                    context: testContext,
+                    examples: const [],
+                  ),
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              r'$matrix': const MultipartPropertyEncoding(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+              ),
+            },
+            examples: const [],
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final _$formData = FormData();
+                throw EncodingException(
+                  r'Arrays of arrays are not supported for multipart encoding (property: $matrix).',
                 );
                 return _$formData;
               }
@@ -6729,7 +7520,70 @@ void main() {
               void test() {
                 final _$formData = FormData();
                 throw EncodingException(
-                  'Unsupported contentType "application/x-www-form-urlencoded" for array multipart property "items". Only application/json is supported for content-based array serialization.',
+                  r'Unsupported contentType "application/x-www-form-urlencoded" for array multipart property "items". Only application/json is supported for content-based array serialization.',
+                );
+                return _$formData;
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'unsupported contentType error uses raw literal when property name '
+        'has special characters',
+        () {
+          final model = ClassModel(
+            name: 'TestForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: "it's-items",
+                model: ListModel(
+                  content: StringModel(context: testContext),
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            encoding: {
+              "it's-items": const MultipartPropertyEncoding(
+                contentType: ContentType.form,
+                rawContentType: 'application/x-www-form-urlencoded',
+              ),
+            },
+            examples: const [],
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final _$formData = FormData();
+                throw EncodingException(
+                  r"""Unsupported contentType "application/x-www-form-urlencoded" for array multipart property "it's-items". Only application/json is supported for content-based array serialization.""",
                 );
                 return _$formData;
               }

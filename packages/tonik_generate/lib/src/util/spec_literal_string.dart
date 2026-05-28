@@ -51,18 +51,11 @@ String specLiteralStringCode(String value) {
     return 'r"""$value"""';
   }
 
-  // Fall back to a regular single-quoted string with escaping.
-  final escaped = escapeForSingleQuotedDartString(value);
+  final escaped = _escapeForSingleQuotedDartString(value);
   return "'$escaped'";
 }
 
-/// Escapes a string for embedding inside a Dart single-quoted (non-raw) string.
-///
-/// Handles `\`, `'`, `$`, `\n`, and `\r` — the characters that are special
-/// or invalid inside single-quoted Dart strings. This is useful both for the
-/// fallback path in [specLiteralStringCode] and for building interpolated
-/// strings like templated server URLs.
-String escapeForSingleQuotedDartString(String value) {
+String _escapeForSingleQuotedDartString(String value) {
   return value
       .replaceAll(r'\', r'\\')
       .replaceAll("'", r"\'")
