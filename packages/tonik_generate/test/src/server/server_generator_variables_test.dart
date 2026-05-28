@@ -492,8 +492,8 @@ void main() {
     });
   });
 
-  group('ServerGenerator edge cases', () {
-    test('empty URL template with variables emits empty baseUrl literal', () {
+  group('ServerGenerator templated URLs with empty url template', () {
+    test('emits empty baseUrl literal when no placeholders are present', () {
       // An empty url combined with any variables means no placeholders match
       // and no literal segments are appended, so the helper falls back to ''.
       final servers = [
