@@ -33,6 +33,7 @@ Tonik is a Dart code generator for OpenAPI 3 specifications. This document provi
     - [Composition](#composition)
     - [Supported Features](#supported-features)
     - [Not Supported](#not-supported)
+    - [Examples](#examples)
   - [Parameters](#parameters)
     - [Locations](#locations)
     - [Encoding Styles](#encoding-styles)
@@ -204,6 +205,7 @@ See [Composite Data Types](composite_data_types.md) for usage examples.
 | `nullable` / `type: [T, null]` | ✅ |
 | `required` array | ✅ |
 | `description` | ✅ (preserved in docs) |
+| `example` / `examples` | ✅ (rendered as dartdoc — see [Examples](#examples)) |
 | `deprecated` | ✅ (configurable) |
 | String & integer enums | ✅ |
 | `x-dart-enum` | ✅ |
@@ -218,6 +220,12 @@ See [Composite Data Types](composite_data_types.md) for usage examples.
 ### Not Supported
 
 Validation constraints (`minimum`, `maximum`, `pattern`, `minLength`, etc.) are parsed but not enforced at runtime. See [Roadmap](roadmap.md) for planned features.
+
+### Examples
+
+Tonik renders OpenAPI examples into dartdoc so they surface in the IDE and in `dart doc` output. Coverage: schema-level `example` (3.0) and `examples` (3.1 array), the named `examples` map at MediaType / Parameter / Header level, `$ref` into `components.examples` with OAS 3.1+ Reference-sibling overrides, and OAS 3.2's `dataValue`.
+
+Examples render on every class, enum, typedef, composite, and property, and on api_client method docs as `Parameter examples`, `Request body`, and `Response NNN` sections. `externalValue` URL fetching is not supported (see [Roadmap](roadmap.md) Non-goals).
 
 ---
 
