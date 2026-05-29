@@ -1183,7 +1183,9 @@ void main() {
         );
         final method = klass.methods.first;
 
-        expect(method.docs, containsAllInOrder([
+        expect(method.docs, [
+          '/// Create user',
+          '///',
           '/// Request body (application/json):',
           '/// **Example** "minimal":',
           '/// ```json',
@@ -1191,7 +1193,7 @@ void main() {
           '///   "name": "alice"',
           '/// }',
           '/// ```',
-        ]));
+        ]);
       });
 
       test('renders response examples grouped by status and content-type', () {
@@ -1240,7 +1242,9 @@ void main() {
         );
         final method = klass.methods.first;
 
-        expect(method.docs, containsAllInOrder([
+        expect(method.docs, [
+          '/// Get user',
+          '///',
           '/// Response 200 (application/json):',
           '/// **Example**:',
           '/// ```json',
@@ -1249,7 +1253,172 @@ void main() {
           '///   "name": "alice"',
           '/// }',
           '/// ```',
-        ]));
+        ]);
+      });
+
+      test('sorts response sections by status with default last', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const DefaultResponseStatus(): ResponseObject(
+              name: null,
+              context: testContext,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: testContext),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [
+                    Example(
+                      name: null,
+                      summary: null,
+                      description: null,
+                      value: 'fallback',
+                    ),
+                  ],
+                ),
+              },
+            ),
+            const RangeResponseStatus(min: 500, max: 599): ResponseObject(
+              name: null,
+              context: testContext,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: testContext),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [
+                    Example(
+                      name: null,
+                      summary: null,
+                      description: null,
+                      value: 'server-error',
+                    ),
+                  ],
+                ),
+              },
+            ),
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: testContext,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: testContext),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [
+                    Example(
+                      name: null,
+                      summary: null,
+                      description: null,
+                      value: 'ok',
+                    ),
+                  ],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        final klass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        final method = klass.methods.first;
+
+        final statusLines = method.docs
+            .where((d) => d.startsWith('/// Response '))
+            .toList();
+        expect(statusLines, [
+          '/// Response 200 (application/json):',
+          '/// Response 500–599 (application/json):',
+          '/// Response default (application/json):',
+        ]);
+      });
+
+      test('renders multiple content types on a request body', () {
+        final operation = Operation(
+          operationId: 'createUser',
+          context: testContext,
+          summary: 'Create user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: RequestBodyObject(
+            description: null,
+            isRequired: true,
+            name: 'createUser',
+            content: {
+              RequestContent(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                model: StringModel(context: testContext),
+                examples: const [
+                  Example(
+                    name: null,
+                    summary: null,
+                    description: null,
+                    value: 'json-form',
+                  ),
+                ],
+              ),
+              RequestContent(
+                contentType: ContentType.json,
+                rawContentType: 'application/hal+json',
+                model: StringModel(context: testContext),
+                examples: const [
+                  Example(
+                    name: null,
+                    summary: null,
+                    description: null,
+                    value: 'hal-form',
+                  ),
+                ],
+              ),
+            },
+            context: testContext,
+          ),
+          securitySchemes: const {},
+        );
+
+        final klass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        final method = klass.methods.first;
+
+        final bodyLines = method.docs
+            .where((d) => d.startsWith('/// Request body'))
+            .toList();
+        expect(bodyLines, [
+          '/// Request body (application/json):',
+          '/// Request body (application/hal+json):',
+        ]);
       });
 
       test('omits body sections when no examples are present', () {

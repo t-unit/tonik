@@ -5,8 +5,6 @@ import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 
 const _jsonEncoder = JsonEncoder.withIndent('  ');
 
-/// Joins [description] doc lines with [examples] doc lines, inserting a
-/// blank `///` separator between them when both are non-empty.
 List<String> formatDocsWithExamples(
   String? description,
   List<Example> examples,
@@ -20,7 +18,6 @@ List<String> formatDocsWithExamples(
   ];
 }
 
-/// Renders [examples] as `/// …` doc-comment lines for an Examples block.
 List<String> formatExamplesAsDocs(List<Example> examples) {
   if (examples.isEmpty) return const [];
 
@@ -54,7 +51,14 @@ List<String>? _formatExample(Example example) {
 
   if (hasDescription) {
     for (final line in example.description!.split('\n')) {
-      lines.add(line.isEmpty ? '///' : '/// $line');
+      if (line.isEmpty) {
+        lines.add('///');
+      } else {
+        // Escape a line that would open a markdown fenced code block,
+        // otherwise the example's own fence below would render as content.
+        final escaped = line.startsWith('```') ? r'\' + line : line;
+        lines.add('/// $escaped');
+      }
     }
     lines.add('///');
   }

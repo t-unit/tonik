@@ -83,6 +83,22 @@ void main() {
 
         expect(result.first, '/// **Example** "admin":');
       });
+
+      test('passes through markdown-special chars in name and summary', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: 'a "quoted" name',
+            summary: 'has *stars* and `ticks`',
+            description: null,
+            value: 1,
+          ),
+        ]);
+
+        expect(
+          result.first,
+          '/// **Example** "a "quoted" name" — has *stars* and `ticks`:',
+        );
+      });
     });
 
     group('description', () {
@@ -139,6 +155,29 @@ void main() {
 
         expect(result, [
           '/// **Example**:',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+      });
+
+      test('escapes a description line that opens a markdown fence', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: null,
+            summary: null,
+            description: 'See:\n```json\n{"x":1}\n```',
+            value: 1,
+          ),
+        ]);
+
+        expect(result, [
+          '/// **Example**:',
+          '/// See:',
+          r'/// \```json',
+          '/// {"x":1}',
+          r'/// \```',
+          '///',
           '/// ```json',
           '/// 1',
           '/// ```',

@@ -483,8 +483,6 @@ class ApiClientGenerator {
     DefaultResponseStatus() => 'default',
   };
 
-  /// Orders explicit and range statuses by their numeric start; `default`
-  /// sorts last so the fallback case appears at the end of the doc.
   int _compareResponses(
     MapEntry<ResponseStatus, Response> a,
     MapEntry<ResponseStatus, Response> b,
