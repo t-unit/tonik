@@ -1131,6 +1131,182 @@ void main() {
       );
     });
 
+    group('body examples in method docs', () {
+      test('renders request body examples under a Request body heading', () {
+        final operation = Operation(
+          operationId: 'createUser',
+          context: testContext,
+          summary: 'Create user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: RequestBodyObject(
+            description: null,
+            isRequired: true,
+            name: 'createUser',
+            content: {
+              RequestContent(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                model: ClassModel(
+                  isDeprecated: false,
+                  name: 'CreateUserRequestBody',
+                  properties: const [],
+                  context: testContext,
+                  examples: const [],
+                ),
+                examples: const [
+                  Example(
+                    name: 'minimal',
+                    summary: null,
+                    description: null,
+                    value: {'name': 'alice'},
+                  ),
+                ],
+              ),
+            },
+            context: testContext,
+          ),
+          securitySchemes: const {},
+        );
+
+        final klass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        final method = klass.methods.first;
+
+        expect(method.docs, containsAllInOrder([
+          '/// Request body (application/json):',
+          '/// **Example** "minimal":',
+          '/// ```json',
+          '/// {',
+          '///   "name": "alice"',
+          '/// }',
+          '/// ```',
+        ]));
+      });
+
+      test('renders response examples grouped by status and content-type', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: testContext,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: testContext),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [
+                    Example(
+                      name: null,
+                      summary: null,
+                      description: null,
+                      value: {'id': 1, 'name': 'alice'},
+                    ),
+                  ],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        final klass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        final method = klass.methods.first;
+
+        expect(method.docs, containsAllInOrder([
+          '/// Response 200 (application/json):',
+          '/// **Example**:',
+          '/// ```json',
+          '/// {',
+          '///   "id": 1,',
+          '///   "name": "alice"',
+          '/// }',
+          '/// ```',
+        ]));
+      });
+
+      test('omits body sections when no examples are present', () {
+        final operation = Operation(
+          operationId: 'createUser',
+          context: testContext,
+          summary: 'Create user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: RequestBodyObject(
+            description: null,
+            isRequired: true,
+            name: 'createUser',
+            content: {
+              RequestContent(
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                model: ClassModel(
+                  isDeprecated: false,
+                  name: 'CreateUserRequestBody',
+                  properties: const [],
+                  context: testContext,
+                  examples: const [],
+                ),
+                examples: const [],
+              ),
+            },
+            context: testContext,
+          ),
+          securitySchemes: const {},
+        );
+
+        final klass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        final method = klass.methods.first;
+
+        expect(
+          method.docs.any((d) => d.contains('Request body')),
+          isFalse,
+        );
+        expect(
+          method.docs.any((d) => d.contains('Response ')),
+          isFalse,
+        );
+      });
+    });
+
     group('security scheme descriptions with newlines', () {
       test('multi-line API key description produces valid doc comments', () {
         final operation = Operation(

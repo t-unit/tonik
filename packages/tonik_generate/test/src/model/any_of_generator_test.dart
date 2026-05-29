@@ -187,6 +187,67 @@ void main() {
 
         expect(klass.docs, isEmpty);
       });
+
+      test('renders class-level examples', () {
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 1,
+            ),
+          ],
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(klass.docs, [
+          '/// **Example**:',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+      });
+
+      test('appends examples after description', () {
+        final model = AnyOfModel(
+          isDeprecated: false,
+          description: 'A flexible model',
+          name: 'FlexibleModel',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 1,
+            ),
+          ],
+        );
+
+        final klass = generator.generateClass(model);
+
+        expect(klass.docs, [
+          '/// A flexible model',
+          '///',
+          '/// **Example**:',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+      });
     });
 
     test(
