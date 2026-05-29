@@ -159,6 +159,14 @@ class ApiClientGenerator {
       docs.addAll(paramDocs);
     }
 
+    final paramExampleDocs = _generateParameterExampleDocs(operation);
+    if (paramExampleDocs.isNotEmpty) {
+      docs
+        ..add('///')
+        ..add('/// Parameter examples:')
+        ..addAll(paramExampleDocs);
+    }
+
     final requestBody = operation.requestBody;
     if (requestBody != null) {
       for (final content in requestBody.resolvedContent) {
@@ -443,6 +451,80 @@ class ApiClientGenerator {
     }
 
     return docs;
+  }
+
+  List<String> _generateParameterExampleDocs(Operation operation) {
+    final hasRequestBody =
+        operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+
+    final normalizedParams = normalizeRequestParameters(
+      pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
+      queryParameters: operation.queryParameters
+          .map((p) => p.resolve())
+          .toSet(),
+      headers: operation.headers.map((p) => p.resolve()).toSet(),
+      cookieParameters: operation.cookieParameters
+          .map((p) => p.resolve())
+          .toSet(),
+      reservedNames: operationReservedParameterNames(
+        hasRequestBody: hasRequestBody,
+      ),
+    );
+
+    final paramExamplesByOriginalName = <String, List<Example>>{};
+    for (final param in operation.pathParameters) {
+      final resolved = param.resolve();
+      if (resolved.examples.isNotEmpty && resolved.name != null) {
+        paramExamplesByOriginalName[resolved.name!] = resolved.examples;
+      }
+    }
+    for (final param in operation.queryParameters) {
+      final resolved = param.resolve();
+      if (resolved.examples.isNotEmpty && resolved.name != null) {
+        paramExamplesByOriginalName[resolved.name!] = resolved.examples;
+      }
+    }
+    for (final param in operation.headers) {
+      final resolved = param.resolve();
+      if (resolved.examples.isNotEmpty && resolved.name != null) {
+        paramExamplesByOriginalName[resolved.name!] = resolved.examples;
+      }
+    }
+    for (final param in operation.cookieParameters) {
+      final resolved = param.resolve();
+      if (resolved.examples.isNotEmpty && resolved.name != null) {
+        paramExamplesByOriginalName[resolved.name!] = resolved.examples;
+      }
+    }
+
+    final result = <String>[];
+    var first = true;
+    void appendIfExamples(String? originalName, String normalizedName) {
+      if (originalName == null) return;
+      final examples = paramExamplesByOriginalName[originalName];
+      if (examples == null || examples.isEmpty) return;
+      final exampleDocs = formatExamplesAsDocs(examples);
+      if (exampleDocs.isEmpty) return;
+      if (!first) result.add('///');
+      first = false;
+      result
+        ..add('/// [$normalizedName]:')
+        ..addAll(exampleDocs);
+    }
+
+    for (final p in normalizedParams.pathParameters) {
+      appendIfExamples(p.parameter.name, p.normalizedName);
+    }
+    for (final p in normalizedParams.queryParameters) {
+      appendIfExamples(p.parameter.name, p.normalizedName);
+    }
+    for (final p in normalizedParams.headers) {
+      appendIfExamples(p.parameter.name, p.normalizedName);
+    }
+    for (final p in normalizedParams.cookieParameters) {
+      appendIfExamples(p.parameter.name, p.normalizedName);
+    }
+    return result;
   }
 
   String? _getPathParameterDescription(PathParameter param) {

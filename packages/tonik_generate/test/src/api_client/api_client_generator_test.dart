@@ -1421,6 +1421,198 @@ void main() {
         ]);
       });
 
+      test('renders parameter examples in a Parameter examples block', () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{userId}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: {
+            QueryParameterObject(
+              name: 'limit',
+              rawName: 'limit',
+              description: 'Max results.',
+              isRequired: false,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              allowReserved: false,
+              explode: false,
+              model: IntegerModel(context: testContext),
+              encoding: QueryParameterEncoding.form,
+              context: testContext,
+              examples: const [
+                Example(
+                  name: null,
+                  summary: null,
+                  description: null,
+                  value: 100,
+                ),
+              ],
+            ),
+          },
+          pathParameters: {
+            PathParameterObject(
+              name: 'userId',
+              rawName: 'userId',
+              description: 'The user id.',
+              isRequired: true,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              explode: false,
+              model: StringModel(context: testContext),
+              encoding: PathParameterEncoding.simple,
+              context: testContext,
+              examples: const [
+                Example(
+                  name: 'admin',
+                  summary: null,
+                  description: null,
+                  value: 'abc-123',
+                ),
+              ],
+            ),
+          },
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final klass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        final method = klass.methods.first;
+
+        expect(method.docs, [
+          '/// Get user',
+          '/// [userId] The user id.',
+          '/// [limit] Max results.',
+          '///',
+          '/// Parameter examples:',
+          '/// [userId]:',
+          '/// **Example** "admin":',
+          '/// ```',
+          '/// abc-123',
+          '/// ```',
+          '///',
+          '/// [limit]:',
+          '/// **Example**:',
+          '/// ```json',
+          '/// 100',
+          '/// ```',
+        ]);
+      });
+
+      test(
+        'emits parameter examples even when the parameter has no description',
+        () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            tags: {Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{userId}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: {
+              PathParameterObject(
+                name: 'userId',
+                rawName: 'userId',
+                description: null,
+                isRequired: true,
+                isDeprecated: false,
+                allowEmptyValue: false,
+                explode: false,
+                model: StringModel(context: testContext),
+                encoding: PathParameterEncoding.simple,
+                context: testContext,
+                examples: const [
+                  Example(
+                    name: null,
+                    summary: null,
+                    description: null,
+                    value: 'abc-123',
+                  ),
+                ],
+              ),
+            },
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final klass = generator.generateClass(
+            {operation},
+            Tag(name: 'users'),
+            testServers,
+          );
+          final method = klass.methods.first;
+
+          expect(method.docs, [
+            '/// Get user',
+            '///',
+            '/// Parameter examples:',
+            '/// [userId]:',
+            '/// **Example**:',
+            '/// ```',
+            '/// abc-123',
+            '/// ```',
+          ]);
+        },
+      );
+
+      test('omits the Parameter examples block when no params carry examples',
+          () {
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          summary: 'Get user',
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{userId}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: {
+            PathParameterObject(
+              name: 'userId',
+              rawName: 'userId',
+              description: 'The user id.',
+              isRequired: true,
+              isDeprecated: false,
+              allowEmptyValue: false,
+              explode: false,
+              model: StringModel(context: testContext),
+              encoding: PathParameterEncoding.simple,
+              context: testContext,
+              examples: const [],
+            ),
+          },
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final klass = generator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        final method = klass.methods.first;
+
+        expect(
+          method.docs.any((d) => d.contains('Parameter examples')),
+          isFalse,
+        );
+      });
+
       test('omits body sections when no examples are present', () {
         final operation = Operation(
           operationId: 'createUser',
