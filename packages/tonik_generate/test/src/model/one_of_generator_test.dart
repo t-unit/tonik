@@ -196,6 +196,69 @@ void main() {
         expect(baseClass.docs, isEmpty);
       },
     );
+
+    test('renders sealed-class-level examples', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+        examples: const [
+          Example(
+            name: null,
+            summary: null,
+            description: null,
+            value: 1,
+          ),
+        ],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      expect(baseClass.docs, [
+        '/// **Example**:',
+        '/// ```json',
+        '/// 1',
+        '/// ```',
+      ]);
+    });
+
+    test('appends examples after description', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        description: 'A flexible value',
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+        examples: const [
+          Example(
+            name: null,
+            summary: null,
+            description: null,
+            value: 1,
+          ),
+        ],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+
+      expect(baseClass.docs, [
+        '/// A flexible value',
+        '///',
+        '/// **Example**:',
+        '/// ```json',
+        '/// 1',
+        '/// ```',
+      ]);
+    });
   });
 
   test(

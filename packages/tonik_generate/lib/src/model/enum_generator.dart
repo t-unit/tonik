@@ -6,7 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
-import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
+import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
@@ -93,7 +93,9 @@ class EnumGenerator {
       (b) {
         b
           ..name = actualEnumName
-          ..docs.addAll(formatDocComment(model.description))
+          ..docs.addAll(
+            formatDocsWithExamples(model.description, model.examples),
+          )
           ..implements.addAll([
             refer('MatrixEncodable', 'package:tonik_util/tonik_util.dart'),
             refer('LabelEncodable', 'package:tonik_util/tonik_util.dart'),

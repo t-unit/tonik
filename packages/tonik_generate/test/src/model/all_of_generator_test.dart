@@ -196,6 +196,61 @@ void main() {
 
         expect(combinedClass.docs, isEmpty);
       });
+
+      test('renders class-level examples', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'Combined',
+          models: {StringModel(context: context)},
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 1,
+            ),
+          ],
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        expect(combinedClass.docs, [
+          '/// **Example**:',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+      });
+
+      test('appends examples after description', () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          description: 'A combined model',
+          name: 'Combined',
+          models: {StringModel(context: context)},
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 1,
+            ),
+          ],
+        );
+
+        final combinedClass = generator.generateClass(model);
+
+        expect(combinedClass.docs, [
+          '/// A combined model',
+          '///',
+          '/// **Example**:',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+      });
     });
 
     test('generates getter for mixed allOf', () {

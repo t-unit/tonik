@@ -5,7 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
-import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
+import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/recursion_detector.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
@@ -50,7 +50,9 @@ class TypedefGenerator {
         b
           ..name = nameManager.modelName(model)
           ..definition = baseType
-          ..docs.addAll(formatDocComment(model.description));
+          ..docs.addAll(
+            formatDocsWithExamples(model.description, model.examples),
+          );
 
         if (model.isDeprecated) {
           b.annotations.add(
@@ -82,7 +84,8 @@ class TypedefGenerator {
     return TypeDef(
       (b) => b
         ..name = nameManager.modelName(model)
-        ..definition = baseType,
+        ..definition = baseType
+        ..docs.addAll(formatDocsWithExamples(null, model.examples)),
     );
   }
 
@@ -106,7 +109,8 @@ class TypedefGenerator {
     return TypeDef(
       (b) => b
         ..name = nameManager.modelName(model)
-        ..definition = baseType,
+        ..definition = baseType
+        ..docs.addAll(formatDocsWithExamples(null, model.examples)),
     );
   }
 

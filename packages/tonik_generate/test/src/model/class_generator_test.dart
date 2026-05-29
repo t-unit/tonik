@@ -376,6 +376,161 @@ void main() {
           expect(field.annotations, hasLength(1));
         },
       );
+
+      test('renders class-level examples', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: {'id': 1, 'name': 'alice'},
+            ),
+          ],
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, [
+          '/// **Example**:',
+          '/// ```json',
+          '/// {',
+          '///   "id": 1,',
+          '///   "name": "alice"',
+          '/// }',
+          '/// ```',
+        ]);
+      });
+
+      test('appends class-level examples after description', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          description: 'A user in the system',
+          name: 'User',
+          properties: const [],
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 1,
+            ),
+          ],
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, [
+          '/// A user in the system',
+          '///',
+          '/// **Example**:',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+      });
+
+      test('renders property-level examples', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: [
+            Property(
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [
+                Example(
+                  name: null,
+                  summary: null,
+                  description: null,
+                  value: 42,
+                ),
+              ],
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+
+        expect(field.docs, [
+          '/// **Example**:',
+          '/// ```json',
+          '/// 42',
+          '/// ```',
+        ]);
+      });
+
+      test('appends property-level examples after description', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: [
+            Property(
+              description: 'The unique identifier',
+              name: 'id',
+              model: IntegerModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [
+                Example(
+                  name: null,
+                  summary: null,
+                  description: null,
+                  value: 42,
+                ),
+              ],
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+
+        expect(field.docs, [
+          '/// The unique identifier',
+          '///',
+          '/// **Example**:',
+          '/// ```json',
+          '/// 42',
+          '/// ```',
+        ]);
+      });
+
+      test('skips example separator when example list collapses to empty', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          description: 'A user in the system',
+          name: 'User',
+          properties: const [],
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: null,
+            ),
+          ],
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(result.docs, ['/// A user in the system']);
+      });
     });
 
     test('generates currentEncodingShape getter for class with properties', () {

@@ -9,8 +9,8 @@ import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
-import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
+import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
@@ -171,7 +171,9 @@ class ClassGenerator {
       (b) {
         b
           ..name = className
-          ..docs.addAll(formatDocComment(model.description))
+          ..docs.addAll(
+            formatDocsWithExamples(model.description, model.examples),
+          )
           ..annotations.add(refer('immutable', 'package:meta/meta.dart'))
           ..implements.add(
             refer('ParameterEncodable', 'package:tonik_util/tonik_util.dart'),
@@ -931,7 +933,9 @@ class ClassGenerator {
   }) {
     final fieldBuilder = FieldBuilder()
       ..name = normalizedName
-      ..docs.addAll(formatDocComment(property.description))
+      ..docs.addAll(
+        formatDocsWithExamples(property.description, property.examples),
+      )
       ..modifier = FieldModifier.final$
       ..type = classModel != null
           ? _getSchemaAwareTypeReference(property, classModel)

@@ -502,6 +502,69 @@ void main() {
 
         expect(generated.enumValue.docs, isEmpty);
       });
+
+      test('renders enum-level examples', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Color',
+          values: {
+            const EnumEntry(value: 'red'),
+            const EnumEntry(value: 'green'),
+            const EnumEntry(value: 'blue'),
+          },
+          isNullable: false,
+          context: Context.initial(),
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 'red',
+            ),
+          ],
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        expect(generated.enumValue.docs, [
+          '/// **Example**:',
+          '/// ```',
+          '/// red',
+          '/// ```',
+        ]);
+      });
+
+      test('appends examples after description', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          description: 'A color',
+          name: 'Color',
+          values: {
+            const EnumEntry(value: 'red'),
+          },
+          isNullable: false,
+          context: Context.initial(),
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 'red',
+            ),
+          ],
+        );
+
+        final generated = generator.generateEnum(model, 'Color');
+
+        expect(generated.enumValue.docs, [
+          '/// A color',
+          '///',
+          '/// **Example**:',
+          '/// ```',
+          '/// red',
+          '/// ```',
+        ]);
+      });
     });
 
     group('enum value name normalization', () {

@@ -951,6 +951,122 @@ void main() {
           'typedef UserId = String;',
         );
       });
+
+      test('renders examples on alias typedef', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 'abc-123',
+            ),
+          ],
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          '/// **Example**:\n'
+          '/// ```\n'
+          '/// abc-123\n'
+          '/// ```\n'
+          'typedef UserId = String;',
+        );
+      });
+
+      test('appends examples after description on alias typedef', () {
+        final model = AliasModel(
+          name: 'UserId',
+          model: StringModel(context: context),
+          context: context,
+          description: 'A user id.',
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: 'abc-123',
+            ),
+          ],
+        );
+
+        final typedef = generator.generateAliasTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          '/// A user id.\n'
+          '///\n'
+          '/// **Example**:\n'
+          '/// ```\n'
+          '/// abc-123\n'
+          '/// ```\n'
+          'typedef UserId = String;',
+        );
+      });
+
+      test('renders examples on list typedef', () {
+        final model = ListModel(
+          name: 'Tags',
+          content: StringModel(context: context),
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: ['red', 'green'],
+            ),
+          ],
+        );
+
+        final typedef = generator.generateListTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          '/// **Example**:\n'
+          '/// ```json\n'
+          '/// [\n'
+          '///   "red",\n'
+          '///   "green"\n'
+          '/// ]\n'
+          '/// ```\n'
+          'typedef Tags = List<String>;',
+        );
+      });
+
+      test('renders examples on map typedef', () {
+        final model = MapModel(
+          name: 'Scores',
+          valueModel: IntegerModel(context: context),
+          context: context,
+          examples: const [
+            Example(
+              name: null,
+              summary: null,
+              description: null,
+              value: {'a': 1},
+            ),
+          ],
+        );
+
+        final typedef = generator.generateMapTypedef(model);
+
+        expect(
+          typedef.accept(emitter).toString().trim(),
+          '/// **Example**:\n'
+          '/// ```json\n'
+          '/// {\n'
+          '///   "a": 1\n'
+          '/// }\n'
+          '/// ```\n'
+          'typedef Scores = Map<String,int>;',
+        );
+      });
     });
 
     group('useImmutableCollections', () {

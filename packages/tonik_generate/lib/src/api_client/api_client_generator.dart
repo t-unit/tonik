@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
+import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
@@ -156,6 +157,35 @@ class ApiClientGenerator {
     final paramDocs = _generateParameterDocs(operation, nameManager);
     if (paramDocs.isNotEmpty) {
       docs.addAll(paramDocs);
+    }
+
+    final requestBody = operation.requestBody;
+    if (requestBody != null) {
+      for (final content in requestBody.resolvedContent) {
+        final exampleDocs = formatExamplesAsDocs(content.examples);
+        if (exampleDocs.isEmpty) continue;
+        docs
+          ..add('///')
+          ..add('/// Request body (${content.rawContentType}):')
+          ..addAll(exampleDocs);
+      }
+    }
+
+    final sortedResponses = operation.responses.entries.toList()
+      ..sort(_compareResponses);
+    for (final entry in sortedResponses) {
+      final resolved = entry.value.resolved;
+      for (final body in resolved.bodies) {
+        final exampleDocs = formatExamplesAsDocs(body.examples);
+        if (exampleDocs.isEmpty) continue;
+        docs
+          ..add('///')
+          ..add(
+            '/// Response ${_formatStatus(entry.key)} '
+            '(${body.rawContentType}):',
+          )
+          ..addAll(exampleDocs);
+      }
     }
 
     return Method(
@@ -446,4 +476,26 @@ class ApiClientGenerator {
       CookieParameterObject(:final description) => description,
     };
   }
+
+  String _formatStatus(ResponseStatus status) => switch (status) {
+    ExplicitResponseStatus(:final statusCode) => '$statusCode',
+    RangeResponseStatus(:final min, :final max) => '$min–$max',
+    DefaultResponseStatus() => 'default',
+  };
+
+  int _compareResponses(
+    MapEntry<ResponseStatus, Response> a,
+    MapEntry<ResponseStatus, Response> b,
+  ) {
+    final aDefault = a.key is DefaultResponseStatus;
+    final bDefault = b.key is DefaultResponseStatus;
+    if (aDefault != bDefault) return aDefault ? 1 : -1;
+    return _numericStart(a.key).compareTo(_numericStart(b.key));
+  }
+
+  int _numericStart(ResponseStatus status) => switch (status) {
+    ExplicitResponseStatus(:final statusCode) => statusCode,
+    RangeResponseStatus(:final min) => min,
+    DefaultResponseStatus() => 0,
+  };
 }
