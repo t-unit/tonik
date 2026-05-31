@@ -2848,5 +2848,261 @@ Future<TonikResult<void>> call({
         );
       });
     });
+
+    group('generateClass — parameter defaults', () {
+      test(
+        'mixed-location defaults emit static const fields ordered '
+        'path → query → header → cookie immediately after _dio',
+        () {
+          final pathParam = PathParameterObject(
+            name: 'id',
+            rawName: 'id',
+            description: null,
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: PathParameterEncoding.simple,
+            context: context,
+            examples: const [],
+            defaultValue: 'x',
+          );
+          final queryParam = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'us',
+          );
+          final header = RequestHeaderObject(
+            name: 'retries',
+            rawName: 'X-Retries',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            model: IntegerModel(context: context),
+            encoding: HeaderParameterEncoding.simple,
+            context: context,
+            examples: const [],
+            defaultValue: 5,
+          );
+          final cookie = CookieParameterObject(
+            name: 'tracking',
+            rawName: 'tracking',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            explode: false,
+            model: BooleanModel(context: context),
+            encoding: CookieParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: false,
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/things/{id}',
+            method: HttpMethod.get,
+            headers: {header},
+            queryParameters: {queryParam},
+            pathParameters: {pathParam},
+            cookieParameters: {cookie},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'ListThings');
+
+          final fieldNames = result.fields.map((f) => f.name).toList();
+          expect(fieldNames, [
+            '_dio',
+            'idDefault',
+            'regionDefault',
+            'retriesDefault',
+            'trackingDefault',
+          ]);
+
+          final regionField =
+              result.fields.firstWhere((f) => f.name == 'regionDefault');
+          expect(regionField.static, isTrue);
+          expect(regionField.modifier, FieldModifier.constant);
+          expect(regionField.type?.symbol, 'String');
+
+          final callMethod =
+              result.methods.firstWhere((m) => m.name == 'call');
+          final regionParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'region');
+          expect(regionParam.required, isFalse);
+          expect(
+            regionParam.defaultTo?.accept(emitter).toString(),
+            'regionDefault',
+          );
+          expect(regionParam.type?.accept(emitter).toString(), 'String');
+
+          final idParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'id');
+          expect(idParam.required, isFalse);
+          expect(
+            idParam.defaultTo?.accept(emitter).toString(),
+            'idDefault',
+          );
+          expect(idParam.type?.accept(emitter).toString(), 'String');
+
+          final retriesParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'retries');
+          expect(retriesParam.required, isFalse);
+          expect(
+            retriesParam.defaultTo?.accept(emitter).toString(),
+            'retriesDefault',
+          );
+          expect(retriesParam.type?.accept(emitter).toString(), 'int');
+
+          final trackingParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'tracking');
+          expect(trackingParam.required, isFalse);
+          expect(
+            trackingParam.defaultTo?.accept(emitter).toString(),
+            'trackingDefault',
+          );
+          expect(trackingParam.type?.accept(emitter).toString(), 'bool');
+        },
+      );
+
+      test(
+        'parameter with no default keeps required+nullable rules and gets '
+        'no static const field',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'filter',
+            rawName: 'filter',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          );
+
+          final operation = Operation(
+            operationId: 'noDefaults',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/pets',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'NoDefaults');
+
+          expect(
+            result.fields.where((f) => f.name == 'filterDefault'),
+            isEmpty,
+          );
+
+          final callMethod =
+              result.methods.firstWhere((m) => m.name == 'call');
+          final filterParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'filter');
+          expect(filterParam.required, isFalse);
+          expect(filterParam.defaultTo, isNull);
+          expect(filterParam.type?.accept(emitter).toString(), 'String?');
+        },
+      );
+
+      test(
+        'collision: query parameter named regionDefault forces suffix on '
+        'region default',
+        () {
+          final region = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'us',
+          );
+          final preExisting = QueryParameterObject(
+            name: 'regionDefault',
+            rawName: 'regionDefault',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          );
+
+          final operation = Operation(
+            operationId: 'collide',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/x',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {region, preExisting},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'Collide');
+
+          final defaultField = result.fields.firstWhere(
+            (f) => f.name == 'regionDefault2',
+            orElse: () => Field((b) => b..name = 'MISSING'),
+          );
+          expect(defaultField.name, 'regionDefault2');
+
+          final callMethod =
+              result.methods.firstWhere((m) => m.name == 'call');
+          final regionParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'region');
+          expect(
+            regionParam.defaultTo?.accept(emitter).toString(),
+            'regionDefault2',
+          );
+        },
+      );
+    });
   });
 }

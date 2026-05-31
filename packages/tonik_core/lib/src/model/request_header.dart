@@ -114,6 +114,14 @@ class RequestHeaderObject extends RequestHeader {
 
   Object? defaultValue;
 
+  /// The header's own [defaultValue] when set, otherwise the default
+  /// carried by its [model] when that model is an [AliasModel] chain.
+  Object? get effectiveDefaultValue {
+    if (defaultValue != null) return defaultValue;
+    final m = model;
+    return m is AliasModel ? m.defaultValue : null;
+  }
+
   @override
   String toString() =>
       'RequestHeader{name: $name, nameOverride: $nameOverride, '

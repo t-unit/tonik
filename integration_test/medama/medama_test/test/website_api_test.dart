@@ -35,8 +35,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/websites',
+          success.response.requestOptions.uri.path,
+          '/websites',
         );
       });
 
@@ -86,14 +86,14 @@ void main() {
         expect(uri.queryParameters['summary'], 'false');
       });
 
-      test('summary is omitted when not provided', () async {
+      test('summary defaults to false when not provided', () async {
         final api = buildWebsiteApi(responseStatus: '200');
 
         final response = await api.getWebsites(meSess: 'test_session');
 
         final success = response as TonikSuccess<GetWebsitesResponse>;
         final uri = success.response.requestOptions.uri;
-        expect(uri.queryParameters.containsKey('summary'), isFalse);
+        expect(uri.queryParameters['summary'], 'false');
       });
     });
 

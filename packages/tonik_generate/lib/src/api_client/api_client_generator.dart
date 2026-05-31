@@ -9,6 +9,7 @@ import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
@@ -118,10 +119,59 @@ class ApiClientGenerator {
 
   /// Generates a method for an operation
   Method _generateMethod(Operation operation) {
+    final hasRequestBody =
+        operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+
+    final normalizedParams = normalizeRequestParameters(
+      pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
+      queryParameters: operation.queryParameters
+          .map((p) => p.resolve())
+          .toSet(),
+      headers: operation.headers.map((p) => p.resolve()).toSet(),
+      cookieParameters: operation.cookieParameters
+          .map((p) => p.resolve())
+          .toSet(),
+      reservedNames: operationReservedParameterNames(
+        hasRequestBody: hasRequestBody,
+      ),
+    );
+
+    final operationClassName = nameManager.operationName(operation);
+    final defaults = resolveOperationParameterDefaults(
+      normalizedParams: normalizedParams,
+      operationClassName: operationClassName,
+      nameManager: nameManager,
+      package: package,
+      initialReservedNames: initialOperationDefaultReservedNames(
+        normalizedParams: normalizedParams,
+        hasRequestBody: hasRequestBody,
+        hasResponses: operation.responses.isNotEmpty,
+        hasQueryParameters: operation.queryParameters.isNotEmpty,
+      ),
+      emitWarnings: false,
+    );
+
+    final operationUrl = sourceFileUrl(
+      package,
+      'operation',
+      operationClassName,
+    );
+    final qualifiedDefaults = {
+      for (final entry in defaults.byName.entries)
+        entry.key: OperationParameterDefault(
+          memberName: entry.value.memberName,
+          value: entry.value.value,
+          type: entry.value.type,
+          ownerClassName: operationClassName,
+          ownerUrl: operationUrl,
+        ),
+    };
+
     final parameters = generateParameters(
       operation: operation,
       nameManager: nameManager,
       package: package,
+      defaultsByName: qualifiedDefaults,
     );
 
     final resultType = resultTypeForOperation(

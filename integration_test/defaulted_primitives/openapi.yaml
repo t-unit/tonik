@@ -27,6 +27,63 @@ paths:
                 properties:
                   status:
                     type: string
+  /things:
+    get:
+      operationId: listThings
+      summary: List things with defaulted parameters
+      parameters:
+        - name: region
+          in: query
+          schema:
+            type: string
+            default: "us"
+        - name: page
+          in: query
+          required: true
+          schema:
+            type: integer
+            default: 1
+        - name: X-Retries
+          in: header
+          schema:
+            type: integer
+            default: 5
+        - name: tracking
+          in: cookie
+          schema:
+            type: boolean
+            default: false
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+  /things/{id}:
+    get:
+      operationId: getThing
+      summary: Get a single thing with defaulted path parameter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            default: "x"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
 
 components:
   schemas:

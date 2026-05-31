@@ -3,6 +3,7 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 
 void main() {
@@ -1722,4 +1723,279 @@ void main() {
       },
     );
   });
+
+  group('generateParameters — defaultsByName', () {
+    Operation operationWith({
+      Set<QueryParameterObject> queryParameters = const {},
+      Set<PathParameterObject> pathParameters = const {},
+      Set<RequestHeaderObject> headers = const {},
+      Set<CookieParameterObject> cookieParameters = const {},
+      String path = '/things',
+    }) => Operation(
+      operationId: 'op',
+      context: context,
+      tags: const {},
+      isDeprecated: false,
+      path: path,
+      method: HttpMethod.get,
+      headers: headers,
+      queryParameters: queryParameters,
+      pathParameters: pathParameters,
+      cookieParameters: cookieParameters,
+      responses: const {},
+      securitySchemes: const {},
+    );
+
+    test(
+      'optional query string with materialised default becomes non-required '
+      'with defaultTo and non-nullable type',
+      () {
+        final region = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 'us',
+        );
+
+        final operation = operationWith(queryParameters: {region});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'region': OperationParameterDefault(
+              memberName: 'regionDefault',
+              value: const CodeExpression(Code("r'us'")),
+              type: _dummyType,
+            ),
+          },
+        );
+
+        expect(parameters.length, 1);
+        final param = parameters.single;
+        expect(param.name, 'region');
+        expect(param.required, isFalse);
+        expect(param.named, isTrue);
+        expect(param.defaultTo?.accept(emitter).toString(), 'regionDefault');
+        expect(param.type?.accept(emitter).toString(), 'String');
+      },
+    );
+
+    test(
+      'required query int with materialised default becomes non-required '
+      'with defaultTo',
+      () {
+        final page = QueryParameterObject(
+          name: 'page',
+          rawName: 'page',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: IntegerModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 1,
+        );
+
+        final operation = operationWith(queryParameters: {page});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'page': OperationParameterDefault(
+              memberName: 'pageDefault',
+              value: const CodeExpression(Code('1')),
+              type: _dummyType,
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.required, isFalse);
+        expect(param.defaultTo?.accept(emitter).toString(), 'pageDefault');
+        expect(param.type?.accept(emitter).toString(), 'int');
+      },
+    );
+
+    test(
+      'header integer with materialised default exposes defaultTo + '
+      'non-nullable int type',
+      () {
+        final retries = RequestHeaderObject(
+          name: 'retries',
+          rawName: 'X-Retries',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: IntegerModel(context: context),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: 5,
+        );
+
+        final operation = operationWith(headers: {retries});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'retries': OperationParameterDefault(
+              memberName: 'retriesDefault',
+              value: const CodeExpression(Code('5')),
+              type: _dummyType,
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.name, 'retries');
+        expect(param.required, isFalse);
+        expect(param.defaultTo?.accept(emitter).toString(), 'retriesDefault');
+        expect(param.type?.accept(emitter).toString(), 'int');
+      },
+    );
+
+    test(
+      'cookie boolean with materialised default exposes defaultTo + '
+      'non-nullable bool type',
+      () {
+        final tracking = CookieParameterObject(
+          name: 'tracking',
+          rawName: 'tracking',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: BooleanModel(context: context),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: false,
+        );
+
+        final operation = operationWith(cookieParameters: {tracking});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'tracking': OperationParameterDefault(
+              memberName: 'trackingDefault',
+              value: const CodeExpression(Code('false')),
+              type: _dummyType,
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.name, 'tracking');
+        expect(param.required, isFalse);
+        expect(
+          param.defaultTo?.accept(emitter).toString(),
+          'trackingDefault',
+        );
+        expect(param.type?.accept(emitter).toString(), 'bool');
+      },
+    );
+
+    test(
+      'path string with materialised default becomes non-required + '
+      'defaultTo, no warning',
+      () {
+        final id = PathParameterObject(
+          name: 'id',
+          rawName: 'id',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: PathParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: 'x',
+        );
+
+        final operation = operationWith(
+          pathParameters: {id},
+          path: '/things/{id}',
+        );
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'id': OperationParameterDefault(
+              memberName: 'idDefault',
+              value: const CodeExpression(Code("r'x'")),
+              type: _dummyType,
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.required, isFalse);
+        expect(param.defaultTo?.accept(emitter).toString(), 'idDefault');
+        expect(param.type?.accept(emitter).toString(), 'String');
+      },
+    );
+
+    test(
+      'parameter without a defaults entry retains normal required/optional '
+      'rules — defaultTo stays null',
+      () {
+        final region = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        final operation = operationWith(queryParameters: {region});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+        );
+
+        final param = parameters.single;
+        expect(param.required, isTrue);
+        expect(param.defaultTo, isNull);
+        expect(param.type?.accept(emitter).toString(), 'String');
+      },
+    );
+  });
 }
+
+final _dummyType = TypeReference(
+  (b) => b
+    ..symbol = 'String'
+    ..url = 'dart:core',
+);

@@ -196,7 +196,7 @@ void main() {
       expect(uri.queryParameters['limit'], '10');
     });
 
-    test('list_files 200 no params', () async {
+    test('list_files 200 applies schema default for limit', () async {
       final op = ListFiles(buildDio(responseStatus: '200'));
 
       final result = await op();
@@ -207,7 +207,10 @@ void main() {
 
       final uri = success.response.requestOptions.uri;
       expect(uri.path, '/v1/files');
-      expect(uri.queryParameters, isEmpty);
+      expect(uri.queryParameters['limit'], '10000');
+      expect(uri.queryParameters.containsKey('purpose'), isFalse);
+      expect(uri.queryParameters.containsKey('order'), isFalse);
+      expect(uri.queryParameters.containsKey('after'), isFalse);
     });
   });
 
@@ -258,27 +261,31 @@ void main() {
       expect(uri.queryParameters['limit'], '5');
     });
 
-    test('list_fine_tuning_events 200 no query params', () async {
-      final op = ListFineTuningEvents(
-        buildDio(responseStatus: '200'),
-      );
+    test(
+      'list_fine_tuning_events 200 applies schema default for limit',
+      () async {
+        final op = ListFineTuningEvents(
+          buildDio(responseStatus: '200'),
+        );
 
-      final result = await op(fineTuningJobId: 'ftjob-abc123');
+        final result = await op(fineTuningJobId: 'ftjob-abc123');
 
-      expect(
-        result,
-        isA<TonikSuccess<ListFineTuningJobEventsResponse>>(),
-      );
-      final success = result as TonikSuccess<ListFineTuningJobEventsResponse>;
-      expect(success.response.statusCode, 200);
+        expect(
+          result,
+          isA<TonikSuccess<ListFineTuningJobEventsResponse>>(),
+        );
+        final success = result as TonikSuccess<ListFineTuningJobEventsResponse>;
+        expect(success.response.statusCode, 200);
 
-      final uri = success.response.requestOptions.uri;
-      expect(
-        uri.path,
-        '/v1/fine_tuning/jobs/ftjob-abc123/events',
-      );
-      expect(uri.queryParameters, isEmpty);
-    });
+        final uri = success.response.requestOptions.uri;
+        expect(
+          uri.path,
+          '/v1/fine_tuning/jobs/ftjob-abc123/events',
+        );
+        expect(uri.queryParameters['limit'], '20');
+        expect(uri.queryParameters.containsKey('after'), isFalse);
+      },
+    );
   });
 
   // ── POST /fine_tuning/jobs/{id}/cancel (CancelFineTuningJob) ─────────

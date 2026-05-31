@@ -2007,5 +2007,63 @@ void main() {
         expect(method.name, r'$class');
       });
     });
+
+    group('parameter defaults', () {
+      test(
+        'forwards defaulted parameters with class-qualified defaultTo so the '
+        'reference resolves outside the operation class',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: testContext),
+            encoding: QueryParameterEncoding.form,
+            context: testContext,
+            examples: const [],
+            defaultValue: 'us',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: testContext,
+            tags: {Tag(name: 'things')},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final generatedClass = generator.generateClass(
+            {operation},
+            Tag(name: 'things'),
+            testServers,
+          );
+
+          final method = generatedClass.methods.firstWhere(
+            (m) => m.name == 'listThings',
+          );
+
+          final regionParam = method.optionalParameters
+              .firstWhere((p) => p.name == 'region');
+          expect(regionParam.required, isFalse);
+          expect(regionParam.type?.accept(emitter).toString(), 'String');
+          expect(
+            regionParam.defaultTo?.accept(emitter).toString(),
+            'ListThings.regionDefault',
+          );
+        },
+      );
+    });
   });
 }
