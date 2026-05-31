@@ -30,6 +30,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('userId', parameter)),
@@ -57,6 +58,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('ids', parameter)),
@@ -84,6 +86,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('ids', parameter)),
@@ -105,6 +108,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('filter', parameter)),
@@ -135,6 +139,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('status', parameter)),
@@ -155,6 +160,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('id', parameter)),
@@ -175,6 +181,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('price', parameter)),
@@ -195,6 +202,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('enabled', parameter)),
@@ -215,6 +223,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('timestamp', parameter)),
@@ -239,6 +248,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'value',
@@ -247,6 +257,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           examples: const [],
@@ -258,6 +269,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('filter', parameter)),
@@ -285,6 +297,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(
@@ -329,6 +342,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('statuses', parameter)),
@@ -357,6 +371,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('ids', parameter)),
@@ -395,6 +410,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('statuses', parameter)),
@@ -423,6 +439,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('prices', parameter)),
@@ -451,6 +468,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('flags', parameter)),
@@ -479,6 +497,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('timestamps', parameter)),
@@ -522,6 +541,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('values', parameter)),
@@ -565,6 +585,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('values', parameter)),
@@ -593,6 +614,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('amounts', parameter)),
@@ -621,6 +643,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('anyValues', parameter)),
@@ -648,6 +671,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('tags', parameter)),
@@ -674,6 +698,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         final result = emit(
           buildToLabelPathParameterExpression('counts', parameter),
@@ -715,6 +740,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           collapseWhitespace(
@@ -745,6 +771,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final result = emit(
         buildToLabelPathParameterExpression('fileData', parameter),
@@ -781,6 +808,7 @@ void main() {
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
+                defaultValue: null,
               ),
             ],
             examples: const [],
@@ -794,6 +822,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         collapseWhitespace(
@@ -833,6 +862,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         final result = emit(
           buildToLabelPathParameterExpression('items', parameter),
@@ -882,6 +912,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           collapseWhitespace(
@@ -915,6 +946,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final result = emit(
         buildToLabelPathParameterExpression('files', parameter),
@@ -947,6 +979,7 @@ void main() {
             context: context,
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           ),
           encoding: PathParameterEncoding.label,
           explode: false,
@@ -955,6 +988,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(
@@ -978,6 +1012,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToLabelPathParameterExpression('userId', parameter)),
@@ -1006,6 +1041,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(buildToLabelPathParameterExpression('tags', parameter)),

@@ -31,6 +31,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final result = generator.generateAlias(model);
@@ -53,6 +54,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final result = generator.generateAlias(model);
@@ -79,6 +81,7 @@ void main() {
         model: userModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final result = generator.generateAlias(model);
@@ -105,6 +108,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final result = generator.generateAlias(model);
@@ -136,6 +140,7 @@ void main() {
           model: type.model,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -153,6 +158,7 @@ void main() {
           model: UriModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = generator.generateAlias(model);
@@ -171,6 +177,7 @@ void main() {
           model: UriModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -191,6 +198,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = generator.generateAlias(model);
@@ -217,6 +225,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = generator.generateAlias(model);
@@ -341,6 +350,7 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -357,6 +367,7 @@ void main() {
           model: DateTimeModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -420,6 +431,7 @@ void main() {
             context: context,
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           );
 
           final typedef = generator.generateAliasTypedef(model);
@@ -438,6 +450,7 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = generator.generateAlias(model);
@@ -469,6 +482,7 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -501,6 +515,7 @@ void main() {
           model: allOfModel,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -548,6 +563,7 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -593,6 +609,7 @@ void main() {
           model: oneOfModel,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -640,6 +657,7 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -685,6 +703,7 @@ void main() {
           model: anyOfModel,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -830,6 +849,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final model = MapModel(
@@ -855,6 +875,7 @@ void main() {
           context: context,
           description: 'A unique identifier for a user.',
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -872,6 +893,7 @@ void main() {
           context: context,
           description: 'A unique identifier for a user.\nUsed across the API.',
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -891,6 +913,7 @@ void main() {
           context: context,
           isDeprecated: true,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -909,6 +932,7 @@ void main() {
           description: 'A unique identifier for a user.',
           isDeprecated: true,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -926,6 +950,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -942,6 +967,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -965,6 +991,7 @@ void main() {
               value: 'abc-123',
             ),
           ],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -993,6 +1020,7 @@ void main() {
               value: 'abc-123',
             ),
           ],
+          defaultValue: null,
         );
 
         final typedef = generator.generateAliasTypedef(model);
@@ -1090,6 +1118,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = immutableGenerator.generateAliasTypedef(model);
@@ -1146,6 +1175,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = immutableGenerator.generateAliasTypedef(model);
@@ -1162,6 +1192,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final typedef = immutableGenerator.generateAliasTypedef(model);
@@ -1318,12 +1349,14 @@ void main() {
             model: tree,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
           final alias = AliasModel(
             name: 'MyAlias',
             model: inner,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final outer = MapModel(

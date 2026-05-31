@@ -39,6 +39,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('name', property);
@@ -56,6 +57,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('name', property);
@@ -73,6 +75,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('count', property);
@@ -90,6 +93,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('count', property);
@@ -107,6 +111,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('price', property);
@@ -124,6 +129,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('price', property);
@@ -141,6 +147,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('value', property);
@@ -158,6 +165,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('active', property);
@@ -175,6 +183,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('active', property);
@@ -192,6 +201,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('timestamp', property);
@@ -209,6 +219,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('timestamp', property);
@@ -226,6 +237,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -243,6 +255,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -260,6 +273,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('amount', property);
@@ -277,6 +291,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('amount', property);
@@ -294,6 +309,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -311,6 +327,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -332,6 +349,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
 
           final result = buildToFormPropertyExpression('name', property);
@@ -354,6 +372,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
 
           final result = buildToFormPropertyExpression('count', property);
@@ -376,6 +395,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
 
           final result = buildToFormPropertyExpression('price', property);
@@ -398,6 +418,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
 
           final result = buildToFormPropertyExpression('active', property);
@@ -420,6 +441,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
 
           final result = buildToFormPropertyExpression('timestamp', property);
@@ -441,6 +463,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('date', property);
@@ -462,6 +485,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
 
           final result = buildToFormPropertyExpression('amount', property);
@@ -482,6 +506,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('url', property);
@@ -507,6 +532,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('items', property);
@@ -530,6 +556,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('nested', property);
@@ -557,6 +584,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('status', property);
@@ -576,11 +604,13 @@ void main() {
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('userId', property);
@@ -598,11 +628,13 @@ void main() {
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           isRequired: false,
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('userId', property);
@@ -624,11 +656,13 @@ void main() {
             ),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           isRequired: true,
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('users', property);
@@ -648,6 +682,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -665,6 +700,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -712,6 +748,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -729,6 +766,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -749,11 +787,13 @@ void main() {
             model: AnyModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           isRequired: true,
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('data', property);
@@ -775,6 +815,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression('name', property);
@@ -792,6 +833,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression(
@@ -814,6 +856,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression(
@@ -838,6 +881,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
 
           final result = buildToFormPropertyExpression(
@@ -861,6 +905,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression(
@@ -883,6 +928,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression(
@@ -903,6 +949,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         final property = Property(
           name: 'userId',
@@ -911,6 +958,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression(
@@ -935,6 +983,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression(
@@ -956,6 +1005,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = buildToFormPropertyExpression(

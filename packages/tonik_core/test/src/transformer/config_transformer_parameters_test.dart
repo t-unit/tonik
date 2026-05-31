@@ -21,6 +21,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: ctx.push('components').push('parameters').push('petId'),
           examples: const [],
+          defaultValue: null,
         );
 
         final limitParam = QueryParameterObject(
@@ -36,6 +37,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: ctx.push('components').push('parameters').push('limit'),
           examples: const [],
+          defaultValue: null,
         );
 
         final tag = Tag(name: 'pet', description: 'Pet tag');

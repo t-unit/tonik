@@ -46,6 +46,7 @@ void main() {
           contentEncoding: null,
           contentMediaType: null,
           contentSchema: null,
+          rawDefault: null,
         ),
       },
       responses: {},
@@ -82,6 +83,7 @@ void main() {
     contentEncoding: null,
     contentMediaType: null,
     contentSchema: null,
+    rawDefault: null,
   );
 
   final inlineClass = Schema(
@@ -107,6 +109,7 @@ void main() {
     contentEncoding: null,
     contentMediaType: null,
     contentSchema: null,
+    rawDefault: null,
   );
 
   final inlineUri = Schema(
@@ -132,6 +135,7 @@ void main() {
     contentEncoding: null,
     contentMediaType: null,
     contentSchema: null,
+    rawDefault: null,
   );
 
   final inlineUrl = Schema(
@@ -157,6 +161,7 @@ void main() {
     contentEncoding: null,
     contentMediaType: null,
     contentSchema: null,
+    rawDefault: null,
   );
 
   final reference = Schema(
@@ -182,6 +187,7 @@ void main() {
     contentEncoding: null,
     contentMediaType: null,
     contentSchema: null,
+    rawDefault: null,
   );
 
   late ModelImporter importer;

@@ -26,6 +26,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final resolved = param.resolve();
@@ -49,6 +50,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = param.resolve(nameOverride: 'newOverride');
@@ -71,6 +73,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final alias = QueryParameterAlias(
@@ -98,6 +101,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final alias = QueryParameterAlias(
@@ -129,6 +133,7 @@ void main() {
           encoding: PathParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final resolved = param.resolve();
@@ -151,6 +156,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = param.resolve(nameOverride: 'newOverride');
@@ -172,6 +178,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final alias = PathParameterAlias(
@@ -201,6 +208,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = header.resolve();
@@ -222,6 +230,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = header.resolve(nameOverride: 'newOverride');
@@ -243,6 +252,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final alias = RequestHeaderAlias(

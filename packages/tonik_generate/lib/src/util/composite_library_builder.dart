@@ -31,6 +31,7 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
             name: '\$Raw$publicClassName',
             model: model,
             context: model.context,
+            defaultValue: null,
             examples: const [],
           ),
         )

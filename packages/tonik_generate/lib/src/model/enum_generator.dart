@@ -84,6 +84,7 @@ class EnumGenerator {
               name: '\$Raw$enumName',
               model: model,
               context: model.context,
+              defaultValue: null,
               examples: const [],
             ),
           )

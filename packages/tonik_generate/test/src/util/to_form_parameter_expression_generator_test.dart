@@ -146,6 +146,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -264,6 +265,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -356,6 +358,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final expression = buildFormParameterExpression(
         refer('value'),
@@ -825,6 +828,7 @@ void main() {
         context: context,
         isNullable: true,
         examples: const [],
+        defaultValue: null,
       );
       final expression = buildFormParameterExpression(
         refer('value'),

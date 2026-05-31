@@ -39,6 +39,7 @@ void main() {
         allowReserved: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
     }
 
@@ -234,6 +235,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         explode: true,
         allowEmpty: false,
@@ -654,6 +656,7 @@ void main() {
             ),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           explode: true,
           allowEmpty: false,
@@ -687,6 +690,7 @@ void main() {
             ),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           explode: true,
           allowEmpty: false,

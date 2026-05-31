@@ -93,6 +93,7 @@ void main() {
           model: StringModel(context: Context.initial()),
           context: Context.initial(),
           examples: const [],
+          defaultValue: null,
         ).encodingShape,
         EncodingShape.simple,
       );
@@ -107,6 +108,7 @@ void main() {
           ),
           context: Context.initial(),
           examples: const [],
+          defaultValue: null,
         ).encodingShape,
         EncodingShape.complex,
       );

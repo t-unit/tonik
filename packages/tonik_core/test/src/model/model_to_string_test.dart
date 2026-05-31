@@ -32,6 +32,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
       modelB.properties = [
@@ -42,6 +43,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -65,6 +67,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -102,6 +105,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
       modelB.properties = [
@@ -112,6 +116,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
       modelC.properties = [
@@ -122,6 +127,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -153,6 +159,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -183,6 +190,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -212,6 +220,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -231,6 +240,7 @@ void main() {
         model: classModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       classModel.properties = [
         Property(
@@ -240,6 +250,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -269,6 +280,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -289,6 +301,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'email',
@@ -297,6 +310,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -316,6 +330,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       final result = prop.toString();
@@ -328,6 +343,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final result = alias.toString();

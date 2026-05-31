@@ -87,6 +87,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -143,6 +144,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -214,6 +216,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -283,6 +286,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -356,6 +360,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -426,6 +431,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final tagsParam = QueryParameterObject(
@@ -445,6 +451,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final sortParam = QueryParameterObject(
@@ -464,6 +471,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -556,6 +564,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final tagsParam = QueryParameterObject(
@@ -575,6 +584,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -655,6 +665,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -724,6 +735,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -790,6 +802,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final listParam = QueryParameterObject(
@@ -809,6 +822,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final numberParam = QueryParameterObject(
@@ -824,6 +838,7 @@ void main() {
         model: IntegerModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final boolParam = QueryParameterObject(
@@ -839,6 +854,7 @@ void main() {
         model: BooleanModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -936,6 +952,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final classWithNumberParam = QueryParameterObject(
@@ -956,6 +973,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1078,6 +1096,7 @@ void main() {
         model: enumModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final oneOfParam = QueryParameterObject(
@@ -1093,6 +1112,7 @@ void main() {
         model: oneOfModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final intListParam = QueryParameterObject(
@@ -1108,6 +1128,7 @@ void main() {
         model: intListModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final enumListParam = QueryParameterObject(
@@ -1123,6 +1144,7 @@ void main() {
         model: enumListModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1240,6 +1262,7 @@ void main() {
         model: listModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1324,6 +1347,7 @@ void main() {
         model: outerListModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1396,6 +1420,7 @@ void main() {
           model: stringModel,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -1491,6 +1516,7 @@ void main() {
           model: oneOfListModel,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -1594,6 +1620,7 @@ void main() {
           model: oneOfListModel,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -1680,6 +1707,7 @@ void main() {
           model: classListModel,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -1750,6 +1778,7 @@ void main() {
         allowReserved: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1832,6 +1861,7 @@ void main() {
         allowReserved: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1905,6 +1935,7 @@ void main() {
         allowReserved: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1979,6 +2010,7 @@ void main() {
         allowReserved: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2047,6 +2079,7 @@ void main() {
         allowReserved: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(

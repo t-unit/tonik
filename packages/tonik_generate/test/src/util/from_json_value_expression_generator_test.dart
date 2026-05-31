@@ -142,6 +142,7 @@ void main() {
           name: 'UserId',
           model: StringModel(context: context),
           examples: const [],
+          defaultValue: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -167,6 +168,7 @@ void main() {
           name: 'UserReference',
           model: userModel,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -190,6 +192,7 @@ void main() {
           name: 'StringList',
           model: listModel,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -215,12 +218,14 @@ void main() {
           name: 'UserReference',
           model: userModel,
           examples: const [],
+          defaultValue: null,
         );
         final nestedAlias = AliasModel(
           context: context,
           name: 'NestedAlias',
           model: userAlias,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -251,6 +256,7 @@ void main() {
           name: 'UserList',
           model: userListModel,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           buildFromJsonValueExpression(
@@ -279,6 +285,7 @@ void main() {
           name: 'UserReference',
           model: userModel,
           examples: const [],
+          defaultValue: null,
         );
         final userAliasListModel = ListModel(
           content: userAlias,
@@ -1067,6 +1074,7 @@ void main() {
             model: classModel,
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1096,12 +1104,14 @@ void main() {
             model: classModel,
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           );
           final outerAlias = AliasModel(
             context: context,
             name: 'OuterAlias',
             model: innerAlias,
             examples: const [],
+            defaultValue: null,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1124,6 +1134,7 @@ void main() {
             model: StringModel(context: context),
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           );
           expect(
             buildFromJsonValueExpression(
@@ -1385,6 +1396,7 @@ void main() {
         model: NeverModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final result = buildFromJsonValueExpression(
         'value',

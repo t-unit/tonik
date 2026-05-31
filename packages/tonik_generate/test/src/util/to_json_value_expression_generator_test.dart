@@ -41,6 +41,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -62,6 +63,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -83,6 +85,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -104,6 +107,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -125,6 +129,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -146,6 +151,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -167,6 +173,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -188,6 +195,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       // Binary data: toBytes() then decode to String for JSON.
       expect(
@@ -210,6 +218,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -231,6 +240,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       // Base64 data: toBytes() then encode to base64 string for JSON.
       expect(
@@ -253,6 +263,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -285,6 +296,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -317,6 +329,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -349,6 +362,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       expect(
@@ -379,6 +393,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       expect(
@@ -409,6 +424,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       expect(
@@ -440,6 +456,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       expect(
@@ -471,6 +488,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       expect(
@@ -497,6 +515,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       // List<primitive> is handled directly
       expect(
@@ -523,6 +542,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -548,6 +568,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       // List of binary needs each element's bytes decoded to string
       expect(
@@ -574,6 +595,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       // List of base64 needs each element's bytes base64-encoded
       expect(
@@ -607,6 +629,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -632,6 +655,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -651,6 +675,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'id',
@@ -659,6 +684,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -678,6 +704,7 @@ void main() {
         model: DateTimeModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'createdAt',
@@ -686,6 +713,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -705,6 +733,7 @@ void main() {
         model: DateTimeModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'updatedAt',
@@ -713,6 +742,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -739,6 +769,7 @@ void main() {
         model: addressModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'address',
@@ -747,6 +778,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -773,6 +805,7 @@ void main() {
         model: addressModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'address',
@@ -781,6 +814,7 @@ void main() {
         isNullable: true, // nullable
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -809,6 +843,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -837,6 +872,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -865,6 +901,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -893,6 +930,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -922,6 +960,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -951,6 +990,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -980,6 +1020,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1008,6 +1049,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1035,6 +1077,7 @@ void main() {
         isNullable: true,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'address',
@@ -1043,6 +1086,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       expect(
@@ -1064,6 +1108,7 @@ void main() {
         isNullable: true,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'createdAt',
@@ -1072,6 +1117,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       expect(
@@ -1096,6 +1142,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'meetingTimes',
@@ -1104,6 +1151,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1127,6 +1175,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'meetingTimes',
@@ -1135,6 +1184,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1165,6 +1215,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'addresses',
@@ -1173,6 +1224,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1203,6 +1255,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'addresses',
@@ -1211,6 +1264,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1239,6 +1293,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1265,6 +1320,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1298,6 +1354,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1332,6 +1389,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1367,6 +1425,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1394,6 +1453,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1433,6 +1493,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final result = emit(
         buildToJsonPropertyExpression(
@@ -1469,6 +1530,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
         final result = emit(
           buildToJsonPropertyExpression(
@@ -1500,6 +1562,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1526,6 +1589,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1552,6 +1616,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1589,6 +1654,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1618,6 +1684,7 @@ void main() {
         context: context,
         allowReserved: true,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1645,6 +1712,7 @@ void main() {
         context: context,
         allowReserved: true,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1672,6 +1740,7 @@ void main() {
         context: context,
         allowReserved: true,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1710,6 +1779,7 @@ void main() {
         context: context,
         allowReserved: true,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1733,6 +1803,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         scopedEmit(
@@ -1754,6 +1825,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         scopedEmit(
@@ -1780,6 +1852,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         scopedEmit(
@@ -1799,6 +1872,7 @@ void main() {
         model: NeverModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'forbiddenAlias',
@@ -1807,6 +1881,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         scopedEmit(
@@ -1835,6 +1910,7 @@ void main() {
         context: context,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         scopedEmit(
@@ -1864,6 +1940,7 @@ void main() {
         context: context,
         allowReserved: true,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         scopedEmit(
@@ -1887,6 +1964,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1911,6 +1989,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1935,6 +2014,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1956,6 +2036,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1983,6 +2064,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2009,6 +2091,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2035,6 +2118,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2061,6 +2145,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2087,6 +2172,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2120,6 +2206,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2151,6 +2238,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2177,6 +2265,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2203,6 +2292,7 @@ void main() {
         isDeprecated: false,
         isWriteOnly: true,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2234,6 +2324,7 @@ void main() {
           isDeprecated: false,
           isWriteOnly: true,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(
@@ -2262,6 +2353,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2289,6 +2381,7 @@ void main() {
         isDeprecated: false,
         isWriteOnly: true,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2327,6 +2420,7 @@ void main() {
           isDeprecated: false,
           isWriteOnly: true,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(
@@ -2362,6 +2456,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -2386,6 +2481,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final property = Property(
         name: 'tags',
@@ -2394,6 +2490,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(

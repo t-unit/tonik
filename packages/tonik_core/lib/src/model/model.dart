@@ -160,6 +160,7 @@ class AliasModel extends Model with NamedModel {
     required this.model,
     required super.context,
     required this.examples,
+    required this.defaultValue,
     this.name,
     this.nameOverride,
     this.description,
@@ -175,6 +176,7 @@ class AliasModel extends Model with NamedModel {
   String? nameOverride;
   Model model;
   String? description;
+  Object? defaultValue;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
@@ -194,7 +196,8 @@ class AliasModel extends Model with NamedModel {
   String toString() =>
       'AliasModel{name: $name, nameOverride: $nameOverride, '
       'model: ${model._ref}, description: $description, '
-      'isDeprecated: $isDeprecated, examples: $examples}';
+      'isDeprecated: $isDeprecated, defaultValue: $defaultValue, '
+      'examples: $examples}';
 }
 
 class ListModel extends Model with NamedModel {
@@ -574,6 +577,7 @@ class Property {
     required this.isNullable,
     required this.isDeprecated,
     required this.examples,
+    required this.defaultValue,
     this.isReadOnly = false,
     this.isWriteOnly = false,
     this.nameOverride,
@@ -591,6 +595,7 @@ class Property {
   bool isReadOnly;
   bool isWriteOnly;
   List<Example> examples;
+  Object? defaultValue;
 
   @override
   String toString() =>
@@ -598,5 +603,6 @@ class Property {
       'model: ${model._ref}, isRequired: $isRequired, '
       'isNullable: $isNullable, isDeprecated: $isDeprecated, '
       'isReadOnly: $isReadOnly, isWriteOnly: $isWriteOnly, '
-      'description: $description, examples: $examples}';
+      'description: $description, defaultValue: $defaultValue, '
+      'examples: $examples}';
 }

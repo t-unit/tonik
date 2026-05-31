@@ -18,6 +18,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = param.resolve(name: 'newName');
@@ -48,6 +49,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = param.resolve();
@@ -70,6 +72,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final alias = CookieParameterAlias(
@@ -101,6 +104,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = CookieParameterAlias(
@@ -130,6 +134,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final firstAlias = CookieParameterAlias(
@@ -166,6 +171,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = CookieParameterAlias(
@@ -194,6 +200,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = CookieParameterAlias(
@@ -222,6 +229,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias1 = CookieParameterAlias(
@@ -259,6 +267,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final alias1 = CookieParameterAlias(

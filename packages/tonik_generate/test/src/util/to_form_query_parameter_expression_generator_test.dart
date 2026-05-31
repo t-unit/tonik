@@ -45,6 +45,7 @@ void main() {
         allowReserved: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
     }
 
@@ -425,6 +426,7 @@ void main() {
               model: BinaryModel(context: context),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             explode: false,
             allowEmpty: true,
@@ -464,6 +466,7 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             explode: false,
             allowEmpty: true,
@@ -510,6 +513,7 @@ void main() {
                 context: context,
                 isNullable: true,
                 examples: const [],
+                defaultValue: null,
               ),
               context: context,
               examples: const [],
@@ -606,6 +610,7 @@ void main() {
                 context: context,
                 isNullable: true,
                 examples: const [],
+                defaultValue: null,
               ),
               context: context,
               examples: const [],

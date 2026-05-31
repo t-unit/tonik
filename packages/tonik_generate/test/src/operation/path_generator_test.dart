@@ -88,6 +88,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -148,6 +149,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -213,6 +215,7 @@ void main() {
       encoding: PathParameterEncoding.label,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -278,6 +281,7 @@ void main() {
       encoding: PathParameterEncoding.matrix,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -343,10 +347,12 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          defaultValue: null,
         ),
         encoding: PathParameterEncoding.matrix,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -413,6 +419,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -479,6 +486,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -540,6 +548,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final labelParam = PathParameterObject(
@@ -554,6 +563,7 @@ void main() {
       encoding: PathParameterEncoding.label,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final matrixParam = PathParameterObject(
@@ -572,6 +582,7 @@ void main() {
       encoding: PathParameterEncoding.matrix,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -669,6 +680,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final classParam = PathParameterObject(
@@ -683,6 +695,7 @@ void main() {
       encoding: PathParameterEncoding.matrix,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final oneOfParam = PathParameterObject(
@@ -697,6 +710,7 @@ void main() {
       encoding: PathParameterEncoding.label,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -760,6 +774,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final animalIdParam = PathParameterObject(
@@ -774,6 +789,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -836,6 +852,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -915,6 +932,7 @@ void main() {
       model: listModel,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -995,6 +1013,7 @@ void main() {
       model: outerListModel,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1065,6 +1084,7 @@ void main() {
       model: listModel,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1132,6 +1152,7 @@ void main() {
       model: listModel,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1211,6 +1232,7 @@ void main() {
       model: listModel,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1286,6 +1308,7 @@ void main() {
         model: listModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1359,6 +1382,7 @@ void main() {
       model: outerListModel,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1421,6 +1445,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final param2 = PathParameterObject(
@@ -1435,6 +1460,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final param3 = PathParameterObject(
@@ -1449,6 +1475,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1545,6 +1572,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1597,6 +1625,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1650,6 +1679,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1704,6 +1734,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final bParam = PathParameterObject(
@@ -1718,6 +1749,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1772,6 +1804,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1824,6 +1857,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1876,6 +1910,7 @@ void main() {
       encoding: PathParameterEncoding.label,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1928,6 +1963,7 @@ void main() {
       encoding: PathParameterEncoding.matrix,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -1980,6 +2016,7 @@ void main() {
       encoding: PathParameterEncoding.simple,
       context: context,
       examples: const [],
+      defaultValue: null,
     );
 
     final operation = Operation(
@@ -2068,6 +2105,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2155,6 +2193,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2229,6 +2268,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2290,6 +2330,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2364,6 +2405,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2443,6 +2485,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2508,6 +2551,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2563,6 +2607,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2639,6 +2684,7 @@ void main() {
           encoding: PathParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2716,6 +2762,7 @@ void main() {
           encoding: PathParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2780,6 +2827,7 @@ void main() {
         model: mapModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final pathParam = PathParameterObject(
@@ -2794,6 +2842,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2856,6 +2905,7 @@ void main() {
         model: listModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final pathParam = PathParameterObject(
@@ -2870,6 +2920,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2940,6 +2991,7 @@ void main() {
         model: outerListModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2993,6 +3045,7 @@ void main() {
         model: outerListModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final pathParam = PathParameterObject(
@@ -3007,6 +3060,7 @@ void main() {
         model: aliasModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3055,6 +3109,7 @@ void main() {
         model: innerListModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final outerListModel = ListModel(
         context: context,
@@ -3074,6 +3129,7 @@ void main() {
         model: outerListModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3136,6 +3192,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3186,6 +3243,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3236,6 +3294,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3292,6 +3351,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3348,6 +3408,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3391,6 +3452,7 @@ void main() {
         model: NeverModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final pathParam = PathParameterObject(
@@ -3405,6 +3467,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3457,12 +3520,14 @@ void main() {
         model: NeverModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final outerAlias = AliasModel(
         name: 'NeverOuter',
         model: innerAlias,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final pathParam = PathParameterObject(
@@ -3477,6 +3542,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3540,12 +3606,14 @@ void main() {
         model: mapModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final outerAlias = AliasModel(
         name: 'MapOuter',
         model: innerAlias,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final pathParam = PathParameterObject(
@@ -3560,6 +3628,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3619,6 +3688,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final classModel = ClassModel(
@@ -3644,6 +3714,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -3709,6 +3780,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(

@@ -191,6 +191,7 @@ void main() {
         context: ctx.push('components').push('schemas').push('Id'),
         model: stringModel,
         examples: const [],
+        defaultValue: null,
       );
     });
 

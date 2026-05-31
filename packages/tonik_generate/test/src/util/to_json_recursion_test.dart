@@ -56,6 +56,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
         'body',
@@ -106,6 +107,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
         final built = buildToJsonPropertyExpression(
           'subtree',
@@ -158,6 +160,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
         'subtree',
@@ -205,6 +208,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       final first = buildToJsonPropertyExpression(
@@ -240,6 +244,7 @@ void main() {
         model: tree,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       tree.valueModel = alias;
 
@@ -251,6 +256,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
         'body',
@@ -315,6 +321,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
         'body',
@@ -392,6 +399,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
       final built = buildToJsonPropertyExpression(
         'body',

@@ -109,6 +109,7 @@ class DataGenerator {
                 isRequired: true,
                 isNullable: false,
                 isDeprecated: false,
+                defaultValue: null,
                 examples: const [],
               ),
               nameManager: nameManager,
@@ -224,6 +225,7 @@ class DataGenerator {
       isRequired: isRequired,
       isNullable: !isRequired,
       isDeprecated: false,
+      defaultValue: null,
       examples: const [],
     );
 

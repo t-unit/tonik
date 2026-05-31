@@ -445,6 +445,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: ctx.push('parameters').push('deprecatedFilter'),
         examples: const [],
+        defaultValue: null,
       );
 
       normalQuery = QueryParameterObject(
@@ -460,6 +461,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: ctx.push('parameters').push('normalFilter'),
         examples: const [],
+        defaultValue: null,
       );
 
       deprecatedPath = PathParameterObject(
@@ -474,6 +476,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: ctx.push('parameters').push('deprecatedId'),
         examples: const [],
+        defaultValue: null,
       );
 
       normalPath = PathParameterObject(
@@ -488,6 +491,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: ctx.push('parameters').push('normalId'),
         examples: const [],
+        defaultValue: null,
       );
 
       deprecatedHeader = RequestHeaderObject(
@@ -502,6 +506,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: ctx.push('headers').push('X-Deprecated-Header'),
         examples: const [],
+        defaultValue: null,
       );
 
       normalHeader = RequestHeaderObject(
@@ -516,6 +521,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: ctx.push('headers').push('X-Normal-Header'),
         examples: const [],
+        defaultValue: null,
       );
 
       operation = Operation(
@@ -638,6 +644,7 @@ void main() {
         isDeprecated: true,
         description: 'A deprecated property',
         examples: const [],
+        defaultValue: null,
       );
 
       final normalProp = Property(
@@ -648,6 +655,7 @@ void main() {
         isDeprecated: false,
         description: 'A normal property',
         examples: const [],
+        defaultValue: null,
       );
 
       final anotherNormalProp = Property(
@@ -657,6 +665,7 @@ void main() {
         isNullable: true,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       modelWithDeprecatedProps = ClassModel(
