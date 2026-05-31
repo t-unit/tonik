@@ -1,0 +1,59 @@
+openapi: 3.0.4
+info:
+  title: Defaulted Primitives API
+  description: >-
+    OpenAPI specification covering primitive `default` values on class
+    properties, exercising Strategy A const materialisation (M1).
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /health:
+    get:
+      operationId: healthCheck
+      summary: Health check
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+
+components:
+  schemas:
+    DefaultedPrimitives:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          default: "anon"
+        count:
+          type: integer
+          default: 0
+        rate:
+          type: number
+          format: double
+          default: 1.5
+        active:
+          type: boolean
+          default: true
+        nickname:
+          type: string
+          nullable: true
+          default: null
+        title:
+          type: string
+          nullable: true
+          default: "Mx."

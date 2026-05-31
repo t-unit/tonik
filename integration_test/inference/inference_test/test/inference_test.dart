@@ -729,28 +729,32 @@ void main() {
         expect(requestBody['interruption_reply'], false);
       });
 
-      test('request body omits interruption_reply when null', () async {
-        final api = buildApi(responseStatus: '200');
+      test(
+        'request body falls back to the schema-level default when '
+        'interruption_reply is omitted at the call site',
+        () async {
+          final api = buildApi(responseStatus: '200');
 
-        final response = await api
-            .sendMessageProtoRouteApiV1InferSendMessagePost(
-              body: const SendMessageRequest(
-                chatSessionId: 'session-123',
-                userId: 'user-456',
-                messageId: 'msg-789',
-                message: 'Hello',
-              ),
-            );
+          final response = await api
+              .sendMessageProtoRouteApiV1InferSendMessagePost(
+                body: const SendMessageRequest(
+                  chatSessionId: 'session-123',
+                  userId: 'user-456',
+                  messageId: 'msg-789',
+                  message: 'Hello',
+                ),
+              );
 
-        final success =
-            response
-                as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
-                >;
-        final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
-        expect(requestBody.containsKey('interruption_reply'), isFalse);
-      });
+          final success =
+              response
+                  as TonikSuccess<
+                    SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  >;
+          final requestBody =
+              success.response.requestOptions.data as Map<String, dynamic>;
+          expect(requestBody['interruption_reply'], false);
+        },
+      );
 
       test('request body encodes user_specified_llm when provided', () async {
         final api = buildApi(responseStatus: '200');
@@ -1523,23 +1527,27 @@ void main() {
         expect(requestBody['latest_only'], true);
       });
 
-      test('request body does not include latestOnly when null', () async {
-        final api = buildApi(responseStatus: '200');
+      test(
+        'request body falls back to the schema-level default when latestOnly '
+        'is omitted at the call site',
+        () async {
+          final api = buildApi(responseStatus: '200');
 
-        final response = await api
-            .getGithubReleaseProtoRouteApiV1GithubReleasePost(
-              body: const GithubReleaseRequest(repo: 'owner/repo'),
-            );
+          final response = await api
+              .getGithubReleaseProtoRouteApiV1GithubReleasePost(
+                body: const GithubReleaseRequest(repo: 'owner/repo'),
+              );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
-                >;
-        final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
-        expect(requestBody.containsKey('latest_only'), isFalse);
-      });
+          final success =
+              response
+                  as TonikSuccess<
+                    GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  >;
+          final requestBody =
+              success.response.requestOptions.data as Map<String, dynamic>;
+          expect(requestBody['latest_only'], false);
+        },
+      );
     });
 
     group('response decoding - 200', () {
