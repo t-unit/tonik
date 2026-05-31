@@ -356,8 +356,6 @@ class ClassGenerator {
       final materialised = materialiseConstDefault(
         jsonValue: raw,
         targetModel: prop.property.model,
-        nameManager: nameManager,
-        package: package,
       );
 
       if (materialised == null) {

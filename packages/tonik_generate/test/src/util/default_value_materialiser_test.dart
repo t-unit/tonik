@@ -2,13 +2,10 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/name_generator.dart';
-import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/default_value_materialiser.dart';
 
 void main() {
   late Context context;
-  late NameManager nameManager;
   final formatter = DartFormatter(
     languageVersion: DartFormatter.latestLanguageVersion,
   );
@@ -29,10 +26,6 @@ void main() {
 
   setUp(() {
     context = Context.initial();
-    nameManager = NameManager(
-      generator: NameGenerator(),
-      stableModelSorter: StableModelSorter(),
-    );
   });
 
   group('materialiseConstDefault — primitives', () {
@@ -40,8 +33,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 'anon',
         targetModel: StringModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -55,8 +46,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: r'Hello $world',
         targetModel: StringModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -70,8 +59,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 0,
         targetModel: IntegerModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -85,8 +72,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 1.5,
         targetModel: DoubleModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -100,8 +85,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 2,
         targetModel: DoubleModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -115,8 +98,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 3,
         targetModel: NumberModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -130,8 +111,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: true,
         targetModel: BooleanModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -147,8 +126,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 42,
         targetModel: StringModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);
@@ -158,8 +135,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 'no',
         targetModel: IntegerModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);
@@ -169,8 +144,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 1.5,
         targetModel: IntegerModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);
@@ -180,8 +153,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 'true',
         targetModel: BooleanModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);
@@ -193,8 +164,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: null,
         targetModel: StringModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);
@@ -213,8 +182,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: null,
         targetModel: alias,
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);
@@ -234,8 +201,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 'hi',
         targetModel: alias,
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -264,8 +229,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 7,
         targetModel: outer,
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNotNull);
@@ -287,8 +250,6 @@ void main() {
           context: context,
           examples: const [],
         ),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);
@@ -298,8 +259,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: '2024-01-01T00:00:00Z',
         targetModel: DateTimeModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);
@@ -309,8 +268,6 @@ void main() {
       final result = materialiseConstDefault(
         jsonValue: 'anything',
         targetModel: AnyModel(context: context),
-        nameManager: nameManager,
-        package: 'example',
       );
 
       expect(result, isNull);

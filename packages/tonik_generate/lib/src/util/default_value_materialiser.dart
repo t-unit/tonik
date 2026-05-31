@@ -1,6 +1,5 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Returns a compile-time const Dart expression for [jsonValue] that
@@ -11,15 +10,9 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 /// is `Object?` with no `hasDefault` flag) cannot distinguish "no default
 /// keyword" from "explicit `default: null`", so both collapse to the
 /// no-default path.
-///
-/// [nameManager] and [package] are accepted now and unused so cross-package
-/// type references emitted by future composite handlers can plug in without
-/// changing every call site.
 Expression? materialiseConstDefault({
   required Object? jsonValue,
   required Model targetModel,
-  required NameManager nameManager,
-  required String package,
 }) {
   if (jsonValue == null) return null;
 
