@@ -298,6 +298,32 @@ class NameManager {
     });
   }
 
+  /// Picks a static-member name for a class property's default value.
+  ///
+  /// See [NameGenerator.generateDefaultMemberName]. Class-body scoped — the
+  /// caller owns and mutates [reservedNames].
+  String defaultMemberName({
+    required String propertyName,
+    required Set<String> reservedNames,
+  }) => generator.generateDefaultMemberName(
+    propertyName: propertyName,
+    reservedNames: reservedNames,
+  );
+
+  /// Picks a field name for a class's additional-properties map.
+  ///
+  /// See [NameGenerator.generateAdditionalPropertiesFieldName].
+  String additionalPropertiesFieldName(
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final reserved = normalizedProperties
+        .map((p) => p.normalizedName)
+        .toSet();
+    return generator.generateAdditionalPropertiesFieldName(
+      reservedNames: reserved,
+    );
+  }
+
   void _logModelName(String name, Model model) {
     final modelName = model is NamedModel && model.name != null
         ? model.name

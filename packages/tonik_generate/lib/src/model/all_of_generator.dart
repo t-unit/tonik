@@ -327,7 +327,7 @@ class AllOfGenerator {
     }).toList();
 
     if (hasActiveAdditionalProperties(model.additionalProperties)) {
-      final apFieldName = pickAdditionalPropertiesFieldName(
+      final apFieldName = nameManager.additionalPropertiesFieldName(
         normalizedProperties,
       );
       fields.add(
@@ -364,7 +364,7 @@ class AllOfGenerator {
 
     if (model != null &&
         hasActiveAdditionalProperties(model.additionalProperties)) {
-      final apFieldName = pickAdditionalPropertiesFieldName(
+      final apFieldName = nameManager.additionalPropertiesFieldName(
         normalizedProperties,
       );
       props.add(
@@ -398,7 +398,7 @@ class AllOfGenerator {
             }),
           );
         if (hasActiveAdditionalProperties(model.additionalProperties)) {
-          final apFieldName = pickAdditionalPropertiesFieldName(
+          final apFieldName = nameManager.additionalPropertiesFieldName(
             normalizedProperties,
           );
           b.optionalParameters.add(
@@ -481,7 +481,9 @@ class AllOfGenerator {
     }
 
     // With additional properties: decode map, collect unknown keys
-    final apFieldName = pickAdditionalPropertiesFieldName(normalizedProperties);
+    final apFieldName = nameManager.additionalPropertiesFieldName(
+      normalizedProperties,
+    );
     final knownKeys = collectKnownKeys(model);
     final knownKeysLiteral = knownKeys.map((k) => "r'$k'").join(', ');
 
@@ -870,7 +872,7 @@ class AllOfGenerator {
       }
 
       if (hasActiveAdditionalProperties(model.additionalProperties)) {
-        final apFieldName = pickAdditionalPropertiesFieldName(
+        final apFieldName = nameManager.additionalPropertiesFieldName(
           normalizedProperties,
         );
         final ap = model.additionalProperties;
@@ -1050,7 +1052,7 @@ class AllOfGenerator {
         }
 
         if (hasActiveAdditionalProperties(model.additionalProperties)) {
-          final apFieldName = pickAdditionalPropertiesFieldName(
+          final apFieldName = nameManager.additionalPropertiesFieldName(
             normalizedProperties,
           );
           final ap = model.additionalProperties;
@@ -1183,7 +1185,7 @@ class AllOfGenerator {
       );
     }
 
-    final apFieldName = pickAdditionalPropertiesFieldName(
+    final apFieldName = nameManager.additionalPropertiesFieldName(
       normalizedProperties,
     );
     final knownKeys = collectKnownKeys(model);
@@ -1430,7 +1432,7 @@ class AllOfGenerator {
   ) {
     if (!hasActiveAdditionalProperties(model.additionalProperties)) return [];
 
-    final apFieldName = pickAdditionalPropertiesFieldName(
+    final apFieldName = nameManager.additionalPropertiesFieldName(
       normalizedProperties,
     );
     final ap = model.additionalProperties;
@@ -2972,7 +2974,7 @@ for (final _\$e in $apFieldName.entries) {
     }).toList();
 
     if (hasActiveAdditionalProperties(model.additionalProperties)) {
-      final apFieldName = pickAdditionalPropertiesFieldName(
+      final apFieldName = nameManager.additionalPropertiesFieldName(
         normalizedProperties,
       );
       copyWithProps.add(

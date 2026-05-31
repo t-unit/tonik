@@ -603,4 +603,48 @@ class NameGenerator {
 
     return _makeUnique(baseName, '');
   }
+
+  /// Picks a static-member name for the default value of a class property,
+  /// avoiding collisions with anything already reserved on the class.
+  ///
+  /// The candidate is `<propertyName>Default`; on collision a numeric suffix
+  /// is appended starting at 2.
+  ///
+  /// Scoped to a single class body — not the global naming domain owned by
+  /// [_usedNames] — so the caller manages [reservedNames].
+  String generateDefaultMemberName({
+    required String propertyName,
+    required Set<String> reservedNames,
+  }) {
+    return _pickWithSuffix(
+      baseName: '${propertyName}Default',
+      reservedNames: reservedNames,
+    );
+  }
+
+  /// Picks a field name for the additional-properties map on a class,
+  /// avoiding collisions with the already-normalised property names.
+  ///
+  /// The candidate is `additionalProperties`; on collision a numeric suffix
+  /// is appended starting at 2. Scoped to a single class body.
+  String generateAdditionalPropertiesFieldName({
+    required Set<String> reservedNames,
+  }) {
+    return _pickWithSuffix(
+      baseName: 'additionalProperties',
+      reservedNames: reservedNames,
+    );
+  }
+
+  String _pickWithSuffix({
+    required String baseName,
+    required Set<String> reservedNames,
+  }) {
+    if (!reservedNames.contains(baseName)) return baseName;
+    var counter = 2;
+    while (reservedNames.contains('$baseName$counter')) {
+      counter++;
+    }
+    return '$baseName$counter';
+  }
 }

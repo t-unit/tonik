@@ -10,7 +10,6 @@ import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
-import 'package:tonik_generate/src/util/default_member_name.dart';
 import 'package:tonik_generate/src/util/default_value_materialiser.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
@@ -146,7 +145,9 @@ class ClassGenerator {
   }) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
     final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
-    final apFieldName = pickAdditionalPropertiesFieldName(normalizedProperties);
+    final apFieldName = nameManager.additionalPropertiesFieldName(
+      normalizedProperties,
+    );
     final defaultsByName = _resolveDefaults(
       normalizedProperties,
       className,
@@ -370,7 +371,7 @@ class ClassGenerator {
         continue;
       }
 
-      final memberName = pickDefaultMemberName(
+      final memberName = nameManager.defaultMemberName(
         propertyName: prop.normalizedName,
         reservedNames: reservedNames,
       );
@@ -469,7 +470,7 @@ class ClassGenerator {
     ).toList();
 
     if (hasActiveAdditionalProperties(model.additionalProperties)) {
-      final apFieldName = pickAdditionalPropertiesFieldName(properties);
+      final apFieldName = nameManager.additionalPropertiesFieldName(properties);
       copyWithProps.add(
         (
           normalizedName: apFieldName,
@@ -677,7 +678,9 @@ class ClassGenerator {
 
     final ap = classModel.additionalProperties;
     if (captureAP && ap != null) {
-      final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
+      final apFieldName = nameManager.additionalPropertiesFieldName(
+        allProperties,
+      );
       final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
       final mapType = additionalPropertiesType(
         ap,
@@ -801,7 +804,7 @@ class ClassGenerator {
     );
     final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
     final apFieldName = hasAP
-        ? pickAdditionalPropertiesFieldName(
+        ? nameManager.additionalPropertiesFieldName(
             normalizeProperties(model.properties.toList()),
           )
         : null;
@@ -1047,7 +1050,9 @@ class ClassGenerator {
 
     if (hasActiveAdditionalProperties(model.additionalProperties)) {
       final allNormalized = normalizeProperties(model.properties.toList());
-      final apFieldName = pickAdditionalPropertiesFieldName(allNormalized);
+      final apFieldName = nameManager.additionalPropertiesFieldName(
+        allNormalized,
+      );
       final ap = model.additionalProperties;
       // When using immutable collections, unlock the IMap before spreading.
       final apAccess = useImmutableCollections
@@ -1281,7 +1286,9 @@ class ClassGenerator {
     if (!hasActiveAdditionalProperties(model.additionalProperties)) return [];
 
     final allNormalized = normalizeProperties(model.properties.toList());
-    final apFieldName = pickAdditionalPropertiesFieldName(allNormalized);
+    final apFieldName = nameManager.additionalPropertiesFieldName(
+      allNormalized,
+    );
     final ap = model.additionalProperties;
 
     if (ap is TypedAdditionalProperties &&
@@ -1972,7 +1979,9 @@ if ($name != null) {
 
     final ap = classModel.additionalProperties;
     if (captureAP && ap != null) {
-      final apFieldName = pickAdditionalPropertiesFieldName(allProperties);
+      final apFieldName = nameManager.additionalPropertiesFieldName(
+        allProperties,
+      );
       final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
       final mapType = additionalPropertiesType(
         ap,
