@@ -3103,6 +3103,91 @@ Future<TonikResult<void>> call({
           );
         },
       );
+
+      test(
+        'multipart per-part header with an aliased default does not emit a '
+        'static const field on the operation class',
+        () {
+          final aliasedModel = AliasModel(
+            name: 'TraceIdHeader',
+            model: StringModel(context: context),
+            context: context,
+            examples: const [],
+            defaultValue: 'static-trace-id',
+          );
+
+          final requestBody = RequestBodyObject(
+            name: 'uploadBody',
+            context: context,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: ClassModel(
+                  name: 'UploadForm',
+                  properties: [
+                    Property(
+                      name: 'file',
+                      model: BinaryModel(context: context),
+                      isRequired: true,
+                      isNullable: false,
+                      isDeprecated: false,
+                      examples: const [],
+                      defaultValue: null,
+                    ),
+                  ],
+                  context: context,
+                  isDeprecated: false,
+                  examples: const [],
+                ),
+                contentType: ContentType.multipart,
+                rawContentType: 'multipart/form-data',
+                encoding: {
+                  'file': MultipartPropertyEncoding(
+                    contentType: ContentType.bytes,
+                    rawContentType: 'application/octet-stream',
+                    headers: {
+                      'X-Trace-Id': ResponseHeaderObject(
+                        name: 'X-Trace-Id',
+                        context: context,
+                        description: null,
+                        explode: false,
+                        model: aliasedModel,
+                        isRequired: true,
+                        isDeprecated: false,
+                        encoding: ResponseHeaderEncoding.simple,
+                        examples: const [],
+                      ),
+                    },
+                  ),
+                },
+                examples: const [],
+              ),
+            },
+          );
+
+          final operation = Operation(
+            operationId: 'upload',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/upload',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'Upload');
+
+          final fieldNames = result.fields.map((f) => f.name).toList();
+          expect(fieldNames, ['_dio']);
+        },
+      );
     });
   });
 }

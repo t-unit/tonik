@@ -7,12 +7,12 @@ import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
-/// Generates parameters for an operation.
+/// Generates the `call()` parameters for an operation.
 ///
-/// When [defaultsByName] is provided, parameters keyed by their normalised
-/// name receive `..required = false ..defaultTo = refer(<memberName>).code`.
-/// Callers (operation_generator) supply the map alongside the static-const
-/// field list so the two stay in lock-step.
+/// Parameters whose normalized name appears in [defaultsByName] are emitted
+/// as optional, with a `defaultTo` referencing the corresponding static
+/// const on the owning class (qualified when the call site lives outside
+/// that class, e.g. an API-client wrapper).
 List<Parameter> generateParameters({
   required Operation operation,
   required NameManager nameManager,

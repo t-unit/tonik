@@ -1145,6 +1145,99 @@ void main() {
       final typeCode = headerParam.type?.accept(emitter).toString();
       expect(typeCode, contains('String'));
     });
+
+    test(
+      'per-part header backed by an alias with a default does not receive a '
+      'defaultTo or static const field (defaults pipeline is operation '
+      'parameters only)',
+      () {
+        final aliasedModel = AliasModel(
+          name: 'TraceIdHeader',
+          model: StringModel(context: context),
+          context: context,
+          examples: const [],
+          defaultValue: 'static-trace-id',
+        );
+
+        final requestBody = RequestBodyObject(
+          name: 'uploadBody',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'UploadForm',
+                properties: [
+                  Property(
+                    name: 'file',
+                    model: BinaryModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                    examples: const [],
+                    defaultValue: null,
+                  ),
+                ],
+                context: context,
+                isDeprecated: false,
+                examples: const [],
+              ),
+              contentType: ContentType.multipart,
+              rawContentType: 'multipart/form-data',
+              encoding: {
+                'file': MultipartPropertyEncoding(
+                  contentType: ContentType.bytes,
+                  rawContentType: 'application/octet-stream',
+                  headers: {
+                    'X-Trace-Id': ResponseHeaderObject(
+                      name: 'X-Trace-Id',
+                      context: context,
+                      description: null,
+                      explode: false,
+                      model: aliasedModel,
+                      isRequired: true,
+                      isDeprecated: false,
+                      encoding: ResponseHeaderEncoding.simple,
+                      examples: const [],
+                    ),
+                  },
+                ),
+              },
+              examples: const [],
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'upload',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/upload',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
+
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+        );
+
+        final headerParam = parameters.firstWhere(
+          (p) => p.name == 'fileTraceId',
+        );
+        expect(headerParam.defaultTo, isNull);
+        expect(headerParam.required, isTrue);
+      },
+    );
   });
 
   group('body parameter name collision', () {
@@ -1772,7 +1865,7 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'region': OperationParameterDefault(
+            'region': OperationParameterDefault.local(
               memberName: 'regionDefault',
               value: const CodeExpression(Code("r'us'")),
               type: _dummyType,
@@ -1816,7 +1909,7 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'page': OperationParameterDefault(
+            'page': OperationParameterDefault.local(
               memberName: 'pageDefault',
               value: const CodeExpression(Code('1')),
               type: _dummyType,
@@ -1856,7 +1949,7 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'retries': OperationParameterDefault(
+            'retries': OperationParameterDefault.local(
               memberName: 'retriesDefault',
               value: const CodeExpression(Code('5')),
               type: _dummyType,
@@ -1896,7 +1989,7 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'tracking': OperationParameterDefault(
+            'tracking': OperationParameterDefault.local(
               memberName: 'trackingDefault',
               value: const CodeExpression(Code('false')),
               type: _dummyType,
@@ -1943,7 +2036,7 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'id': OperationParameterDefault(
+            'id': OperationParameterDefault.local(
               memberName: 'idDefault',
               value: const CodeExpression(Code("r'x'")),
               type: _dummyType,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
@@ -9,35 +11,49 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 final Logger _log = Logger('OperationParameterDefaults');
 
-/// Qualified with [ownerClassName] when emitted outside the owning operation
-/// class (API-client wrapper); otherwise a bare reference suffices.
+/// A materialised default for a single operation parameter, plus the
+/// metadata needed to reference it from a generated call site.
+///
+/// Two construction modes guarantee owner metadata is set as a pair:
+/// `.local` for references inside the owning operation class, `.qualified`
+/// for references from a different file (e.g. an API-client wrapper) that
+/// needs both the class name and its source URL to compile.
 @immutable
 class OperationParameterDefault {
-  const OperationParameterDefault({
+  const OperationParameterDefault.local({
     required this.memberName,
     required this.value,
     required this.type,
-    this.ownerClassName,
-    this.ownerUrl,
-  });
+  }) : _owner = null;
+
+  const OperationParameterDefault.qualified({
+    required this.memberName,
+    required this.value,
+    required this.type,
+    required String className,
+    required String url,
+  }) : _owner = (className: className, url: url);
 
   final String memberName;
   final Expression value;
   final TypeReference type;
-  final String? ownerClassName;
-  final String? ownerUrl;
+  final ({String className, String url})? _owner;
 
   Code defaultToCode() {
-    final owner = ownerClassName;
+    final owner = _owner;
     if (owner == null) {
       return refer(memberName).code;
     }
-    return refer(owner, ownerUrl).property(memberName).code;
+    return refer(owner.className, owner.url).property(memberName).code;
   }
 }
 
-/// Primary emission site for warnings; API-client forwarding suppresses to
-/// avoid duplicates.
+/// Resolves operation-parameter defaults into materialised const
+/// expressions and the static fields that hold them.
+///
+/// Pass [emitWarnings] `false` on secondary call sites (e.g. the
+/// API-client forwarder) — the primary site already logs once per
+/// dropped default.
 ({
   Map<String, OperationParameterDefault> byName,
   List<Field> fields,
@@ -59,6 +75,7 @@ resolveOperationParameterDefaults({
     required Model model,
     required Object? rawDefault,
     required String specName,
+    required String location,
   }) {
     if (rawDefault == null) return;
 
@@ -68,11 +85,18 @@ resolveOperationParameterDefaults({
     );
 
     if (materialised == null) {
-      if (emitWarnings && _isMaterialiserSupportedPrimitive(model)) {
-        _log.warning(
-          'Dropping default for $operationClassName.$specName: '
-          'value does not match the parameter type.',
-        );
+      if (emitWarnings) {
+        final resolved = model.resolved;
+        if (resolved is PrimitiveModel) {
+          final reason = _isMaterialiserSupportedPrimitive(model)
+              ? 'value does not match the parameter type'
+              : 'default value cannot be expressed as a const Dart '
+                    'expression for this type';
+          _log.warning(
+            'Dropping default for $operationClassName.$specName '
+            '($location, value: ${_describeDefault(rawDefault)}): $reason.',
+          );
+        }
       }
       return;
     }
@@ -89,7 +113,7 @@ resolveOperationParameterDefaults({
       package,
     );
 
-    byName[normalizedName] = OperationParameterDefault(
+    byName[normalizedName] = OperationParameterDefault.local(
       memberName: memberName,
       value: materialised,
       type: type,
@@ -113,6 +137,7 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
+      location: 'path',
     );
   }
   for (final p in normalizedParams.queryParameters) {
@@ -121,6 +146,7 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
+      location: 'query',
     );
   }
   for (final p in normalizedParams.headers) {
@@ -129,6 +155,7 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
+      location: 'header',
     );
   }
   for (final p in normalizedParams.cookieParameters) {
@@ -137,6 +164,7 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
+      location: 'cookie',
     );
   }
 
@@ -164,10 +192,22 @@ Set<String> initialOperationDefaultReservedNames({
   for (final p in normalizedParams.cookieParameters) p.normalizedName,
 };
 
-// Must duplicate (not introspect) the set in default_value_materialiser.dart —
-// the coupling is intentional: a `PrimitiveModel` outside this set (DateTime,
-// Date, Decimal, Uri, Binary, Base64) is parseable but not const-materialisable
-// in Dart, so its default is silently dropped without warning.
+// YAML's timestamp inference can hand us a `DateTime` (or any non-JSON
+// scalar) — fall back to `toString` so a logging path never throws.
+String _describeDefault(Object? raw) =>
+    _isJsonEncodable(raw) ? jsonEncode(raw) : raw.toString();
+
+bool _isJsonEncodable(Object? value) => switch (value) {
+  null || bool() || num() || String() => true,
+  final List<Object?> list => list.every(_isJsonEncodable),
+  final Map<Object?, Object?> map =>
+    map.keys.every((k) => k is String) && map.values.every(_isJsonEncodable),
+  _ => false,
+};
+
+// Mirrors the supported-types switch in default_value_materialiser.dart;
+// kept duplicated so a primitive added there without a parallel update here
+// shows up immediately as a wrong-reason warning.
 bool _isMaterialiserSupportedPrimitive(Model model) => switch (model.resolved) {
   StringModel() ||
   IntegerModel() ||
