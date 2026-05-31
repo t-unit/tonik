@@ -28,24 +28,6 @@ import 'package:tonik_util/tonik_util.dart';
 
 final Logger _classGeneratorLog = Logger('ClassGenerator');
 
-/// A defaulted property's resolved member metadata.
-///
-/// Built once per class generation and threaded through the constructor /
-/// `fromJson` / `fromSimple` / `fromForm` emitters so all references stay
-/// in lock-step on naming and shape.
-@immutable
-class _DefaultedProperty {
-  const _DefaultedProperty({
-    required this.memberName,
-    required this.value,
-    required this.type,
-  });
-
-  final String memberName;
-  final Expression value;
-  final TypeReference type;
-}
-
 /// A generator for creating Dart class files from model definitions.
 @immutable
 class ClassGenerator {
@@ -2216,4 +2198,22 @@ if ($name != null) {
     }
     return false;
   }
+}
+
+/// A defaulted property's resolved member metadata.
+///
+/// Built once per class generation and threaded through the constructor /
+/// `fromJson` / `fromSimple` / `fromForm` emitters so all references stay
+/// in lock-step on naming and shape.
+@immutable
+class _DefaultedProperty {
+  const _DefaultedProperty({
+    required this.memberName,
+    required this.value,
+    required this.type,
+  });
+
+  final String memberName;
+  final Expression value;
+  final TypeReference type;
 }
