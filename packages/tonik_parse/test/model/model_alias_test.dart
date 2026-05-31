@@ -138,5 +138,27 @@ void main() {
 
       expect(level1.resolved, stringModel);
     });
+
+    test('returns current alias when chain forms a direct cycle', () {
+      final context = Context.initial();
+      final a = AliasModel(
+        name: 'A',
+        model: AnyModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final b = AliasModel(
+        name: 'B',
+        model: AnyModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      a.model = b;
+      b.model = a;
+
+      expect(a.resolved, same(a));
+    });
   });
 }
