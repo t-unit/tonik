@@ -44,6 +44,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'age',
@@ -52,6 +53,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -82,6 +84,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'name',
@@ -90,6 +93,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'email',
@@ -98,6 +102,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'age',
@@ -106,6 +111,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -136,6 +142,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'bio',
@@ -144,6 +151,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -174,6 +182,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'last_name',
@@ -182,6 +191,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -212,6 +222,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'tags',
@@ -224,6 +235,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -257,6 +269,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'nestedList',
@@ -273,6 +286,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,

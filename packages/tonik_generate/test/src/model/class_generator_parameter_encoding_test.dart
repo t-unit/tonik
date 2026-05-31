@@ -44,6 +44,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -117,6 +118,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'name',
@@ -125,6 +127,7 @@ void main() {
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -204,6 +207,7 @@ Map<String, String> parameterProperties({
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'nullable_count',
@@ -212,6 +216,7 @@ Map<String, String> parameterProperties({
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -277,6 +282,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -327,6 +333,7 @@ Map<String, String> parameterProperties({
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -349,6 +356,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -407,6 +415,7 @@ Map<String, String> parameterProperties({
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -429,6 +438,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -478,6 +488,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -503,6 +514,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -554,6 +566,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'count',
@@ -562,6 +575,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -619,6 +633,7 @@ Map<String, String> parameterProperties({
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               context: context,
@@ -628,6 +643,7 @@ Map<String, String> parameterProperties({
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -675,6 +691,7 @@ Map<String, String> parameterProperties({
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -697,6 +714,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -757,6 +775,7 @@ Map<String, String> parameterProperties({
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -786,6 +805,7 @@ Map<String, String> parameterProperties({
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -815,6 +835,7 @@ Map<String, String> parameterProperties({
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -838,6 +859,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'count',
@@ -846,6 +868,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'active',
@@ -854,6 +877,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             // Composite properties (runtime checks)
             Property(
@@ -863,6 +887,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'data2',
@@ -871,6 +896,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'flexible',
@@ -879,6 +905,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -972,6 +999,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1035,6 +1063,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'tags',
@@ -1047,6 +1076,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1129,6 +1159,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1184,6 +1215,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'tags',
@@ -1196,6 +1228,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1258,6 +1291,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1279,6 +1313,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1342,6 +1377,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1413,6 +1449,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1466,6 +1503,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1518,6 +1556,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'tags',
@@ -1530,6 +1569,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1586,6 +1626,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'age',
@@ -1594,6 +1635,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1631,7 +1673,7 @@ Map<String, String> parameterProperties({
 
     test(
       'generates parameterProperties with null check for required property '
-      'referencing nullable AliasModel (simple encoding)',
+      'referencing nullable AliasModel (simple encoding, defaultValue: null)',
       () {
         // AliasModel with isNullable=true means the typedef is
         // `typedef Foo = String?`, so the field type is nullable even though
@@ -1642,6 +1684,7 @@ Map<String, String> parameterProperties({
           isNullable: true,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final model = ClassModel(
@@ -1655,6 +1698,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1702,6 +1746,7 @@ Map<String, String> parameterProperties({
           isNullable: true,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final model = ClassModel(
@@ -1715,6 +1760,7 @@ Map<String, String> parameterProperties({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'tags',
@@ -1727,6 +1773,7 @@ Map<String, String> parameterProperties({
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1775,6 +1822,7 @@ if (description != null) {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1820,6 +1868,7 @@ if (description != null) {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'value',
@@ -1828,6 +1877,7 @@ if (description != null) {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1879,6 +1929,7 @@ String toForm({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1891,6 +1942,7 @@ String toForm({
           model: innerClass,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final model = ClassModel(
@@ -1904,6 +1956,7 @@ String toForm({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -1946,6 +1999,7 @@ String toForm({
           isNullable: true,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final outerAlias = AliasModel(
@@ -1953,6 +2007,7 @@ String toForm({
           model: innerAlias,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final model = ClassModel(
@@ -1966,6 +2021,7 @@ String toForm({
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,

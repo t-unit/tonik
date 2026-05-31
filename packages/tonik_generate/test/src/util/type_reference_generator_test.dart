@@ -498,6 +498,7 @@ void main() {
           model: listModel,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final result = typeReference(

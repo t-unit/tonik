@@ -530,6 +530,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final expression = buildFromFormValueExpression(
@@ -562,6 +563,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final expression = buildFromFormValueExpression(
@@ -899,6 +901,7 @@ void main() {
                 model: NeverModel(context: context),
                 context: context,
                 examples: const [],
+                defaultValue: null,
               ),
               isNullable: true,
               context: context,

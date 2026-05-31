@@ -47,6 +47,7 @@ sealed class QueryParameter {
           encoding: param.encoding,
           context: context,
           examples: param.examples,
+          defaultValue: param.defaultValue,
         );
       case final QueryParameterAlias alias:
         return alias.parameter.resolve(
@@ -105,6 +106,7 @@ class QueryParameterObject extends QueryParameter {
     required this.encoding,
     required super.context,
     required this.examples,
+    required this.defaultValue,
     this.nameOverride,
   });
 
@@ -123,6 +125,7 @@ class QueryParameterObject extends QueryParameter {
   Model model;
   QueryParameterEncoding encoding;
   List<Example> examples;
+  Object? defaultValue;
 
   @override
   String toString() =>
@@ -130,5 +133,6 @@ class QueryParameterObject extends QueryParameter {
       'rawName: $rawName, description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'allowReserved: $allowReserved, explode: $explode, '
-      'model: $model, encoding: $encoding, examples: $examples}';
+      'model: $model, encoding: $encoding, defaultValue: $defaultValue, '
+      'examples: $examples}';
 }

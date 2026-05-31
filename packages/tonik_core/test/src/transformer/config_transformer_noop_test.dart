@@ -23,6 +23,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       final petModel = ClassModel(
@@ -48,6 +49,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: ctx.push('components').push('parameters').push('petId'),
         examples: const [],
+        defaultValue: null,
       );
 
       final getPet = Operation(

@@ -242,6 +242,8 @@ class RequestParameterImporter {
 
         final model = modelImporter.importSchema(parameter.schema!, context);
 
+        final rawDefault = parameter.schema?.rawDefault;
+
         switch (parameter.location) {
           case ParameterLocation.header:
             final header = core.RequestHeaderObject(
@@ -256,6 +258,7 @@ class RequestParameterImporter {
               allowEmptyValue: parameter.allowEmptyValue ?? false,
               context: context,
               examples: exampleImporter.fromParameter(parameter),
+              defaultValue: rawDefault,
             );
             // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
@@ -279,6 +282,7 @@ class RequestParameterImporter {
               allowReserved: parameter.allowReserved ?? false,
               context: context,
               examples: exampleImporter.fromParameter(parameter),
+              defaultValue: rawDefault,
             );
             // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
@@ -299,6 +303,7 @@ class RequestParameterImporter {
               allowEmptyValue: parameter.allowEmptyValue ?? false,
               context: context,
               examples: exampleImporter.fromParameter(parameter),
+              defaultValue: rawDefault,
             );
             // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
@@ -318,6 +323,7 @@ class RequestParameterImporter {
               isDeprecated: parameter.isDeprecated ?? false,
               context: context,
               examples: exampleImporter.fromParameter(parameter),
+              defaultValue: rawDefault,
             );
             // Apply x-dart-name vendor extension.
             if (parameter.xDartName != null) {

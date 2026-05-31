@@ -37,6 +37,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
         modelB.properties = [
@@ -47,6 +48,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
 
@@ -72,6 +74,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ];
 
@@ -111,6 +114,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
         modelB.properties = [
@@ -121,6 +125,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
         modelC.properties = [
@@ -131,6 +136,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
 
@@ -164,6 +170,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
         modelB.properties = [
@@ -174,6 +181,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
 
@@ -407,6 +415,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'count',
@@ -415,6 +424,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -519,6 +529,7 @@ void main() {
                 isNullable: true,
                 isDeprecated: false,
                 examples: const [],
+                defaultValue: null,
               ),
           ];
         }
@@ -620,6 +631,7 @@ void main() {
                 isNullable: true,
                 isDeprecated: false,
                 examples: const [],
+                defaultValue: null,
               ),
           ];
         }
@@ -674,6 +686,7 @@ void main() {
             model: current,
             context: context.push('Alias$i'),
             examples: const [],
+            defaultValue: null,
           );
           aliases.insert(0, alias);
           current = alias;
@@ -728,6 +741,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
         modelB.properties = [
@@ -738,6 +752,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ];
 

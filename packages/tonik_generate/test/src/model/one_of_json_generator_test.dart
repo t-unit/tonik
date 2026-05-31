@@ -133,6 +133,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -152,6 +153,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -259,6 +261,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -279,6 +282,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -598,6 +602,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -659,6 +664,7 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               context: context,
@@ -771,6 +777,7 @@ void main() {
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
+                defaultValue: null,
               ),
             ],
             context: context,
@@ -887,6 +894,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final model = OneOfModel(
@@ -1008,6 +1016,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -1064,6 +1073,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -1109,6 +1119,7 @@ void main() {
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final model = OneOfModel(
@@ -1152,6 +1163,7 @@ void main() {
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final model = OneOfModel(
@@ -1172,6 +1184,7 @@ void main() {
                       isNullable: false,
                       isDeprecated: false,
                       examples: const [],
+                      defaultValue: null,
                     ),
                   ],
                   context: context,

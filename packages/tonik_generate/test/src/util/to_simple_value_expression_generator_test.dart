@@ -41,6 +41,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToSimplePathParameterExpression('userId', parameter)),
@@ -61,6 +62,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -88,6 +90,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToSimplePathParameterExpression('timestamp', parameter)),
@@ -108,6 +111,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(buildToSimplePathParameterExpression('neverParam', parameter)),
@@ -130,6 +134,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -152,6 +157,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -179,6 +185,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -332,6 +339,7 @@ void main() {
         model: underlying,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -991,6 +999,7 @@ void main() {
             context: context,
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           ),
           encoding: PathParameterEncoding.simple,
           explode: false,
@@ -999,6 +1008,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(
@@ -1022,6 +1032,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1044,6 +1055,7 @@ void main() {
           context: context,
           isNullable: true,
           examples: const [],
+          defaultValue: null,
         ),
         encoding: HeaderParameterEncoding.simple,
         explode: false,
@@ -1052,6 +1064,7 @@ void main() {
         isDeprecated: false,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(
         emit(
@@ -1075,6 +1088,7 @@ void main() {
             context: context,
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           ),
           encoding: HeaderParameterEncoding.simple,
           explode: false,
@@ -1083,6 +1097,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(
@@ -1120,6 +1135,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(
@@ -1156,6 +1172,7 @@ void main() {
           isDeprecated: false,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         expect(
           emit(
@@ -1273,6 +1290,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(StringModel)',
       );
@@ -1284,9 +1302,11 @@ void main() {
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(AliasModel(StringModel))',
       );
@@ -1375,6 +1395,7 @@ void main() {
           model: NeverModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(NeverModel)',
         containsText: 'never-typed',
@@ -1391,9 +1412,11 @@ void main() {
             model: NeverModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(AliasModel(NeverModel))',
         containsText: 'never-typed',
@@ -1417,6 +1440,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(MapModel(ClassModel))',
         containsText: 'map with complex value types',
@@ -1486,6 +1510,7 @@ void main() {
             model: NeverModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],

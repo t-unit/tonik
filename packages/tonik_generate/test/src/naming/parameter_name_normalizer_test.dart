@@ -548,6 +548,7 @@ PathParameterObject createPathParameter(
     encoding: PathParameterEncoding.simple,
     context: context,
     examples: const [],
+    defaultValue: null,
   );
 }
 
@@ -570,6 +571,7 @@ QueryParameterObject createQueryParameter(
     encoding: QueryParameterEncoding.form,
     context: context,
     examples: const [],
+    defaultValue: null,
   );
 }
 
@@ -591,6 +593,7 @@ RequestHeaderObject createHeader(
     encoding: HeaderParameterEncoding.simple,
     context: context,
     examples: const [],
+    defaultValue: null,
   );
 }
 
@@ -611,5 +614,6 @@ CookieParameterObject createCookieParameter(
     encoding: CookieParameterEncoding.form,
     context: context,
     examples: const [],
+    defaultValue: null,
   );
 }

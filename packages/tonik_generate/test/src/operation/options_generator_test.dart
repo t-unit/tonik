@@ -221,6 +221,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -292,6 +293,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       // Required date header that allows empty values
@@ -307,6 +309,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       // Optional boolean header
@@ -322,6 +325,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       // Optional list header
@@ -341,6 +345,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -450,6 +455,7 @@ void main() {
           encoding: HeaderParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -517,6 +523,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -594,6 +601,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -676,6 +684,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1012,6 +1021,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final operation = Operation(
         operationId: 'explicitAccept',
@@ -1083,6 +1093,7 @@ void main() {
           encoding: HeaderParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         final operation = Operation(
           operationId: 'optionalAccept',
@@ -1164,6 +1175,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1224,6 +1236,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1289,6 +1302,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final cookie2 = CookieParameterObject(
@@ -1302,6 +1316,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1374,6 +1389,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1438,6 +1454,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1505,6 +1522,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1577,6 +1595,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1657,6 +1676,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1707,6 +1727,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -1786,6 +1807,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -1871,6 +1893,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -1946,6 +1969,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2019,6 +2043,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2094,6 +2119,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2176,6 +2202,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2245,6 +2272,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -2320,6 +2348,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2397,6 +2426,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2481,6 +2511,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2555,6 +2586,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final stringCookie = CookieParameterObject(
@@ -2568,6 +2600,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2646,10 +2679,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2726,10 +2761,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2809,12 +2846,14 @@ void main() {
             ),
             context: context,
             examples: const [],
+            defaultValue: null,
           );
           final flagList = AliasModel(
             name: 'FlagList',
             model: boolArray,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final cookieParam = CookieParameterObject(
@@ -2828,6 +2867,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2914,10 +2954,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3004,10 +3046,12 @@ void main() {
             ),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -3082,10 +3126,12 @@ void main() {
             model: AnyModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -3164,10 +3210,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3257,10 +3305,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3345,10 +3395,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3425,10 +3477,12 @@ void main() {
             ),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -3505,10 +3559,12 @@ void main() {
             model: AnyModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -3585,10 +3641,12 @@ void main() {
               model: Base64Model(context: context),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3664,10 +3722,12 @@ void main() {
               model: BinaryModel(context: context),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3745,10 +3805,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3832,10 +3894,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3909,10 +3973,12 @@ void main() {
               model: Base64Model(context: context),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -3992,10 +4058,12 @@ void main() {
               model: BinaryModel(context: context),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -4076,10 +4144,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -4167,10 +4237,12 @@ void main() {
               ),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(

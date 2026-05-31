@@ -250,6 +250,7 @@ void main() {
           context: context.push('ExistingAlias'),
           description: 'Already an alias',
           examples: const [],
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -287,6 +288,7 @@ void main() {
           model: baseModel,
           context: context.push('InnerAlias'),
           examples: const [],
+          defaultValue: null,
         );
 
         final outerAllOf = AllOfModel(
@@ -403,6 +405,7 @@ void main() {
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context.push('ArtistObject'),
@@ -622,6 +625,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context.push('ContainerModel'),

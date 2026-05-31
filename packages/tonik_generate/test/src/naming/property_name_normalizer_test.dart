@@ -382,5 +382,6 @@ Property createProperty(String name, {bool isDeprecated = false}) {
     isNullable: true,
     isDeprecated: isDeprecated,
     examples: const [],
+    defaultValue: null,
   );
 }

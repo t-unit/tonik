@@ -45,6 +45,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
         Property(
           name: 'version',
@@ -53,6 +54,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
         Property(
           name: 'region',
@@ -61,6 +63,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ],
       context: context,
@@ -82,6 +85,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
         Property(
           name: 'confirmPassword',
@@ -90,6 +94,7 @@ void main() {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
         Property(
           name: 'hint',
@@ -98,6 +103,7 @@ void main() {
           isNullable: true,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         ),
       ],
       context: context,
@@ -365,6 +371,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'token',
@@ -374,6 +381,7 @@ void main() {
             isDeprecated: false,
             isWriteOnly: true,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,

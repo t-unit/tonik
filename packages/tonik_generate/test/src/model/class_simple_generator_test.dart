@@ -43,6 +43,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'count',
@@ -51,6 +52,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'label',
@@ -59,6 +61,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'created',
@@ -67,6 +70,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'amount',
@@ -75,6 +79,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'thumbnail',
@@ -83,6 +88,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -174,6 +180,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -236,6 +243,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'count',
@@ -244,6 +252,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'label',
@@ -252,6 +261,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'created',
@@ -260,6 +270,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'amount',
@@ -268,6 +279,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -359,6 +371,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -444,6 +457,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -503,6 +517,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -525,6 +540,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -563,6 +579,7 @@ void main() {
         model: IntegerModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final model = ClassModel(
         isDeprecated: false,
@@ -575,6 +592,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -642,6 +660,7 @@ void main() {
         model: oneOfModel,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final model = ClassModel(
         isDeprecated: false,
@@ -654,6 +673,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -720,6 +740,7 @@ void main() {
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
+                defaultValue: null,
               ),
             ],
             context: context,
@@ -727,6 +748,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         final model = ClassModel(
           isDeprecated: false,
@@ -739,6 +761,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -782,6 +805,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
         final model = ClassModel(
           isDeprecated: false,
@@ -794,6 +818,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -844,6 +869,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'address',
@@ -852,6 +878,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -895,6 +922,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -961,6 +989,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -1027,6 +1056,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'endpoint',
@@ -1035,6 +1065,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'port',
@@ -1043,6 +1074,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'callback',
@@ -1051,6 +1083,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -1124,6 +1157,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'age',
@@ -1132,6 +1166,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -1183,6 +1218,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'address',
@@ -1197,6 +1233,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,

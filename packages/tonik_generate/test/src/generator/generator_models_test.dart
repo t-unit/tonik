@@ -73,6 +73,7 @@ void main() {
             model: StringModel(context: ctx),
             context: ctx,
             examples: const [],
+            defaultValue: null,
           ),
           ListModel(
             name: 'UserList',

@@ -71,6 +71,7 @@ class AnyOfGenerator {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
         })
         .toList();
@@ -132,6 +133,7 @@ class AnyOfGenerator {
                   name: '\$Raw$publicClassName',
                   model: model,
                   context: model.context,
+                  defaultValue: null,
                   examples: const [],
                 ),
               )
@@ -154,6 +156,7 @@ class AnyOfGenerator {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           );
         })
         .toList();

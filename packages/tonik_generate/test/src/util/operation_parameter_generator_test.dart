@@ -34,6 +34,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -79,6 +80,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -123,6 +125,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -171,6 +174,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -210,6 +214,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -253,6 +258,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -297,6 +303,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final cookieParam = CookieParameterObject(
@@ -310,6 +317,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -353,6 +361,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final queryParam = QueryParameterObject(
@@ -368,6 +377,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final headerParam = RequestHeaderObject(
@@ -382,6 +392,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final cookieParam = CookieParameterObject(
@@ -395,6 +406,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -447,6 +459,7 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               context: context,
@@ -529,6 +542,7 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               context: context,
@@ -630,6 +644,7 @@ void main() {
                     isNullable: false,
                     isDeprecated: false,
                     examples: const [],
+                    defaultValue: null,
                   ),
                 ],
                 context: context,
@@ -711,6 +726,7 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               context: context,
@@ -802,6 +818,7 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               context: context,
@@ -870,6 +887,7 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               context: context,
@@ -915,6 +933,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -969,6 +988,7 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               context: context,
@@ -1055,6 +1075,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,
@@ -1143,6 +1164,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final requestBody = RequestBodyObject(
@@ -1215,6 +1237,7 @@ void main() {
           encoding: HeaderParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final requestBody = RequestBodyObject(
@@ -1286,6 +1309,7 @@ void main() {
           encoding: CookieParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final requestBody = RequestBodyObject(
@@ -1358,6 +1382,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -1402,6 +1427,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1448,6 +1474,7 @@ void main() {
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1494,6 +1521,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1539,6 +1567,7 @@ void main() {
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final operation = Operation(
@@ -1589,6 +1618,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final requestBody = RequestBodyObject(
@@ -1663,6 +1693,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(

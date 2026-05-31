@@ -36,6 +36,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'name',
@@ -44,6 +45,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'isActive',
@@ -52,6 +54,7 @@ void main() {
             isNullable: true,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         context: context,

@@ -33,6 +33,7 @@ sealed class RequestHeader {
           encoding: header.encoding,
           context: context,
           examples: header.examples,
+          defaultValue: header.defaultValue,
         );
       case final RequestHeaderAlias alias:
         return alias.header.resolve(
@@ -90,6 +91,7 @@ class RequestHeaderObject extends RequestHeader {
     required this.encoding,
     required super.context,
     required this.examples,
+    required this.defaultValue,
     this.nameOverride,
   });
 
@@ -109,6 +111,7 @@ class RequestHeaderObject extends RequestHeader {
   Model model;
   HeaderParameterEncoding encoding;
   List<Example> examples;
+  Object? defaultValue;
 
   @override
   String toString() =>
@@ -116,5 +119,5 @@ class RequestHeaderObject extends RequestHeader {
       'rawName: $rawName, description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'explode: $explode, model: $model, encoding: $encoding, '
-      'examples: $examples}';
+      'defaultValue: $defaultValue, examples: $examples}';
 }

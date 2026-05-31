@@ -151,6 +151,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           CookieParameterObject(
             name: 'optionalCookie',
@@ -163,6 +164,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -213,6 +215,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -263,6 +266,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -328,6 +332,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           CookieParameterObject(
             name: 'userId',
@@ -340,6 +345,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -421,6 +427,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -491,6 +498,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -560,6 +568,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -612,6 +621,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
           Property(
             name: 'name',
@@ -620,6 +630,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         examples: const [],
@@ -647,6 +658,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -712,6 +724,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -780,6 +793,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -829,6 +843,7 @@ void main() {
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
+                defaultValue: null,
               ),
             ],
             examples: const [],
@@ -845,6 +860,7 @@ void main() {
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
+                defaultValue: null,
               ),
             ],
             examples: const [],
@@ -875,6 +891,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -920,6 +937,7 @@ void main() {
                   isNullable: false,
                   isDeprecated: false,
                   examples: const [],
+                  defaultValue: null,
                 ),
               ],
               examples: const [],
@@ -928,6 +946,7 @@ void main() {
             isNullable: false,
             isDeprecated: false,
             examples: const [],
+            defaultValue: null,
           ),
         ],
         examples: const [],
@@ -955,6 +974,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -1008,6 +1028,7 @@ void main() {
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
         },
         responses: const {},
@@ -1072,6 +1093,7 @@ CookieParameterObject createCookieParameter(
     encoding: CookieParameterEncoding.form,
     context: context,
     examples: const [],
+    defaultValue: null,
   );
 }
 
@@ -1093,6 +1115,7 @@ PathParameterObject createPathParameter(
     encoding: PathParameterEncoding.simple,
     context: context,
     examples: const [],
+    defaultValue: null,
   );
 }
 
@@ -1115,6 +1138,7 @@ QueryParameterObject createQueryParameter(
     encoding: QueryParameterEncoding.form,
     context: context,
     examples: const [],
+    defaultValue: null,
   );
 }
 
@@ -1136,5 +1160,6 @@ RequestHeaderObject createHeader(
     encoding: HeaderParameterEncoding.simple,
     context: context,
     examples: const [],
+    defaultValue: null,
   );
 }
