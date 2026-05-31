@@ -93,6 +93,7 @@ add_dependency_overrides_recursive() {
 # Remove existing generated API projects before regenerating
 echo "Cleaning up existing generated API projects..."
 rm -rf additional_properties/additional_properties_api
+rm -rf defaulted_primitives/defaulted_primitives_api
 rm -rf petstore/petstore_api
 rm -rf petstore_config/petstore_api
 rm -rf petstore_config/petstore_filtering_api
@@ -138,6 +139,9 @@ rm -rf recursive_map/recursive_map_api
 # Generate all API packages first
 $TONIK_BINARY -p additional_properties_api -s additional_properties/openapi.yaml -o additional_properties
 add_dependency_overrides_recursive "additional_properties/additional_properties_api"
+
+$TONIK_BINARY -p defaulted_primitives_api -s defaulted_primitives/openapi.yaml -o defaulted_primitives
+add_dependency_overrides_recursive "defaulted_primitives/defaulted_primitives_api"
 
 $TONIK_BINARY --config petstore/tonik.yaml
 add_dependency_overrides_recursive "petstore/petstore_api"
@@ -260,6 +264,7 @@ add_dependency_overrides_recursive "recursive_map/recursive_map_api"
 echo "Running dart pub get for all generated packages in parallel..."
 (
   cd additional_properties/additional_properties_api && dart pub get &
+  cd defaulted_primitives/defaulted_primitives_api && dart pub get &
   cd petstore/petstore_api && dart pub get &
   cd petstore_config/petstore_api && dart pub get &
   cd petstore_config/petstore_filtering_api && dart pub get &
@@ -324,6 +329,7 @@ fi
 # (reverts any changes made by verify_published_version.sh)
 echo "Restoring local dependency overrides in test packages..."
 restore_test_package_overrides "additional_properties/additional_properties_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "defaulted_primitives/defaulted_primitives_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "petstore/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "petstore_config/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "music_streaming/music_streaming_test/pubspec.yaml" "../../../packages/tonik_util"
@@ -364,6 +370,7 @@ restore_test_package_overrides "recursive_map/recursive_map_test/pubspec.yaml" "
 echo "Running dart pub get for all test packages in parallel..."
 (
   cd additional_properties/additional_properties_test && dart pub get &
+  cd defaulted_primitives/defaulted_primitives_test && dart pub get &
   cd petstore/petstore_test && dart pub get &
   cd petstore_config/petstore_test && dart pub get &
   cd music_streaming/music_streaming_test && dart pub get &

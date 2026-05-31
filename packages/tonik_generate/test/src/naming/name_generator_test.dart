@@ -1538,5 +1538,83 @@ void main() {
         );
       });
     });
+
+    group('generateDefaultMemberName', () {
+      test('returns <propertyName>Default when nothing collides', () {
+        expect(
+          nameGenerator.generateDefaultMemberName(
+            propertyName: 'name',
+            reservedNames: const <String>{'name'},
+          ),
+          'nameDefault',
+        );
+      });
+
+      test('appends numeric suffix starting at 2 on collision', () {
+        expect(
+          nameGenerator.generateDefaultMemberName(
+            propertyName: 'value',
+            reservedNames: const <String>{'value', 'valueDefault'},
+          ),
+          'valueDefault2',
+        );
+      });
+
+      test('skips occupied numeric suffixes', () {
+        expect(
+          nameGenerator.generateDefaultMemberName(
+            propertyName: 'value',
+            reservedNames: const <String>{
+              'value',
+              'valueDefault',
+              'valueDefault2',
+              'valueDefault3',
+            },
+          ),
+          'valueDefault4',
+        );
+      });
+
+      test('does not mutate the reservedNames set', () {
+        final reserved = <String>{'name', 'nameDefault'};
+        nameGenerator.generateDefaultMemberName(
+          propertyName: 'name',
+          reservedNames: reserved,
+        );
+        expect(reserved, <String>{'name', 'nameDefault'});
+      });
+    });
+
+    group('generateAdditionalPropertiesFieldName', () {
+      test('returns additionalProperties when nothing collides', () {
+        expect(
+          nameGenerator.generateAdditionalPropertiesFieldName(
+            reservedNames: const <String>{'name', 'count'},
+          ),
+          'additionalProperties',
+        );
+      });
+
+      test('appends numeric suffix starting at 2 on collision', () {
+        expect(
+          nameGenerator.generateAdditionalPropertiesFieldName(
+            reservedNames: const <String>{'additionalProperties'},
+          ),
+          'additionalProperties2',
+        );
+      });
+
+      test('skips occupied numeric suffixes', () {
+        expect(
+          nameGenerator.generateAdditionalPropertiesFieldName(
+            reservedNames: const <String>{
+              'additionalProperties',
+              'additionalProperties2',
+            },
+          ),
+          'additionalProperties3',
+        );
+      });
+    });
   });
 }

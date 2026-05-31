@@ -17,21 +17,6 @@ bool hasActiveAdditionalProperties(
     additionalProperties is UnrestrictedAdditionalProperties ||
     additionalProperties is TypedAdditionalProperties;
 
-/// Picks a field name for the additional-properties map that does not collide
-/// with any of the already-normalised property names.
-String pickAdditionalPropertiesFieldName(
-  List<({String normalizedName, Property property})> normalizedProperties,
-) {
-  final usedNames = normalizedProperties.map((p) => p.normalizedName).toSet();
-  var candidate = 'additionalProperties';
-  var counter = 2;
-  while (usedNames.contains(candidate)) {
-    candidate = 'additionalProperties$counter';
-    counter++;
-  }
-  return candidate;
-}
-
 const _ficUrl =
     'package:fast_immutable_collections/fast_immutable_collections.dart';
 
