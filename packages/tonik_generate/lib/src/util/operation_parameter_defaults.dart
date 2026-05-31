@@ -28,11 +28,18 @@ class OperationParameterDefault {
   OperationParameterDefault withOwner({
     required String className,
     required String url,
-  }) => OperationParameterDefault.qualified(
-    memberName: memberName,
-    className: className,
-    url: url,
-  );
+  }) {
+    assert(
+      _owner == null,
+      'withOwner called on an already-qualified OperationParameterDefault — '
+      'qualifying twice would silently overwrite the existing owner.',
+    );
+    return OperationParameterDefault.qualified(
+      memberName: memberName,
+      className: className,
+      url: url,
+    );
+  }
 
   Code defaultToCode() {
     final owner = _owner;

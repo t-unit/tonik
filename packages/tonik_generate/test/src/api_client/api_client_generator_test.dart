@@ -2067,6 +2067,64 @@ void main() {
       );
 
       test(
+        'forwarder body invokes the operation with the parameter name, not '
+        'the qualified default reference',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: testContext),
+            encoding: QueryParameterEncoding.form,
+            context: testContext,
+            examples: const [],
+            defaultValue: 'us',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: testContext,
+            tags: {Tag(name: 'things')},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final generatedClass = generator.generateClass(
+            {operation},
+            Tag(name: 'things'),
+            testServers,
+          );
+
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+
+          const expectedMethod = '''
+Future<TonikResult<void>> listThings({
+  String region = ListThings.regionDefault,
+}) async => _listThings(region: region);
+''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+
+      test(
         'suppresses dropped-default warnings — the operation class is the '
         'sole logging site',
         () {

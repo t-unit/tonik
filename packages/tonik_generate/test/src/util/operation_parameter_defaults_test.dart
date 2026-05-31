@@ -939,4 +939,38 @@ void main() {
       },
     );
   });
+
+  group('OperationParameterDefault.withOwner', () {
+    test('qualifies a local default with the supplied owner', () {
+      const local = OperationParameterDefault.local(
+        memberName: 'regionDefault',
+      );
+
+      final qualified = local.withOwner(
+        className: 'ListThings',
+        url: 'package:api/src/operation/list_things.dart',
+      );
+
+      expect(
+        qualified.defaultToCode().accept(emitter).toString(),
+        'ListThings.regionDefault',
+      );
+    });
+
+    test('asserts when called on an already-qualified default', () {
+      const qualified = OperationParameterDefault.qualified(
+        memberName: 'regionDefault',
+        className: 'ListThings',
+        url: 'package:api/src/operation/list_things.dart',
+      );
+
+      expect(
+        () => qualified.withOwner(
+          className: 'OtherClass',
+          url: 'package:api/src/operation/other_class.dart',
+        ),
+        throwsA(isA<AssertionError>()),
+      );
+    });
+  });
 }

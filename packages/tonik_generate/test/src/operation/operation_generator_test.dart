@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -3186,6 +3187,166 @@ Future<TonikResult<void>> call({
 
           final fieldNames = result.fields.map((f) => f.name).toList();
           expect(fieldNames, ['_dio']);
+        },
+      );
+
+      test(
+        'call() body delegates to _path/_queryParameters with the parameter '
+        'name, not the qualified default reference',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'us',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+Future<TonikResult<void>> call({
+  String region = regionDefault,
+  CancelToken? cancelToken,
+}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(
+      path: _$newPath,
+      query: _queryParameters(region: region),
+    );
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  return TonikSuccess(null, _$response);
+}
+''';
+
+          final cls = generator.generateClass(operation, 'ListThings');
+          final method = cls.methods.firstWhere((m) => m.name == 'call');
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(expectedMethod),
+          );
+        },
+      );
+
+      test(
+        'emits exactly one warning when a primitive default value does not '
+        'match the parameter type',
+        () {
+          final logs = <LogRecord>[];
+          final sub = Logger('OperationParameterDefaults')
+              .onRecord
+              .listen(logs.add);
+          addTearDown(sub.cancel);
+
+          final queryParam = QueryParameterObject(
+            name: 'enabled',
+            rawName: 'enabled',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: BooleanModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'true',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          generator.generateClass(operation, 'ListThings');
+
+          final warnings =
+              logs.where((r) => r.level == Level.WARNING).toList();
+          expect(warnings, hasLength(1));
+          expect(warnings.single.message, contains('ListThings'));
+          expect(warnings.single.message, contains('enabled'));
         },
       );
     });
