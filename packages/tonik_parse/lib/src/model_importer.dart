@@ -551,8 +551,7 @@ class ModelImporter {
         ..description = schema.description
         ..isDeprecated = (schema.isDeprecated ?? false)
         ..isNullable = (schema.isNullable ?? schema.type.contains('null'))
-        ..defaultValue =
-            schema.rawDefault ?? _resolvedDefault(refModel);
+        ..defaultValue = schema.rawDefault;
       return;
     }
 
@@ -561,22 +560,7 @@ class ModelImporter {
       ..description = schema.description
       ..isDeprecated = (schema.isDeprecated ?? false)
       ..isNullable = (schema.isNullable ?? schema.type.contains('null'))
-      ..defaultValue =
-          schema.rawDefault ?? _resolvedDefault(refModel);
-  }
-
-  /// Walks an [AliasModel] chain on [refModel] to surface a `default`
-  /// declared on the referenced schema. Returns `null` if no member of
-  /// the chain carries a default.
-  Object? _resolvedDefault(Model refModel) {
-    var current = refModel;
-    final visited = <Model>{};
-    while (current is AliasModel) {
-      if (!visited.add(current)) return null;
-      if (current.defaultValue != null) return current.defaultValue;
-      current = current.model;
-    }
-    return null;
+      ..defaultValue = schema.rawDefault;
   }
 
   /// Attaches schema-level [examples] to an already-constructed [model].
@@ -1182,8 +1166,7 @@ class ModelImporter {
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.isNullable ?? schema.type.contains('null'),
-        defaultValue:
-            schema.rawDefault ?? _resolvedDefault(refModel),
+        defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
       );
 
@@ -1337,8 +1320,7 @@ class ModelImporter {
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.isNullable ?? schema.type.contains('null'),
-        defaultValue:
-            schema.rawDefault ?? _resolvedDefault(refModel),
+        defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
       );
 

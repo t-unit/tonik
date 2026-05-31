@@ -203,5 +203,109 @@ void main() {
       final resolved = cookie.resolve();
       expect(resolved.defaultValue, 'anonymous');
     });
+
+    test('QueryParameterAlias.resolve propagates defaultValue', () {
+      final context = Context.initial();
+      final inner = QueryParameterObject(
+        name: 'limit',
+        rawName: 'limit',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: IntegerModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 10,
+      );
+      final alias = QueryParameterAlias(
+        name: 'limitAlias',
+        parameter: inner,
+        context: context,
+      );
+
+      final resolved = alias.resolve();
+      expect(resolved.defaultValue, 10);
+    });
+
+    test('PathParameterAlias.resolve propagates defaultValue', () {
+      final context = Context.initial();
+      final inner = PathParameterObject(
+        name: 'id',
+        rawName: 'id',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: PathParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: 'main',
+      );
+      final alias = PathParameterAlias(
+        name: 'idAlias',
+        parameter: inner,
+        context: context,
+      );
+
+      final resolved = alias.resolve();
+      expect(resolved.defaultValue, 'main');
+    });
+
+    test('RequestHeaderAlias.resolve propagates defaultValue', () {
+      final context = Context.initial();
+      final inner = RequestHeaderObject(
+        name: 'X-Locale',
+        rawName: 'X-Locale',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: HeaderParameterEncoding.simple,
+        context: context,
+        examples: const [],
+        defaultValue: 'en',
+      );
+      final alias = RequestHeaderAlias(
+        name: 'LocaleAlias',
+        header: inner,
+        context: context,
+      );
+
+      final resolved = alias.resolve();
+      expect(resolved.defaultValue, 'en');
+    });
+
+    test('CookieParameterAlias.resolve propagates defaultValue', () {
+      final context = Context.initial();
+      final inner = CookieParameterObject(
+        name: 'session',
+        rawName: 'session',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        explode: true,
+        model: StringModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 'anonymous',
+      );
+      final alias = CookieParameterAlias(
+        name: 'sessionAlias',
+        parameter: inner,
+        context: context,
+      );
+
+      final resolved = alias.resolve();
+      expect(resolved.defaultValue, 'anonymous');
+    });
   });
 }

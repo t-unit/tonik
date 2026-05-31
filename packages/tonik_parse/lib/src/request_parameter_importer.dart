@@ -242,7 +242,7 @@ class RequestParameterImporter {
 
         final model = modelImporter.importSchema(parameter.schema!, context);
 
-        final rawDefault = parameter.schema?.rawDefault;
+        final rawDefault = parameter.schema!.rawDefault;
 
         switch (parameter.location) {
           case ParameterLocation.header:

@@ -1,7 +1,10 @@
+import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/src/model/example.dart';
 import 'package:tonik_core/src/util/context.dart';
 import 'package:tonik_util/tonik_util.dart';
+
+final Logger _aliasModelLog = Logger('AliasModel');
 
 sealed class AdditionalProperties {
   const AdditionalProperties();
@@ -160,7 +163,7 @@ class AliasModel extends Model with NamedModel {
     required this.model,
     required super.context,
     required this.examples,
-    required this.defaultValue,
+    required Object? defaultValue,
     this.name,
     this.nameOverride,
     this.description,
@@ -168,7 +171,7 @@ class AliasModel extends Model with NamedModel {
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
-  });
+  }) : _localDefault = defaultValue;
 
   @override
   final String? name;
@@ -176,12 +179,43 @@ class AliasModel extends Model with NamedModel {
   String? nameOverride;
   Model model;
   String? description;
-  Object? defaultValue;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
   List<Example> examples;
+
+  /// Default value declared directly on this alias (sibling-of-`$ref`,
+  /// or own `default` on a primitive shell). Not the chain-resolved view.
+  Object? _localDefault;
+
+  /// Raw OpenAPI `default` value carried by this alias.
+  ///
+  /// Resolves lazily by first returning the locally declared override
+  /// (a sibling-of-`$ref` or the alias's own `default`), and otherwise
+  /// walking the inner model chain. Returns `null` if neither this alias
+  /// nor any wrapped alias carries a default. `null` is by design
+  /// indistinguishable from an explicit `default: null` in the spec —
+  /// the raw value is not validated against the alias's resolved type.
+  Object? get defaultValue => _resolveDefault(this, <AliasModel>{});
+
+  set defaultValue(Object? value) {
+    _localDefault = value;
+  }
+
+  static Object? _resolveDefault(AliasModel alias, Set<AliasModel> visited) {
+    if (!visited.add(alias)) {
+      _aliasModelLog.fine(
+        'Cycle detected in alias chain while resolving default; '
+        'returning null.',
+      );
+      return null;
+    }
+    if (alias._localDefault != null) return alias._localDefault;
+    final inner = alias.model;
+    if (inner is AliasModel) return _resolveDefault(inner, visited);
+    return null;
+  }
 
   @override
   Model get resolved => switch (model) {
@@ -595,6 +629,12 @@ class Property {
   bool isReadOnly;
   bool isWriteOnly;
   List<Example> examples;
+
+  /// Raw OpenAPI `default` value declared directly on this property.
+  ///
+  /// Not validated against the property's resolved type. `null` is
+  /// overloaded: it means both "no `default` keyword" and `default: null`
+  /// and the two are treated identically downstream by design.
   Object? defaultValue;
 
   @override

@@ -108,6 +108,12 @@ class CookieParameterObject extends CookieParameter {
   Model model;
   CookieParameterEncoding encoding;
   List<Example> examples;
+
+  /// Raw OpenAPI `default` value declared on the parameter's schema.
+  ///
+  /// Not validated against the parameter's resolved type. `null` is
+  /// overloaded: it means both "no `default` keyword" and `default: null`
+  /// and the two are treated identically downstream by design.
   Object? defaultValue;
 
   @override

@@ -123,7 +123,7 @@ void main() {
       expect(aliasOfCountry.defaultValue, 'US');
     });
 
-    test('sibling default overrides referenced schema default (D6)', () {
+    test('sibling default overrides referenced schema default', () {
       final api = Importer().import({
         'openapi': '3.0.0',
         'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -231,5 +231,117 @@ void main() {
       ) as AliasModel;
       expect(greeting.defaultValue, 'hello');
     });
+
+    test(r'two-hop $ref chain surfaces the terminal default on the head', () {
+      final api = Importer().import({
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'A': {r'$ref': '#/components/schemas/B'},
+            'B': {r'$ref': '#/components/schemas/C'},
+            'C': {'type': 'string', 'default': 'X'},
+          },
+        },
+      });
+
+      final a = api.models.firstWhere(
+        (m) => m is AliasModel && m.name == 'A',
+      ) as AliasModel;
+      final b = api.models.firstWhere(
+        (m) => m is AliasModel && m.name == 'B',
+      ) as AliasModel;
+      final c = api.models.firstWhere(
+        (m) => m is AliasModel && m.name == 'C',
+      ) as AliasModel;
+
+      expect(c.defaultValue, 'X');
+      expect(b.defaultValue, 'X');
+      expect(a.defaultValue, 'X');
+    });
+
+    test(
+      r'two-hop $ref chain with reversed declaration order also '
+      'surfaces the terminal default',
+      () {
+        final api = Importer().import({
+          'openapi': '3.0.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'C': {'type': 'string', 'default': 'X'},
+              'B': {r'$ref': '#/components/schemas/C'},
+              'A': {r'$ref': '#/components/schemas/B'},
+            },
+          },
+        });
+
+        final a = api.models.firstWhere(
+          (m) => m is AliasModel && m.name == 'A',
+        ) as AliasModel;
+        expect(a.defaultValue, 'X');
+      },
+    );
+
+    test(
+      r'bare $ref cycle with sibling default terminates and surfaces '
+      'the local default',
+      () {
+        final api = Importer().import({
+          'openapi': '3.0.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'A': {
+                r'$ref': '#/components/schemas/B',
+                'default': 'x',
+              },
+              'B': {r'$ref': '#/components/schemas/A'},
+            },
+          },
+        });
+
+        final a = api.models.firstWhere(
+          (m) => m is AliasModel && m.name == 'A',
+        ) as AliasModel;
+        expect(a.defaultValue, 'x');
+      },
+    );
+
+    test(
+      r'$defs reference with default surfaces on AliasModel',
+      () {
+        final api = Importer().import({
+          'openapi': '3.0.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'Outer': {
+                'type': 'object',
+                r'$defs': {
+                  'Sub': {'type': 'string', 'default': 'd'},
+                },
+                'properties': {
+                  'sub': {
+                    r'$ref': r'#/components/schemas/Outer/$defs/Sub',
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        final outer = api.models.firstWhere(
+          (m) => m is ClassModel && m.name == 'Outer',
+        ) as ClassModel;
+        final sub = outer.properties.firstWhere((p) => p.name == 'sub');
+        expect(sub.model, isA<AliasModel>());
+        expect((sub.model as AliasModel).defaultValue, 'd');
+      },
+    );
   });
 }
