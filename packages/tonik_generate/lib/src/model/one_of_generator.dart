@@ -342,6 +342,7 @@ class OneOfGenerator {
           isNullable: false,
           isDeprecated: false,
           examples: const [],
+          defaultValue: null,
         );
         final jsonValueBuilt = buildToJsonPropertyExpression(
           'value',

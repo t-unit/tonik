@@ -385,6 +385,7 @@ void main() {
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],
@@ -407,6 +408,7 @@ void main() {
             model: IntegerModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],
@@ -560,6 +562,7 @@ void main() {
             context: context,
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],
@@ -591,6 +594,7 @@ void main() {
             context: context,
             isNullable: true,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],
@@ -732,6 +736,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(isMapValueTypeSimplyEncodable(model), isTrue);
     });
@@ -742,6 +747,7 @@ void main() {
         model: IntegerModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(isMapValueTypeSimplyEncodable(model), isTrue);
     });
@@ -758,6 +764,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -772,6 +779,7 @@ void main() {
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -791,9 +799,11 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       expect(isMapValueTypeSimplyEncodable(model), isFalse);
     });
@@ -981,6 +991,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(StringModel)',
       );
@@ -996,6 +1007,7 @@ void main() {
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(ClassModel)',
       );
@@ -1008,9 +1020,11 @@ void main() {
             model: IntegerModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(AliasModel(IntegerModel))',
       );
@@ -1029,9 +1043,11 @@ void main() {
             ),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
           examples: const [],
+          defaultValue: null,
         ),
         label: 'AliasModel(AliasModel(ClassModel))',
       );

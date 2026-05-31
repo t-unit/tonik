@@ -263,6 +263,7 @@ void main() {
         model: StringModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -565,6 +566,7 @@ void main() {
         model: IntegerModel(context: context),
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       final model = ListModel(
         content: aliasModel,

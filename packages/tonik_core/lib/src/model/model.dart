@@ -1,7 +1,10 @@
+import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/src/model/example.dart';
 import 'package:tonik_core/src/util/context.dart';
 import 'package:tonik_util/tonik_util.dart';
+
+final Logger _aliasModelLog = Logger('AliasModel');
 
 sealed class AdditionalProperties {
   const AdditionalProperties();
@@ -160,6 +163,7 @@ class AliasModel extends Model with NamedModel {
     required this.model,
     required super.context,
     required this.examples,
+    required Object? defaultValue,
     this.name,
     this.nameOverride,
     this.description,
@@ -167,7 +171,7 @@ class AliasModel extends Model with NamedModel {
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
-  });
+  }) : _localDefault = defaultValue;
 
   @override
   final String? name;
@@ -181,11 +185,41 @@ class AliasModel extends Model with NamedModel {
   bool isWriteOnly;
   List<Example> examples;
 
+  final Object? _localDefault;
+
+  /// The locally declared default if set, otherwise the first one found
+  /// while walking nested [AliasModel]s.
+  Object? get defaultValue => _resolveDefault(this, <AliasModel>{});
+
+  static Object? _resolveDefault(AliasModel alias, Set<AliasModel> visited) {
+    if (!visited.add(alias)) {
+      _aliasModelLog.warning(
+        'Cycle detected resolving default on alias chain rooted at '
+        '${alias.name ?? '(unnamed)'}; returning null.',
+      );
+      return null;
+    }
+    if (alias._localDefault != null) return alias._localDefault;
+    final inner = alias.model;
+    if (inner is AliasModel) return _resolveDefault(inner, visited);
+    return null;
+  }
+
   @override
-  Model get resolved => switch (model) {
-    final AliasModel alias => alias.resolved,
-    _ => model,
-  };
+  Model get resolved => _resolveResolved(this, <AliasModel>{});
+
+  static Model _resolveResolved(AliasModel alias, Set<AliasModel> visited) {
+    if (!visited.add(alias)) {
+      _aliasModelLog.warning(
+        'Cycle detected resolving terminal model on alias chain rooted at '
+        '${alias.name ?? '(unnamed)'}; returning current alias.',
+      );
+      return alias;
+    }
+    final inner = alias.model;
+    if (inner is AliasModel) return _resolveResolved(inner, visited);
+    return inner;
+  }
 
   @override
   EncodingShape get encodingShape => resolved.encodingShape;
@@ -194,7 +228,8 @@ class AliasModel extends Model with NamedModel {
   String toString() =>
       'AliasModel{name: $name, nameOverride: $nameOverride, '
       'model: ${model._ref}, description: $description, '
-      'isDeprecated: $isDeprecated, examples: $examples}';
+      'isDeprecated: $isDeprecated, defaultValue: $defaultValue, '
+      'examples: $examples}';
 }
 
 class ListModel extends Model with NamedModel {
@@ -574,6 +609,7 @@ class Property {
     required this.isNullable,
     required this.isDeprecated,
     required this.examples,
+    required this.defaultValue,
     this.isReadOnly = false,
     this.isWriteOnly = false,
     this.nameOverride,
@@ -592,11 +628,14 @@ class Property {
   bool isWriteOnly;
   List<Example> examples;
 
+  Object? defaultValue;
+
   @override
   String toString() =>
       'Property{name: $name, nameOverride: $nameOverride, '
       'model: ${model._ref}, isRequired: $isRequired, '
       'isNullable: $isNullable, isDeprecated: $isDeprecated, '
       'isReadOnly: $isReadOnly, isWriteOnly: $isWriteOnly, '
-      'description: $description, examples: $examples}';
+      'description: $description, defaultValue: $defaultValue, '
+      'examples: $examples}';
 }

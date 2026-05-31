@@ -17,6 +17,7 @@ normalizeResponseProperties(ResponseObject response) {
       isNullable: false,
       isDeprecated: header.value.resolve(name: header.key).isDeprecated,
       examples: const [],
+      defaultValue: null,
     );
 
     headerMap[property] = header.value;
@@ -33,6 +34,7 @@ normalizeResponseProperties(ResponseObject response) {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       ),
   ];
 

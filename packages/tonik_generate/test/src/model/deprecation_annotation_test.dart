@@ -342,6 +342,7 @@ void main() {
               isDeprecated: true,
               description: 'This field is deprecated',
               examples: const [],
+              defaultValue: null,
             ),
             Property(
               name: 'newField',
@@ -351,6 +352,7 @@ void main() {
               isDeprecated: false,
               description: 'This field is current',
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,
@@ -387,6 +389,7 @@ void main() {
               isDeprecated: false,
               description: 'This field is current',
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context,

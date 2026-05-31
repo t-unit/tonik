@@ -340,6 +340,7 @@ Future<TonikResult<Never>> call({CancelToken? cancelToken}) async {
                     model: NeverModel(context: context),
                     context: context,
                     examples: const [],
+                    defaultValue: null,
                   ),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,

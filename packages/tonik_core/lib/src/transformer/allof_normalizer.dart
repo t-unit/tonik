@@ -103,6 +103,7 @@ class AllOfNormalizer {
         isDeprecated: model.isDeprecated,
         isNullable: model.isNullable,
         nameOverride: model.nameOverride,
+        defaultValue: null,
         examples: model.examples,
       );
     } else if (model is AllOfModel) {

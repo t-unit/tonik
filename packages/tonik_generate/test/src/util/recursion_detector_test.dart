@@ -134,6 +134,7 @@ void main() {
         model: tree,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
       tree.valueModel = alias;
 

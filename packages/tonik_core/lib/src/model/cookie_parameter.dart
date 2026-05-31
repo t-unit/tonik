@@ -32,6 +32,7 @@ sealed class CookieParameter {
           encoding: param.encoding,
           context: context,
           examples: param.examples,
+          defaultValue: param.defaultValue,
         );
       case final CookieParameterAlias alias:
         return alias.parameter.resolve(
@@ -88,6 +89,7 @@ class CookieParameterObject extends CookieParameter {
     required this.encoding,
     required super.context,
     required this.examples,
+    required this.defaultValue,
     this.nameOverride,
   });
 
@@ -107,10 +109,13 @@ class CookieParameterObject extends CookieParameter {
   CookieParameterEncoding encoding;
   List<Example> examples;
 
+  Object? defaultValue;
+
   @override
   String toString() =>
       'CookieParameter{name: $name, nameOverride: $nameOverride, '
       'rawName: $rawName, description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, explode: $explode, '
-      'model: $model, encoding: $encoding, examples: $examples}';
+      'model: $model, encoding: $encoding, defaultValue: $defaultValue, '
+      'examples: $examples}';
 }

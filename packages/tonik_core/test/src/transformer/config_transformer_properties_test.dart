@@ -13,6 +13,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       final nameProperty = Property(
@@ -22,6 +23,7 @@ void main() {
         isNullable: false,
         isDeprecated: false,
         examples: const [],
+        defaultValue: null,
       );
 
       final petModel = ClassModel(

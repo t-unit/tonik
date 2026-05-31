@@ -58,6 +58,7 @@ void main() {
       contentEncoding: null,
       contentMediaType: null,
       contentSchema: null,
+      rawDefault: null,
     );
 
     final inlineByte = Schema(
@@ -83,6 +84,7 @@ void main() {
       contentEncoding: null,
       contentMediaType: null,
       contentSchema: null,
+      rawDefault: null,
     );
 
     final inlineContentEncodingBase64 = Schema(
@@ -108,6 +110,7 @@ void main() {
       contentEncoding: 'base64',
       contentMediaType: null,
       contentSchema: null,
+      rawDefault: null,
     );
 
     late ModelImporter importer;
@@ -218,6 +221,7 @@ void main() {
             contentEncoding: null,
             contentMediaType: null,
             contentSchema: null,
+            rawDefault: null,
           ),
           'Base64Data': Schema(
             ref: null,
@@ -242,6 +246,7 @@ void main() {
             contentEncoding: null,
             contentMediaType: null,
             contentSchema: null,
+            rawDefault: null,
           ),
         },
         responses: {},
@@ -334,6 +339,7 @@ void main() {
       contentEncoding: 'base64',
       contentMediaType: 'image/png',
       contentSchema: null,
+      rawDefault: null,
     );
 
     // contentEncoding without contentMediaType should also fallback
@@ -361,6 +367,7 @@ void main() {
       contentEncoding: 'base64',
       contentMediaType: null,
       contentSchema: null,
+      rawDefault: null,
     );
 
     test(
@@ -439,6 +446,7 @@ void main() {
         contentEncoding: 'base64',
         contentMediaType: 'text/plain',
         contentSchema: null,
+        rawDefault: null,
       );
 
       final importer = ModelImporter(

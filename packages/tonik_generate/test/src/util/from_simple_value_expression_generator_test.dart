@@ -373,6 +373,7 @@ void main() {
         name: 'UserId',
         model: StringModel(context: context),
         examples: const [],
+        defaultValue: null,
       );
 
       expect(

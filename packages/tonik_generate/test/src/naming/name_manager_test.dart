@@ -946,6 +946,7 @@ void main() {
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final name = manager.modelName(model);

@@ -93,6 +93,102 @@ void main() {
         expect(model.description, equals('This is deprecated'));
       });
 
+      test(
+        'single-member AllOf wrapping AliasModel with default exposes '
+        'the wrapped default through the resulting outer alias',
+        () {
+          final innerAlias = AliasModel(
+            name: 'InnerWithDefault',
+            model: StringModel(context: context),
+            context: context.push('InnerWithDefault'),
+            defaultValue: 'hello',
+            examples: const [],
+          );
+
+          final allOfModel = AllOfModel(
+            name: 'OuterWithDescription',
+            models: {innerAlias},
+            context: context.push('OuterWithDescription'),
+            description: 'Adds description',
+            isDeprecated: false,
+            examples: const [],
+          );
+
+          final document = ApiDocument(
+            title: 'Test API',
+            version: '1.0.0',
+            models: {innerAlias, allOfModel},
+            responseHeaders: const {},
+            requestHeaders: const {},
+            servers: const {},
+            operations: const {},
+            responses: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            requestBodies: const {},
+          );
+
+          final transformed = normalizer.apply(document);
+
+          final outer =
+              transformed.models.firstWhere(
+                    (m) => m is NamedModel && m.name == 'OuterWithDescription',
+                  )
+                  as AliasModel;
+
+          expect(outer.defaultValue, 'hello');
+        },
+      );
+
+      test(
+        'single-member AllOf wrapping AliasModel without default surfaces '
+        'null on the resulting outer alias',
+        () {
+          final innerAlias = AliasModel(
+            name: 'InnerWithoutDefault',
+            model: StringModel(context: context),
+            context: context.push('InnerWithoutDefault'),
+            defaultValue: null,
+            examples: const [],
+          );
+
+          final allOfModel = AllOfModel(
+            name: 'OuterWithDescription',
+            models: {innerAlias},
+            context: context.push('OuterWithDescription'),
+            description: 'Adds description',
+            isDeprecated: false,
+            examples: const [],
+          );
+
+          final document = ApiDocument(
+            title: 'Test API',
+            version: '1.0.0',
+            models: {innerAlias, allOfModel},
+            responseHeaders: const {},
+            requestHeaders: const {},
+            servers: const {},
+            operations: const {},
+            responses: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            requestBodies: const {},
+          );
+
+          final transformed = normalizer.apply(document);
+
+          final outer =
+              transformed.models.firstWhere(
+                    (m) => m is NamedModel && m.name == 'OuterWithDescription',
+                  )
+                  as AliasModel;
+
+          expect(outer.defaultValue, isNull);
+        },
+      );
+
       test('preserves nullable flag from AllOfModel', () {
         final baseModel = IntegerModel(context: context);
 
@@ -250,6 +346,7 @@ void main() {
           context: context.push('ExistingAlias'),
           description: 'Already an alias',
           examples: const [],
+          defaultValue: null,
         );
 
         final document = ApiDocument(
@@ -287,6 +384,7 @@ void main() {
           model: baseModel,
           context: context.push('InnerAlias'),
           examples: const [],
+          defaultValue: null,
         );
 
         final outerAllOf = AllOfModel(
@@ -403,6 +501,7 @@ void main() {
               isNullable: true,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context.push('ArtistObject'),
@@ -622,6 +721,7 @@ void main() {
               isNullable: false,
               isDeprecated: false,
               examples: const [],
+              defaultValue: null,
             ),
           ],
           context: context.push('ContainerModel'),

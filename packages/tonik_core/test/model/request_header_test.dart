@@ -19,6 +19,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = header.resolve(name: 'newName');
@@ -51,6 +52,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = header.resolve();
@@ -74,6 +76,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final alias = RequestHeaderAlias(
@@ -106,6 +109,7 @@ void main() {
           encoding: HeaderParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = RequestHeaderAlias(
@@ -136,6 +140,7 @@ void main() {
         encoding: HeaderParameterEncoding.simple,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final firstAlias = RequestHeaderAlias(
@@ -173,6 +178,7 @@ void main() {
           encoding: HeaderParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = RequestHeaderAlias(
@@ -202,6 +208,7 @@ void main() {
           encoding: HeaderParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = RequestHeaderAlias(

@@ -24,6 +24,7 @@ class Schema {
     required this.contentEncoding,
     required this.contentMediaType,
     required this.contentSchema,
+    required this.rawDefault,
     this.additionalProperties,
     this.isReadOnly,
     this.isWriteOnly,
@@ -57,6 +58,7 @@ class Schema {
         contentEncoding: null,
         contentMediaType: null,
         contentSchema: null,
+        rawDefault: null,
         isBooleanSchema: boolSchema,
       ),
       // Bare type strings (e.g., 'string' instead of {'type': 'string'}).
@@ -83,6 +85,7 @@ class Schema {
         contentEncoding: null,
         contentMediaType: null,
         contentSchema: null,
+        rawDefault: null,
       ),
       final Map<String, dynamic> map => Schema(
         ref: map[r'$ref'] as String?,
@@ -124,6 +127,7 @@ class Schema {
         ),
         isReadOnly: map['readOnly'] as bool?,
         isWriteOnly: map['writeOnly'] as bool?,
+        rawDefault: map['default'],
         example: map['example'],
         examples: map['examples'] as List<dynamic>?,
       ),
@@ -158,6 +162,8 @@ class Schema {
   final bool? isReadOnly;
   final bool? isWriteOnly;
 
+  final Object? rawDefault;
+
   /// OpenAPI 3.0 singular example value.
   final Object? example;
 
@@ -171,7 +177,7 @@ class Schema {
   /// - `null`: Not a boolean schema (standard object schema)
   final bool? isBooleanSchema;
 
-  // We ignore externalDocs, xml, default, title, multipleOf, maximum,
+  // We ignore externalDocs, xml, title, multipleOf, maximum,
   // exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern,
   // maxItems, minItems, maxProperties, minProperties.
   @override
@@ -187,6 +193,7 @@ class Schema {
       'additionalProperties: $additionalProperties, '
       'isReadOnly: $isReadOnly, '
       'isWriteOnly: $isWriteOnly, isBooleanSchema: $isBooleanSchema, '
+      'rawDefault: $rawDefault, '
       'example: $example, examples: $examples}';
 }
 

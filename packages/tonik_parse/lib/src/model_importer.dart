@@ -96,6 +96,7 @@ class ModelImporter {
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.isNullable ?? schema.type.contains('null'),
+        defaultValue: schema.rawDefault,
         examples: const [],
       );
       _logModelAdded(aliasModel);
@@ -111,6 +112,7 @@ class ModelImporter {
         name: name,
         model: model,
         context: context,
+        defaultValue: schema.rawDefault,
         examples: const [],
       );
       _logModelAdded(aliasModel);
@@ -222,6 +224,7 @@ class ModelImporter {
           isNullable: schema.isNullable ?? hasNullType,
           isReadOnly: schema.isReadOnly ?? false,
           isWriteOnly: schema.isWriteOnly ?? false,
+          defaultValue: schema.rawDefault,
           examples: const [],
         );
         _logModelAdded(aliasModel);
@@ -338,6 +341,7 @@ class ModelImporter {
           name: name,
           model: model,
           context: context,
+          defaultValue: schema.rawDefault,
           examples: const [],
         );
       }
@@ -542,7 +546,6 @@ class ModelImporter {
     // If following the alias chain from refModel would lead back to this
     // shell, we'd create an infinite loop. Keep the AnyModel terminal.
     if (_wouldCreateAliasCycle(shell, refModel)) {
-      // Keep the shell's AnyModel as the terminal to break the cycle.
       shell
         ..description = schema.description
         ..isDeprecated = (schema.isDeprecated ?? false)
@@ -550,7 +553,6 @@ class ModelImporter {
       return;
     }
 
-    // Update the shell's inner model to point to the resolved target.
     shell
       ..model = refModel
       ..description = schema.description
@@ -857,6 +859,7 @@ class ModelImporter {
           model: valueModel,
           context: mapContext,
           isNullable: true,
+          defaultValue: null,
           examples: const [],
         );
       }
@@ -925,6 +928,7 @@ class ModelImporter {
         isReadOnly: isReadOnly,
         isWriteOnly: isWriteOnly,
         description: description,
+        defaultValue: propertySchema.rawDefault,
         examples: exampleImporter.fromSchema(propertySchema),
       );
 
@@ -967,7 +971,21 @@ class ModelImporter {
       if (_hasStructuralSiblings(schema)) {
         return _mergeRefWithStructuralSiblingsForProperty(schema, context);
       }
-      return _resolveReferenceForProperty(schema.ref!, context);
+      final refModel = _resolveReferenceForProperty(schema.ref!, context);
+      if (schema.rawDefault != null) {
+        final aliasModel = AliasModel(
+          model: refModel,
+          context: context,
+          description: schema.description,
+          isDeprecated: schema.isDeprecated ?? false,
+          isNullable: schema.isNullable ?? schema.type.contains('null'),
+          defaultValue: schema.rawDefault,
+          examples: exampleImporter.fromSchema(schema),
+        );
+        _addModelToSet(aliasModel);
+        return aliasModel;
+      }
+      return refModel;
     }
     return _parseSchema(null, schema, context);
   }
@@ -1096,6 +1114,7 @@ class ModelImporter {
         name: defName,
         model: AnyModel(context: _contextFromDefsPath(ref)),
         context: _contextFromDefsPath(ref),
+        defaultValue: null,
         examples: const [],
       );
       _placeholders[ref] = placeholder;
@@ -1144,6 +1163,7 @@ class ModelImporter {
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.isNullable ?? schema.type.contains('null'),
+        defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
       );
 
@@ -1190,6 +1210,7 @@ class ModelImporter {
         name: refName,
         model: AnyModel(context: rootContext),
         context: rootContext,
+        defaultValue: null,
         examples: const [],
       );
       _placeholders[refName] = placeholder;
@@ -1225,7 +1246,8 @@ class ModelImporter {
     return schema.description != null ||
         (schema.isDeprecated ?? false) ||
         (schema.isNullable ?? false) ||
-        schema.type.contains('null');
+        schema.type.contains('null') ||
+        schema.rawDefault != null;
   }
 
   bool _hasStructuralSiblings(Schema schema) {
@@ -1295,6 +1317,7 @@ class ModelImporter {
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isNullable: schema.isNullable ?? schema.type.contains('null'),
+        defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
       );
 
@@ -1407,6 +1430,7 @@ class ModelImporter {
             model: valueModel,
             context: mapContext,
             isNullable: true,
+            defaultValue: null,
             examples: const [],
           );
         }
@@ -1488,6 +1512,7 @@ class ModelImporter {
         isNullable: schema.isNullable ?? hasNullType,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
+        defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
       );
       _logModelAdded(model);
@@ -1543,6 +1568,7 @@ class ModelImporter {
         additionalProperties: schema.additionalProperties,
         isReadOnly: schema.isReadOnly,
         isWriteOnly: schema.isWriteOnly,
+        rawDefault: schema.rawDefault,
         example: schema.example,
         examples: schema.examples,
       );
@@ -1838,6 +1864,7 @@ class ModelImporter {
           model: valueModel,
           context: context,
           isNullable: true,
+          defaultValue: null,
           examples: const [],
         );
       }
@@ -1925,6 +1952,7 @@ class ModelImporter {
         isReadOnly: isReadOnly,
         isWriteOnly: isWriteOnly,
         description: description,
+        defaultValue: propertySchema.rawDefault,
         examples: exampleImporter.fromSchema(propertySchema),
       );
 

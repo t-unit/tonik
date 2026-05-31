@@ -20,6 +20,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = param.resolve(name: 'newName');
@@ -54,6 +55,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final resolved = param.resolve();
@@ -78,6 +80,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final alias = QueryParameterAlias(
@@ -111,6 +114,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = QueryParameterAlias(
@@ -142,6 +146,7 @@ void main() {
         encoding: QueryParameterEncoding.form,
         context: context,
         examples: const [],
+        defaultValue: null,
       );
 
       final firstAlias = QueryParameterAlias(
@@ -180,6 +185,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = QueryParameterAlias(
@@ -210,6 +216,7 @@ void main() {
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final alias = QueryParameterAlias(

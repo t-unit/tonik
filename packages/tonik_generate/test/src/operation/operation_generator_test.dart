@@ -160,6 +160,7 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
           encoding: HeaderParameterEncoding.simple,
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -299,6 +300,7 @@ Future<TonikResult<void>> call({
               model: IntegerModel(context: context),
               context: context,
               examples: const [],
+              defaultValue: null,
             ),
           },
           responses: const {},
@@ -380,6 +382,7 @@ Future<TonikResult<void>> call({
                 model: IntegerModel(context: context),
                 context: context,
                 examples: const [],
+                defaultValue: null,
               ),
             ),
           ],
@@ -535,6 +538,7 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
           context: context,
           allowReserved: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final queryParam2 = QueryParameterObject(
@@ -550,6 +554,7 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
           context: context,
           allowReserved: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -845,6 +850,7 @@ Future<TonikResult<void>> call({
                 isNullable: false,
                 isDeprecated: false,
                 examples: const [],
+                defaultValue: null,
               ),
             ],
             context: context,
@@ -1004,6 +1010,7 @@ Future<TonikResult<void>> call({
             encoding: HeaderParameterEncoding.simple,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final queryParam = QueryParameterObject(
@@ -1019,6 +1026,7 @@ Future<TonikResult<void>> call({
             context: context,
             allowReserved: false,
             examples: const [],
+            defaultValue: null,
           );
 
           final pathParam = PathParameterObject(
@@ -1033,6 +1041,7 @@ Future<TonikResult<void>> call({
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -1617,6 +1626,7 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
             model: IntegerModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -1771,6 +1781,7 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
             encoding: QueryParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -1900,6 +1911,7 @@ Future<TonikResult<void>> call({
             encoding: QueryParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2014,6 +2026,7 @@ Future<TonikResult<void>> call({
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2123,6 +2136,7 @@ Future<TonikResult<void>> call({
             encoding: HeaderParameterEncoding.simple,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2231,6 +2245,7 @@ Future<TonikResult<void>> call({
             encoding: CookieParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2341,6 +2356,7 @@ Future<TonikResult<void>> call({
             encoding: QueryParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2454,6 +2470,7 @@ Future<TonikResult<void>> call({
             encoding: QueryParameterEncoding.form,
             context: context,
             examples: const [],
+            defaultValue: null,
           );
 
           final operation = Operation(
@@ -2533,6 +2550,7 @@ Future<TonikResult<void>> call({
           model: StringModel(context: context),
           context: context,
           examples: const [],
+          defaultValue: null,
         );
 
         final queryParam = QueryParameterObject(
@@ -2548,6 +2566,7 @@ Future<TonikResult<void>> call({
           context: context,
           allowReserved: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(
@@ -2600,6 +2619,7 @@ Future<TonikResult<void>> call({
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
         );
@@ -2619,6 +2639,7 @@ Future<TonikResult<void>> call({
             context: context,
             allowReserved: false,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
         );
@@ -2637,6 +2658,7 @@ Future<TonikResult<void>> call({
             model: StringModel(context: context),
             context: context,
             examples: const [],
+            defaultValue: null,
           ),
           context: context,
         );
@@ -2798,6 +2820,7 @@ Future<TonikResult<void>> call({
           context: context,
           allowReserved: false,
           examples: const [],
+          defaultValue: null,
         );
 
         final operation = Operation(

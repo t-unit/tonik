@@ -41,6 +41,7 @@ sealed class PathParameter {
           encoding: param.encoding,
           context: context,
           examples: param.examples,
+          defaultValue: param.defaultValue,
         );
       case final PathParameterAlias alias:
         return alias.parameter.resolve(
@@ -98,6 +99,7 @@ class PathParameterObject extends PathParameter {
     required this.encoding,
     required super.context,
     required this.examples,
+    required this.defaultValue,
     this.nameOverride,
   });
 
@@ -116,11 +118,13 @@ class PathParameterObject extends PathParameter {
   PathParameterEncoding encoding;
   List<Example> examples;
 
+  Object? defaultValue;
+
   @override
   String toString() =>
       'PathParameterObject{name: $name, nameOverride: $nameOverride, '
       'description: $description, isRequired: $isRequired, '
       'isDeprecated: $isDeprecated, allowEmptyValue: $allowEmptyValue, '
       'explode: $explode, model: $model, encoding: $encoding, '
-      'examples: $examples}';
+      'defaultValue: $defaultValue, examples: $examples}';
 }
