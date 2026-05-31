@@ -326,7 +326,7 @@ class ClassGenerator {
 
     final result = <String, _DefaultedProperty>{};
     for (final prop in normalizedProperties) {
-      final raw = _effectiveDefaultValue(prop.property);
+      final raw = prop.property.effectiveDefaultValue;
       // Null carrier collapses "no default" and "default: null" — emit nothing.
       if (raw == null) continue;
 
@@ -366,12 +366,14 @@ class ClassGenerator {
     return result;
   }
 
-  Object? _effectiveDefaultValue(Property property) {
-    if (property.defaultValue != null) return property.defaultValue;
-    final model = property.model;
-    if (model is AliasModel) return model.defaultValue;
-    return null;
-  }
+  Expression _defaultIfAbsent({
+    required Expression decoded,
+    required String key,
+    required _DefaultedProperty defaulted,
+  }) => refer(r'_$values')
+      .property('containsKey')
+      .call([specLiteralString(key)])
+      .conditional(decoded, refer(defaulted.memberName));
 
   CopyWithResult? _buildCopyWith(
     String className,
@@ -557,10 +559,11 @@ class ClassGenerator {
       }
 
       if (defaulted != null) {
-        expr = refer(r'_$values')
-            .property('containsKey')
-            .call([specLiteralString(propertyName)])
-            .conditional(expr, refer(defaulted.memberName));
+        expr = _defaultIfAbsent(
+          decoded: expr,
+          key: propertyName,
+          defaulted: defaulted,
+        );
       }
 
       constructorArgs[normalizedName] = expr;
@@ -1857,10 +1860,11 @@ if ($name != null) {
       ).expression;
 
       if (defaulted != null) {
-        expr = refer(r'_$values')
-            .property('containsKey')
-            .call([specLiteralString(propertyName)])
-            .conditional(expr, refer(defaulted.memberName));
+        expr = _defaultIfAbsent(
+          decoded: expr,
+          key: propertyName,
+          defaulted: defaulted,
+        );
       }
 
       constructorArgs[normalizedName] = expr;
