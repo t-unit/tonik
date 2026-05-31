@@ -162,10 +162,6 @@ class Schema {
   final bool? isReadOnly;
   final bool? isWriteOnly;
 
-  /// Raw value of the `default` keyword as parsed from the spec.
-  ///
-  /// `null` is overloaded: it means both "no `default` keyword present" and
-  /// "`default: null`". The two are treated identically downstream by design.
   final Object? rawDefault;
 
   /// OpenAPI 3.0 singular example value.

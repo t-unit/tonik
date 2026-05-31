@@ -185,20 +185,10 @@ class AliasModel extends Model with NamedModel {
   bool isWriteOnly;
   List<Example> examples;
 
-  /// Default value declared directly on this alias (sibling-of-`$ref`,
-  /// or own `default` on a primitive shell). Set once at construction;
-  /// the chain-resolved view is exposed via [defaultValue].
   final Object? _localDefault;
 
-  /// Raw OpenAPI `default` value carried by this alias.
-  ///
-  /// Resolves lazily by first returning the locally declared override
-  /// (a sibling-of-`$ref` or the alias's own `default`), and otherwise
-  /// walking the inner model chain. Returns `null` if neither this alias
-  /// nor any wrapped alias carries a default. An explicit `default: null`
-  /// declared on this alias does not suppress an inherited non-null default
-  /// from a wrapped alias; both surface as the inherited value. The raw
-  /// value is not validated against the alias's resolved type.
+  /// The locally declared default if set, otherwise the first one found
+  /// while walking nested [AliasModel]s.
   Object? get defaultValue => _resolveDefault(this, <AliasModel>{});
 
   static Object? _resolveDefault(AliasModel alias, Set<AliasModel> visited) {
@@ -638,11 +628,6 @@ class Property {
   bool isWriteOnly;
   List<Example> examples;
 
-  /// Raw OpenAPI `default` value declared directly on this property.
-  ///
-  /// Not validated against the property's resolved type. `null` is
-  /// overloaded: it means both "no `default` keyword" and `default: null`
-  /// and the two are treated identically downstream by design.
   Object? defaultValue;
 
   @override
