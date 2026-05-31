@@ -186,28 +186,26 @@ class AliasModel extends Model with NamedModel {
   List<Example> examples;
 
   /// Default value declared directly on this alias (sibling-of-`$ref`,
-  /// or own `default` on a primitive shell). Not the chain-resolved view.
-  Object? _localDefault;
+  /// or own `default` on a primitive shell). Set once at construction;
+  /// the chain-resolved view is exposed via [defaultValue].
+  final Object? _localDefault;
 
   /// Raw OpenAPI `default` value carried by this alias.
   ///
   /// Resolves lazily by first returning the locally declared override
   /// (a sibling-of-`$ref` or the alias's own `default`), and otherwise
   /// walking the inner model chain. Returns `null` if neither this alias
-  /// nor any wrapped alias carries a default. `null` is by design
-  /// indistinguishable from an explicit `default: null` in the spec —
-  /// the raw value is not validated against the alias's resolved type.
+  /// nor any wrapped alias carries a default. An explicit `default: null`
+  /// declared on this alias does not suppress an inherited non-null default
+  /// from a wrapped alias; both surface as the inherited value. The raw
+  /// value is not validated against the alias's resolved type.
   Object? get defaultValue => _resolveDefault(this, <AliasModel>{});
-
-  set defaultValue(Object? value) {
-    _localDefault = value;
-  }
 
   static Object? _resolveDefault(AliasModel alias, Set<AliasModel> visited) {
     if (!visited.add(alias)) {
-      _aliasModelLog.fine(
-        'Cycle detected in alias chain while resolving default; '
-        'returning null.',
+      _aliasModelLog.warning(
+        'Cycle detected resolving default on alias chain rooted at '
+        '${alias.name ?? '(unnamed)'}; returning null.',
       );
       return null;
     }
@@ -218,10 +216,20 @@ class AliasModel extends Model with NamedModel {
   }
 
   @override
-  Model get resolved => switch (model) {
-    final AliasModel alias => alias.resolved,
-    _ => model,
-  };
+  Model get resolved => _resolveResolved(this, <AliasModel>{});
+
+  static Model _resolveResolved(AliasModel alias, Set<AliasModel> visited) {
+    if (!visited.add(alias)) {
+      _aliasModelLog.warning(
+        'Cycle detected resolving terminal model on alias chain rooted at '
+        '${alias.name ?? '(unnamed)'}; returning current alias.',
+      );
+      return alias;
+    }
+    final inner = alias.model;
+    if (inner is AliasModel) return _resolveResolved(inner, visited);
+    return inner;
+  }
 
   @override
   EncodingShape get encodingShape => resolved.encodingShape;

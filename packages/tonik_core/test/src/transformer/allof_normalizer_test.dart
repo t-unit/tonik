@@ -141,6 +141,54 @@ void main() {
         },
       );
 
+      test(
+        'single-member AllOf wrapping AliasModel without default surfaces '
+        'null on the resulting outer alias',
+        () {
+          final innerAlias = AliasModel(
+            name: 'InnerWithoutDefault',
+            model: StringModel(context: context),
+            context: context.push('InnerWithoutDefault'),
+            defaultValue: null,
+            examples: const [],
+          );
+
+          final allOfModel = AllOfModel(
+            name: 'OuterWithDescription',
+            models: {innerAlias},
+            context: context.push('OuterWithDescription'),
+            description: 'Adds description',
+            isDeprecated: false,
+            examples: const [],
+          );
+
+          final document = ApiDocument(
+            title: 'Test API',
+            version: '1.0.0',
+            models: {innerAlias, allOfModel},
+            responseHeaders: const {},
+            requestHeaders: const {},
+            servers: const {},
+            operations: const {},
+            responses: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            requestBodies: const {},
+          );
+
+          final transformed = normalizer.apply(document);
+
+          final outer =
+              transformed.models.firstWhere(
+                    (m) => m is NamedModel && m.name == 'OuterWithDescription',
+                  )
+                  as AliasModel;
+
+          expect(outer.defaultValue, isNull);
+        },
+      );
+
       test('preserves nullable flag from AllOfModel', () {
         final baseModel = IntegerModel(context: context);
 

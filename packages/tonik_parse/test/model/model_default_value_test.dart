@@ -97,6 +97,7 @@ void main() {
       expect(country.model, isA<AliasModel>());
       final alias = country.model as AliasModel;
       expect(alias.defaultValue, 'DE');
+      expect(country.defaultValue, 'DE');
     });
 
     test('referenced schema own default surfaces on resolving AliasModel', () {
@@ -308,6 +309,44 @@ void main() {
           (m) => m is AliasModel && m.name == 'A',
         ) as AliasModel;
         expect(a.defaultValue, 'x');
+      },
+    );
+
+    test(
+      r'property $ref with non-string sibling default carries the list '
+      'value through Property and AliasModel',
+      () {
+        final api = Importer().import({
+          'openapi': '3.0.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'Sizes': {
+                'type': 'array',
+                'items': {'type': 'integer'},
+              },
+              'Box': {
+                'type': 'object',
+                'properties': {
+                  'dims': {
+                    r'$ref': '#/components/schemas/Sizes',
+                    'default': [1, 2, 3],
+                  },
+                },
+              },
+            },
+          },
+        });
+
+        final box = api.models.firstWhere(
+          (m) => m is ClassModel && m.name == 'Box',
+        ) as ClassModel;
+        final dims = box.properties.firstWhere((p) => p.name == 'dims');
+
+        expect(dims.defaultValue, [1, 2, 3]);
+        expect(dims.model, isA<AliasModel>());
+        expect((dims.model as AliasModel).defaultValue, [1, 2, 3]);
       },
     );
 

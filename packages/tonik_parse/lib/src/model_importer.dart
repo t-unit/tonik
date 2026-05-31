@@ -486,8 +486,7 @@ class ModelImporter {
           ..isDeprecated = model.isDeprecated
           ..isNullable = model.isNullable
           ..isReadOnly = model.isReadOnly
-          ..isWriteOnly = model.isWriteOnly
-          ..defaultValue = model.defaultValue;
+          ..isWriteOnly = model.isWriteOnly;
       }
       if (models.none((m) => m is NamedModel && m.name == name)) {
         models.add(shell);
@@ -550,8 +549,7 @@ class ModelImporter {
       shell
         ..description = schema.description
         ..isDeprecated = (schema.isDeprecated ?? false)
-        ..isNullable = (schema.isNullable ?? schema.type.contains('null'))
-        ..defaultValue = schema.rawDefault;
+        ..isNullable = (schema.isNullable ?? schema.type.contains('null'));
       return;
     }
 
@@ -559,8 +557,7 @@ class ModelImporter {
       ..model = refModel
       ..description = schema.description
       ..isDeprecated = (schema.isDeprecated ?? false)
-      ..isNullable = (schema.isNullable ?? schema.type.contains('null'))
-      ..defaultValue = schema.rawDefault;
+      ..isNullable = (schema.isNullable ?? schema.type.contains('null'));
   }
 
   /// Attaches schema-level [examples] to an already-constructed [model].
