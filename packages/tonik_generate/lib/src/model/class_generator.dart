@@ -314,11 +314,6 @@ class ClassGenerator {
     );
   }
 
-  /// Resolves the [_DefaultedProperty] for each property whose schema-level
-  /// default materialises to a const expression. Properties whose
-  /// materialisation returns null are omitted. A primitive target with a
-  /// JSON-shape-mismatched default triggers one warning per property and is
-  /// omitted from the result map.
   Map<String, _DefaultedProperty> _resolveDefaults(
     List<({String normalizedName, Property property})> normalizedProperties,
     String className, {
@@ -372,9 +367,6 @@ class ClassGenerator {
     return result;
   }
 
-  /// Resolves the effective raw default for [property]. A property-local
-  /// default takes precedence over any default carried by the property's
-  /// `AliasModel` target.
   Object? _effectiveDefaultValue(Property property) {
     if (property.defaultValue != null) return property.defaultValue;
     final model = property.model;
@@ -1160,7 +1152,6 @@ class ClassGenerator {
     );
   }
 
-  /// Returns a type reference for a property, considering schema-level flags.
   TypeReference _getSchemaAwareTypeReference(
     Property property,
     ClassModel model,
