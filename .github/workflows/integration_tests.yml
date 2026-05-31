@@ -62,6 +62,11 @@ jobs:
           cd integration_test/additional_properties/additional_properties_test
           dart test --concurrency=2
 
+      - name: Run defaulted primitives integration tests
+        run: |
+          cd integration_test/defaulted_primitives/defaulted_primitives_test
+          dart test --concurrency=2
+
       - name: Run petstore integration tests
         run: |
           cd integration_test/petstore/petstore_test
