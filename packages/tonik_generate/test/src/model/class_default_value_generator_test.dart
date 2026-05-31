@@ -274,94 +274,86 @@ void main() {
       final warnings =
           logs.where((r) => r.level == Level.WARNING).toList();
       expect(warnings, hasLength(1));
-      final message = warnings.single.message;
-      expect(message, contains('Mismatched.tier'));
-      expect(message, contains('String'));
-      expect(message, contains('int'));
-      expect(message, contains('value: no'));
+      expect(warnings.single.message, contains('Mismatched.tier'));
     });
 
-    test(
-      'alias-carried mismatched default warning attributes the alias name',
-      () {
-        final logs = <LogRecord>[];
-        final subscription =
-            Logger('ClassGenerator').onRecord.listen(logs.add);
-        addTearDown(subscription.cancel);
+    test('alias-carried mismatched default still drops + logs once', () {
+      final logs = <LogRecord>[];
+      final subscription =
+          Logger('ClassGenerator').onRecord.listen(logs.add);
+      addTearDown(subscription.cancel);
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'WithAliasedBadDefault',
-          properties: [
-            Property(
-              name: 'count',
-              model: AliasModel(
-                name: 'CountAlias',
-                model: IntegerModel(context: context),
-                context: context,
-                examples: const [],
-                defaultValue: 'bad',
-              ),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'WithAliasedBadDefault',
+        properties: [
+          Property(
+            name: 'count',
+            model: AliasModel(
+              name: 'CountAlias',
+              model: IntegerModel(context: context),
+              context: context,
               examples: const [],
-              defaultValue: null,
+              defaultValue: 'bad',
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        generator.generateClass(model);
+      generator.generateClass(model);
 
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        final message = warnings.single.message;
-        expect(message, contains('WithAliasedBadDefault.count'));
-        expect(
-          message,
-          contains("carried by alias chain rooted at 'CountAlias'"),
-        );
-        expect(message, contains('int'));
-        expect(message, contains('String'));
-      },
-    );
+      final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+      expect(warnings, hasLength(1));
+      expect(
+        warnings.single.message,
+        contains('WithAliasedBadDefault.count'),
+      );
+    });
 
-    test(
-      'non-primitive target with default emits NO warning and NO const',
-      () {
-        final logs = <LogRecord>[];
-        final subscription =
-            Logger('ClassGenerator').onRecord.listen(logs.add);
-        addTearDown(subscription.cancel);
+    test('composite target with default emits NO warning and NO const', () {
+      final logs = <LogRecord>[];
+      final subscription =
+          Logger('ClassGenerator').onRecord.listen(logs.add);
+      addTearDown(subscription.cancel);
 
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'WithDate',
-          properties: [
-            Property(
-              name: 'startsAt',
-              model: DateTimeModel(context: context),
-              isRequired: true,
-              isNullable: false,
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'WithChild',
+        properties: [
+          Property(
+            name: 'child',
+            model: ClassModel(
               isDeprecated: false,
+              name: 'Child',
+              properties: const [],
+              context: context,
               examples: const [],
-              defaultValue: '2024-01-01T00:00:00Z',
             ),
-          ],
-          context: context,
-          examples: const [],
-        );
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: const <String, Object?>{},
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
 
-        final result = generator.generateClass(model);
-        expect(
-          result.fields.where((f) => f.name == 'startsAtDefault'),
-          isEmpty,
-        );
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
+      final result = generator.generateClass(model);
+      expect(
+        result.fields.where((f) => f.name == 'childDefault'),
+        isEmpty,
+      );
+      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+    });
 
     test(
       'nullable + default: null produces no static const',

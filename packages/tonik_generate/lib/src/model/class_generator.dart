@@ -336,11 +336,10 @@ class ClassGenerator {
       );
 
       if (materialised == null) {
-        if (_isPrimitiveTarget(prop.property.model)) {
-          _logDroppedDefaultWarning(
-            className: className,
-            property: prop.property,
-            raw: raw,
+        if (prop.property.model.resolved is PrimitiveModel) {
+          _classGeneratorLog.warning(
+            'Dropping default for $className.${prop.property.name}: '
+            'value does not match the property type.',
           );
         }
         continue;
@@ -372,56 +371,6 @@ class ClassGenerator {
     final model = property.model;
     if (model is AliasModel) return model.defaultValue;
     return null;
-  }
-
-  bool _isPrimitiveTarget(Model model) {
-    final resolved = model.resolved;
-    return resolved is StringModel ||
-        resolved is IntegerModel ||
-        resolved is DoubleModel ||
-        resolved is NumberModel ||
-        resolved is BooleanModel;
-  }
-
-  String _expectedPrimitiveName(Model model) {
-    final resolved = model.resolved;
-    return switch (resolved) {
-      StringModel() => 'String',
-      IntegerModel() => 'int',
-      DoubleModel() => 'double',
-      NumberModel() => 'num',
-      BooleanModel() => 'bool',
-      _ => resolved.runtimeType.toString(),
-    };
-  }
-
-  String? _aliasDefaultAttribution(Property property) {
-    if (property.defaultValue != null) return null;
-    final model = property.model;
-    if (model is! AliasModel) return null;
-    if (model.defaultValue == null) return null;
-    // The originator inside the chain is not directly observable from out
-    // here (AliasModel._localDefault is private), so the warning attributes
-    // to the chain as a whole instead of promising pinpoint accuracy.
-    final name = model.name;
-    return name != null
-        ? "alias chain rooted at '$name'"
-        : 'alias chain';
-  }
-
-  void _logDroppedDefaultWarning({
-    required String className,
-    required Property property,
-    required Object raw,
-  }) {
-    final expected = _expectedPrimitiveName(property.model);
-    final attribution = _aliasDefaultAttribution(property);
-    final source = attribution != null ? ' (carried by $attribution)' : '';
-    _classGeneratorLog.warning(
-      'Dropping default for $className.${property.name}$source: '
-      'spec default of type ${raw.runtimeType} (value: $raw) '
-      'cannot be materialised as $expected; emitting no default.',
-    );
   }
 
   CopyWithResult? _buildCopyWith(

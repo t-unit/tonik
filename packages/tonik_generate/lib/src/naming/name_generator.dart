@@ -488,16 +488,17 @@ class NameGenerator {
   }
 
   String _addNumberSuffix(String baseName) {
+    final picked = _firstFreeSuffix(baseName, _usedNames);
+    _usedNames.add(picked);
+    return picked;
+  }
+
+  String _firstFreeSuffix(String baseName, Set<String> taken) {
     var counter = 2;
-    String uniqueName;
-
-    do {
-      uniqueName = '$baseName$counter';
+    while (taken.contains('$baseName$counter')) {
       counter++;
-    } while (_usedNames.contains(uniqueName));
-
-    _usedNames.add(uniqueName);
-    return uniqueName;
+    }
+    return '$baseName$counter';
   }
 
   /// Generates names for a list of servers based on their domains.
@@ -641,10 +642,6 @@ class NameGenerator {
     required Set<String> reservedNames,
   }) {
     if (!reservedNames.contains(baseName)) return baseName;
-    var counter = 2;
-    while (reservedNames.contains('$baseName$counter')) {
-      counter++;
-    }
-    return '$baseName$counter';
+    return _firstFreeSuffix(baseName, reservedNames);
   }
 }
