@@ -120,8 +120,6 @@ class PathParameterObject extends PathParameter {
 
   Object? defaultValue;
 
-  /// The parameter's own [defaultValue] when set, otherwise the default
-  /// carried by its [model] when that model is an [AliasModel] chain.
   Object? get effectiveDefaultValue {
     if (defaultValue != null) return defaultValue;
     final m = model;

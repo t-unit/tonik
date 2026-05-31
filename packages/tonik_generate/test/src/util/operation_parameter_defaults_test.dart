@@ -64,6 +64,52 @@ void main() {
       },
     );
 
+    test(
+      'explicit defaultValue: null is treated as no default — no field, '
+      'no warning, no byName entry',
+      () {
+        final logs = <LogRecord>[];
+        final sub = Logger('OperationParameterDefaults')
+            .onRecord
+            .listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final region = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        final normalized = normalizeRequestParameters(
+          pathParameters: const {},
+          queryParameters: {region},
+          headers: const {},
+        );
+
+        final result = resolveOperationParameterDefaults(
+          normalizedParams: normalized,
+          operationClassName: 'Op',
+          nameManager: nameManager,
+          package: 'api',
+          initialReservedNames: const {'_dio'},
+        );
+
+        expect(result.byName, isEmpty);
+        expect(result.fields, isEmpty);
+        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+      },
+    );
+
     test('materialises primitive defaults across all four locations '
         'in path → query → header → cookie field order', () {
       final pathId = PathParameterObject(
@@ -209,6 +255,7 @@ void main() {
         final message = warnings.single.message;
         expect(message, contains('BadOp.page'));
         expect(message, contains('(query,'));
+        expect(message, contains('expected IntegerModel'));
         expect(message, contains('"not-a-number"'));
         expect(message, contains('value does not match the parameter type'));
       },
@@ -261,6 +308,7 @@ void main() {
         final message = warnings.single.message;
         expect(message, contains('BoolOp.enabled'));
         expect(message, contains('(query,'));
+        expect(message, contains('expected BooleanModel'));
         expect(message, contains('"true"'));
         expect(message, contains('value does not match the parameter type'));
       },
@@ -313,6 +361,7 @@ void main() {
         final message = warnings.single.message;
         expect(message, contains('StrOp.name'));
         expect(message, contains('(query,'));
+        expect(message, contains('expected StringModel'));
         expect(message, contains('value: 42'));
         expect(message, contains('value does not match the parameter type'));
       },
@@ -511,6 +560,7 @@ void main() {
         final message = warnings.single.message;
         expect(message, contains('Op.since'));
         expect(message, contains('(query,'));
+        expect(message, contains('expected DateTimeModel'));
         expect(message, contains('"2024-01-01T00:00:00Z"'));
         expect(
           message,

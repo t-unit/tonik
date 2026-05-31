@@ -158,10 +158,7 @@ class ApiClientGenerator {
     );
     final qualifiedDefaults = {
       for (final entry in defaults.byName.entries)
-        entry.key: OperationParameterDefault.qualified(
-          memberName: entry.value.memberName,
-          value: entry.value.value,
-          type: entry.value.type,
+        entry.key: entry.value.withOwner(
           className: operationClassName,
           url: operationUrl,
         ),

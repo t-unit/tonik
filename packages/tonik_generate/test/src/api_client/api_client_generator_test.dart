@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
@@ -2061,6 +2062,60 @@ void main() {
           expect(
             regionParam.defaultTo?.accept(emitter).toString(),
             'ListThings.regionDefault',
+          );
+        },
+      );
+
+      test(
+        'suppresses dropped-default warnings — the operation class is the '
+        'sole logging site',
+        () {
+          final logs = <LogRecord>[];
+          final sub = Logger('OperationParameterDefaults')
+              .onRecord
+              .listen(logs.add);
+          addTearDown(sub.cancel);
+
+          final queryParam = QueryParameterObject(
+            name: 'enabled',
+            rawName: 'enabled',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: BooleanModel(context: testContext),
+            encoding: QueryParameterEncoding.form,
+            context: testContext,
+            examples: const [],
+            defaultValue: 'true',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: testContext,
+            tags: {Tag(name: 'things')},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          generator.generateClass(
+            {operation},
+            Tag(name: 'things'),
+            testServers,
+          );
+
+          expect(
+            logs.where((r) => r.level == Level.WARNING),
+            isEmpty,
           );
         },
       );

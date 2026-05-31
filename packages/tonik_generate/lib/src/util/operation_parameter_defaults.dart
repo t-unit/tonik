@@ -11,33 +11,28 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 final Logger _log = Logger('OperationParameterDefaults');
 
-/// A materialised default for a single operation parameter, plus the
-/// metadata needed to reference it from a generated call site.
-///
-/// Two construction modes guarantee owner metadata is set as a pair:
-/// `.local` for references inside the owning operation class, `.qualified`
-/// for references from a different file (e.g. an API-client wrapper) that
-/// needs both the class name and its source URL to compile.
 @immutable
 class OperationParameterDefault {
-  const OperationParameterDefault.local({
-    required this.memberName,
-    required this.value,
-    required this.type,
-  }) : _owner = null;
+  const OperationParameterDefault.local({required this.memberName})
+    : _owner = null;
 
   const OperationParameterDefault.qualified({
     required this.memberName,
-    required this.value,
-    required this.type,
     required String className,
     required String url,
   }) : _owner = (className: className, url: url);
 
   final String memberName;
-  final Expression value;
-  final TypeReference type;
   final ({String className, String url})? _owner;
+
+  OperationParameterDefault withOwner({
+    required String className,
+    required String url,
+  }) => OperationParameterDefault.qualified(
+    memberName: memberName,
+    className: className,
+    url: url,
+  );
 
   Code defaultToCode() {
     final owner = _owner;
@@ -48,9 +43,6 @@ class OperationParameterDefault {
   }
 }
 
-/// Resolves operation-parameter defaults into materialised const
-/// expressions and the static fields that hold them.
-///
 /// Pass [emitWarnings] `false` on secondary call sites (e.g. the
 /// API-client forwarder) — the primary site already logs once per
 /// dropped default.
@@ -94,7 +86,8 @@ resolveOperationParameterDefaults({
                     'expression for this type';
           _log.warning(
             'Dropping default for $operationClassName.$specName '
-            '($location, value: ${_describeDefault(rawDefault)}): $reason.',
+            '($location, expected ${resolved.runtimeType}, '
+            'value: ${_describeDefault(rawDefault)}): $reason.',
           );
         }
       }
@@ -115,8 +108,6 @@ resolveOperationParameterDefaults({
 
     byName[normalizedName] = OperationParameterDefault.local(
       memberName: memberName,
-      value: materialised,
-      type: type,
     );
 
     fields.add(

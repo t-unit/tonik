@@ -9,10 +9,9 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Generates the `call()` parameters for an operation.
 ///
-/// Parameters whose normalized name appears in [defaultsByName] are emitted
-/// as optional, with a `defaultTo` referencing the corresponding static
-/// const on the owning class (qualified when the call site lives outside
-/// that class, e.g. an API-client wrapper).
+/// When [defaultsByName] is supplied, named parameters become optional and
+/// receive `defaultTo` references — qualified for call sites outside the
+/// owning class so the import allocator resolves them.
 List<Parameter> generateParameters({
   required Operation operation,
   required NameManager nameManager,

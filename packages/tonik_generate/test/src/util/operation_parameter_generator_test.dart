@@ -1865,10 +1865,8 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'region': OperationParameterDefault.local(
+            'region': const OperationParameterDefault.local(
               memberName: 'regionDefault',
-              value: const CodeExpression(Code("r'us'")),
-              type: _dummyType,
             ),
           },
         );
@@ -1909,10 +1907,8 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'page': OperationParameterDefault.local(
+            'page': const OperationParameterDefault.local(
               memberName: 'pageDefault',
-              value: const CodeExpression(Code('1')),
-              type: _dummyType,
             ),
           },
         );
@@ -1949,10 +1945,8 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'retries': OperationParameterDefault.local(
+            'retries': const OperationParameterDefault.local(
               memberName: 'retriesDefault',
-              value: const CodeExpression(Code('5')),
-              type: _dummyType,
             ),
           },
         );
@@ -1989,10 +1983,8 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'tracking': OperationParameterDefault.local(
+            'tracking': const OperationParameterDefault.local(
               memberName: 'trackingDefault',
-              value: const CodeExpression(Code('false')),
-              type: _dummyType,
             ),
           },
         );
@@ -2036,10 +2028,8 @@ void main() {
           nameManager: nameManager,
           package: 'api',
           defaultsByName: {
-            'id': OperationParameterDefault.local(
+            'id': const OperationParameterDefault.local(
               memberName: 'idDefault',
-              value: const CodeExpression(Code("r'x'")),
-              type: _dummyType,
             ),
           },
         );
@@ -2086,9 +2076,3 @@ void main() {
     );
   });
 }
-
-final _dummyType = TypeReference(
-  (b) => b
-    ..symbol = 'String'
-    ..url = 'dart:core',
-);
