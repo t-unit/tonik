@@ -897,47 +897,32 @@ void main() {
       final names = initialOperationDefaultReservedNames(
         normalizedParams: normalized,
         hasRequestBody: true,
-        hasResponses: true,
-        hasQueryParameters: true,
       );
 
       expect(names, containsAll(<String>[
-        '_dio',
         'call',
-        '_path',
-        '_data',
-        '_options',
-        '_queryParameters',
-        '_parseResponse',
         'body',
         'cancelToken',
         'region',
       ]));
     });
 
-    test(
-      'omits body, query, response method names when not applicable',
-      () {
-        const normalized = NormalizedRequestParameters(
-          pathParameters: [],
-          queryParameters: [],
-          headers: [],
-          cookieParameters: [],
-        );
+    test('omits body when no request body is present', () {
+      const normalized = NormalizedRequestParameters(
+        pathParameters: [],
+        queryParameters: [],
+        headers: [],
+        cookieParameters: [],
+      );
 
-        final names = initialOperationDefaultReservedNames(
-          normalizedParams: normalized,
-          hasRequestBody: false,
-          hasResponses: false,
-          hasQueryParameters: false,
-        );
+      final names = initialOperationDefaultReservedNames(
+        normalizedParams: normalized,
+        hasRequestBody: false,
+      );
 
-        expect(names.contains('body'), isFalse);
-        expect(names.contains('_queryParameters'), isFalse);
-        expect(names.contains('_parseResponse'), isFalse);
-        expect(names, containsAll(<String>['_dio', 'cancelToken', 'call']));
-      },
-    );
+      expect(names.contains('body'), isFalse);
+      expect(names, containsAll(<String>['cancelToken', 'call']));
+    });
   });
 
   group('OperationParameterDefault.withOwner', () {

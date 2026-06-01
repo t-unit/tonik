@@ -145,8 +145,6 @@ class ApiClientGenerator {
       initialReservedNames: initialOperationDefaultReservedNames(
         normalizedParams: normalizedParams,
         hasRequestBody: hasRequestBody,
-        hasResponses: operation.responses.isNotEmpty,
-        hasQueryParameters: operation.queryParameters.isNotEmpty,
       ),
       emitWarnings: false,
     );

@@ -134,19 +134,15 @@ resolveOperationParameterDefaults({
   return (byName: byName, fields: fields);
 }
 
+// Normalised parameter names cannot start with `_` (see `normalizeSingle` in
+// name_utils.dart), and the default-member candidate is `<paramName>Default`
+// — so private operation members like `_dio` / `_path` / `_queryParameters`
+// can never collide with a default and don't need to be reserved here.
 Set<String> initialOperationDefaultReservedNames({
   required NormalizedRequestParameters normalizedParams,
   required bool hasRequestBody,
-  required bool hasResponses,
-  required bool hasQueryParameters,
 }) => <String>{
-  '_dio',
   'call',
-  '_path',
-  '_data',
-  '_options',
-  if (hasQueryParameters) '_queryParameters',
-  if (hasResponses) '_parseResponse',
   if (hasRequestBody) 'body',
   'cancelToken',
   for (final p in normalizedParams.pathParameters) p.normalizedName,
