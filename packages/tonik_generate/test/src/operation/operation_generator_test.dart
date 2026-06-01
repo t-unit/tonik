@@ -3301,7 +3301,7 @@ Future<TonikResult<void>> call({
 
       test(
         'emits exactly one warning when a primitive default value does not '
-        'match the parameter type',
+        'match the expected type',
         () {
           final logs = <LogRecord>[];
           final sub = Logger('OperationParameterDefaults')

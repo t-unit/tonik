@@ -68,9 +68,9 @@ void main() {
         expect(messages, hasLength(1));
         expect(
           messages.single,
-          'Dropping default for BadOp.name (query, expected IntegerModel, '
+          'Dropping default for BadOp.name (query, expected integer, '
           'value: "not-a-number"): '
-          'value does not match the parameter type.',
+          'value does not match the expected type.',
         );
       },
     );
@@ -98,7 +98,7 @@ void main() {
         expect(messages, hasLength(1));
         expect(
           messages.single,
-          'Dropping default for Op.since (query, expected DateTimeModel, '
+          'Dropping default for Op.since (query, expected string (date-time), '
           'value: "2024-01-01T00:00:00Z"): '
           'default value cannot be expressed as a const Dart expression '
           'for this type.',

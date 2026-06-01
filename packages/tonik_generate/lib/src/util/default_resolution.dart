@@ -48,12 +48,12 @@ ResolvedDefault? resolveSingleDefault({
       final resolved = model.resolved;
       if (resolved is PrimitiveModel) {
         final reason = _isMaterialiserSupportedPrimitive(model)
-            ? 'value does not match the parameter type'
+            ? 'value does not match the expected type'
             : 'default value cannot be expressed as a const Dart expression '
                   'for this type';
         onDroppedDefault(
           'Dropping default for $containerName.$specName '
-          '($location, expected ${resolved.runtimeType}, '
+          '($location, expected ${_specTypeName(resolved)}, '
           'value: ${_describeDefault(rawDefault)}): $reason.',
         );
       }
@@ -112,4 +112,20 @@ bool _isMaterialiserSupportedPrimitive(Model model) => switch (model.resolved) {
   NumberModel() ||
   BooleanModel() => true,
   _ => false,
+};
+
+// Spec authors edit YAML in OpenAPI keywords, not the generator's Dart class
+// names — surface the keyword so the warning is directly actionable.
+String _specTypeName(PrimitiveModel resolved) => switch (resolved) {
+  StringModel() => 'string',
+  IntegerModel() => 'integer',
+  DoubleModel() => 'number (double)',
+  NumberModel() => 'number',
+  BooleanModel() => 'boolean',
+  DateTimeModel() => 'string (date-time)',
+  DateModel() => 'string (date)',
+  UriModel() => 'string (uri)',
+  DecimalModel() => 'string (decimal)',
+  BinaryModel() => 'string (binary)',
+  Base64Model() => 'string (byte)',
 };
