@@ -274,7 +274,11 @@ void main() {
       final warnings =
           logs.where((r) => r.level == Level.WARNING).toList();
       expect(warnings, hasLength(1));
-      expect(warnings.single.message, contains('Mismatched.tier'));
+      expect(
+        warnings.single.message,
+        'Dropping default for Mismatched.tier (property, expected IntegerModel, '
+        'value: "no"): value does not match the parameter type.',
+      );
     });
 
     test('alias-carried mismatched default still drops + logs once', () {
@@ -313,7 +317,9 @@ void main() {
       expect(warnings, hasLength(1));
       expect(
         warnings.single.message,
-        contains('WithAliasedBadDefault.count'),
+        'Dropping default for WithAliasedBadDefault.count '
+        '(property, expected IntegerModel, value: "bad"): '
+        'value does not match the parameter type.',
       );
     });
 

@@ -114,11 +114,7 @@ class RequestHeaderObject extends RequestHeader {
 
   Object? defaultValue;
 
-  Object? get effectiveDefaultValue {
-    if (defaultValue != null) return defaultValue;
-    final m = model;
-    return m is AliasModel ? m.defaultValue : null;
-  }
+  Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override
   String toString() =>

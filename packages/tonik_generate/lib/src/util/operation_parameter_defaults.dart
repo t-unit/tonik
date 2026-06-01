@@ -1,13 +1,10 @@
-import 'dart:convert';
-
 import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
-import 'package:tonik_generate/src/util/default_value_materialiser.dart';
-import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_generate/src/util/default_resolution.dart';
 
 final Logger _log = Logger('OperationParameterDefaults');
 
@@ -68,6 +65,7 @@ resolveOperationParameterDefaults({
   final reserved = {...initialReservedNames};
   final byName = <String, OperationParameterDefault>{};
   final fields = <Field>[];
+  final onDropped = emitWarnings ? _log.warning : null;
 
   void process({
     required String normalizedName,
@@ -76,57 +74,24 @@ resolveOperationParameterDefaults({
     required String specName,
     required String location,
   }) {
-    if (rawDefault == null) return;
-
-    final materialised = materialiseConstDefault(
-      jsonValue: rawDefault,
-      targetModel: model,
-    );
-
-    if (materialised == null) {
-      if (emitWarnings) {
-        final resolved = model.resolved;
-        if (resolved is PrimitiveModel) {
-          final reason = _isMaterialiserSupportedPrimitive(model)
-              ? 'value does not match the parameter type'
-              : 'default value cannot be expressed as a const Dart '
-                    'expression for this type';
-          _log.warning(
-            'Dropping default for $operationClassName.$specName '
-            '($location, expected ${resolved.runtimeType}, '
-            'value: ${_describeDefault(rawDefault)}): $reason.',
-          );
-        }
-      }
-      return;
-    }
-
-    final memberName = nameManager.defaultMemberName(
-      propertyName: normalizedName,
+    final resolved = resolveSingleDefault(
+      normalizedName: normalizedName,
+      specName: specName,
+      model: model,
+      rawDefault: rawDefault,
+      containerName: operationClassName,
+      location: location,
       reservedNames: reserved,
+      nameManager: nameManager,
+      package: package,
+      onDroppedDefault: onDropped,
     );
-    reserved.add(memberName);
-
-    final type = typeReference(
-      model,
-      nameManager,
-      package,
-    );
+    if (resolved == null) return;
 
     byName[normalizedName] = OperationParameterDefault.local(
-      memberName: memberName,
+      memberName: resolved.memberName,
     );
-
-    fields.add(
-      Field(
-        (b) => b
-          ..static = true
-          ..modifier = FieldModifier.constant
-          ..name = memberName
-          ..type = type
-          ..assignment = materialised.code,
-      ),
-    );
+    fields.add(defaultField(resolved));
   }
 
   for (final p in normalizedParams.pathParameters) {
@@ -188,29 +153,4 @@ Set<String> initialOperationDefaultReservedNames({
   for (final p in normalizedParams.queryParameters) p.normalizedName,
   for (final p in normalizedParams.headers) p.normalizedName,
   for (final p in normalizedParams.cookieParameters) p.normalizedName,
-};
-
-// YAML's timestamp inference can hand us a `DateTime` (or any non-JSON
-// scalar) — fall back to `toString` so a logging path never throws.
-String _describeDefault(Object? raw) =>
-    _isJsonEncodable(raw) ? jsonEncode(raw) : raw.toString();
-
-bool _isJsonEncodable(Object? value) => switch (value) {
-  null || bool() || num() || String() => true,
-  final List<Object?> list => list.every(_isJsonEncodable),
-  final Map<Object?, Object?> map =>
-    map.keys.every((k) => k is String) && map.values.every(_isJsonEncodable),
-  _ => false,
-};
-
-// Mirrors the supported-types switch in default_value_materialiser.dart;
-// kept duplicated so a primitive added there without a parallel update here
-// shows up immediately as a wrong-reason warning.
-bool _isMaterialiserSupportedPrimitive(Model model) => switch (model.resolved) {
-  StringModel() ||
-  IntegerModel() ||
-  DoubleModel() ||
-  NumberModel() ||
-  BooleanModel() => true,
-  _ => false,
 };
