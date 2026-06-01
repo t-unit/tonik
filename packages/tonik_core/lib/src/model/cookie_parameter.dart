@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Encoding styles supported for cookie parameters.

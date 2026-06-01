@@ -1,4 +1,5 @@
 import 'package:test/test.dart';
+import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 void main() {
