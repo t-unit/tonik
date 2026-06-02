@@ -255,7 +255,7 @@ void main() {
         final message = warnings.single.message;
         expect(message, contains('BadOp.page'));
         expect(message, contains('(query,'));
-        expect(message, contains('expected integer'));
+        expect(message, contains('expected IntegerModel'));
         expect(message, contains('"not-a-number"'));
         expect(message, contains('value does not match the expected type'));
       },
@@ -308,7 +308,7 @@ void main() {
         final message = warnings.single.message;
         expect(message, contains('BoolOp.enabled'));
         expect(message, contains('(query,'));
-        expect(message, contains('expected boolean'));
+        expect(message, contains('expected BooleanModel'));
         expect(message, contains('"true"'));
         expect(message, contains('value does not match the expected type'));
       },
@@ -361,7 +361,7 @@ void main() {
         final message = warnings.single.message;
         expect(message, contains('StrOp.name'));
         expect(message, contains('(query,'));
-        expect(message, contains('expected string'));
+        expect(message, contains('expected StringModel'));
         expect(message, contains('value: 42'));
         expect(message, contains('value does not match the expected type'));
       },
@@ -560,7 +560,7 @@ void main() {
         final message = warnings.single.message;
         expect(message, contains('Op.since'));
         expect(message, contains('(query,'));
-        expect(message, contains('expected string (date-time)'));
+        expect(message, contains('expected DateTimeModel'));
         expect(message, contains('"2024-01-01T00:00:00Z"'));
         expect(
           message,

@@ -276,8 +276,9 @@ void main() {
       expect(warnings, hasLength(1));
       expect(
         warnings.single.message,
-        'Dropping default for Mismatched.tier (property, expected integer, '
-        'value: "no"): value does not match the expected type.',
+        'Dropping default for Mismatched.tier '
+        '(property, expected IntegerModel, value: "no"): '
+        'value does not match the expected type.',
       );
     });
 
@@ -318,7 +319,7 @@ void main() {
       expect(
         warnings.single.message,
         'Dropping default for WithAliasedBadDefault.count '
-        '(property, expected integer, value: "bad"): '
+        '(property, expected IntegerModel, value: "bad"): '
         'value does not match the expected type.',
       );
     });
