@@ -703,8 +703,8 @@ void main() {
     );
 
     test(
-      'enum parameter with a defaulted variant emits no field and no '
-      'warning (composite/non-PrimitiveModel — silent by design)',
+      'enum parameter with a valid defaulted variant emits a static const '
+      'field referencing the matching enum variant',
       () {
         final logs = <LogRecord>[];
         final sub = Logger('OperationParameterDefaults')
@@ -752,8 +752,12 @@ void main() {
           initialReservedNames: const {'_dio'},
         );
 
-        expect(result.byName, isEmpty);
-        expect(result.fields, isEmpty);
+        expect(result.byName.keys, ['order']);
+        expect(result.fields, hasLength(1));
+        final field = result.fields.single;
+        expect(field.name, 'orderDefault');
+        expect(field.type?.symbol, 'Order');
+        expect(renderAssignment(field.assignment), 'Order.desc');
         expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
       },
     );

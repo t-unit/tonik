@@ -3349,6 +3349,148 @@ Future<TonikResult<void>> call({
           expect(warnings.single.message, contains('enabled'));
         },
       );
+
+      test(
+        'enum-typed query parameter with valid default emits static const '
+        'and references it from call()',
+        () {
+          final statusEnum = EnumModel<String>(
+            name: 'Status',
+            values: {
+              const EnumEntry<String>(value: 'active'),
+              const EnumEntry<String>(value: 'inactive'),
+            },
+            isNullable: false,
+            context: context,
+            isDeprecated: false,
+            examples: const [],
+          );
+
+          final queryParam = QueryParameterObject(
+            name: 'status',
+            rawName: 'status',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: statusEnum,
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'active',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'ListThings');
+
+          final defaultField =
+              result.fields.firstWhere((f) => f.name == 'statusDefault');
+          expect(defaultField.static, isTrue);
+          expect(defaultField.modifier, FieldModifier.constant);
+          expect(defaultField.type?.symbol, 'Status');
+          expect(
+            defaultField.assignment?.accept(emitter).toString(),
+            'Status.active',
+          );
+
+          final callMethod =
+              result.methods.firstWhere((m) => m.name == 'call');
+          final statusParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'status');
+          expect(statusParam.required, isFalse);
+          expect(
+            statusParam.defaultTo?.accept(emitter).toString(),
+            'statusDefault',
+          );
+          expect(statusParam.type?.accept(emitter).toString(), 'Status');
+
+          const expectedCall = r'''
+Future<TonikResult<void>> call({
+  Status status = statusDefault,
+  CancelToken? cancelToken,
+}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(
+      path: _$newPath,
+      query: _queryParameters(status: status),
+    );
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  return TonikSuccess(null, _$response);
+}
+''';
+
+          final actualCall = format(callMethod.accept(emitter).toString());
+          expect(
+            collapseWhitespace(actualCall),
+            collapseWhitespace(expectedCall),
+          );
+        },
+      );
     });
   });
 }

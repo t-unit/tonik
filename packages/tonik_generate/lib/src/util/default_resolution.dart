@@ -41,6 +41,8 @@ ResolvedDefault? resolveSingleDefault({
   final materialised = materialiseConstDefault(
     jsonValue: rawDefault,
     targetModel: model,
+    nameManager: nameManager,
+    package: package,
   );
 
   if (materialised == null) {
@@ -55,6 +57,17 @@ ResolvedDefault? resolveSingleDefault({
           'Dropping default for $containerName.$specName '
           '($location, expected ${resolved.runtimeType}, '
           'value: ${_describeDefault(rawDefault)}): $reason.',
+        );
+      } else if (resolved is EnumModel) {
+        final reason = _enumValueIsMember(resolved, rawDefault)
+            ? 'default value cannot be expressed as a const Dart expression '
+                  'for this type'
+            : 'value is not one of the enum values';
+        onDroppedDefault(
+          'Dropping default for $containerName.$specName '
+          '($location, expected ${resolved.runtimeType}, '
+          'value: ${_describeDefault(rawDefault)}): '
+          '$reason.',
         );
       }
     }
@@ -113,3 +126,6 @@ bool _isMaterialiserSupportedPrimitive(Model model) => switch (model.resolved) {
   BooleanModel() => true,
   _ => false,
 };
+
+bool _enumValueIsMember(EnumModel<dynamic> model, Object? rawDefault) =>
+    model.values.any((entry) => entry.value == rawDefault);

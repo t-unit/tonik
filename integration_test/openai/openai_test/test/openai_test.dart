@@ -208,8 +208,8 @@ void main() {
       final uri = success.response.requestOptions.uri;
       expect(uri.path, '/v1/files');
       expect(uri.queryParameters['limit'], '10000');
+      expect(uri.queryParameters['order'], 'desc');
       expect(uri.queryParameters.containsKey('purpose'), isFalse);
-      expect(uri.queryParameters.containsKey('order'), isFalse);
       expect(uri.queryParameters.containsKey('after'), isFalse);
     });
   });

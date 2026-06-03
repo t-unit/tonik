@@ -884,28 +884,32 @@ void main() {
         expect(requestBody['reasoning_mode'], 'investigate');
       });
 
-      test('request body omits reasoning_mode when null', () async {
-        final api = buildApi(responseStatus: '200');
+      test(
+        'request body applies schema default for reasoning_mode when caller '
+        'omits it',
+        () async {
+          final api = buildApi(responseStatus: '200');
 
-        final response = await api
-            .sendMessageProtoRouteApiV1InferSendMessagePost(
-              body: const SendMessageRequest(
-                chatSessionId: 'session-123',
-                userId: 'user-456',
-                messageId: 'msg-789',
-                message: 'Hello',
-              ),
-            );
+          final response = await api
+              .sendMessageProtoRouteApiV1InferSendMessagePost(
+                body: const SendMessageRequest(
+                  chatSessionId: 'session-123',
+                  userId: 'user-456',
+                  messageId: 'msg-789',
+                  message: 'Hello',
+                ),
+              );
 
-        final success =
-            response
-                as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
-                >;
-        final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
-        expect(requestBody.containsKey('reasoning_mode'), isFalse);
-      });
+          final success =
+              response
+                  as TonikSuccess<
+                    SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  >;
+          final requestBody =
+              success.response.requestOptions.data as Map<String, dynamic>;
+          expect(requestBody['reasoning_mode'], 'copilot');
+        },
+      );
 
       test('request body encodes all optional fields together', () async {
         final api = buildApi(responseStatus: '200');
