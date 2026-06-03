@@ -1009,6 +1009,68 @@ void main() {
     );
 
     test(
+      'enum query parameter with default value outside the enum values is '
+      'dropped with a query-location warning',
+      () {
+        final logs = <LogRecord>[];
+        final sub = Logger('OperationParameterDefaults')
+            .onRecord
+            .listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final order = QueryParameterObject(
+          name: 'order',
+          rawName: 'order',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: EnumModel<String>(
+            name: 'Order',
+            values: {
+              const EnumEntry(value: 'asc'),
+              const EnumEntry(value: 'desc'),
+            },
+            isNullable: false,
+            isDeprecated: false,
+            context: context,
+            examples: const [],
+          ),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 'archived',
+        );
+
+        final normalized = normalizeRequestParameters(
+          pathParameters: const {},
+          queryParameters: {order},
+          headers: const {},
+        );
+
+        final result = resolveOperationParameterDefaults(
+          normalizedParams: normalized,
+          operationClassName: 'Op',
+          nameManager: nameManager,
+          package: 'api',
+          initialReservedNames: const {'_dio'},
+        );
+
+        expect(result.byName.containsKey('order'), isFalse);
+        expect(result.fields, isEmpty);
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+        final message = warnings.single.message;
+        expect(message, contains('Op.order'));
+        expect(message, contains('(query,'));
+        expect(message, contains('"archived"'));
+        expect(message, contains('value is not one of the enum values'));
+      },
+    );
+
+    test(
       'alias-wrapped enum default surfaces via effectiveDefaultValue and '
       'materialises the matching variant const',
       () {
