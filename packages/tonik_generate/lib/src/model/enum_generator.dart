@@ -4,7 +4,6 @@ import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
@@ -60,21 +59,13 @@ class EnumGenerator {
       );
     }
 
-    // Collect all values for normalization (using nameOverride if provided)
-    final allValuesToNormalize = [
-      ...model.values.map((v) => v.nameOverride ?? v.value.toString()),
-      if (model.fallbackValue != null)
-        model.fallbackValue!.nameOverride ??
-            model.fallbackValue!.value.toString(),
-    ];
-
-    final normalizedValues = normalizeEnumValues(allValuesToNormalize);
-    final enumValues = _generateEnumValues(model, normalizedValues);
-
-    // Get the fallback normalized name for use in fromJson and encoding methods
-    final fallbackNormalizedName = model.fallbackValue != null
-        ? normalizedValues[model.values.length].normalizedName
-        : '';
+    final variantNames = nameManager.enumVariantNames(model);
+    final enumValues = _generateEnumValues(
+      model,
+      variantNames.valueNames,
+      variantNames.fallbackName,
+    );
+    final fallbackNormalizedName = variantNames.fallbackName ?? '';
 
     // Generate unique name for nullable enum with prefix to allow
     // using a typedef to express the nullable type.
@@ -682,18 +673,15 @@ return rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
 
   List<EnumValue> _generateEnumValues<T>(
     EnumModel<T> model,
-    List<({String normalizedName, String originalValue})> normalizedValues,
+    List<String> valueNames,
+    String? fallbackName,
   ) {
     final values = model.values.toList();
     final enumValues = values.asMap().entries.map((entry) {
       final rawValue = entry.value.value;
-      // Always use normalized name
-      // (nameOverride is used as input to normalization)
-      final enumName = normalizedValues[entry.key].normalizedName;
-
       return EnumValue(
         (b) => b
-          ..name = enumName
+          ..name = valueNames[entry.key]
           ..arguments.add(
             rawValue is int
                 ? literalNum(rawValue)
@@ -702,13 +690,9 @@ return rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
       );
     }).toList();
 
-    // Add fallback value at the end if present
-    if (model.fallbackValue != null) {
-      final fallbackRawValue = model.fallbackValue!.value;
-      // Always use normalized name
-      // (nameOverride is used as input to normalization)
-      final fallbackName = normalizedValues[values.length].normalizedName;
-
+    final fallback = model.fallbackValue;
+    if (fallback != null && fallbackName != null) {
+      final fallbackRawValue = fallback.value;
       enumValues.add(
         EnumValue(
           (b) => b

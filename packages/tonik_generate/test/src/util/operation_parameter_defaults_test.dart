@@ -763,6 +763,128 @@ void main() {
     );
 
     test(
+      'header enum parameter with a valid defaulted variant emits a static '
+      'const field referencing the matching enum variant',
+      () {
+        final logs = <LogRecord>[];
+        final sub = Logger('OperationParameterDefaults')
+            .onRecord
+            .listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final mode = RequestHeaderObject(
+          name: 'mode',
+          rawName: 'X-Mode',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: EnumModel<String>(
+            name: 'Mode',
+            values: {
+              const EnumEntry(value: 'fast'),
+              const EnumEntry(value: 'slow'),
+            },
+            isNullable: false,
+            isDeprecated: false,
+            context: context,
+            examples: const [],
+          ),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: 'slow',
+        );
+
+        final normalized = normalizeRequestParameters(
+          pathParameters: const {},
+          queryParameters: const {},
+          headers: {mode},
+        );
+
+        final result = resolveOperationParameterDefaults(
+          normalizedParams: normalized,
+          operationClassName: 'Op',
+          nameManager: nameManager,
+          package: 'api',
+          initialReservedNames: const {'_dio'},
+        );
+
+        expect(result.byName.keys, ['mode']);
+        expect(result.fields, hasLength(1));
+        final field = result.fields.single;
+        expect(field.name, 'modeDefault');
+        expect(field.static, isTrue);
+        expect(field.modifier, FieldModifier.constant);
+        expect(field.type?.symbol, 'Mode');
+        expect(renderAssignment(field.assignment), 'Mode.slow');
+        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+      },
+    );
+
+    test(
+      'path enum parameter with a valid defaulted variant emits a static '
+      'const field referencing the matching enum variant',
+      () {
+        final logs = <LogRecord>[];
+        final sub = Logger('OperationParameterDefaults')
+            .onRecord
+            .listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final kind = PathParameterObject(
+          name: 'kind',
+          rawName: 'kind',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: EnumModel<String>(
+            name: 'Kind',
+            values: {
+              const EnumEntry(value: 'big'),
+              const EnumEntry(value: 'small'),
+            },
+            isNullable: false,
+            isDeprecated: false,
+            context: context,
+            examples: const [],
+          ),
+          encoding: PathParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: 'big',
+        );
+
+        final normalized = normalizeRequestParameters(
+          pathParameters: {kind},
+          queryParameters: const {},
+          headers: const {},
+        );
+
+        final result = resolveOperationParameterDefaults(
+          normalizedParams: normalized,
+          operationClassName: 'Op',
+          nameManager: nameManager,
+          package: 'api',
+          initialReservedNames: const {'_dio'},
+        );
+
+        expect(result.byName.keys, ['kind']);
+        expect(result.fields, hasLength(1));
+        final field = result.fields.single;
+        expect(field.name, 'kindDefault');
+        expect(field.static, isTrue);
+        expect(field.modifier, FieldModifier.constant);
+        expect(field.type?.symbol, 'Kind');
+        expect(renderAssignment(field.assignment), 'Kind.big');
+        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+      },
+    );
+
+    test(
       'warning formatter falls back to toString when the raw default is '
       'not JSON-encodable (e.g. a YAML-parsed DateTime)',
       () {

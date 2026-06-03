@@ -8,6 +8,7 @@ void main() {
       expect(value.priority, SubscriptionPriorityModel.medium);
       expect(value.level, SubscriptionLevelModel.two);
       expect(value.status, Status.active);
+      expect(value.tier, Tier.two);
       expect(value.fallbackPriority, isNull);
     });
 
@@ -15,6 +16,7 @@ void main() {
       expect(Subscription.priorityDefault, SubscriptionPriorityModel.medium);
       expect(Subscription.levelDefault, SubscriptionLevelModel.two);
       expect(Subscription.statusDefault, Status.active);
+      expect(Subscription.tierDefault, Tier.two);
     });
 
     test('fromJson with empty map yields enum defaults', () {
@@ -22,6 +24,7 @@ void main() {
       expect(value.priority, SubscriptionPriorityModel.medium);
       expect(value.level, SubscriptionLevelModel.two);
       expect(value.status, Status.active);
+      expect(value.tier, Tier.two);
       expect(value.fallbackPriority, isNull);
     });
 
@@ -30,10 +33,12 @@ void main() {
         'priority': 'high',
         'level': 3,
         'status': 'inactive',
+        'tier': 3,
       });
       expect(value.priority, SubscriptionPriorityModel.high);
       expect(value.level, SubscriptionLevelModel.three);
       expect(value.status, Status.inactive);
+      expect(value.tier, Tier.three);
     });
 
     test('round-trip: fromJson(toJson(...)) yields an equal instance', () {
@@ -47,9 +52,6 @@ void main() {
       'default value NOT in enum values is dropped — the field keeps the '
       'no-default behaviour and remains null when the key is missing',
       () {
-        // `fallbackPriority` was declared with default "nonexistent" but the
-        // enum only contains [low, medium, high]; the generator must drop the
-        // default and emit no static const member.
         final value = Subscription.fromJson(const <String, Object?>{});
         expect(value.fallbackPriority, isNull);
       },

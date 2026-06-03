@@ -1079,5 +1079,118 @@ void main() {
         expect(name, 'PetsApi');
       });
     });
+
+    group('enumVariantNames', () {
+      test('returns normalized names in iteration order for plain entries', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry<String>(value: 'active'),
+            const EnumEntry<String>(value: 'inactive'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+        );
+
+        final result = manager.enumVariantNames(model);
+
+        expect(result.valueNames, ['active', 'inactive']);
+        expect(result.fallbackName, isNull);
+      });
+
+      test('respects nameOverride on entries', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry<String>(value: 'active', nameOverride: 'Activated'),
+            const EnumEntry<String>(
+              value: 'inactive',
+              nameOverride: 'Deactivated',
+            ),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+        );
+
+        final result = manager.enumVariantNames(model);
+
+        expect(result.valueNames, ['activated', 'deactivated']);
+        expect(result.fallbackName, isNull);
+      });
+
+      test('emits fallbackName at the end when fallbackValue is set', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry<String>(value: 'active'),
+            const EnumEntry<String>(value: 'inactive'),
+          },
+          fallbackValue: const EnumEntry<String>(value: 'unknown'),
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+        );
+
+        final result = manager.enumVariantNames(model);
+
+        expect(result.valueNames, ['active', 'inactive']);
+        expect(result.fallbackName, 'unknown');
+      });
+
+      test(
+        'collision between two normalized names disambiguates the second '
+        'occurrence — the first keeps the base name',
+        () {
+          final model = EnumModel<String>(
+            name: 'Status',
+            values: {
+              const EnumEntry<String>(
+                value: 'active',
+                nameOverride: 'Activated',
+              ),
+              const EnumEntry<String>(value: 'inactive'),
+            },
+            fallbackValue: const EnumEntry<String>(
+              value: 'unknown',
+              nameOverride: 'Activated',
+            ),
+            isNullable: false,
+            isDeprecated: false,
+            context: context,
+            examples: const [],
+          );
+
+          final result = manager.enumVariantNames(model);
+
+          expect(result.valueNames, ['activated', 'inactive']);
+          expect(result.fallbackName, 'activated2');
+        },
+      );
+
+      test('caches per model — second call returns the same record', () {
+        final model = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry<String>(value: 'active'),
+            const EnumEntry<String>(value: 'inactive'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+        );
+
+        final first = manager.enumVariantNames(model);
+        final second = manager.enumVariantNames(model);
+
+        expect(identical(first.valueNames, second.valueNames), isTrue);
+        expect(first.fallbackName, second.fallbackName);
+      });
+    });
   });
 }

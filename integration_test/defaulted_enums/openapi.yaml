@@ -55,11 +55,16 @@ components:
           type: integer
           enum: [1, 2, 3]
           default: 2
-        # $ref to a named enum with a sibling default — propagates via
+        # $ref to a named string enum with a sibling default — propagates via
         # AliasModel.
         status:
           $ref: '#/components/schemas/Status'
           default: active
+        # $ref to a named integer enum with a sibling default — exercises the
+        # alias-chain-to-int-enum-with-default path end to end.
+        tier:
+          $ref: '#/components/schemas/Tier'
+          default: 2
         # Default outside the enum's values — must be dropped.
         fallbackPriority:
           type: string

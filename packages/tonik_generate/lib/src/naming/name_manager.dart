@@ -4,6 +4,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
+import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 
 /// Manages name generation and caches results for consistent naming.
 class NameManager {
@@ -47,6 +48,12 @@ class NameManager {
     ({String baseName, Map<String, String> implementationNames})
   >
   responseAndImplementationNames = {};
+
+  final Map<
+    EnumModel<dynamic>,
+    ({List<String> valueNames, String? fallbackName})
+  >
+  _enumVariantNamesCache = {};
 
   final log = Logger('NameManager');
 
@@ -309,6 +316,35 @@ class NameManager {
     propertyName: propertyName,
     reservedNames: reservedNames,
   );
+
+  /// Canonical normalized variant names for [model], cached per model so the
+  /// enum generator and the default-value materialiser cannot drift.
+  ///
+  /// `valueNames` is positional with `model.values.toList()`; `fallbackName`
+  /// is non-null iff `model.fallbackValue` is non-null and gets a numeric
+  /// suffix if its sanitised name collides with an earlier entry.
+  ({List<String> valueNames, String? fallbackName}) enumVariantNames(
+    EnumModel<dynamic> model,
+  ) {
+    return _enumVariantNamesCache.putIfAbsent(model, () {
+      final values = model.values.toList();
+      final inputs = [
+        ...values.map((v) => v.nameOverride ?? v.value.toString()),
+        if (model.fallbackValue != null)
+          model.fallbackValue!.nameOverride ??
+              model.fallbackValue!.value.toString(),
+      ];
+      final normalized = normalizeEnumValues(inputs);
+      return (
+        valueNames: List<String>.unmodifiable(
+          normalized.take(values.length).map((n) => n.normalizedName),
+        ),
+        fallbackName: model.fallbackValue != null
+            ? normalized[values.length].normalizedName
+            : null,
+      );
+    });
+  }
 
   /// Picks a field name for a class's additional-properties map.
   ///

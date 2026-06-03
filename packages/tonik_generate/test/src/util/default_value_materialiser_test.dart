@@ -451,6 +451,34 @@ void main() {
       );
     });
 
+    test(
+      'matched variant name is stable when fallbackValue nameOverride '
+      'collides with an entry nameOverride',
+      () {
+        final result = materialiseConstDefault(
+          jsonValue: 'active',
+          targetModel: stringEnum(
+            values: const [
+              EnumEntry<String>(value: 'active', nameOverride: 'Activated'),
+              EnumEntry<String>(value: 'inactive'),
+            ],
+            fallbackValue: const EnumEntry<String>(
+              value: 'unknown',
+              nameOverride: 'Activated',
+            ),
+          ),
+          nameManager: nameManager,
+          package: package,
+        );
+
+        expect(result, isNotNull);
+        expect(
+          collapseWhitespace(renderExpression(result!)),
+          collapseWhitespace(formatBody('Status.activated')),
+        );
+      },
+    );
+
     test('alias chain to EnumModel routes via targetModel.resolved', () {
       final enumModel = stringEnum();
       final inner = AliasModel(

@@ -1,7 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
@@ -41,29 +40,21 @@ Expression? materialiseConstDefault({
   };
 }
 
-// Nullable enums route through a typedef + `$Raw`-prefixed actual enum;
-// const variant access would need the prefixed symbol, which is not yet
-// wired up.
 Expression? _materialiseEnumDefault({
   required EnumModel<dynamic> model,
   required Object? jsonValue,
   required NameManager nameManager,
   required String package,
 }) {
+  // Nullable enum's actual name is $Raw-prefixed; const variant ref not wired.
   if (model.isNullable) return null;
 
   final entries = model.values.toList();
   final matchedIndex = entries.indexWhere((e) => e.value == jsonValue);
   if (matchedIndex < 0) return null;
 
-  final fallback = model.fallbackValue;
-  final inputs = [
-    ...entries.map((v) => v.nameOverride ?? v.value.toString()),
-    if (fallback != null) fallback.nameOverride ?? fallback.value.toString(),
-  ];
-  final normalized = normalizeEnumValues(inputs);
-  final variantName = normalized[matchedIndex].normalizedName;
-
+  final variantName =
+      nameManager.enumVariantNames(model).valueNames[matchedIndex];
   final enumName = nameManager.modelName(model);
   final url = sourceFileUrl(package, 'model', enumName);
   return refer('$enumName.$variantName', url);
