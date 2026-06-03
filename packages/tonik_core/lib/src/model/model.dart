@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/src/model/example.dart';
 import 'package:tonik_core/src/util/context.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -632,11 +633,7 @@ class Property {
 
   /// The property's own [defaultValue] when set, otherwise the default
   /// carried by its [model] when that model is an [AliasModel] chain.
-  Object? get effectiveDefaultValue {
-    if (defaultValue != null) return defaultValue;
-    final m = model;
-    return m is AliasModel ? m.defaultValue : null;
-  }
+  Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override
   String toString() =>

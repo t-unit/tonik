@@ -12,6 +12,7 @@ import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
+import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
@@ -110,6 +111,17 @@ class OperationGenerator {
       ),
     );
 
+    final defaults = resolveOperationParameterDefaults(
+      normalizedParams: normalizedParams,
+      operationClassName: className,
+      nameManager: nameManager,
+      package: package,
+      initialReservedNames: initialOperationDefaultReservedNames(
+        normalizedParams: normalizedParams,
+        hasRequestBody: hasRequestBody,
+      ),
+    );
+
     return Class(
       (b) {
         b
@@ -121,7 +133,8 @@ class OperationGenerator {
                 ..modifier = FieldModifier.final$
                 ..type = refer('Dio', 'package:dio/dio.dart'),
             ),
-          );
+          )
+          ..fields.addAll(defaults.fields);
 
         if (operation.isDeprecated) {
           b.annotations.add(
@@ -145,7 +158,11 @@ class OperationGenerator {
             ),
           )
           ..methods.addAll([
-            generateCallMethod(operation, normalizedParams),
+            generateCallMethod(
+              operation,
+              normalizedParams,
+              defaultsByName: defaults.byName,
+            ),
             _pathGenerator.generatePathMethod(
               operation,
               normalizedParams.pathParameters,
@@ -172,14 +189,16 @@ class OperationGenerator {
   @visibleForTesting
   Method generateCallMethod(
     Operation operation,
-    NormalizedRequestParameters normalizedParams,
-  ) {
+    NormalizedRequestParameters normalizedParams, {
+    Map<String, OperationParameterDefault> defaultsByName = const {},
+  }) {
     final hasRequestBody =
         operation.requestBody?.resolvedContent.isNotEmpty ?? false;
     final parameters = generateParameters(
       operation: operation,
       nameManager: nameManager,
       package: package,
+      defaultsByName: defaultsByName,
     );
 
     final pathArgs = <String, Expression>{};

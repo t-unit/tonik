@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
@@ -2006,6 +2007,176 @@ void main() {
         final method = generatedClass.methods.first;
         expect(method.name, r'$class');
       });
+    });
+
+    group('parameter defaults', () {
+      test(
+        'forwards defaulted parameters with class-qualified defaultTo so the '
+        'reference resolves outside the operation class',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: testContext),
+            encoding: QueryParameterEncoding.form,
+            context: testContext,
+            examples: const [],
+            defaultValue: 'us',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: testContext,
+            tags: {Tag(name: 'things')},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final generatedClass = generator.generateClass(
+            {operation},
+            Tag(name: 'things'),
+            testServers,
+          );
+
+          final method = generatedClass.methods.firstWhere(
+            (m) => m.name == 'listThings',
+          );
+
+          final regionParam = method.optionalParameters
+              .firstWhere((p) => p.name == 'region');
+          expect(regionParam.required, isFalse);
+          expect(regionParam.type?.accept(emitter).toString(), 'String');
+          expect(
+            regionParam.defaultTo?.accept(emitter).toString(),
+            'ListThings.regionDefault',
+          );
+        },
+      );
+
+      test(
+        'forwarder body invokes the operation with the parameter name, not '
+        'the qualified default reference',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: testContext),
+            encoding: QueryParameterEncoding.form,
+            context: testContext,
+            examples: const [],
+            defaultValue: 'us',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: testContext,
+            tags: {Tag(name: 'things')},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final generatedClass = generator.generateClass(
+            {operation},
+            Tag(name: 'things'),
+            testServers,
+          );
+
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+
+          const expectedMethod = '''
+Future<TonikResult<void>> listThings({
+  String region = ListThings.regionDefault,
+}) async => _listThings(region: region);
+''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'suppresses dropped-default warnings — the operation class is the '
+        'sole logging site',
+        () {
+          final logs = <LogRecord>[];
+          final sub = Logger('OperationParameterDefaults')
+              .onRecord
+              .listen(logs.add);
+          addTearDown(sub.cancel);
+
+          final queryParam = QueryParameterObject(
+            name: 'enabled',
+            rawName: 'enabled',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: BooleanModel(context: testContext),
+            encoding: QueryParameterEncoding.form,
+            context: testContext,
+            examples: const [],
+            defaultValue: 'true',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: testContext,
+            tags: {Tag(name: 'things')},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          generator.generateClass(
+            {operation},
+            Tag(name: 'things'),
+            testServers,
+          );
+
+          expect(
+            logs.where((r) => r.level == Level.WARNING),
+            isEmpty,
+          );
+        },
+      );
     });
   });
 }

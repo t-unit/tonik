@@ -38,8 +38,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/summary',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/summary',
         );
       });
 
@@ -141,7 +141,8 @@ void main() {
         expect(uri.queryParameters['end'], isNotNull);
       });
 
-      test('omits optional parameters when not provided', () async {
+      test('omits non-defaulted optional parameters when not provided '
+          'and applies the schema default for previous', () async {
         final api = buildStatsApi(responseStatus: '200');
 
         final response = await api.getWebsiteIdSummary(
@@ -151,7 +152,7 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
         final uri = success.response.requestOptions.uri;
-        expect(uri.queryParameters.containsKey('previous'), isFalse);
+        expect(uri.queryParameters['previous'], 'false');
         expect(uri.queryParameters.containsKey('interval'), isFalse);
         expect(uri.queryParameters.containsKey('start'), isFalse);
         expect(uri.queryParameters.containsKey('end'), isFalse);
@@ -318,8 +319,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdPagesResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/pages',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/pages',
         );
       });
 
@@ -505,8 +506,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdTimeResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/time',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/time',
         );
       });
 
@@ -648,8 +649,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdReferrersResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/referrers',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/referrers',
         );
       });
 
@@ -685,12 +686,12 @@ void main() {
         final response = await api.getWebsiteIdReferrers(
           meSess: 'test_session',
           hostname: 'example.com',
-          grouped: true,
+          grouped: false,
         );
 
         final success = response as TonikSuccess<GetWebsiteIdReferrersResponse>;
         final uri = success.response.requestOptions.uri;
-        expect(uri.queryParameters['grouped'], 'true');
+        expect(uri.queryParameters['grouped'], 'false');
       });
     });
 
@@ -845,8 +846,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdSourcesResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/sources',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/sources',
         );
       });
 
@@ -1020,8 +1021,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdMediumsResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/mediums',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/mediums',
         );
       });
 
@@ -1195,8 +1196,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdCampaignsResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/campaigns',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/campaigns',
         );
       });
 
@@ -1376,8 +1377,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdBrowsersResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/browsers',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/browsers',
         );
       });
 
@@ -1557,8 +1558,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdOsResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/os',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/os',
         );
       });
 
@@ -1714,8 +1715,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdDeviceResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/devices',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/devices',
         );
       });
 
@@ -1889,8 +1890,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdCountryResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/countries',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/countries',
         );
       });
 
@@ -2064,8 +2065,8 @@ void main() {
 
         final success = response as TonikSuccess<GetWebsiteIdLanguageResponse>;
         expect(
-          success.response.requestOptions.path,
-          '$baseUrl/website/example.com/languages',
+          success.response.requestOptions.uri.path,
+          '/website/example.com/languages',
         );
       });
 

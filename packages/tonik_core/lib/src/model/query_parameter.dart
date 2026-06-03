@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Encoding styles supported for query parameters.
@@ -127,6 +128,8 @@ class QueryParameterObject extends QueryParameter {
   List<Example> examples;
 
   Object? defaultValue;
+
+  Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override
   String toString() =>

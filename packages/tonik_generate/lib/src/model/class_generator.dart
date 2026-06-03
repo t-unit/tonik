@@ -10,7 +10,7 @@ import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
-import 'package:tonik_generate/src/util/default_value_materialiser.dart';
+import 'package:tonik_generate/src/util/default_resolution.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
@@ -273,16 +273,7 @@ class ClassGenerator {
         for (final prop in normalizedProperties) {
           final defaulted = defaultsByName[prop.normalizedName];
           if (defaulted == null) continue;
-          b.fields.add(
-            Field(
-              (fb) => fb
-                ..static = true
-                ..modifier = FieldModifier.constant
-                ..name = defaulted.memberName
-                ..type = defaulted.type
-                ..assignment = defaulted.value.code,
-            ),
-          );
+          b.fields.add(defaultField(defaulted));
         }
 
         b.fields.addAll(
@@ -314,7 +305,7 @@ class ClassGenerator {
     );
   }
 
-  Map<String, _DefaultedProperty> _resolveDefaults(
+  Map<String, ResolvedDefault> _resolveDefaults(
     List<({String normalizedName, Property property})> normalizedProperties,
     String className, {
     String? apFieldName,
@@ -324,44 +315,24 @@ class ClassGenerator {
       ?apFieldName,
     };
 
-    final result = <String, _DefaultedProperty>{};
+    final result = <String, ResolvedDefault>{};
     for (final prop in normalizedProperties) {
-      final raw = prop.property.effectiveDefaultValue;
-      // Null carrier collapses "no default" and "default: null" — emit nothing.
-      if (raw == null) continue;
-
-      final materialised = materialiseConstDefault(
-        jsonValue: raw,
-        targetModel: prop.property.model,
-      );
-
-      if (materialised == null) {
-        if (prop.property.model.resolved is PrimitiveModel) {
-          _classGeneratorLog.warning(
-            'Dropping default for $className.${prop.property.name}: '
-            'value does not match the property type.',
-          );
-        }
-        continue;
-      }
-
-      final memberName = nameManager.defaultMemberName(
-        propertyName: prop.normalizedName,
+      final resolved = resolveSingleDefault(
+        normalizedName: prop.normalizedName,
+        specName: prop.property.name,
+        model: prop.property.model,
+        rawDefault: prop.property.effectiveDefaultValue,
+        containerName: className,
+        location: 'property',
         reservedNames: reservedNames,
+        nameManager: nameManager,
+        package: package,
+        onDroppedDefault: _classGeneratorLog.warning,
+        isNullableOverride: prop.property.isNullable,
+        useImmutableCollections: useImmutableCollections,
       );
-      reservedNames.add(memberName);
-
-      result[prop.normalizedName] = _DefaultedProperty(
-        memberName: memberName,
-        value: materialised,
-        type: typeReference(
-          prop.property.model,
-          nameManager,
-          package,
-          isNullableOverride: prop.property.isNullable,
-          useImmutableCollections: useImmutableCollections,
-        ),
-      );
+      if (resolved == null) continue;
+      result[prop.normalizedName] = resolved;
     }
     return result;
   }
@@ -369,7 +340,7 @@ class ClassGenerator {
   Expression _defaultIfAbsent({
     required Expression decoded,
     required String key,
-    required _DefaultedProperty defaulted,
+    required ResolvedDefault defaulted,
   }) => refer(r'_$values')
       .property('containsKey')
       .call([specLiteralString(key)])
@@ -417,7 +388,7 @@ class ClassGenerator {
   Constructor _buildFromSimpleConstructor(
     String className,
     ClassModel model,
-    Map<String, _DefaultedProperty> defaultsByName,
+    Map<String, ResolvedDefault> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
     if (model.isWriteOnly) {
@@ -502,7 +473,7 @@ class ClassGenerator {
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
     ClassModel classModel,
-    Map<String, _DefaultedProperty> defaultsByName,
+    Map<String, ResolvedDefault> defaultsByName,
   ) {
     if (properties.isEmpty) {
       if (hasAnyProperties) {
@@ -680,7 +651,7 @@ class ClassGenerator {
   Constructor _buildFromJsonConstructor(
     String className,
     ClassModel model,
-    Map<String, _DefaultedProperty> defaultsByName,
+    Map<String, ResolvedDefault> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
     if (model.isWriteOnly) {
@@ -721,7 +692,7 @@ class ClassGenerator {
   Code _buildFromJsonBody(
     String className,
     ClassModel model,
-    Map<String, _DefaultedProperty> defaultsByName,
+    Map<String, ResolvedDefault> defaultsByName,
   ) {
     final normalizedProperties = normalizeProperties(
       model.properties.where((p) => !p.isWriteOnly).toList(),
@@ -1725,7 +1696,7 @@ if ($name != null) {
   Constructor _buildFromFormConstructor(
     String className,
     ClassModel model,
-    Map<String, _DefaultedProperty> defaultsByName,
+    Map<String, ResolvedDefault> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
     if (model.isWriteOnly) {
@@ -1810,7 +1781,7 @@ if ($name != null) {
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
     ClassModel classModel,
-    Map<String, _DefaultedProperty> defaultsByName,
+    Map<String, ResolvedDefault> defaultsByName,
   ) {
     if (properties.isEmpty) {
       if (hasAnyProperties) {
@@ -2142,22 +2113,4 @@ if ($name != null) {
     }
     return false;
   }
-}
-
-/// A defaulted property's resolved member metadata.
-///
-/// Built once per class generation and threaded through the constructor /
-/// `fromJson` / `fromSimple` / `fromForm` emitters so all references stay
-/// in lock-step on naming and shape.
-@immutable
-class _DefaultedProperty {
-  const _DefaultedProperty({
-    required this.memberName,
-    required this.value,
-    required this.type,
-  });
-
-  final String memberName;
-  final Expression value;
-  final TypeReference type;
 }

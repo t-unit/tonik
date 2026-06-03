@@ -3,14 +3,20 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
-/// Generates parameters for an operation
+/// Generates the `call()` parameters for an operation.
+///
+/// When [defaultsByName] is supplied, named parameters become optional and
+/// receive `defaultTo` references — qualified for call sites outside the
+/// owning class so the import allocator resolves them.
 List<Parameter> generateParameters({
   required Operation operation,
   required NameManager nameManager,
   required String package,
+  Map<String, OperationParameterDefault> defaultsByName = const {},
 }) {
   final hasRequestBody =
       operation.requestBody?.resolvedContent.isNotEmpty ?? false;
@@ -62,11 +68,13 @@ List<Parameter> generateParameters({
 
   // Add path parameters
   for (final pathParam in normalizedParams.pathParameters) {
+    final defaulted = defaultsByName[pathParam.normalizedName];
     final parameterType = typeReference(
       pathParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride: !pathParam.parameter.isRequired,
+      isNullableOverride:
+          !pathParam.parameter.isRequired && defaulted == null,
     );
 
     parameters.add(
@@ -76,7 +84,8 @@ List<Parameter> generateParameters({
             ..name = pathParam.normalizedName
             ..type = parameterType
             ..named = true
-            ..required = pathParam.parameter.isRequired;
+            ..required = defaulted == null && pathParam.parameter.isRequired
+            ..defaultTo = defaulted?.defaultToCode();
 
           if (pathParam.parameter.isDeprecated) {
             b.annotations.add(
@@ -92,11 +101,13 @@ List<Parameter> generateParameters({
 
   // Add query parameters
   for (final queryParam in normalizedParams.queryParameters) {
+    final defaulted = defaultsByName[queryParam.normalizedName];
     final parameterType = typeReference(
       queryParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride: !queryParam.parameter.isRequired,
+      isNullableOverride:
+          !queryParam.parameter.isRequired && defaulted == null,
     );
 
     parameters.add(
@@ -106,7 +117,8 @@ List<Parameter> generateParameters({
             ..name = queryParam.normalizedName
             ..type = parameterType
             ..named = true
-            ..required = queryParam.parameter.isRequired;
+            ..required = defaulted == null && queryParam.parameter.isRequired
+            ..defaultTo = defaulted?.defaultToCode();
 
           if (queryParam.parameter.isDeprecated) {
             b.annotations.add(
@@ -122,11 +134,13 @@ List<Parameter> generateParameters({
 
   // Add header parameters
   for (final headerParam in normalizedParams.headers) {
+    final defaulted = defaultsByName[headerParam.normalizedName];
     final parameterType = typeReference(
       headerParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride: !headerParam.parameter.isRequired,
+      isNullableOverride:
+          !headerParam.parameter.isRequired && defaulted == null,
     );
 
     parameters.add(
@@ -136,7 +150,8 @@ List<Parameter> generateParameters({
             ..name = headerParam.normalizedName
             ..type = parameterType
             ..named = true
-            ..required = headerParam.parameter.isRequired;
+            ..required = defaulted == null && headerParam.parameter.isRequired
+            ..defaultTo = defaulted?.defaultToCode();
 
           if (headerParam.parameter.isDeprecated) {
             b.annotations.add(
@@ -152,11 +167,13 @@ List<Parameter> generateParameters({
 
   // Add cookie parameters
   for (final cookieParam in normalizedParams.cookieParameters) {
+    final defaulted = defaultsByName[cookieParam.normalizedName];
     final parameterType = typeReference(
       cookieParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride: !cookieParam.parameter.isRequired,
+      isNullableOverride:
+          !cookieParam.parameter.isRequired && defaulted == null,
     );
 
     parameters.add(
@@ -166,7 +183,8 @@ List<Parameter> generateParameters({
             ..name = cookieParam.normalizedName
             ..type = parameterType
             ..named = true
-            ..required = cookieParam.parameter.isRequired;
+            ..required = defaulted == null && cookieParam.parameter.isRequired
+            ..defaultTo = defaulted?.defaultToCode();
 
           if (cookieParam.parameter.isDeprecated) {
             b.annotations.add(

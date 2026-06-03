@@ -1,4 +1,5 @@
 import 'package:meta/meta.dart';
+import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Encoding style supported for header parameters.
@@ -113,6 +114,8 @@ class RequestHeaderObject extends RequestHeader {
   List<Example> examples;
 
   Object? defaultValue;
+
+  Object? get effectiveDefaultValue => effectiveDefault(defaultValue, model);
 
   @override
   String toString() =>

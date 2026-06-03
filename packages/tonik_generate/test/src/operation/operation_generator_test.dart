@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -2847,6 +2848,507 @@ Future<TonikResult<void>> call({
           isTrue,
         );
       });
+    });
+
+    group('generateClass — parameter defaults', () {
+      test(
+        'mixed-location defaults emit static const fields ordered '
+        'path → query → header → cookie immediately after _dio',
+        () {
+          final pathParam = PathParameterObject(
+            name: 'id',
+            rawName: 'id',
+            description: null,
+            isRequired: true,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: PathParameterEncoding.simple,
+            context: context,
+            examples: const [],
+            defaultValue: 'x',
+          );
+          final queryParam = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'us',
+          );
+          final header = RequestHeaderObject(
+            name: 'retries',
+            rawName: 'X-Retries',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            explode: false,
+            model: IntegerModel(context: context),
+            encoding: HeaderParameterEncoding.simple,
+            context: context,
+            examples: const [],
+            defaultValue: 5,
+          );
+          final cookie = CookieParameterObject(
+            name: 'tracking',
+            rawName: 'tracking',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            explode: false,
+            model: BooleanModel(context: context),
+            encoding: CookieParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: false,
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/things/{id}',
+            method: HttpMethod.get,
+            headers: {header},
+            queryParameters: {queryParam},
+            pathParameters: {pathParam},
+            cookieParameters: {cookie},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'ListThings');
+
+          final fieldNames = result.fields.map((f) => f.name).toList();
+          expect(fieldNames, [
+            '_dio',
+            'idDefault',
+            'regionDefault',
+            'retriesDefault',
+            'trackingDefault',
+          ]);
+
+          final regionField =
+              result.fields.firstWhere((f) => f.name == 'regionDefault');
+          expect(regionField.static, isTrue);
+          expect(regionField.modifier, FieldModifier.constant);
+          expect(regionField.type?.symbol, 'String');
+
+          final callMethod =
+              result.methods.firstWhere((m) => m.name == 'call');
+          final regionParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'region');
+          expect(regionParam.required, isFalse);
+          expect(
+            regionParam.defaultTo?.accept(emitter).toString(),
+            'regionDefault',
+          );
+          expect(regionParam.type?.accept(emitter).toString(), 'String');
+
+          final idParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'id');
+          expect(idParam.required, isFalse);
+          expect(
+            idParam.defaultTo?.accept(emitter).toString(),
+            'idDefault',
+          );
+          expect(idParam.type?.accept(emitter).toString(), 'String');
+
+          final retriesParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'retries');
+          expect(retriesParam.required, isFalse);
+          expect(
+            retriesParam.defaultTo?.accept(emitter).toString(),
+            'retriesDefault',
+          );
+          expect(retriesParam.type?.accept(emitter).toString(), 'int');
+
+          final trackingParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'tracking');
+          expect(trackingParam.required, isFalse);
+          expect(
+            trackingParam.defaultTo?.accept(emitter).toString(),
+            'trackingDefault',
+          );
+          expect(trackingParam.type?.accept(emitter).toString(), 'bool');
+        },
+      );
+
+      test(
+        'parameter with no default keeps required+nullable rules and gets '
+        'no static const field',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'filter',
+            rawName: 'filter',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          );
+
+          final operation = Operation(
+            operationId: 'noDefaults',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/pets',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'NoDefaults');
+
+          expect(
+            result.fields.where((f) => f.name == 'filterDefault'),
+            isEmpty,
+          );
+
+          final callMethod =
+              result.methods.firstWhere((m) => m.name == 'call');
+          final filterParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'filter');
+          expect(filterParam.required, isFalse);
+          expect(filterParam.defaultTo, isNull);
+          expect(filterParam.type?.accept(emitter).toString(), 'String?');
+        },
+      );
+
+      test(
+        'collision: query parameter named regionDefault forces suffix on '
+        'region default',
+        () {
+          final region = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'us',
+          );
+          final preExisting = QueryParameterObject(
+            name: 'regionDefault',
+            rawName: 'regionDefault',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          );
+
+          final operation = Operation(
+            operationId: 'collide',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/x',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {region, preExisting},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'Collide');
+
+          final defaultField = result.fields.firstWhere(
+            (f) => f.name == 'regionDefault2',
+            orElse: () => Field((b) => b..name = 'MISSING'),
+          );
+          expect(defaultField.name, 'regionDefault2');
+
+          final callMethod =
+              result.methods.firstWhere((m) => m.name == 'call');
+          final regionParam = callMethod.optionalParameters
+              .firstWhere((p) => p.name == 'region');
+          expect(
+            regionParam.defaultTo?.accept(emitter).toString(),
+            'regionDefault2',
+          );
+        },
+      );
+
+      test(
+        'multipart per-part header with an aliased default does not emit a '
+        'static const field on the operation class',
+        () {
+          final aliasedModel = AliasModel(
+            name: 'TraceIdHeader',
+            model: StringModel(context: context),
+            context: context,
+            examples: const [],
+            defaultValue: 'static-trace-id',
+          );
+
+          final requestBody = RequestBodyObject(
+            name: 'uploadBody',
+            context: context,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: ClassModel(
+                  name: 'UploadForm',
+                  properties: [
+                    Property(
+                      name: 'file',
+                      model: BinaryModel(context: context),
+                      isRequired: true,
+                      isNullable: false,
+                      isDeprecated: false,
+                      examples: const [],
+                      defaultValue: null,
+                    ),
+                  ],
+                  context: context,
+                  isDeprecated: false,
+                  examples: const [],
+                ),
+                contentType: ContentType.multipart,
+                rawContentType: 'multipart/form-data',
+                encoding: {
+                  'file': MultipartPropertyEncoding(
+                    contentType: ContentType.bytes,
+                    rawContentType: 'application/octet-stream',
+                    headers: {
+                      'X-Trace-Id': ResponseHeaderObject(
+                        name: 'X-Trace-Id',
+                        context: context,
+                        description: null,
+                        explode: false,
+                        model: aliasedModel,
+                        isRequired: true,
+                        isDeprecated: false,
+                        encoding: ResponseHeaderEncoding.simple,
+                        examples: const [],
+                      ),
+                    },
+                  ),
+                },
+                examples: const [],
+              ),
+            },
+          );
+
+          final operation = Operation(
+            operationId: 'upload',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/upload',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'Upload');
+
+          final fieldNames = result.fields.map((f) => f.name).toList();
+          expect(fieldNames, ['_dio']);
+        },
+      );
+
+      test(
+        'call() body delegates to _path/_queryParameters with the parameter '
+        'name, not the qualified default reference',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'region',
+            rawName: 'region',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: StringModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'us',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+Future<TonikResult<void>> call({
+  String region = regionDefault,
+  CancelToken? cancelToken,
+}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(
+      path: _$newPath,
+      query: _queryParameters(region: region),
+    );
+    _$data = _data();
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  return TonikSuccess(null, _$response);
+}
+''';
+
+          final cls = generator.generateClass(operation, 'ListThings');
+          final method = cls.methods.firstWhere((m) => m.name == 'call');
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(expectedMethod),
+          );
+        },
+      );
+
+      test(
+        'emits exactly one warning when a primitive default value does not '
+        'match the expected type',
+        () {
+          final logs = <LogRecord>[];
+          final sub = Logger('OperationParameterDefaults')
+              .onRecord
+              .listen(logs.add);
+          addTearDown(sub.cancel);
+
+          final queryParam = QueryParameterObject(
+            name: 'enabled',
+            rawName: 'enabled',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: BooleanModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: 'true',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          generator.generateClass(operation, 'ListThings');
+
+          final warnings =
+              logs.where((r) => r.level == Level.WARNING).toList();
+          expect(warnings, hasLength(1));
+          expect(warnings.single.message, contains('ListThings'));
+          expect(warnings.single.message, contains('enabled'));
+        },
+      );
     });
   });
 }

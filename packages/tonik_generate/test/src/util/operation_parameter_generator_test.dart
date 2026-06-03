@@ -3,6 +3,7 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 
 void main() {
@@ -1144,6 +1145,99 @@ void main() {
       final typeCode = headerParam.type?.accept(emitter).toString();
       expect(typeCode, contains('String'));
     });
+
+    test(
+      'per-part header backed by an alias with a default does not receive a '
+      'defaultTo or static const field (defaults pipeline is operation '
+      'parameters only)',
+      () {
+        final aliasedModel = AliasModel(
+          name: 'TraceIdHeader',
+          model: StringModel(context: context),
+          context: context,
+          examples: const [],
+          defaultValue: 'static-trace-id',
+        );
+
+        final requestBody = RequestBodyObject(
+          name: 'uploadBody',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'UploadForm',
+                properties: [
+                  Property(
+                    name: 'file',
+                    model: BinaryModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                    examples: const [],
+                    defaultValue: null,
+                  ),
+                ],
+                context: context,
+                isDeprecated: false,
+                examples: const [],
+              ),
+              contentType: ContentType.multipart,
+              rawContentType: 'multipart/form-data',
+              encoding: {
+                'file': MultipartPropertyEncoding(
+                  contentType: ContentType.bytes,
+                  rawContentType: 'application/octet-stream',
+                  headers: {
+                    'X-Trace-Id': ResponseHeaderObject(
+                      name: 'X-Trace-Id',
+                      context: context,
+                      description: null,
+                      explode: false,
+                      model: aliasedModel,
+                      isRequired: true,
+                      isDeprecated: false,
+                      encoding: ResponseHeaderEncoding.simple,
+                      examples: const [],
+                    ),
+                  },
+                ),
+              },
+              examples: const [],
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'upload',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/upload',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
+
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+        );
+
+        final headerParam = parameters.firstWhere(
+          (p) => p.name == 'fileTraceId',
+        );
+        expect(headerParam.defaultTo, isNull);
+        expect(headerParam.required, isTrue);
+      },
+    );
   });
 
   group('body parameter name collision', () {
@@ -1719,6 +1813,265 @@ void main() {
 
         expect(parameters.length, 1);
         expect(parameters.first.name, 'token');
+      },
+    );
+  });
+
+  group('generateParameters — defaultsByName', () {
+    Operation operationWith({
+      Set<QueryParameterObject> queryParameters = const {},
+      Set<PathParameterObject> pathParameters = const {},
+      Set<RequestHeaderObject> headers = const {},
+      Set<CookieParameterObject> cookieParameters = const {},
+      String path = '/things',
+    }) => Operation(
+      operationId: 'op',
+      context: context,
+      tags: const {},
+      isDeprecated: false,
+      path: path,
+      method: HttpMethod.get,
+      headers: headers,
+      queryParameters: queryParameters,
+      pathParameters: pathParameters,
+      cookieParameters: cookieParameters,
+      responses: const {},
+      securitySchemes: const {},
+    );
+
+    test(
+      'optional query string with materialised default becomes non-required '
+      'with defaultTo and non-nullable type',
+      () {
+        final region = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 'us',
+        );
+
+        final operation = operationWith(queryParameters: {region});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'region': const OperationParameterDefault.local(
+              memberName: 'regionDefault',
+            ),
+          },
+        );
+
+        expect(parameters.length, 1);
+        final param = parameters.single;
+        expect(param.name, 'region');
+        expect(param.required, isFalse);
+        expect(param.named, isTrue);
+        expect(param.defaultTo?.accept(emitter).toString(), 'regionDefault');
+        expect(param.type?.accept(emitter).toString(), 'String');
+      },
+    );
+
+    test(
+      'required query int with materialised default becomes non-required '
+      'with defaultTo',
+      () {
+        final page = QueryParameterObject(
+          name: 'page',
+          rawName: 'page',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: IntegerModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: 1,
+        );
+
+        final operation = operationWith(queryParameters: {page});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'page': const OperationParameterDefault.local(
+              memberName: 'pageDefault',
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.required, isFalse);
+        expect(param.defaultTo?.accept(emitter).toString(), 'pageDefault');
+        expect(param.type?.accept(emitter).toString(), 'int');
+      },
+    );
+
+    test(
+      'header integer with materialised default exposes defaultTo + '
+      'non-nullable int type',
+      () {
+        final retries = RequestHeaderObject(
+          name: 'retries',
+          rawName: 'X-Retries',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: IntegerModel(context: context),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: 5,
+        );
+
+        final operation = operationWith(headers: {retries});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'retries': const OperationParameterDefault.local(
+              memberName: 'retriesDefault',
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.name, 'retries');
+        expect(param.required, isFalse);
+        expect(param.defaultTo?.accept(emitter).toString(), 'retriesDefault');
+        expect(param.type?.accept(emitter).toString(), 'int');
+      },
+    );
+
+    test(
+      'cookie boolean with materialised default exposes defaultTo + '
+      'non-nullable bool type',
+      () {
+        final tracking = CookieParameterObject(
+          name: 'tracking',
+          rawName: 'tracking',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          explode: false,
+          model: BooleanModel(context: context),
+          encoding: CookieParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: false,
+        );
+
+        final operation = operationWith(cookieParameters: {tracking});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'tracking': const OperationParameterDefault.local(
+              memberName: 'trackingDefault',
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.name, 'tracking');
+        expect(param.required, isFalse);
+        expect(
+          param.defaultTo?.accept(emitter).toString(),
+          'trackingDefault',
+        );
+        expect(param.type?.accept(emitter).toString(), 'bool');
+      },
+    );
+
+    test(
+      'path string with materialised default becomes non-required + '
+      'defaultTo, no warning',
+      () {
+        final id = PathParameterObject(
+          name: 'id',
+          rawName: 'id',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: PathParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: 'x',
+        );
+
+        final operation = operationWith(
+          pathParameters: {id},
+          path: '/things/{id}',
+        );
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'id': const OperationParameterDefault.local(
+              memberName: 'idDefault',
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.required, isFalse);
+        expect(param.defaultTo?.accept(emitter).toString(), 'idDefault');
+        expect(param.type?.accept(emitter).toString(), 'String');
+      },
+    );
+
+    test(
+      'parameter without a defaults entry retains normal required/optional '
+      'rules — defaultTo stays null',
+      () {
+        final region = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        final operation = operationWith(queryParameters: {region});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+        );
+
+        final param = parameters.single;
+        expect(param.required, isTrue);
+        expect(param.defaultTo, isNull);
+        expect(param.type?.accept(emitter).toString(), 'String');
       },
     );
   });
