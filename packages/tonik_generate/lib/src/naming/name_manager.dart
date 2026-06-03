@@ -317,12 +317,8 @@ class NameManager {
     reservedNames: reservedNames,
   );
 
-  /// Canonical normalized variant names for [model], cached per model so the
-  /// enum generator and the default-value materialiser cannot drift.
-  ///
-  /// `valueNames` is positional with `model.values.toList()`; `fallbackName`
-  /// is non-null iff `model.fallbackValue` is non-null and gets a numeric
-  /// suffix if its sanitised name collides with an earlier entry.
+  /// Cached per model so the enum generator and default-value materialiser
+  /// cannot drift on variant naming.
   ({List<String> valueNames, String? fallbackName}) enumVariantNames(
     EnumModel<dynamic> model,
   ) {
@@ -335,7 +331,7 @@ class NameManager {
               model.fallbackValue!.value.toString(),
       ];
       final normalized = normalizeEnumValues(inputs);
-      return (
+      final result = (
         valueNames: List<String>.unmodifiable(
           normalized.take(values.length).map((n) => n.normalizedName),
         ),
@@ -343,6 +339,12 @@ class NameManager {
             ? normalized[values.length].normalizedName
             : null,
       );
+      assert(
+        (result.fallbackName == null) == (model.fallbackValue == null),
+        'enumVariantNames: fallbackName must be non-null iff '
+        'model.fallbackValue is non-null',
+      );
+      return result;
     });
   }
 

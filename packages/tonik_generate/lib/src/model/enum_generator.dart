@@ -65,7 +65,7 @@ class EnumGenerator {
       variantNames.valueNames,
       variantNames.fallbackName,
     );
-    final fallbackNormalizedName = variantNames.fallbackName ?? '';
+    final fallbackNormalizedName = variantNames.fallbackName;
 
     // Generate unique name for nullable enum with prefix to allow
     // using a typedef to express the nullable type.
@@ -137,7 +137,6 @@ class EnumGenerator {
             _generateToJsonMethod<T>(
               actualEnumName,
               fallbackNormalizedName,
-              model.fallbackValue != null,
             ),
           )
           ..methods.add(
@@ -160,35 +159,30 @@ class EnumGenerator {
             _generateToSimpleMethod<T>(
               actualEnumName,
               fallbackNormalizedName,
-              model.fallbackValue != null,
             ),
           )
           ..methods.add(
             _generateToFormMethod<T>(
               actualEnumName,
               fallbackNormalizedName,
-              model.fallbackValue != null,
             ),
           )
           ..methods.add(
             _generateToLabelMethod<T>(
               actualEnumName,
               fallbackNormalizedName,
-              model.fallbackValue != null,
             ),
           )
           ..methods.add(
             _generateUriEncodeMethod<T>(
               actualEnumName,
               fallbackNormalizedName,
-              model.fallbackValue != null,
             ),
           )
           ..methods.add(
             _generateToMatrixMethod<T>(
               actualEnumName,
               fallbackNormalizedName,
-              model.fallbackValue != null,
             ),
           )
           ..fields.add(
@@ -316,7 +310,7 @@ class EnumGenerator {
     String publicEnumName,
     String actualEnumName,
     EnumModel<T> model,
-    String fallbackNormalizedName,
+    String? fallbackNormalizedName,
   ) {
     const valueParam = 'value';
     final typeReference = refer(T.toString(), 'dart:core');
@@ -358,7 +352,7 @@ class EnumGenerator {
                   ).closure,
                 ],
                 {
-                  'orElse': model.fallbackValue != null
+                  'orElse': fallbackNormalizedName != null
                       ? Method(
                           (mb) => mb
                             ..body = refer(
@@ -383,10 +377,9 @@ class EnumGenerator {
 
   Method _generateToJsonMethod<T>(
     String actualEnumName,
-    String fallbackNormalizedName,
-    bool hasFallback,
+    String? fallbackNormalizedName,
   ) {
-    if (!hasFallback) {
+    if (fallbackNormalizedName == null) {
       return Method(
         (b) => b
           ..annotations.add(refer('override', 'dart:core'))
@@ -417,10 +410,9 @@ class EnumGenerator {
 
   Method _generateToSimpleMethod<T>(
     String actualEnumName,
-    String fallbackNormalizedName,
-    bool hasFallback,
+    String? fallbackNormalizedName,
   ) {
-    if (!hasFallback) {
+    if (fallbackNormalizedName == null) {
       return Method(
         (b) => b
           ..annotations.add(refer('override', 'dart:core'))
@@ -459,10 +451,9 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
 
   Method _generateToFormMethod<T>(
     String actualEnumName,
-    String fallbackNormalizedName,
-    bool hasFallback,
+    String? fallbackNormalizedName,
   ) {
-    if (!hasFallback) {
+    if (fallbackNormalizedName == null) {
       return Method(
         (b) => b
           ..annotations.add(refer('override', 'dart:core'))
@@ -501,10 +492,9 @@ return rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
 
   Method _generateToLabelMethod<T>(
     String actualEnumName,
-    String fallbackNormalizedName,
-    bool hasFallback,
+    String? fallbackNormalizedName,
   ) {
-    if (!hasFallback) {
+    if (fallbackNormalizedName == null) {
       return Method(
         (b) => b
           ..annotations.add(refer('override', 'dart:core'))
@@ -543,10 +533,9 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
 
   Method _generateUriEncodeMethod<T>(
     String actualEnumName,
-    String fallbackNormalizedName,
-    bool hasFallback,
+    String? fallbackNormalizedName,
   ) {
-    if (!hasFallback) {
+    if (fallbackNormalizedName == null) {
       return Method(
         (b) => b
           ..name = 'uriEncode'
@@ -617,10 +606,9 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
 
   Method _generateToMatrixMethod<T>(
     String actualEnumName,
-    String fallbackNormalizedName,
-    bool hasFallback,
+    String? fallbackNormalizedName,
   ) {
-    if (!hasFallback) {
+    if (fallbackNormalizedName == null) {
       return Method(
         (b) => b
           ..annotations.add(refer('override', 'dart:core'))
