@@ -300,5 +300,84 @@ void main() {
         expect(messages.single, contains('Mismatched.tier (property,'));
       },
     );
+
+    test(
+      'nullable enum with a value present in the enum drops with the '
+      'const-expression reason',
+      () {
+        final messages = <String>[];
+        final reserved = <String>{'status'};
+        final result = resolveSingleDefault(
+          normalizedName: 'status',
+          specName: 'status',
+          model: EnumModel<String>(
+            name: 'Status',
+            values: {
+              const EnumEntry<String>(value: 'active'),
+              const EnumEntry<String>(value: 'inactive'),
+            },
+            isNullable: true,
+            context: context,
+            isDeprecated: false,
+            examples: const [],
+          ),
+          rawDefault: 'active',
+          containerName: 'Op',
+          location: 'query',
+          reservedNames: reserved,
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(result, isNull);
+        expect(reserved, {'status'});
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.status (query, expected EnumModel<String>, '
+          'value: "active"): '
+          'default value cannot be expressed as a const Dart expression '
+          'for this type.',
+        );
+      },
+    );
+
+    test(
+      'nullable enum with a value NOT in the enum drops with the '
+      'value-not-in-enum reason',
+      () {
+        final messages = <String>[];
+        resolveSingleDefault(
+          normalizedName: 'status',
+          specName: 'status',
+          model: EnumModel<String>(
+            name: 'Status',
+            values: {
+              const EnumEntry<String>(value: 'active'),
+              const EnumEntry<String>(value: 'inactive'),
+            },
+            isNullable: true,
+            context: context,
+            isDeprecated: false,
+            examples: const [],
+          ),
+          rawDefault: 'archived',
+          containerName: 'Op',
+          location: 'query',
+          reservedNames: <String>{'status'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.status (query, expected EnumModel<String>, '
+          'value: "archived"): value is not one of the enum values.',
+        );
+      },
+    );
   });
 }

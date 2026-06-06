@@ -1,0 +1,71 @@
+openapi: 3.0.4
+info:
+  title: Defaulted Enums API
+  description: >-
+    Schema with `default` values for enum-typed properties and operation
+    parameters.
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+paths:
+  /subscriptions:
+    get:
+      operationId: listSubscriptions
+      summary: List subscriptions filtered by status
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/Status'
+            default: active
+        - name: X-Mode
+          in: header
+          schema:
+            type: string
+            enum: [auto, manual]
+            default: auto
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
+
+components:
+  schemas:
+    Status:
+      type: string
+      enum: [active, inactive, archived]
+    Tier:
+      type: integer
+      enum: [1, 2, 3]
+    Subscription:
+      type: object
+      properties:
+        priority:
+          type: string
+          enum: [low, medium, high]
+          default: medium
+        level:
+          type: integer
+          enum: [1, 2, 3]
+          default: 2
+        status:
+          $ref: '#/components/schemas/Status'
+          default: active
+        tier:
+          $ref: '#/components/schemas/Tier'
+          default: 2
+        fallbackPriority:
+          type: string
+          enum: [low, medium, high]
+          default: nonexistent

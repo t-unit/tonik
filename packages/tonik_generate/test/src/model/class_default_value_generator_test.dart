@@ -859,4 +859,326 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
       expect(renderAssignment(constField.assignment), "r'hi'");
     });
   });
+
+  group('ClassGenerator enum defaults', () {
+    late ClassGenerator generator;
+    late NameManager nameManager;
+    late Context context;
+    late DartEmitter emitter;
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
+
+    setUp(() {
+      nameManager = NameManager(
+        generator: NameGenerator(),
+        stableModelSorter: StableModelSorter(),
+      );
+      generator = ClassGenerator(
+        nameManager: nameManager,
+        package: 'example',
+      );
+      context = Context.initial();
+      emitter = DartEmitter(useNullSafetySyntax: true);
+    });
+
+    String renderAssignment(Code? assignment) =>
+        assignment == null ? '' : assignment.accept(emitter).toString();
+
+    EnumModel<String> statusEnum() => EnumModel<String>(
+      name: 'Status',
+      values: {
+        const EnumEntry<String>(value: 'active'),
+        const EnumEntry<String>(value: 'inactive'),
+      },
+      isNullable: false,
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+    );
+
+    EnumModel<int> tierEnum() => EnumModel<int>(
+      name: 'Tier',
+      values: {
+        const EnumEntry<int>(value: 1),
+        const EnumEntry<int>(value: 2),
+        const EnumEntry<int>(value: 3),
+      },
+      isNullable: false,
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+    );
+
+    test(
+      'string enum default emits static const + defaultTo referencing it',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Subscription',
+          properties: [
+            Property(
+              name: 'status',
+              model: statusEnum(),
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: 'active',
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+
+        final constField =
+            result.fields.firstWhere((f) => f.name == 'statusDefault');
+        expect(constField.static, isTrue);
+        expect(constField.modifier, FieldModifier.constant);
+        expect(constField.type?.symbol, 'Status');
+        expect(constField.type?.accept(emitter).toString(), 'Status');
+        expect(renderAssignment(constField.assignment), 'Status.active');
+
+        final constructor =
+            result.constructors.firstWhere((c) => c.name == null);
+        final statusParam = constructor.optionalParameters
+            .firstWhere((p) => p.name == 'status');
+        expect(statusParam.required, isFalse);
+        expect(
+          statusParam.defaultTo?.accept(emitter).toString(),
+          'statusDefault',
+        );
+      },
+    );
+
+    test('integer enum default emits static const Tier with variant ref', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Subscription',
+        properties: [
+          Property(
+            name: 'tier',
+            model: tierEnum(),
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 2,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final result = generator.generateClass(model);
+
+      final constField =
+          result.fields.firstWhere((f) => f.name == 'tierDefault');
+      expect(constField.static, isTrue);
+      expect(constField.modifier, FieldModifier.constant);
+      expect(constField.type?.symbol, 'Tier');
+      expect(constField.type?.accept(emitter).toString(), 'Tier');
+      expect(renderAssignment(constField.assignment), 'Tier.two');
+    });
+
+    test(
+      'default value NOT in enum values drops with warning and no static const',
+      () {
+        final logs = <LogRecord>[];
+        final subscription =
+            Logger('ClassGenerator').onRecord.listen(logs.add);
+        addTearDown(subscription.cancel);
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Subscription',
+          properties: [
+            Property(
+              name: 'status',
+              model: statusEnum(),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: 'archived',
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(
+          result.fields.where((f) => f.name == 'statusDefault'),
+          isEmpty,
+        );
+
+        final constructor =
+            result.constructors.firstWhere((c) => c.name == null);
+        final statusParam = constructor.optionalParameters
+            .firstWhere((p) => p.name == 'status');
+        expect(statusParam.required, isTrue);
+        expect(statusParam.defaultTo, isNull);
+
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+        expect(
+          warnings.single.message,
+          'Dropping default for Subscription.status '
+          '(property, expected EnumModel<String>, value: "archived"): '
+          'value is not one of the enum values.',
+        );
+      },
+    );
+
+    test(
+      'fallbackValue set and default outside values — no static const',
+      () {
+        final logs = <LogRecord>[];
+        final subscription =
+            Logger('ClassGenerator').onRecord.listen(logs.add);
+        addTearDown(subscription.cancel);
+
+        final fallbackEnum = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry<String>(value: 'active'),
+            const EnumEntry<String>(value: 'inactive'),
+          },
+          isNullable: false,
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          fallbackValue: const EnumEntry<String>(value: 'unknown'),
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Subscription',
+          properties: [
+            Property(
+              name: 'status',
+              model: fallbackEnum,
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: 'unknown',
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+
+        expect(
+          result.fields.where((f) => f.name == 'statusDefault'),
+          isEmpty,
+          reason: 'fallbackValue must never be auto-selected as a default',
+        );
+
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+      },
+    );
+
+    test(
+      'fromJson body for enum-defaulted property uses containsKey + '
+      'static const',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Subscription',
+          properties: [
+            Property(
+              name: 'status',
+              model: statusEnum(),
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: 'active',
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+
+        final fromJsonCtor =
+            result.constructors.firstWhere((c) => c.name == 'fromJson');
+        final wrapper = Class(
+          (b) => b
+            ..name = result.name
+            ..constructors.add(fromJsonCtor),
+        );
+        final actualFromJson = format(wrapper.accept(emitter).toString());
+
+        const expectedFromJson = r'''
+class Subscription {
+  factory Subscription.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Subscription');
+    return Subscription(
+      status: _$map.containsKey(r'status')
+          ? Status.fromJson(_$map[r'status'])
+          : statusDefault,
+    );
+  }
+}
+''';
+
+        expect(
+          collapseWhitespace(actualFromJson),
+          collapseWhitespace(expectedFromJson),
+        );
+      },
+    );
+
+    test('nameOverride on matched entry produces override-derived variant', () {
+      final namedEnum = EnumModel<String>(
+        name: 'Status',
+        values: {
+          const EnumEntry<String>(value: 'active', nameOverride: 'Activated'),
+          const EnumEntry<String>(
+            value: 'inactive',
+            nameOverride: 'Deactivated',
+          ),
+        },
+        isNullable: false,
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Subscription',
+        properties: [
+          Property(
+            name: 'status',
+            model: namedEnum,
+            isRequired: false,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: 'active',
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final result = generator.generateClass(model);
+
+      final constField =
+          result.fields.firstWhere((f) => f.name == 'statusDefault');
+      expect(constField.type?.symbol, 'Status');
+      expect(renderAssignment(constField.assignment), 'Status.activated');
+    });
+  });
 }

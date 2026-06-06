@@ -1,5 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 /// Returns a compile-time const Dart expression for [jsonValue] that
@@ -13,6 +15,8 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 Expression? materialiseConstDefault({
   required Object? jsonValue,
   required Model targetModel,
+  required NameManager nameManager,
+  required String package,
 }) {
   if (jsonValue == null) return null;
 
@@ -26,6 +30,32 @@ Expression? materialiseConstDefault({
         : null,
     NumberModel() => jsonValue is num ? literalNum(jsonValue) : null,
     BooleanModel() => jsonValue is bool ? literalBool(jsonValue) : null,
+    final EnumModel<dynamic> model => _materialiseEnumDefault(
+      model: model,
+      jsonValue: jsonValue,
+      nameManager: nameManager,
+      package: package,
+    ),
     _ => null,
   };
+}
+
+Expression? _materialiseEnumDefault({
+  required EnumModel<dynamic> model,
+  required Object? jsonValue,
+  required NameManager nameManager,
+  required String package,
+}) {
+  // Nullable enum's actual name is $Raw-prefixed; const variant ref not wired.
+  if (model.isNullable) return null;
+
+  final entries = model.values.toList();
+  final matchedIndex = entries.indexWhere((e) => e.value == jsonValue);
+  if (matchedIndex < 0) return null;
+
+  final variantName =
+      nameManager.enumVariantNames(model).valueNames[matchedIndex];
+  final enumName = nameManager.modelName(model);
+  final url = sourceFileUrl(package, 'model', enumName);
+  return refer('$enumName.$variantName', url);
 }
