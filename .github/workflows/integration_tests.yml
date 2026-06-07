@@ -72,6 +72,11 @@ jobs:
           cd integration_test/defaulted_enums/defaulted_enums_test
           dart test --concurrency=2
 
+      - name: Run defaulted collections integration tests
+        run: |
+          cd integration_test/defaulted_collections/defaulted_collections_test
+          dart test --concurrency=2
+
       - name: Run petstore integration tests
         run: |
           cd integration_test/petstore/petstore_test

@@ -43,6 +43,7 @@ ResolvedDefault? resolveSingleDefault({
     targetModel: model,
     nameManager: nameManager,
     package: package,
+    useImmutableCollections: useImmutableCollections,
   );
 
   if (materialised == null) {
@@ -68,6 +69,15 @@ ResolvedDefault? resolveSingleDefault({
           '($location, expected ${resolved.runtimeType}, '
           'value: ${_describeDefault(rawDefault)}): '
           '$reason.',
+        );
+      } else if (resolved is ListModel ||
+          resolved is MapModel ||
+          resolved is AnyModel) {
+        onDroppedDefault(
+          'Dropping default for $containerName.$specName '
+          '($location, expected ${resolved.runtimeType}, '
+          'value: ${_describeDefault(rawDefault)}): '
+          'value shape or a leaf is not const-materialisable for this type.',
         );
       }
     }
@@ -115,7 +125,7 @@ bool _isJsonEncodable(Object? value) => switch (value) {
   _ => false,
 };
 
-// Mirrors the supported-types switch in default_value_materialiser.dart;
+// Mirrors the supported-primitives switch in default_value_materialiser.dart;
 // kept duplicated so a primitive added there without a parallel update here
 // shows up immediately as a wrong-reason warning.
 bool _isMaterialiserSupportedPrimitive(Model model) => switch (model.resolved) {

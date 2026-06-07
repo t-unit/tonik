@@ -306,9 +306,9 @@ void main() {
       expect(result, isNull);
     });
 
-    test('AnyModel returns null', () {
+    test('null jsonValue on AnyModel returns null', () {
       final result = materialiseConstDefault(
-        jsonValue: 'anything',
+        jsonValue: null,
         targetModel: AnyModel(context: context),
         nameManager: nameManager,
         package: package,
@@ -557,5 +557,435 @@ void main() {
         expect(result, isNull);
       },
     );
+  });
+
+  group('materialiseConstDefault — collections', () {
+    ListModel listOf(Model content) => ListModel(
+          content: content,
+          context: context,
+          examples: const [],
+        );
+
+    MapModel mapOf(Model valueModel) => MapModel(
+          valueModel: valueModel,
+          context: context,
+          examples: const [],
+        );
+
+    test('ListModel<StringModel> + list of strings yields const list', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>['a', 'b'],
+        targetModel: listOf(StringModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(formatBody("const <String>[r'a', r'b']")),
+      );
+    });
+
+    test('ListModel<IntegerModel> + list of ints yields const list', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>[1, 2, 3],
+        targetModel: listOf(IntegerModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(formatBody('const <int>[1, 2, 3]')),
+      );
+    });
+
+    test('ListModel<EnumModel> + list of enum values yields const list', () {
+      final statusEnum = EnumModel<String>(
+        name: 'Status',
+        values: {
+          const EnumEntry<String>(value: 'active'),
+          const EnumEntry<String>(value: 'inactive'),
+        },
+        isNullable: false,
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>['active'],
+        targetModel: listOf(statusEnum),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(formatBody('const <Status>[Status.active]')),
+      );
+    });
+
+    test(
+        'ListModel<DateTimeModel> returns null (composite leaf bubbles up)',
+        () {
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>['2024-01-01T00:00:00Z'],
+        targetModel: listOf(DateTimeModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
+
+    test('ListModel<ClassModel> returns null (composite leaf bubbles up)', () {
+      final classModel = ClassModel(
+        name: 'Address',
+        isDeprecated: false,
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>[<String, Object?>{}],
+        targetModel: listOf(classModel),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
+
+    test('ListModel + non-List JSON returns null', () {
+      final result = materialiseConstDefault(
+        jsonValue: 'not-a-list',
+        targetModel: listOf(StringModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
+
+    test('MapModel<StringModel> + map of strings yields const map', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <String, Object?>{'a': 'b'},
+        targetModel: mapOf(StringModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(formatBody("const <String, String>{r'a': r'b'}")),
+      );
+    });
+
+    test('MapModel<IntegerModel> + map of ints yields const map', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <String, Object?>{'x': 1, 'y': 2},
+        targetModel: mapOf(IntegerModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(
+          formatBody("const <String, int>{r'x': 1, r'y': 2}"),
+        ),
+      );
+    });
+
+    test('MapModel<ClassModel> returns null (composite leaf bubbles up)', () {
+      final classModel = ClassModel(
+        name: 'Address',
+        isDeprecated: false,
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+
+      final result = materialiseConstDefault(
+        jsonValue: const <String, Object?>{'a': <String, Object?>{}},
+        targetModel: mapOf(classModel),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
+
+    test(
+        'MapModel<DateTimeModel> returns null (composite leaf bubbles up)',
+        () {
+      final result = materialiseConstDefault(
+        jsonValue: const <String, Object?>{'a': '2024-01-01T00:00:00Z'},
+        targetModel: mapOf(DateTimeModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
+
+    test('MapModel with non-String key returns null (no throw)', () {
+      final result = materialiseConstDefault(
+        jsonValue: <Object?, Object?>{1: 'one'},
+        targetModel: mapOf(StringModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
+
+    test('MapModel + non-Map JSON returns null', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>['a', 'b'],
+        targetModel: mapOf(StringModel(context: context)),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
+
+    test(
+      'useImmutableCollections: true wraps ListModel<StringModel> in '
+      'IListConst',
+      () {
+        final result = materialiseConstDefault(
+          jsonValue: const <Object?>['a'],
+          targetModel: listOf(StringModel(context: context)),
+          nameManager: nameManager,
+          package: package,
+          useImmutableCollections: true,
+        );
+
+        expect(result, isNotNull);
+        expect(
+          collapseWhitespace(renderExpression(result!)),
+          collapseWhitespace(
+            formatBody("const IListConst(<String>[r'a'])"),
+          ),
+        );
+      },
+    );
+
+    test(
+      'useImmutableCollections: true wraps MapModel<IntegerModel> in '
+      'IMapConst',
+      () {
+        final result = materialiseConstDefault(
+          jsonValue: const <String, Object?>{'a': 1},
+          targetModel: mapOf(IntegerModel(context: context)),
+          nameManager: nameManager,
+          package: package,
+          useImmutableCollections: true,
+        );
+
+        expect(result, isNotNull);
+        expect(
+          collapseWhitespace(renderExpression(result!)),
+          collapseWhitespace(
+            formatBody(
+              "const IMapConst(<String, int>{r'a': 1})",
+            ),
+          ),
+        );
+      },
+    );
+
+    test('ListModel<ListModel<StringModel>> nests const list', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>[
+          <Object?>['a', 'b'],
+          <Object?>['c'],
+        ],
+        targetModel: listOf(listOf(StringModel(context: context))),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(
+          formatBody(
+            "const <List<String>>[<String>[r'a', r'b'], <String>[r'c']]",
+          ),
+        ),
+      );
+    });
+  });
+
+  group('materialiseConstDefault — AnyModel', () {
+    test('AnyModel + bool literal yields literal bool', () {
+      final result = materialiseConstDefault(
+        jsonValue: true,
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(formatBody('true')),
+      );
+    });
+
+    test('AnyModel + int literal yields literal num', () {
+      final result = materialiseConstDefault(
+        jsonValue: 42,
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(formatBody('42')),
+      );
+    });
+
+    test('AnyModel + double literal yields literal num', () {
+      final result = materialiseConstDefault(
+        jsonValue: 1.5,
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(formatBody('1.5')),
+      );
+    });
+
+    test('AnyModel + String yields literal string', () {
+      final result = materialiseConstDefault(
+        jsonValue: 'hello',
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(formatBody("r'hello'")),
+      );
+    });
+
+    test('AnyModel + list of primitives yields const list<Object?>', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>[1, true, 'x'],
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(
+          formatBody("const <Object?>[1, true, r'x']"),
+        ),
+      );
+    });
+
+    test('AnyModel + list containing null yields const list with null', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <Object?>[1, null, 'x'],
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(
+          formatBody("const <Object?>[1, null, r'x']"),
+        ),
+      );
+    });
+
+    test('AnyModel + map of primitives yields const map<String, Object?>', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <String, Object?>{'a': 1, 'b': true},
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(
+          formatBody(
+            "const <String, Object?>{r'a': 1, r'b': true}",
+          ),
+        ),
+      );
+    });
+
+    test('AnyModel + nested map and list yields nested const literal', () {
+      final result = materialiseConstDefault(
+        jsonValue: const <String, Object?>{
+          'any': 'value',
+          'nested': <Object?>[1, 2, 3],
+        },
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNotNull);
+      expect(
+        collapseWhitespace(renderExpression(result!)),
+        collapseWhitespace(
+          formatBody(
+            "const <String, Object?>{r'any': r'value', "
+            "r'nested': <Object?>[1, 2, 3]}",
+          ),
+        ),
+      );
+    });
+
+    test('AnyModel + map with non-String key returns null', () {
+      final result = materialiseConstDefault(
+        jsonValue: <Object?, Object?>{1: 'one'},
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
+
+    test('AnyModel + nested map with non-String inner key returns null', () {
+      final result = materialiseConstDefault(
+        jsonValue: <String, Object?>{
+          'outer': <Object?, Object?>{2: 'two'},
+        },
+        targetModel: AnyModel(context: context),
+        nameManager: nameManager,
+        package: package,
+      );
+
+      expect(result, isNull);
+    });
   });
 }

@@ -379,5 +379,171 @@ void main() {
         );
       },
     );
+
+    test(
+      'ListModel<StringModel> with non-List JSON drops with the '
+      'collection-leaf reason',
+      () {
+        final messages = <String>[];
+        final reserved = <String>{'tags'};
+        final result = resolveSingleDefault(
+          normalizedName: 'tags',
+          specName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: 'not-a-list',
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: reserved,
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(result, isNull);
+        expect(reserved, {'tags'});
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.tags (property, expected ListModel, '
+          'value: "not-a-list"): '
+          'value shape or a leaf is not const-materialisable for this type.',
+        );
+      },
+    );
+
+    test(
+      'ListModel<DateTimeModel> with valid-shape list of strings drops with '
+      'the collection-leaf reason (composite leaf bubbles up)',
+      () {
+        final messages = <String>[];
+        resolveSingleDefault(
+          normalizedName: 'since',
+          specName: 'since',
+          model: ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: const <Object?>['2024-01-01'],
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'since'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.since (property, expected ListModel, '
+          'value: ["2024-01-01"]): '
+          'value shape or a leaf is not const-materialisable for this type.',
+        );
+      },
+    );
+
+    test(
+      'MapModel<IntegerModel> with non-Map JSON drops with the '
+      'collection-leaf reason',
+      () {
+        final messages = <String>[];
+        resolveSingleDefault(
+          normalizedName: 'counts',
+          specName: 'counts',
+          model: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: 'not-a-map',
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'counts'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.counts (property, expected MapModel, '
+          'value: "not-a-map"): '
+          'value shape or a leaf is not const-materialisable for this type.',
+        );
+      },
+    );
+
+    test(
+      'MapModel<ClassModel> with nested-object JSON drops with the '
+      'collection-leaf reason',
+      () {
+        final messages = <String>[];
+        resolveSingleDefault(
+          normalizedName: 'index',
+          specName: 'index',
+          model: MapModel(
+            valueModel: ClassModel(
+              name: 'Address',
+              isDeprecated: false,
+              properties: const [],
+              context: context,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: const <String, Object?>{'a': <String, Object?>{}},
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'index'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.index (property, expected MapModel, '
+          'value: {"a":{}}): '
+          'value shape or a leaf is not const-materialisable for this type.',
+        );
+      },
+    );
+
+    test(
+      'AnyModel with non-JSON value (Map<int, String>) drops with the '
+      'collection-leaf reason',
+      () {
+        final messages = <String>[];
+        final nonStringKeyMap = <int, String>{1: 'one'};
+        resolveSingleDefault(
+          normalizedName: 'raw',
+          specName: 'raw',
+          model: AnyModel(context: context),
+          rawDefault: nonStringKeyMap,
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'raw'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.raw (property, expected AnyModel, '
+          'value: $nonStringKeyMap): '
+          'value shape or a leaf is not const-materialisable for this type.',
+        );
+      },
+    );
   });
 }

@@ -95,6 +95,7 @@ echo "Cleaning up existing generated API projects..."
 rm -rf additional_properties/additional_properties_api
 rm -rf defaulted_primitives/defaulted_primitives_api
 rm -rf defaulted_enums/defaulted_enums_api
+rm -rf defaulted_collections/defaulted_collections_api
 rm -rf petstore/petstore_api
 rm -rf petstore_config/petstore_api
 rm -rf petstore_config/petstore_filtering_api
@@ -146,6 +147,9 @@ add_dependency_overrides_recursive "defaulted_primitives/defaulted_primitives_ap
 
 $TONIK_BINARY -p defaulted_enums_api -s defaulted_enums/openapi.yaml -o defaulted_enums
 add_dependency_overrides_recursive "defaulted_enums/defaulted_enums_api"
+
+$TONIK_BINARY -p defaulted_collections_api -s defaulted_collections/openapi.yaml -o defaulted_collections
+add_dependency_overrides_recursive "defaulted_collections/defaulted_collections_api"
 
 $TONIK_BINARY --config petstore/tonik.yaml
 add_dependency_overrides_recursive "petstore/petstore_api"
@@ -270,6 +274,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   cd additional_properties/additional_properties_api && dart pub get &
   cd defaulted_primitives/defaulted_primitives_api && dart pub get &
   cd defaulted_enums/defaulted_enums_api && dart pub get &
+  cd defaulted_collections/defaulted_collections_api && dart pub get &
   cd petstore/petstore_api && dart pub get &
   cd petstore_config/petstore_api && dart pub get &
   cd petstore_config/petstore_filtering_api && dart pub get &
@@ -336,6 +341,7 @@ echo "Restoring local dependency overrides in test packages..."
 restore_test_package_overrides "additional_properties/additional_properties_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "defaulted_primitives/defaulted_primitives_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "defaulted_enums/defaulted_enums_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "defaulted_collections/defaulted_collections_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "petstore/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "petstore_config/petstore_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "music_streaming/music_streaming_test/pubspec.yaml" "../../../packages/tonik_util"
@@ -378,6 +384,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd additional_properties/additional_properties_test && dart pub get &
   cd defaulted_primitives/defaulted_primitives_test && dart pub get &
   cd defaulted_enums/defaulted_enums_test && dart pub get &
+  cd defaulted_collections/defaulted_collections_test && dart pub get &
   cd petstore/petstore_test && dart pub get &
   cd petstore_config/petstore_test && dart pub get &
   cd music_streaming/music_streaming_test && dart pub get &

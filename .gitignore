@@ -45,6 +45,7 @@
 /integration_test/adversarial_strings/adversarial_strings_api
 /integration_test/defaulted_primitives/defaulted_primitives_api
 /integration_test/defaulted_enums/defaulted_enums_api
+/integration_test/defaulted_collections/defaulted_collections_api
 /integration_test/immutable_collections/immutable_collections_api
 /integration_test/naming/naming_api
 /integration_test/recursive_map/recursive_map_api
