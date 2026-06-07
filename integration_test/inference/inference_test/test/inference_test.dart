@@ -658,28 +658,36 @@ void main() {
         expect((requestBody['connectors'] as List<dynamic>).isEmpty, isTrue);
       });
 
-      test('request body omits connectors when null', () async {
-        final api = buildApi(responseStatus: '200');
+      test(
+        'request body encodes the schema default empty list when connectors '
+        'is omitted',
+        () async {
+          final api = buildApi(responseStatus: '200');
 
-        final response = await api
-            .sendMessageProtoRouteApiV1InferSendMessagePost(
-              body: const SendMessageRequest(
-                chatSessionId: 'session-123',
-                userId: 'user-456',
-                messageId: 'msg-789',
-                message: 'Hello',
-              ),
-            );
+          final response = await api
+              .sendMessageProtoRouteApiV1InferSendMessagePost(
+                body: const SendMessageRequest(
+                  chatSessionId: 'session-123',
+                  userId: 'user-456',
+                  messageId: 'msg-789',
+                  message: 'Hello',
+                ),
+              );
 
-        final success =
-            response
-                as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
-                >;
-        final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
-        expect(requestBody.containsKey('connectors'), isFalse);
-      });
+          final success =
+              response
+                  as TonikSuccess<
+                    SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  >;
+          final requestBody =
+              success.response.requestOptions.data as Map<String, dynamic>;
+          expect(requestBody['connectors'], isA<List<dynamic>>());
+          expect(
+            (requestBody['connectors'] as List<dynamic>).isEmpty,
+            isTrue,
+          );
+        },
+      );
 
       test('request body encodes interruption_reply as true', () async {
         final api = buildApi(responseStatus: '200');
