@@ -324,7 +324,59 @@ void main() {
       );
     });
 
-    test('composite target with default emits NO warning and NO const', () {
+    test(
+      'ClassModel property target with default emits the generic '
+      'cannot-express-as-const warning and no static const',
+      () {
+        final logs = <LogRecord>[];
+        final subscription =
+            Logger('ClassGenerator').onRecord.listen(logs.add);
+        addTearDown(subscription.cancel);
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'WithChild',
+          properties: [
+            Property(
+              name: 'child',
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'Child',
+                properties: const [],
+                context: context,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: const <String, Object?>{},
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        expect(
+          result.fields.where((f) => f.name == 'childDefault'),
+          isEmpty,
+        );
+
+        final warnings =
+            logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+        expect(
+          warnings.single.message,
+          'Dropping default for WithChild.child '
+          '(property, expected ClassModel, value: {}): '
+          'default value cannot be expressed as a const Dart expression '
+          'for this type.',
+        );
+      },
+    );
+
+    test('AllOf composite property target with default drops silently', () {
       final logs = <LogRecord>[];
       final subscription =
           Logger('ClassGenerator').onRecord.listen(logs.add);
@@ -332,14 +384,14 @@ void main() {
 
       final model = ClassModel(
         isDeprecated: false,
-        name: 'WithChild',
+        name: 'WithComposite',
         properties: [
           Property(
-            name: 'child',
-            model: ClassModel(
+            name: 'union',
+            model: AllOfModel(
               isDeprecated: false,
-              name: 'Child',
-              properties: const [],
+              name: 'Union',
+              models: const {},
               context: context,
               examples: const [],
             ),
@@ -356,7 +408,7 @@ void main() {
 
       final result = generator.generateClass(model);
       expect(
-        result.fields.where((f) => f.name == 'childDefault'),
+        result.fields.where((f) => f.name == 'unionDefault'),
         isEmpty,
       );
       expect(logs.where((r) => r.level == Level.WARNING), isEmpty);

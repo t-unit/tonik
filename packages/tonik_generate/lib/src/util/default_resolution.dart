@@ -20,8 +20,9 @@ class ResolvedDefault {
   final TypeReference type;
 }
 
-/// Composite-target defaults drop silently — they cannot carry a const
-/// default anyway, so emitting a warning would be noise.
+/// [CompositeModel] targets (`allOf` / `oneOf` / `anyOf`) drop silently —
+/// they cannot carry a const default, so emitting a warning would be noise.
+/// Every other unsupported model surfaces a generic dropped-default warning.
 ResolvedDefault? resolveSingleDefault({
   required String normalizedName,
   required String specName,
@@ -73,11 +74,22 @@ ResolvedDefault? resolveSingleDefault({
       } else if (resolved is ListModel ||
           resolved is MapModel ||
           resolved is AnyModel) {
+        final reason = _isCollectionShapeMismatch(resolved, rawDefault)
+            ? 'value does not match the expected list / map / free-form shape'
+            : 'a nested value cannot be expressed as a const Dart expression';
         onDroppedDefault(
           'Dropping default for $containerName.$specName '
           '($location, expected ${resolved.runtimeType}, '
           'value: ${_describeDefault(rawDefault)}): '
-          'value shape or a leaf is not const-materialisable for this type.',
+          '$reason.',
+        );
+      } else if (resolved is! CompositeModel) {
+        onDroppedDefault(
+          'Dropping default for $containerName.$specName '
+          '($location, expected ${resolved.runtimeType}, '
+          'value: ${_describeDefault(rawDefault)}): '
+          'default value cannot be expressed as a const Dart expression '
+          'for this type.',
         );
       }
     }
@@ -139,3 +151,18 @@ bool _isMaterialiserSupportedPrimitive(Model model) => switch (model.resolved) {
 
 bool _enumValueIsMember(EnumModel<dynamic> model, Object? rawDefault) =>
     model.values.any((entry) => entry.value == rawDefault);
+
+// Outer-shape gate: true when the raw default cannot be the JSON shape this
+// model expects at the top level. Non-String map keys and inner-leaf failures
+// are classified as nested-value failures, not shape mismatches.
+bool _isCollectionShapeMismatch(Model resolved, Object? rawDefault) =>
+    switch (resolved) {
+      ListModel() => rawDefault is! List,
+      MapModel() => rawDefault is! Map,
+      AnyModel() => rawDefault is! bool &&
+          rawDefault is! num &&
+          rawDefault is! String &&
+          rawDefault is! List<Object?> &&
+          rawDefault is! Map<Object?, Object?>,
+      _ => false,
+    };

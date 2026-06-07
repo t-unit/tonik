@@ -570,7 +570,8 @@ void main() {
     );
 
     test(
-      'composite target with default emits no field and no warning',
+      'ClassModel target with default emits no field and the generic '
+      'cannot-express-as-const warning',
       () {
         final logs = <LogRecord>[];
         final sub = Logger('OperationParameterDefaults')
@@ -591,6 +592,67 @@ void main() {
             isDeprecated: false,
             name: 'Region',
             properties: const [],
+            context: context,
+            examples: const [],
+          ),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: const <String, Object?>{},
+        );
+
+        final normalized = normalizeRequestParameters(
+          pathParameters: const {},
+          queryParameters: {region},
+          headers: const {},
+        );
+
+        final result = resolveOperationParameterDefaults(
+          normalizedParams: normalized,
+          operationClassName: 'Op',
+          nameManager: nameManager,
+          package: 'api',
+          initialReservedNames: const {'_dio'},
+        );
+
+        expect(result.byName, isEmpty);
+        expect(result.fields, isEmpty);
+
+        final warnings =
+            logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+        expect(
+          warnings.single.message,
+          'Dropping default for Op.region '
+          '(query, expected ClassModel, value: {}): '
+          'default value cannot be expressed as a const Dart expression '
+          'for this type.',
+        );
+      },
+    );
+
+    test(
+      'AllOf composite target with default emits no field and no warning',
+      () {
+        final logs = <LogRecord>[];
+        final sub = Logger('OperationParameterDefaults')
+            .onRecord
+            .listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final region = QueryParameterObject(
+          name: 'region',
+          rawName: 'region',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: AllOfModel(
+            isDeprecated: false,
+            name: 'Region',
+            models: const {},
             context: context,
             examples: const [],
           ),
