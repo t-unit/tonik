@@ -2128,6 +2128,81 @@ Future<TonikResult<void>> listThings({
       );
 
       test(
+        'runtime-default query parameter (DateTime) forwards a class-qualified '
+        'reference but the api-client call() parameter wires no defaultTo — '
+        'a static getter is not a constant expression',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'since',
+            rawName: 'since',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: DateTimeModel(context: testContext),
+            encoding: QueryParameterEncoding.form,
+            context: testContext,
+            examples: const [],
+            defaultValue: '2024-01-01T00:00:00Z',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: testContext,
+            tags: {Tag(name: 'things')},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final generatedClass = generator.generateClass(
+            {operation},
+            Tag(name: 'things'),
+            testServers,
+          );
+
+          final method = generatedClass.methods.firstWhere(
+            (m) => m.name == 'listThings',
+          );
+
+          final sinceParam = method.optionalParameters.firstWhere(
+            (p) => p.name == 'since',
+          );
+          // The OpenAPI parameter is not required, so the forwarder mirrors
+          // that on the call() signature. A runtime-fallback default cannot
+          // be wired as defaultTo (a static getter is not const).
+          expect(sinceParam.required, isFalse);
+          expect(sinceParam.defaultTo, isNull);
+          expect(
+            sinceParam.type?.accept(emitter).toString(),
+            'DateTime?',
+          );
+
+          // Cross-check the full forwarder body: a runtime-default param keeps
+          // its spec-optional shape (`DateTime?` with no `defaultTo`) and the
+          // body forwards by name so the operation receives the caller's value.
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+          const expectedMethod =
+              'Future<TonikResult<void>> listThings({DateTime? since}) '
+              'async => _listThings(since: since);';
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+
+      test(
         'suppresses dropped-default warnings — the operation class is the '
         'sole logging site',
         () {

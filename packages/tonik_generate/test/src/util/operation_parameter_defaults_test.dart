@@ -514,8 +514,8 @@ void main() {
     );
 
     test(
-      'date-time target emits no field but warns that the value is not '
-      'const-materialisable',
+      'date-time target falls through to a runtime getter — no const field, '
+      'no warning, isRuntime flag set',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -553,25 +553,17 @@ void main() {
           initialReservedNames: const {'_dio'},
         );
 
-        expect(result.byName.containsKey('since'), isFalse);
         expect(result.fields, isEmpty);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        final message = warnings.single.message;
-        expect(message, contains('Op.since'));
-        expect(message, contains('(query,'));
-        expect(message, contains('expected DateTimeModel'));
-        expect(message, contains('"2024-01-01T00:00:00Z"'));
-        expect(
-          message,
-          contains('cannot be expressed as a const Dart expression'),
-        );
+        expect(result.getters, hasLength(1));
+        expect(result.byName['since']?.memberName, 'sinceDefault');
+        expect(result.byName['since']?.isRuntime, isTrue);
+        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
       },
     );
 
     test(
-      'ClassModel target with default emits no field and the generic '
-      'cannot-express-as-const warning',
+      'ClassModel target with default falls through to a runtime getter — '
+      'no const field, no warning, isRuntime flag set',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -615,23 +607,17 @@ void main() {
           initialReservedNames: const {'_dio'},
         );
 
-        expect(result.byName, isEmpty);
         expect(result.fields, isEmpty);
-
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        expect(
-          warnings.single.message,
-          'Dropping default for Op.region '
-          '(query, expected ClassModel, value: {}): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(result.getters, hasLength(1));
+        expect(result.byName['region']?.memberName, 'regionDefault');
+        expect(result.byName['region']?.isRuntime, isTrue);
+        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
       },
     );
 
     test(
-      'AllOf composite target with default emits no field and no warning',
+      'AllOf composite target with default falls through to a runtime getter '
+      'without emitting a const field or a warning',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -675,8 +661,10 @@ void main() {
           initialReservedNames: const {'_dio'},
         );
 
-        expect(result.byName, isEmpty);
         expect(result.fields, isEmpty);
+        expect(result.getters, hasLength(1));
+        expect(result.byName['region']?.memberName, 'regionDefault');
+        expect(result.byName['region']?.isRuntime, isTrue);
         expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
       },
     );
@@ -1200,8 +1188,8 @@ void main() {
     );
 
     test(
-      'warning formatter falls back to toString when the raw default is '
-      'not JSON-encodable (e.g. a YAML-parsed DateTime)',
+      'warning formatter falls back to toString when the type-mismatched raw '
+      'default is not JSON-encodable (e.g. a YAML-parsed DateTime)',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -1211,15 +1199,15 @@ void main() {
 
         final yamlDateTime = DateTime.utc(2024, 6, 15);
         final bad = QueryParameterObject(
-          name: 'since',
-          rawName: 'since',
+          name: 'count',
+          rawName: 'count',
           description: null,
           isRequired: false,
           isDeprecated: false,
           allowEmptyValue: false,
           allowReserved: false,
           explode: false,
-          model: DateTimeModel(context: context),
+          model: IntegerModel(context: context),
           encoding: QueryParameterEncoding.form,
           context: context,
           examples: const [],

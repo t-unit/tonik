@@ -10,17 +10,26 @@ final Logger _log = Logger('OperationParameterDefaults');
 
 @immutable
 class OperationParameterDefault {
-  const OperationParameterDefault.local({required this.memberName})
-    : _owner = null;
+  const OperationParameterDefault.local({
+    required this.memberName,
+    this.isRuntime = false,
+  }) : _owner = null;
 
   const OperationParameterDefault.qualified({
     required this.memberName,
     required String className,
     required String url,
+    this.isRuntime = false,
   }) : _owner = (className: className, url: url);
 
   final String memberName;
   final ({String className, String url})? _owner;
+
+  /// `true` when the underlying member is a non-const `static get` (runtime
+  /// fallback). The call-site reference syntax is identical, but the
+  /// generated `call()` parameter cannot wire `defaultTo` because a static
+  /// getter is not a constant expression.
+  final bool isRuntime;
 
   OperationParameterDefault withOwner({
     required String className,
@@ -35,6 +44,7 @@ class OperationParameterDefault {
       memberName: memberName,
       className: className,
       url: url,
+      isRuntime: isRuntime,
     );
   }
 
@@ -53,6 +63,7 @@ class OperationParameterDefault {
 ({
   Map<String, OperationParameterDefault> byName,
   List<Field> fields,
+  List<Method> getters,
 })
 resolveOperationParameterDefaults({
   required NormalizedRequestParameters normalizedParams,
@@ -65,7 +76,8 @@ resolveOperationParameterDefaults({
   final reserved = {...initialReservedNames};
   final byName = <String, OperationParameterDefault>{};
   final fields = <Field>[];
-  final onDropped = emitWarnings ? _log.warning : null;
+  final getters = <Method>[];
+  final logWarning = emitWarnings ? _log.warning : null;
 
   void process({
     required String normalizedName,
@@ -74,6 +86,9 @@ resolveOperationParameterDefaults({
     required String specName,
     required String location,
   }) {
+    if (rawDefault == null) return;
+
+    var dropped = false;
     final resolved = resolveSingleDefault(
       normalizedName: normalizedName,
       specName: specName,
@@ -84,14 +99,47 @@ resolveOperationParameterDefaults({
       reservedNames: reserved,
       nameManager: nameManager,
       package: package,
-      onDroppedDefault: onDropped,
+      onDroppedDefault: (message) {
+        dropped = true;
+        logWarning?.call(message);
+      },
     );
-    if (resolved == null) return;
+    if (resolved != null) {
+      byName[normalizedName] = OperationParameterDefault.local(
+        memberName: resolved.memberName,
+      );
+      fields.add(defaultField(resolved));
+      return;
+    }
+    if (dropped) return;
 
-    byName[normalizedName] = OperationParameterDefault.local(
-      memberName: resolved.memberName,
+    // The const path bubbled without a warning (composite target or
+    // non-const leaf) — emit a runtime getter on the operation class so
+    // callers can reference `<Op>.<param>Default` from Dart. The `call()`
+    // parameter stays as-was (no `defaultTo` wiring) because the getter is
+    // not const-evaluable.
+    final runtime = resolveRuntimeDefault(
+      normalizedName: normalizedName,
+      model: model,
+      rawDefault: rawDefault,
+      containerName: operationClassName,
+      reservedNames: reserved,
+      nameManager: nameManager,
+      package: package,
     );
-    fields.add(defaultField(resolved));
+    if (runtime == null) return;
+
+    if (emitWarnings) {
+      _log.info(
+        'Emitting runtime default for $operationClassName.$specName '
+        '($location, ${runtimeFallbackReason(model)}).',
+      );
+    }
+    byName[normalizedName] = OperationParameterDefault.local(
+      memberName: runtime.memberName,
+      isRuntime: true,
+    );
+    getters.add(runtime.getter);
   }
 
   for (final p in normalizedParams.pathParameters) {
@@ -131,7 +179,7 @@ resolveOperationParameterDefaults({
     );
   }
 
-  return (byName: byName, fields: fields);
+  return (byName: byName, fields: fields, getters: getters);
 }
 
 // Normalised parameter names cannot start with `_` (see `normalizeSingle` in

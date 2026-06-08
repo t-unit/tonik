@@ -76,8 +76,8 @@ void main() {
     );
 
     test(
-      'non-const-materialisable primitive (DateTime) returns null and emits '
-      'the const-expression reason',
+      'non-const-materialisable primitive (DateTime) returns null silently — '
+      'the caller routes it to the runtime fallback',
       () {
         final messages = <String>[];
         final reserved = <String>{'since'};
@@ -95,20 +95,13 @@ void main() {
         );
 
         expect(result, isNull);
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.since (query, expected DateTimeModel, '
-          'value: "2024-01-01T00:00:00Z"): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
     test(
-      'ClassModel target with an empty default drops with the generic '
-      'cannot-express-as-const reason',
+      'ClassModel target returns null silently — the caller routes it to the '
+      'runtime fallback',
       () {
         final messages = <String>[];
         final reserved = <String>{'region'};
@@ -133,14 +126,7 @@ void main() {
 
         expect(result, isNull);
         expect(reserved, {'region'});
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.region (query, expected ClassModel, '
-          'value: {}): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
@@ -250,13 +236,13 @@ void main() {
         final messages = <String>[];
         final yamlDateTime = DateTime.utc(2024, 6, 15);
         resolveSingleDefault(
-          normalizedName: 'since',
-          specName: 'since',
-          model: DateTimeModel(context: context),
+          normalizedName: 'count',
+          specName: 'count',
+          model: IntegerModel(context: context),
           rawDefault: yamlDateTime,
           containerName: 'Op',
           location: 'query',
-          reservedNames: <String>{'since'},
+          reservedNames: <String>{'count'},
           nameManager: nameManager,
           package: 'api',
           onDroppedDefault: messages.add,
@@ -273,7 +259,7 @@ void main() {
         resolveSingleDefault(
           normalizedName: 'value',
           specName: 'value',
-          model: DateTimeModel(context: context),
+          model: IntegerModel(context: context),
           rawDefault: const <String, Object?>{'a': 1, 'b': null},
           containerName: 'Op',
           location: 'query',
@@ -309,8 +295,8 @@ void main() {
     );
 
     test(
-      'nullable enum with a value present in the enum drops with the '
-      'const-expression reason',
+      'nullable enum with a value present in the enum returns null silently — '
+      'the caller routes it to the runtime fallback',
       () {
         final messages = <String>[];
         final reserved = <String>{'status'};
@@ -339,14 +325,7 @@ void main() {
 
         expect(result, isNull);
         expect(reserved, {'status'});
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.status (query, expected EnumModel<String>, '
-          'value: "active"): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
@@ -423,8 +402,8 @@ void main() {
     );
 
     test(
-      'ListModel<DateTimeModel> with valid-shape list drops with the '
-      'nested-value reason (inner leaf bubbles up)',
+      'ListModel<DateTimeModel> with valid-shape list returns null silently — '
+      'the inner leaf bubbles up for runtime-fallback handling',
       () {
         final messages = <String>[];
         resolveSingleDefault(
@@ -444,13 +423,7 @@ void main() {
           onDroppedDefault: messages.add,
         );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.since (property, expected ListModel, '
-          'value: ["2024-01-01"]): '
-          'a nested value cannot be expressed as a const Dart expression.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
@@ -487,8 +460,8 @@ void main() {
     );
 
     test(
-      'MapModel<ClassModel> with valid-shape Map drops with the '
-      'nested-value reason (inner leaf bubbles up)',
+      'MapModel<ClassModel> with valid-shape Map returns null silently — '
+      'the inner leaf bubbles up for runtime-fallback handling',
       () {
         final messages = <String>[];
         resolveSingleDefault(
@@ -514,13 +487,7 @@ void main() {
           onDroppedDefault: messages.add,
         );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.index (property, expected MapModel, '
-          'value: {"a":{}}): '
-          'a nested value cannot be expressed as a const Dart expression.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
@@ -554,8 +521,9 @@ void main() {
     );
 
     test(
-      'AnyModel with a Map carrying a non-String key drops with the '
-      'nested-value reason (non-String keys classified as inner failure)',
+      'AnyModel with a Map carrying a non-String key returns null silently — '
+      'non-String keys are classified as an inner-value failure that bubbles '
+      'to the runtime fallback',
       () {
         final messages = <String>[];
         final nonStringKeyMap = <int, String>{1: 'one'};
@@ -572,19 +540,13 @@ void main() {
           onDroppedDefault: messages.add,
         );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.raw (property, expected AnyModel, '
-          'value: $nonStringKeyMap): '
-          'a nested value cannot be expressed as a const Dart expression.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
     test(
-      'ClassModel target with a non-empty default drops with the generic '
-      'cannot-express-as-const reason',
+      'ClassModel target with a non-empty default returns null silently — '
+      'the caller routes it to the runtime fallback',
       () {
         final messages = <String>[];
         final reserved = <String>{'profile'};
@@ -609,14 +571,7 @@ void main() {
 
         expect(result, isNull);
         expect(reserved, {'profile'});
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.profile (property, expected ClassModel, '
-          'value: {"field":"value"}): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(messages, isEmpty);
       },
     );
 

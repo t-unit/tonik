@@ -331,8 +331,8 @@ void main() {
     });
 
     test(
-      'ClassModel property target with default emits the generic '
-      'cannot-express-as-const warning and no static const',
+      'ClassModel property target with default emits a runtime getter '
+      'instead of a static const field, with no warning',
       () {
         final logs = <LogRecord>[];
         final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
@@ -367,20 +367,17 @@ void main() {
           result.fields.where((f) => f.name == 'childDefault'),
           isEmpty,
         );
-
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        expect(
-          warnings.single.message,
-          'Dropping default for WithChild.child '
-          '(property, expected ClassModel, value: {}): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
+        final getter = result.methods.firstWhere(
+          (m) => m.name == 'childDefault',
         );
+        expect(getter.static, isTrue);
+        expect(getter.type, MethodType.getter);
+        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
       },
     );
 
-    test('AllOf composite property target with default drops silently', () {
+    test('AllOf composite property target with default emits a runtime getter',
+        () {
       final logs = <LogRecord>[];
       final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
       addTearDown(subscription.cancel);
@@ -414,6 +411,11 @@ void main() {
         result.fields.where((f) => f.name == 'unionDefault'),
         isEmpty,
       );
+      final getter = result.methods.firstWhere(
+        (m) => m.name == 'unionDefault',
+      );
+      expect(getter.static, isTrue);
+      expect(getter.type, MethodType.getter);
       expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
     });
 

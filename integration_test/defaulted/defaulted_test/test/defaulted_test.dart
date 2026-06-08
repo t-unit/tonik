@@ -1,6 +1,7 @@
 import 'package:defaulted_api/defaulted_api.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 Dio _newDio({required void Function(RequestOptions) onRequest}) {
   final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
@@ -234,7 +235,14 @@ void main() {
     });
 
     test('round-trip: fromJson(toJson(...)) yields an equal instance', () {
-      const original = Subscription();
+      // Construct with explicit values for the runtime-fallback fields so
+      // toJson does not drop them and decode applies the supplied values
+      // (rather than the runtime defaults) on the way back.
+      final original = Subscription(
+        startsAt: DateTime.utc(2024, 1, 1),
+        homepage: Uri.parse('https://example.com'),
+        pricing: Subscription.pricingDefault,
+      );
       final encoded = original.toJson()! as Map<String, Object?>;
       final decoded = Subscription.fromJson(encoded);
       expect(decoded, original);
@@ -457,6 +465,100 @@ void main() {
     },
   );
 
+  group(
+    'Subscription — runtime-fallback defaults (DateTime, Uri, Class)',
+    () {
+      test('static getter returns the DateTime default', () {
+        expect(
+          Subscription.startsAtDefault,
+          DateTime.utc(2024, 1, 1),
+        );
+      });
+
+      test('static getter returns the Uri default', () {
+        expect(
+          Subscription.homepageDefault,
+          Uri.parse('https://example.com'),
+        );
+      });
+
+      test('static getter returns a Pricing instance for the object default',
+          () {
+        final pricing = Subscription.pricingDefault;
+        expect(pricing.amount.toString(), '9.99');
+        expect(pricing.currency, 'USD');
+      });
+
+      test('computed getter is not cached — successive accesses produce '
+          'equal but non-identical DateTime instances', () {
+        final a = Subscription.startsAtDefault;
+        final b = Subscription.startsAtDefault;
+        expect(a, b);
+        expect(identical(a, b), isFalse);
+      });
+
+      test('fromJson with an empty map applies all runtime-fallback defaults',
+          () {
+        final value = Subscription.fromJson(const <String, Object?>{});
+        expect(value.startsAt, DateTime.utc(2024, 1, 1));
+        expect(value.homepage, Uri.parse('https://example.com'));
+        expect(value.pricing?.amount.toString(), '9.99');
+        expect(value.pricing?.currency, 'USD');
+      });
+
+      test('fromJson supplied keys override the runtime-fallback defaults', () {
+        final value = Subscription.fromJson(const <String, Object?>{
+          'startsAt': '2030-12-31T23:59:59Z',
+          'homepage': 'https://override.example',
+          'pricing': <String, Object?>{
+            'amount': '1.00',
+            'currency': 'EUR',
+          },
+        });
+        expect(value.startsAt, DateTime.utc(2030, 12, 31, 23, 59, 59));
+        expect(value.homepage, Uri.parse('https://override.example'));
+        expect(value.pricing?.amount.toString(), '1.00');
+        expect(value.pricing?.currency, 'EUR');
+      });
+    },
+  );
+
+  group(
+    'Order — runtime-fallback oneOf default via discriminator',
+    () {
+      test('static getter returns the discriminated cat variant', () {
+        final pet = Order.petDefault;
+        expect(pet, isA<PetCat>());
+        final cat = (pet as PetCat).value;
+        expect(cat.kind, 'cat');
+        expect(cat.livesLeft, 9);
+      });
+
+      test('fromJson with an empty map applies the runtime-fallback default',
+          () {
+        final value = Order.fromJson(const <String, Object?>{});
+        expect(value.pet, isA<PetCat>());
+        final cat = (value.pet! as PetCat).value;
+        expect(cat.kind, 'cat');
+        expect(cat.livesLeft, 9);
+      });
+
+      test('fromJson with an explicit pet overrides the default — dog variant',
+          () {
+        final value = Order.fromJson(const <String, Object?>{
+          'pet': <String, Object?>{
+            'kind': 'dog',
+            'goodBoy': true,
+          },
+        });
+        expect(value.pet, isA<PetDog>());
+        final dog = (value.pet! as PetDog).value;
+        expect(dog.kind, 'dog');
+        expect(dog.goodBoy, isTrue);
+      });
+    },
+  );
+
   group('operation call() — enum query parameter wire encoding', () {
     test(
       'omitted enum query parameter serialises the default variant on the wire',
@@ -508,4 +610,20 @@ void main() {
       },
     );
   });
+
+  group(
+    'BadlyDefaulted — runtime fallback validates on first access',
+    () {
+      test(
+        'runtime decoder rejects a syntactically-invalid date-time default '
+        'with a decoding exception — proving the runtime path is the validator',
+        () {
+          expect(
+            () => BadlyDefaulted.$whenDefault,
+            throwsA(isA<DecodingException>()),
+          );
+        },
+      );
+    },
+  );
 }
