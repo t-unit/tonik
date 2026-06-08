@@ -30,9 +30,7 @@ Expression? materialiseConstDefault({
   return switch (resolved) {
     StringModel() => jsonValue is String ? specLiteralString(jsonValue) : null,
     IntegerModel() => jsonValue is int ? literalNum(jsonValue) : null,
-    DoubleModel() => jsonValue is num
-        ? literalNum(jsonValue.toDouble())
-        : null,
+    DoubleModel() => jsonValue is num ? literalNum(jsonValue.toDouble()) : null,
     NumberModel() => jsonValue is num ? literalNum(jsonValue) : null,
     BooleanModel() => jsonValue is bool ? literalBool(jsonValue) : null,
     final EnumModel<dynamic> model => _materialiseEnumDefault(
@@ -73,8 +71,9 @@ Expression? _materialiseEnumDefault({
   final matchedIndex = entries.indexWhere((e) => e.value == jsonValue);
   if (matchedIndex < 0) return null;
 
-  final variantName =
-      nameManager.enumVariantNames(model).valueNames[matchedIndex];
+  final variantName = nameManager
+      .enumVariantNames(model)
+      .valueNames[matchedIndex];
   final enumName = nameManager.modelName(model);
   final url = sourceFileUrl(package, 'model', enumName);
   return refer('$enumName.$variantName', url);

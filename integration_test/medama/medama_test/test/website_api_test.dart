@@ -78,7 +78,6 @@ void main() {
 
         final response = await api.getWebsites(
           meSess: 'test_session',
-          summary: false,
         );
 
         final success = response as TonikSuccess<GetWebsitesResponse>;

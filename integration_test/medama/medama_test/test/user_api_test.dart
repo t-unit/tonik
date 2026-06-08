@@ -331,7 +331,6 @@ void main() {
           meSess: 'test_session',
           body: const UserPatch(
             settings: UserSettings(
-              language: UserSettingsLanguageModel.en,
               blockAbusiveIPs: true,
               blockTorExitNodes: false,
             ),
@@ -350,7 +349,7 @@ void main() {
         final response = await api.patchUser(
           meSess: 'test_session',
           body: const UserPatch(
-            settings: UserSettings(language: UserSettingsLanguageModel.en),
+            settings: UserSettings(),
           ),
         );
 
@@ -403,7 +402,7 @@ void main() {
           body: const UserPatch(
             username: 'fullUpdate',
             password: 'fullPassword!',
-            settings: UserSettings(language: UserSettingsLanguageModel.en),
+            settings: UserSettings(),
           ),
         );
 

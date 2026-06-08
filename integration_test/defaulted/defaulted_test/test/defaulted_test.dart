@@ -494,16 +494,18 @@ void main() {
       },
     );
 
-    test('explicit enum header value replaces the default on the wire',
-        () async {
-      RequestOptions? captured;
-      final dio = _newDio(onRequest: (o) => captured = o);
+    test(
+      'explicit enum header value replaces the default on the wire',
+      () async {
+        RequestOptions? captured;
+        final dio = _newDio(onRequest: (o) => captured = o);
 
-      await ListSubscriptions(
-        dio,
-      ).call(mode: SubscriptionsParametersModel2.manual);
+        await ListSubscriptions(
+          dio,
+        ).call(mode: SubscriptionsParametersModel2.manual);
 
-      expect(captured!.headers['X-Mode'], 'manual');
-    });
+        expect(captured!.headers['X-Mode'], 'manual');
+      },
+    );
   });
 }

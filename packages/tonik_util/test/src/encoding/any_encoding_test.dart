@@ -73,8 +73,7 @@ class TestEncodableModel implements ParameterEncodable {
 enum TestUriEncodableEnum implements UriEncodable {
   value1('one'),
   value2('two'),
-  valueWithSpace('has space')
-  ;
+  valueWithSpace('has space');
 
   const TestUriEncodableEnum(this.rawValue);
 

@@ -25,8 +25,7 @@ void main() {
     return formatter.format(source);
   }
 
-  String formatBody(String body) =>
-      formatter.format('_render() => $body;');
+  String formatBody(String body) => formatter.format('_render() => $body;');
 
   setUp(() {
     context = Context.initial();
@@ -324,7 +323,8 @@ void main() {
       List<EnumEntry<String>>? values,
       EnumEntry<String>? fallbackValue,
     }) {
-      final entries = values ??
+      final entries =
+          values ??
           [
             const EnumEntry<String>(value: 'active'),
             const EnumEntry<String>(value: 'inactive'),
@@ -345,7 +345,8 @@ void main() {
       List<EnumEntry<int>>? values,
       EnumEntry<int>? fallbackValue,
     }) {
-      final entries = values ??
+      final entries =
+          values ??
           [
             const EnumEntry<int>(value: 1),
             const EnumEntry<int>(value: 2),
@@ -561,16 +562,16 @@ void main() {
 
   group('materialiseConstDefault — collections', () {
     ListModel listOf(Model content) => ListModel(
-          content: content,
-          context: context,
-          examples: const [],
-        );
+      content: content,
+      context: context,
+      examples: const [],
+    );
 
     MapModel mapOf(Model valueModel) => MapModel(
-          valueModel: valueModel,
-          context: context,
-          examples: const [],
-        );
+      valueModel: valueModel,
+      context: context,
+      examples: const [],
+    );
 
     test('ListModel<StringModel> + list of strings yields const list', () {
       final result = materialiseConstDefault(
@@ -630,17 +631,18 @@ void main() {
     });
 
     test(
-        'ListModel<DateTimeModel> returns null (composite leaf bubbles up)',
-        () {
-      final result = materialiseConstDefault(
-        jsonValue: const <Object?>['2024-01-01T00:00:00Z'],
-        targetModel: listOf(DateTimeModel(context: context)),
-        nameManager: nameManager,
-        package: package,
-      );
+      'ListModel<DateTimeModel> returns null (composite leaf bubbles up)',
+      () {
+        final result = materialiseConstDefault(
+          jsonValue: const <Object?>['2024-01-01T00:00:00Z'],
+          targetModel: listOf(DateTimeModel(context: context)),
+          nameManager: nameManager,
+          package: package,
+        );
 
-      expect(result, isNull);
-    });
+        expect(result, isNull);
+      },
+    );
 
     test('ListModel<ClassModel> returns null (composite leaf bubbles up)', () {
       final classModel = ClassModel(
@@ -724,17 +726,18 @@ void main() {
     });
 
     test(
-        'MapModel<DateTimeModel> returns null (composite leaf bubbles up)',
-        () {
-      final result = materialiseConstDefault(
-        jsonValue: const <String, Object?>{'a': '2024-01-01T00:00:00Z'},
-        targetModel: mapOf(DateTimeModel(context: context)),
-        nameManager: nameManager,
-        package: package,
-      );
+      'MapModel<DateTimeModel> returns null (composite leaf bubbles up)',
+      () {
+        final result = materialiseConstDefault(
+          jsonValue: const <String, Object?>{'a': '2024-01-01T00:00:00Z'},
+          targetModel: mapOf(DateTimeModel(context: context)),
+          nameManager: nameManager,
+          package: package,
+        );
 
-      expect(result, isNull);
-    });
+        expect(result, isNull);
+      },
+    );
 
     test('MapModel with non-String key returns null (no throw)', () {
       final result = materialiseConstDefault(

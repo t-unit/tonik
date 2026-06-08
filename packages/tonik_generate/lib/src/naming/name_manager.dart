@@ -354,9 +354,7 @@ class NameManager {
   String additionalPropertiesFieldName(
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    final reserved = normalizedProperties
-        .map((p) => p.normalizedName)
-        .toSet();
+    final reserved = normalizedProperties.map((p) => p.normalizedName).toSet();
     return generator.generateAdditionalPropertiesFieldName(
       reservedNames: reserved,
     );

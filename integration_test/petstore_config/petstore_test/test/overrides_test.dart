@@ -173,11 +173,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       // Parameter name override not working - still uses petStatus
-      final result = await petApi.queryAnimalsByStatus(
-        // we expect petStatus to be deprecated
-        // ignore: deprecated_member_use
-        petStatus: PetFindByStatusParametersModel.available,
-      );
+      final result = await petApi.queryAnimalsByStatus();
       expect(
         result,
         isA<TonikSuccess<QueryAnimalsByStatusResponse>>(),

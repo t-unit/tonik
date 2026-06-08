@@ -89,7 +89,6 @@ void main() {
         final response = await api.getWebsiteIdSummary(
           meSess: 'test_session',
           hostname: 'example.com',
-          previous: false,
         );
 
         final success = response as TonikSuccess<GetWebsiteIdSummaryResponse>;
