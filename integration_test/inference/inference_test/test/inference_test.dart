@@ -643,7 +643,6 @@ void main() {
                 userId: 'user-456',
                 messageId: 'msg-789',
                 message: 'Hello',
-                connectors: [],
               ),
             );
 
@@ -723,7 +722,6 @@ void main() {
                 userId: 'user-456',
                 messageId: 'msg-789',
                 message: 'Hello',
-                interruptionReply: false,
               ),
             );
 
@@ -854,7 +852,6 @@ void main() {
                 userId: 'user-456',
                 messageId: 'msg-789',
                 message: 'Hello',
-                reasoningMode: ReasoningMode.copilot,
               ),
             );
 

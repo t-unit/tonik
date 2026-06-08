@@ -1,5 +1,5 @@
-name: defaulted_enums_test
-description: Integration tests for class-property and operation-parameter enum default values.
+name: defaulted_test
+description: Integration tests for primitive, enum, and collection const default values, plus operation parameter defaults.
 version: 1.0.0
 publish_to: none
 
@@ -7,8 +7,8 @@ environment:
   sdk: '>=3.10.0 <4.0.0'
 
 dependencies:
-  defaulted_enums_api:
-    path: ../defaulted_enums_api
+  defaulted_api:
+    path: ../defaulted_api
   dio: ^5.8.0
   path: ^1.9.1
   tonik_util: ^0.4.1

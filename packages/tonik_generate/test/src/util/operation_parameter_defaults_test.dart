@@ -69,9 +69,9 @@ void main() {
       'no warning, no byName entry',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final region = QueryParameterObject(
@@ -213,9 +213,9 @@ void main() {
       'no map entry',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final bad = QueryParameterObject(
@@ -266,9 +266,9 @@ void main() {
       'location, value, and reason',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final bad = QueryParameterObject(
@@ -319,9 +319,9 @@ void main() {
       'the JSON-encoded numeric value',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final bad = QueryParameterObject(
@@ -518,9 +518,9 @@ void main() {
       'const-materialisable',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final since = QueryParameterObject(
@@ -574,9 +574,9 @@ void main() {
       'cannot-express-as-const warning',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final region = QueryParameterObject(
@@ -618,8 +618,7 @@ void main() {
         expect(result.byName, isEmpty);
         expect(result.fields, isEmpty);
 
-        final warnings =
-            logs.where((r) => r.level == Level.WARNING).toList();
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
         expect(warnings, hasLength(1));
         expect(
           warnings.single.message,
@@ -635,9 +634,9 @@ void main() {
       'AllOf composite target with default emits no field and no warning',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final region = QueryParameterObject(
@@ -769,9 +768,9 @@ void main() {
       'field referencing the matching enum variant',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final order = QueryParameterObject(
@@ -829,9 +828,9 @@ void main() {
       'const field referencing the matching enum variant',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final mode = RequestHeaderObject(
@@ -890,9 +889,9 @@ void main() {
       'const field referencing the matching enum variant',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final kind = PathParameterObject(
@@ -951,9 +950,9 @@ void main() {
       'const field referencing the matching enum variant',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final flavor = CookieParameterObject(
@@ -1012,9 +1011,9 @@ void main() {
       'referencing the matching enum variant',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final priority = QueryParameterObject(
@@ -1075,9 +1074,9 @@ void main() {
       'dropped with a query-location warning',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final order = QueryParameterObject(
@@ -1137,9 +1136,9 @@ void main() {
       'materialises the matching variant const',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final status = QueryParameterObject(
@@ -1205,9 +1204,9 @@ void main() {
       'not JSON-encodable (e.g. a YAML-parsed DateTime)',
       () {
         final logs = <LogRecord>[];
-        final sub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(logs.add);
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
         final yamlDateTime = DateTime.utc(2024, 6, 15);
@@ -1275,9 +1274,9 @@ void main() {
         );
 
         final suppressedLogs = <LogRecord>[];
-        final suppressedSub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(suppressedLogs.add);
+        final suppressedSub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(suppressedLogs.add);
         resolveOperationParameterDefaults(
           normalizedParams: normalized,
           operationClassName: 'BadOp',
@@ -1293,9 +1292,9 @@ void main() {
         );
 
         final emittedLogs = <LogRecord>[];
-        final emittedSub = Logger('OperationParameterDefaults')
-            .onRecord
-            .listen(emittedLogs.add);
+        final emittedSub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(emittedLogs.add);
         addTearDown(emittedSub.cancel);
         resolveOperationParameterDefaults(
           normalizedParams: normalized,
@@ -1341,12 +1340,15 @@ void main() {
         hasRequestBody: true,
       );
 
-      expect(names, containsAll(<String>[
-        'call',
-        'body',
-        'cancelToken',
-        'region',
-      ]));
+      expect(
+        names,
+        containsAll(<String>[
+          'call',
+          'body',
+          'cancelToken',
+          'region',
+        ]),
+      );
     });
 
     test('omits body when no request body is present', () {

@@ -159,10 +159,11 @@ bool _isCollectionShapeMismatch(Model resolved, Object? rawDefault) =>
     switch (resolved) {
       ListModel() => rawDefault is! List,
       MapModel() => rawDefault is! Map,
-      AnyModel() => rawDefault is! bool &&
-          rawDefault is! num &&
-          rawDefault is! String &&
-          rawDefault is! List<Object?> &&
-          rawDefault is! Map<Object?, Object?>,
+      AnyModel() =>
+        rawDefault is! bool &&
+            rawDefault is! num &&
+            rawDefault is! String &&
+            rawDefault is! List<Object?> &&
+            rawDefault is! Map<Object?, Object?>,
       _ => false,
     };

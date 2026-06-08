@@ -1585,51 +1585,53 @@ void main() {
         },
       );
 
-      test('omits the Parameter examples block when no params carry examples',
-          () {
-        final operation = Operation(
-          operationId: 'getUser',
-          context: testContext,
-          summary: 'Get user',
-          tags: {Tag(name: 'users')},
-          isDeprecated: false,
-          path: '/users/{userId}',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: {
-            PathParameterObject(
-              name: 'userId',
-              rawName: 'userId',
-              description: 'The user id.',
-              isRequired: true,
-              isDeprecated: false,
-              allowEmptyValue: false,
-              explode: false,
-              model: StringModel(context: testContext),
-              encoding: PathParameterEncoding.simple,
-              context: testContext,
-              examples: const [],
-              defaultValue: null,
-            ),
-          },
-          cookieParameters: const {},
-          responses: const {},
-          securitySchemes: const {},
-        );
+      test(
+        'omits the Parameter examples block when no params carry examples',
+        () {
+          final operation = Operation(
+            operationId: 'getUser',
+            context: testContext,
+            summary: 'Get user',
+            tags: {Tag(name: 'users')},
+            isDeprecated: false,
+            path: '/users/{userId}',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: {
+              PathParameterObject(
+                name: 'userId',
+                rawName: 'userId',
+                description: 'The user id.',
+                isRequired: true,
+                isDeprecated: false,
+                allowEmptyValue: false,
+                explode: false,
+                model: StringModel(context: testContext),
+                encoding: PathParameterEncoding.simple,
+                context: testContext,
+                examples: const [],
+                defaultValue: null,
+              ),
+            },
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
 
-        final klass = generator.generateClass(
-          {operation},
-          Tag(name: 'users'),
-          testServers,
-        );
-        final method = klass.methods.first;
+          final klass = generator.generateClass(
+            {operation},
+            Tag(name: 'users'),
+            testServers,
+          );
+          final method = klass.methods.first;
 
-        expect(
-          method.docs.any((d) => d.contains('Parameter examples')),
-          isFalse,
-        );
-      });
+          expect(
+            method.docs.any((d) => d.contains('Parameter examples')),
+            isFalse,
+          );
+        },
+      );
 
       test('omits body sections when no examples are present', () {
         final operation = Operation(
@@ -2055,8 +2057,9 @@ void main() {
             (m) => m.name == 'listThings',
           );
 
-          final regionParam = method.optionalParameters
-              .firstWhere((p) => p.name == 'region');
+          final regionParam = method.optionalParameters.firstWhere(
+            (p) => p.name == 'region',
+          );
           expect(regionParam.required, isFalse);
           expect(regionParam.type?.accept(emitter).toString(), 'String');
           expect(
@@ -2129,9 +2132,9 @@ Future<TonikResult<void>> listThings({
         'sole logging site',
         () {
           final logs = <LogRecord>[];
-          final sub = Logger('OperationParameterDefaults')
-              .onRecord
-              .listen(logs.add);
+          final sub = Logger(
+            'OperationParameterDefaults',
+          ).onRecord.listen(logs.add);
           addTearDown(sub.cancel);
 
           final queryParam = QueryParameterObject(

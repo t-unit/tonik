@@ -1,8 +1,10 @@
 openapi: 3.0.4
 info:
-  title: Defaulted Primitives API
+  title: Defaulted API
   description: >-
-    Schema with `default` values for primitive properties.
+    Schema with `default` values for primitive, enum, and collection / free-form
+    properties, plus operation parameter defaults across query, header, cookie,
+    and path locations.
   version: 1.0.0
   contact:
     name: Example
@@ -84,6 +86,31 @@ paths:
                 properties:
                   id:
                     type: string
+  /subscriptions:
+    get:
+      operationId: listSubscriptions
+      summary: List subscriptions filtered by status
+      parameters:
+        - name: status
+          in: query
+          schema:
+            $ref: '#/components/schemas/Status'
+            default: active
+        - name: X-Mode
+          in: header
+          schema:
+            type: string
+            enum: [auto, manual]
+            default: auto
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Subscription'
 
 components:
   schemas:
@@ -113,3 +140,51 @@ components:
           type: string
           nullable: true
           default: "Mx."
+    Status:
+      type: string
+      enum: [active, inactive, archived]
+    Tier:
+      type: integer
+      enum: [1, 2, 3]
+    Subscription:
+      type: object
+      properties:
+        priority:
+          type: string
+          enum: [low, medium, high]
+          default: medium
+        level:
+          type: integer
+          enum: [1, 2, 3]
+          default: 2
+        status:
+          $ref: '#/components/schemas/Status'
+          default: active
+        tier:
+          $ref: '#/components/schemas/Tier'
+          default: 2
+        fallbackPriority:
+          type: string
+          enum: [low, medium, high]
+          default: nonexistent
+    Filters:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          default: ["new", "featured"]
+        counts:
+          type: object
+          additionalProperties:
+            type: integer
+          default:
+            x: 1
+            y: 2
+        raw:
+          type: object
+          additionalProperties: true
+          default:
+            any: "value"
+            nested: [1, 2, 3]

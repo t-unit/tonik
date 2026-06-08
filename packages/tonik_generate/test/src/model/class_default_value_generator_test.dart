@@ -54,8 +54,9 @@ void main() {
 
       final result = generator.generateClass(model);
 
-      final constField =
-          result.fields.firstWhere((f) => f.name == 'nameDefault');
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'nameDefault',
+      );
       expect(constField.static, isTrue);
       expect(constField.modifier, FieldModifier.constant);
       expect(constField.type?.symbol, 'String');
@@ -65,10 +66,10 @@ void main() {
       final nameField = result.fields.firstWhere((f) => f.name == 'name');
       expect(nameField.type?.accept(emitter).toString(), 'String?');
 
-      final constructor =
-          result.constructors.firstWhere((c) => c.name == null);
-      final nameParam =
-          constructor.optionalParameters.firstWhere((p) => p.name == 'name');
+      final constructor = result.constructors.firstWhere((c) => c.name == null);
+      final nameParam = constructor.optionalParameters.firstWhere(
+        (p) => p.name == 'name',
+      );
       expect(nameParam.required, isFalse);
       expect(nameParam.defaultTo?.accept(emitter).toString(), 'nameDefault');
     });
@@ -97,18 +98,21 @@ void main() {
 
         final result = generator.generateClass(model);
 
-        final constField =
-            result.fields.firstWhere((f) => f.name == 'nameDefault');
+        final constField = result.fields.firstWhere(
+          (f) => f.name == 'nameDefault',
+        );
         expect(constField.type?.accept(emitter).toString(), 'String');
         expect(renderAssignment(constField.assignment), "r'anon'");
 
         final nameField = result.fields.firstWhere((f) => f.name == 'name');
         expect(nameField.type?.accept(emitter).toString(), 'String');
 
-        final constructor =
-            result.constructors.firstWhere((c) => c.name == null);
-        final nameParam =
-            constructor.optionalParameters.firstWhere((p) => p.name == 'name');
+        final constructor = result.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final nameParam = constructor.optionalParameters.firstWhere(
+          (p) => p.name == 'name',
+        );
         expect(nameParam.required, isFalse);
         expect(nameParam.defaultTo?.accept(emitter).toString(), 'nameDefault');
       },
@@ -135,8 +139,9 @@ void main() {
 
       final result = generator.generateClass(model);
 
-      final constField =
-          result.fields.firstWhere((f) => f.name == 'countDefault');
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'countDefault',
+      );
       expect(constField.static, isTrue);
       expect(constField.modifier, FieldModifier.constant);
       expect(constField.type?.symbol, 'int');
@@ -165,8 +170,9 @@ void main() {
 
       final result = generator.generateClass(model);
 
-      final constField =
-          result.fields.firstWhere((f) => f.name == 'rateDefault');
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'rateDefault',
+      );
       expect(constField.static, isTrue);
       expect(constField.modifier, FieldModifier.constant);
       expect(constField.type?.symbol, 'double');
@@ -195,8 +201,9 @@ void main() {
 
       final result = generator.generateClass(model);
 
-      final constField =
-          result.fields.firstWhere((f) => f.name == 'scoreDefault');
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'scoreDefault',
+      );
       expect(constField.static, isTrue);
       expect(constField.modifier, FieldModifier.constant);
       expect(constField.type?.symbol, 'num');
@@ -225,8 +232,9 @@ void main() {
 
       final result = generator.generateClass(model);
 
-      final constField =
-          result.fields.firstWhere((f) => f.name == 'activeDefault');
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'activeDefault',
+      );
       expect(constField.static, isTrue);
       expect(constField.modifier, FieldModifier.constant);
       expect(constField.type?.symbol, 'bool');
@@ -236,8 +244,7 @@ void main() {
 
     test('type mismatch drops default, logs one warning, no static const', () {
       final logs = <LogRecord>[];
-      final subscription =
-          Logger('ClassGenerator').onRecord.listen(logs.add);
+      final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
       addTearDown(subscription.cancel);
 
       final model = ClassModel(
@@ -266,13 +273,13 @@ void main() {
       );
 
       final constructor = result.constructors.firstWhere((c) => c.name == null);
-      final tierParam =
-          constructor.optionalParameters.firstWhere((p) => p.name == 'tier');
+      final tierParam = constructor.optionalParameters.firstWhere(
+        (p) => p.name == 'tier',
+      );
       expect(tierParam.required, isTrue);
       expect(tierParam.defaultTo, isNull);
 
-      final warnings =
-          logs.where((r) => r.level == Level.WARNING).toList();
+      final warnings = logs.where((r) => r.level == Level.WARNING).toList();
       expect(warnings, hasLength(1));
       expect(
         warnings.single.message,
@@ -284,8 +291,7 @@ void main() {
 
     test('alias-carried mismatched default still drops + logs once', () {
       final logs = <LogRecord>[];
-      final subscription =
-          Logger('ClassGenerator').onRecord.listen(logs.add);
+      final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
       addTearDown(subscription.cancel);
 
       final model = ClassModel(
@@ -329,8 +335,7 @@ void main() {
       'cannot-express-as-const warning and no static const',
       () {
         final logs = <LogRecord>[];
-        final subscription =
-            Logger('ClassGenerator').onRecord.listen(logs.add);
+        final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
         addTearDown(subscription.cancel);
 
         final model = ClassModel(
@@ -363,8 +368,7 @@ void main() {
           isEmpty,
         );
 
-        final warnings =
-            logs.where((r) => r.level == Level.WARNING).toList();
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
         expect(warnings, hasLength(1));
         expect(
           warnings.single.message,
@@ -378,8 +382,7 @@ void main() {
 
     test('AllOf composite property target with default drops silently', () {
       final logs = <LogRecord>[];
-      final subscription =
-          Logger('ClassGenerator').onRecord.listen(logs.add);
+      final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
       addTearDown(subscription.cancel);
 
       final model = ClassModel(
@@ -440,15 +443,18 @@ void main() {
         expect(
           result.fields.where((f) => f.name == 'nicknameDefault'),
           isEmpty,
-          reason: 'raw default is null and Property.defaultValue is null — '
+          reason:
+              'raw default is null and Property.defaultValue is null — '
               'absent and explicit-null defaults collapse to the no-default '
               'path',
         );
 
-        final constructor =
-            result.constructors.firstWhere((c) => c.name == null);
-        final nicknameParam = constructor.optionalParameters
-            .firstWhere((p) => p.name == 'nickname');
+        final constructor = result.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final nicknameParam = constructor.optionalParameters.firstWhere(
+          (p) => p.name == 'nickname',
+        );
         expect(nicknameParam.defaultTo, isNull);
       },
     );
@@ -483,8 +489,9 @@ void main() {
         );
 
         final result = generator.generateClass(model);
-        final constField =
-            result.fields.firstWhere((f) => f.name == 'nicknameDefault');
+        final constField = result.fields.firstWhere(
+          (f) => f.name == 'nicknameDefault',
+        );
         expect(constField.static, isTrue);
         expect(constField.modifier, FieldModifier.constant);
         expect(constField.type?.symbol, 'NullableNickname');
@@ -520,18 +527,21 @@ void main() {
 
         final result = generator.generateClass(model);
 
-        final constField =
-            result.fields.firstWhere((f) => f.name == 'salutationDefault');
+        final constField = result.fields.firstWhere(
+          (f) => f.name == 'salutationDefault',
+        );
         expect(constField.static, isTrue);
         expect(constField.modifier, FieldModifier.constant);
         expect(constField.type?.symbol, 'String');
         expect(constField.type?.accept(emitter).toString(), 'String?');
         expect(renderAssignment(constField.assignment), "r'hi'");
 
-        final constructor =
-            result.constructors.firstWhere((c) => c.name == null);
-        final salutationParam = constructor.optionalParameters
-            .firstWhere((p) => p.name == 'salutation');
+        final constructor = result.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final salutationParam = constructor.optionalParameters.firstWhere(
+          (p) => p.name == 'salutation',
+        );
         expect(salutationParam.required, isFalse);
         expect(
           salutationParam.defaultTo?.accept(emitter).toString(),
@@ -682,18 +692,21 @@ factory WithNullable.fromJson(Object? json) {
 
         final result = generator.generateClass(model);
 
-        final constField =
-            result.fields.firstWhere((f) => f.name == 'valueDefault2');
+        final constField = result.fields.firstWhere(
+          (f) => f.name == 'valueDefault2',
+        );
         expect(constField.static, isTrue);
         expect(constField.modifier, FieldModifier.constant);
         expect(constField.type?.symbol, 'String');
         expect(constField.type?.accept(emitter).toString(), 'String');
         expect(renderAssignment(constField.assignment), "r'x'");
 
-        final constructor =
-            result.constructors.firstWhere((c) => c.name == null);
-        final valueParam =
-            constructor.optionalParameters.firstWhere((p) => p.name == 'value');
+        final constructor = result.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final valueParam = constructor.optionalParameters.firstWhere(
+          (p) => p.name == 'value',
+        );
         expect(
           valueParam.defaultTo?.accept(emitter).toString(),
           'valueDefault2',
@@ -702,7 +715,8 @@ factory WithNullable.fromJson(Object? json) {
         expect(
           result.fields.where((f) => f.name == 'valueDefault'),
           isNotEmpty,
-          reason: 'the original property field named valueDefault still '
+          reason:
+              'the original property field named valueDefault still '
               'exists; the renamed const must not shadow it',
         );
       },
@@ -829,8 +843,9 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
 
         final result = generator.generateClass(model);
 
-        final constField =
-            result.fields.firstWhere((f) => f.name == 'regionDefault');
+        final constField = result.fields.firstWhere(
+          (f) => f.name == 'regionDefault',
+        );
         expect(constField.static, isTrue);
         expect(constField.modifier, FieldModifier.constant);
         expect(constField.type?.symbol, 'Region');
@@ -868,8 +883,9 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
 
         final result = generator.generateClass(model);
 
-        final constField =
-            result.fields.firstWhere((f) => f.name == 'regionDefault');
+        final constField = result.fields.firstWhere(
+          (f) => f.name == 'regionDefault',
+        );
         expect(constField.type?.accept(emitter).toString(), 'Region');
         expect(renderAssignment(constField.assignment), "r'eu'");
       },
@@ -902,8 +918,9 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
 
       final result = generator.generateClass(model);
 
-      final constField =
-          result.fields.firstWhere((f) => f.name == 'tagDefault');
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'tagDefault',
+      );
       expect(constField.static, isTrue);
       expect(constField.modifier, FieldModifier.constant);
       expect(constField.type?.symbol, 'Tag');
@@ -985,18 +1002,21 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
 
         final result = generator.generateClass(model);
 
-        final constField =
-            result.fields.firstWhere((f) => f.name == 'statusDefault');
+        final constField = result.fields.firstWhere(
+          (f) => f.name == 'statusDefault',
+        );
         expect(constField.static, isTrue);
         expect(constField.modifier, FieldModifier.constant);
         expect(constField.type?.symbol, 'Status');
         expect(constField.type?.accept(emitter).toString(), 'Status');
         expect(renderAssignment(constField.assignment), 'Status.active');
 
-        final constructor =
-            result.constructors.firstWhere((c) => c.name == null);
-        final statusParam = constructor.optionalParameters
-            .firstWhere((p) => p.name == 'status');
+        final constructor = result.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final statusParam = constructor.optionalParameters.firstWhere(
+          (p) => p.name == 'status',
+        );
         expect(statusParam.required, isFalse);
         expect(
           statusParam.defaultTo?.accept(emitter).toString(),
@@ -1026,8 +1046,9 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
 
       final result = generator.generateClass(model);
 
-      final constField =
-          result.fields.firstWhere((f) => f.name == 'tierDefault');
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'tierDefault',
+      );
       expect(constField.static, isTrue);
       expect(constField.modifier, FieldModifier.constant);
       expect(constField.type?.symbol, 'Tier');
@@ -1039,8 +1060,7 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
       'default value NOT in enum values drops with warning and no static const',
       () {
         final logs = <LogRecord>[];
-        final subscription =
-            Logger('ClassGenerator').onRecord.listen(logs.add);
+        final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
         addTearDown(subscription.cancel);
 
         final model = ClassModel(
@@ -1068,10 +1088,12 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
           isEmpty,
         );
 
-        final constructor =
-            result.constructors.firstWhere((c) => c.name == null);
-        final statusParam = constructor.optionalParameters
-            .firstWhere((p) => p.name == 'status');
+        final constructor = result.constructors.firstWhere(
+          (c) => c.name == null,
+        );
+        final statusParam = constructor.optionalParameters.firstWhere(
+          (p) => p.name == 'status',
+        );
         expect(statusParam.required, isTrue);
         expect(statusParam.defaultTo, isNull);
 
@@ -1090,8 +1112,7 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
       'fallbackValue set and default outside values — no static const',
       () {
         final logs = <LogRecord>[];
-        final subscription =
-            Logger('ClassGenerator').onRecord.listen(logs.add);
+        final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
         addTearDown(subscription.cancel);
 
         final fallbackEnum = EnumModel<String>(
@@ -1162,8 +1183,9 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
 
         final result = generator.generateClass(model);
 
-        final fromJsonCtor =
-            result.constructors.firstWhere((c) => c.name == 'fromJson');
+        final fromJsonCtor = result.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
         final wrapper = Class(
           (b) => b
             ..name = result.name
@@ -1227,8 +1249,9 @@ class Subscription {
 
       final result = generator.generateClass(model);
 
-      final constField =
-          result.fields.firstWhere((f) => f.name == 'statusDefault');
+      final constField = result.fields.firstWhere(
+        (f) => f.name == 'statusDefault',
+      );
       expect(constField.type?.symbol, 'Status');
       expect(renderAssignment(constField.assignment), 'Status.activated');
     });

@@ -27,9 +27,11 @@ void main() {
         },
       });
 
-      final model = api.models.firstWhere(
-        (m) => m is ClassModel && m.name == 'WithDefaults',
-      ) as ClassModel;
+      final model =
+          api.models.firstWhere(
+                (m) => m is ClassModel && m.name == 'WithDefaults',
+              )
+              as ClassModel;
 
       final name = model.properties.firstWhere((p) => p.name == 'name');
       final age = model.properties.firstWhere((p) => p.name == 'age');
@@ -57,9 +59,11 @@ void main() {
         },
       });
 
-      final model = api.models.firstWhere(
-        (m) => m is ClassModel && m.name == 'NoDefaults',
-      ) as ClassModel;
+      final model =
+          api.models.firstWhere(
+                (m) => m is ClassModel && m.name == 'NoDefaults',
+              )
+              as ClassModel;
 
       final name = model.properties.firstWhere((p) => p.name == 'name');
       expect(name.defaultValue, isNull);
@@ -87,9 +91,11 @@ void main() {
         },
       });
 
-      final address = api.models.firstWhere(
-        (m) => m is ClassModel && m.name == 'Address',
-      ) as ClassModel;
+      final address =
+          api.models.firstWhere(
+                (m) => m is ClassModel && m.name == 'Address',
+              )
+              as ClassModel;
       final country = address.properties.firstWhere(
         (p) => p.name == 'country',
       );
@@ -113,14 +119,18 @@ void main() {
         },
       });
 
-      final country = api.models.firstWhere(
-        (m) => m is AliasModel && m.name == 'Country',
-      ) as AliasModel;
+      final country =
+          api.models.firstWhere(
+                (m) => m is AliasModel && m.name == 'Country',
+              )
+              as AliasModel;
       expect(country.defaultValue, 'US');
 
-      final aliasOfCountry = api.models.firstWhere(
-        (m) => m is AliasModel && m.name == 'CountryAlias',
-      ) as AliasModel;
+      final aliasOfCountry =
+          api.models.firstWhere(
+                (m) => m is AliasModel && m.name == 'CountryAlias',
+              )
+              as AliasModel;
       expect(aliasOfCountry.defaultValue, 'US');
     });
 
@@ -140,9 +150,11 @@ void main() {
         },
       });
 
-      final override = api.models.firstWhere(
-        (m) => m is AliasModel && m.name == 'CountryOverride',
-      ) as AliasModel;
+      final override =
+          api.models.firstWhere(
+                (m) => m is AliasModel && m.name == 'CountryOverride',
+              )
+              as AliasModel;
       expect(override.defaultValue, 'DE');
     });
 
@@ -171,9 +183,11 @@ void main() {
           },
         });
 
-        final model = api.models.firstWhere(
-          (m) => m is ClassModel && m.name == 'WithExplicitNull',
-        ) as ClassModel;
+        final model =
+            api.models.firstWhere(
+                  (m) => m is ClassModel && m.name == 'WithExplicitNull',
+                )
+                as ClassModel;
         final absent = model.properties.firstWhere((p) => p.name == 'absent');
         final present = model.properties.firstWhere((p) => p.name == 'present');
 
@@ -203,9 +217,11 @@ void main() {
           },
         });
 
-        final address = api.models.firstWhere(
-          (m) => m is ClassModel && m.name == 'Address',
-        ) as ClassModel;
+        final address =
+            api.models.firstWhere(
+                  (m) => m is ClassModel && m.name == 'Address',
+                )
+                as ClassModel;
         final country = address.properties.firstWhere(
           (p) => p.name == 'country',
         );
@@ -227,9 +243,11 @@ void main() {
         },
       });
 
-      final greeting = api.models.firstWhere(
-        (m) => m is AliasModel && m.name == 'Greeting',
-      ) as AliasModel;
+      final greeting =
+          api.models.firstWhere(
+                (m) => m is AliasModel && m.name == 'Greeting',
+              )
+              as AliasModel;
       expect(greeting.defaultValue, 'hello');
     });
 
@@ -247,15 +265,21 @@ void main() {
         },
       });
 
-      final a = api.models.firstWhere(
-        (m) => m is AliasModel && m.name == 'A',
-      ) as AliasModel;
-      final b = api.models.firstWhere(
-        (m) => m is AliasModel && m.name == 'B',
-      ) as AliasModel;
-      final c = api.models.firstWhere(
-        (m) => m is AliasModel && m.name == 'C',
-      ) as AliasModel;
+      final a =
+          api.models.firstWhere(
+                (m) => m is AliasModel && m.name == 'A',
+              )
+              as AliasModel;
+      final b =
+          api.models.firstWhere(
+                (m) => m is AliasModel && m.name == 'B',
+              )
+              as AliasModel;
+      final c =
+          api.models.firstWhere(
+                (m) => m is AliasModel && m.name == 'C',
+              )
+              as AliasModel;
 
       expect(c.defaultValue, 'X');
       expect(b.defaultValue, 'X');
@@ -279,9 +303,11 @@ void main() {
           },
         });
 
-        final a = api.models.firstWhere(
-          (m) => m is AliasModel && m.name == 'A',
-        ) as AliasModel;
+        final a =
+            api.models.firstWhere(
+                  (m) => m is AliasModel && m.name == 'A',
+                )
+                as AliasModel;
         expect(a.defaultValue, 'X');
       },
     );
@@ -305,9 +331,11 @@ void main() {
           },
         });
 
-        final a = api.models.firstWhere(
-          (m) => m is AliasModel && m.name == 'A',
-        ) as AliasModel;
+        final a =
+            api.models.firstWhere(
+                  (m) => m is AliasModel && m.name == 'A',
+                )
+                as AliasModel;
         expect(a.defaultValue, 'x');
       },
     );
@@ -339,9 +367,11 @@ void main() {
           },
         });
 
-        final box = api.models.firstWhere(
-          (m) => m is ClassModel && m.name == 'Box',
-        ) as ClassModel;
+        final box =
+            api.models.firstWhere(
+                  (m) => m is ClassModel && m.name == 'Box',
+                )
+                as ClassModel;
         final dims = box.properties.firstWhere((p) => p.name == 'dims');
 
         expect(dims.defaultValue, [1, 2, 3]);
@@ -374,9 +404,11 @@ void main() {
           },
         });
 
-        final outer = api.models.firstWhere(
-          (m) => m is ClassModel && m.name == 'Outer',
-        ) as ClassModel;
+        final outer =
+            api.models.firstWhere(
+                  (m) => m is ClassModel && m.name == 'Outer',
+                )
+                as ClassModel;
         final sub = outer.properties.firstWhere((p) => p.name == 'sub');
         expect(sub.model, isA<AliasModel>());
         expect((sub.model as AliasModel).defaultValue, 'd');

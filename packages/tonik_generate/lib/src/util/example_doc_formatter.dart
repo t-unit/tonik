@@ -38,8 +38,7 @@ List<String> formatExamplesAsDocs(List<Example> examples) {
 }
 
 List<String>? _formatExample(Example example) {
-  final hasSummary =
-      example.summary != null && example.summary!.isNotEmpty;
+  final hasSummary = example.summary != null && example.summary!.isNotEmpty;
   final hasDescription =
       example.description != null && example.description!.isNotEmpty;
   final hasHeadingContent =

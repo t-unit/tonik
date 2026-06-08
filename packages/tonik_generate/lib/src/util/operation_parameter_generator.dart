@@ -73,8 +73,7 @@ List<Parameter> generateParameters({
       pathParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride:
-          !pathParam.parameter.isRequired && defaulted == null,
+      isNullableOverride: !pathParam.parameter.isRequired && defaulted == null,
     );
 
     parameters.add(
@@ -106,8 +105,7 @@ List<Parameter> generateParameters({
       queryParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride:
-          !queryParam.parameter.isRequired && defaulted == null,
+      isNullableOverride: !queryParam.parameter.isRequired && defaulted == null,
     );
 
     parameters.add(

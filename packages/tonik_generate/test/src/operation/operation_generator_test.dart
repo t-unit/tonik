@@ -2938,16 +2938,17 @@ Future<TonikResult<void>> call({
             'trackingDefault',
           ]);
 
-          final regionField =
-              result.fields.firstWhere((f) => f.name == 'regionDefault');
+          final regionField = result.fields.firstWhere(
+            (f) => f.name == 'regionDefault',
+          );
           expect(regionField.static, isTrue);
           expect(regionField.modifier, FieldModifier.constant);
           expect(regionField.type?.symbol, 'String');
 
-          final callMethod =
-              result.methods.firstWhere((m) => m.name == 'call');
-          final regionParam = callMethod.optionalParameters
-              .firstWhere((p) => p.name == 'region');
+          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+          final regionParam = callMethod.optionalParameters.firstWhere(
+            (p) => p.name == 'region',
+          );
           expect(regionParam.required, isFalse);
           expect(
             regionParam.defaultTo?.accept(emitter).toString(),
@@ -2955,8 +2956,9 @@ Future<TonikResult<void>> call({
           );
           expect(regionParam.type?.accept(emitter).toString(), 'String');
 
-          final idParam = callMethod.optionalParameters
-              .firstWhere((p) => p.name == 'id');
+          final idParam = callMethod.optionalParameters.firstWhere(
+            (p) => p.name == 'id',
+          );
           expect(idParam.required, isFalse);
           expect(
             idParam.defaultTo?.accept(emitter).toString(),
@@ -2964,8 +2966,9 @@ Future<TonikResult<void>> call({
           );
           expect(idParam.type?.accept(emitter).toString(), 'String');
 
-          final retriesParam = callMethod.optionalParameters
-              .firstWhere((p) => p.name == 'retries');
+          final retriesParam = callMethod.optionalParameters.firstWhere(
+            (p) => p.name == 'retries',
+          );
           expect(retriesParam.required, isFalse);
           expect(
             retriesParam.defaultTo?.accept(emitter).toString(),
@@ -2973,8 +2976,9 @@ Future<TonikResult<void>> call({
           );
           expect(retriesParam.type?.accept(emitter).toString(), 'int');
 
-          final trackingParam = callMethod.optionalParameters
-              .firstWhere((p) => p.name == 'tracking');
+          final trackingParam = callMethod.optionalParameters.firstWhere(
+            (p) => p.name == 'tracking',
+          );
           expect(trackingParam.required, isFalse);
           expect(
             trackingParam.defaultTo?.accept(emitter).toString(),
@@ -3026,10 +3030,10 @@ Future<TonikResult<void>> call({
             isEmpty,
           );
 
-          final callMethod =
-              result.methods.firstWhere((m) => m.name == 'call');
-          final filterParam = callMethod.optionalParameters
-              .firstWhere((p) => p.name == 'filter');
+          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+          final filterParam = callMethod.optionalParameters.firstWhere(
+            (p) => p.name == 'filter',
+          );
           expect(filterParam.required, isFalse);
           expect(filterParam.defaultTo, isNull);
           expect(filterParam.type?.accept(emitter).toString(), 'String?');
@@ -3094,10 +3098,10 @@ Future<TonikResult<void>> call({
           );
           expect(defaultField.name, 'regionDefault2');
 
-          final callMethod =
-              result.methods.firstWhere((m) => m.name == 'call');
-          final regionParam = callMethod.optionalParameters
-              .firstWhere((p) => p.name == 'region');
+          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+          final regionParam = callMethod.optionalParameters.firstWhere(
+            (p) => p.name == 'region',
+          );
           expect(
             regionParam.defaultTo?.accept(emitter).toString(),
             'regionDefault2',
@@ -3304,9 +3308,9 @@ Future<TonikResult<void>> call({
         'match the expected type',
         () {
           final logs = <LogRecord>[];
-          final sub = Logger('OperationParameterDefaults')
-              .onRecord
-              .listen(logs.add);
+          final sub = Logger(
+            'OperationParameterDefaults',
+          ).onRecord.listen(logs.add);
           addTearDown(sub.cancel);
 
           final queryParam = QueryParameterObject(
@@ -3342,8 +3346,7 @@ Future<TonikResult<void>> call({
 
           generator.generateClass(operation, 'ListThings');
 
-          final warnings =
-              logs.where((r) => r.level == Level.WARNING).toList();
+          final warnings = logs.where((r) => r.level == Level.WARNING).toList();
           expect(warnings, hasLength(1));
           expect(warnings.single.message, contains('ListThings'));
           expect(warnings.single.message, contains('enabled'));
@@ -3399,8 +3402,9 @@ Future<TonikResult<void>> call({
 
           final result = generator.generateClass(operation, 'ListThings');
 
-          final defaultField =
-              result.fields.firstWhere((f) => f.name == 'statusDefault');
+          final defaultField = result.fields.firstWhere(
+            (f) => f.name == 'statusDefault',
+          );
           expect(defaultField.static, isTrue);
           expect(defaultField.modifier, FieldModifier.constant);
           expect(defaultField.type?.symbol, 'Status');
@@ -3409,10 +3413,10 @@ Future<TonikResult<void>> call({
             'Status.active',
           );
 
-          final callMethod =
-              result.methods.firstWhere((m) => m.name == 'call');
-          final statusParam = callMethod.optionalParameters
-              .firstWhere((p) => p.name == 'status');
+          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+          final statusParam = callMethod.optionalParameters.firstWhere(
+            (p) => p.name == 'status',
+          );
           expect(statusParam.required, isFalse);
           expect(
             statusParam.defaultTo?.accept(emitter).toString(),

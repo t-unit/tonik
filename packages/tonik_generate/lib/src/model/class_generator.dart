@@ -741,8 +741,8 @@ class ClassGenerator {
       final decodeIsNullable = defaulted != null
           ? property.isNullable || property.model.isEffectivelyNullable
           : property.isNullable ||
-              !requiredInResponse ||
-              property.model.isEffectivelyNullable;
+                !requiredInResponse ||
+                property.model.isEffectivelyNullable;
 
       final valueBuilt = buildFromJsonValueExpression(
         '_\$map[${specLiteralStringCode(jsonKey)}]',
