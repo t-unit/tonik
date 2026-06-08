@@ -68,6 +68,11 @@ melos:
         cd integration_test/defaulted_enums/defaulted_enums_test
         dart test
 
+    test-integration-defaulted-collections:
+      run: |
+        cd integration_test/defaulted_collections/defaulted_collections_test
+        dart test
+
     test-integration-petstore:
       run: |
         cd integration_test/petstore/petstore_test
@@ -244,6 +249,7 @@ melos:
         melos run test-integration-additional-properties
         melos run test-integration-defaulted-primitives
         melos run test-integration-defaulted-enums
+        melos run test-integration-defaulted-collections
         melos run test-integration-petstore
         melos run test-integration-petstore-config
         melos run test-integration-music-streaming

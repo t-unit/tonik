@@ -390,3 +390,28 @@ components:
             name:
               type: string
 
+    # Const collection / AnyModel defaults under immutableCollections — the
+    # generated Filters class must wrap the list/map defaults in
+    # IListConst / IMapConst so they retain const-identity across instances.
+    Filters:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          default: ["new", "featured"]
+        counts:
+          type: object
+          additionalProperties:
+            type: integer
+          default:
+            x: 1
+            y: 2
+        raw:
+          type: object
+          additionalProperties: true
+          default:
+            any: "value"
+            nested: [1, 2, 3]
+

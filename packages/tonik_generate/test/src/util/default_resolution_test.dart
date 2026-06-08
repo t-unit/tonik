@@ -107,8 +107,8 @@ void main() {
     );
 
     test(
-      'composite target (ClassModel) drops the default silently — no result, '
-      'no warning, reserved names untouched',
+      'ClassModel target with an empty default drops with the generic '
+      'cannot-express-as-const reason',
       () {
         final messages = <String>[];
         final reserved = <String>{'region'};
@@ -132,8 +132,15 @@ void main() {
         );
 
         expect(result, isNull);
-        expect(messages, isEmpty);
         expect(reserved, {'region'});
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.region (query, expected ClassModel, '
+          'value: {}): '
+          'default value cannot be expressed as a const Dart expression '
+          'for this type.',
+        );
       },
     );
 
@@ -377,6 +384,288 @@ void main() {
           'Dropping default for Op.status (query, expected EnumModel<String>, '
           'value: "archived"): value is not one of the enum values.',
         );
+      },
+    );
+
+    test(
+      'ListModel<StringModel> with non-List JSON drops with the '
+      'shape-mismatch reason',
+      () {
+        final messages = <String>[];
+        final reserved = <String>{'tags'};
+        final result = resolveSingleDefault(
+          normalizedName: 'tags',
+          specName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: 'not-a-list',
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: reserved,
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(result, isNull);
+        expect(reserved, {'tags'});
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.tags (property, expected ListModel, '
+          'value: "not-a-list"): '
+          'value does not match the expected list / map / free-form shape.',
+        );
+      },
+    );
+
+    test(
+      'ListModel<DateTimeModel> with valid-shape list drops with the '
+      'nested-value reason (inner leaf bubbles up)',
+      () {
+        final messages = <String>[];
+        resolveSingleDefault(
+          normalizedName: 'since',
+          specName: 'since',
+          model: ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: const <Object?>['2024-01-01'],
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'since'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.since (property, expected ListModel, '
+          'value: ["2024-01-01"]): '
+          'a nested value cannot be expressed as a const Dart expression.',
+        );
+      },
+    );
+
+    test(
+      'MapModel<IntegerModel> with non-Map JSON drops with the '
+      'shape-mismatch reason',
+      () {
+        final messages = <String>[];
+        resolveSingleDefault(
+          normalizedName: 'counts',
+          specName: 'counts',
+          model: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: 'not-a-map',
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'counts'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.counts (property, expected MapModel, '
+          'value: "not-a-map"): '
+          'value does not match the expected list / map / free-form shape.',
+        );
+      },
+    );
+
+    test(
+      'MapModel<ClassModel> with valid-shape Map drops with the '
+      'nested-value reason (inner leaf bubbles up)',
+      () {
+        final messages = <String>[];
+        resolveSingleDefault(
+          normalizedName: 'index',
+          specName: 'index',
+          model: MapModel(
+            valueModel: ClassModel(
+              name: 'Address',
+              isDeprecated: false,
+              properties: const [],
+              context: context,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: const <String, Object?>{'a': <String, Object?>{}},
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'index'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.index (property, expected MapModel, '
+          'value: {"a":{}}): '
+          'a nested value cannot be expressed as a const Dart expression.',
+        );
+      },
+    );
+
+    test(
+      'AnyModel with non-JSON outer value (DateTime) drops with the '
+      'shape-mismatch reason',
+      () {
+        final messages = <String>[];
+        final yamlDateTime = DateTime.utc(2024, 6, 15);
+        resolveSingleDefault(
+          normalizedName: 'raw',
+          specName: 'raw',
+          model: AnyModel(context: context),
+          rawDefault: yamlDateTime,
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'raw'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.raw (property, expected AnyModel, '
+          'value: $yamlDateTime): '
+          'value does not match the expected list / map / free-form shape.',
+        );
+      },
+    );
+
+    test(
+      'AnyModel with a Map carrying a non-String key drops with the '
+      'nested-value reason (non-String keys classified as inner failure)',
+      () {
+        final messages = <String>[];
+        final nonStringKeyMap = <int, String>{1: 'one'};
+        resolveSingleDefault(
+          normalizedName: 'raw',
+          specName: 'raw',
+          model: AnyModel(context: context),
+          rawDefault: nonStringKeyMap,
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: <String>{'raw'},
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.raw (property, expected AnyModel, '
+          'value: $nonStringKeyMap): '
+          'a nested value cannot be expressed as a const Dart expression.',
+        );
+      },
+    );
+
+    test(
+      'ClassModel target with a non-empty default drops with the generic '
+      'cannot-express-as-const reason',
+      () {
+        final messages = <String>[];
+        final reserved = <String>{'profile'};
+        final result = resolveSingleDefault(
+          normalizedName: 'profile',
+          specName: 'profile',
+          model: ClassModel(
+            isDeprecated: false,
+            name: 'Profile',
+            properties: const [],
+            context: context,
+            examples: const [],
+          ),
+          rawDefault: const <String, Object?>{'field': 'value'},
+          containerName: 'Op',
+          location: 'property',
+          reservedNames: reserved,
+          nameManager: nameManager,
+          package: 'api',
+          onDroppedDefault: messages.add,
+        );
+
+        expect(result, isNull);
+        expect(reserved, {'profile'});
+        expect(messages, hasLength(1));
+        expect(
+          messages.single,
+          'Dropping default for Op.profile (property, expected ClassModel, '
+          'value: {"field":"value"}): '
+          'default value cannot be expressed as a const Dart expression '
+          'for this type.',
+        );
+      },
+    );
+
+    test(
+      'AllOf / OneOf / AnyOf composite targets drop silently — no warning, '
+      'no result, reserved names untouched',
+      () {
+        for (final model in <Model>[
+          AllOfModel(
+            name: 'A',
+            isDeprecated: false,
+            models: const {},
+            context: context,
+            examples: const [],
+          ),
+          OneOfModel(
+            name: 'O',
+            isDeprecated: false,
+            models: const {},
+            context: context,
+            examples: const [],
+          ),
+          AnyOfModel(
+            name: 'N',
+            isDeprecated: false,
+            models: const {},
+            context: context,
+            examples: const [],
+          ),
+        ]) {
+          final messages = <String>[];
+          final reserved = <String>{'composite'};
+          final result = resolveSingleDefault(
+            normalizedName: 'composite',
+            specName: 'composite',
+            model: model,
+            rawDefault: const <String, Object?>{'anything': 1},
+            containerName: 'Op',
+            location: 'property',
+            reservedNames: reserved,
+            nameManager: nameManager,
+            package: 'api',
+            onDroppedDefault: messages.add,
+          );
+
+          expect(result, isNull);
+          expect(messages, isEmpty);
+          expect(reserved, {'composite'});
+        }
       },
     );
   });
