@@ -332,7 +332,7 @@ void main() {
 
     test(
       'ClassModel property target with default emits a runtime getter '
-      'instead of a static const field, with no warning',
+      'instead of a static const field, "object target" warning emitted',
       () {
         final logs = <LogRecord>[];
         final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
@@ -372,7 +372,18 @@ void main() {
         );
         expect(getter.static, isTrue);
         expect(getter.type, MethodType.getter);
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+        final warnings = logs
+            .where(
+              (r) =>
+                  r.level == Level.WARNING && r.loggerName == 'ClassGenerator',
+            )
+            .toList();
+        expect(warnings, hasLength(1));
+        expect(
+          warnings.single.message,
+          contains('Routing default to runtime fallback for WithChild.child'),
+        );
+        expect(warnings.single.message, contains('object target'));
       },
     );
 
@@ -416,7 +427,18 @@ void main() {
       );
       expect(getter.static, isTrue);
       expect(getter.type, MethodType.getter);
-      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+      final warnings = logs
+          .where(
+            (r) =>
+                r.level == Level.WARNING && r.loggerName == 'ClassGenerator',
+          )
+          .toList();
+      expect(warnings, hasLength(1));
+      expect(
+        warnings.single.message,
+        contains('Routing default to runtime fallback for WithComposite.union'),
+      );
+      expect(warnings.single.message, contains('composite target'));
     });
 
     test(

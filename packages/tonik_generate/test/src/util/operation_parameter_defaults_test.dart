@@ -515,7 +515,7 @@ void main() {
 
     test(
       'date-time target falls through to a runtime getter — no const field, '
-      'no warning, isRuntime flag set',
+      'isRuntime flag set, single routing warning emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -557,13 +557,19 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['since']?.memberName, 'sinceDefault');
         expect(result.byName['since']?.isRuntime, isTrue);
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+        expect(
+          warnings.single.message,
+          contains('Routing default to runtime fallback for Op.since'),
+        );
+        expect(warnings.single.message, contains('non-const leaf'));
       },
     );
 
     test(
       'ClassModel target with default falls through to a runtime getter — '
-      'no const field, no warning, isRuntime flag set',
+      'no const field, isRuntime flag set, "object target" warning emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -611,13 +617,161 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['region']?.memberName, 'regionDefault');
         expect(result.byName['region']?.isRuntime, isTrue);
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+        expect(warnings.single.message, contains('Op.region'));
+        expect(warnings.single.message, contains('object target'));
+      },
+    );
+
+    test(
+      'path parameter with date-time default falls through to a runtime '
+      'getter — no const field, no DefaultResolution drop callback fires',
+      () {
+        final logs = <LogRecord>[];
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final since = PathParameterObject(
+          name: 'since',
+          rawName: 'since',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: DateTimeModel(context: context),
+          encoding: PathParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: '2024-01-01T00:00:00Z',
+        );
+
+        final normalized = normalizeRequestParameters(
+          pathParameters: {since},
+          queryParameters: const {},
+          headers: const {},
+        );
+
+        final result = resolveOperationParameterDefaults(
+          normalizedParams: normalized,
+          operationClassName: 'Op',
+          nameManager: nameManager,
+          package: 'api',
+          initialReservedNames: const {'_dio'},
+        );
+
+        expect(result.fields, isEmpty);
+        expect(result.getters, hasLength(1));
+        expect(result.byName['since']?.memberName, 'sinceDefault');
+        expect(result.byName['since']?.isRuntime, isTrue);
+        final warnings = logs
+            .where(
+              (r) =>
+                  r.level == Level.WARNING &&
+                  r.loggerName == 'OperationParameterDefaults',
+            )
+            .toList();
+        expect(warnings, hasLength(1));
+        expect(
+          warnings.single.message,
+          contains('Routing default to runtime fallback for Op.since'),
+        );
+        expect(warnings.single.message, contains('(path,'));
+        expect(
+          logs.where(
+            (r) =>
+                r.level == Level.WARNING &&
+                r.loggerName == 'DefaultResolution',
+          ),
+          isEmpty,
+          reason: 'no JSON-encodability drop should fire for a valid string '
+              'default that bubbles to runtime',
+        );
+      },
+    );
+
+    test(
+      'header parameter with ClassModel default falls through to a runtime '
+      'getter — no const field, no DefaultResolution drop callback fires',
+      () {
+        final logs = <LogRecord>[];
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final hPolicy = RequestHeaderObject(
+          name: 'policy',
+          rawName: 'X-Policy',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: ClassModel(
+            isDeprecated: false,
+            name: 'Policy',
+            properties: const [],
+            context: context,
+            examples: const [],
+          ),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: const <String, Object?>{},
+        );
+
+        final normalized = normalizeRequestParameters(
+          pathParameters: const {},
+          queryParameters: const {},
+          headers: {hPolicy},
+        );
+
+        final result = resolveOperationParameterDefaults(
+          normalizedParams: normalized,
+          operationClassName: 'Op',
+          nameManager: nameManager,
+          package: 'api',
+          initialReservedNames: const {'_dio'},
+        );
+
+        expect(result.fields, isEmpty);
+        expect(result.getters, hasLength(1));
+        expect(result.byName['policy']?.memberName, 'policyDefault');
+        expect(result.byName['policy']?.isRuntime, isTrue);
+        final warnings = logs
+            .where(
+              (r) =>
+                  r.level == Level.WARNING &&
+                  r.loggerName == 'OperationParameterDefaults',
+            )
+            .toList();
+        expect(warnings, hasLength(1));
+        // The op-class warning uses the raw spec name ("X-Policy"), so the
+        // header's wire identity remains the diagnostic anchor.
+        expect(
+          warnings.single.message,
+          contains('Routing default to runtime fallback for Op.X-Policy'),
+        );
+        expect(warnings.single.message, contains('(header,'));
+        expect(warnings.single.message, contains('object target'));
+        expect(
+          logs.where(
+            (r) =>
+                r.level == Level.WARNING &&
+                r.loggerName == 'DefaultResolution',
+          ),
+          isEmpty,
+        );
       },
     );
 
     test(
       'AllOf composite target with default falls through to a runtime getter '
-      'without emitting a const field or a warning',
+      'without emitting a const field, "composite target" warning emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -665,7 +819,10 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['region']?.memberName, 'regionDefault');
         expect(result.byName['region']?.isRuntime, isTrue);
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings, hasLength(1));
+        expect(warnings.single.message, contains('Op.region'));
+        expect(warnings.single.message, contains('composite target'));
       },
     );
 
@@ -1389,5 +1546,28 @@ void main() {
         throwsA(isA<AssertionError>()),
       );
     });
+
+    test(
+      'preserves isRuntime: true when qualifying a runtime local default '
+      'and keeps the defaultToCode shape pointing at the static getter',
+      () {
+        const local = OperationParameterDefault.local(
+          memberName: 'sinceDefault',
+          isRuntime: true,
+        );
+
+        final qualified = local.withOwner(
+          className: 'ListThings',
+          url: 'package:api/src/operation/list_things.dart',
+        );
+
+        expect(qualified.isRuntime, isTrue);
+        expect(qualified.memberName, 'sinceDefault');
+        expect(
+          qualified.defaultToCode().accept(emitter).toString(),
+          'ListThings.sinceDefault',
+        );
+      },
+    );
   });
 }

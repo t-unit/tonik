@@ -13,6 +13,11 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 final Logger _log = Logger('DefaultResolution');
 
+/// Default dropped-default callback for [resolveRuntimeDefault]. Exposed so
+/// secondary call sites can opt back into the canonical logger after passing
+/// `null` to suppress.
+void defaultRuntimeDropLogger(String message) => _log.warning(message);
+
 @immutable
 class ResolvedDefault {
   const ResolvedDefault({
@@ -28,8 +33,10 @@ class ResolvedDefault {
 
 /// Runtime-fallback sibling of [ResolvedDefault] for defaults that cannot be
 /// const-materialised (composite targets, non-const leaf scalars, or
-/// collections nesting either). The static getter recomputes the value
-/// on every access via the target's `fromJson` factory.
+/// collections nesting either). The static getter recomputes the value on
+/// every access via the runtime decode path appropriate for the target:
+/// `fromJson` for composite and object targets, scalar extension decoders
+/// (`decodeJsonDateTime`, etc.) for non-const leaves.
 @immutable
 class RuntimeResolvedDefault {
   const RuntimeResolvedDefault({
@@ -71,9 +78,11 @@ final class RuntimeDefaultBinding extends DefaultBinding {
   String get memberName => resolved.memberName;
 }
 
-/// [CompositeModel] targets (`allOf` / `oneOf` / `anyOf`) drop silently —
-/// they cannot carry a const default, so emitting a warning would be noise.
-/// Every other unsupported model surfaces a generic dropped-default warning.
+/// Returns `null` when the default cannot be expressed as a const Dart
+/// expression. `onDroppedDefault` fires only for real drops (type / shape /
+/// enum-value mismatches on otherwise-supported primitives, enums, and
+/// collections). Silent `null` returns are intentional bubbles the caller
+/// routes to [resolveRuntimeDefault].
 ResolvedDefault? resolveSingleDefault({
   required String normalizedName,
   required String specName,
@@ -180,19 +189,23 @@ Field defaultField(ResolvedDefault resolved) => Field(
 /// Runtime-fallback entry point. Sibling of [resolveSingleDefault] for
 /// defaults that cannot be expressed as a const Dart expression (composite
 /// targets, non-const leaves, or collections nesting either). Emits a
-/// computed `static get <name>Default` getter whose body calls the target's
-/// `fromJson` factory on the raw-JSON default literal.
+/// computed `static get <name>Default` getter whose body decodes the
+/// raw-JSON default literal via the runtime decode path appropriate for
+/// the target: `fromJson` for composite and object targets, scalar
+/// extension decoders (`decodeJsonDateTime`, etc.) for non-const leaves.
 ///
 /// The runtime decoder is the validator — no codegen-time dry-run. A bad
-/// default surfaces as a `FormatException` on first access.
+/// default surfaces as a `DecodingException` on first access.
 RuntimeResolvedDefault? resolveRuntimeDefault({
   required String normalizedName,
+  required String specName,
   required Model model,
   required Object? rawDefault,
   required String containerName,
   required Set<String> reservedNames,
   required NameManager nameManager,
   required String package,
+  void Function(String message)? onDroppedDefault = defaultRuntimeDropLogger,
   bool isNullableOverride = false,
   bool useImmutableCollections = false,
 }) {
@@ -206,8 +219,8 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   // Base64) and this guard would also drop it. Logging makes the drop
   // visible to the spec author.
   if (!_isJsonEncodable(rawDefault)) {
-    _log.warning(
-      'Dropping default for $containerName.$normalizedName: '
+    onDroppedDefault?.call(
+      'Dropping default for $containerName.$specName: '
       'value of type ${rawDefault.runtimeType} is not JSON-encodable '
       'and cannot be embedded as a runtime literal.',
     );
@@ -238,7 +251,7 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
     nameManager: nameManager,
     package: package,
     contextClass: containerName,
-    contextProperty: normalizedName,
+    contextProperty: specName,
     isNullable: isNullableOverride,
     useImmutableCollections: useImmutableCollections,
     receiverOverride: rawLiteral,
@@ -277,12 +290,12 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
 }
 
 /// Discriminator returned to log/diagnostic call sites that route a default
-/// to the runtime fallback (composite target vs. non-const leaf).
+/// to the runtime fallback. Distinguishes object targets ([ClassModel]),
+/// true composites ([AllOfModel] / [OneOfModel] / [AnyOfModel]), and
+/// non-const leaf scalars / collections.
 String runtimeFallbackReason(Model model) => switch (model.resolved) {
-  ClassModel() ||
-  AllOfModel() ||
-  OneOfModel() ||
-  AnyOfModel() => 'composite target',
+  ClassModel() => 'object target',
+  AllOfModel() || OneOfModel() || AnyOfModel() => 'composite target',
   _ => 'non-const leaf',
 };
 

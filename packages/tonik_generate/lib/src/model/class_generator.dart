@@ -353,11 +353,11 @@ class ClassGenerator {
       }
       if (dropped) continue;
 
-      // The const path bubbled without a warning (composite target or
-      // non-const leaf) — fall through to the runtime getter. The fromJson
-      // decoder is the validator at first access.
+      // The const path bubbled without a warning — the runtime decoder
+      // validates on first access.
       final runtime = resolveRuntimeDefault(
         normalizedName: prop.normalizedName,
+        specName: prop.property.name,
         model: prop.property.model,
         rawDefault: raw,
         containerName: className,
@@ -368,9 +368,9 @@ class ClassGenerator {
         useImmutableCollections: useImmutableCollections,
       );
       if (runtime == null) continue;
-      _classGeneratorLog.info(
-        'Emitting runtime default for $className.${prop.property.name} '
-        '(${runtimeFallbackReason(prop.property.model)}).',
+      _classGeneratorLog.warning(
+        'Routing default to runtime fallback for $className.'
+        '${prop.property.name}: ${runtimeFallbackReason(prop.property.model)}.',
       );
       result[prop.normalizedName] = RuntimeDefaultBinding(runtime);
     }

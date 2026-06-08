@@ -113,26 +113,27 @@ resolveOperationParameterDefaults({
     }
     if (dropped) return;
 
-    // The const path bubbled without a warning (composite target or
-    // non-const leaf) — emit a runtime getter on the operation class so
-    // callers can reference `<Op>.<param>Default` from Dart. The `call()`
-    // parameter stays as-was (no `defaultTo` wiring) because the getter is
-    // not const-evaluable.
+    // No `defaultTo` wiring on the `call()` parameter — a static getter is
+    // not a constant expression.
     final runtime = resolveRuntimeDefault(
       normalizedName: normalizedName,
+      specName: specName,
       model: model,
       rawDefault: rawDefault,
       containerName: operationClassName,
       reservedNames: reserved,
       nameManager: nameManager,
       package: package,
+      // Mirror `emitWarnings` so the api-client forwarder doesn't
+      // double-log the non-JSON-encodable drop.
+      onDroppedDefault: emitWarnings ? defaultRuntimeDropLogger : null,
     );
     if (runtime == null) return;
 
     if (emitWarnings) {
-      _log.info(
-        'Emitting runtime default for $operationClassName.$specName '
-        '($location, ${runtimeFallbackReason(model)}).',
+      _log.warning(
+        'Routing default to runtime fallback for $operationClassName.'
+        '$specName ($location, ${runtimeFallbackReason(model)}).',
       );
     }
     byName[normalizedName] = OperationParameterDefault.local(

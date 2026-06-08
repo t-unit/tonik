@@ -2255,6 +2255,69 @@ Future<TonikResult<void>> listThings({
           );
         },
       );
+
+      test(
+        'YAML-DateTime raw default surfaces a single DefaultResolution drop '
+        'warning end-to-end — the api-client forwarder does not double-log',
+        () {
+          final logs = <LogRecord>[];
+          final sub = Logger(
+            'DefaultResolution',
+          ).onRecord.listen(logs.add);
+          addTearDown(sub.cancel);
+
+          final queryParam = QueryParameterObject(
+            name: 'since',
+            rawName: 'since',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: DateTimeModel(context: testContext),
+            encoding: QueryParameterEncoding.form,
+            context: testContext,
+            examples: const [],
+            defaultValue: DateTime.utc(2024, 6, 15),
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: testContext,
+            tags: {Tag(name: 'things')},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          generator.generateClass(
+            {operation},
+            Tag(name: 'things'),
+            testServers,
+          );
+
+          expect(
+            logs
+                .where(
+                  (r) =>
+                      r.level == Level.WARNING &&
+                      r.loggerName == 'DefaultResolution',
+                )
+                .toList(),
+            isEmpty,
+            reason: 'the api-client forwarder runs with emitWarnings: false '
+                'and must silence the DefaultResolution non-JSON-encodable '
+                'warning — the operation-class pass is the sole logging site',
+          );
+        },
+      );
     });
   });
 }

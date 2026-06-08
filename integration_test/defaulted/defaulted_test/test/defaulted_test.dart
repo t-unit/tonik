@@ -497,6 +497,17 @@ void main() {
         expect(identical(a, b), isFalse);
       });
 
+      test(
+        'pricingDefault is not cached — the composite (ClassModel) default '
+        'also recomputes on every access',
+        () {
+          final a = Subscription.pricingDefault;
+          final b = Subscription.pricingDefault;
+          expect(a, b);
+          expect(identical(a, b), isFalse);
+        },
+      );
+
       test('fromJson with an empty map applies all runtime-fallback defaults',
           () {
         final value = Subscription.fromJson(const <String, Object?>{});
@@ -620,6 +631,18 @@ void main() {
         () {
           expect(
             () => BadlyDefaulted.$whenDefault,
+            throwsA(isA<DecodingException>()),
+          );
+        },
+      );
+
+      test(
+        'fromJson({}) propagates the decode-time exception for the malformed '
+        'default — the user-visible failure path is the decoder, not just '
+        'direct getter access',
+        () {
+          expect(
+            () => BadlyDefaulted.fromJson(const <String, Object?>{}),
             throwsA(isA<DecodingException>()),
           );
         },

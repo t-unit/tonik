@@ -41,12 +41,14 @@ void main() {
     required Model model,
     required Object? raw,
     String container = 'Holder',
+    String? specName,
     bool isNullableOverride = false,
     bool useImmutableCollections = false,
     Set<String>? reservedSeed,
   }) {
     return resolveRuntimeDefault(
       normalizedName: name,
+      specName: specName ?? name,
       model: model,
       rawDefault: raw,
       containerName: container,
@@ -477,12 +479,210 @@ static Bag get bagDefault => Bag.fromJson(
     });
   });
 
+  group('resolveRuntimeDefault — collections with non-const leaves', () {
+    test(
+      'ListModel<DateTime> default decodes each element on the const list '
+      'literal via the receiverOverride plumbing',
+      () {
+        final dateList = ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
+          examples: const [],
+        );
+
+        final result = resolve(
+          name: 'windows',
+          model: dateList,
+          raw: const <Object?>['2024-01-01T00:00:00Z', '2024-06-15T12:00:00Z'],
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'List');
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static List<DateTime> get windowsDefault =>
+    const <Object?>[r'2024-01-01T00:00:00Z', r'2024-06-15T12:00:00Z']
+        .decodeJsonList<String>(context: r'Holder.windows')
+        .map((e) => e.decodeJsonDateTime(context: r'Holder.windows'))
+        .toList();
+''',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'MapModel<ClassModel> default decodes each value on the const map '
+      'literal via the receiverOverride plumbing',
+      () {
+        final pricing = ClassModel(
+          isDeprecated: false,
+          name: 'Pricing',
+          properties: [
+            Property(
+              name: 'amount',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+        final pricingMap = MapModel(
+          valueModel: pricing,
+          context: context,
+          examples: const [],
+        );
+
+        final result = resolve(
+          name: 'plans',
+          model: pricingMap,
+          raw: const <String, Object?>{
+            'gold': <String, Object?>{'amount': '9.99'},
+          },
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'Map');
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static Map<String, Pricing> get plansDefault =>
+    const <String, Object?>{
+      r'gold': <String, Object?>{r'amount': r'9.99'},
+    }.decodeJsonMap(
+      (v) => Pricing.fromJson(v),
+      context: r'Holder.plans',
+    );
+''',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'useImmutableCollections: true wraps the decoded ListModel in IList',
+      () {
+        final dateList = ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
+          examples: const [],
+        );
+
+        final result = resolve(
+          name: 'windows',
+          model: dateList,
+          raw: const <Object?>['2024-01-01T00:00:00Z'],
+          useImmutableCollections: true,
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'IList');
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static IList<DateTime> get windowsDefault => IList(
+  const <Object?>[r'2024-01-01T00:00:00Z']
+      .decodeJsonList<String>(context: r'Holder.windows')
+      .map((e) => e.decodeJsonDateTime(context: r'Holder.windows'))
+      .toList(),
+);
+''',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'ListModel<OneOf> default delegates each element to the wrapper '
+      'fromJson on the const list literal',
+      () {
+        final cat = ClassModel(
+          isDeprecated: false,
+          name: 'Cat',
+          properties: const [],
+          context: context,
+          examples: const [],
+        );
+        final dog = ClassModel(
+          isDeprecated: false,
+          name: 'Dog',
+          properties: const [],
+          context: context,
+          examples: const [],
+        );
+        final pet = OneOfModel(
+          isDeprecated: false,
+          name: 'Pet',
+          models: {
+            (discriminatorValue: 'cat', model: cat),
+            (discriminatorValue: 'dog', model: dog),
+          },
+          discriminator: 'kind',
+          context: context,
+          examples: const [],
+        );
+        final petList = ListModel(
+          content: pet,
+          context: context,
+          examples: const [],
+        );
+
+        final result = resolve(
+          name: 'pets',
+          model: petList,
+          raw: const <Object?>[
+            <String, Object?>{'kind': 'cat', 'livesLeft': 9},
+          ],
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'List');
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static List<Pet> get petsDefault =>
+    const <Object?>[
+      <String, Object?>{r'kind': r'cat', r'livesLeft': 9},
+    ]
+        .decodeJsonList<Object?>(context: r'Holder.pets')
+        .map(Pet.fromJson)
+        .toList();
+''',
+            ),
+          ),
+        );
+      },
+    );
+  });
+
   group('resolveRuntimeDefault — semantics', () {
     test('null raw default short-circuits to null without consuming a '
         'name', () {
       final reserved = <String>{'startsAt'};
       final result = resolveRuntimeDefault(
         normalizedName: 'startsAt',
+        specName: 'startsAt',
         model: DateTimeModel(context: context),
         rawDefault: null,
         containerName: 'Holder',
@@ -500,6 +700,7 @@ static Bag get bagDefault => Bag.fromJson(
       final reserved = <String>{'startsAt', 'startsAtDefault'};
       final result = resolveRuntimeDefault(
         normalizedName: 'startsAt',
+        specName: 'startsAt',
         model: DateTimeModel(context: context),
         rawDefault: '2024-01-01T00:00:00Z',
         containerName: 'Holder',
@@ -531,7 +732,7 @@ static Bag get bagDefault => Bag.fromJson(
     );
 
     test(
-      'implausible default emits without warning — runtime FormatException',
+      'implausible default emits without warning — runtime DecodingException',
       () {
         // DateTime field with a non-string default. The runtime fallback
         // emits the getter unchecked; the runtime decoder is the validator.
