@@ -25,10 +25,8 @@ class OperationParameterDefault {
   final String memberName;
   final ({String className, String url})? _owner;
 
-  /// `true` when the underlying member is a non-const `static get` (runtime
-  /// fallback). The call-site reference syntax is identical, but the
-  /// generated `call()` parameter cannot wire `defaultTo` because a static
-  /// getter is not a constant expression.
+  /// `true` when the member is a `static get` — the `call()` parameter
+  /// cannot wire `defaultTo` against a non-const expression.
   final bool isRuntime;
 
   OperationParameterDefault withOwner({
@@ -113,8 +111,6 @@ resolveOperationParameterDefaults({
     }
     if (dropped) return;
 
-    // No `defaultTo` wiring on the `call()` parameter — a static getter is
-    // not a constant expression.
     final runtime = resolveRuntimeDefault(
       normalizedName: normalizedName,
       specName: specName,
@@ -125,8 +121,7 @@ resolveOperationParameterDefaults({
       reservedNames: reserved,
       nameManager: nameManager,
       package: package,
-      // Mirror `emitWarnings` so the api-client forwarder doesn't
-      // double-log the non-JSON-encodable drop.
+      // Suppressed on the api-client forwarder pass to avoid a duplicate.
       onDroppedDefault: emitWarnings ? defaultRuntimeDropLogger : null,
     );
     if (runtime == null) return;

@@ -21,10 +21,9 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// [BuiltExpression.inlineFunctions]. If [helperContext] is omitted, a
 /// fresh context is created and helpers cannot be shared with sibling
 /// builders — every builder pass independently emits its own helpers.
-/// When [receiverOverride] is provided, it substitutes for `refer(value)` at
-/// the top-level receiver position — useful when the caller wants to inline a
-/// const literal instead of binding it to a named variable. Nested element
-/// closures (`e` in list `.map`, `v` in map `.decodeJsonMap`) are unaffected.
+/// [receiverOverride], when provided, replaces `refer(value)` at the
+/// top-level receiver position only — nested element closures (`e` / `v`)
+/// keep their identifiers.
 BuiltExpression buildFromJsonValueExpression(
   String value, {
   required Model model,
@@ -65,11 +64,8 @@ BuiltExpression _buildFromJson(
   Expression? receiverOverride,
 }) {
   final contextParam = _buildContextParam(contextClass, contextProperty);
-  // A `receiverOverride` is always a const literal supplied by the caller
-  // (see `resolveRuntimeDefault`), so it is statically non-null and the
-  // receiver-null guards (`receiver == null ? null : ...`) below would be
-  // dead code. Use non-nullable decoders in that case — the static getter's
-  // return type stays nullable via [isNullableOverride] in [typeReference].
+  // The override is always a const literal, so the `receiver == null ? ...`
+  // guards below would be dead.
   final nullable =
       receiverOverride == null && (isNullable || model.isEffectivelyNullable);
   final receiver = receiverOverride ?? refer(value);

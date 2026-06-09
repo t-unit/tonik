@@ -384,12 +384,6 @@ void main() {
           contains('Routing default to runtime fallback for WithChild.child'),
         );
         expect(warnings.single.message, contains('object target'));
-        // Mirrors the operation-parameter coverage: the dropped-default
-        // callback in resolveSingleDefault must stay silent for valid
-        // JSON-encodable defaults that bubble to the runtime fallback. With
-        // hierarchical logging off, a single root subscription captures
-        // records from every logger; filtering by loggerName surfaces any
-        // unexpected DefaultResolution drop.
         expect(
           logs.where(
             (r) =>
@@ -481,12 +475,6 @@ factory WithChild.fromJson(Object? json) {
         contains('Routing default to runtime fallback for WithComposite.union'),
       );
       expect(warnings.single.message, contains('composite target'));
-      // Mirrors the operation-parameter coverage: the dropped-default
-      // callback in resolveSingleDefault must stay silent for valid
-      // JSON-encodable defaults that bubble to the runtime fallback. With
-      // hierarchical logging off, a single root subscription captures
-      // records from every logger; filtering by loggerName surfaces any
-      // unexpected DefaultResolution drop.
       expect(
         logs.where(
           (r) =>

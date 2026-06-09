@@ -3533,7 +3533,6 @@ Future<TonikResult<void>> call({
 
           final result = generator.generateClass(operation, 'ListThings');
 
-          // No const field is emitted for runtime defaults — only a getter.
           expect(
             result.fields.where((f) => f.name == 'sinceDefault'),
             isEmpty,
@@ -3551,8 +3550,6 @@ Future<TonikResult<void>> call({
           final sinceParam = callMethod.optionalParameters.firstWhere(
             (p) => p.name == 'since',
           );
-          // Spec-optional parameter stays optional; a static getter is not a
-          // constant expression so `defaultTo` cannot be wired here.
           expect(sinceParam.required, isFalse);
           expect(sinceParam.defaultTo, isNull);
           expect(sinceParam.type?.accept(emitter).toString(), 'DateTime?');

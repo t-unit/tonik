@@ -353,8 +353,6 @@ class ClassGenerator {
       }
       if (dropped) continue;
 
-      // The const path bubbled without a warning — the runtime decoder
-      // validates on first access.
       final runtime = resolveRuntimeDefault(
         normalizedName: prop.normalizedName,
         specName: prop.property.name,

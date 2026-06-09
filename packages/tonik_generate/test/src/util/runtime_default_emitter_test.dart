@@ -439,9 +439,6 @@ static Tree get treeDefault {
         context: context,
         examples: const [],
       );
-      // Self-reference: `next: Node?`. The runtime emitter must dispatch to
-      // `Node.fromJson(...)` without recursing into the property tree —
-      // otherwise materialisation would loop forever on cyclic models.
       recursive.properties.add(
         Property(
           name: 'next',
@@ -1005,8 +1002,6 @@ static Date get birthdayDefault => r'2024-01-01'
     test(
       'implausible default emits without warning — runtime DecodingException',
       () {
-        // DateTime field with a non-string default. The runtime fallback
-        // emits the getter unchecked; the runtime decoder is the validator.
         final logs = <LogRecord>[];
         final sub = Logger(
           'DefaultResolution',

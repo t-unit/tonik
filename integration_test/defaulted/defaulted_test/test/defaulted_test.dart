@@ -235,9 +235,6 @@ void main() {
     });
 
     test('round-trip: fromJson(toJson(...)) yields an equal instance', () {
-      // Construct with explicit values for the runtime-fallback fields so
-      // toJson does not drop them and decode applies the supplied values
-      // (rather than the runtime defaults) on the way back.
       final original = Subscription(
         startsAt: DateTime.utc(2024),
         homepage: Uri.parse('https://example.com'),
@@ -532,12 +529,14 @@ void main() {
         );
       });
 
-      test('static getter returns a Pricing instance for the object default',
-          () {
-        final pricing = Subscription.pricingDefault;
-        expect(pricing.amount.toString(), '9.99');
-        expect(pricing.currency, 'USD');
-      });
+      test(
+        'static getter returns a Pricing instance for the object default',
+        () {
+          final pricing = Subscription.pricingDefault;
+          expect(pricing.amount.toString(), '9.99');
+          expect(pricing.currency, 'USD');
+        },
+      );
 
       test('computed getter is not cached — successive accesses produce '
           'equal but non-identical DateTime instances', () {
@@ -558,14 +557,16 @@ void main() {
         },
       );
 
-      test('fromJson with an empty map applies all runtime-fallback defaults',
-          () {
-        final value = Subscription.fromJson(const <String, Object?>{});
-        expect(value.startsAt, DateTime.utc(2024));
-        expect(value.homepage, Uri.parse('https://example.com'));
-        expect(value.pricing?.amount.toString(), '9.99');
-        expect(value.pricing?.currency, 'USD');
-      });
+      test(
+        'fromJson with an empty map applies all runtime-fallback defaults',
+        () {
+          final value = Subscription.fromJson(const <String, Object?>{});
+          expect(value.startsAt, DateTime.utc(2024));
+          expect(value.homepage, Uri.parse('https://example.com'));
+          expect(value.pricing?.amount.toString(), '9.99');
+          expect(value.pricing?.currency, 'USD');
+        },
+      );
 
       test('fromJson supplied keys override the runtime-fallback defaults', () {
         final value = Subscription.fromJson(const <String, Object?>{
@@ -595,28 +596,32 @@ void main() {
         expect(cat.livesLeft, 9);
       });
 
-      test('fromJson with an empty map applies the runtime-fallback default',
-          () {
-        final value = Order.fromJson(const <String, Object?>{});
-        expect(value.pet, isA<PetCat>());
-        final cat = (value.pet! as PetCat).value;
-        expect(cat.kind, 'cat');
-        expect(cat.livesLeft, 9);
-      });
+      test(
+        'fromJson with an empty map applies the runtime-fallback default',
+        () {
+          final value = Order.fromJson(const <String, Object?>{});
+          expect(value.pet, isA<PetCat>());
+          final cat = (value.pet! as PetCat).value;
+          expect(cat.kind, 'cat');
+          expect(cat.livesLeft, 9);
+        },
+      );
 
-      test('fromJson with an explicit pet overrides the default — dog variant',
-          () {
-        final value = Order.fromJson(const <String, Object?>{
-          'pet': <String, Object?>{
-            'kind': 'dog',
-            'goodBoy': true,
-          },
-        });
-        expect(value.pet, isA<PetDog>());
-        final dog = (value.pet! as PetDog).value;
-        expect(dog.kind, 'dog');
-        expect(dog.goodBoy, isTrue);
-      });
+      test(
+        'fromJson with an explicit pet overrides the default — dog variant',
+        () {
+          final value = Order.fromJson(const <String, Object?>{
+            'pet': <String, Object?>{
+              'kind': 'dog',
+              'goodBoy': true,
+            },
+          });
+          expect(value.pet, isA<PetDog>());
+          final dog = (value.pet! as PetDog).value;
+          expect(dog.kind, 'dog');
+          expect(dog.goodBoy, isTrue);
+        },
+      );
     },
   );
 

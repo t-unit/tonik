@@ -750,8 +750,6 @@ void main() {
             )
             .toList();
         expect(warnings, hasLength(1));
-        // The op-class warning uses the raw spec name ("X-Policy"), so the
-        // header's wire identity remains the diagnostic anchor.
         expect(
           warnings.single.message,
           contains('Routing default to runtime fallback for Op.X-Policy'),

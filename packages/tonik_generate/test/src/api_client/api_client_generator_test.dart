@@ -2182,9 +2182,6 @@ Future<TonikResult<void>> listThings({
           final sinceParam = method.optionalParameters.firstWhere(
             (p) => p.name == 'since',
           );
-          // The OpenAPI parameter is not required, so the forwarder mirrors
-          // that on the call() signature. A runtime-fallback default cannot
-          // be wired as defaultTo (a static getter is not const).
           expect(sinceParam.required, isFalse);
           expect(sinceParam.defaultTo, isNull);
           expect(
@@ -2192,9 +2189,6 @@ Future<TonikResult<void>> listThings({
             'DateTime?',
           );
 
-          // Cross-check the full forwarder body: a runtime-default param keeps
-          // its spec-optional shape (`DateTime?` with no `defaultTo`) and the
-          // body forwards by name so the operation receives the caller's value.
           final generatedCode = format(
             generatedClass.accept(emitter).toString(),
           );
