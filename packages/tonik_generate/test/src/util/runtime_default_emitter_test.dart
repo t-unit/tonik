@@ -29,7 +29,9 @@ void main() {
         ..name = '_Holder'
         ..methods.add(getter),
     );
-    final source = cls.accept(DartEmitter()).toString();
+    final source = cls
+        .accept(DartEmitter(useNullSafetySyntax: true))
+        .toString();
     return formatter.format(source);
   }
 
@@ -42,6 +44,7 @@ void main() {
     required Object? raw,
     String container = 'Holder',
     String? specName,
+    String location = 'property',
     bool isNullableOverride = false,
     bool useImmutableCollections = false,
     Set<String>? reservedSeed,
@@ -52,6 +55,7 @@ void main() {
       model: model,
       rawDefault: raw,
       containerName: container,
+      location: location,
       reservedNames: reservedSeed ?? <String>{name},
       nameManager: nameManager,
       package: package,
@@ -379,6 +383,53 @@ static Either get eitherDefault => Either.fromJson(
       );
     });
 
+    test(
+      'self-referential MapModel default emits a block body with inline '
+      'helper declarations spliced before the return statement',
+      () {
+        final tree = MapModel(
+          name: 'Tree',
+          valueModel: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        tree.valueModel = tree;
+
+        final result = resolve(
+          name: 'tree',
+          model: tree,
+          raw: const <String, Object?>{},
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'Tree');
+        expect(
+          result.getter.lambda,
+          isNot(isTrue),
+          reason:
+              'self-referential typedefs require an inline helper '
+              'declaration, which cannot live in a lambda body',
+        );
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              r'''
+static Tree get treeDefault {
+  late final Tree Function(Object?) _$decodeTree;
+  _$decodeTree = (Object? v) => v.decodeJsonMap(
+    (v) => _$decodeTree(v),
+    context: r"Tree (at 'Holder.tree')",
+  );
+  return _$decodeTree(const <String, Object?>{});
+}
+''',
+            ),
+          ),
+        );
+      },
+    );
+
     test('recursive class default emits a fromJson call without a cycle guard',
         () {
       final recursive = ClassModel(
@@ -676,6 +727,186 @@ static List<Pet> get petsDefault =>
     );
   });
 
+  group('resolveRuntimeDefault — isNullableOverride: true', () {
+    test(
+      'nullable DateTime leaf uses decodeJsonNullableDateTime and the return '
+      'type carries the nullable suffix',
+      () {
+        final result = resolve(
+          name: 'startsAt',
+          model: DateTimeModel(context: context),
+          raw: '2024-01-01T00:00:00Z',
+          isNullableOverride: true,
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'DateTime');
+        expect(result.type.isNullable, isTrue);
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
+    .decodeJsonNullableDateTime(context: r'Holder.startsAt');
+''',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'nullable ClassModel wraps fromJson in a null-receiver conditional and '
+      'the return type carries the nullable suffix',
+      () {
+        final pricing = ClassModel(
+          isDeprecated: false,
+          name: 'Pricing',
+          properties: const [],
+          context: context,
+          examples: const [],
+        );
+
+        final result = resolve(
+          name: 'pricing',
+          model: pricing,
+          raw: const <String, Object?>{},
+          isNullableOverride: true,
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'Pricing');
+        expect(result.type.isNullable, isTrue);
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static Pricing? get pricingDefault => const <String, Object?>{} == null
+    ? null
+    : Pricing.fromJson(const <String, Object?>{});
+''',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
+      'nullable ListModel<DateTime> with immutable collections wraps the '
+      'decoded list in IList? via a null-receiver conditional',
+      () {
+        final dateList = ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
+          examples: const [],
+        );
+
+        final result = resolve(
+          name: 'windows',
+          model: dateList,
+          raw: const <Object?>['2024-01-01T00:00:00Z'],
+          isNullableOverride: true,
+          useImmutableCollections: true,
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'IList');
+        expect(result.type.isNullable, isTrue);
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static IList<DateTime>? get windowsDefault =>
+    const <Object?>[r'2024-01-01T00:00:00Z'] == null
+        ? null
+        : IList(
+            const <Object?>[r'2024-01-01T00:00:00Z']
+                .decodeJsonList<String>(context: r'Holder.windows')
+                .map((e) => e.decodeJsonDateTime(context: r'Holder.windows'))
+                .toList(),
+          );
+''',
+            ),
+          ),
+        );
+      },
+    );
+  });
+
+  group('resolveRuntimeDefault — EnumModel', () {
+    test(
+      'nullable EnumModel default with valid value uses fromJson on the const '
+      'literal and the return type carries the nullable suffix',
+      () {
+        final status = EnumModel<String>(
+          isDeprecated: false,
+          isNullable: true,
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          context: context,
+          examples: const [],
+        );
+
+        final result = resolve(
+          name: 'status',
+          model: status,
+          raw: 'active',
+          isNullableOverride: true,
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'Status');
+        expect(result.type.isNullable, isTrue);
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static Status? get statusDefault =>
+    r'active' == null ? null : Status.fromJson(r'active');
+''',
+            ),
+          ),
+        );
+      },
+    );
+  });
+
+  group('resolveRuntimeDefault — DateModel', () {
+    test('DateModel leaf with string default emits decodeJsonDate getter', () {
+      final result = resolve(
+        name: 'birthday',
+        model: DateModel(context: context),
+        raw: '2024-01-01',
+      );
+
+      expect(result, isNotNull);
+      expect(result!.type.symbol, 'Date');
+      expect(result.getter.lambda, isTrue);
+      expect(
+        collapseWhitespace(renderGetter(result.getter)),
+        collapseWhitespace(
+          formatBody(
+            '''
+static Date get birthdayDefault => r'2024-01-01'
+    .decodeJsonDate(context: r'Holder.birthday');
+''',
+          ),
+        ),
+      );
+    });
+  });
+
   group('resolveRuntimeDefault — semantics', () {
     test('null raw default short-circuits to null without consuming a '
         'name', () {
@@ -686,6 +917,7 @@ static List<Pet> get petsDefault =>
         model: DateTimeModel(context: context),
         rawDefault: null,
         containerName: 'Holder',
+        location: 'property',
         reservedNames: reserved,
         nameManager: nameManager,
         package: package,
@@ -704,6 +936,7 @@ static List<Pet> get petsDefault =>
         model: DateTimeModel(context: context),
         rawDefault: '2024-01-01T00:00:00Z',
         containerName: 'Holder',
+        location: 'property',
         reservedNames: reserved,
         nameManager: nameManager,
         package: package,
@@ -759,8 +992,9 @@ static DateTime get startsAtDefault =>
 
     test(
       'non-JSON-encodable raw default (e.g. a YAML-parsed DateTime) returns '
-      'null AND logs a warning identifying the property and the rejected '
-      'runtime type — so the silently-dropped default is observable',
+      'null AND logs a warning identifying the property, location, expected '
+      'type, rendered value, and rejected runtime type — so the silently '
+      'dropped default is observable',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -773,6 +1007,7 @@ static DateTime get startsAtDefault =>
           name: 'startsAt',
           model: DateTimeModel(context: context),
           raw: yamlDateTime,
+          location: 'query',
         );
 
         expect(result, isNull);
@@ -780,8 +1015,12 @@ static DateTime get startsAtDefault =>
         expect(warnings, hasLength(1));
         final message = warnings.single.message;
         expect(message, contains('Holder.startsAt'));
-        expect(message, contains('DateTime'));
-        expect(message, contains('not JSON-encodable'));
+        expect(message, contains('(query, expected DateTimeModel'));
+        expect(message, contains('value: $yamlDateTime'));
+        expect(
+          message,
+          contains('value of type DateTime is not JSON-encodable'),
+        );
       },
     );
   });

@@ -384,6 +384,34 @@ void main() {
           contains('Routing default to runtime fallback for WithChild.child'),
         );
         expect(warnings.single.message, contains('object target'));
+
+        final generated = format(result.accept(emitter).toString());
+        const expectedGetter =
+            'static Child get childDefault => '
+            'Child.fromJson(const <String, Object?>{});';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedGetter)),
+        );
+        const expectedCtor = 'const WithChild({required this.child});';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedCtor)),
+        );
+        const expectedFromJson = r'''
+factory WithChild.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'WithChild');
+  return WithChild(
+    child: _$map.containsKey(r'child')
+        ? Child.fromJson(_$map[r'child'])
+        : childDefault,
+  );
+}
+''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromJson)),
+        );
       },
     );
 
@@ -439,6 +467,34 @@ void main() {
         contains('Routing default to runtime fallback for WithComposite.union'),
       );
       expect(warnings.single.message, contains('composite target'));
+
+      final generated = format(result.accept(emitter).toString());
+      const expectedGetter =
+          'static Union get unionDefault => '
+          'Union.fromJson(const <String, Object?>{});';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+      const expectedCtor = 'const WithComposite({required this.union});';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedCtor)),
+      );
+      const expectedFromJson = r'''
+factory WithComposite.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'WithComposite');
+  return WithComposite(
+    union: _$map.containsKey(r'union')
+        ? Union.fromJson(_$map[r'union'])
+        : unionDefault,
+  );
+}
+''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
     });
 
     test(

@@ -121,6 +121,7 @@ resolveOperationParameterDefaults({
       model: model,
       rawDefault: rawDefault,
       containerName: operationClassName,
+      location: location,
       reservedNames: reserved,
       nameManager: nameManager,
       package: package,

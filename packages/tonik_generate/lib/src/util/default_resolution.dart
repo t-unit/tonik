@@ -202,6 +202,7 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   required Model model,
   required Object? rawDefault,
   required String containerName,
+  required String location,
   required Set<String> reservedNames,
   required NameManager nameManager,
   required String package,
@@ -220,7 +221,9 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   // visible to the spec author.
   if (!_isJsonEncodable(rawDefault)) {
     onDroppedDefault?.call(
-      'Dropping default for $containerName.$specName: '
+      'Dropping default for $containerName.$specName '
+      '($location, expected ${model.resolved.runtimeType}, '
+      'value: ${_describeDefault(rawDefault)}): '
       'value of type ${rawDefault.runtimeType} is not JSON-encodable '
       'and cannot be embedded as a runtime literal.',
     );

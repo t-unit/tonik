@@ -2132,6 +2132,12 @@ Future<TonikResult<void>> listThings({
         'reference but the api-client call() parameter wires no defaultTo — '
         'a static getter is not a constant expression',
         () {
+          final logs = <LogRecord>[];
+          final sub = Logger(
+            'OperationParameterDefaults',
+          ).onRecord.listen(logs.add);
+          addTearDown(sub.cancel);
+
           final queryParam = QueryParameterObject(
             name: 'since',
             rawName: 'since',
@@ -2198,6 +2204,15 @@ Future<TonikResult<void>> listThings({
           expect(
             collapseWhitespace(generatedCode),
             contains(collapseWhitespace(expectedMethod)),
+          );
+
+          expect(
+            logs,
+            isEmpty,
+            reason:
+                'the api-client forwarder runs with emitWarnings: false and '
+                'must not emit a Routing-to-runtime warning — the operation '
+                'class is the sole logging site',
           );
         },
       );

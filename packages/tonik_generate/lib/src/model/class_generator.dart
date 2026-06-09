@@ -361,6 +361,7 @@ class ClassGenerator {
         model: prop.property.model,
         rawDefault: raw,
         containerName: className,
+        location: 'property',
         reservedNames: reservedNames,
         nameManager: nameManager,
         package: package,
