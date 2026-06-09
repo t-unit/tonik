@@ -33,10 +33,9 @@ class ResolvedDefault {
 
 /// Runtime-fallback sibling of [ResolvedDefault] for defaults that cannot be
 /// const-materialised (composite targets, non-const leaf scalars, or
-/// collections nesting either). The static getter recomputes the value on
-/// every access via the runtime decode path appropriate for the target:
-/// `fromJson` for composite and object targets, scalar extension decoders
-/// (`decodeJsonDateTime`, etc.) for non-const leaves.
+/// collections nesting either). [resolveRuntimeDefault] is the only producer
+/// and configures [getter] as a `static get` with no caching, so each access
+/// re-runs the runtime decode path appropriate for the target.
 @immutable
 class RuntimeResolvedDefault {
   const RuntimeResolvedDefault({
@@ -322,10 +321,8 @@ String runtimeFallbackReason(Model model) {
 }
 
 // Recursive JSON → const Dart expression. Callers must gate on
-// `_isJsonEncodable` first; otherwise this may throw on non-JSON inputs:
-// non-String map keys and non-JSON scalars (e.g. YAML-parsed DateTime) are
-// rejected with a StateError — the runtime fallback requires a const-able
-// literal.
+// `_isJsonEncodable` first; otherwise this may throw a StateError on
+// non-JSON scalars (e.g. a YAML-parsed DateTime).
 Expression _jsonAsConstExpression(Object? json) {
   switch (json) {
     case null:
