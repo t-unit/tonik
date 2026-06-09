@@ -13,9 +13,6 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 final Logger _log = Logger('DefaultResolution');
 
-/// Default dropped-default callback for [resolveRuntimeDefault]. Exposed so
-/// secondary call sites can opt back into the canonical logger after passing
-/// `null` to suppress.
 void defaultRuntimeDropLogger(String message) => _log.warning(message);
 
 @immutable
@@ -31,11 +28,7 @@ class ResolvedDefault {
   final TypeReference type;
 }
 
-/// Runtime-fallback sibling of [ResolvedDefault] for defaults that cannot be
-/// const-materialised (composite targets, non-const leaf scalars, or
-/// collections nesting either). [resolveRuntimeDefault] is the only producer
-/// and configures [getter] as a `static get` with no caching, so each access
-/// re-runs the runtime decode path appropriate for the target.
+/// Runtime-fallback sibling of [ResolvedDefault]. See [resolveRuntimeDefault].
 @immutable
 class RuntimeResolvedDefault {
   const RuntimeResolvedDefault({
@@ -49,9 +42,6 @@ class RuntimeResolvedDefault {
   final TypeReference type;
 }
 
-/// Sealed binding so a caller can pattern-match const vs runtime defaults
-/// without ad-hoc booleans. Both carriers expose [memberName] — that is
-/// all the decoder template needs.
 @immutable
 sealed class DefaultBinding {
   const DefaultBinding();
@@ -107,51 +97,38 @@ ResolvedDefault? resolveSingleDefault({
   );
 
   if (materialised == null) {
+    // Real drops warn (a runtime decoder would throw); intentional bubbles
+    // are silent so the caller can route them to the runtime fallback.
     if (onDroppedDefault != null) {
       final resolved = model.resolved;
-      if (resolved is PrimitiveModel) {
-        // Type mismatch on a const-supported primitive is a real drop —
-        // a runtime decoder would throw, so warn rather than route to the
-        // runtime fallback. Non-const-materialisable primitives (DateTime /
-        // Uri / Decimal / Binary / Base64) are intentional bubbles — the
-        // caller routes them to the runtime fallback.
-        if (_isMaterialiserSupportedPrimitive(model)) {
-          onDroppedDefault(
-            'Dropping default for $containerName.$specName '
-            '($location, expected ${resolved.runtimeType}, '
-            'value: ${_describeDefault(rawDefault)}): '
-            'value does not match the expected type.',
-          );
-        }
-      } else if (resolved is EnumModel) {
-        // Enum value mismatch is a real drop. A nullable enum that holds a
-        // valid value just lacks a const variant ref — bubble to the runtime
-        // fallback.
-        if (!_enumValueIsMember(resolved, rawDefault)) {
-          onDroppedDefault(
-            'Dropping default for $containerName.$specName '
-            '($location, expected ${resolved.runtimeType}, '
-            'value: ${_describeDefault(rawDefault)}): '
-            'value is not one of the enum values.',
-          );
-        }
-      } else if (resolved is ListModel ||
-          resolved is MapModel ||
-          resolved is AnyModel) {
-        // Outer-shape mismatch is a real drop; nested-leaf failures bubble
-        // to the runtime fallback.
-        if (_isCollectionShapeMismatch(resolved, rawDefault)) {
-          onDroppedDefault(
-            'Dropping default for $containerName.$specName '
-            '($location, expected ${resolved.runtimeType}, '
-            'value: ${_describeDefault(rawDefault)}): '
-            'value does not match the expected list / map / free-form '
-            'shape.',
-          );
-        }
+      if (resolved is PrimitiveModel &&
+          _isMaterialiserSupportedPrimitive(model)) {
+        onDroppedDefault(
+          'Dropping default for $containerName.$specName '
+          '($location, expected ${resolved.runtimeType}, '
+          'value: ${_describeDefault(rawDefault)}): '
+          'value does not match the expected type.',
+        );
+      } else if (resolved is EnumModel &&
+          !_enumValueIsMember(resolved, rawDefault)) {
+        onDroppedDefault(
+          'Dropping default for $containerName.$specName '
+          '($location, expected ${resolved.runtimeType}, '
+          'value: ${_describeDefault(rawDefault)}): '
+          'value is not one of the enum values.',
+        );
+      } else if ((resolved is ListModel ||
+              resolved is MapModel ||
+              resolved is AnyModel) &&
+          _isCollectionShapeMismatch(resolved, rawDefault)) {
+        onDroppedDefault(
+          'Dropping default for $containerName.$specName '
+          '($location, expected ${resolved.runtimeType}, '
+          'value: ${_describeDefault(rawDefault)}): '
+          'value does not match the expected list / map / free-form '
+          'shape.',
+        );
       }
-      // ClassModel and CompositeModel return null silently — both are
-      // intentional bubbles to the runtime fallback.
     }
     return null;
   }
@@ -184,16 +161,10 @@ Field defaultField(ResolvedDefault resolved) => Field(
     ..assignment = resolved.value.code,
 );
 
-/// Runtime-fallback entry point. Sibling of [resolveSingleDefault] for
-/// defaults that cannot be expressed as a const Dart expression (composite
-/// targets, non-const leaves, or collections nesting either). Emits a
-/// computed `static get <name>Default` getter whose body decodes the
-/// raw-JSON default literal via the runtime decode path appropriate for
-/// the target: `fromJson` for composite and object targets, scalar
-/// extension decoders (`decodeJsonDateTime`, etc.) for non-const leaves.
-///
-/// The runtime decoder is the validator — no codegen-time dry-run. A bad
-/// default surfaces as a `DecodingException` on first access.
+/// Runtime-fallback sibling of [resolveSingleDefault]. Emits a
+/// `static get <name>Default` getter that decodes the raw default on every
+/// access — the runtime decoder is the validator, so a bad default surfaces
+/// as a `DecodingException` rather than a codegen-time drop.
 RuntimeResolvedDefault? resolveRuntimeDefault({
   required String normalizedName,
   required String specName,
@@ -210,13 +181,9 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
 }) {
   if (rawDefault == null) return null;
 
-  // A non-JSON-encodable raw default (e.g. a YAML-parsed DateTime that
-  // wasn't quoted in the spec) cannot be embedded as a Dart literal. Without
-  // a warning here the spec's `default:` would silently vanish from the
-  // generated code: the const path may have bubbled without warning (for
-  // non-const-materialisable primitives like DateTime/Uri/Decimal/Binary/
-  // Base64) and this guard would also drop it. Logging makes the drop
-  // visible to the spec author.
+  // Without this warning a non-JSON-encodable raw default (e.g. an unquoted
+  // YAML timestamp on a `format: date-time` field) would silently vanish:
+  // the const path bubbled without warning and this guard drops it too.
   if (!_isJsonEncodable(rawDefault)) {
     onDroppedDefault?.call(
       'Dropping default for $containerName.$specName '
@@ -244,9 +211,6 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
 
   final rawLiteral = _jsonAsConstExpression(rawDefault);
   final decoded = buildFromJsonValueExpression(
-    // The receiver override below replaces this at every receiver position,
-    // so this identifier never appears in the emitted code — passed only
-    // because the parameter is required.
     r'_$raw',
     model: model,
     nameManager: nameManager,
@@ -254,9 +218,6 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
     contextClass: containerName,
     contextProperty: specName,
     useImmutableCollections: useImmutableCollections,
-    // `receiverOverride` forces non-nullable decoding inside the helper —
-    // the const literal is statically non-null. The return type stays
-    // nullable via [isNullableOverride] on [typeReference] below.
     receiverOverride: rawLiteral,
   );
 
@@ -273,10 +234,8 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
           ..lambda = true
           ..body = decoded.unsafeRawBody.code;
       } else {
-        // Self-referential `MapModel`/`ListModel` typedefs surface as inline
-        // helper functions that must be declared as statements before the
-        // returned expression. A lambda body can only carry a single
-        // expression, so we fall back to a block body for this case.
+        // Self-referential typedef helpers need to be declared as statements
+        // before the returned expression, which a lambda body cannot carry.
         b.body = Block.of([
           ...spliceInlineHelpers(decoded.inlineFunctions),
           decoded.unsafeRawBody.returned.statement,
@@ -292,10 +251,7 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   );
 }
 
-/// Discriminator returned to log/diagnostic call sites that route a default
-/// to the runtime fallback. Distinguishes the routing reason at the model
-/// shape so the warning message points an operator at the right schema
-/// location.
+/// Short label embedded in routing-warning log lines.
 String runtimeFallbackReason(Model model) {
   final resolved = model.resolved;
   return switch (resolved) {
@@ -316,9 +272,7 @@ String runtimeFallbackReason(Model model) {
   };
 }
 
-// Recursive JSON → const Dart expression. Callers must gate on
-// `_isJsonEncodable` first; otherwise this may throw a StateError on
-// non-JSON scalars (e.g. a YAML-parsed DateTime).
+// Callers must gate on `_isJsonEncodable` first; otherwise this throws.
 Expression _jsonAsConstExpression(Object? json) {
   switch (json) {
     case null:
@@ -355,8 +309,8 @@ Expression _jsonAsConstExpression(Object? json) {
   throw StateError('Non-JSON value in runtime default literal: $json');
 }
 
-// YAML's timestamp inference can hand us a `DateTime` (or any non-JSON
-// scalar) — fall back to `toString` so a logging path never throws.
+// YAML can hand us non-JSON scalars (e.g. an inferred DateTime); fall back
+// to toString so logging never throws.
 String _describeDefault(Object? raw) =>
     _isJsonEncodable(raw) ? jsonEncode(raw) : raw.toString();
 
@@ -368,9 +322,8 @@ bool _isJsonEncodable(Object? value) => switch (value) {
   _ => false,
 };
 
-// Mirrors the supported-primitives switch in default_value_materialiser.dart;
-// kept duplicated so a primitive added there without a parallel update here
-// shows up immediately as a wrong-reason warning.
+// Duplicated from default_value_materialiser.dart so a primitive added there
+// without a parallel update here surfaces as a wrong-reason warning.
 bool _isMaterialiserSupportedPrimitive(Model model) => switch (model.resolved) {
   StringModel() ||
   IntegerModel() ||
@@ -383,9 +336,8 @@ bool _isMaterialiserSupportedPrimitive(Model model) => switch (model.resolved) {
 bool _enumValueIsMember(EnumModel<dynamic> model, Object? rawDefault) =>
     model.values.any((entry) => entry.value == rawDefault);
 
-// Outer-shape gate: true when the raw default cannot be the JSON shape this
-// model expects at the top level. Non-String map keys and inner-leaf failures
-// are classified as nested-value failures, not shape mismatches.
+// True only when the outer shape is wrong; nested-leaf failures bubble to
+// the runtime fallback instead.
 bool _isCollectionShapeMismatch(Model resolved, Object? rawDefault) =>
     switch (resolved) {
       ListModel() => rawDefault is! List,
