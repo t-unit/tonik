@@ -253,14 +253,10 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
     package: package,
     contextClass: containerName,
     contextProperty: specName,
-    // Force non-nullable decoding: the const-literal receiver is statically
-    // non-null, so the nullable receiver-null guard would always be dead.
-    // The return type stays nullable via [isNullableOverride] on
-    // [typeReference] below so the static getter still matches a nullable
-    // field/parameter signature.
-    // ignore: avoid_redundant_argument_values
-    isNullable: false,
     useImmutableCollections: useImmutableCollections,
+    // `receiverOverride` forces non-nullable decoding inside the helper —
+    // the const literal is statically non-null. The return type stays
+    // nullable via [isNullableOverride] on [typeReference] below.
     receiverOverride: rawLiteral,
   );
 

@@ -911,8 +911,7 @@ static IList<DateTime>? get windowsDefault => IList(
           collapseWhitespace(
             formatBody(
               '''
-static Status? get statusDefault =>
-    r'active' == null ? null : Status.fromJson(r'active');
+static Status? get statusDefault => Status.fromJson(r'active');
 ''',
             ),
           ),

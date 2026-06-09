@@ -239,7 +239,7 @@ void main() {
       // toJson does not drop them and decode applies the supplied values
       // (rather than the runtime defaults) on the way back.
       final original = Subscription(
-        startsAt: DateTime.utc(2024, 1, 1),
+        startsAt: DateTime.utc(2024),
         homepage: Uri.parse('https://example.com'),
         pricing: Subscription.pricingDefault,
       );
@@ -521,7 +521,7 @@ void main() {
       test('static getter returns the DateTime default', () {
         expect(
           Subscription.startsAtDefault,
-          DateTime.utc(2024, 1, 1),
+          DateTime.utc(2024),
         );
       });
 
@@ -561,7 +561,7 @@ void main() {
       test('fromJson with an empty map applies all runtime-fallback defaults',
           () {
         final value = Subscription.fromJson(const <String, Object?>{});
-        expect(value.startsAt, DateTime.utc(2024, 1, 1));
+        expect(value.startsAt, DateTime.utc(2024));
         expect(value.homepage, Uri.parse('https://example.com'));
         expect(value.pricing?.amount.toString(), '9.99');
         expect(value.pricing?.currency, 'USD');

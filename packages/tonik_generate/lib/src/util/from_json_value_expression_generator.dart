@@ -65,7 +65,13 @@ BuiltExpression _buildFromJson(
   Expression? receiverOverride,
 }) {
   final contextParam = _buildContextParam(contextClass, contextProperty);
-  final nullable = isNullable || model.isEffectivelyNullable;
+  // A `receiverOverride` is always a const literal supplied by the caller
+  // (see `resolveRuntimeDefault`), so it is statically non-null and the
+  // receiver-null guards (`receiver == null ? null : ...`) below would be
+  // dead code. Use non-nullable decoders in that case — the static getter's
+  // return type stays nullable via [isNullableOverride] in [typeReference].
+  final nullable =
+      receiverOverride == null && (isNullable || model.isEffectivelyNullable);
   final receiver = receiverOverride ?? refer(value);
 
   switch (model) {

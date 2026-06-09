@@ -1689,8 +1689,9 @@ void main() {
     );
 
     test(
-      'NeverModel uses the override in the null-receiver equality check '
-      'instead of refer(value)',
+      'NeverModel with receiverOverride emits the throw directly — the '
+      'receiver-null guard is skipped because the override is statically '
+      'non-null',
       () {
         expect(
           buildFromJsonValueExpression(
@@ -1701,7 +1702,7 @@ void main() {
             isNullable: true,
             receiverOverride: receiverLiteral,
           ).accept(emitter).toString(),
-          '''const [1, 2, ] == null ? null : throw  JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
+          '''throw  JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
         );
       },
     );
