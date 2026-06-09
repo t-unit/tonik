@@ -384,6 +384,20 @@ void main() {
           contains('Routing default to runtime fallback for WithChild.child'),
         );
         expect(warnings.single.message, contains('object target'));
+        // Mirrors the operation-parameter coverage: the dropped-default
+        // callback in resolveSingleDefault must stay silent for valid
+        // JSON-encodable defaults that bubble to the runtime fallback. With
+        // hierarchical logging off, a single root subscription captures
+        // records from every logger; filtering by loggerName surfaces any
+        // unexpected DefaultResolution drop.
+        expect(
+          logs.where(
+            (r) =>
+                r.level == Level.WARNING &&
+                r.loggerName == 'DefaultResolution',
+          ),
+          isEmpty,
+        );
 
         final generated = format(result.accept(emitter).toString());
         const expectedGetter =
@@ -467,6 +481,20 @@ factory WithChild.fromJson(Object? json) {
         contains('Routing default to runtime fallback for WithComposite.union'),
       );
       expect(warnings.single.message, contains('composite target'));
+      // Mirrors the operation-parameter coverage: the dropped-default
+      // callback in resolveSingleDefault must stay silent for valid
+      // JSON-encodable defaults that bubble to the runtime fallback. With
+      // hierarchical logging off, a single root subscription captures
+      // records from every logger; filtering by loggerName surfaces any
+      // unexpected DefaultResolution drop.
+      expect(
+        logs.where(
+          (r) =>
+              r.level == Level.WARNING &&
+              r.loggerName == 'DefaultResolution',
+        ),
+        isEmpty,
+      );
 
       final generated = format(result.accept(emitter).toString());
       const expectedGetter =
@@ -893,6 +921,116 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
         contains(collapseWhitespace(expectedFromForm)),
       );
     });
+
+    test(
+      'fromSimple uses containsKey template for a runtime-defaulted '
+      'property — the absent-key branch references the runtime getter '
+      'identifier just like the const-default path',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'DefaultedSimpleRuntime',
+          properties: [
+            Property(
+              name: 'startsAt',
+              model: DateTimeModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: '2024-01-01T00:00:00Z',
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final generated = format(result.accept(emitter).toString());
+
+        const expectedFromSimple = r'''
+factory DefaultedSimpleRuntime.fromSimple(
+  String? value, {
+  required bool explode,
+}) {
+  final _$values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: ',',
+    expectedKeys: {r'startsAt'},
+    listKeys: {},
+    context: r'DefaultedSimpleRuntime',
+  );
+  return DefaultedSimpleRuntime(
+    startsAt: _$values.containsKey(r'startsAt')
+        ? _$values[r'startsAt'].decodeSimpleDateTime(
+          context: r'DefaultedSimpleRuntime.startsAt',
+        )
+        : startsAtDefault,
+  );
+}
+''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromSimple)),
+        );
+      },
+    );
+
+    test(
+      'fromForm uses containsKey template for a runtime-defaulted '
+      'property — the absent-key branch references the runtime getter '
+      'identifier just like the const-default path',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'DefaultedFormRuntime',
+          properties: [
+            Property(
+              name: 'startsAt',
+              model: DateTimeModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: '2024-01-01T00:00:00Z',
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final generated = format(result.accept(emitter).toString());
+
+        const expectedFromForm = r'''
+factory DefaultedFormRuntime.fromForm(
+  String? value, {
+  required bool explode,
+}) {
+  final _$values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: '&',
+    expectedKeys: {r'startsAt'},
+    listKeys: {},
+    context: r'DefaultedFormRuntime',
+  );
+  return DefaultedFormRuntime(
+    startsAt: _$values.containsKey(r'startsAt')
+        ? _$values[r'startsAt'].decodeFormDateTime(
+          context: r'DefaultedFormRuntime.startsAt',
+        )
+        : startsAtDefault,
+  );
+}
+''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromForm)),
+        );
+      },
+    );
 
     test(
       'alias-carried default propagates when property has no local default',

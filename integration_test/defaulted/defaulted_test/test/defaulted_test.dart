@@ -389,6 +389,56 @@ void main() {
     },
   );
 
+  group(
+    'operation parameter runtime-fallback defaults — DateTime via static '
+    'getter',
+    () {
+      test('query date-time default is reachable via the runtime getter', () {
+        expect(ListThings.sinceDefault, DateTime.utc(2024));
+      });
+
+      test(
+        'runtime getter recomputes on every access — successive reads return '
+        'equal but non-identical DateTime instances, confirming no cache',
+        () {
+          final first = ListThings.sinceDefault;
+          final second = ListThings.sinceDefault;
+          expect(first, second);
+          expect(identical(first, second), isFalse);
+        },
+      );
+
+      test(
+        'omitted date-time query parameter does NOT serialise the runtime '
+        'default — the api-client forwarder param is nullable with no '
+        'defaultTo, so the wire omits the key entirely',
+        () async {
+          RequestOptions? captured;
+          final dio = _newDio(onRequest: (o) => captured = o);
+
+          await ListThings(dio).call();
+
+          expect(captured!.uri.queryParameters.containsKey('since'), isFalse);
+        },
+      );
+
+      test(
+        'explicit date-time query parameter serialises on the wire',
+        () async {
+          RequestOptions? captured;
+          final dio = _newDio(onRequest: (o) => captured = o);
+
+          await ListThings(dio).call(since: DateTime.utc(2030, 12, 31));
+
+          expect(
+            captured!.uri.queryParameters['since'],
+            '2030-12-31T00:00:00.000Z',
+          );
+        },
+      );
+    },
+  );
+
   group('operation call() with no arguments uses defaults', () {
     test(
       'omitted query/header/cookie parameters serialise the default values',

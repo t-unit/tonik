@@ -1660,4 +1660,140 @@ void main() {
       },
     );
   });
+
+  group('buildFromJsonValueExpression with receiverOverride', () {
+    final receiverLiteral = literalConstList(<Object?>[1, 2]);
+
+    test(
+      'AliasModel forwards receiverOverride into the underlying recursion '
+      'so the alias decoder sees the literal at the top-level receiver',
+      () {
+        final stringAlias = AliasModel(
+          context: context,
+          name: 'UserId',
+          model: StringModel(context: context),
+          examples: const [],
+          defaultValue: null,
+        );
+        expect(
+          buildFromJsonValueExpression(
+            r'_$raw',
+            model: stringAlias,
+            nameManager: nameManager,
+            package: 'my_package',
+            receiverOverride: receiverLiteral,
+          ).accept(emitter).toString(),
+          'const [1, 2, ].decodeJsonString()',
+        );
+      },
+    );
+
+    test(
+      'NeverModel uses the override in the null-receiver equality check '
+      'instead of refer(value)',
+      () {
+        expect(
+          buildFromJsonValueExpression(
+            r'_$raw',
+            model: NeverModel(context: context),
+            nameManager: nameManager,
+            package: 'my_package',
+            isNullable: true,
+            receiverOverride: receiverLiteral,
+          ).accept(emitter).toString(),
+          '''const [1, 2, ] == null ? null : throw  JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
+        );
+      },
+    );
+
+    test(
+      'AnyModel returns the override expression verbatim as a pass-through '
+      'instead of refer(value)',
+      () {
+        expect(
+          buildFromJsonValueExpression(
+            r'_$raw',
+            model: AnyModel(context: context),
+            nameManager: nameManager,
+            package: 'my_package',
+            receiverOverride: receiverLiteral,
+          ).accept(emitter).toString(),
+          'const [1, 2, ]',
+        );
+      },
+    );
+
+    test(
+      'ListModel<String> applies the override at the outer decode receiver '
+      'but the inner closure parameter (`e`) is unaffected',
+      () {
+        final listModel = ListModel(
+          content: DateTimeModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        expect(
+          buildFromJsonValueExpression(
+            r'_$raw',
+            model: listModel,
+            nameManager: nameManager,
+            package: 'my_package',
+            receiverOverride: receiverLiteral,
+          ).accept(emitter).toString(),
+          'const [1, 2, ].decodeJsonList<String>().map((e) '
+          '=> e.decodeJsonDateTime()).toList()',
+        );
+      },
+    );
+
+    test(
+      'MapModel<DateTime> applies the override at the outer decode receiver '
+      'but the inner closure parameter (`v`) is unaffected',
+      () {
+        final mapModel = MapModel(
+          valueModel: DateTimeModel(context: context),
+          context: context,
+          examples: const [],
+        );
+        expect(
+          buildFromJsonValueExpression(
+            r'_$raw',
+            model: mapModel,
+            nameManager: nameManager,
+            package: 'my_package',
+            receiverOverride: literalConstMap(<Object?, Object?>{
+              'k': '2024-01-01T00:00:00Z',
+            }),
+          ).accept(emitter).toString(),
+          "const {'k': '2024-01-01T00:00:00Z'}.decodeJsonMap((v) "
+          '=> v.decodeJsonDateTime())',
+        );
+      },
+    );
+
+    test(
+      'ClassModel applies the override at the receiver passed to fromJson',
+      () {
+        final user = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'User',
+          properties: const [],
+          examples: const [],
+        );
+        expect(
+          buildFromJsonValueExpression(
+            r'_$raw',
+            model: user,
+            nameManager: nameManager,
+            package: 'my_package',
+            receiverOverride: literalConstMap(<Object?, Object?>{
+              'a': 1,
+            }),
+          ).accept(emitter).toString(),
+          "User.fromJson(const {'a': 1})",
+        );
+      },
+    );
+  });
 }

@@ -140,8 +140,7 @@ ResolvedDefault? resolveSingleDefault({
           resolved is MapModel ||
           resolved is AnyModel) {
         // Outer-shape mismatch is a real drop; nested-leaf failures bubble
-        // to the runtime fallback (the runtime decoder handles them via
-        // fromJson).
+        // to the runtime fallback.
         if (_isCollectionShapeMismatch(resolved, rawDefault)) {
           onDroppedDefault(
             'Dropping default for $containerName.$specName '
@@ -246,16 +245,22 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
 
   final rawLiteral = _jsonAsConstExpression(rawDefault);
   final decoded = buildFromJsonValueExpression(
-    // The receiver override below replaces this name at every top-level use,
-    // so the identifier never appears in the emitted code. It still names the
-    // few inline helpers we could not eliminate via the override.
+    // The receiver override below replaces this at every receiver position,
+    // so this identifier never appears in the emitted code — passed only
+    // because the parameter is required.
     r'_$raw',
     model: model,
     nameManager: nameManager,
     package: package,
     contextClass: containerName,
     contextProperty: specName,
-    isNullable: isNullableOverride,
+    // Force non-nullable decoding: the const-literal receiver is statically
+    // non-null, so the nullable receiver-null guard would always be dead.
+    // The return type stays nullable via [isNullableOverride] on
+    // [typeReference] below so the static getter still matches a nullable
+    // field/parameter signature.
+    // ignore: avoid_redundant_argument_values
+    isNullable: false,
     useImmutableCollections: useImmutableCollections,
     receiverOverride: rawLiteral,
   );
@@ -293,14 +298,28 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
 }
 
 /// Discriminator returned to log/diagnostic call sites that route a default
-/// to the runtime fallback. Distinguishes object targets ([ClassModel]),
-/// true composites ([AllOfModel] / [OneOfModel] / [AnyOfModel]), and
-/// non-const leaf scalars / collections.
-String runtimeFallbackReason(Model model) => switch (model.resolved) {
-  ClassModel() => 'object target',
-  AllOfModel() || OneOfModel() || AnyOfModel() => 'composite target',
-  _ => 'non-const leaf',
-};
+/// to the runtime fallback. Distinguishes the routing reason at the model
+/// shape so the warning message points an operator at the right schema
+/// location.
+String runtimeFallbackReason(Model model) {
+  final resolved = model.resolved;
+  return switch (resolved) {
+    ClassModel() => 'object target',
+    AllOfModel() || OneOfModel() || AnyOfModel() => 'composite target',
+    EnumModel() => 'enum target',
+    ListModel() => 'list with non-const content',
+    MapModel() => 'map with non-const content',
+    AliasModel() => 'alias target',
+    DateTimeModel() ||
+    DateModel() ||
+    UriModel() ||
+    DecimalModel() ||
+    BinaryModel() ||
+    Base64Model() ||
+    AnyModel() => 'non-const leaf',
+    _ => 'unrecognized model (${resolved.runtimeType})',
+  };
+}
 
 // Recursive JSON → const Dart expression. Callers must gate on
 // `_isJsonEncodable` first; otherwise this may throw on non-JSON inputs:

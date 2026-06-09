@@ -662,6 +662,44 @@ static IList<DateTime> get windowsDefault => IList(
     );
 
     test(
+      'useImmutableCollections: true wraps the decoded MapModel in IMap',
+      () {
+        final dateMap = MapModel(
+          valueModel: DateTimeModel(context: context),
+          context: context,
+          examples: const [],
+        );
+
+        final result = resolve(
+          name: 'windows',
+          model: dateMap,
+          raw: const <String, Object?>{'first': '2024-01-01T00:00:00Z'},
+          useImmutableCollections: true,
+        );
+
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'IMap');
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
+static IMap<String, DateTime> get windowsDefault => IMap(
+  const <String, Object?>{r'first': r'2024-01-01T00:00:00Z'}
+      .decodeJsonMap(
+        (v) => v.decodeJsonDateTime(context: r'Holder.windows'),
+        context: r'Holder.windows',
+      ),
+);
+''',
+            ),
+          ),
+        );
+      },
+    );
+
+    test(
       'ListModel<OneOf> default delegates each element to the wrapper '
       'fromJson on the const list literal',
       () {
@@ -729,8 +767,10 @@ static List<Pet> get petsDefault =>
 
   group('resolveRuntimeDefault — isNullableOverride: true', () {
     test(
-      'nullable DateTime leaf uses decodeJsonNullableDateTime and the return '
-      'type carries the nullable suffix',
+      'nullable DateTime leaf decodes the const literal via the non-nullable '
+      'decoder; the return type still carries the nullable suffix because '
+      'the field/parameter is nullable but the raw literal is statically '
+      'non-null',
       () {
         final result = resolve(
           name: 'startsAt',
@@ -749,7 +789,7 @@ static List<Pet> get petsDefault =>
             formatBody(
               '''
 static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
-    .decodeJsonNullableDateTime(context: r'Holder.startsAt');
+    .decodeJsonDateTime(context: r'Holder.startsAt');
 ''',
             ),
           ),
@@ -758,8 +798,9 @@ static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
     );
 
     test(
-      'nullable ClassModel wraps fromJson in a null-receiver conditional and '
-      'the return type carries the nullable suffix',
+      'nullable ClassModel decodes via fromJson without a dead null-check; '
+      'the return type carries the nullable suffix but the const literal is '
+      'statically non-null so the receiver-null guard is omitted',
       () {
         final pricing = ClassModel(
           isDeprecated: false,
@@ -785,9 +826,8 @@ static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
           collapseWhitespace(
             formatBody(
               '''
-static Pricing? get pricingDefault => const <String, Object?>{} == null
-    ? null
-    : Pricing.fromJson(const <String, Object?>{});
+static Pricing? get pricingDefault =>
+    Pricing.fromJson(const <String, Object?>{});
 ''',
             ),
           ),
@@ -797,7 +837,9 @@ static Pricing? get pricingDefault => const <String, Object?>{} == null
 
     test(
       'nullable ListModel<DateTime> with immutable collections wraps the '
-      'decoded list in IList? via a null-receiver conditional',
+      'decoded list in IList?; the return type carries the nullable suffix '
+      'but the const literal is statically non-null so no receiver-null '
+      'guard is emitted',
       () {
         final dateList = ListModel(
           content: DateTimeModel(context: context),
@@ -822,15 +864,12 @@ static Pricing? get pricingDefault => const <String, Object?>{} == null
           collapseWhitespace(
             formatBody(
               '''
-static IList<DateTime>? get windowsDefault =>
-    const <Object?>[r'2024-01-01T00:00:00Z'] == null
-        ? null
-        : IList(
-            const <Object?>[r'2024-01-01T00:00:00Z']
-                .decodeJsonList<String>(context: r'Holder.windows')
-                .map((e) => e.decodeJsonDateTime(context: r'Holder.windows'))
-                .toList(),
-          );
+static IList<DateTime>? get windowsDefault => IList(
+  const <Object?>[r'2024-01-01T00:00:00Z']
+      .decodeJsonList<String>(context: r'Holder.windows')
+      .map((e) => e.decodeJsonDateTime(context: r'Holder.windows'))
+      .toList(),
+);
 ''',
             ),
           ),
@@ -969,6 +1008,12 @@ static Date get birthdayDefault => r'2024-01-01'
       () {
         // DateTime field with a non-string default. The runtime fallback
         // emits the getter unchecked; the runtime decoder is the validator.
+        final logs = <LogRecord>[];
+        final sub = Logger(
+          'DefaultResolution',
+        ).onRecord.listen(logs.add);
+        addTearDown(sub.cancel);
+
         final result = resolve(
           name: 'startsAt',
           model: DateTimeModel(context: context),
@@ -986,6 +1031,13 @@ static DateTime get startsAtDefault =>
 ''',
             ),
           ),
+        );
+        expect(
+          logs.where((r) => r.level == Level.WARNING),
+          isEmpty,
+          reason:
+              'the runtime decoder is the validator — no codegen-time '
+              'warning fires for a plausibly-shaped but implausible default',
         );
       },
     );

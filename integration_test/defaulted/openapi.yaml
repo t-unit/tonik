@@ -45,6 +45,12 @@ paths:
           schema:
             type: integer
             default: 1
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+            default: "2024-01-01T00:00:00Z"
         - name: X-Retries
           in: header
           schema:
