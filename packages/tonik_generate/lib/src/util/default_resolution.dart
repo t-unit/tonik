@@ -13,8 +13,6 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 final Logger _log = Logger('DefaultResolution');
 
-void defaultRuntimeDropLogger(String message) => _log.warning(message);
-
 @immutable
 class ResolvedDefault {
   const ResolvedDefault({
@@ -175,7 +173,6 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   required Set<String> reservedNames,
   required NameManager nameManager,
   required String package,
-  void Function(String message)? onDroppedDefault = defaultRuntimeDropLogger,
   bool isNullableOverride = false,
   bool useImmutableCollections = false,
 }) {
@@ -185,7 +182,7 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   // YAML timestamp on a `format: date-time` field) would silently vanish:
   // the const path bubbled without warning and this guard drops it too.
   if (!_isJsonEncodable(rawDefault)) {
-    onDroppedDefault?.call(
+    _log.warning(
       'Dropping default for $containerName.$specName '
       '($location, expected ${model.resolved.runtimeType}, '
       'value: ${_describeDefault(rawDefault)}): '

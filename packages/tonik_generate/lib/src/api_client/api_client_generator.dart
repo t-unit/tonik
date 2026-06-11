@@ -146,7 +146,6 @@ class ApiClientGenerator {
         normalizedParams: normalizedParams,
         hasRequestBody: hasRequestBody,
       ),
-      emitWarnings: false,
     );
 
     final operationUrl = sourceFileUrl(

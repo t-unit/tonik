@@ -1,6 +1,5 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
-import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
@@ -2132,12 +2131,6 @@ Future<TonikResult<void>> listThings({
         'reference but the api-client call() parameter wires no defaultTo — '
         'a static getter is not a constant expression',
         () {
-          final logs = <LogRecord>[];
-          final sub = Logger(
-            'OperationParameterDefaults',
-          ).onRecord.listen(logs.add);
-          addTearDown(sub.cancel);
-
           final queryParam = QueryParameterObject(
             name: 'since',
             rawName: 'since',
@@ -2198,132 +2191,6 @@ Future<TonikResult<void>> listThings({
           expect(
             collapseWhitespace(generatedCode),
             contains(collapseWhitespace(expectedMethod)),
-          );
-
-          expect(
-            logs,
-            isEmpty,
-            reason:
-                'the api-client forwarder runs with emitWarnings: false and '
-                'must not emit a Routing-to-runtime warning — the operation '
-                'class is the sole logging site',
-          );
-        },
-      );
-
-      test(
-        'suppresses dropped-default warnings — the operation class is the '
-        'sole logging site',
-        () {
-          final logs = <LogRecord>[];
-          final sub = Logger(
-            'OperationParameterDefaults',
-          ).onRecord.listen(logs.add);
-          addTearDown(sub.cancel);
-
-          final queryParam = QueryParameterObject(
-            name: 'enabled',
-            rawName: 'enabled',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: BooleanModel(context: testContext),
-            encoding: QueryParameterEncoding.form,
-            context: testContext,
-            examples: const [],
-            defaultValue: 'true',
-          );
-
-          final operation = Operation(
-            operationId: 'listThings',
-            context: testContext,
-            tags: {Tag(name: 'things')},
-            isDeprecated: false,
-            path: '/things',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
-
-          generator.generateClass(
-            {operation},
-            Tag(name: 'things'),
-            testServers,
-          );
-
-          expect(
-            logs.where((r) => r.level == Level.WARNING),
-            isEmpty,
-          );
-        },
-      );
-
-      test(
-        'YAML-DateTime raw default surfaces a single DefaultResolution drop '
-        'warning end-to-end — the api-client forwarder does not double-log',
-        () {
-          final logs = <LogRecord>[];
-          final sub = Logger(
-            'DefaultResolution',
-          ).onRecord.listen(logs.add);
-          addTearDown(sub.cancel);
-
-          final queryParam = QueryParameterObject(
-            name: 'since',
-            rawName: 'since',
-            description: null,
-            isRequired: false,
-            isDeprecated: false,
-            allowEmptyValue: false,
-            allowReserved: false,
-            explode: false,
-            model: DateTimeModel(context: testContext),
-            encoding: QueryParameterEncoding.form,
-            context: testContext,
-            examples: const [],
-            defaultValue: DateTime.utc(2024, 6, 15),
-          );
-
-          final operation = Operation(
-            operationId: 'listThings',
-            context: testContext,
-            tags: {Tag(name: 'things')},
-            isDeprecated: false,
-            path: '/things',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: {queryParam},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {},
-          );
-
-          generator.generateClass(
-            {operation},
-            Tag(name: 'things'),
-            testServers,
-          );
-
-          expect(
-            logs
-                .where(
-                  (r) =>
-                      r.level == Level.WARNING &&
-                      r.loggerName == 'DefaultResolution',
-                )
-                .toList(),
-            isEmpty,
-            reason: 'the api-client forwarder runs with emitWarnings: false '
-                'and must silence the DefaultResolution non-JSON-encodable '
-                'warning — the operation-class pass is the sole logging site',
           );
         },
       );

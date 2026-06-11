@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
 import 'package:test/test.dart';
@@ -1321,68 +1319,6 @@ void main() {
       },
     );
 
-    test(
-      'emitWarnings: false suppresses the dropped-default warning while '
-      'the default emitWarnings: true logs exactly once',
-      () {
-        final bad = QueryParameterObject(
-          name: 'page',
-          rawName: 'page',
-          description: null,
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: IntegerModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 'not-a-number',
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {bad},
-          headers: const {},
-        );
-
-        final suppressedLogs = <LogRecord>[];
-        final suppressedSub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(suppressedLogs.add);
-        resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'BadOp',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-          emitWarnings: false,
-        );
-        unawaited(suppressedSub.cancel());
-        expect(
-          suppressedLogs.where((r) => r.level == Level.WARNING),
-          isEmpty,
-        );
-
-        final emittedLogs = <LogRecord>[];
-        final emittedSub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(emittedLogs.add);
-        addTearDown(emittedSub.cancel);
-        resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'BadOp',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-        expect(
-          emittedLogs.where((r) => r.level == Level.WARNING),
-          hasLength(1),
-        );
-      },
-    );
   });
 
   group('initialOperationDefaultReservedNames', () {

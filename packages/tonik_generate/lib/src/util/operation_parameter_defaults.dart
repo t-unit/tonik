@@ -55,9 +55,6 @@ class OperationParameterDefault {
   }
 }
 
-/// Pass [emitWarnings] `false` on secondary call sites (e.g. the
-/// API-client forwarder) — the primary site already logs once per
-/// dropped default.
 ({
   Map<String, OperationParameterDefault> byName,
   List<Field> fields,
@@ -69,13 +66,11 @@ resolveOperationParameterDefaults({
   required NameManager nameManager,
   required String package,
   required Set<String> initialReservedNames,
-  bool emitWarnings = true,
 }) {
   final reserved = {...initialReservedNames};
   final byName = <String, OperationParameterDefault>{};
   final fields = <Field>[];
   final getters = <Method>[];
-  final logWarning = emitWarnings ? _log.warning : null;
 
   void process({
     required String normalizedName,
@@ -99,7 +94,7 @@ resolveOperationParameterDefaults({
       package: package,
       onDroppedDefault: (message) {
         dropped = true;
-        logWarning?.call(message);
+        _log.warning(message);
       },
     );
     if (resolved != null) {
@@ -121,17 +116,13 @@ resolveOperationParameterDefaults({
       reservedNames: reserved,
       nameManager: nameManager,
       package: package,
-      // Suppressed on the api-client forwarder pass to avoid a duplicate.
-      onDroppedDefault: emitWarnings ? defaultRuntimeDropLogger : null,
     );
     if (runtime == null) return;
 
-    if (emitWarnings) {
-      _log.warning(
-        'Routing default to runtime fallback for $operationClassName.'
-        '$specName ($location, ${runtimeFallbackReason(model)}).',
-      );
-    }
+    _log.warning(
+      'Routing default to runtime fallback for $operationClassName.'
+      '$specName ($location, ${runtimeFallbackReason(model)}).',
+    );
     byName[normalizedName] = OperationParameterDefault.local(
       memberName: runtime.memberName,
       isRuntime: true,
