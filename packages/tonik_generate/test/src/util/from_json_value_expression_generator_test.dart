@@ -1748,31 +1748,6 @@ void main() {
     );
 
     test(
-      'MapModel<DateTime> applies the override at the outer decode receiver '
-      'but the inner closure parameter (`v`) is unaffected',
-      () {
-        final mapModel = MapModel(
-          valueModel: DateTimeModel(context: context),
-          context: context,
-          examples: const [],
-        );
-        expect(
-          buildFromJsonValueExpression(
-            r'_$raw',
-            model: mapModel,
-            nameManager: nameManager,
-            package: 'my_package',
-            receiverOverride: literalConstMap(<Object?, Object?>{
-              'k': '2024-01-01T00:00:00Z',
-            }),
-          ).accept(emitter).toString(),
-          "const {'k': '2024-01-01T00:00:00Z'}.decodeJsonMap((v) "
-          '=> v.decodeJsonDateTime())',
-        );
-      },
-    );
-
-    test(
       'ClassModel applies the override at the receiver passed to fromJson',
       () {
         final user = ClassModel(

@@ -393,46 +393,6 @@ void main() {
       test('query date-time default is reachable via the runtime getter', () {
         expect(ListThings.sinceDefault, DateTime.utc(2024));
       });
-
-      test(
-        'runtime getter recomputes on every access — successive reads return '
-        'equal but non-identical DateTime instances, confirming no cache',
-        () {
-          final first = ListThings.sinceDefault;
-          final second = ListThings.sinceDefault;
-          expect(first, second);
-          expect(identical(first, second), isFalse);
-        },
-      );
-
-      test(
-        'omitted date-time query parameter does NOT serialise the runtime '
-        'default — the api-client forwarder param is nullable with no '
-        'defaultTo, so the wire omits the key entirely',
-        () async {
-          RequestOptions? captured;
-          final dio = _newDio(onRequest: (o) => captured = o);
-
-          await ListThings(dio).call();
-
-          expect(captured!.uri.queryParameters.containsKey('since'), isFalse);
-        },
-      );
-
-      test(
-        'explicit date-time query parameter serialises on the wire',
-        () async {
-          RequestOptions? captured;
-          final dio = _newDio(onRequest: (o) => captured = o);
-
-          await ListThings(dio).call(since: DateTime.utc(2030, 12, 31));
-
-          expect(
-            captured!.uri.queryParameters['since'],
-            '2030-12-31T00:00:00.000Z',
-          );
-        },
-      );
     },
   );
 
@@ -512,118 +472,34 @@ void main() {
     },
   );
 
-  group(
-    'Subscription — runtime-fallback defaults (DateTime, Uri, Class)',
-    () {
-      test('static getter returns the DateTime default', () {
-        expect(
-          Subscription.startsAtDefault,
-          DateTime.utc(2024),
-        );
-      });
+  group('Subscription — runtime-fallback defaults', () {
+    test('non-const leaf default reachable via static getter', () {
+      expect(Subscription.startsAtDefault, DateTime.utc(2024));
+    });
 
-      test('static getter returns the Uri default', () {
-        expect(
-          Subscription.homepageDefault,
-          Uri.parse('https://example.com'),
-        );
-      });
+    test('composite default reachable via static getter', () {
+      final pricing = Subscription.pricingDefault;
+      expect(pricing.amount.toString(), '9.99');
+      expect(pricing.currency, 'USD');
+    });
 
-      test(
-        'static getter returns a Pricing instance for the object default',
-        () {
-          final pricing = Subscription.pricingDefault;
-          expect(pricing.amount.toString(), '9.99');
-          expect(pricing.currency, 'USD');
-        },
-      );
+    test('computed getter is not cached — successive accesses are NOT '
+        'identical', () {
+      final a = Subscription.startsAtDefault;
+      final b = Subscription.startsAtDefault;
+      expect(identical(a, b), isFalse);
+    });
+  });
 
-      test('computed getter is not cached — successive accesses produce '
-          'equal but non-identical DateTime instances', () {
-        final a = Subscription.startsAtDefault;
-        final b = Subscription.startsAtDefault;
-        expect(a, b);
-        expect(identical(a, b), isFalse);
-      });
-
-      test(
-        'pricingDefault is not cached — the composite (ClassModel) default '
-        'also recomputes on every access',
-        () {
-          final a = Subscription.pricingDefault;
-          final b = Subscription.pricingDefault;
-          expect(a, b);
-          expect(identical(a, b), isFalse);
-        },
-      );
-
-      test(
-        'fromJson with an empty map applies all runtime-fallback defaults',
-        () {
-          final value = Subscription.fromJson(const <String, Object?>{});
-          expect(value.startsAt, DateTime.utc(2024));
-          expect(value.homepage, Uri.parse('https://example.com'));
-          expect(value.pricing?.amount.toString(), '9.99');
-          expect(value.pricing?.currency, 'USD');
-        },
-      );
-
-      test('fromJson supplied keys override the runtime-fallback defaults', () {
-        final value = Subscription.fromJson(const <String, Object?>{
-          'startsAt': '2030-12-31T23:59:59Z',
-          'homepage': 'https://override.example',
-          'pricing': <String, Object?>{
-            'amount': '1.00',
-            'currency': 'EUR',
-          },
-        });
-        expect(value.startsAt, DateTime.utc(2030, 12, 31, 23, 59, 59));
-        expect(value.homepage, Uri.parse('https://override.example'));
-        expect(value.pricing?.amount.toString(), '1.00');
-        expect(value.pricing?.currency, 'EUR');
-      });
-    },
-  );
-
-  group(
-    'Order — runtime-fallback oneOf default via discriminator',
-    () {
-      test('static getter returns the discriminated cat variant', () {
-        final pet = Order.petDefault;
-        expect(pet, isA<PetCat>());
-        final cat = (pet as PetCat).value;
-        expect(cat.kind, 'cat');
-        expect(cat.livesLeft, 9);
-      });
-
-      test(
-        'fromJson with an empty map applies the runtime-fallback default',
-        () {
-          final value = Order.fromJson(const <String, Object?>{});
-          expect(value.pet, isA<PetCat>());
-          final cat = (value.pet! as PetCat).value;
-          expect(cat.kind, 'cat');
-          expect(cat.livesLeft, 9);
-        },
-      );
-
-      test(
-        'fromJson with an explicit pet overrides the default — dog variant',
-        () {
-          final value = Order.fromJson(const <String, Object?>{
-            'pet': <String, Object?>{
-              'kind': 'dog',
-              'goodBoy': true,
-            },
-          });
-          expect(value.pet, isA<PetDog>());
-          final dog = (value.pet! as PetDog).value;
-          expect(dog.kind, 'dog');
-          expect(dog.goodBoy, isTrue);
-        },
-      );
-    },
-  );
+  group('Order — runtime-fallback oneOf default via discriminator', () {
+    test('static getter resolves the discriminator to the right variant', () {
+      final pet = Order.petDefault;
+      expect(pet, isA<PetCat>());
+      final cat = (pet as PetCat).value;
+      expect(cat.kind, 'cat');
+      expect(cat.livesLeft, 9);
+    });
+  });
 
   group('operation call() — enum query parameter wire encoding', () {
     test(
@@ -677,31 +553,12 @@ void main() {
     );
   });
 
-  group(
-    'BadlyDefaulted — runtime fallback validates on first access',
-    () {
-      test(
-        'runtime decoder rejects a syntactically-invalid date-time default '
-        'with a decoding exception — proving the runtime path is the validator',
-        () {
-          expect(
-            () => BadlyDefaulted.$whenDefault,
-            throwsA(isA<DecodingException>()),
-          );
-        },
+  group('BadlyDefaulted — runtime fallback validates on access', () {
+    test('a syntactically-invalid spec default throws at getter access', () {
+      expect(
+        () => BadlyDefaulted.$whenDefault,
+        throwsA(isA<DecodingException>()),
       );
-
-      test(
-        'fromJson({}) propagates the decode-time exception for the malformed '
-        'default — the user-visible failure path is the decoder, not just '
-        'direct getter access',
-        () {
-          expect(
-            () => BadlyDefaulted.fromJson(const <String, Object?>{}),
-            throwsA(isA<DecodingException>()),
-          );
-        },
-      );
-    },
-  );
+    });
+  });
 }

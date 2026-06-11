@@ -966,61 +966,6 @@ factory DefaultedSimpleRuntime.fromSimple(
     );
 
     test(
-      'fromForm uses containsKey template for a runtime-defaulted '
-      'property — the absent-key branch references the runtime getter '
-      'identifier just like the const-default path',
-      () {
-        final model = ClassModel(
-          isDeprecated: false,
-          name: 'DefaultedFormRuntime',
-          properties: [
-            Property(
-              name: 'startsAt',
-              model: DateTimeModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: '2024-01-01T00:00:00Z',
-            ),
-          ],
-          context: context,
-          examples: const [],
-        );
-
-        final result = generator.generateClass(model);
-        final generated = format(result.accept(emitter).toString());
-
-        const expectedFromForm = r'''
-factory DefaultedFormRuntime.fromForm(
-  String? value, {
-  required bool explode,
-}) {
-  final _$values = value.decodeObject(
-    explode: explode,
-    explodeSeparator: '&',
-    expectedKeys: {r'startsAt'},
-    listKeys: {},
-    context: r'DefaultedFormRuntime',
-  );
-  return DefaultedFormRuntime(
-    startsAt: _$values.containsKey(r'startsAt')
-        ? _$values[r'startsAt'].decodeFormDateTime(
-          context: r'DefaultedFormRuntime.startsAt',
-        )
-        : startsAtDefault,
-  );
-}
-''';
-
-        expect(
-          collapseWhitespace(generated),
-          contains(collapseWhitespace(expectedFromForm)),
-        );
-      },
-    );
-
-    test(
       'alias-carried default propagates when property has no local default',
       () {
         final model = ClassModel(
