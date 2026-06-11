@@ -32,12 +32,12 @@ class RuntimeResolvedDefault {
   const RuntimeResolvedDefault({
     required this.memberName,
     required this.getter,
-    required this.type,
   });
 
   final String memberName;
   final Method getter;
-  final TypeReference type;
+
+  TypeReference get type => getter.returns! as TypeReference;
 }
 
 @immutable
@@ -241,11 +241,7 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
     },
   );
 
-  return RuntimeResolvedDefault(
-    memberName: memberName,
-    getter: getter,
-    type: returnType,
-  );
+  return RuntimeResolvedDefault(memberName: memberName, getter: getter);
 }
 
 /// Short label embedded in routing-warning log lines.

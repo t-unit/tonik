@@ -38,39 +38,19 @@ void main() {
   String formatBody(String body) =>
       formatter.format('class _Holder { $body }');
 
-  RuntimeResolvedDefault? resolve({
-    required String name,
-    required Model model,
-    required Object? raw,
-    String container = 'Holder',
-    String? specName,
-    String location = 'property',
-    bool isNullableOverride = false,
-    bool useImmutableCollections = false,
-    Set<String>? reservedSeed,
-  }) {
-    return resolveRuntimeDefault(
-      normalizedName: name,
-      specName: specName ?? name,
-      model: model,
-      rawDefault: raw,
-      containerName: container,
-      location: location,
-      reservedNames: reservedSeed ?? <String>{name},
-      nameManager: nameManager,
-      package: package,
-      isNullableOverride: isNullableOverride,
-      useImmutableCollections: useImmutableCollections,
-    );
-  }
-
   group('resolveRuntimeDefault — non-const leaf primitives', () {
     test('DateTime leaf with string default emits decodeJsonDateTime '
         'getter', () {
-      final result = resolve(
-        name: 'startsAt',
+      final result = resolveRuntimeDefault(
+        normalizedName: 'startsAt',
+        specName: 'startsAt',
         model: DateTimeModel(context: context),
-        raw: '2024-01-01T00:00:00Z',
+        rawDefault: '2024-01-01T00:00:00Z',
+        containerName: 'Holder',
+        location: 'property',
+        reservedNames: <String>{'startsAt'},
+        nameManager: nameManager,
+        package: package,
       );
 
       expect(result, isNotNull);
@@ -95,10 +75,16 @@ static DateTime get startsAtDefault => r'2024-01-01T00:00:00Z'
     });
 
     test('Binary leaf wraps decoder in TonikFileBytes', () {
-      final result = resolve(
-        name: 'payload',
+      final result = resolveRuntimeDefault(
+        normalizedName: 'payload',
+        specName: 'payload',
         model: BinaryModel(context: context),
-        raw: 'base64-blob',
+        rawDefault: 'base64-blob',
+        containerName: 'Holder',
+        location: 'property',
+        reservedNames: <String>{'payload'},
+        nameManager: nameManager,
+        package: package,
       );
 
       expect(result, isNotNull);
@@ -147,10 +133,19 @@ static TonikFile get payloadDefault => TonikFileBytes(
         examples: const [],
       );
 
-      final result = resolve(
-        name: 'pricing',
+      final result = resolveRuntimeDefault(
+        normalizedName: 'pricing',
+        specName: 'pricing',
         model: pricing,
-        raw: const <String, Object?>{'amount': '9.99', 'currency': 'USD'},
+        rawDefault: const <String, Object?>{
+          'amount': '9.99',
+          'currency': 'USD',
+        },
+        containerName: 'Holder',
+        location: 'property',
+        reservedNames: <String>{'pricing'},
+        nameManager: nameManager,
+        package: package,
       );
 
       expect(result, isNotNull);
@@ -182,10 +177,16 @@ static Pricing get pricingDefault => Pricing.fromJson(
         );
         tree.valueModel = tree;
 
-        final result = resolve(
-          name: 'tree',
+        final result = resolveRuntimeDefault(
+          normalizedName: 'tree',
+          specName: 'tree',
           model: tree,
-          raw: const <String, Object?>{},
+          rawDefault: const <String, Object?>{},
+          containerName: 'Holder',
+          location: 'property',
+          reservedNames: <String>{'tree'},
+          nameManager: nameManager,
+          package: package,
         );
 
         expect(result, isNotNull);
@@ -238,10 +239,16 @@ static Tree get treeDefault {
         ),
       );
 
-      final result = resolve(
-        name: 'next',
+      final result = resolveRuntimeDefault(
+        normalizedName: 'next',
+        specName: 'next',
         model: recursive,
-        raw: const <String, Object?>{},
+        rawDefault: const <String, Object?>{},
+        containerName: 'Holder',
+        location: 'property',
+        reservedNames: <String>{'next'},
+        nameManager: nameManager,
+        package: package,
       );
 
       expect(result, isNotNull);
@@ -273,10 +280,19 @@ static Node get nextDefault =>
           examples: const [],
         );
 
-        final result = resolve(
-          name: 'windows',
+        final result = resolveRuntimeDefault(
+          normalizedName: 'windows',
+          specName: 'windows',
           model: dateList,
-          raw: const <Object?>['2024-01-01T00:00:00Z', '2024-06-15T12:00:00Z'],
+          rawDefault: const <Object?>[
+            '2024-01-01T00:00:00Z',
+            '2024-06-15T12:00:00Z',
+          ],
+          containerName: 'Holder',
+          location: 'property',
+          reservedNames: <String>{'windows'},
+          nameManager: nameManager,
+          package: package,
         );
 
         expect(result, isNotNull);
@@ -308,10 +324,16 @@ static List<DateTime> get windowsDefault =>
           examples: const [],
         );
 
-        final result = resolve(
-          name: 'windows',
+        final result = resolveRuntimeDefault(
+          normalizedName: 'windows',
+          specName: 'windows',
           model: dateList,
-          raw: const <Object?>['2024-01-01T00:00:00Z'],
+          rawDefault: const <Object?>['2024-01-01T00:00:00Z'],
+          containerName: 'Holder',
+          location: 'property',
+          reservedNames: <String>{'windows'},
+          nameManager: nameManager,
+          package: package,
           useImmutableCollections: true,
         );
 
@@ -345,10 +367,16 @@ static IList<DateTime> get windowsDefault => IList(
       'the field/parameter is nullable but the raw literal is statically '
       'non-null',
       () {
-        final result = resolve(
-          name: 'startsAt',
+        final result = resolveRuntimeDefault(
+          normalizedName: 'startsAt',
+          specName: 'startsAt',
           model: DateTimeModel(context: context),
-          raw: '2024-01-01T00:00:00Z',
+          rawDefault: '2024-01-01T00:00:00Z',
+          containerName: 'Holder',
+          location: 'property',
+          reservedNames: <String>{'startsAt'},
+          nameManager: nameManager,
+          package: package,
           isNullableOverride: true,
         );
 
@@ -383,10 +411,16 @@ static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
           examples: const [],
         );
 
-        final result = resolve(
-          name: 'pricing',
+        final result = resolveRuntimeDefault(
+          normalizedName: 'pricing',
+          specName: 'pricing',
           model: pricing,
-          raw: const <String, Object?>{},
+          rawDefault: const <String, Object?>{},
+          containerName: 'Holder',
+          location: 'property',
+          reservedNames: <String>{'pricing'},
+          nameManager: nameManager,
+          package: package,
           isNullableOverride: true,
         );
 
@@ -427,10 +461,16 @@ static Pricing? get pricingDefault =>
           examples: const [],
         );
 
-        final result = resolve(
-          name: 'status',
+        final result = resolveRuntimeDefault(
+          normalizedName: 'status',
+          specName: 'status',
           model: status,
-          raw: 'active',
+          rawDefault: 'active',
+          containerName: 'Holder',
+          location: 'property',
+          reservedNames: <String>{'status'},
+          nameManager: nameManager,
+          package: package,
           isNullableOverride: true,
         );
 
@@ -501,10 +541,16 @@ static Status? get statusDefault => Status.fromJson(r'active');
         ).onRecord.listen(logs.add);
         addTearDown(sub.cancel);
 
-        final result = resolve(
-          name: 'startsAt',
+        final result = resolveRuntimeDefault(
+          normalizedName: 'startsAt',
+          specName: 'startsAt',
           model: DateTimeModel(context: context),
-          raw: 42,
+          rawDefault: 42,
+          containerName: 'Holder',
+          location: 'property',
+          reservedNames: <String>{'startsAt'},
+          nameManager: nameManager,
+          package: package,
         );
 
         expect(result, isNotNull);
@@ -542,11 +588,16 @@ static DateTime get startsAtDefault =>
         addTearDown(sub.cancel);
 
         final yamlDateTime = DateTime.utc(2024, 6, 15);
-        final result = resolve(
-          name: 'startsAt',
+        final result = resolveRuntimeDefault(
+          normalizedName: 'startsAt',
+          specName: 'startsAt',
           model: DateTimeModel(context: context),
-          raw: yamlDateTime,
+          rawDefault: yamlDateTime,
+          containerName: 'Holder',
           location: 'query',
+          reservedNames: <String>{'startsAt'},
+          nameManager: nameManager,
+          package: package,
         );
 
         expect(result, isNull);
