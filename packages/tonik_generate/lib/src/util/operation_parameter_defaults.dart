@@ -77,7 +77,6 @@ resolveOperationParameterDefaults({
     required Model model,
     required Object? rawDefault,
     required String specName,
-    required String location,
   }) {
     if (rawDefault == null) return;
 
@@ -88,7 +87,6 @@ resolveOperationParameterDefaults({
       model: model,
       rawDefault: rawDefault,
       containerName: operationClassName,
-      location: location,
       reservedNames: reserved,
       nameManager: nameManager,
       package: package,
@@ -112,7 +110,6 @@ resolveOperationParameterDefaults({
       model: model,
       rawDefault: rawDefault,
       containerName: operationClassName,
-      location: location,
       reservedNames: reserved,
       nameManager: nameManager,
       package: package,
@@ -120,8 +117,7 @@ resolveOperationParameterDefaults({
     if (runtime == null) return;
 
     _log.warning(
-      'Routing default to runtime fallback for $operationClassName.'
-      '$specName ($location, ${runtimeFallbackReason(model)}).',
+      'Routing default to runtime fallback for $operationClassName.$specName.',
     );
     byName[normalizedName] = OperationParameterDefault.local(
       memberName: runtime.memberName,
@@ -136,7 +132,6 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
-      location: 'path',
     );
   }
   for (final p in normalizedParams.queryParameters) {
@@ -145,7 +140,6 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
-      location: 'query',
     );
   }
   for (final p in normalizedParams.headers) {
@@ -154,7 +148,6 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
-      location: 'header',
     );
   }
   for (final p in normalizedParams.cookieParameters) {
@@ -163,7 +156,6 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
-      location: 'cookie',
     );
   }
 

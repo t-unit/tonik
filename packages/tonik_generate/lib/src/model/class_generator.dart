@@ -336,7 +336,6 @@ class ClassGenerator {
         model: prop.property.model,
         rawDefault: raw,
         containerName: className,
-        location: 'property',
         reservedNames: reservedNames,
         nameManager: nameManager,
         package: package,
@@ -359,7 +358,6 @@ class ClassGenerator {
         model: prop.property.model,
         rawDefault: raw,
         containerName: className,
-        location: 'property',
         reservedNames: reservedNames,
         nameManager: nameManager,
         package: package,
@@ -368,8 +366,8 @@ class ClassGenerator {
       );
       if (runtime == null) continue;
       _classGeneratorLog.warning(
-        'Routing default to runtime fallback for $className.'
-        '${prop.property.name}: ${runtimeFallbackReason(prop.property.model)}.',
+        'Routing default to runtime fallback for '
+        '$className.${prop.property.name}.',
       );
       result[prop.normalizedName] = RuntimeDefaultBinding(runtime);
     }

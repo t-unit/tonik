@@ -280,13 +280,9 @@ void main() {
       expect(tierParam.defaultTo, isNull);
 
       final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-      expect(warnings, hasLength(1));
-      expect(
-        warnings.single.message,
-        'Dropping default for Mismatched.tier '
-        '(property, expected IntegerModel, value: "no"): '
-        'value does not match the expected type.',
-      );
+      expect(warnings.map((r) => r.message), [
+        'Dropping default for Mismatched.tier.',
+      ]);
     });
 
     test('alias-carried mismatched default still drops + logs once', () {
@@ -321,13 +317,9 @@ void main() {
       generator.generateClass(model);
 
       final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-      expect(warnings, hasLength(1));
-      expect(
-        warnings.single.message,
-        'Dropping default for WithAliasedBadDefault.count '
-        '(property, expected IntegerModel, value: "bad"): '
-        'value does not match the expected type.',
-      );
+      expect(warnings.map((r) => r.message), [
+        'Dropping default for WithAliasedBadDefault.count.',
+      ]);
     });
 
     test(
@@ -378,12 +370,9 @@ void main() {
                   r.level == Level.WARNING && r.loggerName == 'ClassGenerator',
             )
             .toList();
-        expect(warnings, hasLength(1));
-        expect(
-          warnings.single.message,
-          contains('Routing default to runtime fallback for WithChild.child'),
-        );
-        expect(warnings.single.message, contains('object target'));
+        expect(warnings.map((r) => r.message), [
+          'Routing default to runtime fallback for WithChild.child.',
+        ]);
         expect(
           logs.where(
             (r) =>
@@ -469,12 +458,9 @@ factory WithChild.fromJson(Object? json) {
                 r.level == Level.WARNING && r.loggerName == 'ClassGenerator',
           )
           .toList();
-      expect(warnings, hasLength(1));
-      expect(
-        warnings.single.message,
-        contains('Routing default to runtime fallback for WithComposite.union'),
-      );
-      expect(warnings.single.message, contains('composite target'));
+      expect(warnings.map((r) => r.message), [
+        'Routing default to runtime fallback for WithComposite.union.',
+      ]);
       expect(
         logs.where(
           (r) =>
@@ -1249,13 +1235,9 @@ factory DefaultedSimpleRuntime.fromSimple(
         expect(statusParam.defaultTo, isNull);
 
         final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        expect(
-          warnings.single.message,
-          'Dropping default for Subscription.status '
-          '(property, expected EnumModel<String>, value: "archived"): '
-          'value is not one of the enum values.',
-        );
+        expect(warnings.map((r) => r.message), [
+          'Dropping default for Subscription.status.',
+        ]);
       },
     );
 

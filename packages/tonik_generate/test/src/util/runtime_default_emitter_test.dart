@@ -47,7 +47,6 @@ void main() {
         model: DateTimeModel(context: context),
         rawDefault: '2024-01-01T00:00:00Z',
         containerName: 'Holder',
-        location: 'property',
         reservedNames: <String>{'startsAt'},
         nameManager: nameManager,
         package: package,
@@ -81,7 +80,6 @@ static DateTime get startsAtDefault => r'2024-01-01T00:00:00Z'
         model: BinaryModel(context: context),
         rawDefault: 'base64-blob',
         containerName: 'Holder',
-        location: 'property',
         reservedNames: <String>{'payload'},
         nameManager: nameManager,
         package: package,
@@ -142,7 +140,6 @@ static TonikFile get payloadDefault => TonikFileBytes(
           'currency': 'USD',
         },
         containerName: 'Holder',
-        location: 'property',
         reservedNames: <String>{'pricing'},
         nameManager: nameManager,
         package: package,
@@ -183,8 +180,7 @@ static Pricing get pricingDefault => Pricing.fromJson(
           model: tree,
           rawDefault: const <String, Object?>{},
           containerName: 'Holder',
-          location: 'property',
-          reservedNames: <String>{'tree'},
+            reservedNames: <String>{'tree'},
           nameManager: nameManager,
           package: package,
         );
@@ -245,7 +241,6 @@ static Tree get treeDefault {
         model: recursive,
         rawDefault: const <String, Object?>{},
         containerName: 'Holder',
-        location: 'property',
         reservedNames: <String>{'next'},
         nameManager: nameManager,
         package: package,
@@ -289,8 +284,7 @@ static Node get nextDefault =>
             '2024-06-15T12:00:00Z',
           ],
           containerName: 'Holder',
-          location: 'property',
-          reservedNames: <String>{'windows'},
+            reservedNames: <String>{'windows'},
           nameManager: nameManager,
           package: package,
         );
@@ -330,8 +324,7 @@ static List<DateTime> get windowsDefault =>
           model: dateList,
           rawDefault: const <Object?>['2024-01-01T00:00:00Z'],
           containerName: 'Holder',
-          location: 'property',
-          reservedNames: <String>{'windows'},
+            reservedNames: <String>{'windows'},
           nameManager: nameManager,
           package: package,
           useImmutableCollections: true,
@@ -373,8 +366,7 @@ static IList<DateTime> get windowsDefault => IList(
           model: DateTimeModel(context: context),
           rawDefault: '2024-01-01T00:00:00Z',
           containerName: 'Holder',
-          location: 'property',
-          reservedNames: <String>{'startsAt'},
+            reservedNames: <String>{'startsAt'},
           nameManager: nameManager,
           package: package,
           isNullableOverride: true,
@@ -417,8 +409,7 @@ static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
           model: pricing,
           rawDefault: const <String, Object?>{},
           containerName: 'Holder',
-          location: 'property',
-          reservedNames: <String>{'pricing'},
+            reservedNames: <String>{'pricing'},
           nameManager: nameManager,
           package: package,
           isNullableOverride: true,
@@ -467,8 +458,7 @@ static Pricing? get pricingDefault =>
           model: status,
           rawDefault: 'active',
           containerName: 'Holder',
-          location: 'property',
-          reservedNames: <String>{'status'},
+            reservedNames: <String>{'status'},
           nameManager: nameManager,
           package: package,
           isNullableOverride: true,
@@ -502,7 +492,6 @@ static Status? get statusDefault => Status.fromJson(r'active');
         model: DateTimeModel(context: context),
         rawDefault: null,
         containerName: 'Holder',
-        location: 'property',
         reservedNames: reserved,
         nameManager: nameManager,
         package: package,
@@ -521,7 +510,6 @@ static Status? get statusDefault => Status.fromJson(r'active');
         model: DateTimeModel(context: context),
         rawDefault: '2024-01-01T00:00:00Z',
         containerName: 'Holder',
-        location: 'property',
         reservedNames: reserved,
         nameManager: nameManager,
         package: package,
@@ -547,8 +535,7 @@ static Status? get statusDefault => Status.fromJson(r'active');
           model: DateTimeModel(context: context),
           rawDefault: 42,
           containerName: 'Holder',
-          location: 'property',
-          reservedNames: <String>{'startsAt'},
+            reservedNames: <String>{'startsAt'},
           nameManager: nameManager,
           package: package,
         );
@@ -577,9 +564,7 @@ static DateTime get startsAtDefault =>
 
     test(
       'non-JSON-encodable raw default (e.g. a YAML-parsed DateTime) returns '
-      'null AND logs a warning identifying the property, location, expected '
-      'type, rendered value, and rejected runtime type — so the silently '
-      'dropped default is observable',
+      'null AND warns once — so the silently dropped default is observable',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -594,7 +579,6 @@ static DateTime get startsAtDefault =>
           model: DateTimeModel(context: context),
           rawDefault: yamlDateTime,
           containerName: 'Holder',
-          location: 'query',
           reservedNames: <String>{'startsAt'},
           nameManager: nameManager,
           package: package,
@@ -602,15 +586,9 @@ static DateTime get startsAtDefault =>
 
         expect(result, isNull);
         final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        final message = warnings.single.message;
-        expect(message, contains('Holder.startsAt'));
-        expect(message, contains('(query, expected DateTimeModel'));
-        expect(message, contains('value: $yamlDateTime'));
-        expect(
-          message,
-          contains('value of type DateTime is not JSON-encodable'),
-        );
+        expect(warnings.map((r) => r.message), [
+          'Dropping default for Holder.startsAt.',
+        ]);
       },
     );
   });

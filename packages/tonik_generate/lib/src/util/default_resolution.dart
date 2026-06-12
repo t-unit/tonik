@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
@@ -26,7 +24,6 @@ class ResolvedDefault {
   final TypeReference type;
 }
 
-/// Runtime-fallback sibling of [ResolvedDefault]. See [resolveRuntimeDefault].
 @immutable
 class RuntimeResolvedDefault {
   const RuntimeResolvedDefault({
@@ -76,7 +73,6 @@ ResolvedDefault? resolveSingleDefault({
   required Model model,
   required Object? rawDefault,
   required String containerName,
-  required String location,
   required Set<String> reservedNames,
   required NameManager nameManager,
   required String package,
@@ -95,38 +91,8 @@ ResolvedDefault? resolveSingleDefault({
   );
 
   if (materialised == null) {
-    // Real drops warn (a runtime decoder would throw); intentional bubbles
-    // are silent so the caller can route them to the runtime fallback.
-    if (onDroppedDefault != null) {
-      final resolved = model.resolved;
-      if (resolved is PrimitiveModel &&
-          _isMaterialiserSupportedPrimitive(model)) {
-        onDroppedDefault(
-          'Dropping default for $containerName.$specName '
-          '($location, expected ${resolved.runtimeType}, '
-          'value: ${_describeDefault(rawDefault)}): '
-          'value does not match the expected type.',
-        );
-      } else if (resolved is EnumModel &&
-          !_enumValueIsMember(resolved, rawDefault)) {
-        onDroppedDefault(
-          'Dropping default for $containerName.$specName '
-          '($location, expected ${resolved.runtimeType}, '
-          'value: ${_describeDefault(rawDefault)}): '
-          'value is not one of the enum values.',
-        );
-      } else if ((resolved is ListModel ||
-              resolved is MapModel ||
-              resolved is AnyModel) &&
-          _isCollectionShapeMismatch(resolved, rawDefault)) {
-        onDroppedDefault(
-          'Dropping default for $containerName.$specName '
-          '($location, expected ${resolved.runtimeType}, '
-          'value: ${_describeDefault(rawDefault)}): '
-          'value does not match the expected list / map / free-form '
-          'shape.',
-        );
-      }
+    if (onDroppedDefault != null && _isRealDrop(model, rawDefault)) {
+      onDroppedDefault('Dropping default for $containerName.$specName.');
     }
     return null;
   }
@@ -169,7 +135,6 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   required Model model,
   required Object? rawDefault,
   required String containerName,
-  required String location,
   required Set<String> reservedNames,
   required NameManager nameManager,
   required String package,
@@ -182,13 +147,7 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   // YAML timestamp on a `format: date-time` field) would silently vanish:
   // the const path bubbled without warning and this guard drops it too.
   if (!_isJsonEncodable(rawDefault)) {
-    _log.warning(
-      'Dropping default for $containerName.$specName '
-      '($location, expected ${model.resolved.runtimeType}, '
-      'value: ${_describeDefault(rawDefault)}): '
-      'value of type ${rawDefault.runtimeType} is not JSON-encodable '
-      'and cannot be embedded as a runtime literal.',
-    );
+    _log.warning('Dropping default for $containerName.$specName.');
     return null;
   }
 
@@ -244,27 +203,6 @@ RuntimeResolvedDefault? resolveRuntimeDefault({
   return RuntimeResolvedDefault(memberName: memberName, getter: getter);
 }
 
-/// Short label embedded in routing-warning log lines.
-String runtimeFallbackReason(Model model) {
-  final resolved = model.resolved;
-  return switch (resolved) {
-    ClassModel() => 'object target',
-    AllOfModel() || OneOfModel() || AnyOfModel() => 'composite target',
-    EnumModel() => 'enum target',
-    ListModel() => 'list with non-const content',
-    MapModel() => 'map with non-const content',
-    AliasModel() => 'alias target',
-    DateTimeModel() ||
-    DateModel() ||
-    UriModel() ||
-    DecimalModel() ||
-    BinaryModel() ||
-    Base64Model() ||
-    AnyModel() => 'non-const leaf',
-    _ => 'unrecognized model (${resolved.runtimeType})',
-  };
-}
-
 // Callers must gate on `_isJsonEncodable` first; otherwise this throws.
 Expression _jsonAsConstExpression(Object? json) {
   switch (json) {
@@ -302,11 +240,6 @@ Expression _jsonAsConstExpression(Object? json) {
   throw StateError('Non-JSON value in runtime default literal: $json');
 }
 
-// YAML can hand us non-JSON scalars (e.g. an inferred DateTime); fall back
-// to toString so logging never throws.
-String _describeDefault(Object? raw) =>
-    _isJsonEncodable(raw) ? jsonEncode(raw) : raw.toString();
-
 bool _isJsonEncodable(Object? value) => switch (value) {
   null || bool() || num() || String() => true,
   final List<Object?> list => list.every(_isJsonEncodable),
@@ -314,6 +247,27 @@ bool _isJsonEncodable(Object? value) => switch (value) {
     map.keys.every((k) => k is String) && map.values.every(_isJsonEncodable),
   _ => false,
 };
+
+// Distinguishes real drops (warn) from intentional bubbles to the runtime
+// fallback (silent). A drop is real when the spec-author's value is wrong
+// for an otherwise-supported target.
+bool _isRealDrop(Model model, Object? rawDefault) {
+  final resolved = model.resolved;
+  if (resolved is PrimitiveModel &&
+      _isMaterialiserSupportedPrimitive(model)) {
+    return true;
+  }
+  if (resolved is EnumModel && !_enumValueIsMember(resolved, rawDefault)) {
+    return true;
+  }
+  if ((resolved is ListModel ||
+          resolved is MapModel ||
+          resolved is AnyModel) &&
+      _isCollectionShapeMismatch(resolved, rawDefault)) {
+    return true;
+  }
+  return false;
+}
 
 // Duplicated from default_value_materialiser.dart so a primitive added there
 // without a parallel update here surfaces as a wrong-reason warning.
