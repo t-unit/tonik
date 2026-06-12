@@ -10,17 +10,24 @@ final Logger _log = Logger('OperationParameterDefaults');
 
 @immutable
 class OperationParameterDefault {
-  const OperationParameterDefault.local({required this.memberName})
-    : _owner = null;
+  const OperationParameterDefault.local({
+    required this.memberName,
+    this.isRuntime = false,
+  }) : _owner = null;
 
   const OperationParameterDefault.qualified({
     required this.memberName,
     required String className,
     required String url,
+    this.isRuntime = false,
   }) : _owner = (className: className, url: url);
 
   final String memberName;
   final ({String className, String url})? _owner;
+
+  /// `true` when the member is a `static get` — the `call()` parameter
+  /// cannot wire `defaultTo` against a non-const expression.
+  final bool isRuntime;
 
   OperationParameterDefault withOwner({
     required String className,
@@ -35,6 +42,7 @@ class OperationParameterDefault {
       memberName: memberName,
       className: className,
       url: url,
+      isRuntime: isRuntime,
     );
   }
 
@@ -47,12 +55,10 @@ class OperationParameterDefault {
   }
 }
 
-/// Pass [emitWarnings] `false` on secondary call sites (e.g. the
-/// API-client forwarder) — the primary site already logs once per
-/// dropped default.
 ({
   Map<String, OperationParameterDefault> byName,
   List<Field> fields,
+  List<Method> getters,
 })
 resolveOperationParameterDefaults({
   required NormalizedRequestParameters normalizedParams,
@@ -60,38 +66,64 @@ resolveOperationParameterDefaults({
   required NameManager nameManager,
   required String package,
   required Set<String> initialReservedNames,
-  bool emitWarnings = true,
 }) {
   final reserved = {...initialReservedNames};
   final byName = <String, OperationParameterDefault>{};
   final fields = <Field>[];
-  final onDropped = emitWarnings ? _log.warning : null;
+  final getters = <Method>[];
 
   void process({
     required String normalizedName,
     required Model model,
     required Object? rawDefault,
     required String specName,
-    required String location,
   }) {
+    if (rawDefault == null) return;
+
+    var dropped = false;
     final resolved = resolveSingleDefault(
       normalizedName: normalizedName,
       specName: specName,
       model: model,
       rawDefault: rawDefault,
       containerName: operationClassName,
-      location: location,
       reservedNames: reserved,
       nameManager: nameManager,
       package: package,
-      onDroppedDefault: onDropped,
+      onDroppedDefault: (message) {
+        dropped = true;
+        _log.warning(message);
+      },
     );
-    if (resolved == null) return;
+    if (resolved != null) {
+      byName[normalizedName] = OperationParameterDefault.local(
+        memberName: resolved.memberName,
+      );
+      fields.add(defaultField(resolved));
+      return;
+    }
+    if (dropped) return;
 
-    byName[normalizedName] = OperationParameterDefault.local(
-      memberName: resolved.memberName,
+    final runtime = resolveRuntimeDefault(
+      normalizedName: normalizedName,
+      specName: specName,
+      model: model,
+      rawDefault: rawDefault,
+      containerName: operationClassName,
+      reservedNames: reserved,
+      nameManager: nameManager,
+      package: package,
     );
-    fields.add(defaultField(resolved));
+    if (runtime == null) return;
+
+    _log.warning(
+      'Routing default to runtime fallback for $operationClassName.$specName.',
+    );
+    byName[normalizedName] = OperationParameterDefault.local(
+      memberName: runtime.memberName,
+      isRuntime: true,
+    );
+    getters.add(runtime.getter);
   }
 
   for (final p in normalizedParams.pathParameters) {
@@ -100,7 +132,6 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
-      location: 'path',
     );
   }
   for (final p in normalizedParams.queryParameters) {
@@ -109,7 +140,6 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
-      location: 'query',
     );
   }
   for (final p in normalizedParams.headers) {
@@ -118,7 +148,6 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
-      location: 'header',
     );
   }
   for (final p in normalizedParams.cookieParameters) {
@@ -127,11 +156,10 @@ resolveOperationParameterDefaults({
       model: p.parameter.model,
       rawDefault: p.parameter.effectiveDefaultValue,
       specName: p.parameter.rawName,
-      location: 'cookie',
     );
   }
 
-  return (byName: byName, fields: fields);
+  return (byName: byName, fields: fields, getters: getters);
 }
 
 // Normalised parameter names cannot start with `_` (see `normalizeSingle` in

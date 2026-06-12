@@ -2074,5 +2074,93 @@ void main() {
         expect(param.type?.accept(emitter).toString(), 'String');
       },
     );
+
+    test(
+      'runtime-default path parameter (DateTime, isRequired=true) preserves '
+      'required + non-nullable type, wires no defaultTo — static getter is '
+      'not const',
+      () {
+        final since = PathParameterObject(
+          name: 'since',
+          rawName: 'since',
+          description: null,
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: DateTimeModel(context: context),
+          encoding: PathParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: '2024-01-01T00:00:00Z',
+        );
+
+        final operation = operationWith(
+          pathParameters: {since},
+          path: '/things/{since}',
+        );
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'since': const OperationParameterDefault.local(
+              memberName: 'sinceDefault',
+              isRuntime: true,
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.name, 'since');
+        expect(param.named, isTrue);
+        expect(param.required, isTrue);
+        expect(param.defaultTo, isNull);
+        expect(param.type?.accept(emitter).toString(), 'DateTime');
+      },
+    );
+
+    test(
+      'runtime-default query parameter (DateTime) keeps nullable type, '
+      'is not required, and wires no defaultTo — static getter is not const',
+      () {
+        final since = QueryParameterObject(
+          name: 'since',
+          rawName: 'since',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: DateTimeModel(context: context),
+          encoding: QueryParameterEncoding.form,
+          context: context,
+          examples: const [],
+          defaultValue: '2024-01-01T00:00:00Z',
+        );
+
+        final operation = operationWith(queryParameters: {since});
+        final parameters = generateParameters(
+          operation: operation,
+          nameManager: nameManager,
+          package: 'api',
+          defaultsByName: {
+            'since': const OperationParameterDefault.local(
+              memberName: 'sinceDefault',
+              isRuntime: true,
+            ),
+          },
+        );
+
+        final param = parameters.single;
+        expect(param.name, 'since');
+        expect(param.named, isTrue);
+        expect(param.required, isFalse);
+        expect(param.defaultTo, isNull);
+        expect(param.type?.accept(emitter).toString(), 'DateTime?');
+      },
+    );
+
   });
 }

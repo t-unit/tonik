@@ -45,6 +45,12 @@ paths:
           schema:
             type: integer
             default: 1
+        - name: since
+          in: query
+          schema:
+            type: string
+            format: date-time
+            default: "2024-01-01T00:00:00Z"
         - name: X-Retries
           in: header
           schema:
@@ -167,6 +173,65 @@ components:
           type: string
           enum: [low, medium, high]
           default: nonexistent
+        startsAt:
+          type: string
+          format: date-time
+          default: "2024-01-01T00:00:00Z"
+        homepage:
+          type: string
+          format: uri
+          default: "https://example.com"
+        pricing:
+          $ref: '#/components/schemas/Pricing'
+          default:
+            amount: "9.99"
+            currency: "USD"
+    Pricing:
+      type: object
+      required:
+        - amount
+        - currency
+      properties:
+        amount:
+          type: string
+          format: decimal
+        currency:
+          type: string
+    Cat:
+      type: object
+      required:
+        - kind
+      properties:
+        kind:
+          type: string
+        livesLeft:
+          type: integer
+    Dog:
+      type: object
+      required:
+        - kind
+      properties:
+        kind:
+          type: string
+        goodBoy:
+          type: boolean
+    Pet:
+      oneOf:
+        - $ref: '#/components/schemas/Cat'
+        - $ref: '#/components/schemas/Dog'
+      discriminator:
+        propertyName: kind
+        mapping:
+          cat: '#/components/schemas/Cat'
+          dog: '#/components/schemas/Dog'
+    Order:
+      type: object
+      properties:
+        pet:
+          $ref: '#/components/schemas/Pet'
+          default:
+            kind: cat
+            livesLeft: 9
     Filters:
       type: object
       properties:
@@ -188,3 +253,10 @@ components:
           default:
             any: "value"
             nested: [1, 2, 3]
+    BadlyDefaulted:
+      type: object
+      properties:
+        when:
+          type: string
+          format: date-time
+          default: "not a date"

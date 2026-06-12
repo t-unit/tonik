@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
 import 'package:test/test.dart';
@@ -208,164 +206,50 @@ void main() {
       expect(renderAssignment(result.fields[3].assignment), 'false');
     });
 
-    test(
-      'drops type-mismatched default with a single warning, no field, '
-      'no map entry',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
+    test('drops type-mismatched default with a single warning, no field', () {
+      final logs = <LogRecord>[];
+      final sub = Logger(
+        'OperationParameterDefaults',
+      ).onRecord.listen(logs.add);
+      addTearDown(sub.cancel);
 
-        final bad = QueryParameterObject(
-          name: 'page',
-          rawName: 'page',
-          description: null,
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: IntegerModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 'not-a-number',
-        );
+      final bad = QueryParameterObject(
+        name: 'page',
+        rawName: 'page',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: IntegerModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: 'not-a-number',
+      );
 
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {bad},
-          headers: const {},
-        );
+      final normalized = normalizeRequestParameters(
+        pathParameters: const {},
+        queryParameters: {bad},
+        headers: const {},
+      );
 
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'BadOp',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
+      final result = resolveOperationParameterDefaults(
+        normalizedParams: normalized,
+        operationClassName: 'BadOp',
+        nameManager: nameManager,
+        package: 'api',
+        initialReservedNames: const {'_dio'},
+      );
 
-        expect(result.byName, isEmpty);
-        expect(result.fields, isEmpty);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        final message = warnings.single.message;
-        expect(message, contains('BadOp.page'));
-        expect(message, contains('(query,'));
-        expect(message, contains('expected IntegerModel'));
-        expect(message, contains('"not-a-number"'));
-        expect(message, contains('value does not match the expected type'));
-      },
-    );
-
-    test(
-      'type mismatch on a boolean parameter emits a warning with the '
-      'location, value, and reason',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final bad = QueryParameterObject(
-          name: 'enabled',
-          rawName: 'enabled',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: BooleanModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 'true',
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {bad},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'BoolOp',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName, isEmpty);
-        expect(result.fields, isEmpty);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        final message = warnings.single.message;
-        expect(message, contains('BoolOp.enabled'));
-        expect(message, contains('(query,'));
-        expect(message, contains('expected BooleanModel'));
-        expect(message, contains('"true"'));
-        expect(message, contains('value does not match the expected type'));
-      },
-    );
-
-    test(
-      'type mismatch on a string parameter (int value) emits a warning with '
-      'the JSON-encoded numeric value',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final bad = QueryParameterObject(
-          name: 'name',
-          rawName: 'name',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: StringModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 42,
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {bad},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'StrOp',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName, isEmpty);
-        expect(result.fields, isEmpty);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        final message = warnings.single.message;
-        expect(message, contains('StrOp.name'));
-        expect(message, contains('(query,'));
-        expect(message, contains('expected StringModel'));
-        expect(message, contains('value: 42'));
-        expect(message, contains('value does not match the expected type'));
-      },
-    );
+      expect(result.byName, isEmpty);
+      expect(result.fields, isEmpty);
+      final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+      expect(warnings.map((r) => r.message), [
+        'Dropping default for BadOp.page.',
+      ]);
+    });
 
     test(
       'alias-carried default surfaces via effectiveDefaultValue',
@@ -514,8 +398,8 @@ void main() {
     );
 
     test(
-      'date-time target emits no field but warns that the value is not '
-      'const-materialisable',
+      'date-time target falls through to a runtime getter — no const field, '
+      'isRuntime flag set, single routing warning emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -553,25 +437,20 @@ void main() {
           initialReservedNames: const {'_dio'},
         );
 
-        expect(result.byName.containsKey('since'), isFalse);
         expect(result.fields, isEmpty);
+        expect(result.getters, hasLength(1));
+        expect(result.byName['since']?.memberName, 'sinceDefault');
+        expect(result.byName['since']?.isRuntime, isTrue);
         final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        final message = warnings.single.message;
-        expect(message, contains('Op.since'));
-        expect(message, contains('(query,'));
-        expect(message, contains('expected DateTimeModel'));
-        expect(message, contains('"2024-01-01T00:00:00Z"'));
-        expect(
-          message,
-          contains('cannot be expressed as a const Dart expression'),
-        );
+        expect(warnings.map((r) => r.message), [
+          'Routing default to runtime fallback for Op.since.',
+        ]);
       },
     );
 
     test(
-      'ClassModel target with default emits no field and the generic '
-      'cannot-express-as-const warning',
+      'ClassModel target with default falls through to a runtime getter — '
+      'no const field, isRuntime flag set, routing warning emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -615,23 +494,90 @@ void main() {
           initialReservedNames: const {'_dio'},
         );
 
-        expect(result.byName, isEmpty);
         expect(result.fields, isEmpty);
-
+        expect(result.getters, hasLength(1));
+        expect(result.byName['region']?.memberName, 'regionDefault');
+        expect(result.byName['region']?.isRuntime, isTrue);
         final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
+        expect(warnings.map((r) => r.message), [
+          'Routing default to runtime fallback for Op.region.',
+        ]);
+      },
+    );
+
+    test(
+      'header parameter with ClassModel default falls through to a runtime '
+      'getter — no const field, no DefaultResolution drop callback fires',
+      () {
+        final logs = <LogRecord>[];
+        final sub = Logger(
+          'OperationParameterDefaults',
+        ).onRecord.listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final hPolicy = RequestHeaderObject(
+          name: 'policy',
+          rawName: 'X-Policy',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          model: ClassModel(
+            isDeprecated: false,
+            name: 'Policy',
+            properties: const [],
+            context: context,
+            examples: const [],
+          ),
+          encoding: HeaderParameterEncoding.simple,
+          context: context,
+          examples: const [],
+          defaultValue: const <String, Object?>{},
+        );
+
+        final normalized = normalizeRequestParameters(
+          pathParameters: const {},
+          queryParameters: const {},
+          headers: {hPolicy},
+        );
+
+        final result = resolveOperationParameterDefaults(
+          normalizedParams: normalized,
+          operationClassName: 'Op',
+          nameManager: nameManager,
+          package: 'api',
+          initialReservedNames: const {'_dio'},
+        );
+
+        expect(result.fields, isEmpty);
+        expect(result.getters, hasLength(1));
+        expect(result.byName['policy']?.memberName, 'policyDefault');
+        expect(result.byName['policy']?.isRuntime, isTrue);
+        final warnings = logs
+            .where(
+              (r) =>
+                  r.level == Level.WARNING &&
+                  r.loggerName == 'OperationParameterDefaults',
+            )
+            .toList();
+        expect(warnings.map((r) => r.message), [
+          'Routing default to runtime fallback for Op.X-Policy.',
+        ]);
         expect(
-          warnings.single.message,
-          'Dropping default for Op.region '
-          '(query, expected ClassModel, value: {}): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
+          logs.where(
+            (r) =>
+                r.level == Level.WARNING &&
+                r.loggerName == 'DefaultResolution',
+          ),
+          isEmpty,
         );
       },
     );
 
     test(
-      'AllOf composite target with default emits no field and no warning',
+      'AllOf composite target with default falls through to a runtime getter '
+      'without emitting a const field, routing warning emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -675,9 +621,14 @@ void main() {
           initialReservedNames: const {'_dio'},
         );
 
-        expect(result.byName, isEmpty);
         expect(result.fields, isEmpty);
-        expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+        expect(result.getters, hasLength(1));
+        expect(result.byName['region']?.memberName, 'regionDefault');
+        expect(result.byName['region']?.isRuntime, isTrue);
+        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
+        expect(warnings.map((r) => r.message), [
+          'Routing default to runtime fallback for Op.region.',
+        ]);
       },
     );
 
@@ -1071,7 +1022,7 @@ void main() {
 
     test(
       'enum query parameter with default value outside the enum values is '
-      'dropped with a query-location warning',
+      'dropped with a warning',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -1122,12 +1073,9 @@ void main() {
         expect(result.byName.containsKey('order'), isFalse);
         expect(result.fields, isEmpty);
         final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        final message = warnings.single.message;
-        expect(message, contains('Op.order'));
-        expect(message, contains('(query,'));
-        expect(message, contains('"archived"'));
-        expect(message, contains('value is not one of the enum values'));
+        expect(warnings.map((r) => r.message), [
+          'Dropping default for Op.order.',
+        ]);
       },
     );
 
@@ -1196,117 +1144,6 @@ void main() {
         expect(field.type?.symbol, 'StatusAlias');
         expect(renderAssignment(field.assignment), 'Status.active');
         expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
-      },
-    );
-
-    test(
-      'warning formatter falls back to toString when the raw default is '
-      'not JSON-encodable (e.g. a YAML-parsed DateTime)',
-      () {
-        final logs = <LogRecord>[];
-        final sub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(logs.add);
-        addTearDown(sub.cancel);
-
-        final yamlDateTime = DateTime.utc(2024, 6, 15);
-        final bad = QueryParameterObject(
-          name: 'since',
-          rawName: 'since',
-          description: null,
-          isRequired: false,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: DateTimeModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: yamlDateTime,
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {bad},
-          headers: const {},
-        );
-
-        final result = resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'Op',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-
-        expect(result.byName, isEmpty);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        expect(warnings.single.message, contains(yamlDateTime.toString()));
-      },
-    );
-
-    test(
-      'emitWarnings: false suppresses the dropped-default warning while '
-      'the default emitWarnings: true logs exactly once',
-      () {
-        final bad = QueryParameterObject(
-          name: 'page',
-          rawName: 'page',
-          description: null,
-          isRequired: true,
-          isDeprecated: false,
-          allowEmptyValue: false,
-          allowReserved: false,
-          explode: false,
-          model: IntegerModel(context: context),
-          encoding: QueryParameterEncoding.form,
-          context: context,
-          examples: const [],
-          defaultValue: 'not-a-number',
-        );
-
-        final normalized = normalizeRequestParameters(
-          pathParameters: const {},
-          queryParameters: {bad},
-          headers: const {},
-        );
-
-        final suppressedLogs = <LogRecord>[];
-        final suppressedSub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(suppressedLogs.add);
-        resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'BadOp',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-          emitWarnings: false,
-        );
-        unawaited(suppressedSub.cancel());
-        expect(
-          suppressedLogs.where((r) => r.level == Level.WARNING),
-          isEmpty,
-        );
-
-        final emittedLogs = <LogRecord>[];
-        final emittedSub = Logger(
-          'OperationParameterDefaults',
-        ).onRecord.listen(emittedLogs.add);
-        addTearDown(emittedSub.cancel);
-        resolveOperationParameterDefaults(
-          normalizedParams: normalized,
-          operationClassName: 'BadOp',
-          nameManager: nameManager,
-          package: 'api',
-          initialReservedNames: const {'_dio'},
-        );
-        expect(
-          emittedLogs.where((r) => r.level == Level.WARNING),
-          hasLength(1),
-        );
       },
     );
   });
@@ -1401,5 +1238,28 @@ void main() {
         throwsA(isA<AssertionError>()),
       );
     });
+
+    test(
+      'preserves isRuntime: true when qualifying a runtime local default '
+      'and keeps the defaultToCode shape pointing at the static getter',
+      () {
+        const local = OperationParameterDefault.local(
+          memberName: 'sinceDefault',
+          isRuntime: true,
+        );
+
+        final qualified = local.withOwner(
+          className: 'ListThings',
+          url: 'package:api/src/operation/list_things.dart',
+        );
+
+        expect(qualified.isRuntime, isTrue);
+        expect(qualified.memberName, 'sinceDefault');
+        expect(
+          qualified.defaultToCode().accept(emitter).toString(),
+          'ListThings.sinceDefault',
+        );
+      },
+    );
   });
 }

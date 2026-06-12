@@ -33,7 +33,6 @@ void main() {
           model: StringModel(context: context),
           rawDefault: null,
           containerName: 'Op',
-          location: 'query',
           reservedNames: reserved,
           nameManager: nameManager,
           package: 'api',
@@ -44,40 +43,29 @@ void main() {
       },
     );
 
-    test(
-      'primitive type mismatch returns null and emits a unified warning '
-      'with container, spec name, location, expected type, value, and reason',
-      () {
-        final messages = <String>[];
-        final reserved = <String>{'name'};
-        final result = resolveSingleDefault(
-          normalizedName: 'name',
-          specName: 'name',
-          model: IntegerModel(context: context),
-          rawDefault: 'not-a-number',
-          containerName: 'BadOp',
-          location: 'query',
-          reservedNames: reserved,
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
+    test('primitive type mismatch warns with container.specName only', () {
+      final messages = <String>[];
+      final reserved = <String>{'name'};
+      final result = resolveSingleDefault(
+        normalizedName: 'name',
+        specName: 'name',
+        model: IntegerModel(context: context),
+        rawDefault: 'not-a-number',
+        containerName: 'BadOp',
+        reservedNames: reserved,
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: messages.add,
+      );
 
-        expect(result, isNull);
-        expect(reserved, {'name'});
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for BadOp.name (query, expected IntegerModel, '
-          'value: "not-a-number"): '
-          'value does not match the expected type.',
-        );
-      },
-    );
+      expect(result, isNull);
+      expect(reserved, {'name'});
+      expect(messages, ['Dropping default for BadOp.name.']);
+    });
 
     test(
-      'non-const-materialisable primitive (DateTime) returns null and emits '
-      'the const-expression reason',
+      'non-const-materialisable primitive (DateTime) returns null silently — '
+      'the caller routes it to the runtime fallback',
       () {
         final messages = <String>[];
         final reserved = <String>{'since'};
@@ -87,7 +75,6 @@ void main() {
           model: DateTimeModel(context: context),
           rawDefault: '2024-01-01T00:00:00Z',
           containerName: 'Op',
-          location: 'query',
           reservedNames: reserved,
           nameManager: nameManager,
           package: 'api',
@@ -95,20 +82,13 @@ void main() {
         );
 
         expect(result, isNull);
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.since (query, expected DateTimeModel, '
-          'value: "2024-01-01T00:00:00Z"): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
     test(
-      'ClassModel target with an empty default drops with the generic '
-      'cannot-express-as-const reason',
+      'ClassModel target returns null silently — the caller routes it to the '
+      'runtime fallback',
       () {
         final messages = <String>[];
         final reserved = <String>{'region'};
@@ -124,7 +104,6 @@ void main() {
           ),
           rawDefault: const <String, Object?>{},
           containerName: 'Op',
-          location: 'query',
           reservedNames: reserved,
           nameManager: nameManager,
           package: 'api',
@@ -133,14 +112,7 @@ void main() {
 
         expect(result, isNull);
         expect(reserved, {'region'});
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.region (query, expected ClassModel, '
-          'value: {}): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
@@ -155,7 +127,6 @@ void main() {
           model: StringModel(context: context),
           rawDefault: 'us',
           containerName: 'Op',
-          location: 'query',
           reservedNames: reserved,
           nameManager: nameManager,
           package: 'api',
@@ -176,141 +147,65 @@ void main() {
       },
     );
 
-    test(
-      'name collision against existing reserved name appends suffix',
-      () {
-        final reserved = <String>{'region', 'regionDefault'};
-        final result = resolveSingleDefault(
-          normalizedName: 'region',
-          specName: 'region',
-          model: StringModel(context: context),
-          rawDefault: 'us',
-          containerName: 'Op',
-          location: 'query',
-          reservedNames: reserved,
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: (_) {},
-        );
+    test('name collision against existing reserved name appends suffix', () {
+      final reserved = <String>{'region', 'regionDefault'};
+      final result = resolveSingleDefault(
+        normalizedName: 'region',
+        specName: 'region',
+        model: StringModel(context: context),
+        rawDefault: 'us',
+        containerName: 'Op',
+        reservedNames: reserved,
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: (_) {},
+      );
 
-        expect(result, isNotNull);
-        expect(result!.memberName, 'regionDefault2');
-        expect(reserved.contains('regionDefault2'), isTrue);
-      },
-    );
+      expect(result, isNotNull);
+      expect(result!.memberName, 'regionDefault2');
+      expect(reserved.contains('regionDefault2'), isTrue);
+    });
 
-    test(
-      'null onDroppedDefault suppresses the warning while still returning null',
-      () {
-        final reserved = <String>{'page'};
-        final result = resolveSingleDefault(
-          normalizedName: 'page',
-          specName: 'page',
-          model: IntegerModel(context: context),
-          rawDefault: 'not-a-number',
-          containerName: 'BadOp',
-          location: 'query',
-          reservedNames: reserved,
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: null,
-        );
-        expect(result, isNull);
-        expect(reserved, {'page'});
-      },
-    );
+    test('null onDroppedDefault stays silent on a drop', () {
+      final reserved = <String>{'page'};
+      final result = resolveSingleDefault(
+        normalizedName: 'page',
+        specName: 'page',
+        model: IntegerModel(context: context),
+        rawDefault: 'not-a-number',
+        containerName: 'BadOp',
+        reservedNames: reserved,
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: null,
+      );
+      expect(result, isNull);
+      expect(reserved, {'page'});
+    });
 
-    test(
-      'isNullableOverride forces a nullable type reference on success',
-      () {
-        final reserved = <String>{'nickname'};
-        final result = resolveSingleDefault(
-          normalizedName: 'nickname',
-          specName: 'nickname',
-          model: StringModel(context: context),
-          rawDefault: 'fallback',
-          containerName: 'Holder',
-          location: 'property',
-          reservedNames: reserved,
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: (_) {},
-          isNullableOverride: true,
-        );
+    test('isNullableOverride forces a nullable type reference on success', () {
+      final reserved = <String>{'nickname'};
+      final result = resolveSingleDefault(
+        normalizedName: 'nickname',
+        specName: 'nickname',
+        model: StringModel(context: context),
+        rawDefault: 'fallback',
+        containerName: 'Holder',
+        reservedNames: reserved,
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: (_) {},
+        isNullableOverride: true,
+      );
 
-        expect(result, isNotNull);
-        expect(result!.type.isNullable, isTrue);
-        expect(result.type.accept(emitter).toString(), 'String?');
-      },
-    );
+      expect(result, isNotNull);
+      expect(result!.type.isNullable, isTrue);
+      expect(result.type.accept(emitter).toString(), 'String?');
+    });
 
     test(
-      'warning describes a non-JSON-encodable raw default via toString',
-      () {
-        final messages = <String>[];
-        final yamlDateTime = DateTime.utc(2024, 6, 15);
-        resolveSingleDefault(
-          normalizedName: 'since',
-          specName: 'since',
-          model: DateTimeModel(context: context),
-          rawDefault: yamlDateTime,
-          containerName: 'Op',
-          location: 'query',
-          reservedNames: <String>{'since'},
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
-        expect(messages, hasLength(1));
-        expect(messages.single, contains(yamlDateTime.toString()));
-      },
-    );
-
-    test(
-      'warning JSON-encodes a Map<String,Object?> raw default with valid keys',
-      () {
-        final messages = <String>[];
-        resolveSingleDefault(
-          normalizedName: 'value',
-          specName: 'value',
-          model: DateTimeModel(context: context),
-          rawDefault: const <String, Object?>{'a': 1, 'b': null},
-          containerName: 'Op',
-          location: 'query',
-          reservedNames: <String>{'value'},
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
-        expect(messages, hasLength(1));
-        expect(messages.single, contains('{"a":1,"b":null}'));
-      },
-    );
-
-    test(
-      'property location label is preserved verbatim in the warning',
-      () {
-        final messages = <String>[];
-        resolveSingleDefault(
-          normalizedName: 'tier',
-          specName: 'tier',
-          model: IntegerModel(context: context),
-          rawDefault: 'no',
-          containerName: 'Mismatched',
-          location: 'property',
-          reservedNames: <String>{'tier'},
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
-        expect(messages, hasLength(1));
-        expect(messages.single, contains('Mismatched.tier (property,'));
-      },
-    );
-
-    test(
-      'nullable enum with a value present in the enum drops with the '
-      'const-expression reason',
+      'nullable enum with a value present in the enum returns null silently — '
+      'the caller routes it to the runtime fallback',
       () {
         final messages = <String>[];
         final reserved = <String>{'status'};
@@ -330,7 +225,6 @@ void main() {
           ),
           rawDefault: 'active',
           containerName: 'Op',
-          location: 'query',
           reservedNames: reserved,
           nameManager: nameManager,
           package: 'api',
@@ -339,92 +233,64 @@ void main() {
 
         expect(result, isNull);
         expect(reserved, {'status'});
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.status (query, expected EnumModel<String>, '
-          'value: "active"): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
-    test(
-      'nullable enum with a value NOT in the enum drops with the '
-      'value-not-in-enum reason',
-      () {
-        final messages = <String>[];
-        resolveSingleDefault(
-          normalizedName: 'status',
-          specName: 'status',
-          model: EnumModel<String>(
-            name: 'Status',
-            values: {
-              const EnumEntry<String>(value: 'active'),
-              const EnumEntry<String>(value: 'inactive'),
-            },
-            isNullable: true,
-            context: context,
-            isDeprecated: false,
-            examples: const [],
-          ),
-          rawDefault: 'archived',
-          containerName: 'Op',
-          location: 'query',
-          reservedNames: <String>{'status'},
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
+    test('enum default outside the enum values warns once', () {
+      final messages = <String>[];
+      resolveSingleDefault(
+        normalizedName: 'status',
+        specName: 'status',
+        model: EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry<String>(value: 'active'),
+            const EnumEntry<String>(value: 'inactive'),
+          },
+          isNullable: true,
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        ),
+        rawDefault: 'archived',
+        containerName: 'Op',
+        reservedNames: <String>{'status'},
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: messages.add,
+      );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.status (query, expected EnumModel<String>, '
-          'value: "archived"): value is not one of the enum values.',
-        );
-      },
-    );
+      expect(messages, ['Dropping default for Op.status.']);
+    });
 
-    test(
-      'ListModel<StringModel> with non-List JSON drops with the '
-      'shape-mismatch reason',
-      () {
-        final messages = <String>[];
-        final reserved = <String>{'tags'};
-        final result = resolveSingleDefault(
-          normalizedName: 'tags',
-          specName: 'tags',
-          model: ListModel(
-            content: StringModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          rawDefault: 'not-a-list',
-          containerName: 'Op',
-          location: 'property',
-          reservedNames: reserved,
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
+    test('ListModel<StringModel> with non-List JSON warns once', () {
+      final messages = <String>[];
+      final reserved = <String>{'tags'};
+      final result = resolveSingleDefault(
+        normalizedName: 'tags',
+        specName: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        rawDefault: 'not-a-list',
+        containerName: 'Op',
+        reservedNames: reserved,
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: messages.add,
+      );
 
-        expect(result, isNull);
-        expect(reserved, {'tags'});
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.tags (property, expected ListModel, '
-          'value: "not-a-list"): '
-          'value does not match the expected list / map / free-form shape.',
-        );
-      },
-    );
+      expect(result, isNull);
+      expect(reserved, {'tags'});
+      expect(messages, ['Dropping default for Op.tags.']);
+    });
 
     test(
-      'ListModel<DateTimeModel> with valid-shape list drops with the '
-      'nested-value reason (inner leaf bubbles up)',
+      'ListModel<DateTimeModel> with valid-shape list returns null silently — '
+      'the inner leaf bubbles up for runtime-fallback handling',
       () {
         final messages = <String>[];
         resolveSingleDefault(
@@ -437,58 +303,40 @@ void main() {
           ),
           rawDefault: const <Object?>['2024-01-01'],
           containerName: 'Op',
-          location: 'property',
           reservedNames: <String>{'since'},
           nameManager: nameManager,
           package: 'api',
           onDroppedDefault: messages.add,
         );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.since (property, expected ListModel, '
-          'value: ["2024-01-01"]): '
-          'a nested value cannot be expressed as a const Dart expression.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
-    test(
-      'MapModel<IntegerModel> with non-Map JSON drops with the '
-      'shape-mismatch reason',
-      () {
-        final messages = <String>[];
-        resolveSingleDefault(
-          normalizedName: 'counts',
-          specName: 'counts',
-          model: MapModel(
-            valueModel: IntegerModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          rawDefault: 'not-a-map',
-          containerName: 'Op',
-          location: 'property',
-          reservedNames: <String>{'counts'},
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
+    test('MapModel<IntegerModel> with non-Map JSON warns once', () {
+      final messages = <String>[];
+      resolveSingleDefault(
+        normalizedName: 'counts',
+        specName: 'counts',
+        model: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        rawDefault: 'not-a-map',
+        containerName: 'Op',
+        reservedNames: <String>{'counts'},
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: messages.add,
+      );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.counts (property, expected MapModel, '
-          'value: "not-a-map"): '
-          'value does not match the expected list / map / free-form shape.',
-        );
-      },
-    );
+      expect(messages, ['Dropping default for Op.counts.']);
+    });
 
     test(
-      'MapModel<ClassModel> with valid-shape Map drops with the '
-      'nested-value reason (inner leaf bubbles up)',
+      'MapModel<ClassModel> with valid-shape Map returns null silently — '
+      'the inner leaf bubbles up for runtime-fallback handling',
       () {
         final messages = <String>[];
         resolveSingleDefault(
@@ -507,55 +355,38 @@ void main() {
           ),
           rawDefault: const <String, Object?>{'a': <String, Object?>{}},
           containerName: 'Op',
-          location: 'property',
           reservedNames: <String>{'index'},
           nameManager: nameManager,
           package: 'api',
           onDroppedDefault: messages.add,
         );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.index (property, expected MapModel, '
-          'value: {"a":{}}): '
-          'a nested value cannot be expressed as a const Dart expression.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
-    test(
-      'AnyModel with non-JSON outer value (DateTime) drops with the '
-      'shape-mismatch reason',
-      () {
-        final messages = <String>[];
-        final yamlDateTime = DateTime.utc(2024, 6, 15);
-        resolveSingleDefault(
-          normalizedName: 'raw',
-          specName: 'raw',
-          model: AnyModel(context: context),
-          rawDefault: yamlDateTime,
-          containerName: 'Op',
-          location: 'property',
-          reservedNames: <String>{'raw'},
-          nameManager: nameManager,
-          package: 'api',
-          onDroppedDefault: messages.add,
-        );
+    test('AnyModel with non-JSON outer value (DateTime) warns once', () {
+      final messages = <String>[];
+      final yamlDateTime = DateTime.utc(2024, 6, 15);
+      resolveSingleDefault(
+        normalizedName: 'raw',
+        specName: 'raw',
+        model: AnyModel(context: context),
+        rawDefault: yamlDateTime,
+        containerName: 'Op',
+        reservedNames: <String>{'raw'},
+        nameManager: nameManager,
+        package: 'api',
+        onDroppedDefault: messages.add,
+      );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.raw (property, expected AnyModel, '
-          'value: $yamlDateTime): '
-          'value does not match the expected list / map / free-form shape.',
-        );
-      },
-    );
+      expect(messages, ['Dropping default for Op.raw.']);
+    });
 
     test(
-      'AnyModel with a Map carrying a non-String key drops with the '
-      'nested-value reason (non-String keys classified as inner failure)',
+      'AnyModel with a Map carrying a non-String key returns null silently — '
+      'non-String keys are classified as an inner-value failure that bubbles '
+      'to the runtime fallback',
       () {
         final messages = <String>[];
         final nonStringKeyMap = <int, String>{1: 'one'};
@@ -565,26 +396,19 @@ void main() {
           model: AnyModel(context: context),
           rawDefault: nonStringKeyMap,
           containerName: 'Op',
-          location: 'property',
           reservedNames: <String>{'raw'},
           nameManager: nameManager,
           package: 'api',
           onDroppedDefault: messages.add,
         );
 
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.raw (property, expected AnyModel, '
-          'value: $nonStringKeyMap): '
-          'a nested value cannot be expressed as a const Dart expression.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
     test(
-      'ClassModel target with a non-empty default drops with the generic '
-      'cannot-express-as-const reason',
+      'ClassModel target with a non-empty default returns null silently — '
+      'the caller routes it to the runtime fallback',
       () {
         final messages = <String>[];
         final reserved = <String>{'profile'};
@@ -600,7 +424,6 @@ void main() {
           ),
           rawDefault: const <String, Object?>{'field': 'value'},
           containerName: 'Op',
-          location: 'property',
           reservedNames: reserved,
           nameManager: nameManager,
           package: 'api',
@@ -609,14 +432,7 @@ void main() {
 
         expect(result, isNull);
         expect(reserved, {'profile'});
-        expect(messages, hasLength(1));
-        expect(
-          messages.single,
-          'Dropping default for Op.profile (property, expected ClassModel, '
-          'value: {"field":"value"}): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
-        );
+        expect(messages, isEmpty);
       },
     );
 
@@ -655,7 +471,6 @@ void main() {
             model: model,
             rawDefault: const <String, Object?>{'anything': 1},
             containerName: 'Op',
-            location: 'property',
             reservedNames: reserved,
             nameManager: nameManager,
             package: 'api',

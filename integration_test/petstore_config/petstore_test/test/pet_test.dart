@@ -206,11 +206,7 @@ void main() {
     test('200', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
-      final pet = await petApi.findPetsByStatus(
-        // deprecation is defined by the OpenAPI spec and correct
-        // ignore: deprecated_member_use
-        petStatus: PetFindByStatusParametersModel.available,
-      );
+      final pet = await petApi.findPetsByStatus();
       final success = pet as TonikSuccess<FindPetsByStatusResponse>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FindPetsByStatusResponse200>());

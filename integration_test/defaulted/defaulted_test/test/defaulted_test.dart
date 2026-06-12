@@ -1,6 +1,7 @@
 import 'package:defaulted_api/defaulted_api.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 Dio _newDio({required void Function(RequestOptions) onRequest}) {
   final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
@@ -234,7 +235,11 @@ void main() {
     });
 
     test('round-trip: fromJson(toJson(...)) yields an equal instance', () {
-      const original = Subscription();
+      final original = Subscription(
+        startsAt: DateTime.utc(2024),
+        homepage: Uri.parse('https://example.com'),
+        pricing: Subscription.pricingDefault,
+      );
       final encoded = original.toJson()! as Map<String, Object?>;
       final decoded = Subscription.fromJson(encoded);
       expect(decoded, original);
@@ -381,6 +386,16 @@ void main() {
     },
   );
 
+  group(
+    'operation parameter runtime-fallback defaults — DateTime via static '
+    'getter',
+    () {
+      test('query date-time default is reachable via the runtime getter', () {
+        expect(ListThings.sinceDefault, DateTime.utc(2024));
+      });
+    },
+  );
+
   group('operation call() with no arguments uses defaults', () {
     test(
       'omitted query/header/cookie parameters serialise the default values',
@@ -457,6 +472,35 @@ void main() {
     },
   );
 
+  group('Subscription — runtime-fallback defaults', () {
+    test('non-const leaf default reachable via static getter', () {
+      expect(Subscription.startsAtDefault, DateTime.utc(2024));
+    });
+
+    test('composite default reachable via static getter', () {
+      final pricing = Subscription.pricingDefault;
+      expect(pricing.amount.toString(), '9.99');
+      expect(pricing.currency, 'USD');
+    });
+
+    test('computed getter is not cached — successive accesses are NOT '
+        'identical', () {
+      final a = Subscription.startsAtDefault;
+      final b = Subscription.startsAtDefault;
+      expect(identical(a, b), isFalse);
+    });
+  });
+
+  group('Order — runtime-fallback oneOf default via discriminator', () {
+    test('static getter resolves the discriminator to the right variant', () {
+      final pet = Order.petDefault;
+      expect(pet, isA<PetCat>());
+      final cat = (pet as PetCat).value;
+      expect(cat.kind, 'cat');
+      expect(cat.livesLeft, 9);
+    });
+  });
+
   group('operation call() — enum query parameter wire encoding', () {
     test(
       'omitted enum query parameter serialises the default variant on the wire',
@@ -507,5 +551,14 @@ void main() {
         expect(captured!.headers['X-Mode'], 'manual');
       },
     );
+  });
+
+  group('BadlyDefaulted — runtime fallback validates on access', () {
+    test('a syntactically-invalid spec default throws at getter access', () {
+      expect(
+        () => BadlyDefaulted.$whenDefault,
+        throwsA(isA<DecodingException>()),
+      );
+    });
   });
 }

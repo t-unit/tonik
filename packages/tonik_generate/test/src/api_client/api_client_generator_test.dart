@@ -1,6 +1,5 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
-import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
@@ -2128,29 +2127,24 @@ Future<TonikResult<void>> listThings({
       );
 
       test(
-        'suppresses dropped-default warnings — the operation class is the '
-        'sole logging site',
+        'runtime-default query parameter (DateTime) forwards a class-qualified '
+        'reference but the api-client call() parameter wires no defaultTo — '
+        'a static getter is not a constant expression',
         () {
-          final logs = <LogRecord>[];
-          final sub = Logger(
-            'OperationParameterDefaults',
-          ).onRecord.listen(logs.add);
-          addTearDown(sub.cancel);
-
           final queryParam = QueryParameterObject(
-            name: 'enabled',
-            rawName: 'enabled',
+            name: 'since',
+            rawName: 'since',
             description: null,
             isRequired: false,
             isDeprecated: false,
             allowEmptyValue: false,
             allowReserved: false,
             explode: false,
-            model: BooleanModel(context: testContext),
+            model: DateTimeModel(context: testContext),
             encoding: QueryParameterEncoding.form,
             context: testContext,
             examples: const [],
-            defaultValue: 'true',
+            defaultValue: '2024-01-01T00:00:00Z',
           );
 
           final operation = Operation(
@@ -2168,15 +2162,35 @@ Future<TonikResult<void>> listThings({
             securitySchemes: const {},
           );
 
-          generator.generateClass(
+          final generatedClass = generator.generateClass(
             {operation},
             Tag(name: 'things'),
             testServers,
           );
 
+          final method = generatedClass.methods.firstWhere(
+            (m) => m.name == 'listThings',
+          );
+
+          final sinceParam = method.optionalParameters.firstWhere(
+            (p) => p.name == 'since',
+          );
+          expect(sinceParam.required, isFalse);
+          expect(sinceParam.defaultTo, isNull);
           expect(
-            logs.where((r) => r.level == Level.WARNING),
-            isEmpty,
+            sinceParam.type?.accept(emitter).toString(),
+            'DateTime?',
+          );
+
+          final generatedCode = format(
+            generatedClass.accept(emitter).toString(),
+          );
+          const expectedMethod =
+              'Future<TonikResult<void>> listThings({DateTime? since}) '
+              'async => _listThings(since: since);';
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedMethod)),
           );
         },
       );

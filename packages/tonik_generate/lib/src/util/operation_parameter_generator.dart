@@ -69,11 +69,13 @@ List<Parameter> generateParameters({
   // Add path parameters
   for (final pathParam in normalizedParams.pathParameters) {
     final defaulted = defaultsByName[pathParam.normalizedName];
+    final wiresDefaultTo = defaulted != null && !defaulted.isRuntime;
     final parameterType = typeReference(
       pathParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride: !pathParam.parameter.isRequired && defaulted == null,
+      isNullableOverride:
+          !pathParam.parameter.isRequired && !wiresDefaultTo,
     );
 
     parameters.add(
@@ -83,8 +85,8 @@ List<Parameter> generateParameters({
             ..name = pathParam.normalizedName
             ..type = parameterType
             ..named = true
-            ..required = defaulted == null && pathParam.parameter.isRequired
-            ..defaultTo = defaulted?.defaultToCode();
+            ..required = !wiresDefaultTo && pathParam.parameter.isRequired
+            ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
 
           if (pathParam.parameter.isDeprecated) {
             b.annotations.add(
@@ -101,11 +103,13 @@ List<Parameter> generateParameters({
   // Add query parameters
   for (final queryParam in normalizedParams.queryParameters) {
     final defaulted = defaultsByName[queryParam.normalizedName];
+    final wiresDefaultTo = defaulted != null && !defaulted.isRuntime;
     final parameterType = typeReference(
       queryParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride: !queryParam.parameter.isRequired && defaulted == null,
+      isNullableOverride:
+          !queryParam.parameter.isRequired && !wiresDefaultTo,
     );
 
     parameters.add(
@@ -115,8 +119,8 @@ List<Parameter> generateParameters({
             ..name = queryParam.normalizedName
             ..type = parameterType
             ..named = true
-            ..required = defaulted == null && queryParam.parameter.isRequired
-            ..defaultTo = defaulted?.defaultToCode();
+            ..required = !wiresDefaultTo && queryParam.parameter.isRequired
+            ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
 
           if (queryParam.parameter.isDeprecated) {
             b.annotations.add(
@@ -133,12 +137,13 @@ List<Parameter> generateParameters({
   // Add header parameters
   for (final headerParam in normalizedParams.headers) {
     final defaulted = defaultsByName[headerParam.normalizedName];
+    final wiresDefaultTo = defaulted != null && !defaulted.isRuntime;
     final parameterType = typeReference(
       headerParam.parameter.model,
       nameManager,
       package,
       isNullableOverride:
-          !headerParam.parameter.isRequired && defaulted == null,
+          !headerParam.parameter.isRequired && !wiresDefaultTo,
     );
 
     parameters.add(
@@ -148,8 +153,8 @@ List<Parameter> generateParameters({
             ..name = headerParam.normalizedName
             ..type = parameterType
             ..named = true
-            ..required = defaulted == null && headerParam.parameter.isRequired
-            ..defaultTo = defaulted?.defaultToCode();
+            ..required = !wiresDefaultTo && headerParam.parameter.isRequired
+            ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
 
           if (headerParam.parameter.isDeprecated) {
             b.annotations.add(
@@ -166,12 +171,13 @@ List<Parameter> generateParameters({
   // Add cookie parameters
   for (final cookieParam in normalizedParams.cookieParameters) {
     final defaulted = defaultsByName[cookieParam.normalizedName];
+    final wiresDefaultTo = defaulted != null && !defaulted.isRuntime;
     final parameterType = typeReference(
       cookieParam.parameter.model,
       nameManager,
       package,
       isNullableOverride:
-          !cookieParam.parameter.isRequired && defaulted == null,
+          !cookieParam.parameter.isRequired && !wiresDefaultTo,
     );
 
     parameters.add(
@@ -181,8 +187,8 @@ List<Parameter> generateParameters({
             ..name = cookieParam.normalizedName
             ..type = parameterType
             ..named = true
-            ..required = defaulted == null && cookieParam.parameter.isRequired
-            ..defaultTo = defaulted?.defaultToCode();
+            ..required = !wiresDefaultTo && cookieParam.parameter.isRequired
+            ..defaultTo = wiresDefaultTo ? defaulted.defaultToCode() : null;
 
           if (cookieParam.parameter.isDeprecated) {
             b.annotations.add(

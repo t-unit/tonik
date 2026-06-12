@@ -158,6 +158,7 @@ class OperationGenerator {
             ),
           )
           ..methods.addAll([
+            ...defaults.getters,
             generateCallMethod(
               operation,
               normalizedParams,

@@ -280,13 +280,9 @@ void main() {
       expect(tierParam.defaultTo, isNull);
 
       final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-      expect(warnings, hasLength(1));
-      expect(
-        warnings.single.message,
-        'Dropping default for Mismatched.tier '
-        '(property, expected IntegerModel, value: "no"): '
-        'value does not match the expected type.',
-      );
+      expect(warnings.map((r) => r.message), [
+        'Dropping default for Mismatched.tier.',
+      ]);
     });
 
     test('alias-carried mismatched default still drops + logs once', () {
@@ -321,18 +317,14 @@ void main() {
       generator.generateClass(model);
 
       final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-      expect(warnings, hasLength(1));
-      expect(
-        warnings.single.message,
-        'Dropping default for WithAliasedBadDefault.count '
-        '(property, expected IntegerModel, value: "bad"): '
-        'value does not match the expected type.',
-      );
+      expect(warnings.map((r) => r.message), [
+        'Dropping default for WithAliasedBadDefault.count.',
+      ]);
     });
 
     test(
-      'ClassModel property target with default emits the generic '
-      'cannot-express-as-const warning and no static const',
+      'ClassModel property target with default emits a runtime getter '
+      'instead of a static const field, "object target" warning emitted',
       () {
         final logs = <LogRecord>[];
         final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
@@ -367,20 +359,61 @@ void main() {
           result.fields.where((f) => f.name == 'childDefault'),
           isEmpty,
         );
-
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
+        final getter = result.methods.firstWhere(
+          (m) => m.name == 'childDefault',
+        );
+        expect(getter.static, isTrue);
+        expect(getter.type, MethodType.getter);
+        final warnings = logs
+            .where(
+              (r) =>
+                  r.level == Level.WARNING && r.loggerName == 'ClassGenerator',
+            )
+            .toList();
+        expect(warnings.map((r) => r.message), [
+          'Routing default to runtime fallback for WithChild.child.',
+        ]);
         expect(
-          warnings.single.message,
-          'Dropping default for WithChild.child '
-          '(property, expected ClassModel, value: {}): '
-          'default value cannot be expressed as a const Dart expression '
-          'for this type.',
+          logs.where(
+            (r) =>
+                r.level == Level.WARNING &&
+                r.loggerName == 'DefaultResolution',
+          ),
+          isEmpty,
+        );
+
+        final generated = format(result.accept(emitter).toString());
+        const expectedGetter =
+            'static Child get childDefault => '
+            'Child.fromJson(const <String, Object?>{});';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedGetter)),
+        );
+        const expectedCtor = 'const WithChild({required this.child});';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedCtor)),
+        );
+        const expectedFromJson = r'''
+factory WithChild.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'WithChild');
+  return WithChild(
+    child: _$map.containsKey(r'child')
+        ? Child.fromJson(_$map[r'child'])
+        : childDefault,
+  );
+}
+''';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromJson)),
         );
       },
     );
 
-    test('AllOf composite property target with default drops silently', () {
+    test('AllOf composite property target with default emits a runtime getter',
+        () {
       final logs = <LogRecord>[];
       final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
       addTearDown(subscription.cancel);
@@ -414,7 +447,56 @@ void main() {
         result.fields.where((f) => f.name == 'unionDefault'),
         isEmpty,
       );
-      expect(logs.where((r) => r.level == Level.WARNING), isEmpty);
+      final getter = result.methods.firstWhere(
+        (m) => m.name == 'unionDefault',
+      );
+      expect(getter.static, isTrue);
+      expect(getter.type, MethodType.getter);
+      final warnings = logs
+          .where(
+            (r) =>
+                r.level == Level.WARNING && r.loggerName == 'ClassGenerator',
+          )
+          .toList();
+      expect(warnings.map((r) => r.message), [
+        'Routing default to runtime fallback for WithComposite.union.',
+      ]);
+      expect(
+        logs.where(
+          (r) =>
+              r.level == Level.WARNING &&
+              r.loggerName == 'DefaultResolution',
+        ),
+        isEmpty,
+      );
+
+      final generated = format(result.accept(emitter).toString());
+      const expectedGetter =
+          'static Union get unionDefault => '
+          'Union.fromJson(const <String, Object?>{});';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedGetter)),
+      );
+      const expectedCtor = 'const WithComposite({required this.union});';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedCtor)),
+      );
+      const expectedFromJson = r'''
+factory WithComposite.fromJson(Object? json) {
+  final _$map = json.decodeMap(context: r'WithComposite');
+  return WithComposite(
+    union: _$map.containsKey(r'union')
+        ? Union.fromJson(_$map[r'union'])
+        : unionDefault,
+  );
+}
+''';
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedFromJson)),
+      );
     });
 
     test(
@@ -815,6 +897,61 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
     });
 
     test(
+      'fromSimple uses containsKey template for a runtime-defaulted '
+      'property — the absent-key branch references the runtime getter '
+      'identifier just like the const-default path',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'DefaultedSimpleRuntime',
+          properties: [
+            Property(
+              name: 'startsAt',
+              model: DateTimeModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: '2024-01-01T00:00:00Z',
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final generated = format(result.accept(emitter).toString());
+
+        const expectedFromSimple = r'''
+factory DefaultedSimpleRuntime.fromSimple(
+  String? value, {
+  required bool explode,
+}) {
+  final _$values = value.decodeObject(
+    explode: explode,
+    explodeSeparator: ',',
+    expectedKeys: {r'startsAt'},
+    listKeys: {},
+    context: r'DefaultedSimpleRuntime',
+  );
+  return DefaultedSimpleRuntime(
+    startsAt: _$values.containsKey(r'startsAt')
+        ? _$values[r'startsAt'].decodeSimpleDateTime(
+          context: r'DefaultedSimpleRuntime.startsAt',
+        )
+        : startsAtDefault,
+  );
+}
+''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromSimple)),
+        );
+      },
+    );
+
+    test(
       'alias-carried default propagates when property has no local default',
       () {
         final model = ClassModel(
@@ -1098,13 +1235,9 @@ factory DefaultedForm.fromForm(String? value, {required bool explode}) {
         expect(statusParam.defaultTo, isNull);
 
         final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings, hasLength(1));
-        expect(
-          warnings.single.message,
-          'Dropping default for Subscription.status '
-          '(property, expected EnumModel<String>, value: "archived"): '
-          'value is not one of the enum values.',
-        );
+        expect(warnings.map((r) => r.message), [
+          'Dropping default for Subscription.status.',
+        ]);
       },
     );
 

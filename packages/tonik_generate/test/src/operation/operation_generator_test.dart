@@ -3495,6 +3495,66 @@ Future<TonikResult<void>> call({
           );
         },
       );
+
+      test(
+        'runtime-default query parameter (DateTime) emits a static getter on '
+        'the operation class while the call() parameter stays as-was',
+        () {
+          final queryParam = QueryParameterObject(
+            name: 'since',
+            rawName: 'since',
+            description: null,
+            isRequired: false,
+            isDeprecated: false,
+            allowEmptyValue: false,
+            allowReserved: false,
+            explode: false,
+            model: DateTimeModel(context: context),
+            encoding: QueryParameterEncoding.form,
+            context: context,
+            examples: const [],
+            defaultValue: '2024-01-01T00:00:00Z',
+          );
+
+          final operation = Operation(
+            operationId: 'listThings',
+            context: context,
+            tags: const {},
+            isDeprecated: false,
+            path: '/things',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: {queryParam},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            securitySchemes: const {},
+          );
+
+          final result = generator.generateClass(operation, 'ListThings');
+
+          expect(
+            result.fields.where((f) => f.name == 'sinceDefault'),
+            isEmpty,
+          );
+
+          final getter = result.methods.firstWhere(
+            (m) => m.name == 'sinceDefault',
+          );
+          expect(getter.static, isTrue);
+          expect(getter.type, MethodType.getter);
+          expect(getter.lambda, isTrue);
+          expect(getter.returns?.symbol, 'DateTime');
+
+          final callMethod = result.methods.firstWhere((m) => m.name == 'call');
+          final sinceParam = callMethod.optionalParameters.firstWhere(
+            (p) => p.name == 'since',
+          );
+          expect(sinceParam.required, isFalse);
+          expect(sinceParam.defaultTo, isNull);
+          expect(sinceParam.type?.accept(emitter).toString(), 'DateTime?');
+        },
+      );
     });
   });
 }

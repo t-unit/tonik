@@ -140,8 +140,11 @@ class ClassGenerator {
         copyWithGetter ??
         _buildCopyWith(className, normalizedProperties, model)?.getter;
 
+    bool hasConstDefault(({String normalizedName, Property property}) p) =>
+        defaultsByName[p.normalizedName] is ConstDefaultBinding;
+
     bool isParamRequired(({String normalizedName, Property property}) p) =>
-        defaultsByName[p.normalizedName] == null &&
+        !hasConstDefault(p) &&
         p.property.isRequired &&
         !p.property.isReadOnly &&
         !model.isReadOnly;
@@ -216,9 +219,9 @@ class ClassGenerator {
                           ..name = prop.normalizedName
                           ..named = true
                           ..required = isParamRequired(prop)
-                          ..defaultTo = defaulted == null
-                              ? null
-                              : refer(defaulted.memberName).code
+                          ..defaultTo = defaulted is ConstDefaultBinding
+                              ? refer(defaulted.memberName).code
+                              : null
                           ..toThis = true,
                       );
                     },
@@ -272,8 +275,14 @@ class ClassGenerator {
 
         for (final prop in normalizedProperties) {
           final defaulted = defaultsByName[prop.normalizedName];
-          if (defaulted == null) continue;
-          b.fields.add(defaultField(defaulted));
+          switch (defaulted) {
+            case null:
+              break;
+            case ConstDefaultBinding(:final resolved):
+              b.fields.add(defaultField(resolved));
+            case RuntimeDefaultBinding(:final resolved):
+              b.methods.add(resolved.getter);
+          }
         }
 
         b.fields.addAll(
@@ -305,7 +314,7 @@ class ClassGenerator {
     );
   }
 
-  Map<String, ResolvedDefault> _resolveDefaults(
+  Map<String, DefaultBinding> _resolveDefaults(
     List<({String normalizedName, Property property})> normalizedProperties,
     String className, {
     String? apFieldName,
@@ -315,24 +324,52 @@ class ClassGenerator {
       ?apFieldName,
     };
 
-    final result = <String, ResolvedDefault>{};
+    final result = <String, DefaultBinding>{};
     for (final prop in normalizedProperties) {
+      final raw = prop.property.effectiveDefaultValue;
+      if (raw == null) continue;
+
+      var dropped = false;
       final resolved = resolveSingleDefault(
         normalizedName: prop.normalizedName,
         specName: prop.property.name,
         model: prop.property.model,
-        rawDefault: prop.property.effectiveDefaultValue,
+        rawDefault: raw,
         containerName: className,
-        location: 'property',
         reservedNames: reservedNames,
         nameManager: nameManager,
         package: package,
-        onDroppedDefault: _classGeneratorLog.warning,
+        onDroppedDefault: (message) {
+          dropped = true;
+          _classGeneratorLog.warning(message);
+        },
         isNullableOverride: prop.property.isNullable,
         useImmutableCollections: useImmutableCollections,
       );
-      if (resolved == null) continue;
-      result[prop.normalizedName] = resolved;
+      if (resolved != null) {
+        result[prop.normalizedName] = ConstDefaultBinding(resolved);
+        continue;
+      }
+      if (dropped) continue;
+
+      final runtime = resolveRuntimeDefault(
+        normalizedName: prop.normalizedName,
+        specName: prop.property.name,
+        model: prop.property.model,
+        rawDefault: raw,
+        containerName: className,
+        reservedNames: reservedNames,
+        nameManager: nameManager,
+        package: package,
+        isNullableOverride: prop.property.isNullable,
+        useImmutableCollections: useImmutableCollections,
+      );
+      if (runtime == null) continue;
+      _classGeneratorLog.warning(
+        'Routing default to runtime fallback for '
+        '$className.${prop.property.name}.',
+      );
+      result[prop.normalizedName] = RuntimeDefaultBinding(runtime);
     }
     return result;
   }
@@ -340,7 +377,7 @@ class ClassGenerator {
   Expression _defaultIfAbsent({
     required Expression decoded,
     required String key,
-    required ResolvedDefault defaulted,
+    required DefaultBinding defaulted,
   }) => refer(r'_$values')
       .property('containsKey')
       .call([specLiteralString(key)])
@@ -388,7 +425,7 @@ class ClassGenerator {
   Constructor _buildFromSimpleConstructor(
     String className,
     ClassModel model,
-    Map<String, ResolvedDefault> defaultsByName,
+    Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
     if (model.isWriteOnly) {
@@ -473,7 +510,7 @@ class ClassGenerator {
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
     ClassModel classModel,
-    Map<String, ResolvedDefault> defaultsByName,
+    Map<String, DefaultBinding> defaultsByName,
   ) {
     if (properties.isEmpty) {
       if (hasAnyProperties) {
@@ -651,7 +688,7 @@ class ClassGenerator {
   Constructor _buildFromJsonConstructor(
     String className,
     ClassModel model,
-    Map<String, ResolvedDefault> defaultsByName,
+    Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
     if (model.isWriteOnly) {
@@ -692,7 +729,7 @@ class ClassGenerator {
   Code _buildFromJsonBody(
     String className,
     ClassModel model,
-    Map<String, ResolvedDefault> defaultsByName,
+    Map<String, DefaultBinding> defaultsByName,
   ) {
     final normalizedProperties = normalizeProperties(
       model.properties.where((p) => !p.isWriteOnly).toList(),
@@ -1696,7 +1733,7 @@ if ($name != null) {
   Constructor _buildFromFormConstructor(
     String className,
     ClassModel model,
-    Map<String, ResolvedDefault> defaultsByName,
+    Map<String, DefaultBinding> defaultsByName,
   ) {
     // Schema-level writeOnly: decoding is never valid.
     if (model.isWriteOnly) {
@@ -1781,7 +1818,7 @@ if ($name != null) {
     List<({String normalizedName, Property property})> allProperties,
     List<String> writeOnlyRequiredNames,
     ClassModel classModel,
-    Map<String, ResolvedDefault> defaultsByName,
+    Map<String, DefaultBinding> defaultsByName,
   ) {
     if (properties.isEmpty) {
       if (hasAnyProperties) {
