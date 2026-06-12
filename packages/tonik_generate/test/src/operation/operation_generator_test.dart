@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
+import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
 void main() {
   group('OperationGenerator', () {
@@ -29,6 +30,10 @@ void main() {
       generator = OperationGenerator(
         nameManager: nameManager,
         package: 'api',
+        defaultsCache: OperationDefaultsCache(
+          nameManager: nameManager,
+          package: 'api',
+        ),
       );
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);

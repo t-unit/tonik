@@ -23,6 +23,7 @@ import 'package:tonik_generate/src/response_wrapper/response_wrapper_file_genera
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_generator.dart';
 import 'package:tonik_generate/src/server/server_file_generator.dart';
 import 'package:tonik_generate/src/server/server_generator.dart';
+import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
 class Generator {
   const Generator();
@@ -81,9 +82,15 @@ class Generator {
       allOfGenerator: allOfGenerator,
     );
 
+    final defaultsCache = OperationDefaultsCache(
+      nameManager: nameManager,
+      package: package,
+    );
+
     final operationGenerator = OperationGenerator(
       nameManager: nameManager,
       package: package,
+      defaultsCache: defaultsCache,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -124,6 +131,7 @@ class Generator {
     final apiClientGenerator = ApiClientGenerator(
       nameManager: nameManager,
       package: package,
+      defaultsCache: defaultsCache,
       useImmutableCollections: useImmutableCollections,
     );
 

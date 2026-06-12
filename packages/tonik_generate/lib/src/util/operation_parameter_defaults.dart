@@ -55,12 +55,13 @@ class OperationParameterDefault {
   }
 }
 
-({
+typedef OperationDefaultsResult = ({
   Map<String, OperationParameterDefault> byName,
   List<Field> fields,
   List<Method> getters,
-})
-resolveOperationParameterDefaults({
+});
+
+OperationDefaultsResult resolveOperationParameterDefaults({
   required NormalizedRequestParameters normalizedParams,
   required String operationClassName,
   required NameManager nameManager,
@@ -178,3 +179,35 @@ Set<String> initialOperationDefaultReservedNames({
   for (final p in normalizedParams.headers) p.normalizedName,
   for (final p in normalizedParams.cookieParameters) p.normalizedName,
 };
+
+/// Memoizes [resolveOperationParameterDefaults] per [Operation] so warning
+/// logs and default-member name allocations fire exactly once per operation
+/// per generator run. Keys on [Operation] identity — callers must share the
+/// same instance from the parsed [ApiDocument].
+class OperationDefaultsCache {
+  OperationDefaultsCache({
+    required NameManager nameManager,
+    required String package,
+  }) : _nameManager = nameManager,
+       _package = package;
+
+  final NameManager _nameManager;
+  final String _package;
+  final Map<Operation, OperationDefaultsResult> _byOperation = {};
+
+  OperationDefaultsResult forOperation(
+    Operation operation, {
+    required NormalizedRequestParameters normalizedParams,
+    required String operationClassName,
+    required Set<String> initialReservedNames,
+  }) => _byOperation.putIfAbsent(
+    operation,
+    () => resolveOperationParameterDefaults(
+      normalizedParams: normalizedParams,
+      operationClassName: operationClassName,
+      nameManager: _nameManager,
+      package: _package,
+      initialReservedNames: initialReservedNames,
+    ),
+  );
+}

@@ -19,11 +19,13 @@ class ApiClientGenerator {
   ApiClientGenerator({
     required this.nameManager,
     required this.package,
+    required this.defaultsCache,
     this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
+  final OperationDefaultsCache defaultsCache;
   final bool useImmutableCollections;
 
   ({String code, String filename}) generate(
@@ -137,11 +139,10 @@ class ApiClientGenerator {
     );
 
     final operationClassName = nameManager.operationName(operation);
-    final defaults = resolveOperationParameterDefaults(
+    final defaults = defaultsCache.forOperation(
+      operation,
       normalizedParams: normalizedParams,
       operationClassName: operationClassName,
-      nameManager: nameManager,
-      package: package,
       initialReservedNames: initialOperationDefaultReservedNames(
         normalizedParams: normalizedParams,
         hasRequestBody: hasRequestBody,
