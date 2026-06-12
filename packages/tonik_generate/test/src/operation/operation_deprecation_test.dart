@@ -5,6 +5,7 @@ import 'package:tonik_generate/src/api_client/api_client_generator.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/operation_generator.dart';
+import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
 void main() {
   late NameManager nameManager;
@@ -35,6 +36,10 @@ void main() {
       generator = ApiClientGenerator(
         nameManager: nameManager,
         package: 'test_package',
+        defaultsCache: OperationDefaultsCache(
+          nameManager: nameManager,
+          package: 'test_package',
+        ),
       );
     });
 
@@ -123,6 +128,10 @@ void main() {
       generator = OperationGenerator(
         nameManager: nameManager,
         package: 'test_package',
+        defaultsCache: OperationDefaultsCache(
+          nameManager: nameManager,
+          package: 'test_package',
+        ),
       );
     });
 
@@ -203,6 +212,10 @@ void main() {
       generator = ApiClientGenerator(
         nameManager: nameManager,
         package: 'test_package',
+        defaultsCache: OperationDefaultsCache(
+          nameManager: nameManager,
+          package: 'test_package',
+        ),
       );
       emitter = DartEmitter(useNullSafetySyntax: true);
     });

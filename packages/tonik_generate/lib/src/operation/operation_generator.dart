@@ -23,6 +23,7 @@ class OperationGenerator {
   OperationGenerator({
     required this.nameManager,
     required this.package,
+    required this.defaultsCache,
     this.useImmutableCollections = false,
   }) : _optionsGenerator = OptionsGenerator(
          nameManager: nameManager,
@@ -52,6 +53,7 @@ class OperationGenerator {
 
   final NameManager nameManager;
   final String package;
+  final OperationDefaultsCache defaultsCache;
   final bool useImmutableCollections;
 
   final OptionsGenerator _optionsGenerator;
@@ -111,11 +113,10 @@ class OperationGenerator {
       ),
     );
 
-    final defaults = resolveOperationParameterDefaults(
+    final defaults = defaultsCache.forOperation(
+      operation,
       normalizedParams: normalizedParams,
       operationClassName: className,
-      nameManager: nameManager,
-      package: package,
       initialReservedNames: initialOperationDefaultReservedNames(
         normalizedParams: normalizedParams,
         hasRequestBody: hasRequestBody,
