@@ -180,10 +180,10 @@ Set<String> initialOperationDefaultReservedNames({
   for (final p in normalizedParams.cookieParameters) p.normalizedName,
 };
 
-/// Memoizes [resolveOperationParameterDefaults] per [Operation] so the
-/// side-effecting parts (warning logs, [NameManager] reservations) fire
-/// exactly once per operation per generator run, regardless of which
-/// consumer (operation class, api-client forwarder) asks first.
+/// Memoizes [resolveOperationParameterDefaults] per [Operation] so warning
+/// logs and default-member name allocations fire exactly once per operation
+/// per generator run. Keys on [Operation] identity — callers must share the
+/// same instance from the parsed [ApiDocument].
 class OperationDefaultsCache {
   OperationDefaultsCache({
     required NameManager nameManager,
