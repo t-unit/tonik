@@ -877,12 +877,6 @@ void main() {
   group(
     'Node — nullable self-referential default-null collapse',
     () {
-      // Only nextOrNull is exercised here. The companion non-nullable
-      // `next` property with `default: {}` stack-overflows on first
-      // access because Node.fromJson({}) recurses into nextDefault,
-      // which recurses back into Node.fromJson({}). That limitation is
-      // documented in docs/defaults.md and intentionally not exercised
-      // here.
       test(
         'nullable self-referential default null collapses to no default '
         '— nextOrNull accepts a null literal directly',
