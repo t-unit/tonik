@@ -410,6 +410,31 @@ components:
           $ref: '#/components/schemas/OneOfNoDiscAmbiguous'
           default:
             shared: "anywhere"
+    OneOfRouteFirstOnly:
+      type: object
+      required:
+        - intOnly
+      properties:
+        intOnly:
+          type: integer
+    OneOfRouteSecondOnly:
+      type: object
+      required:
+        - flexible
+      properties:
+        flexible:
+          type: string
+    OneOfNoDiscRouted:
+      oneOf:
+        - $ref: '#/components/schemas/OneOfRouteFirstOnly'
+        - $ref: '#/components/schemas/OneOfRouteSecondOnly'
+    OneOfNoDiscRoutedHolder:
+      type: object
+      properties:
+        routed:
+          $ref: '#/components/schemas/OneOfNoDiscRouted'
+          default:
+            flexible: "matches-second"
     AnyOfShapeA:
       type: object
       properties:

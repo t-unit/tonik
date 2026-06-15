@@ -508,6 +508,11 @@ void main() {
       expect(cat.kind, 'cat');
       expect(cat.livesLeft, 9);
     });
+
+    test('Order.fromJson({}) populates the pet default', () {
+      final order = Order.fromJson(const <String, Object?>{});
+      expect(order.pet, isA<PetCat>());
+    });
   });
 
   group('operation call() — enum query parameter wire encoding', () {
@@ -576,7 +581,10 @@ void main() {
               'message',
               allOf(
                 contains('ISO8601'),
-                contains('not'),
+                // OffsetDateTime.parse normalises space → T before reporting,
+                // so the spec literal `"not a date"` surfaces as `"notTa date"`
+                // in the offending-value slot.
+                contains('notTa date'),
               ),
             ),
           ),
@@ -596,6 +604,17 @@ void main() {
       'still applies because the field is omitted from the decoded map',
       () {
         final value = RwoDefaults.fromJson(const <String, Object?>{});
+        expect(value.writeOnlyToken, 'wo-token');
+      },
+    );
+
+    test(
+      'writeOnly field is excluded from fromJson — wire value is ignored, '
+      'default still applies',
+      () {
+        final value = RwoDefaults.fromJson(const <String, Object?>{
+          'writeOnlyToken': 'on-wire',
+        });
         expect(value.writeOnlyToken, 'wo-token');
       },
     );
@@ -634,7 +653,16 @@ void main() {
 
       test('encoding throws because the whole schema is read-only', () {
         const value = RwoSchemaLevel();
-        expect(value.toJson, throwsA(isA<EncodingException>()));
+        expect(
+          value.toJson,
+          throwsA(
+            isA<EncodingException>().having(
+              (e) => e.message,
+              'message',
+              allOf(contains('RwoSchemaLevel'), contains('read-only')),
+            ),
+          ),
+        );
       });
 
       test('static defaults are emitted and reachable', () {
@@ -666,6 +694,23 @@ void main() {
       expect(AliasChainHolder.viaChainDefault, 'c-default');
       expect(AliasChainHolder.viaOuterDefault, 'outer-default');
     });
+
+    test(
+      'fromJson({}) propagates alias-chain defaults through the decoder',
+      () {
+        final value = AliasChainHolder.fromJson(const <String, Object?>{});
+        expect(value.viaChain, 'c-default');
+        expect(value.viaOuter, 'outer-default');
+      },
+    );
+
+    test('fromJson supplied keys override the alias-chain defaults', () {
+      final value = AliasChainHolder.fromJson(const <String, Object?>{
+        'viaChain': 'override',
+      });
+      expect(value.viaChain, 'override');
+      expect(value.viaOuter, 'outer-default');
+    });
   });
 
   group('ApDefaults — composite defaults against additionalProperties shapes',
@@ -696,8 +741,8 @@ void main() {
     );
 
     test(
-      'additionalProperties: false — extras in the default are dropped by '
-      'the runtime decoder and do not survive a round-trip',
+      'additionalProperties: false — extras absent from the class because no '
+      'AP field is generated; round-trip drops them structurally',
       () {
         final strict = ApDefaults.strictExtrasDefault;
         expect(strict.name, 'n');
@@ -756,6 +801,40 @@ void main() {
           expect(ambiguous, isA<OneOfNoDiscAmbiguousOneOfShapeShared>());
         },
       );
+
+      test('OneOfNoDiscHolder.fromJson({}) populates both defaults', () {
+        final holder = OneOfNoDiscHolder.fromJson(const <String, Object?>{});
+        expect(holder.single, isA<OneOfNoDiscOneOfShapeA>());
+        expect(holder.ambiguous, isA<OneOfNoDiscAmbiguousOneOfShapeShared>());
+      });
+    },
+  );
+
+  group(
+    'OneOfNoDiscRoutedHolder — oneOf routes to the second variant when the '
+    'first variant rejects the default',
+    () {
+      test(
+        'static getter resolves to the second variant when the first cannot '
+        'decode the default',
+        () {
+          final routed = OneOfNoDiscRoutedHolder.routedDefault;
+          expect(routed, isA<OneOfNoDiscRoutedOneOfRouteSecondOnly>());
+          final second =
+              (routed as OneOfNoDiscRoutedOneOfRouteSecondOnly).value;
+          expect(second.flexible, 'matches-second');
+        },
+      );
+
+      test(
+        'fromJson with missing key falls through to the routed default',
+        () {
+          final holder = OneOfNoDiscRoutedHolder.fromJson(
+            const <String, Object?>{},
+          );
+          expect(holder.routed, isA<OneOfNoDiscRoutedOneOfRouteSecondOnly>());
+        },
+      );
     },
   );
 
@@ -771,14 +850,19 @@ void main() {
         expect(any.anyOfShapeB!.b, 5);
       },
     );
+
+    test('AnyOfDefaultHolder.fromJson({}) populates both fields', () {
+      final holder = AnyOfDefaultHolder.fromJson(const <String, Object?>{});
+      expect(holder.any, isNotNull);
+      expect(holder.any!.anyOfShapeA, isNotNull);
+      expect(holder.any!.anyOfShapeA!.a, 'a-val');
+      expect(holder.any!.anyOfShapeB, isNotNull);
+      expect(holder.any!.anyOfShapeB!.b, 5);
+    });
   });
 
   group('Node — recursive class defaults', () {
-    // Self-referential composite defaults are a known limitation: the
-    // generator emits the static getter unchanged, and calling it recurses
-    // into Node.fromJson(const {}) without bound, overflowing the stack.
-    // The limitation is documented in docs/defaults.md.
-
+    // Stack-overflows by design — see docs/defaults.md.
     test(
       'nullable self-referential default null collapses to no default '
       '— nextOrNull accepts a null literal directly',
@@ -854,8 +938,8 @@ void main() {
 
     test('fromJson with missing keys falls through to both defaults', () {
       final value = BinaryDefaults.fromJson(const <String, Object?>{});
-      expect(value.blob, isNotNull);
-      expect(value.encoded, isNotNull);
+      expect(value.blob!.toBytes(), <int>[65, 81, 73, 68]);
+      expect(value.encoded!.toBytes(), <int>[72, 101, 108, 108, 111]);
     });
   });
 }

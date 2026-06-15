@@ -62,7 +62,7 @@ and the decoder reference `nameDefault`.
 **Computed-getter default (`static get`)**
 
 For composites (`ClassModel`, `AllOfModel`, `OneOfModel`, `AnyOfModel`)
-and non-const leaf types (`DateTime`, `Date`, `Uri`, `Decimal`, `BigInt`,
+and non-const leaf types (`DateTime`, `Date`, `Uri`, `BigDecimal`,
 `Binary`, `Base64`) — including collections whose leaves are any of the
 above — the generator emits a computed getter:
 
@@ -71,7 +71,9 @@ class Subscription {
   const Subscription({required this.startsAt, /* … */});
 
   static DateTime get startsAtDefault =>
-      DateTime.parse('2024-01-01T00:00:00Z');
+      r'2024-01-01T00:00:00Z'.decodeJsonDateTime(
+        context: r'Subscription.startsAt',
+      );
 
   final DateTime startsAt;
 
@@ -197,6 +199,7 @@ is true across instances created with the default.
 ```yaml
 Subscription:
   type: object
+  required: [startsAt]
   properties:
     startsAt:
       type: string
@@ -209,16 +212,17 @@ class Subscription {
   const Subscription({required this.startsAt});
 
   static DateTime get startsAtDefault =>
-      '2024-01-01T00:00:00Z'.decodeJsonDateTime(
-        context: 'Subscription.startsAt',
+      r'2024-01-01T00:00:00Z'.decodeJsonDateTime(
+        context: r'Subscription.startsAt',
       );
 
   final DateTime startsAt;
 }
 ```
 
-`DateTime` has no const constructor, so the default is a computed getter.
-Construction without the field calls the getter explicitly:
+`DateTime` values can't be parsed from ISO 8601 strings at compile time,
+so the default is a computed getter. Construction without the field
+calls the getter explicitly:
 
 ```dart
 final s = Subscription(startsAt: Subscription.startsAtDefault);
@@ -290,6 +294,13 @@ merging, and `additionalProperties` extras are handled by the existing
 runtime decoder; the generator never recursively materializes a composite
 default at codegen time.
 
+A class with `additionalProperties: false` does not get an extras field
+at all, so spec defaults containing extra entries beyond the declared
+properties have those entries structurally dropped on decode — there is
+no AP field to hold them, so they simply do not exist on the resulting
+instance and do not survive a round-trip. No warning is emitted; the
+drop is a structural property of the class shape.
+
 A practical consequence: a bad composite default (e.g. a `oneOf` default
 that matches no variant, an `allOf` default missing a required member
 property) only fails at runtime on first access of the getter — not at
@@ -325,8 +336,8 @@ Subscription(startsAt: Subscription.startsAtDefault);
 ## Limitations
 
 - **Non-const leaf types never get a compile-time-constant default.**
-  `DateTime`, `Date`, `Uri`, `Decimal`, `BigInt`, `Binary`, `Base64` have
-  no const constructors. Defaults of these types fall to a computed
+  `DateTime`, `Date`, `Uri`, `BigDecimal`, `Binary`, `Base64` have no
+  const constructors. Defaults of these types fall to a computed
   getter; they apply on decode but cannot be inlined into the constructor
   `defaultTo`.
 - **Computed getters are not cached.** Each access of
@@ -346,15 +357,14 @@ Subscription(startsAt: Subscription.startsAtDefault);
   `$ref`. Tonik does not emit a top-level `Region.regionDefault` const
   for unreferenced component schemas, and does not generate a registry
   of component-level defaults.
-- **`default` on the `additionalProperties` subschema itself is dropped
-  with a codegen warning.** A `default` declared inside an
-  `additionalProperties` block (i.e. "fill unspecified extra entries
-  with this") cannot be expressed at Dart construction time.
 - **`default` on schema positions tonik does not consume is silently
   dropped.** Examples include `default` on a `oneOf` member schema
-  itself (rather than on the property whose type is the `oneOf`), or
-  `default` on an unused component schema. Per the permissive-parser
-  philosophy, no warning is emitted.
+  itself (rather than on the property whose type is the `oneOf`),
+  `default` on the `additionalProperties` subschema (i.e. "fill
+  unspecified extra entries with this" — there is no Dart construction
+  hook for unspecified map entries), or `default` on an unused
+  component schema. Per the permissive-parser philosophy, no warning
+  is emitted.
 - **`nullable: true, default: null` collapses to no default.** The
   generator emits no static member and no decoder default branch — the
   user-observable behavior is identical to having no `default` keyword

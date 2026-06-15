@@ -153,6 +153,34 @@ void main() {
         '3.0 (nullable: true) and 3.1 (type: [.., null]) emit identical Dart '
         'for the same conceptual schema with defaults',
         () {
+          expect(
+            out30,
+            contains("static const _i3.String nameDefault = r'anon';"),
+          );
+          expect(
+            out30,
+            contains('static const _i3.int countDefault = 0;'),
+          );
+          expect(
+            out30,
+            contains('static const _i3.double rateDefault = 1.5;'),
+          );
+          expect(
+            out30,
+            contains('static const _i3.bool activeDefault = true;'),
+          );
+          expect(
+            out30,
+            contains("static const _i3.String? titleDefault = r'Mx.';"),
+          );
+          expect(
+            out30,
+            contains('static const _i3.List<_i3.String> tagsDefault'),
+          );
+          expect(out30, contains(r"_$map.containsKey(r'name')"));
+          expect(out30, contains(r"_$map.containsKey(r'tags')"));
+          expect(out31, contains('nameDefault'));
+          expect(out31, contains('tagsDefault'));
           expect(out31, out30);
         },
       );

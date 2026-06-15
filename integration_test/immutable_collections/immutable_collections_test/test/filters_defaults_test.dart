@@ -4,11 +4,11 @@ import 'package:test/test.dart';
 
 void main() {
   group('Filters — collection const defaults under immutableCollections', () {
-    test('defaults are IList / IMap typed', () {
+    test('defaults are IListConst / IMapConst typed', () {
       const value = Filters();
-      expect(value.tags, isA<IList<String>>());
-      expect(value.counts, isA<IMap<String, int>>());
-      expect(value.raw, isA<IMap<String, Object?>>());
+      expect(value.tags, isA<IListConst<String>>());
+      expect(value.counts, isA<IMapConst<String, int>>());
+      expect(value.raw, isA<IMapConst<String, Object?>>());
     });
 
     test('defaults carry the expected values', () {
@@ -25,9 +25,9 @@ void main() {
     });
 
     test('public static const exposes default value', () {
-      expect(Filters.tagsDefault, isA<IList<String>>());
-      expect(Filters.countsDefault, isA<IMap<String, int>>());
-      expect(Filters.rawDefault, isA<IMap<String, Object?>>());
+      expect(Filters.tagsDefault, isA<IListConst<String>>());
+      expect(Filters.countsDefault, isA<IMapConst<String, int>>());
+      expect(Filters.rawDefault, isA<IMapConst<String, Object?>>());
     });
 
     test('defaults are identical-by-reference across instances', () {
