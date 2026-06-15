@@ -216,6 +216,7 @@ See [Composite Data Types](composite_data_types.md) for usage examples.
 | `additionalProperties` | ✅ (see [Additional Properties](additional_properties.md)) |
 | `readOnly` | ✅ (excluded from request serialization and parameter encoding) |
 | `writeOnly` | ✅ (excluded from response deserialization) |
+| `default` | ✅ (see [Default Values](defaults.md)) |
 
 ### Not Supported
 
