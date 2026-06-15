@@ -53,3 +53,6 @@ coverage/
 
 # Dependencies
 /pubspec.lock
+
+# Internal planning docs
+docs/plans/

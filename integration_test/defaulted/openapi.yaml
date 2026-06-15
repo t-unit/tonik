@@ -260,3 +260,239 @@ components:
           type: string
           format: date-time
           default: "not a date"
+    RwoDefaults:
+      type: object
+      properties:
+        readOnlyTag:
+          type: string
+          readOnly: true
+          default: "ro-tag"
+        writeOnlyToken:
+          type: string
+          writeOnly: true
+          default: "wo-token"
+        plain:
+          type: string
+          default: "plain"
+    RwoSchemaLevel:
+      type: object
+      readOnly: true
+      properties:
+        label:
+          type: string
+          default: "schema-ro"
+        count:
+          type: integer
+          default: 42
+    AliasC:
+      type: string
+      default: "c-default"
+    AliasB:
+      $ref: '#/components/schemas/AliasC'
+    AliasA:
+      $ref: '#/components/schemas/AliasB'
+    AliasOuterWithDefault:
+      $ref: '#/components/schemas/AliasC'
+      default: "outer-default"
+    AliasChainHolder:
+      type: object
+      properties:
+        viaChain:
+          $ref: '#/components/schemas/AliasA'
+        viaOuter:
+          $ref: '#/components/schemas/AliasOuterWithDefault'
+    APTrueClass:
+      type: object
+      additionalProperties: true
+      properties:
+        name:
+          type: string
+    APTypedClass:
+      type: object
+      additionalProperties:
+        type: integer
+      properties:
+        name:
+          type: string
+    APFalseClass:
+      type: object
+      additionalProperties: false
+      properties:
+        name:
+          type: string
+    APDefaults:
+      type: object
+      properties:
+        anyExtras:
+          $ref: '#/components/schemas/APTrueClass'
+          default:
+            name: "n"
+            extraA: "value"
+            extraB: 42
+        typedExtras:
+          $ref: '#/components/schemas/APTypedClass'
+          default:
+            name: "n"
+            count: 7
+        strictExtras:
+          $ref: '#/components/schemas/APFalseClass'
+          default:
+            name: "n"
+            ignored: "drop-me"
+    AllOfBaseA:
+      type: object
+      properties:
+        a:
+          type: string
+    AllOfBaseB:
+      type: object
+      properties:
+        b:
+          type: integer
+    AllOfMerged:
+      allOf:
+        - $ref: '#/components/schemas/AllOfBaseA'
+        - $ref: '#/components/schemas/AllOfBaseB'
+    AllOfDefaultHolder:
+      type: object
+      properties:
+        merged:
+          $ref: '#/components/schemas/AllOfMerged'
+          default:
+            a: "a-val"
+            b: 9
+    OneOfShapeA:
+      type: object
+      required:
+        - onlyA
+      properties:
+        onlyA:
+          type: string
+    OneOfShapeB:
+      type: object
+      required:
+        - onlyB
+      properties:
+        onlyB:
+          type: integer
+    OneOfShapeShared:
+      type: object
+      required:
+        - shared
+      properties:
+        shared:
+          type: string
+    OneOfShapeSharedAlt:
+      type: object
+      required:
+        - shared
+      properties:
+        shared:
+          type: string
+        note:
+          type: string
+    OneOfNoDisc:
+      oneOf:
+        - $ref: '#/components/schemas/OneOfShapeA'
+        - $ref: '#/components/schemas/OneOfShapeB'
+    OneOfNoDiscAmbiguous:
+      oneOf:
+        - $ref: '#/components/schemas/OneOfShapeShared'
+        - $ref: '#/components/schemas/OneOfShapeSharedAlt'
+    OneOfNoDiscHolder:
+      type: object
+      properties:
+        single:
+          $ref: '#/components/schemas/OneOfNoDisc'
+          default:
+            onlyA: "from-default"
+        ambiguous:
+          $ref: '#/components/schemas/OneOfNoDiscAmbiguous'
+          default:
+            shared: "anywhere"
+    OneOfRouteFirstOnly:
+      type: object
+      required:
+        - intOnly
+      properties:
+        intOnly:
+          type: integer
+    OneOfRouteSecondOnly:
+      type: object
+      required:
+        - flexible
+      properties:
+        flexible:
+          type: string
+    OneOfNoDiscRouted:
+      oneOf:
+        - $ref: '#/components/schemas/OneOfRouteFirstOnly'
+        - $ref: '#/components/schemas/OneOfRouteSecondOnly'
+    OneOfNoDiscRoutedHolder:
+      type: object
+      properties:
+        routed:
+          $ref: '#/components/schemas/OneOfNoDiscRouted'
+          default:
+            flexible: "matches-second"
+    AnyOfShapeA:
+      type: object
+      properties:
+        a:
+          type: string
+    AnyOfShapeB:
+      type: object
+      properties:
+        b:
+          type: integer
+    AnyOfMulti:
+      anyOf:
+        - $ref: '#/components/schemas/AnyOfShapeA'
+        - $ref: '#/components/schemas/AnyOfShapeB'
+    AnyOfDefaultHolder:
+      type: object
+      properties:
+        any:
+          $ref: '#/components/schemas/AnyOfMulti'
+          default:
+            a: "a-val"
+            b: 5
+    Node:
+      type: object
+      properties:
+        label:
+          type: string
+        next:
+          $ref: '#/components/schemas/Node'
+          default: {}
+        nextOrNull:
+          $ref: '#/components/schemas/Node'
+          nullable: true
+          default: null
+    DirectDecimal:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          default: "12.34"
+    RequiredRuntimeDefault:
+      type: object
+      required:
+        - startsAt
+      properties:
+        startsAt:
+          type: string
+          format: date-time
+          default: "2024-01-01T00:00:00Z"
+    BinaryDefaults:
+      type: object
+      properties:
+        blob:
+          type: string
+          format: binary
+          default: "AQID"
+        encoded:
+          type: string
+          format: byte
+          default: "SGVsbG8="

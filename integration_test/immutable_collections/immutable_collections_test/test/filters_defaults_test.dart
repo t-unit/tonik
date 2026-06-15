@@ -4,11 +4,11 @@ import 'package:test/test.dart';
 
 void main() {
   group('Filters — collection const defaults under immutableCollections', () {
-    test('defaults are IList / IMap typed', () {
+    test('defaults are IListConst / IMapConst typed', () {
       const value = Filters();
-      expect(value.tags, isA<IList<String>>());
-      expect(value.counts, isA<IMap<String, int>>());
-      expect(value.raw, isA<IMap<String, Object?>>());
+      expect(value.tags, isA<IListConst<String>>());
+      expect(value.counts, isA<IMapConst<String, int>>());
+      expect(value.raw, isA<IMapConst<String, Object?>>());
     });
 
     test('defaults carry the expected values', () {
@@ -25,9 +25,9 @@ void main() {
     });
 
     test('public static const exposes default value', () {
-      expect(Filters.tagsDefault, isA<IList<String>>());
-      expect(Filters.countsDefault, isA<IMap<String, int>>());
-      expect(Filters.rawDefault, isA<IMap<String, Object?>>());
+      expect(Filters.tagsDefault, isA<IListConst<String>>());
+      expect(Filters.countsDefault, isA<IMapConst<String, int>>());
+      expect(Filters.rawDefault, isA<IMapConst<String, Object?>>());
     });
 
     test('defaults are identical-by-reference across instances', () {
@@ -74,4 +74,38 @@ void main() {
       expect(decoded, original);
     });
   });
+
+  group(
+    'BucketHolder — ClassModel default with additionalProperties under '
+    'immutableCollections',
+    () {
+      test(
+        'the static-getter default decodes the named property and populates '
+        'the typed IMap<String,int> AP field correctly',
+        () {
+          final bucket = BucketHolder.bucketDefault;
+          expect(bucket.label, 'primary');
+          expect(bucket.additionalProperties, isA<IMap<String, int>>());
+          expect(
+            bucket.additionalProperties.unlock,
+            <String, int>{'x': 1, 'y': 2},
+          );
+        },
+      );
+
+      test('fromJson with missing key falls through to the bucket default', () {
+        final value = BucketHolder.fromJson(const <String, Object?>{});
+        expect(value.bucket!.label, 'primary');
+        expect(
+          value.bucket!.additionalProperties.unlock,
+          <String, int>{'x': 1, 'y': 2},
+        );
+      });
+
+      test('AP field type is IMap<String,int>, not Map<String,int>', () {
+        const value = BucketWithExtras();
+        expect(value.additionalProperties, isA<IMap<String, int>>());
+      });
+    },
+  );
 }

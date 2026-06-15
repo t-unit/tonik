@@ -415,3 +415,21 @@ components:
             any: "value"
             nested: [1, 2, 3]
 
+    BucketWithExtras:
+      type: object
+      properties:
+        label:
+          type: string
+      additionalProperties:
+        type: integer
+
+    BucketHolder:
+      type: object
+      properties:
+        bucket:
+          $ref: '#/components/schemas/BucketWithExtras'
+          default:
+            label: "primary"
+            x: 1
+            y: 2
+
