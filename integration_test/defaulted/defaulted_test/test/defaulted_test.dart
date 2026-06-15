@@ -481,9 +481,10 @@ void main() {
       expect(Subscription.homepageDefault, Uri.parse('https://example.com'));
     });
 
-    test('fromJson populates Uri default on missing key', () {
+    test('fromJson populates Uri and DateTime defaults on missing keys', () {
       final value = Subscription.fromJson(const <String, Object?>{});
       expect(value.homepage, Uri.parse('https://example.com'));
+      expect(value.startsAt, DateTime.utc(2024));
     });
 
     test('composite default reachable via static getter', () {
@@ -568,25 +569,37 @@ void main() {
   });
 
   group('BadlyDefaulted — runtime fallback validates on access', () {
+    // OffsetDateTime.parse rewrites the first space to T before reporting,
+    // so the spec literal `"not a date"` reaches InvalidFormatException.value
+    // as `"notTa date"`.
+    const offendingValue = 'notTa date';
+
     test(
-      'a syntactically-invalid spec default throws a DecodingException whose '
-      'message identifies the expected format and the offending value so spec '
-      'authors can locate the bad default',
+      'the static getter throws an InvalidFormatException whose structured '
+      'value and format fields identify the offending default and expected '
+      'format',
       () {
         expect(
           () => BadlyDefaulted.$whenDefault,
           throwsA(
-            isA<DecodingException>().having(
-              (e) => e.message,
-              'message',
-              allOf(
-                contains('ISO8601'),
-                // OffsetDateTime.parse normalises space → T before reporting,
-                // so the spec literal `"not a date"` surfaces as `"notTa date"`
-                // in the offending-value slot.
-                contains('notTa date'),
-              ),
-            ),
+            isA<InvalidFormatException>()
+                .having((e) => e.value, 'value', offendingValue)
+                .having((e) => e.format, 'format', contains('ISO8601')),
+          ),
+        );
+      },
+    );
+
+    test(
+      'fromJson on missing key propagates the same InvalidFormatException via '
+      'the default fall-through path',
+      () {
+        expect(
+          () => BadlyDefaulted.fromJson(const <String, Object?>{}),
+          throwsA(
+            isA<InvalidFormatException>()
+                .having((e) => e.value, 'value', offendingValue)
+                .having((e) => e.format, 'format', contains('ISO8601')),
           ),
         );
       },
@@ -861,18 +874,26 @@ void main() {
     });
   });
 
-  group('Node — recursive class defaults', () {
-    // Stack-overflows by design — see docs/defaults.md.
-    test(
-      'nullable self-referential default null collapses to no default '
-      '— nextOrNull accepts a null literal directly',
-      () {
-        const root = Node(label: 'root');
-        expect(root.nextOrNull, isNull);
-        expect(root.label, 'root');
-      },
-    );
-  });
+  group(
+    'Node — nullable self-referential default-null collapse',
+    () {
+      // Only nextOrNull is exercised here. The companion non-nullable
+      // `next` property with `default: {}` stack-overflows on first
+      // access because Node.fromJson({}) recurses into nextDefault,
+      // which recurses back into Node.fromJson({}). That limitation is
+      // documented in docs/defaults.md and intentionally not exercised
+      // here.
+      test(
+        'nullable self-referential default null collapses to no default '
+        '— nextOrNull accepts a null literal directly',
+        () {
+          const root = Node(label: 'root');
+          expect(root.nextOrNull, isNull);
+          expect(root.label, 'root');
+        },
+      );
+    },
+  );
 
   group('DirectDecimal — non-const leaf default at the field root', () {
     test(

@@ -179,8 +179,12 @@ void main() {
           );
           expect(out30, contains(r"_$map.containsKey(r'name')"));
           expect(out30, contains(r"_$map.containsKey(r'tags')"));
+          expect(out30, isNot(contains('nicknameDefault')));
+          expect(out30, isNot(contains(r"_$map.containsKey(r'nickname')")));
           expect(out31, contains('nameDefault'));
           expect(out31, contains('tagsDefault'));
+          expect(out31, isNot(contains('nicknameDefault')));
+          expect(out31, isNot(contains(r"_$map.containsKey(r'nickname')")));
           expect(out31, out30);
         },
       );
