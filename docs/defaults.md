@@ -1,9 +1,9 @@
 # Default Values
 
 Tonik translates the JSON Schema / OpenAPI `default` keyword into Dart-side
-defaults. Every defaulted field gets a public static member named
-`<field>Default` on its containing class — and, where Dart allows it, the
-constructor parameter is wired to that same member so `const MyClass()`
+defaults. Every defaulted field becomes a public `<field>Default` member on
+the generated class — and, when the value is a compile-time constant, also
+becomes the constructor parameter's default value so `const MyClass()`
 just works.
 
 Defaults are supported on:
@@ -11,37 +11,42 @@ Defaults are supported on:
 - model class properties (`components.schemas.*.properties.*.default`),
 - operation parameters (the parameter's `schema.default`) for path, query,
   header, and cookie locations,
-- `$ref` siblings (a property `$ref`-ing an aliased schema with a sibling
-  `default` overrides the target's default — OAS 3.1+).
+- `$ref` siblings — a property `$ref`-ing another schema can carry a
+  sibling `default` that overrides the target's default (OAS 3.1+).
 
 ## Behaviour
 
-### Apply on decode
+### Applied on decode when the key is missing
 
-Generated `fromJson` constructors use a `containsKey` template:
+When you decode JSON that omits a defaulted key, the generated `fromJson`
+fills the field from the default:
 
 ```dart
-field: _$map.containsKey('field')
-    ? /* decode _$map['field'] */
-    : ContainingClass.fieldDefault,
+final value = MyClass.fromJson(<String, Object?>{});
+// value.<field> equals MyClass.<field>Default
 ```
 
-`containsKey` preserves the difference between **missing** and **explicit
-null**. On a nullable defaulted field, `{"field": null}` decodes to `null`,
-not to the default — the wire sent `null` explicitly, so the user gets
-`null`.
+When the JSON sends the key with an explicit `null`, the generated
+`fromJson` honours that — it does **not** substitute the default:
 
-### Two emission shapes
+```dart
+// `title` is `{ type: string, nullable: true, default: "Mx." }`
+MyClass.fromJson({}).title;                 // "Mx." (default applied)
+MyClass.fromJson({'title': null}).title;    // null (explicit null wins)
+```
 
-Defaults split into two emission shapes based on whether the value is a
-Dart compile-time constant. Both shapes share the same decoder template
-and the same `<field>Default` naming.
+The distinction matters for nullable defaulted fields. If you need
+`null` on the wire to mean "use the default", flatten it on the caller
+side before decoding.
 
-**Compile-time constant default (`static const`)**
+### Two value shapes
 
-For primitives, enums, `AnyModel`, and collections of the above the
-generator emits a `static const` field. The constructor parameter is
-wired to it via `defaultTo`:
+Whether the default is also reachable through `const MyClass()` depends
+on whether the value can be expressed as a Dart compile-time constant.
+
+**Compile-time constant default** — for primitives, enums, and
+collections built from them. The generated class exposes the default as
+a `static const` member, and the constructor parameter defaults to it:
 
 ```dart
 class DefaultedPrimitives {
@@ -50,43 +55,41 @@ class DefaultedPrimitives {
   static const String nameDefault = 'anon';
 
   final String name;
-
-  factory DefaultedPrimitives.fromJson(Object? json) { /* containsKey */ }
 }
+
+const value = DefaultedPrimitives();   // value.name == 'anon'
+DefaultedPrimitives.nameDefault;       // 'anon' — reachable directly too
 ```
 
-`const DefaultedPrimitives()` works and the field gets the default. The
-constant is the single source of truth — both the constructor `defaultTo`
-and the decoder reference `nameDefault`.
-
-**Computed-getter default (`static get`)**
-
-For composites (`ClassModel`, `AllOfModel`, `OneOfModel`, `AnyOfModel`)
-and non-const leaf types (`DateTime`, `Date`, `Uri`, `BigDecimal`,
-`Binary`, `Base64`) — including collections whose leaves are any of the
-above — the generator emits a computed getter:
+**Computed default** — for `DateTime`, `Uri`, `BigDecimal`, file
+content, and any composite (`allOf` / `oneOf` / `anyOf` / nested object)
+default. These values can't exist at compile time, so the generated
+class exposes the default as a `static` getter that builds a fresh
+value on each access:
 
 ```dart
 class Subscription {
-  const Subscription({required this.startsAt, /* … */});
+  // ...
 
-  static DateTime get startsAtDefault =>
-      r'2024-01-01T00:00:00Z'.decodeJsonDateTime(
-        context: r'Subscription.startsAt',
-      );
-
-  final DateTime startsAt;
-
-  factory Subscription.fromJson(Object? json) { /* containsKey */ }
+  static DateTime get startsAtDefault => /* parses '2024-01-01T00:00:00Z' */;
 }
+
+Subscription.startsAtDefault;          // 2024-01-01T00:00:00Z, fresh each call
 ```
 
-The constructor parameter stays `required`. Decoding still applies the
-default on missing keys, but Dart-side construction without the field
-requires the caller to reference the getter explicitly:
+Computed defaults still apply on decode the same way — a missing key
+in JSON populates the field from the getter:
 
 ```dart
-final s = Subscription(startsAt: Subscription.startsAtDefault);
+Subscription.fromJson({}).startsAt;    // 2024-01-01T00:00:00Z
+```
+
+But `const Subscription()` does **not** work when the field is
+required, because there's no compile-time value to attach. To
+construct from Dart without supplying the field, reach for the getter:
+
+```dart
+Subscription(startsAt: Subscription.startsAtDefault, /* … */);
 ```
 
 This is deliberate — see [Edge cases](#edge-cases) below.
@@ -113,27 +116,18 @@ DefaultedPrimitives:
 ```
 
 ```dart
-class DefaultedPrimitives {
-  const DefaultedPrimitives({
-    this.name = nameDefault,
-    this.count = countDefault,
-    this.active = activeDefault,
-  });
+const value = DefaultedPrimitives();
+// value.name == 'anon', value.count == 0, value.active == true
 
-  static const String nameDefault = 'anon';
-  static const int countDefault = 0;
-  static const bool activeDefault = true;
-
-  final String name;
-  final int? count;
-  final bool? active;
-}
+DefaultedPrimitives.nameDefault;      // 'anon'
+DefaultedPrimitives.countDefault;     // 0
+DefaultedPrimitives.activeDefault;    // true
 ```
 
-The `name` field stays non-nullable because the constructor still defaults
-it when the caller omits it — required + default makes the constructor
-parameter optional but leaves the field type unchanged. `count` and
-`active` are not `required`, so their fields stay nullable.
+`name` is marked `required` in the schema but still defaults at
+construction — when a defaulted property is required, the field type
+stays non-nullable and the constructor parameter becomes optional. The
+default fills in if you omit it.
 
 ### Enum default
 
@@ -148,14 +142,10 @@ Subscription:
 ```
 
 ```dart
-class Subscription {
-  const Subscription({this.priority = priorityDefault});
+const value = Subscription();
+// value.priority == SubscriptionPriority.medium
 
-  static const SubscriptionPriorityModel priorityDefault =
-      SubscriptionPriorityModel.medium;
-
-  final SubscriptionPriorityModel? priority;
-}
+Subscription.priorityDefault;        // SubscriptionPriority.medium
 ```
 
 ### Collection default
@@ -177,24 +167,18 @@ Filters:
 ```
 
 ```dart
-class Filters {
-  const Filters({
-    this.tags = tagsDefault,
-    this.counts = countsDefault,
-  });
+const value = Filters();
+// value.tags == ['new', 'featured']
+// value.counts == {'x': 1, 'y': 2}
 
-  static const List<String> tagsDefault = ['new', 'featured'];
-  static const Map<String, int> countsDefault = {'x': 1, 'y': 2};
-
-  final List<String>? tags;
-  final Map<String, int>? counts;
-}
+Filters.tagsDefault;                 // ['new', 'featured']
+Filters.countsDefault;               // {'x': 1, 'y': 2}
 ```
 
-`const` collections are shared by reference — `identical(a.tags, b.tags)`
-is true across instances created with the default.
+The defaults are `const` collections, so `identical(a.tags, b.tags)`
+holds across instances created from the default.
 
-### DateTime default (computed getter)
+### DateTime default (computed)
 
 ```yaml
 Subscription:
@@ -208,27 +192,20 @@ Subscription:
 ```
 
 ```dart
-class Subscription {
-  const Subscription({required this.startsAt});
+Subscription.startsAtDefault;        // 2024-01-01T00:00:00Z
 
-  static DateTime get startsAtDefault =>
-      r'2024-01-01T00:00:00Z'.decodeJsonDateTime(
-        context: r'Subscription.startsAt',
-      );
-
-  final DateTime startsAt;
-}
+// fromJson still applies it on missing keys:
+Subscription.fromJson({}).startsAt;  // 2024-01-01T00:00:00Z
 ```
 
-`DateTime` values can't be parsed from ISO 8601 strings at compile time,
-so the default is a computed getter. Construction without the field
-calls the getter explicitly:
+`DateTime` values can't be Dart compile-time constants, so
+`const Subscription()` won't compile. Construct explicitly:
 
 ```dart
-final s = Subscription(startsAt: Subscription.startsAtDefault);
+Subscription(startsAt: Subscription.startsAtDefault);
 ```
 
-### Nested class default (computed getter)
+### Nested object default (computed)
 
 ```yaml
 Subscription:
@@ -252,20 +229,16 @@ Pricing:
 ```
 
 ```dart
-class Subscription {
-  const Subscription({this.pricing});
+Subscription.pricingDefault;
+// Pricing(amount: BigDecimal('9.99'), currency: 'USD')
 
-  static Pricing get pricingDefault => Pricing.fromJson(
-        const <String, Object?>{'amount': '9.99', 'currency': 'USD'},
-      );
-
-  final Pricing? pricing;
-}
+Subscription.fromJson({}).pricing;   // same Pricing instance, freshly built
 ```
 
-The raw JSON literal is `const`; only the decoded `Pricing` instance
-allocates. The existing `Pricing.fromJson` handles the BigDecimal decode
-and `required` validation.
+The default is decoded through the target class's own `fromJson`, so
+`oneOf` variant routing, `allOf` member merging, and
+`additionalProperties` extras all behave exactly as they would on any
+other inbound payload.
 
 ## Edge cases
 
@@ -278,38 +251,37 @@ properties:
     default: "not a number"   # warning + drop
 ```
 
-The generator logs a warning and emits no `static const`. The decoder
-falls back to its normal no-default path for `count`. Spec authors fix
-the type to opt back into a default.
+Tonik logs a warning and emits no `countDefault` static member. The
+field decodes as if no default were declared. Fix the type to opt back
+in.
 
-This only fires on compile-time-constant candidates. Composites and
-non-const leaves never pre-validate — see the next two bullets.
+This only applies to primitives, enums, and collections of those.
+Composite and non-const-leaf defaults aren't pre-validated — see the
+next two bullets.
 
-### Composite defaults always use a computed getter
+### Composite defaults are decoded at access time
 
-`ClassModel`, `AllOfModel`, `OneOfModel`, `AnyOfModel` defaults — and any
-collection whose leaf is composite — always emit as `static T get
-fieldDefault => T.fromJson(const {...});`. Variant routing, AllOf member
-merging, and `additionalProperties` extras are handled by the existing
-runtime decoder; the generator never recursively materializes a composite
-default at codegen time.
+A default on an `allOf` / `oneOf` / `anyOf` property, or on a property
+whose type is a generated class, is delivered as a `static` getter
+that decodes the value on each call. Variant routing, `allOf` member
+merging, and `additionalProperties` extras all flow through the target
+class's existing `fromJson`.
 
-A class with `additionalProperties: false` does not get an extras field
-at all, so spec defaults containing extra entries beyond the declared
-properties have those entries structurally dropped on decode — there is
-no AP field to hold them, so they simply do not exist on the resulting
-instance and do not survive a round-trip. No warning is emitted; the
-drop is a structural property of the class shape.
+A class declared with `additionalProperties: false` has no place to
+hold extra entries, so any extras in a spec default are dropped on
+decode and never survive a round-trip. No warning is emitted; the drop
+is a structural property of the generated class.
 
-A practical consequence: a bad composite default (e.g. a `oneOf` default
-that matches no variant, an `allOf` default missing a required member
-property) only fails at runtime on first access of the getter — not at
-generation time.
+A bad composite default (e.g. a `oneOf` default that matches no
+variant, an `allOf` default missing a required member property) only
+fails at runtime when the getter is first accessed — either by
+direct reference or by a `fromJson` that triggers the default
+fall-through.
 
-### `required` + default — ergonomic gap with computed getters
+### `required` + default — only compile-time defaults reach the constructor
 
-A compile-time-constant default makes a `required` property with a default
-into an optional constructor parameter:
+A compile-time-constant default makes a `required` property's
+constructor parameter optional:
 
 ```yaml
 DefaultedPrimitives:
@@ -323,11 +295,9 @@ DefaultedPrimitives:
 const DefaultedPrimitives();   // works — name is 'anon'
 ```
 
-A computed-getter default does **not** do this. Constructor parameters
-stay `required this.field`, because there is no compile-time constant to
-attach as `defaultTo`. Nullable+`??` is deliberately avoided (it would
-break `required this.field`'s mental model). To construct without
-supplying the field, reference the static getter:
+A computed default does **not**. The constructor parameter stays
+`required this.field` because there's no compile-time value to attach.
+To construct without supplying the field, reach for the getter:
 
 ```dart
 Subscription(startsAt: Subscription.startsAtDefault);
@@ -335,45 +305,39 @@ Subscription(startsAt: Subscription.startsAtDefault);
 
 ## Limitations
 
-- **Non-const leaf types never get a compile-time-constant default.**
-  `DateTime`, `Date`, `Uri`, `BigDecimal`, `Binary`, `Base64` have no
-  const constructors. Defaults of these types fall to a computed
-  getter; they apply on decode but cannot be inlined into the constructor
-  `defaultTo`.
+- **Non-const value types never get a compile-time-constant default.**
+  `DateTime`, `Date`, `Uri`, `BigDecimal`, and file content can't be
+  Dart compile-time constants. Defaults of these types are delivered
+  as computed getters; they apply on decode but cannot be inlined into
+  the constructor.
 - **Computed getters are not cached.** Each access of
-  `MyClass.fieldDefault` runs `fromJson` afresh. The const raw-JSON
-  literal is shared, only the decoded value allocates. If you need
-  identity (`identical(a, b)`) or want to avoid the per-call decode
-  cost, capture in a local: `final d = MyClass.fieldDefault;`.
+  `MyClass.fieldDefault` rebuilds the value. If you need identity
+  (`identical(a, b)`) or want to avoid the per-call decode cost,
+  capture in a local: `final d = MyClass.fieldDefault;`.
 - **Sibling `default` on `$ref` is OAS 3.1+ semantics.** OAS 3.0
-  technically forbids sibling keywords next to `$ref`. Tonik supports
+  technically forbids sibling keywords next to `$ref`. Tonik accepts
   the sibling-default pattern in both 3.0 and 3.1, but some validators
   may reject the 3.0 spec as non-conformant.
 - **External `$ref`s are not supported.** Defaults declared in an
   external file cannot propagate, because tonik does not load external
   files at all.
 - **Top-level component schema defaults are pure metadata.** A
-  component schema with `default: "us"` only takes effect through
-  `$ref`. Tonik does not emit a top-level `Region.regionDefault` const
-  for unreferenced component schemas, and does not generate a registry
-  of component-level defaults.
-- **`default` on schema positions tonik does not consume is silently
-  dropped.** Examples include `default` on a `oneOf` member schema
-  itself (rather than on the property whose type is the `oneOf`),
-  `default` on the `additionalProperties` subschema (i.e. "fill
-  unspecified extra entries with this" — there is no Dart construction
-  hook for unspecified map entries), or `default` on an unused
-  component schema. Per the permissive-parser philosophy, no warning
-  is emitted.
-- **`nullable: true, default: null` collapses to no default.** The
-  generator emits no static member and no decoder default branch — the
-  user-observable behavior is identical to having no `default` keyword
-  at all (a missing key already decodes as `null` on a nullable field).
+  component schema with `default: "us"` only takes effect when another
+  schema `$ref`s it. Tonik does not emit standalone constants for
+  unreferenced component schemas.
+- **`default` is silently dropped in positions tonik can't act on.**
+  Examples: `default` on a `oneOf` member schema itself (rather than on
+  the property whose type is the `oneOf`), `default` on the
+  `additionalProperties` subschema (there's no Dart construction hook
+  for unspecified map entries), or `default` on an unused component
+  schema. No warning is emitted.
+- **`nullable: true, default: null` collapses to no default.** No
+  static member is emitted; the field behaves exactly as if no
+  `default` were declared (a missing key already decodes as `null` on
+  a nullable field).
 - **Self-referential composite defaults are a known limitation.** A
   schema like `Node { next: { $ref: '#/.../Node', default: {} } }`
   declares "decode the default `{}` as a `Node` whose `next` itself
   defaults to `{}` …" — infinite recursion at first access of
-  `Node.nextDefault`. The generator currently emits the getter
-  unchanged; calling it overflows the stack. Use `nullable: true,
-  default: null` (or omit the default keyword) on self-referential
-  properties instead.
+  `Node.nextDefault`. Use `nullable: true, default: null` (or omit the
+  default keyword) on self-referential properties instead.
