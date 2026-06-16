@@ -41,8 +41,6 @@ class ModelFileGenerator {
     }
   }
 
-  /// Silently skips models with no matching sub-generator, matching
-  /// [writeFiles].
   void writeOne(
     Model model, {
     required String outputDirectory,
