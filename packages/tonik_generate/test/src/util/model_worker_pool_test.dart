@@ -84,7 +84,7 @@ void main() {
       () async {
         try {
           await runPool(
-            outputDirectory: '/this/path/does/not/exist/and/cannot/be/created',
+            outputDirectory: _unwritableDirectory(tempDir),
             workerCount: 1,
           );
           fail('expected the worker write to throw');
@@ -224,7 +224,7 @@ void main() {
           apiDocument: apiDoc,
           nameManager: nameManager,
           stableModelSorter: sorter,
-          outputDirectory: '/no/such/dir/and/cannot/be/made',
+          outputDirectory: _unwritableDirectory(tempDir),
           package: _package,
           useImmutableCollections: false,
           workerCount: 2,
@@ -303,6 +303,16 @@ ModelFileGenerator _serialGenerator(
       stableModelSorter: sorter,
     ),
   );
+}
+
+/// Returns a path whose creation as a directory will always fail. Pointing
+/// `outputDirectory` here lets workers exercise the `FileSystemException`
+/// path on every OS — `mkdir` under a regular file is rejected by Windows
+/// and POSIX alike, with no permission assumptions on `/`.
+String _unwritableDirectory(Directory tempDir) {
+  final blocker = File(path.join(tempDir.path, 'blocker'));
+  if (!blocker.existsSync()) blocker.writeAsStringSync('x');
+  return path.join(blocker.path, 'sub');
 }
 
 Map<String, String> _readModelTree(String root) {
