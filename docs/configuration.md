@@ -92,9 +92,7 @@ enums:
 # Use immutable collections (IList/IMap) instead of List/Map
 immutableCollections: true
 
-# Number of worker isolates for parallel model file generation.
-# 0 (default) auto-sizes to (logical cores - 1), clamped to 1..16.
-# 1 forces serial. >= 2 sets the worker count explicitly.
+# Parallel model file generation: 0 = auto, 1 = serial, >= 2 = explicit
 workerCount: 4
 ```
 
@@ -388,25 +386,13 @@ When deserializing, any unrecognized value will map to `unknown` instead of thro
 
 ## Parallel Model File Generation
 
-On large specs, model file generation runs in parallel across multiple worker isolates. The default behaviour scales automatically with the host CPU and is appropriate for most users.
+Model file generation runs across worker isolates when the spec is large enough to benefit. Override via `workerCount` in YAML, `--workers` on the CLI, or `TONIK_WORKERS` in the environment.
 
-```yaml
-workerCount: 4
-```
-
-```bash
-tonik --spec ./openapi.yaml --package-name my_api --workers 4
-```
-
-```bash
-TONIK_WORKERS=4 tonik --spec ./openapi.yaml --package-name my_api
-```
-
-Values:
-
-- **`0` (default)** — auto-sizes to `(number of logical cores) - 1`, clamped to the range `1..16`. Omitting the setting is equivalent.
-- **`1`** — forces serial generation on the main isolate. Useful for benchmarks, reproducibility, or constrained environments.
-- **`>= 2`** — caps the worker count. Negative values are rejected.
+| Value | Behaviour |
+|---|---|
+| `0` (default) | Auto: `(logical cores - 1)`, clamped to `1..16` |
+| `1` | Serial |
+| `>= 2` | Explicit worker count |
 
 Precedence (highest first): `--workers` CLI flag, `workerCount` config key, `TONIK_WORKERS` environment variable, auto.
 
