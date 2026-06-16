@@ -59,8 +59,8 @@ ArgParser buildParser() {
       'workers',
       help:
           'Number of worker isolates for parallel model file generation. '
-          '0 or 1 forces serial. Defaults to auto '
-          '((numberOfProcessors - 1) clamped to 1..16).',
+          '0 (default) auto-sizes to (numberOfProcessors - 1) clamped '
+          'to 1..16; 1 forces serial; >= 2 sets the worker count.',
       valueHelp: 'n',
     );
 }
@@ -72,16 +72,11 @@ void printUsage(ArgParser argParser) {
 
 final Logger logger = Logger('tonik');
 
-/// Parses [raw] as a non-negative integer worker count. [source] names the
-/// origin (`--workers`, `TONIK_WORKERS`) for the error message.
-int? _parseWorkerCountFlag(String? raw, {required String source}) {
+int? _parseWorkerCountOrExit(String? raw, {required String source}) {
   if (raw == null || raw.isEmpty) return null;
   final parsed = int.tryParse(raw);
   if (parsed == null || parsed < 0) {
-    stderr.writeln(
-      'Error: Invalid value "$raw" for $source. '
-      'Must be a non-negative integer.',
-    );
+    stderr.writeln('Error: invalid value "$raw" for $source.');
     exit(128);
   }
   return parsed;
@@ -139,16 +134,17 @@ Future<void> main(List<String> arguments) async {
   final configPath = configPathArg ?? 'tonik.yaml';
   final fileConfig = ConfigLoader.load(configPath);
 
-  final cliWorkerCount = _parseWorkerCountFlag(
+  final cliWorkerCount = _parseWorkerCountOrExit(
     workersArg,
     source: '--workers',
   );
-
-  final fileOrCliHasWorkerCount =
-      cliWorkerCount != null || fileConfig.workerCount != null;
-  final envWorkerCount = fileOrCliHasWorkerCount
+  // Env only consulted when neither CLI nor file specified a value. File's
+  // `0` is the documented default and equivalent to unset for precedence,
+  // so we fall through to env in that case.
+  final envWorkerCount =
+      cliWorkerCount != null || fileConfig.workerCount != 0
       ? null
-      : _parseWorkerCountFlag(
+      : _parseWorkerCountOrExit(
           Platform.environment['TONIK_WORKERS'],
           source: 'TONIK_WORKERS',
         );

@@ -18,8 +18,8 @@ class TonikConfig {
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
     this.useImmutableCollections = false,
-    this.workerCount,
-  });
+    this.workerCount = 0,
+  }) : assert(workerCount >= 0, 'workerCount must be non-negative');
 
   final NameOverridesConfig nameOverrides;
   final Map<String, ContentType> contentTypes;
@@ -38,10 +38,10 @@ class TonikConfig {
 
   /// Number of worker isolates to use for parallel model file generation.
   ///
-  /// `null` (default) auto-sizes to `(Platform.numberOfProcessors - 1)`
-  /// clamped to `1..16`. `0` or `1` forces the serial path. Useful for
-  /// benchmarks, reproducibility, or constrained environments.
-  final int? workerCount;
+  /// `0` (default) auto-sizes to `(Platform.numberOfProcessors - 1)` clamped
+  /// to `1..16`. `1` forces the serial path. `>= 2` sets the worker count
+  /// explicitly.
+  final int workerCount;
 
   @override
   String toString() =>

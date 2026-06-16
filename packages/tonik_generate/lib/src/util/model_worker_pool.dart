@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 import 'dart:isolate';
 import 'dart:math' as math;
 
@@ -13,148 +14,14 @@ import 'package:tonik_generate/src/model/one_of_generator.dart';
 import 'package:tonik_generate/src/model/typedef_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 
-/// Sentinel modelIndex used by [_ModelError] to signal that a worker failed
-/// outside the per-job dispatch loop (handshake, sub-generator construction,
-/// uncaught async error). Main treats this as a fatal pool-level abort.
-const int _setupFailureIndex = -1;
-
-/// Initial handshake payload sent from main to each worker isolate.
-class _WorkerInit {
-  const _WorkerInit({
-    required this.mainInbox,
-    required this.workerId,
-    required this.models,
-    required this.nameManager,
-    required this.outputDirectory,
-    required this.package,
-    required this.useImmutableCollections,
-    required this.stableModelSorter,
-  });
-
-  final SendPort mainInbox;
-  final int workerId;
-  final List<Model> models;
-  final NameManager nameManager;
-  final String outputDirectory;
-  final String package;
-  final bool useImmutableCollections;
-  final StableModelSorter stableModelSorter;
-}
-
-/// Job message sent main -> worker, instructing the worker to generate the
-/// model at [modelIndex] of the shared list it was primed with.
-class _ModelJob {
-  const _ModelJob(this.modelIndex);
-  final int modelIndex;
-}
-
-/// Sentinel message instructing a worker to close its inbox and exit.
-class _Shutdown {
-  const _Shutdown();
-}
-
-/// Success ack sent worker -> main once the file for [modelIndex] is written.
-class _ModelAck {
-  const _ModelAck(this.workerId, this.modelIndex);
-  final int workerId;
-  final int modelIndex;
-}
-
-/// Error report sent worker -> main when generating [modelIndex] throws.
-///
-/// [error] and [stack] may be the original objects (if sendable) or fallback
-/// strings carrying their textual representation (if the originals could not
-/// cross the SendPort boundary).
-class _ModelError {
-  const _ModelError(this.workerId, this.modelIndex, this.error, this.stack);
-  final int workerId;
-  final int modelIndex;
-  final Object error;
-  final StackTrace stack;
-}
-
-/// Log record forwarded worker -> main so a single listener on the main
-/// isolate sees warnings from every worker.
-///
-/// The boundary stringifies `error` and `stackTrace` because `LogRecord.error`
-/// may hold a non-sendable Object. Listeners on `Logger.root` that branched
-/// on `record.error is SomeException` will not behave the same under the
-/// parallel path — they observe a `String` instead of the original type.
-/// `record.time` on the replayed entry is set by main, not the worker.
-class _WorkerLog {
-  const _WorkerLog({
-    required this.levelValue,
-    required this.levelName,
-    required this.loggerName,
-    required this.message,
-    required this.error,
-    required this.stackTrace,
-  });
-
-  final int levelValue;
-  final String levelName;
-  final String loggerName;
-  final String message;
-  final String? error;
-  final String? stackTrace;
-}
-
-/// Sends [error]+[stack] as a [_ModelError] without ever throwing.
-///
-/// First attempts to forward the originals (richer downstream — main can
-/// `isA<ConcreteError>()` and read the original stack). If [SendPort.send]
-/// rejects either object as non-sendable, falls back to stringified copies
-/// so main is never left waiting on a `Future.wait` for a worker that
-/// silently died inside its own catch block.
-void _sendModelError(
-  SendPort mainInbox,
-  int workerId,
-  int modelIndex,
-  Object error,
-  StackTrace stack,
-) {
-  try {
-    mainInbox.send(_ModelError(workerId, modelIndex, error, stack));
-    return;
-  } on Object {
-    // fall through to stringified fallback
-  }
-  try {
-    mainInbox.send(
-      _ModelError(
-        workerId,
-        modelIndex,
-        _NonSendableWorkerError(error.toString(), error.runtimeType.toString()),
-        StackTrace.fromString(stack.toString()),
-      ),
-    );
-  } on Object {
-    // Last resort: every send route refused. Nothing left we can do
-    // from inside the worker — main's exit listener will then observe
-    // the isolate dying and abort.
-  }
-}
-
-/// Carrier type emitted to main when the original worker error could not
-/// be sent across an [Isolate] boundary. Preserves the textual error and
-/// the original runtime type name so log messages remain useful.
-class _NonSendableWorkerError implements Exception {
-  const _NonSendableWorkerError(this.message, this.originalTypeName);
-  final String message;
-  final String originalTypeName;
-
-  @override
-  String toString() =>
-      'Worker error (original type $originalTypeName, non-sendable): $message';
-}
-
-/// Surfaces uncaught async errors that escape the worker's top-level
-/// `try`. Dart's `Isolate.spawn(onError: ...)` channel always stringifies
-/// the original error and stack before delivery, so we cannot rehydrate
-/// the originating type. Callers can use `isA<ModelWorkerAsyncError>()`
-/// to distinguish this stringified async path from a sync worker throw
-/// (which arrives with its original concrete type via [_ModelError]).
-class ModelWorkerAsyncError extends Error {
+/// Carrier exception thrown by [ModelWorkerPool.run] when an uncaught async
+/// error escaped a worker's top-level guard (e.g. an unawaited future
+/// throwing). Dart's `Isolate.spawn(onError: ...)` channel stringifies the
+/// original error and stack before delivery, so callers can use
+/// `isA<ModelWorkerAsyncError>()` to distinguish this stringified async
+/// path from a synchronous worker throw — the latter arrives with its
+/// original concrete type via the internal `_ModelError` carrier.
+class ModelWorkerAsyncError implements Exception {
   ModelWorkerAsyncError(this.message);
   final String message;
 
@@ -162,127 +29,21 @@ class ModelWorkerAsyncError extends Error {
   String toString() => 'tonik model worker async error: $message';
 }
 
-/// Top-level worker entry, required because [Isolate.spawn] cannot bind to
-/// a non-static closure capturing a class instance.
-Future<void> _workerEntry(_WorkerInit init) async {
-  // Top-level guard — any throw escaping below this point either inside
-  // sub-generator construction, handshake, the per-job loop's outer
-  // machinery, or an unawaited future, is forwarded to main as a
-  // setup-time _ModelError. Without this the failure is swallowed by
-  // the isolate's default error handler and main hangs on Future.wait.
-  try {
-    Logger.root.level = Level.ALL;
-    Logger.root.onRecord.listen((record) {
-      final log = _WorkerLog(
-        levelValue: record.level.value,
-        levelName: record.level.name,
-        loggerName: record.loggerName,
-        message: record.message,
-        error: record.error?.toString(),
-        stackTrace: record.stackTrace?.toString(),
-      );
-      try {
-        init.mainInbox.send(log);
-      } on Object {
-        // Best-effort log forwarding; if the port is closed we silently
-        // drop. Main has already aborted (or completed) in that case.
-      }
-    });
+/// Carrier exception thrown by [ModelWorkerPool.run] when a worker error
+/// could not be transported across the [Isolate] boundary with its original
+/// runtime type (e.g. the error held a live [ReceivePort]).
+///
+/// Preserves the textual error and the original runtime type name so log
+/// messages remain useful; callers can use `isA<NonSendableWorkerError>()`
+/// to distinguish this fallback from a sendable rethrow.
+class NonSendableWorkerError implements Exception {
+  const NonSendableWorkerError(this.message, this.originalTypeName);
+  final String message;
+  final String originalTypeName;
 
-    final classGenerator = ClassGenerator(
-      nameManager: init.nameManager,
-      package: init.package,
-      useImmutableCollections: init.useImmutableCollections,
-    );
-    final enumGenerator = EnumGenerator(nameManager: init.nameManager);
-    final oneOfGenerator = OneOfGenerator(
-      nameManager: init.nameManager,
-      package: init.package,
-      stableModelSorter: init.stableModelSorter,
-      useImmutableCollections: init.useImmutableCollections,
-    );
-    final anyOfGenerator = AnyOfGenerator(
-      nameManager: init.nameManager,
-      package: init.package,
-      stableModelSorter: init.stableModelSorter,
-      useImmutableCollections: init.useImmutableCollections,
-    );
-    final typedefGenerator = TypedefGenerator(
-      nameManager: init.nameManager,
-      package: init.package,
-      useImmutableCollections: init.useImmutableCollections,
-    );
-    final allOfGenerator = AllOfGenerator(
-      nameManager: init.nameManager,
-      package: init.package,
-      stableModelSorter: init.stableModelSorter,
-      useImmutableCollections: init.useImmutableCollections,
-    );
-
-    final modelFileGenerator = ModelFileGenerator(
-      classGenerator: classGenerator,
-      enumGenerator: enumGenerator,
-      anyOfGenerator: anyOfGenerator,
-      oneOfGenerator: oneOfGenerator,
-      typedefGenerator: typedefGenerator,
-      allOfGenerator: allOfGenerator,
-    );
-
-    final inbox = ReceivePort();
-    init.mainInbox.send(_WorkerHandshake(init.workerId, inbox.sendPort));
-
-    await for (final msg in inbox) {
-      if (msg is _ModelJob) {
-        try {
-          modelFileGenerator.writeOne(
-            init.models[msg.modelIndex],
-            outputDirectory: init.outputDirectory,
-            package: init.package,
-          );
-          init.mainInbox.send(_ModelAck(init.workerId, msg.modelIndex));
-        } on Object catch (error, stack) {
-          _sendModelError(
-            init.mainInbox,
-            init.workerId,
-            msg.modelIndex,
-            error,
-            stack,
-          );
-        }
-      } else if (msg is _Shutdown) {
-        inbox.close();
-        return;
-      }
-    }
-  } on Object catch (error, stack) {
-    _sendModelError(
-      init.mainInbox,
-      init.workerId,
-      _setupFailureIndex,
-      error,
-      stack,
-    );
-  }
-}
-
-/// Sent worker -> main once during startup, carrying the worker's own
-/// inbox `SendPort` so main can dispatch jobs to it.
-class _WorkerHandshake {
-  const _WorkerHandshake(this.workerId, this.sendPort);
-  final int workerId;
-  final SendPort sendPort;
-}
-
-/// Resolves a [Level] for a forwarded record, preferring the canonical
-/// [Level.LEVELS] entry by value so a record's display name (`FINE`,
-/// `INFO`, ...) matches what the worker emitted. For non-canonical values
-/// (user-installed custom levels), synthesises a [Level] from the
-/// forwarded name+value — identity is not preserved across isolates.
-Level _levelForValue(int value, String name) {
-  for (final level in Level.LEVELS) {
-    if (level.value == value) return level;
-  }
-  return Level(name, value);
+  @override
+  String toString() =>
+      'Worker error (original type $originalTypeName, non-sendable): $message';
 }
 
 /// Bounded pool of isolates that parallelise [ModelFileGenerator.writeOne]
@@ -369,8 +130,19 @@ class ModelWorkerPool {
     Object? capturedSetupError;
     StackTrace? capturedSetupStack;
 
+    final poolLog = Logger('ModelWorkerPool');
+
     void abortWith(Object error, StackTrace stack) {
-      if (aborted) return;
+      if (aborted) {
+        // Surface — but do not act on — secondary worker errors so they
+        // are at least visible in the log stream.
+        poolLog.warning(
+          'additional worker error suppressed after primary failure: $error',
+          error,
+          stack,
+        );
+        return;
+      }
       aborted = true;
       capturedSetupError ??= error;
       capturedSetupStack ??= stack;
@@ -404,12 +176,6 @@ class ModelWorkerPool {
       }
     }
 
-    // Surfaces uncaught async errors that escape the worker's top-level
-    // try (e.g. unawaited futures spawned inside generators). Isolate.spawn
-    // delivers these as a two-element [errorString, stackString] list and
-    // has already stringified the original error — `ModelWorkerAsyncError`
-    // is a named carrier so callers can tell this path apart from a sync
-    // worker throw (which preserves its concrete type via `_ModelError`).
     errorSubscription = errorPort.listen((dynamic msg) {
       if (aborted) return;
       final parts = msg is List && msg.length >= 2 ? msg : ['$msg', ''];
@@ -430,10 +196,12 @@ class ModelWorkerPool {
       // would clobber the real exception with the synthetic StateError below.
       scheduleMicrotask(() {
         if (aborted) return;
-        final stillPending = handshakeCompleters.any((c) => !c.isCompleted) ||
+        final stillPending =
+            handshakeCompleters.any((c) => !c.isCompleted) ||
             acked < models.length;
         if (!stillPending) return;
-        final error = capturedSetupError ??
+        final error =
+            capturedSetupError ??
             StateError(
               'tonik model worker (id < $effectiveWorkerCount) exited '
               'unexpectedly before completing its assigned jobs '
@@ -458,9 +226,9 @@ class ModelWorkerPool {
         return;
       }
       if (msg is _ModelError) {
-        // Setup-time failures (modelIndex == _setupFailureIndex) bypass the
-        // inflight bookkeeping since no job was outstanding.
-        if (msg.modelIndex != _setupFailureIndex) inflight--;
+        // Setup-time failures bypass the inflight bookkeeping since no job
+        // was outstanding when the worker died.
+        if (!msg.isSetupFailure) inflight--;
         abortWith(msg.error, msg.stack);
         return;
       }
@@ -475,10 +243,11 @@ class ModelWorkerPool {
         );
         return;
       }
-      // Defensive — protocol drift between worker and main should not
-      // be silent. Any new message type must be wired here too.
-      Logger('ModelWorkerPool').warning(
-        'ignoring unknown worker message: ${msg.runtimeType}',
+      // Protocol drift is a programming error, not a runtime warning —
+      // any unknown message type means worker and main are out of sync.
+      abortWith(
+        StateError('protocol drift: unknown worker message ${msg.runtimeType}'),
+        StackTrace.current,
       );
     });
 
@@ -497,7 +266,8 @@ class ModelWorkerPool {
             stableModelSorter: stableModelSorter,
           ),
           // Surface uncaught async errors via errorPort so a dying
-          // worker cannot leave main blocked on Future.wait.
+          // worker cannot leave main blocked on Future.wait. See
+          // [ModelWorkerAsyncError] for the rationale on stringification.
           onExit: exitPort.sendPort,
           onError: errorPort.sendPort,
           debugName: 'tonik-model-worker-$i',
@@ -526,6 +296,11 @@ class ModelWorkerPool {
           // Worker already dead; nothing to shut down.
         }
       }
+      // Yield once so each worker has a chance to process the queued
+      // `_Shutdown` and flush any final log records before we kill them.
+      // Without this, a `Logger.warning` emitted in the same microtask as
+      // shutdown can be lost.
+      await Future<void>.delayed(Duration.zero);
       for (final isolate in isolates) {
         isolate.kill();
       }
@@ -553,4 +328,252 @@ class ModelWorkerPool {
       );
     }
   }
+}
+
+/// Resolves a [Level] for a forwarded record, preferring the canonical
+/// [Level.LEVELS] entry by value so a record's display name (`FINE`,
+/// `INFO`, ...) matches what the worker emitted. For non-canonical values
+/// (user-installed custom levels), synthesises a [Level] from the
+/// forwarded name+value — identity is not preserved across isolates.
+Level _levelForValue(int value, String name) {
+  for (final level in Level.LEVELS) {
+    if (level.value == value) return level;
+  }
+  return Level(name, value);
+}
+
+void _sendModelError(
+  SendPort mainInbox,
+  int workerId, {
+  required int? modelIndex,
+  required Object error,
+  required StackTrace stack,
+}) {
+  // First attempt forwards the originals — richer downstream because main
+  // can `isA<ConcreteError>()` and read the original stack. If
+  // [SendPort.send] rejects either object as non-sendable, we retry with
+  // stringified copies so main is never left waiting on a `Future.wait`
+  // for a worker that silently died inside its own catch block.
+  try {
+    mainInbox.send(
+      _ModelError(
+        workerId: workerId,
+        modelIndex: modelIndex,
+        error: error,
+        stack: stack,
+      ),
+    );
+    return;
+  } on Object {
+    // fall through to stringified fallback
+  }
+  try {
+    mainInbox.send(
+      _ModelError(
+        workerId: workerId,
+        modelIndex: modelIndex,
+        error: NonSendableWorkerError(
+          error.toString(),
+          error.runtimeType.toString(),
+        ),
+        stack: StackTrace.fromString(stack.toString()),
+      ),
+    );
+  } on Object {
+    // Last resort: every send route refused. Best-effort breadcrumb to
+    // stderr so the developer at least sees the original error before
+    // main's exit listener observes the dying isolate and aborts.
+    stderr.writeln(
+      'tonik model worker $workerId: failed to forward error '
+      '(${error.runtimeType}) to main: $error',
+    );
+  }
+}
+
+Future<void> _workerEntry(_WorkerInit init) async {
+  // Top-level guard — any throw escaping below this point either inside
+  // sub-generator construction, handshake, the per-job loop's outer
+  // machinery, or an unawaited future, is forwarded to main as a
+  // setup-time _ModelError. Without this the failure is swallowed by
+  // the isolate's default error handler and main hangs on Future.wait.
+  try {
+    Logger.root.level = Level.ALL;
+    Logger.root.onRecord.listen((record) {
+      final log = _WorkerLog(
+        levelValue: record.level.value,
+        levelName: record.level.name,
+        loggerName: record.loggerName,
+        message: record.message,
+        error: record.error?.toString(),
+        stackTrace: record.stackTrace?.toString(),
+      );
+      try {
+        init.mainInbox.send(log);
+      } on Object {
+        // Best-effort log forwarding; if the port is closed we silently
+        // drop. Main has already aborted (or completed) in that case.
+      }
+    });
+
+    final classGenerator = ClassGenerator(
+      nameManager: init.nameManager,
+      package: init.package,
+      useImmutableCollections: init.useImmutableCollections,
+    );
+    final enumGenerator = EnumGenerator(nameManager: init.nameManager);
+    final oneOfGenerator = OneOfGenerator(
+      nameManager: init.nameManager,
+      package: init.package,
+      stableModelSorter: init.stableModelSorter,
+      useImmutableCollections: init.useImmutableCollections,
+    );
+    final anyOfGenerator = AnyOfGenerator(
+      nameManager: init.nameManager,
+      package: init.package,
+      stableModelSorter: init.stableModelSorter,
+      useImmutableCollections: init.useImmutableCollections,
+    );
+    final typedefGenerator = TypedefGenerator(
+      nameManager: init.nameManager,
+      package: init.package,
+      useImmutableCollections: init.useImmutableCollections,
+    );
+    final allOfGenerator = AllOfGenerator(
+      nameManager: init.nameManager,
+      package: init.package,
+      stableModelSorter: init.stableModelSorter,
+      useImmutableCollections: init.useImmutableCollections,
+    );
+
+    final modelFileGenerator = ModelFileGenerator(
+      classGenerator: classGenerator,
+      enumGenerator: enumGenerator,
+      anyOfGenerator: anyOfGenerator,
+      oneOfGenerator: oneOfGenerator,
+      typedefGenerator: typedefGenerator,
+      allOfGenerator: allOfGenerator,
+    );
+
+    final inbox = ReceivePort();
+    init.mainInbox.send(_WorkerHandshake(init.workerId, inbox.sendPort));
+
+    await for (final msg in inbox) {
+      if (msg is _ModelJob) {
+        try {
+          modelFileGenerator.writeOne(
+            init.models[msg.modelIndex],
+            outputDirectory: init.outputDirectory,
+            package: init.package,
+          );
+          init.mainInbox.send(_ModelAck(init.workerId, msg.modelIndex));
+        } on Object catch (error, stack) {
+          _sendModelError(
+            init.mainInbox,
+            init.workerId,
+            modelIndex: msg.modelIndex,
+            error: error,
+            stack: stack,
+          );
+        }
+      } else if (msg is _Shutdown) {
+        inbox.close();
+        return;
+      }
+    }
+  } on Object catch (error, stack) {
+    _sendModelError(
+      init.mainInbox,
+      init.workerId,
+      modelIndex: null,
+      error: error,
+      stack: stack,
+    );
+  }
+}
+
+class _WorkerInit {
+  const _WorkerInit({
+    required this.mainInbox,
+    required this.workerId,
+    required this.models,
+    required this.nameManager,
+    required this.outputDirectory,
+    required this.package,
+    required this.useImmutableCollections,
+    required this.stableModelSorter,
+  });
+
+  final SendPort mainInbox;
+  final int workerId;
+  final List<Model> models;
+  final NameManager nameManager;
+  final String outputDirectory;
+  final String package;
+  final bool useImmutableCollections;
+  final StableModelSorter stableModelSorter;
+}
+
+class _ModelJob {
+  const _ModelJob(this.modelIndex);
+  final int modelIndex;
+}
+
+class _Shutdown {
+  const _Shutdown();
+}
+
+class _ModelAck {
+  const _ModelAck(this.workerId, this.modelIndex);
+  final int workerId;
+  final int modelIndex;
+}
+
+/// [error] and [stack] may be the original objects (if sendable across the
+/// isolate boundary) or fallback stringified copies. A null [modelIndex]
+/// flags a worker that died outside the per-job dispatch loop (handshake,
+/// sub-generator construction, uncaught async error inside the top-level
+/// guard); main does not decrement `inflight` for those.
+class _ModelError {
+  const _ModelError({
+    required this.workerId,
+    required this.modelIndex,
+    required this.error,
+    required this.stack,
+  });
+  final int workerId;
+  final int? modelIndex;
+  final Object error;
+  final StackTrace stack;
+
+  bool get isSetupFailure => modelIndex == null;
+}
+
+/// The boundary stringifies `error` and `stackTrace` because
+/// [LogRecord.error] may hold a non-sendable Object. Listeners on
+/// `Logger.root` that branched on `record.error is SomeException` will
+/// not behave the same under the parallel path — they observe a `String`
+/// instead of the original type. `record.time` on the replayed entry is
+/// set by main, not the worker.
+class _WorkerLog {
+  const _WorkerLog({
+    required this.levelValue,
+    required this.levelName,
+    required this.loggerName,
+    required this.message,
+    required this.error,
+    required this.stackTrace,
+  });
+
+  final int levelValue;
+  final String levelName;
+  final String loggerName;
+  final String message;
+  final String? error;
+  final String? stackTrace;
+}
+
+class _WorkerHandshake {
+  const _WorkerHandshake(this.workerId, this.sendPort);
+  final int workerId;
+  final SendPort sendPort;
 }

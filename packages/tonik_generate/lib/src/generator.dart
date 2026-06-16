@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/analysis_options_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_file_generator.dart';
@@ -31,18 +32,25 @@ import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 class Generator {
   const Generator();
 
-  /// Threshold below which model file generation runs serially. Spawning
-  /// isolates costs ~50-150 ms total setup; on tiny specs the serial path
-  /// finishes first. Tuned for the petstore (small) to cloudflare (large)
-  /// spectrum.
+  /// Below this model count, isolate setup outweighs the parallel speedup.
   static const int parallelThreshold = 200;
 
-  /// Resolves the worker count for the parallel model file generation
-  /// pool. `null` selects auto: `(numberOfProcessors - 1).clamp(1, 16)`.
-  /// `0` or `1` forces the serial path.
-  static int resolveWorkerCount(int? requested) {
-    if (requested != null) return requested;
-    return (Platform.numberOfProcessors - 1).clamp(1, 16);
+  /// Resolves the worker count for the parallel model file generation pool.
+  /// `0` selects auto: [clampAutoWorkerCount] applied to the host processor
+  /// count. Any other value is returned as-is, so `1` forces the serial path
+  /// and `>= 2` sets the explicit worker count. The return value is always
+  /// `>= 1`.
+  static int resolveWorkerCount(int requested) {
+    if (requested == 0) {
+      return clampAutoWorkerCount(Platform.numberOfProcessors);
+    }
+    return requested;
+  }
+
+  /// Reserves one processor for main and caps at 16 because the gains
+  /// flatten out above that on every spec we benchmarked.
+  static int clampAutoWorkerCount(int processorCount) {
+    return (processorCount - 1).clamp(1, 16);
   }
 
   Future<void> generate({
@@ -50,6 +58,7 @@ class Generator {
     required String outputDirectory,
     required String package,
     TonikConfig config = const TonikConfig(),
+    @visibleForTesting ModelWorkerPool Function()? workerPoolFactory,
   }) async {
     final useImmutableCollections = config.useImmutableCollections;
 
@@ -186,7 +195,7 @@ class Generator {
     );
 
     final resolvedWorkerCount = resolveWorkerCount(config.workerCount);
-    if (resolvedWorkerCount <= 1 ||
+    if (resolvedWorkerCount == 1 ||
         apiDocument.models.length < parallelThreshold) {
       modelGenerator.writeFiles(
         apiDocument: apiDocument,
@@ -194,7 +203,8 @@ class Generator {
         package: package,
       );
     } else {
-      await ModelWorkerPool().run(
+      final pool = (workerPoolFactory ?? ModelWorkerPool.new)();
+      await pool.run(
         apiDocument: apiDocument,
         nameManager: nameManager,
         stableModelSorter: stableModelSorter,

@@ -21,8 +21,8 @@ class CliConfig {
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
     this.useImmutableCollections = false,
-    this.workerCount,
-  });
+    this.workerCount = 0,
+  }) : assert(workerCount >= 0, 'workerCount must be non-negative');
 
   /// Path to the OpenAPI specification file.
   final String? spec;
@@ -56,7 +56,7 @@ class CliConfig {
 
   /// Number of worker isolates for parallel model generation. See
   /// [TonikConfig.workerCount] for semantics.
-  final int? workerCount;
+  final int workerCount;
 
   TonikConfig toTonikConfig() => TonikConfig(
     nameOverrides: nameOverrides,

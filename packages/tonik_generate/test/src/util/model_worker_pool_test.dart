@@ -645,6 +645,75 @@ void main() {
       expect(pool.exitedWorkers, pool.spawnedWorkers);
     });
 
+    test(
+      'forwards worker log.warning attached error as stringified type name '
+      'with reconstructable stack',
+      () async {
+        final apiDoc = _allSubtypeModelDocument(ctx);
+
+        final outDir = Directory(path.join(tempDir.path, 'errlogout'))
+          ..createSync();
+
+        final nameGenerator = NameGenerator();
+        final stableModelSorter = StableModelSorter();
+        final nameManager = _WarningLoggingNameManager(
+          generator: nameGenerator,
+          stableModelSorter: stableModelSorter,
+        )
+          ..prime(
+            models: apiDoc.models,
+            responses: apiDoc.responses,
+            requestBodies: apiDoc.requestBodies,
+            operations: apiDoc.operations,
+            tags: apiDoc.operationsByTag.keys,
+            servers: apiDoc.servers,
+          )
+          ..armed = true;
+
+        final previousLevel = Logger.root.level;
+        Logger.root.level = Level.ALL;
+        final forwarded = <LogRecord>[];
+        final sub = Logger.root.onRecord.listen(forwarded.add);
+
+        try {
+          await ModelWorkerPool().run(
+            apiDocument: apiDoc,
+            nameManager: nameManager,
+            stableModelSorter: stableModelSorter,
+            outputDirectory: outDir.path,
+            package: _package,
+            useImmutableCollections: false,
+            workerCount: 1,
+          );
+        } finally {
+          await sub.cancel();
+          Logger.root.level = previousLevel;
+        }
+
+        final warning = forwarded.firstWhere(
+          (r) =>
+              r.loggerName == 'TestWorkerLogger' && r.level == Level.WARNING,
+        );
+
+        expect(
+          warning.error,
+          isA<String>(),
+          reason: 'attached error must arrive as a String (boundary '
+              'stringifies it because the original may be non-sendable)',
+        );
+        expect(
+          warning.error! as String,
+          contains('_AttachedException'),
+          reason: 'stringified error must preserve the original runtime '
+              'type name so log readers can tell error types apart',
+        );
+
+        expect(warning.stackTrace, isA<StackTrace>());
+        expect(warning.stackTrace, isNotNull);
+        expect(warning.stackTrace!.toString(), isNotEmpty);
+      },
+    );
+
     test('throws ArgumentError when workerCount is below 1', () {
       final apiDoc = _allSubtypeModelDocument(ctx);
       final setup = _buildSerial();
@@ -745,6 +814,40 @@ class _PortBearingError implements Exception {
   final ReceivePort port;
   @override
   String toString() => 'PortBearingError carrying $port';
+}
+
+/// NameManager that, once [armed], emits a single `log.warning` with an
+/// attached exception (and a real stack trace). Exercises the
+/// log-forwarding contract: error arrives as a stringified type name and
+/// stackTrace as a reconstructable [StackTrace].
+class _WarningLoggingNameManager extends NameManager {
+  _WarningLoggingNameManager({
+    required super.generator,
+    required super.stableModelSorter,
+  });
+
+  bool armed = false;
+  bool _fired = false;
+
+  @override
+  String modelName(Model model) {
+    if (armed && !_fired) {
+      _fired = true;
+      try {
+        throw _AttachedException('synthetic warning payload');
+      } on _AttachedException catch (e, s) {
+        Logger('TestWorkerLogger').warning('attached error log', e, s);
+      }
+    }
+    return super.modelName(model);
+  }
+}
+
+class _AttachedException implements Exception {
+  _AttachedException(this.message);
+  final String message;
+  @override
+  String toString() => '_AttachedException: $message';
 }
 
 /// NameManager that, once [armed], schedules an unawaited future that

@@ -61,14 +61,9 @@ extension ConfigLoader on CliConfig {
     );
   }
 
-  static int? _parseWorkerCount(dynamic value) {
-    if (value == null) return null;
-    if (value is! int) {
-      throw ConfigLoaderException(
-        'Invalid config: "workerCount" must be a non-negative integer',
-      );
-    }
-    if (value < 0) {
+  static int _parseWorkerCount(dynamic value) {
+    if (value == null) return 0;
+    if (value is! int || value < 0) {
       throw ConfigLoaderException(
         'Invalid config: "workerCount" must be a non-negative integer',
       );

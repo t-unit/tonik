@@ -566,7 +566,7 @@ workerCount: 4
         expect(config.workerCount, 4);
       });
 
-      test('loads workerCount of 0 as serial-forcing value', () {
+      test('loads workerCount of 0 as auto-sizing value', () {
         File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
 workerCount: 0
 ''');
@@ -576,14 +576,14 @@ workerCount: 0
         expect(config.workerCount, 0);
       });
 
-      test('defaults workerCount to null when not specified', () {
+      test('defaults workerCount to 0 when not specified', () {
         File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
 spec: ./api.yaml
 ''');
 
         final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
 
-        expect(config.workerCount, isNull);
+        expect(config.workerCount, 0);
       });
 
       test('throws meaningful error when workerCount is not an int', () {
