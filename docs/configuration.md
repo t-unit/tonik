@@ -394,9 +394,7 @@ Model file generation runs across worker isolates when the spec is large enough 
 | `1` | Serial |
 | `>= 2` | Explicit worker count |
 
-Precedence (highest first): `--workers` CLI flag, `workerCount` config key, `TONIK_WORKERS` environment variable, auto.
-
-The generated output is byte-for-byte identical regardless of worker count — switching between serial and parallel does not change the generated code. Small specs (under a few hundred models) fall back to serial automatically, since the cost of spawning workers exceeds the savings.
+Output is byte-for-byte identical regardless of worker count. Small specs fall back to serial automatically.
 
 ## Immutable Collections
 
