@@ -138,9 +138,7 @@ Future<void> main(List<String> arguments) async {
     workersArg,
     source: '--workers',
   );
-  // Env only consulted when neither CLI nor file specified a value. File's
-  // `0` is the documented default and equivalent to unset for precedence,
-  // so we fall through to env in that case.
+  // File's `0` is unset for precedence purposes (the documented default).
   final envWorkerCount =
       cliWorkerCount != null || fileConfig.workerCount != 0
       ? null

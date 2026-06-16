@@ -41,11 +41,8 @@ class ModelFileGenerator {
     }
   }
 
-  /// Generates and writes a single model file end-to-end.
-  ///
-  /// Dispatches on the model subtype, generates the source, ensures the
-  /// target directory exists, and writes the file. Silently skips models
-  /// that no sub-generator handles, matching [writeFiles] behavior.
+  /// Silently skips models with no matching sub-generator, matching
+  /// [writeFiles].
   void writeOne(
     Model model, {
     required String outputDirectory,

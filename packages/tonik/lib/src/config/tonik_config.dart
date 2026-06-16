@@ -54,8 +54,6 @@ class CliConfig {
   /// `Map<String, V>` for public-facing model types.
   final bool useImmutableCollections;
 
-  /// Number of worker isolates for parallel model generation. See
-  /// [TonikConfig.workerCount] for semantics.
   final int workerCount;
 
   TonikConfig toTonikConfig() => TonikConfig(

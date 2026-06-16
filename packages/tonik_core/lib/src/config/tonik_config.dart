@@ -36,11 +36,8 @@ class TonikConfig {
   /// `Map<String, V>` for public-facing model types.
   final bool useImmutableCollections;
 
-  /// Number of worker isolates to use for parallel model file generation.
-  ///
-  /// `0` (default) auto-sizes to `(Platform.numberOfProcessors - 1)` clamped
-  /// to `1..16`. `1` forces the serial path. `>= 2` sets the worker count
-  /// explicitly.
+  /// Worker isolates for parallel model file generation. `0` = auto, `1` =
+  /// serial, `>= 2` = explicit count.
   final int workerCount;
 
   @override

@@ -35,11 +35,6 @@ class Generator {
   /// Below this model count, isolate setup outweighs the parallel speedup.
   static const int parallelThreshold = 200;
 
-  /// Resolves the worker count for the parallel model file generation pool.
-  /// `0` selects auto: [clampAutoWorkerCount] applied to the host processor
-  /// count. Any other value is returned as-is, so `1` forces the serial path
-  /// and `>= 2` sets the explicit worker count. The return value is always
-  /// `>= 1`.
   static int resolveWorkerCount(int requested) {
     if (requested == 0) {
       return clampAutoWorkerCount(Platform.numberOfProcessors);
@@ -47,8 +42,8 @@ class Generator {
     return requested;
   }
 
-  /// Reserves one processor for main and caps at 16 because the gains
-  /// flatten out above that on every spec we benchmarked.
+  /// Reserves one processor for main; gains flatten above 16 on every spec
+  /// benchmarked.
   static int clampAutoWorkerCount(int processorCount) {
     return (processorCount - 1).clamp(1, 16);
   }
