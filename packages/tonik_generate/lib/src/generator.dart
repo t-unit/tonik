@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/analysis_options_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_file_generator.dart';
@@ -23,17 +26,35 @@ import 'package:tonik_generate/src/response_wrapper/response_wrapper_file_genera
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_generator.dart';
 import 'package:tonik_generate/src/server/server_file_generator.dart';
 import 'package:tonik_generate/src/server/server_generator.dart';
+import 'package:tonik_generate/src/util/model_worker_pool.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
 class Generator {
   const Generator();
 
-  void generate({
+  /// Below this model count, isolate setup outweighs the parallel speedup.
+  static const int parallelThreshold = 200;
+
+  static int resolveWorkerCount(int requested) {
+    if (requested == 0) {
+      return clampAutoWorkerCount(Platform.numberOfProcessors);
+    }
+    return requested;
+  }
+
+  /// Reserves one processor for main; gains flatten above 16 on every spec
+  /// benchmarked.
+  static int clampAutoWorkerCount(int processorCount) {
+    return (processorCount - 1).clamp(1, 16);
+  }
+
+  Future<void> generate({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
     TonikConfig config = const TonikConfig(),
-  }) {
+    @visibleForTesting ModelWorkerPool Function()? workerPoolFactory,
+  }) async {
     final useImmutableCollections = config.useImmutableCollections;
 
     final nameGenerator = NameGenerator();
@@ -168,11 +189,26 @@ class Generator {
       package: package,
     );
 
-    modelGenerator.writeFiles(
-      apiDocument: apiDocument,
-      outputDirectory: outputDirectory,
-      package: package,
-    );
+    final resolvedWorkerCount = resolveWorkerCount(config.workerCount);
+    if (resolvedWorkerCount == 1 ||
+        apiDocument.models.length < parallelThreshold) {
+      modelGenerator.writeFiles(
+        apiDocument: apiDocument,
+        outputDirectory: outputDirectory,
+        package: package,
+      );
+    } else {
+      final pool = (workerPoolFactory ?? ModelWorkerPool.new)();
+      await pool.run(
+        apiDocument: apiDocument,
+        nameManager: nameManager,
+        stableModelSorter: stableModelSorter,
+        outputDirectory: outputDirectory,
+        package: package,
+        useImmutableCollections: useImmutableCollections,
+        workerCount: resolvedWorkerCount,
+      );
+    }
 
     requestBodyFileGenerator.writeFiles(
       apiDocument: apiDocument,

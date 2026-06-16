@@ -18,7 +18,8 @@ class TonikConfig {
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
     this.useImmutableCollections = false,
-  });
+    this.workerCount = 0,
+  }) : assert(workerCount >= 0, 'workerCount must be non-negative');
 
   final NameOverridesConfig nameOverrides;
   final Map<String, ContentType> contentTypes;
@@ -35,12 +36,17 @@ class TonikConfig {
   /// `Map<String, V>` for public-facing model types.
   final bool useImmutableCollections;
 
+  /// Worker isolates for parallel model file generation. `0` = auto, `1` =
+  /// serial, `>= 2` = explicit count.
+  final int workerCount;
+
   @override
   String toString() =>
       'TonikConfig{nameOverrides: $nameOverrides, contentTypes: $contentTypes, '
       'contentMediaTypes: $contentMediaTypes, filter: $filter, '
       'deprecated: $deprecated, enums: $enums, '
-      'useImmutableCollections: $useImmutableCollections}';
+      'useImmutableCollections: $useImmutableCollections, '
+      'workerCount: $workerCount}';
 
   @override
   bool operator ==(Object other) {
@@ -58,7 +64,8 @@ class TonikConfig {
             filter == other.filter &&
             deprecated == other.deprecated &&
             enums == other.enums &&
-            useImmutableCollections == other.useImmutableCollections;
+            useImmutableCollections == other.useImmutableCollections &&
+            workerCount == other.workerCount;
   }
 
   @override
@@ -73,6 +80,7 @@ class TonikConfig {
       deprecated,
       enums,
       useImmutableCollections,
+      workerCount,
     );
   }
 }

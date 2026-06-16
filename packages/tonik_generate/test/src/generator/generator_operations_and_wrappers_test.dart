@@ -19,7 +19,7 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('generates operation files, wrappers, and API clients', () {
+    test('generates operation files, wrappers, and API clients', () async {
       final successResponse = ResponseObject(
         name: 'Ok',
         context: ctx,
@@ -104,7 +104,7 @@ void main() {
       );
 
       const packageName = 'test_package';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,

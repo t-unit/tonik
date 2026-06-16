@@ -19,7 +19,7 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('generates library with comprehensive API metadata', () {
+    test('generates library with comprehensive API metadata', () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -63,7 +63,7 @@ void main() {
       );
 
       const packageName = 'petstore_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,
@@ -114,7 +114,7 @@ void main() {
       expect(content, contains('/// Documentation URL: https://swagger.io'));
     });
 
-    test('handles missing optional metadata gracefully', () {
+    test('handles missing optional metadata gracefully', () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -142,7 +142,7 @@ void main() {
       );
 
       const packageName = 'simple_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,
@@ -166,7 +166,7 @@ void main() {
       expect(content, isNot(contains('/// Documentation:')));
     });
 
-    test('generates library with summary (OAS 3.1)', () {
+    test('generates library with summary (OAS 3.1)', () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -195,7 +195,7 @@ void main() {
       );
 
       const packageName = 'petstore_summary_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,
@@ -211,7 +211,7 @@ void main() {
       expect(content, contains('/// A longer description with more details.'));
     });
 
-    test('generates library with license identifier (OAS 3.1)', () {
+    test('generates library with license identifier (OAS 3.1)', () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -242,7 +242,7 @@ void main() {
       );
 
       const packageName = 'spdx_license_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,

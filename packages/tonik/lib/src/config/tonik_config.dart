@@ -21,7 +21,8 @@ class CliConfig {
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
     this.useImmutableCollections = false,
-  });
+    this.workerCount = 0,
+  }) : assert(workerCount >= 0, 'workerCount must be non-negative');
 
   /// Path to the OpenAPI specification file.
   final String? spec;
@@ -53,6 +54,8 @@ class CliConfig {
   /// `Map<String, V>` for public-facing model types.
   final bool useImmutableCollections;
 
+  final int workerCount;
+
   TonikConfig toTonikConfig() => TonikConfig(
     nameOverrides: nameOverrides,
     contentTypes: contentTypes,
@@ -61,6 +64,7 @@ class CliConfig {
     deprecated: deprecated,
     enums: enums,
     useImmutableCollections: useImmutableCollections,
+    workerCount: workerCount,
   );
 
   static const _contentTypeEquality = MapEquality<String, ContentType>();
@@ -74,7 +78,8 @@ class CliConfig {
       'nameOverrides: $nameOverrides, contentTypes: $contentTypes, '
       'contentMediaTypes: $contentMediaTypes, filter: $filter, '
       'deprecated: $deprecated, enums: $enums, '
-      'useImmutableCollections: $useImmutableCollections}';
+      'useImmutableCollections: $useImmutableCollections, '
+      'workerCount: $workerCount}';
 
   @override
   bool operator ==(Object other) =>
@@ -94,7 +99,8 @@ class CliConfig {
           filter == other.filter &&
           deprecated == other.deprecated &&
           enums == other.enums &&
-          useImmutableCollections == other.useImmutableCollections;
+          useImmutableCollections == other.useImmutableCollections &&
+          workerCount == other.workerCount;
 
   @override
   int get hashCode => Object.hash(
@@ -109,5 +115,6 @@ class CliConfig {
     deprecated,
     enums,
     useImmutableCollections,
+    workerCount,
   );
 }

@@ -54,6 +54,14 @@ ArgParser buildParser() {
           'Use IList/IMap from fast_immutable_collections '
           'instead of List/Map.',
       negatable: false,
+    )
+    ..addOption(
+      'workers',
+      help:
+          'Number of worker isolates for parallel model file generation. '
+          '0 (default) auto-sizes to (numberOfProcessors - 1) clamped '
+          'to 1..16; 1 forces serial; >= 2 sets the worker count.',
+      valueHelp: 'n',
     );
 }
 
@@ -64,7 +72,17 @@ void printUsage(ArgParser argParser) {
 
 final Logger logger = Logger('tonik');
 
-void main(List<String> arguments) {
+int? _parseWorkerCountOrExit(String? raw, {required String source}) {
+  if (raw == null || raw.isEmpty) return null;
+  final parsed = int.tryParse(raw);
+  if (parsed == null || parsed < 0) {
+    stderr.writeln('Error: invalid value "$raw" for $source.');
+    exit(128);
+  }
+  return parsed;
+}
+
+Future<void> main(List<String> arguments) async {
   final argParser = buildParser();
   String? logLevelArg;
   String? packageNameArg;
@@ -72,6 +90,7 @@ void main(List<String> arguments) {
   String? outputDirArg;
   String? configPathArg;
   var immutableCollectionsArg = false;
+  String? workersArg;
 
   try {
     final results = argParser.parse(arguments);
@@ -87,6 +106,7 @@ void main(List<String> arguments) {
     outputDirArg = results['output-dir'] as String?;
     configPathArg = results['config'] as String?;
     immutableCollectionsArg = results.flag('immutable-collections');
+    workersArg = results['workers'] as String?;
   } on FormatException catch (formatException) {
     print(formatException.message);
     printUsage(argParser);
@@ -114,12 +134,26 @@ void main(List<String> arguments) {
   final configPath = configPathArg ?? 'tonik.yaml';
   final fileConfig = ConfigLoader.load(configPath);
 
+  final cliWorkerCount = _parseWorkerCountOrExit(
+    workersArg,
+    source: '--workers',
+  );
+  // File's `0` is unset for precedence purposes (the documented default).
+  final envWorkerCount =
+      cliWorkerCount != null || fileConfig.workerCount != 0
+      ? null
+      : _parseWorkerCountOrExit(
+          Platform.environment['TONIK_WORKERS'],
+          source: 'TONIK_WORKERS',
+        );
+
   final mergedConfig = fileConfig.merge(
     spec: openApiPathArg,
     outputDir: outputDirArg,
     packageName: packageNameArg,
     logLevel: cliLogLevel,
     useImmutableCollections: immutableCollectionsArg ? true : null,
+    workerCount: cliWorkerCount ?? envWorkerCount,
   );
 
   final packageName = mergedConfig.packageName;
@@ -240,7 +274,7 @@ void main(List<String> arguments) {
   }
 
   try {
-    const Generator().generate(
+    await const Generator().generate(
       apiDocument: apiDocument,
       outputDirectory: outputDir ?? '.',
       package: packageName,

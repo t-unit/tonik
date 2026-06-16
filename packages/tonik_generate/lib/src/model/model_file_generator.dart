@@ -36,6 +36,38 @@ class ModelFileGenerator {
   }) {
     log.fine('Writing ${apiDocument.models.length} model files');
 
+    for (final model in apiDocument.models) {
+      writeOne(model, outputDirectory: outputDirectory, package: package);
+    }
+  }
+
+  void writeOne(
+    Model model, {
+    required String outputDirectory,
+    required String package,
+  }) {
+    final result = switch (model) {
+      ClassModel() => classGenerator.generate(model),
+      EnumModel<int>() => enumGenerator.generate<int>(model),
+      EnumModel<String>() => enumGenerator.generate<String>(model),
+      AnyOfModel() => anyOfGenerator.generate(model),
+      OneOfModel() => oneOfGenerator.generate(model),
+      AllOfModel() => allOfGenerator.generate(model),
+      AliasModel() => typedefGenerator.generateAlias(model),
+      ListModel() => typedefGenerator.generateList(model),
+      MapModel() => typedefGenerator.generateMap(model),
+      _ => null,
+    };
+
+    if (result == null) {
+      log.fine('Ignoring model: $model');
+      return;
+    }
+
+    log
+      ..fine('Generating model ${classGenerator.nameManager.modelName(model)}')
+      ..fine('Writing file ${result.filename}');
+
     final modelDirectory = path.joinAll([
       outputDirectory,
       package,
@@ -43,41 +75,8 @@ class ModelFileGenerator {
       'src',
       'model',
     ]);
-
-    for (final model in apiDocument.models) {
-      final name = classGenerator.nameManager.modelName(model);
-      log.fine('Generating model $name');
-
-      ({String code, String filename})? result;
-
-      switch (model) {
-        case ClassModel():
-          result = classGenerator.generate(model);
-        case EnumModel<int>():
-          result = enumGenerator.generate<int>(model);
-        case EnumModel<String>():
-          result = enumGenerator.generate<String>(model);
-        case AnyOfModel():
-          result = anyOfGenerator.generate(model);
-        case OneOfModel():
-          result = oneOfGenerator.generate(model);
-        case AllOfModel():
-          result = allOfGenerator.generate(model);
-        case AliasModel():
-          result = typedefGenerator.generateAlias(model);
-        case ListModel():
-          result = typedefGenerator.generateList(model);
-        case MapModel():
-          result = typedefGenerator.generateMap(model);
-        default:
-          log.fine('Ignoring model: $model');
-          continue;
-      }
-
-      log.fine('Writing file ${result.filename}');
-      final file = File(path.join(modelDirectory, result.filename));
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(result.code);
-    }
+    final file = File(path.join(modelDirectory, result.filename));
+    file.parent.createSync(recursive: true);
+    file.writeAsStringSync(result.code);
   }
 }

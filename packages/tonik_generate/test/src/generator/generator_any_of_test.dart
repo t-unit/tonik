@@ -19,7 +19,7 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('generates file for anyOf model', () {
+    test('generates file for anyOf model', () async {
       final anyOfModel = AnyOfModel(
         isDeprecated: false,
         name: 'FlexibleModel',
@@ -49,7 +49,7 @@ void main() {
 
       const packageName = 'test_package';
 
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,

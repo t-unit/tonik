@@ -91,6 +91,9 @@ enums:
 
 # Use immutable collections (IList/IMap) instead of List/Map
 immutableCollections: true
+
+# Parallel model file generation: 0 = auto, 1 = serial, >= 2 = explicit
+workerCount: 4
 ```
 
 ## CLI Options
@@ -115,6 +118,7 @@ tonik --output-dir ./other-location
 | `--package-name`, `-p` | `packageName` | Name of the generated package (required) |
 | `--log-level` | `logLevel` | Logging verbosity: `verbose`, `info`, `warn`, `silent` (defaults to `warn`) |
 | `--immutable-collections` | `immutableCollections` | Use `IList`/`IMap` instead of `List`/`Map` (defaults to `false`) |
+| `--workers` | `workerCount` | Number of worker isolates for parallel model file generation (defaults to auto) |
 
 ## Name Overrides
 
@@ -379,6 +383,18 @@ enum Status {
 ```
 
 When deserializing, any unrecognized value will map to `unknown` instead of throwing an error.
+
+## Parallel Model File Generation
+
+Model file generation runs across worker isolates when the spec is large enough to benefit. Override via `workerCount` in YAML, `--workers` on the CLI, or `TONIK_WORKERS` in the environment.
+
+| Value | Behaviour |
+|---|---|
+| `0` (default) | Auto: `(logical cores - 1)`, clamped to `1..16` |
+| `1` | Serial |
+| `>= 2` | Explicit worker count |
+
+Output is byte-for-byte identical regardless of worker count. Small specs fall back to serial automatically.
 
 ## Immutable Collections
 

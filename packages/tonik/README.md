@@ -150,7 +150,7 @@ See the [petstore integration tests](https://github.com/t-unit/tonik/blob/main/i
 | **Request Bodies** | `application/json`, `application/x-www-form-urlencoded`, `application/octet-stream`, `text/plain` |
 | **Multipart** | `multipart/form-data` with primitive, file, JSON, and array parts; per-part `encoding` and content types |
 | **Schema** | `readOnly`/`writeOnly` enforcement, `nullable`, `required`, `deprecated`, boolean schemas, `additionalProperties` |
-| **Configuration** | Name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping |
+| **Configuration** | Name overrides, filtering by tag/operation/schema, deprecation handling, content-type mapping, parallel generation tuning |
 | **OAS 3.1** | `$ref` with siblings, `$defs` local definitions, boolean schemas, nullable type arrays, `contentEncoding`/`contentMediaType` |
 
 ## Acknowledgments
