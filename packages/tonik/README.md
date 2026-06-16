@@ -95,8 +95,10 @@ Generated packages are pure Dart with no platform dependencies. Use them in Flut
 - [Configuration](https://github.com/t-unit/tonik/blob/main/docs/configuration.md) – `tonik.yaml` options, name overrides, filtering
 - [Data Types](https://github.com/t-unit/tonik/blob/main/docs/data_types.md) – OpenAPI to Dart type mappings
 - [Composite Data Types](https://github.com/t-unit/tonik/blob/main/docs/composite_data_types.md) – `oneOf`, `anyOf`, `allOf` usage
-- [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md) – Interceptor patterns for auth
+- [Defaults](https://github.com/t-unit/tonik/blob/main/docs/defaults.md) – `default` keyword handling and generated constants
 - [Additional Properties](https://github.com/t-unit/tonik/blob/main/docs/additional_properties.md) – `additionalProperties` support and pure maps
+- [Multipart](https://github.com/t-unit/tonik/blob/main/docs/multipart.md) – `multipart/form-data` request bodies
+- [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md) – Interceptor patterns for auth
 - [URI Encoding Limitations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md) – Dart URI class constraints
 
 ## Quick Start
