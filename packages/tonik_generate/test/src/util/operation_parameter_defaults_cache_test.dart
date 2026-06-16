@@ -11,6 +11,10 @@ void main() {
   late Context context;
 
   setUp(() {
+    final previousRootLevel = Logger.root.level;
+    Logger.root.level = Level.ALL;
+    addTearDown(() => Logger.root.level = previousRootLevel);
+
     nameManager = NameManager(
       generator: NameGenerator(),
       stableModelSorter: StableModelSorter(),
@@ -116,7 +120,7 @@ void main() {
     );
 
     test(
-      'runtime-fallback routing warning fires exactly once across two '
+      'runtime-fallback routing log fires exactly once across two '
       'forOperation calls — pre-cache behaviour would have logged twice',
       () {
         final logs = <LogRecord>[];
@@ -144,11 +148,13 @@ void main() {
             initialReservedNames: const {'_dio'},
           );
 
-        final warnings = logs
-            .where((r) => r.level == Level.WARNING)
+        final routingLogs = logs
+            .where((r) => r.level == Level.FINE)
             .map((r) => r.message)
             .toList();
-        expect(warnings, ['Routing default to runtime fallback for Op.since.']);
+        expect(routingLogs, [
+          'Routing default to runtime fallback for Op.since.',
+        ]);
       },
     );
 

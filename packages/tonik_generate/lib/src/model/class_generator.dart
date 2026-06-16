@@ -365,7 +365,7 @@ class ClassGenerator {
         useImmutableCollections: useImmutableCollections,
       );
       if (runtime == null) continue;
-      _classGeneratorLog.warning(
+      _classGeneratorLog.fine(
         'Routing default to runtime fallback for '
         '$className.${prop.property.name}.',
       );
