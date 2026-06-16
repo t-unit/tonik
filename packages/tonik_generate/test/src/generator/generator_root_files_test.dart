@@ -17,7 +17,7 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('generates pubspec.yaml and analysis_options.yaml', () {
+    test('generates pubspec.yaml and analysis_options.yaml', () async {
       final apiDoc = ApiDocument(
         title: 'Test API',
         version: '1.0.0',
@@ -35,7 +35,7 @@ void main() {
       );
 
       const packageName = 'test_package';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,

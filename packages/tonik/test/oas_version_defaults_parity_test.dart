@@ -22,15 +22,15 @@ void main() {
     }
   });
 
-  String generateAndRead({
+  Future<String> generateAndRead({
     required Map<String, dynamic> spec,
     required String subdir,
     required String filename,
-  }) {
+  }) async {
     final api = Importer().import(spec);
     final outputDirectory = path.join(tempDir.path, subdir);
     Directory(outputDirectory).createSync(recursive: true);
-    const Generator().generate(
+    await const Generator().generate(
       apiDocument: api,
       outputDirectory: outputDirectory,
       package: 'parity_api',
@@ -128,8 +128,8 @@ void main() {
       late String out30;
       late String out31;
 
-      setUp(() {
-        out30 = generateAndRead(
+      setUp(() async {
+        out30 = await generateAndRead(
           spec: wrapSpec(
             openapiVersion: '3.0.4',
             name: className,
@@ -138,7 +138,7 @@ void main() {
           subdir: 'oas30',
           filename: filename,
         );
-        out31 = generateAndRead(
+        out31 = await generateAndRead(
           spec: wrapSpec(
             openapiVersion: '3.1.0',
             name: className,

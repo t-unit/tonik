@@ -19,7 +19,7 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('generates server file and library exports', () {
+    test('generates server file and library exports', () async {
       final servers = {
         const Server(url: 'https://api.example.com', description: 'Prod'),
         const Server(
@@ -55,7 +55,7 @@ void main() {
       );
 
       const packageName = 'test_package';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,

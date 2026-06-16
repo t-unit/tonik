@@ -21,7 +21,7 @@ void main() {
 
     test(
       'generates files for class, enum, oneOf, anyOf, allOf, alias, list',
-      () {
+      () async {
         final models = <Model>{
           ClassModel(
             isDeprecated: false,
@@ -106,7 +106,7 @@ void main() {
         );
 
         const packageName = 'test_package';
-        const Generator().generate(
+        await const Generator().generate(
           apiDocument: apiDoc,
           outputDirectory: tempDir.path,
           package: packageName,

@@ -19,7 +19,9 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('includes security schemes information in library documentation', () {
+    test(
+        'includes security schemes information in library documentation',
+        () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -76,7 +78,7 @@ void main() {
       );
 
       const packageName = 'petstore_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,
@@ -101,7 +103,7 @@ void main() {
       );
     });
 
-    test('includes OAuth2 security scheme information', () {
+    test('includes OAuth2 security scheme information', () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -162,7 +164,7 @@ void main() {
       );
 
       const packageName = 'oauth_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,
@@ -183,7 +185,7 @@ void main() {
       expect(content, contains('///   Scopes: read, write'));
     });
 
-    test('includes mutual TLS security scheme information', () {
+    test('includes mutual TLS security scheme information', () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -233,7 +235,7 @@ void main() {
       );
 
       const packageName = 'mutual_tls_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,
@@ -251,7 +253,7 @@ void main() {
       );
     });
 
-    test('handles empty security schemes', () {
+    test('handles empty security schemes', () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -298,7 +300,7 @@ void main() {
       );
 
       const packageName = 'simple_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,
@@ -313,7 +315,7 @@ void main() {
       expect(content, isNot(contains('/// Security Schemes:')));
     });
 
-    test('omits description when none provided', () {
+    test('omits description when none provided', () async {
       final models = <Model>{
         ClassModel(
           isDeprecated: false,
@@ -370,7 +372,7 @@ void main() {
       );
 
       const packageName = 'no_desc_api';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,

@@ -54,6 +54,14 @@ ArgParser buildParser() {
           'Use IList/IMap from fast_immutable_collections '
           'instead of List/Map.',
       negatable: false,
+    )
+    ..addOption(
+      'workers',
+      help:
+          'Number of worker isolates for parallel model file generation. '
+          '0 or 1 forces serial. Defaults to auto '
+          '((numberOfProcessors - 1) clamped to 1..16).',
+      valueHelp: 'n',
     );
 }
 
@@ -64,7 +72,22 @@ void printUsage(ArgParser argParser) {
 
 final Logger logger = Logger('tonik');
 
-void main(List<String> arguments) {
+/// Parses [raw] as a non-negative integer worker count. [source] names the
+/// origin (`--workers`, `TONIK_WORKERS`) for the error message.
+int? _parseWorkerCountFlag(String? raw, {required String source}) {
+  if (raw == null || raw.isEmpty) return null;
+  final parsed = int.tryParse(raw);
+  if (parsed == null || parsed < 0) {
+    stderr.writeln(
+      'Error: Invalid value "$raw" for $source. '
+      'Must be a non-negative integer.',
+    );
+    exit(128);
+  }
+  return parsed;
+}
+
+Future<void> main(List<String> arguments) async {
   final argParser = buildParser();
   String? logLevelArg;
   String? packageNameArg;
@@ -72,6 +95,7 @@ void main(List<String> arguments) {
   String? outputDirArg;
   String? configPathArg;
   var immutableCollectionsArg = false;
+  String? workersArg;
 
   try {
     final results = argParser.parse(arguments);
@@ -87,6 +111,7 @@ void main(List<String> arguments) {
     outputDirArg = results['output-dir'] as String?;
     configPathArg = results['config'] as String?;
     immutableCollectionsArg = results.flag('immutable-collections');
+    workersArg = results['workers'] as String?;
   } on FormatException catch (formatException) {
     print(formatException.message);
     printUsage(argParser);
@@ -114,12 +139,27 @@ void main(List<String> arguments) {
   final configPath = configPathArg ?? 'tonik.yaml';
   final fileConfig = ConfigLoader.load(configPath);
 
+  final cliWorkerCount = _parseWorkerCountFlag(
+    workersArg,
+    source: '--workers',
+  );
+
+  final fileOrCliHasWorkerCount =
+      cliWorkerCount != null || fileConfig.workerCount != null;
+  final envWorkerCount = fileOrCliHasWorkerCount
+      ? null
+      : _parseWorkerCountFlag(
+          Platform.environment['TONIK_WORKERS'],
+          source: 'TONIK_WORKERS',
+        );
+
   final mergedConfig = fileConfig.merge(
     spec: openApiPathArg,
     outputDir: outputDirArg,
     packageName: packageNameArg,
     logLevel: cliLogLevel,
     useImmutableCollections: immutableCollectionsArg ? true : null,
+    workerCount: cliWorkerCount ?? envWorkerCount,
   );
 
   final packageName = mergedConfig.packageName;
@@ -240,7 +280,7 @@ void main(List<String> arguments) {
   }
 
   try {
-    const Generator().generate(
+    await const Generator().generate(
       apiDocument: apiDocument,
       outputDirectory: outputDir ?? '.',
       package: packageName,

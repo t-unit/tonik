@@ -55,7 +55,8 @@ class NameManager {
   >
   _enumVariantNamesCache = {};
 
-  final log = Logger('NameManager');
+  // Getter (not field) keeps NameManager sendable across isolates.
+  Logger get log => Logger('NameManager');
 
   /// Primes the name generator with all names from the given objects.
   /// This ensures consistent naming across multiple calls.

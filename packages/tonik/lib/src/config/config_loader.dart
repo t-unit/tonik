@@ -57,7 +57,23 @@ extension ConfigLoader on CliConfig {
         yaml['immutableCollections'],
         'immutableCollections',
       ),
+      workerCount: _parseWorkerCount(yaml['workerCount']),
     );
+  }
+
+  static int? _parseWorkerCount(dynamic value) {
+    if (value == null) return null;
+    if (value is! int) {
+      throw ConfigLoaderException(
+        'Invalid config: "workerCount" must be a non-negative integer',
+      );
+    }
+    if (value < 0) {
+      throw ConfigLoaderException(
+        'Invalid config: "workerCount" must be a non-negative integer',
+      );
+    }
+    return value;
   }
 
   static String? _parseString(dynamic value, String fieldName) {
@@ -323,6 +339,7 @@ extension ConfigLoader on CliConfig {
     String? packageName,
     LogLevel? logLevel,
     bool? useImmutableCollections,
+    int? workerCount,
   }) {
     return CliConfig(
       spec: spec ?? this.spec,
@@ -337,6 +354,7 @@ extension ConfigLoader on CliConfig {
       enums: enums,
       useImmutableCollections:
           useImmutableCollections ?? this.useImmutableCollections,
+      workerCount: workerCount ?? this.workerCount,
     );
   }
 }

@@ -19,7 +19,8 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('generates request body file (multi-content) and response files', () {
+    test('generates request body file (multi-content) and response files',
+        () async {
       final multiBodyRequest = RequestBodyObject(
         name: 'MultiBody',
         context: ctx,
@@ -106,7 +107,7 @@ void main() {
       );
 
       const packageName = 'test_package';
-      const Generator().generate(
+      await const Generator().generate(
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: packageName,

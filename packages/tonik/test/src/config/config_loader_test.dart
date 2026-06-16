@@ -556,6 +556,70 @@ immutableCollections: not_a_bool
         },
       );
 
+      test('loads workerCount as integer', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+workerCount: 4
+''');
+
+        final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+        expect(config.workerCount, 4);
+      });
+
+      test('loads workerCount of 0 as serial-forcing value', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+workerCount: 0
+''');
+
+        final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+        expect(config.workerCount, 0);
+      });
+
+      test('defaults workerCount to null when not specified', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+spec: ./api.yaml
+''');
+
+        final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+        expect(config.workerCount, isNull);
+      });
+
+      test('throws meaningful error when workerCount is not an int', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+workerCount: not_a_number
+''');
+
+        expect(
+          () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+          throwsA(
+            isA<ConfigLoaderException>().having(
+              (e) => e.message,
+              'message',
+              contains('"workerCount" must be a non-negative integer'),
+            ),
+          ),
+        );
+      });
+
+      test('throws meaningful error when workerCount is negative', () {
+        File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+workerCount: -1
+''');
+
+        expect(
+          () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+          throwsA(
+            isA<ConfigLoaderException>().having(
+              (e) => e.message,
+              'message',
+              contains('"workerCount" must be a non-negative integer'),
+            ),
+          ),
+        );
+      });
+
       test('loads empty config file as default config', () {
         File('${tempDir.path}/tonik.yaml').writeAsStringSync('');
 
@@ -653,6 +717,12 @@ nameOverrides:
         expect(merged.useImmutableCollections, isTrue);
       });
 
+      test('CLI workerCount overrides config value', () {
+        const config = CliConfig(workerCount: 2);
+        final merged = config.merge(workerCount: 8);
+        expect(merged.workerCount, 8);
+      });
+
       test('merge preserves non-CLI config properties', () {
         const config = CliConfig(
           spec: './config-spec.yaml',
@@ -696,6 +766,12 @@ nameOverrides:
 
         expect(tonikConfig.useImmutableCollections, isFalse);
       });
+
+      test('passes workerCount to TonikConfig', () {
+        const config = CliConfig(workerCount: 4);
+        final tonikConfig = config.toTonikConfig();
+        expect(tonikConfig.workerCount, 4);
+      });
     });
 
     group('CliConfig toString, equality, hashCode', () {
@@ -716,6 +792,7 @@ nameOverrides:
         expect(a == b, isTrue);
         expect(a.hashCode, b.hashCode);
       });
+
     });
 
     group('type validation for string fields', () {

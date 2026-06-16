@@ -91,6 +91,10 @@ enums:
 
 # Use immutable collections (IList/IMap) instead of List/Map
 immutableCollections: true
+
+# Number of worker isolates for parallel model file generation
+# Auto: (logical cores - 1), clamped to 1..16. Use 0 or 1 to force serial.
+workerCount: 4
 ```
 
 ## CLI Options
@@ -115,6 +119,7 @@ tonik --output-dir ./other-location
 | `--package-name`, `-p` | `packageName` | Name of the generated package (required) |
 | `--log-level` | `logLevel` | Logging verbosity: `verbose`, `info`, `warn`, `silent` (defaults to `warn`) |
 | `--immutable-collections` | `immutableCollections` | Use `IList`/`IMap` instead of `List`/`Map` (defaults to `false`) |
+| `--workers` | `workerCount` | Number of worker isolates for parallel model file generation (defaults to auto) |
 
 ## Name Overrides
 
@@ -379,6 +384,32 @@ enum Status {
 ```
 
 When deserializing, any unrecognized value will map to `unknown` instead of throwing an error.
+
+## Parallel Model File Generation
+
+On large specs, model file generation runs in parallel across multiple worker isolates. The default behaviour scales automatically with the host CPU and is appropriate for most users.
+
+```yaml
+workerCount: 4
+```
+
+```bash
+tonik --spec ./openapi.yaml --package-name my_api --workers 4
+```
+
+```bash
+TONIK_WORKERS=4 tonik --spec ./openapi.yaml --package-name my_api
+```
+
+Values:
+
+- **Unset (default)** — auto-sizes to `(number of logical cores) - 1`, clamped to the range `1..16`.
+- **`0` or `1`** — forces serial generation on the main isolate. Useful for benchmarks, reproducibility, or constrained environments.
+- **Any positive integer** — caps the worker count. Negative values are rejected.
+
+Precedence (highest first): `--workers` CLI flag, `workerCount` config key, `TONIK_WORKERS` environment variable, auto.
+
+The generated output is byte-for-byte identical regardless of worker count — switching between serial and parallel does not change the generated code. Small specs (under a few hundred models) fall back to serial automatically, since the cost of spawning workers exceeds the savings.
 
 ## Immutable Collections
 
