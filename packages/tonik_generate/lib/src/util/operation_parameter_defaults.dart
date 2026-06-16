@@ -117,7 +117,7 @@ OperationDefaultsResult resolveOperationParameterDefaults({
     );
     if (runtime == null) return;
 
-    _log.warning(
+    _log.fine(
       'Routing default to runtime fallback for $operationClassName.$specName.',
     );
     byName[normalizedName] = OperationParameterDefault.local(

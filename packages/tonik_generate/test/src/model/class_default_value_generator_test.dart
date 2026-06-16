@@ -18,6 +18,10 @@ void main() {
     ).format;
 
     setUp(() {
+      final previousRootLevel = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      addTearDown(() => Logger.root.level = previousRootLevel);
+
       nameManager = NameManager(
         generator: NameGenerator(),
         stableModelSorter: StableModelSorter(),
@@ -364,13 +368,13 @@ void main() {
         );
         expect(getter.static, isTrue);
         expect(getter.type, MethodType.getter);
-        final warnings = logs
+        final routingLogs = logs
             .where(
               (r) =>
-                  r.level == Level.WARNING && r.loggerName == 'ClassGenerator',
+                  r.level == Level.FINE && r.loggerName == 'ClassGenerator',
             )
             .toList();
-        expect(warnings.map((r) => r.message), [
+        expect(routingLogs.map((r) => r.message), [
           'Routing default to runtime fallback for WithChild.child.',
         ]);
         expect(
@@ -452,13 +456,13 @@ factory WithChild.fromJson(Object? json) {
       );
       expect(getter.static, isTrue);
       expect(getter.type, MethodType.getter);
-      final warnings = logs
+      final routingLogs = logs
           .where(
             (r) =>
-                r.level == Level.WARNING && r.loggerName == 'ClassGenerator',
+                r.level == Level.FINE && r.loggerName == 'ClassGenerator',
           )
           .toList();
-      expect(warnings.map((r) => r.message), [
+      expect(routingLogs.map((r) => r.message), [
         'Routing default to runtime fallback for WithComposite.union.',
       ]);
       expect(
@@ -1076,6 +1080,10 @@ factory DefaultedSimpleRuntime.fromSimple(
     ).format;
 
     setUp(() {
+      final previousRootLevel = Logger.root.level;
+      Logger.root.level = Level.ALL;
+      addTearDown(() => Logger.root.level = previousRootLevel);
+
       nameManager = NameManager(
         generator: NameGenerator(),
         stableModelSorter: StableModelSorter(),

@@ -13,6 +13,10 @@ void main() {
   late DartEmitter emitter;
 
   setUp(() {
+    final previousRootLevel = Logger.root.level;
+    Logger.root.level = Level.ALL;
+    addTearDown(() => Logger.root.level = previousRootLevel);
+
     nameManager = NameManager(
       generator: NameGenerator(),
       stableModelSorter: StableModelSorter(),
@@ -399,7 +403,7 @@ void main() {
 
     test(
       'date-time target falls through to a runtime getter — no const field, '
-      'isRuntime flag set, single routing warning emitted',
+      'isRuntime flag set, single routing log emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -441,8 +445,10 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['since']?.memberName, 'sinceDefault');
         expect(result.byName['since']?.isRuntime, isTrue);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings.map((r) => r.message), [
+        final routingLogs = logs
+            .where((r) => r.level == Level.FINE)
+            .toList();
+        expect(routingLogs.map((r) => r.message), [
           'Routing default to runtime fallback for Op.since.',
         ]);
       },
@@ -450,7 +456,7 @@ void main() {
 
     test(
       'ClassModel target with default falls through to a runtime getter — '
-      'no const field, isRuntime flag set, routing warning emitted',
+      'no const field, isRuntime flag set, routing log emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -498,8 +504,10 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['region']?.memberName, 'regionDefault');
         expect(result.byName['region']?.isRuntime, isTrue);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings.map((r) => r.message), [
+        final routingLogs = logs
+            .where((r) => r.level == Level.FINE)
+            .toList();
+        expect(routingLogs.map((r) => r.message), [
           'Routing default to runtime fallback for Op.region.',
         ]);
       },
@@ -554,14 +562,14 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['policy']?.memberName, 'policyDefault');
         expect(result.byName['policy']?.isRuntime, isTrue);
-        final warnings = logs
+        final routingLogs = logs
             .where(
               (r) =>
-                  r.level == Level.WARNING &&
+                  r.level == Level.FINE &&
                   r.loggerName == 'OperationParameterDefaults',
             )
             .toList();
-        expect(warnings.map((r) => r.message), [
+        expect(routingLogs.map((r) => r.message), [
           'Routing default to runtime fallback for Op.X-Policy.',
         ]);
         expect(
@@ -577,7 +585,7 @@ void main() {
 
     test(
       'AllOf composite target with default falls through to a runtime getter '
-      'without emitting a const field, routing warning emitted',
+      'without emitting a const field, routing log emitted',
       () {
         final logs = <LogRecord>[];
         final sub = Logger(
@@ -625,8 +633,10 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['region']?.memberName, 'regionDefault');
         expect(result.byName['region']?.isRuntime, isTrue);
-        final warnings = logs.where((r) => r.level == Level.WARNING).toList();
-        expect(warnings.map((r) => r.message), [
+        final routingLogs = logs
+            .where((r) => r.level == Level.FINE)
+            .toList();
+        expect(routingLogs.map((r) => r.message), [
           'Routing default to runtime fallback for Op.region.',
         ]);
       },
