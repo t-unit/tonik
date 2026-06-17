@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
@@ -11,6 +12,7 @@ import 'package:tonik_generate/src/util/response_property_normalizer.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_util/tonik_util.dart' as tonik_util;
 
 class ParseGenerator {
   const ParseGenerator({
@@ -22,6 +24,8 @@ class ParseGenerator {
   final NameManager nameManager;
   final String package;
   final bool useImmutableCollections;
+
+  static final log = Logger('ParseGenerator');
 
   /// Generates the _parseResponse method for the operation.
   Method generateParseResponseMethod(Operation operation) {
@@ -60,16 +64,24 @@ class ParseGenerator {
       }
     }
 
-    // Only add a default case if we don't have a default response with
-    // null content type
     final switchCases = <Code>[
+      Block.of([
+        const Code(r'final _$mediaType = '),
+        refer(
+          'extractMediaType',
+          'package:tonik_util/tonik_util.dart',
+        ).code,
+        const Code("(response.headers.value('content-type'));"),
+      ]),
       const Code(
-        'switch ((response.statusCode, '
-        "response.headers.value('content-type'))) {",
+        r'switch ((response.statusCode, _$mediaType)) {',
       ),
       ...cases,
     ];
 
+    // A spec `default` response with no content type already matches `(_, _)`,
+    // so emitting a synthetic `default:` arm would shadow it and produce dead
+    // code.
     if (!hasDefaultWithNullContentType) {
       switchCases.add(
         Block.of([
@@ -78,11 +90,14 @@ class ParseGenerator {
             r"final _$content = response.headers.value('content-type') "
             "?? 'not specified';",
           ),
+          const Code(r"final _$matched = _$mediaType ?? 'none';"),
           const Code(r'final _$status = response.statusCode;'),
           generateResponseDecodingExceptionExpression(
             'Unexpected content type: '
             r'${_$content}'
-            ' for status code: '
+            ' (matched as: '
+            r'${_$matched}'
+            ') for status code: '
             r'${_$status}',
           ).statement,
         ]),
@@ -122,8 +137,11 @@ class ParseGenerator {
   }
 
   Code _casePattern(ResponseStatus status, String? contentType) {
-    final contentTypePattern = contentType != null
-        ? specLiteralStringCode(contentType)
+    // Normalize spec keys with the same helper the generated code uses at
+    // runtime so case patterns match the runtime-computed `_$mediaType`.
+    final normalized = tonik_util.extractMediaType(contentType);
+    final contentTypePattern = normalized != null
+        ? specLiteralStringCode(normalized)
         : '_';
     switch (status) {
       case ExplicitResponseStatus():
@@ -653,13 +671,51 @@ class ParseGenerator {
   Set<String?> _getContentTypes(Response response) {
     final contentTypes = <String?>{};
     final resolvedResponse = response.resolved;
+    final keptByNormalized = <String, ResponseBody>{};
+    final droppedByNormalized = <String, List<ResponseBody>>{};
 
     for (final body in resolvedResponse.bodies) {
-      contentTypes.add(body.rawContentType);
+      final raw = body.rawContentType;
+      final normalized = tonik_util.extractMediaType(raw);
+      if (normalized == null) {
+        contentTypes.add(raw);
+        continue;
+      }
+      if (!keptByNormalized.containsKey(normalized)) {
+        keptByNormalized[normalized] = body;
+        contentTypes.add(raw);
+      } else {
+        droppedByNormalized.putIfAbsent(normalized, () => []).add(body);
+      }
     }
 
     if (contentTypes.isEmpty) {
       contentTypes.add(null);
+    }
+
+    for (final entry in droppedByNormalized.entries) {
+      final kept = keptByNormalized[entry.key]!;
+      final dropped = entry.value;
+      final droppedRaws = dropped
+          .map((b) => '"${b.rawContentType}"')
+          .join(', ');
+
+      final keptType = kept.model.runtimeType;
+      final hasDistinctModels = dropped.any(
+        (b) => b.model.runtimeType != keptType,
+      );
+
+      final modelInfo = hasDistinctModels
+          ? ' kept model: $keptType; dropped models: '
+                '${dropped.map((b) => b.model.runtimeType).join(', ')}.'
+          : '';
+
+      log.warning(
+        'Multiple response content types normalize to '
+        '"${entry.key}"; keeping the first raw entry and dropping '
+        '$droppedRaws. '
+        'The dropped entries are unreachable at runtime.$modelInfo',
+      );
     }
 
     return contentTypes;
