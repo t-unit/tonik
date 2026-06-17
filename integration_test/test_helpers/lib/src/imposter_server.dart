@@ -11,10 +11,10 @@ class ImposterServer {
   ImposterServer();
 
   Process? _process;
+  int _port = 0;
+  Completer<void> _readyCompleter = Completer<void>();
 
-  late final int port;
-
-  final Completer<void> _readyCompleter = Completer<void>();
+  int get port => _port;
 
   /// Finds an available port by binding to port 0 and immediately closing.
   static Future<int> _findAvailablePort() async {
@@ -26,26 +26,20 @@ class ImposterServer {
 
   /// Starts the Imposter server and waits for it to be ready.
   ///
-  /// This method:
-  /// 1. Locates the imposter.jar file (expected two directories up from
-  ///    current)
-  /// 2. Starts the Java process with OpenAPI and REST plugins
-  /// 3. Monitors stdout for the "Mock engine up and running" message
-  /// 4. Waits an additional 500ms for the OpenAPI plugin to fully
-  ///    initialize
-  /// 5. Verifies the server is responding to HTTP requests
+  /// Each attempt waits up to [timeoutSec] seconds for the JVM/Imposter
+  /// plugins to come up. If an attempt times out we kill the (potentially
+  /// hung) process and retry on a fresh port, up to [maxAttempts] times.
+  /// JVMs running concurrent integration suites occasionally hang during
+  /// cold start; retrying recovers without paying the full timeout per
+  /// stuck process.
   ///
-  /// Throws an [Exception] if imposter.jar cannot be found or if the
-  /// server does not become ready within [timeoutSec] seconds.
-  ///
-  /// [timeoutSec] controls how long to wait for the server to start.
-  /// [jvmArgs] are passed to the Java process before `-jar`.
+  /// Throws an [Exception] if imposter.jar cannot be found, or if every
+  /// attempt times out.
   Future<void> start({
     int timeoutSec = 90,
+    int maxAttempts = 2,
     List<String> jvmArgs = const [],
   }) async {
-    port = await _findAvailablePort();
-
     final imposterJar = path.join(
       Directory.current.parent.parent.path,
       'imposter.jar',
@@ -57,6 +51,38 @@ class ImposterServer {
       );
     }
 
+    Exception? lastError;
+    for (var attempt = 1; attempt <= maxAttempts; attempt++) {
+      try {
+        await _startOnce(
+          imposterJar: imposterJar,
+          jvmArgs: jvmArgs,
+          timeoutSec: timeoutSec,
+        );
+        return;
+      } on Exception catch (e) {
+        lastError = e;
+        _process?.kill();
+        _process = null;
+        _readyCompleter = Completer<void>();
+        if (attempt < maxAttempts) {
+          print(
+            'Imposter start attempt $attempt/$maxAttempts failed: $e. '
+            'Retrying on a fresh port...',
+          );
+        }
+      }
+    }
+    throw lastError!;
+  }
+
+  Future<void> _startOnce({
+    required String imposterJar,
+    required List<String> jvmArgs,
+    required int timeoutSec,
+  }) async {
+    _port = await _findAvailablePort();
+
     _process = await Process.start(
       'java',
       [
@@ -64,7 +90,7 @@ class ImposterServer {
         '-jar',
         imposterJar,
         '--listenPort',
-        port.toString(),
+        _port.toString(),
         '--configDir',
         path.join(Directory.current.path, 'imposter'),
         '--plugin',
@@ -91,10 +117,9 @@ class ImposterServer {
 
     final ready = await _waitForImposterReady(timeoutSec: timeoutSec);
     if (!ready) {
-      _process?.kill();
       throw Exception(
         'Imposter server failed to start within $timeoutSec seconds '
-        'on port $port. Check Java/Imposter logs above for details.',
+        'on port $_port. Check Java/Imposter logs above for details.',
       );
     }
   }
@@ -126,7 +151,7 @@ class ImposterServer {
     while (DateTime.now().isBefore(deadline)) {
       try {
         final request = await client.getUrl(
-          Uri.parse('http://localhost:$port'),
+          Uri.parse('http://localhost:$_port'),
         );
         final response = await request.close();
         await response.drain<void>();
@@ -161,10 +186,15 @@ class ImposterServer {
 /// Returns the [ImposterServer] instance with the actual port assigned.
 Future<ImposterServer> setupImposterServer({
   int timeoutSec = 90,
+  int maxAttempts = 2,
   List<String> jvmArgs = const [],
 }) async {
   final server = ImposterServer();
-  await server.start(timeoutSec: timeoutSec, jvmArgs: jvmArgs);
+  await server.start(
+    timeoutSec: timeoutSec,
+    maxAttempts: maxAttempts,
+    jvmArgs: jvmArgs,
+  );
   addTearDown(() => server.stop());
   return server;
 }
