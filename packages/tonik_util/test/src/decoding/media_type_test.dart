@@ -76,28 +76,16 @@ void main() {
       );
     });
 
-    test(
-      'returns trimmed raw input when only a parameter is present so error '
-      'messages surface the malformed header',
-      () {
-        expect(extractMediaType(';charset=utf-8'), ';charset=utf-8');
-      },
-    );
+    test('returns trimmed input verbatim when only a parameter is present', () {
+      expect(extractMediaType(';charset=utf-8'), ';charset=utf-8');
+    });
 
-    test(
-      'returns trimmed raw input when value has no slash so error messages '
-      'surface the malformed header',
-      () {
-        expect(extractMediaType('garbage'), 'garbage');
-      },
-    );
+    test('returns trimmed input verbatim when value has no slash', () {
+      expect(extractMediaType('garbage'), 'garbage');
+    });
 
-    test(
-      'strips parameters from no-slash input so the surfaced header is just '
-      'the malformed type token',
-      () {
-        expect(extractMediaType('garbage; foo=bar'), 'garbage');
-      },
-    );
+    test('strips parameters from no-slash input', () {
+      expect(extractMediaType('garbage; foo=bar'), 'garbage');
+    });
   });
 }

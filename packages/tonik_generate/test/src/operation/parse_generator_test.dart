@@ -3237,8 +3237,8 @@ String _parseResponse(Response<List<int>> response) {
       });
 
       test(
-        'dedupes spec keys that normalize to the same media type and logs '
-        'a warning for the dropped raw entries',
+        'dedupes spec keys that normalize to the same media type, keeps first '
+        'raw entry, and names distinct dropped model types in the warning',
         () {
           final previousRootLevel = Logger.root.level;
           Logger.root.level = Level.ALL;
@@ -3275,13 +3275,13 @@ String _parseResponse(Response<List<int>> response) {
                     examples: const [],
                   ),
                   ResponseBody(
-                    model: StringModel(context: context),
+                    model: IntegerModel(context: context),
                     rawContentType: 'application/json; charset=utf-8',
                     contentType: ContentType.json,
                     examples: const [],
                   ),
                   ResponseBody(
-                    model: StringModel(context: context),
+                    model: IntegerModel(context: context),
                     rawContentType: 'Application/JSON',
                     contentType: ContentType.json,
                     examples: const [],
@@ -3317,9 +3317,119 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
               .map((r) => r.message)
               .toList();
           expect(warnings, hasLength(1));
-          expect(warnings.single, contains('application/json'));
           expect(warnings.single, contains('application/json; charset=utf-8'));
           expect(warnings.single, contains('Application/JSON'));
+          expect(warnings.single, contains('kept model: StringModel'));
+          expect(warnings.single, contains('dropped models:'));
+          expect(warnings.single, contains('IntegerModel'));
+        },
+      );
+
+      test(
+        'dedupes two independent collision groups and emits one warning per '
+        'group',
+        () {
+          final previousRootLevel = Logger.root.level;
+          Logger.root.level = Level.ALL;
+          addTearDown(() => Logger.root.level = previousRootLevel);
+
+          final logs = <LogRecord>[];
+          final sub = Logger('ParseGenerator').onRecord.listen(logs.add);
+          addTearDown(sub.cancel);
+
+          final operation = Operation(
+            operationId: 'multiGroupDedupeOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/multi-group-dedupe',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
+                    examples: const [],
+                  ),
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/json; charset=utf-8',
+                    contentType: ContentType.json,
+                    examples: const [],
+                  ),
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/xml',
+                    contentType: ContentType.json,
+                    examples: const [],
+                  ),
+                  ResponseBody(
+                    model: StringModel(context: context),
+                    rawContentType: 'application/xml; charset=utf-8',
+                    contentType: ContentType.json,
+                    examples: const [],
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+AnonymousResponse _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+  switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return AnonymousResponseJson(body: _$body);
+    case (200, r'application/xml'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return AnonymousResponseXml(body: _$body);
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+
+          final warnings = logs
+              .where((r) => r.level == Level.WARNING)
+              .map((r) => r.message)
+              .toList();
+          expect(warnings, hasLength(2));
+          final jsonWarning = warnings.firstWhere(
+            (w) => w.contains('"application/json"'),
+          );
+          expect(
+            jsonWarning,
+            contains('application/json; charset=utf-8'),
+          );
+          final xmlWarning = warnings.firstWhere(
+            (w) => w.contains('"application/xml"'),
+          );
+          expect(
+            xmlWarning,
+            contains('application/xml; charset=utf-8'),
+          );
         },
       );
     });

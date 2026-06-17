@@ -79,8 +79,9 @@ class ParseGenerator {
       ...cases,
     ];
 
-    // Only add a default case if we don't have a default response with null
-    // content type
+    // A spec `default` response with no content type already matches `(_, _)`,
+    // so emitting a synthetic `default:` arm would shadow it and produce dead
+    // code.
     if (!hasDefaultWithNullContentType) {
       switchCases.add(
         Block.of([
@@ -133,9 +134,8 @@ class ParseGenerator {
   }
 
   Code _casePattern(ResponseStatus status, String? contentType) {
-    // Spec keys are stored verbatim by the parser; normalising via the shared
-    // runtime helper here keeps emitted case patterns in lockstep with what
-    // `extractMediaType` computes against the response header at runtime.
+    // Normalise spec keys with the same helper the generated code uses at
+    // runtime so case patterns match the runtime-computed `_$mediaType`.
     final normalized = tonik_util.extractMediaType(contentType);
     final contentTypePattern = normalized != null
         ? specLiteralStringCode(normalized)
@@ -668,8 +668,8 @@ class ParseGenerator {
   Set<String?> _getContentTypes(Response response) {
     final contentTypes = <String?>{};
     final resolvedResponse = response.resolved;
-    final seenNormalized = <String>{};
-    final droppedByNormalized = <String, List<String>>{};
+    final keptByNormalized = <String, ResponseBody>{};
+    final droppedByNormalized = <String, List<ResponseBody>>{};
 
     for (final body in resolvedResponse.bodies) {
       final raw = body.rawContentType;
@@ -678,10 +678,11 @@ class ParseGenerator {
         contentTypes.add(raw);
         continue;
       }
-      if (seenNormalized.add(normalized)) {
+      if (!keptByNormalized.containsKey(normalized)) {
+        keptByNormalized[normalized] = body;
         contentTypes.add(raw);
       } else {
-        droppedByNormalized.putIfAbsent(normalized, () => []).add(raw);
+        droppedByNormalized.putIfAbsent(normalized, () => []).add(body);
       }
     }
 
@@ -690,11 +691,27 @@ class ParseGenerator {
     }
 
     for (final entry in droppedByNormalized.entries) {
+      final kept = keptByNormalized[entry.key]!;
+      final dropped = entry.value;
+      final droppedRaws = dropped
+          .map((b) => '"${b.rawContentType}"')
+          .join(', ');
+
+      final keptType = kept.model.runtimeType;
+      final hasDistinctModels = dropped.any(
+        (b) => b.model.runtimeType != keptType,
+      );
+
+      final modelInfo = hasDistinctModels
+          ? ' kept model: $keptType; dropped models: '
+                '${dropped.map((b) => b.model.runtimeType).join(', ')}.'
+          : '';
+
       log.warning(
         'Multiple response content types normalize to '
         '"${entry.key}"; keeping the first raw entry and dropping '
-        '${entry.value.map((v) => '"$v"').join(', ')}. '
-        'The dropped entries are unreachable at runtime.',
+        '$droppedRaws. '
+        'The dropped entries are unreachable at runtime.$modelInfo',
       );
     }
 
