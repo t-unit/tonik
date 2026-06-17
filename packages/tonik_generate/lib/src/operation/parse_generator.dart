@@ -90,11 +90,14 @@ class ParseGenerator {
             r"final _$content = response.headers.value('content-type') "
             "?? 'not specified';",
           ),
+          const Code(r"final _$matched = _$mediaType ?? 'none';"),
           const Code(r'final _$status = response.statusCode;'),
           generateResponseDecodingExceptionExpression(
             'Unexpected content type: '
             r'${_$content}'
-            ' for status code: '
+            ' (matched as: '
+            r'${_$matched}'
+            ') for status code: '
             r'${_$status}',
           ).statement,
         ]),
@@ -134,7 +137,7 @@ class ParseGenerator {
   }
 
   Code _casePattern(ResponseStatus status, String? contentType) {
-    // Normalise spec keys with the same helper the generated code uses at
+    // Normalize spec keys with the same helper the generated code uses at
     // runtime so case patterns match the runtime-computed `_$mediaType`.
     final normalized = tonik_util.extractMediaType(contentType);
     final contentTypePattern = normalized != null

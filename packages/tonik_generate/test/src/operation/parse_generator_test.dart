@@ -84,8 +84,9 @@ String _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -149,8 +150,9 @@ String _parseResponse(Response<List<int>> response) {
               return _$body;
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
           }
         }
       ''';
@@ -220,8 +222,9 @@ String _parseResponse(Response<List<int>> response) {
               return _$body;
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
           }
         }
       ''';
@@ -278,8 +281,9 @@ String _parseResponse(Response<List<int>> response) {
               return _$body;
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
           }
         }
       ''';
@@ -356,8 +360,9 @@ String _parseResponse(Response<List<int>> response) {
               return _$body;
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
           }
         }
       ''';
@@ -439,8 +444,9 @@ String _parseResponse(Response<List<int>> response) {
               return _$body;
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
           }
         }
       ''';
@@ -493,8 +499,9 @@ String _parseResponse(Response<List<int>> response) {
               return _$body;
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
           }
         }
       ''';
@@ -547,8 +554,9 @@ String _parseResponse(Response<List<int>> response) {
               return _$body;
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
           }
         }
       ''';
@@ -627,8 +635,9 @@ String _parseResponse(Response<List<int>> response) {
               return MultiStatusOpResponse400();
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
-              throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+              throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
           }
         }
       ''';
@@ -730,9 +739,10 @@ String _parseResponse(Response<List<int>> response) {
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: ${_$content} for status code: ${_$status}',
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
               );
           }
         }
@@ -957,9 +967,10 @@ String _parseResponse(Response<List<int>> response) {
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: ${_$content} for status code: ${_$status}',
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
               );
           }
         }
@@ -1049,9 +1060,10 @@ String _parseResponse(Response<List<int>> response) {
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: ${_$content} for status code: ${_$status}',
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
               );
           }
         }
@@ -1133,9 +1145,10 @@ String _parseResponse(Response<List<int>> response) {
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: ${_$content} for status code: ${_$status}',
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
               );
           }
         }
@@ -1202,9 +1215,10 @@ String _parseResponse(Response<List<int>> response) {
               return UserResponseXml(body: _$body);
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: ${_$content} for status code: ${_$status}',
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
               );
           }
         }
@@ -1282,9 +1296,10 @@ String _parseResponse(Response<List<int>> response) {
               return GetUserResponse400(body: _$body);
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: ${_$content} for status code: ${_$status}',
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
               );
           }
         }
@@ -1428,8 +1443,9 @@ String _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -1483,8 +1499,9 @@ TonikFile _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -1536,8 +1553,9 @@ TonikFile _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -1610,8 +1628,9 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       return AnonymousResponseOctetStream(body: _$body);
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -1666,8 +1685,9 @@ String _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -1747,8 +1767,9 @@ FormData _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -1801,8 +1822,9 @@ int _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -1855,8 +1877,9 @@ DateTime _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -1963,9 +1986,10 @@ DateTime _parseResponse(Response<List<int>> response) {
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: ${_$content} for status code: ${_$status}',
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
               );
           }
         }
@@ -2076,9 +2100,10 @@ DateTime _parseResponse(Response<List<int>> response) {
               return MultiNeverOpResponse404(body: _$body);
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
+              final _$matched = _$mediaType ?? 'none';
               final _$status = response.statusCode;
               throw ResponseDecodingException(
-                'Unexpected content type: ${_$content} for status code: ${_$status}',
+                'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
               );
           }
         }
@@ -2139,8 +2164,9 @@ List<Never> _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -2193,8 +2219,9 @@ Never _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -2255,8 +2282,9 @@ NeverAlias _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -2331,9 +2359,10 @@ MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
       return MultiNeverBodyOpResponse404(body: _$body);
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
       throw ResponseDecodingException(
-        'Unexpected content type: ${_$content} for status code: ${_$status}',
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
       );
   }
 }
@@ -2408,9 +2437,10 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
       throw ResponseDecodingException(
-        'Unexpected content type: ${_$content} for status code: ${_$status}',
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
       );
   }
 }
@@ -2504,9 +2534,10 @@ MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
       return MultiNeverBodyHeaderOpResponse404(body: _$body);
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
       throw ResponseDecodingException(
-        'Unexpected content type: ${_$content} for status code: ${_$status}',
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
       );
   }
 }
@@ -2570,9 +2601,10 @@ NeverFormAlias _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
       throw ResponseDecodingException(
-        'Unexpected content type: ${_$content} for status code: ${_$status}',
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
       );
   }
 }
@@ -2629,9 +2661,10 @@ Never _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
       throw ResponseDecodingException(
-        'Unexpected content type: ${_$content} for status code: ${_$status}',
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
       );
   }
 }
@@ -2693,9 +2726,10 @@ List<Never> _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
       throw ResponseDecodingException(
-        'Unexpected content type: ${_$content} for status code: ${_$status}',
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
       );
   }
 }
@@ -2758,9 +2792,10 @@ List<Never>? _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
       throw ResponseDecodingException(
-        'Unexpected content type: ${_$content} for status code: ${_$status}',
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
       );
   }
 }
@@ -2876,8 +2911,9 @@ String _parseResponse(Response<List<int>> response) {
       );
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3004,8 +3040,9 @@ String _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3063,8 +3100,9 @@ String _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3117,8 +3155,9 @@ String _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3171,8 +3210,9 @@ String _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3225,8 +3265,9 @@ String _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3234,6 +3275,55 @@ String _parseResponse(Response<List<int>> response) {
           collapseWhitespace(format(method.accept(emitter).toString())),
           collapseWhitespace(format(expectedMethod)),
         );
+      });
+
+      test('emits no warnings when normalizing a non-colliding spec key', () {
+        final previousRootLevel = Logger.root.level;
+        Logger.root.level = Level.ALL;
+        addTearDown(() => Logger.root.level = previousRootLevel);
+
+        final logs = <LogRecord>[];
+        final sub = Logger('ParseGenerator').onRecord.listen(logs.add);
+        addTearDown(sub.cancel);
+
+        final operation = Operation(
+          operationId: 'silentNormalizationOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/silent-normalization',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json; charset=utf-8',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        generator.generateParseResponseMethod(operation);
+
+        final warnings = logs
+            .where((r) => r.level == Level.WARNING)
+            .map((r) => r.message)
+            .toList();
+        expect(warnings, isEmpty);
       });
 
       test(
@@ -3302,8 +3392,9 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       return AnonymousResponseJson(body: _$body);
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3401,8 +3492,9 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       return AnonymousResponseXml(body: _$body);
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3423,6 +3515,8 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
             jsonWarning,
             contains('application/json; charset=utf-8'),
           );
+          expect(jsonWarning, isNot(contains('kept model:')));
+          expect(jsonWarning, isNot(contains('dropped models:')));
           final xmlWarning = warnings.firstWhere(
             (w) => w.contains('"application/xml"'),
           );
@@ -3430,6 +3524,8 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
             xmlWarning,
             contains('application/xml; charset=utf-8'),
           );
+          expect(xmlWarning, isNot(contains('kept model:')));
+          expect(xmlWarning, isNot(contains('dropped models:')));
         },
       );
     });
@@ -3548,8 +3644,9 @@ IList<String> _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3608,8 +3705,9 @@ IMap<String, int> _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
@@ -3676,8 +3774,9 @@ Tree _parseResponse(Response<List<int>> response) {
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
       final _$status = response.statusCode;
-      throw ResponseDecodingException('Unexpected content type: ${_$content} for status code: ${_$status}');
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
   }
 }
 ''';
