@@ -41,7 +41,7 @@ class ImposterServer {
   /// [timeoutSec] controls how long to wait for the server to start.
   /// [jvmArgs] are passed to the Java process before `-jar`.
   Future<void> start({
-    int timeoutSec = 30,
+    int timeoutSec = 90,
     List<String> jvmArgs = const [],
   }) async {
     port = await _findAvailablePort();
@@ -160,7 +160,7 @@ class ImposterServer {
 ///
 /// Returns the [ImposterServer] instance with the actual port assigned.
 Future<ImposterServer> setupImposterServer({
-  int timeoutSec = 30,
+  int timeoutSec = 90,
   List<String> jvmArgs = const [],
 }) async {
   final server = ImposterServer();
