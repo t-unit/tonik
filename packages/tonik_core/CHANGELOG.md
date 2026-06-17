@@ -1,3 +1,21 @@
+## 0.8.0
+
+ - **REFACTOR**(generate): simplify workerCount semantics and tighten worker pool.
+ - **REFACTOR**(tonik_core): hide effectiveDefault from the public barrel.
+ - **REFACTOR**: make dropped-default warning location-neutral and report spec types.
+ - **REFACTOR**: consolidate default-resolution across class properties and operation params.
+ - **REFACTOR**: slim default carrier, surface expected type in warning.
+ - **REFACTOR**: move effective-default resolution onto Property; share decoder-default helper.
+ - **REFACTOR**(tonik_core): tighten AliasModel default contract.
+ - **FIX**(tonik_core): resolve alias default lazily through the chain.
+ - **FIX**: require all fields on core Example and detect cyclic example $refs.
+ - **FEAT**(generate): parallelize model file generation across isolates.
+ - **FEAT**: apply primitive defaults to operation parameters.
+ - **FEAT**(tonik): carry OpenAPI `default` through parse + core.
+ - **FEAT**: parse OpenAPI example/examples through to core models.
+ - **DOCS**(generate): trim comments across worker pool changes.
+ - **DOCS**: trim noise dartdoc from default carriers.
+
 ## 0.7.1
 
  - Bump "tonik_core" to `0.7.1`.

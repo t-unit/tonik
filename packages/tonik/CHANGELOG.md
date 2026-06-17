@@ -1,3 +1,13 @@
+## 0.8.0
+
+ - **REFACTOR**(generate): simplify workerCount semantics and tighten worker pool.
+ - **FEAT**(generate): parallelize model file generation across isolates.
+ - **FEAT**: parse OpenAPI example/examples through to core models.
+ - **DOCS**(generate): trim comments across worker pool changes.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.7.1
 
  - Bump "tonik" to `0.7.1`.

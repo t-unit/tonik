@@ -3,6 +3,113 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-06-17
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - There are no breaking changes in this release.
+
+Packages with other changes:
+
+ - [`tonik_util` - `v0.8.0`](#tonik_util---v080)
+ - [`tonik_core` - `v0.8.0`](#tonik_core---v080)
+ - [`tonik_parse` - `v0.8.0`](#tonik_parse---v080)
+ - [`tonik_generate` - `v0.8.0`](#tonik_generate---v080)
+ - [`tonik` - `v0.8.0`](#tonik---v080)
+
+---
+
+#### `tonik_util` - `v0.8.0`
+
+ - **FIX**(generate): refine media-type docs, dedupe warning, and tests.
+ - **FIX**(generate): tolerate media-type parameters in response Content-Type matching.
+
+#### `tonik_core` - `v0.8.0`
+
+ - **REFACTOR**(generate): simplify workerCount semantics and tighten worker pool.
+ - **REFACTOR**(tonik_core): hide effectiveDefault from the public barrel.
+ - **REFACTOR**: make dropped-default warning location-neutral and report spec types.
+ - **REFACTOR**: consolidate default-resolution across class properties and operation params.
+ - **REFACTOR**: slim default carrier, surface expected type in warning.
+ - **REFACTOR**: move effective-default resolution onto Property; share decoder-default helper.
+ - **REFACTOR**(tonik_core): tighten AliasModel default contract.
+ - **FIX**(tonik_core): resolve alias default lazily through the chain.
+ - **FIX**: require all fields on core Example and detect cyclic example $refs.
+ - **FEAT**(generate): parallelize model file generation across isolates.
+ - **FEAT**: apply primitive defaults to operation parameters.
+ - **FEAT**(tonik): carry OpenAPI `default` through parse + core.
+ - **FEAT**: parse OpenAPI example/examples through to core models.
+ - **DOCS**(generate): trim comments across worker pool changes.
+ - **DOCS**: trim noise dartdoc from default carriers.
+
+#### `tonik_parse` - `v0.8.0`
+
+ - **REFACTOR**(tonik_core): tighten AliasModel default contract.
+ - **FIX**(tonik_core): resolve alias default lazily through the chain.
+ - **FIX**(tonik_parse): apply $ref siblings + parse OAS 3.2 dataValue/serializedValue.
+ - **FIX**: log silent example drops.
+ - **FIX**: require all fields on core Example and detect cyclic example $refs.
+ - **FEAT**(tonik): carry OpenAPI `default` through parse + core.
+ - **FEAT**: parse OpenAPI example/examples through to core models.
+ - **DOCS**: trim noise dartdoc from default carriers.
+
+#### `tonik_generate` - `v0.8.0`
+
+ - **REVERT**: drop spec-keyword mapping in dropped-default warning.
+ - **REFACTOR**(tonik_generate): move class-member naming into NameManager.
+ - **REFACTOR**(generate): simplify workerCount semantics and tighten worker pool.
+ - **REFACTOR**: consolidate default-resolution across class properties and operation params.
+ - **REFACTOR**(tonik_generate): cache operation default resolution per operation.
+ - **REFACTOR**(tonik_generate): inline shallow test helper; drop redundant carrier field.
+ - **REFACTOR**(tonik_generate): always log dropped defaults; drop suppression hacks.
+ - **REFACTOR**(tonik_generate): polish runtime-default emission and tighten coverage.
+ - **REFACTOR**(tonik_generate): warn on every non-composite dropped default + split collection failure modes.
+ - **REFACTOR**: tighten enum variant-name contract + cover remaining enum operation parameter paths.
+ - **REFACTOR**: centralise enum variant naming on NameManager + tighten enum-default coverage.
+ - **REFACTOR**(tonik_generate): drop unreachable reserved names from default helper.
+ - **REFACTOR**: make dropped-default warning location-neutral and report spec types.
+ - **REFACTOR**: slim default carrier, surface expected type in warning.
+ - **REFACTOR**: differentiate dropped-default warnings and tighten default carrier.
+ - **REFACTOR**: move effective-default resolution onto Property; share decoder-default helper.
+ - **REFACTOR**(tonik_generate): slim down dropped-default warning + reuse existing abstractions.
+ - **REFACTOR**(tonik_generate): drop unused params from materialiseConstDefault.
+ - **FIX**(generate): tolerate media-type parameters in response Content-Type matching.
+ - **FIX**(generate): demote runtime-default routing log from warning to fine.
+ - **FIX**(tonik_generate): escape spec-derived names in generated string literals.
+ - **FIX**(tonik_generate): escape five sibling multipart error messages.
+ - **FIX**(generate): surface matched media type in unexpected-content-type error.
+ - **FIX**(tonik_generate): drop dead receiver-null guard when inlining const literals.
+ - **FIX**(tonik_generate): address PR review findings for runtime-default emission.
+ - **FIX**(generate): refine media-type docs, dedupe warning, and tests.
+ - **FEAT**(tonik_generate): render OpenAPI examples as dartdoc.
+ - **FEAT**(tonik_generate): render parameter examples in api_client docs.
+ - **FEAT**(tonik): carry OpenAPI `default` through parse + core.
+ - **FEAT**(tonik_generate): emit static get default for non-const-materialisable defaults.
+ - **FEAT**(generate): parallelize model file generation across isolates.
+ - **FEAT**(tonik_generate): materialise enum defaults as const variant references.
+ - **FEAT**: parse OpenAPI example/examples through to core models.
+ - **FEAT**: apply primitive defaults to operation parameters.
+ - **FEAT**(tonik_generate): emit const defaults for primitive class properties.
+ - **FEAT**(tonik_generate): materialise const defaults for lists, maps, and free-form values.
+ - **DOCS**(tonik_generate): correct two comment inaccuracies in default_resolution.
+ - **DOCS**(tonik_generate): prune comments across remaining PR files.
+ - **DOCS**(tonik_generate): tighten OperationDefaultsCache doc comment.
+ - **DOCS**(generate): trim comments across worker pool changes.
+ - **DOCS**: drop writeOne doc comment.
+ - **DOCS**(tonik_generate): prune comment volume in default_resolution.
+
+#### `tonik` - `v0.8.0`
+
+ - **REFACTOR**(generate): simplify workerCount semantics and tighten worker pool.
+ - **FEAT**(generate): parallelize model file generation across isolates.
+ - **FEAT**: parse OpenAPI example/examples through to core models.
+ - **DOCS**(generate): trim comments across worker pool changes.
+
+
 ## 2026-05-23
 
 ### Changes

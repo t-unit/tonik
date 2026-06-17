@@ -1,3 +1,8 @@
+## 0.8.0
+
+ - **FIX**(generate): refine media-type docs, dedupe warning, and tests.
+ - **FIX**(generate): tolerate media-type parameters in response Content-Type matching.
+
 ## 0.7.1
 
  - **FIX**: AnyModel encoding in tonik_util runtime and three generator callsites.

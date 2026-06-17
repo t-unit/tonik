@@ -1,3 +1,14 @@
+## 0.8.0
+
+ - **REFACTOR**(tonik_core): tighten AliasModel default contract.
+ - **FIX**(tonik_core): resolve alias default lazily through the chain.
+ - **FIX**(tonik_parse): apply $ref siblings + parse OAS 3.2 dataValue/serializedValue.
+ - **FIX**: log silent example drops.
+ - **FIX**: require all fields on core Example and detect cyclic example $refs.
+ - **FEAT**(tonik): carry OpenAPI `default` through parse + core.
+ - **FEAT**: parse OpenAPI example/examples through to core models.
+ - **DOCS**: trim noise dartdoc from default carriers.
+
 ## 0.7.1
 
  - **FIX**: handle empty oneOf without producing invalid Dart.
