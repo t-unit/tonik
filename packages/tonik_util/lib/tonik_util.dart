@@ -5,6 +5,7 @@ export 'src/date.dart';
 export 'src/decoding/decoding_exception.dart';
 export 'src/decoding/form_decoder.dart';
 export 'src/decoding/json_decoder.dart';
+export 'src/decoding/media_type.dart';
 export 'src/decoding/object_decoder.dart';
 export 'src/decoding/response_decoder.dart';
 export 'src/decoding/simple_decoder.dart';

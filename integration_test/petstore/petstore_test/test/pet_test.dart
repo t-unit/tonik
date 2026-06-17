@@ -282,7 +282,8 @@ void main() {
   });
 
   group('getPetById', () {
-    test('200', () async {
+    test('200 decodes body when Content-Type carries charset parameter',
+        () async {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.getPetById(petId: 1);
@@ -295,6 +296,8 @@ void main() {
       // deprecation is defined by the OpenAPI spec and correct
       // ignore: deprecated_member_use
       expect(body, isA<Pet>());
+      expect(body.id, 1);
+      expect(body.name, 'doggie');
     });
 
     test('400', () async {
@@ -461,7 +464,8 @@ void main() {
   });
 
   group('getPetHealth', () {
-    test('200 with custom content type', () async {
+    test('200 decodes problem+json body when Content-Type carries version and '
+        'charset parameters', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
       final health = await petApi.getPetHealth(petId: 123);

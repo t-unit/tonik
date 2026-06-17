@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
@@ -11,6 +12,7 @@ import 'package:tonik_generate/src/util/response_property_normalizer.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_util/tonik_util.dart' as tonik_util;
 
 class ParseGenerator {
   const ParseGenerator({
@@ -22,6 +24,8 @@ class ParseGenerator {
   final NameManager nameManager;
   final String package;
   final bool useImmutableCollections;
+
+  static final log = Logger('ParseGenerator');
 
   /// Generates the _parseResponse method for the operation.
   Method generateParseResponseMethod(Operation operation) {
@@ -60,16 +64,23 @@ class ParseGenerator {
       }
     }
 
-    // Only add a default case if we don't have a default response with
-    // null content type
     final switchCases = <Code>[
+      Block.of([
+        const Code(r'final _$mediaType = '),
+        refer(
+          'extractMediaType',
+          'package:tonik_util/tonik_util.dart',
+        ).code,
+        const Code("(response.headers.value('content-type'));"),
+      ]),
       const Code(
-        'switch ((response.statusCode, '
-        "response.headers.value('content-type'))) {",
+        r'switch ((response.statusCode, _$mediaType)) {',
       ),
       ...cases,
     ];
 
+    // Only add a default case if we don't have a default response with null
+    // content type
     if (!hasDefaultWithNullContentType) {
       switchCases.add(
         Block.of([
@@ -122,8 +133,12 @@ class ParseGenerator {
   }
 
   Code _casePattern(ResponseStatus status, String? contentType) {
-    final contentTypePattern = contentType != null
-        ? specLiteralStringCode(contentType)
+    // Spec keys are stored verbatim by the parser; normalising via the shared
+    // runtime helper here keeps emitted case patterns in lockstep with what
+    // `extractMediaType` computes against the response header at runtime.
+    final normalized = tonik_util.extractMediaType(contentType);
+    final contentTypePattern = normalized != null
+        ? specLiteralStringCode(normalized)
         : '_';
     switch (status) {
       case ExplicitResponseStatus():
@@ -653,13 +668,34 @@ class ParseGenerator {
   Set<String?> _getContentTypes(Response response) {
     final contentTypes = <String?>{};
     final resolvedResponse = response.resolved;
+    final seenNormalized = <String>{};
+    final droppedByNormalized = <String, List<String>>{};
 
     for (final body in resolvedResponse.bodies) {
-      contentTypes.add(body.rawContentType);
+      final raw = body.rawContentType;
+      final normalized = tonik_util.extractMediaType(raw);
+      if (normalized == null) {
+        contentTypes.add(raw);
+        continue;
+      }
+      if (seenNormalized.add(normalized)) {
+        contentTypes.add(raw);
+      } else {
+        droppedByNormalized.putIfAbsent(normalized, () => []).add(raw);
+      }
     }
 
     if (contentTypes.isEmpty) {
       contentTypes.add(null);
+    }
+
+    for (final entry in droppedByNormalized.entries) {
+      log.warning(
+        'Multiple response content types normalize to '
+        '"${entry.key}"; keeping the first raw entry and dropping '
+        '${entry.value.map((v) => '"$v"').join(', ')}. '
+        'The dropped entries are unreachable at runtime.',
+      );
     }
 
     return contentTypes;
