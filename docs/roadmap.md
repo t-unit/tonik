@@ -17,7 +17,6 @@
   - `dependentRequired` / `dependentSchemas`
   - `patternProperties` for regex-matched property schemas
   - `propertyNames` for property name validation
-- Default values
 - Supporting the `not` keyword
 
 ## Non-goals
