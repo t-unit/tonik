@@ -384,6 +384,19 @@ void main() {
     });
   });
 
+  group('Scalar body encoding', () {
+    test('encodes a top-level string body as a bare value', () async {
+      final response = await api.postScalarForm(body: 'hello world');
+
+      expect(response, isA<TonikSuccess<String>>());
+
+      final requestData =
+          (response as TonikSuccess<String>).response.requestOptions.data;
+      expect(requestData, 'hello+world');
+      expect((requestData as String).startsWith('='), isFalse);
+    });
+  });
+
   group('Content-Type header', () {
     test('sends correct Content-Type header per OpenAPI spec', () async {
       const form = SimpleForm(name: 'Test', age: 20);

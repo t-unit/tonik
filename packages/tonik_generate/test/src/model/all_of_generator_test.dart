@@ -1475,14 +1475,17 @@ void main() {
           if (list != null) {
             final _$listForm = list!
                 .map(
-                  (e) => e.uriEncode(allowEmpty: allowEmpty, useQueryComponent: true),
+                  (e) => e.uriEncode(
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                  ),
                 )
                 .toList()
                 .toForm(
                   paramName,
                   explode: explode,
                   allowEmpty: allowEmpty,
-                  useQueryComponent: true,
+                  useQueryComponent: useQueryComponent,
                   alreadyEncoded: true,
                 );
             _$entryLists.add(_$listForm);

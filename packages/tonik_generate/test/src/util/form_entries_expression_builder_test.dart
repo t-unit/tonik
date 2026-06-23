@@ -4,6 +4,7 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
+import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
 void main() {
   late Context context;
@@ -41,7 +42,7 @@ void main() {
       paramName: literalString('p'),
       explode: literalBool(explode),
       allowEmpty: literalBool(true),
-      useQueryComponent: useQueryComponent,
+      useQueryComponent: useQueryComponent ? literalBool(true) : null,
     );
     expect(result, isNotNull);
     return result!;
@@ -321,6 +322,134 @@ void main() {
       );
 
       expect(result, isNull);
+    });
+  });
+
+  group('isUriEncodableElement drift guard', () {
+    bool encodesToSingleValue(Model model) {
+      final expression = buildUriEncodeExpression(
+        refer('e'),
+        model,
+        allowEmpty: literalBool(true),
+      ).expression;
+      // buildUriEncodeExpression emits a single uriEncode/encodeAnyToUri value
+      // only when it neither throws an EncodingException nor recurses into a
+      // list/map sub-builder (which renders a `.map(` projection).
+      final body = collapseWhitespace(bodyOf(expression));
+      return !body.contains('EncodingException') && !body.contains('.map(');
+    }
+
+    List<Model> encodableElements() => <Model>[
+      StringModel(context: context),
+      BooleanModel(context: context),
+      DateTimeModel(context: context),
+      DecimalModel(context: context),
+      UriModel(context: context),
+      DateModel(context: context),
+      IntegerModel(context: context),
+      DoubleModel(context: context),
+      NumberModel(context: context),
+      Base64Model(context: context),
+      AnyModel(context: context),
+      EnumModel<String>(
+        values: const {},
+        isNullable: false,
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      ),
+      AnyOfModel(
+        models: const {},
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      ),
+      OneOfModel(
+        models: const {},
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      ),
+      AllOfModel(
+        models: const {},
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      ),
+    ];
+
+    test('every encodable element type matches buildUriEncodeExpression', () {
+      for (final model in encodableElements()) {
+        expect(
+          isUriEncodableElement(model),
+          isTrue,
+          reason: '${model.runtimeType} should be element-encodable',
+        );
+        expect(
+          encodesToSingleValue(model),
+          isTrue,
+          reason: '${model.runtimeType} should uri-encode to a single value',
+        );
+      }
+    });
+
+    test('AliasModel inherits the classification of its target', () {
+      final encodable = AliasModel(
+        name: 'AliasString',
+        model: StringModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final nonEncodable = AliasModel(
+        name: 'AliasMap',
+        model: MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      expect(isUriEncodableElement(encodable), isTrue);
+      expect(isUriEncodableElement(nonEncodable), isFalse);
+    });
+
+    test('complex elements are not element-encodable', () {
+      final complex = <Model>[
+        MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        ClassModel(
+          name: 'Form',
+          isDeprecated: false,
+          properties: const [],
+          context: context,
+          examples: const [],
+        ),
+        NeverModel(context: context),
+      ];
+
+      for (final model in complex) {
+        expect(isUriEncodableElement(model), isFalse);
+      }
+    });
+
+    test('BinaryModel is single-value uri-encodable but rejected as a '
+        'form element', () {
+      final model = BinaryModel(context: context);
+
+      expect(encodesToSingleValue(model), isTrue);
+      expect(isUriEncodableElement(model), isFalse);
     });
   });
 }

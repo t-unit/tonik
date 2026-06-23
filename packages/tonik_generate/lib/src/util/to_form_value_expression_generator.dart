@@ -55,7 +55,7 @@ BuiltExpression buildToFormValueExpression(
     paramName: literalString(''),
     explode: literalBool(explodeLiteral),
     allowEmpty: literalBool(allowEmptyLiteral),
-    useQueryComponent: useQueryComponent,
+    useQueryComponent: useQueryComponent ? literalBool(true) : null,
   );
 
   if (entries == null) {

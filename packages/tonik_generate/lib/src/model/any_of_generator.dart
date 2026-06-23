@@ -1152,7 +1152,7 @@ class AnyOfGenerator {
         ..add(
           declareFinal(r'_$entryLists')
               .assign(
-                literalList([], _parameterEntryListType()),
+                literalList([], buildParameterEntryListType()),
               )
               .statement,
         )
@@ -1392,7 +1392,7 @@ class AnyOfGenerator {
               paramName: refer('paramName'),
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
-              useQueryComponent: true,
+              useQueryComponent: literalBool(true),
             )
           : null;
       if (listEntries != null) {
@@ -1493,15 +1493,6 @@ class AnyOfGenerator {
 
     return codes;
   }
-
-  TypeReference _parameterEntryListType() => TypeReference(
-    (b) => b
-      ..symbol = 'List'
-      ..url = 'dart:core'
-      ..types.add(
-        refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
-      ),
-  );
 
   /// Builds a fromSimple or fromForm factory constructor for anyOf.
   Constructor _buildFromValueConstructor({

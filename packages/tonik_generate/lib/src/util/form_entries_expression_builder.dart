@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
@@ -13,21 +14,22 @@ import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 /// `AnyModel` single-string path are handled by each caller, which use
 /// context-specific wording.
 ///
-/// [paramName], [explode] and [allowEmpty] are expressions so the same builder
-/// serves call sites with literal arguments (query/cookie/body) and composite
-/// variant arms (runtime parameters).
+/// [paramName], [explode], [allowEmpty] and [useQueryComponent] are expressions
+/// so the same builder serves call sites with literal arguments
+/// (query/cookie/body) and composite variant arms that thread runtime
+/// parameters. A null [useQueryComponent] omits the argument entirely.
 Expression? buildFormEntriesValueExpression(
   Expression receiver,
   Model model, {
   required Expression paramName,
   required Expression explode,
   required Expression allowEmpty,
-  bool useQueryComponent = false,
+  Expression? useQueryComponent,
 }) {
   final toFormArgs = <String, Expression>{
     'explode': explode,
     'allowEmpty': allowEmpty,
-    if (useQueryComponent) 'useQueryComponent': literalBool(true),
+    'useQueryComponent': ?useQueryComponent,
   };
 
   Expression toForm(Expression target, {bool alreadyEncoded = false}) =>
@@ -95,6 +97,8 @@ Expression? buildFormEntriesValueExpression(
     case AnyModel():
       return null;
 
+    // Required: the `NamedModel`/`CompositeModel` mixins keep the sealed
+    // hierarchy non-exhaustive for switch flow analysis.
     default:
       return null;
   }
@@ -104,7 +108,7 @@ Expression? _buildListFormEntriesExpression(
   Expression receiver,
   Model contentModel, {
   required Expression allowEmpty,
-  required bool useQueryComponent,
+  required Expression? useQueryComponent,
   required bool isContentNullable,
   required Expression Function(Expression, {bool alreadyEncoded}) toForm,
 }) {
@@ -151,7 +155,7 @@ Expression? _buildEncodedElementsList(
   Expression receiver,
   Model contentModel, {
   required Expression allowEmpty,
-  required bool useQueryComponent,
+  required Expression? useQueryComponent,
   required bool isContentNullable,
 }) {
   if (!_isUriEncodableElement(contentModel)) return null;
@@ -160,7 +164,7 @@ Expression? _buildEncodedElementsList(
     refer('e'),
     contentModel,
     allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent ? literalBool(true) : null,
+    useQueryComponent: useQueryComponent,
   ).expression;
 
   final elementEncode = isContentNullable
@@ -187,6 +191,9 @@ Expression? _buildEncodedElementsList(
 /// Mirrors the scalar/any/composite arms of [buildUriEncodeExpression]. Complex
 /// elements (objects, nested lists, complex maps) cannot be encoded as a single
 /// value and would otherwise yield an ambiguous `List<Never>.toForm` call.
+@visibleForTesting
+bool isUriEncodableElement(Model model) => _isUriEncodableElement(model);
+
 bool _isUriEncodableElement(Model model) {
   return switch (model) {
     StringModel() ||

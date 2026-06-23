@@ -1776,9 +1776,6 @@ for (final _\$e in $apFieldName.entries) {
       const Code('}'),
     ];
 
-    // Simple-content lists are pre-encoded by the entries builder, while every
-    // other shape threads the runtime [useQueryComponent] through its own
-    // `toForm`.
     Expression propFormEntries(Expression receiver, Model propModel) {
       final resolved = propModel.resolved;
       if (resolved is ListModel && resolved.hasSimpleContent) {
@@ -1788,7 +1785,7 @@ for (final _\$e in $apFieldName.entries) {
           paramName: refer('paramName'),
           explode: refer('explode'),
           allowEmpty: refer('allowEmpty'),
-          useQueryComponent: true,
+          useQueryComponent: refer('useQueryComponent'),
         );
         if (entries != null) return entries;
         return generateEncodingExceptionExpression(
