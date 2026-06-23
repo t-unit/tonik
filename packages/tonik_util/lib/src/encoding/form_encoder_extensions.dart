@@ -7,7 +7,7 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 ///
 /// Form encoding always produces a list of [ParameterEntry] (`name=value`
 /// pairs). Callers join them with the separator for their context — `&` for
-/// query strings and urlencoded bodies, `; ` for cookies. Per RFC 6570:
+/// query strings and urlencoded bodies, `; ` for cookies.
 /// - Primitives: a single entry `(paramName, value)`.
 /// - Arrays (explode=false): `(paramName, value1,value2,value3)`.
 /// - Arrays (explode=true): one entry per item, each named `paramName`.

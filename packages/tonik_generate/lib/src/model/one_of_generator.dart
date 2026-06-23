@@ -1110,7 +1110,7 @@ class OneOfGenerator {
           paramName: refer('paramName'),
           explode: refer('explode'),
           allowEmpty: refer('allowEmpty'),
-          useQueryComponent: literalBool(true),
+          useQueryComponent: refer('useQueryComponent'),
         );
 
     final caseCodes = <Code>[];

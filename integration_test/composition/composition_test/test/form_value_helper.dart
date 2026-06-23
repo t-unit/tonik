@@ -6,6 +6,10 @@ import 'package:tonik_util/tonik_util.dart';
 ///
 /// Mirrors the production joiners: an empty-name entry denotes a bare value
 /// and renders as just its value with no `name=` prefix.
+///
+/// A single exploded property whose name equals [paramName] would be
+/// mis-stripped by the single-entry shortcut; tests stay safe by using a
+/// distinct [paramName] (`'p'`).
 String formValue(List<ParameterEntry> entries, String paramName) {
   if (entries.length == 1 && entries.first.name == paramName) {
     return entries.first.value;

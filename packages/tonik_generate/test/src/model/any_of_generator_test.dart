@@ -2537,6 +2537,81 @@ Map<String, String> parameterProperties({
       );
     });
 
+    test('toForm threads useQueryComponent into simple-list variant', () {
+      final model = AnyOfModel(
+        isDeprecated: false,
+        name: 'FlexValue',
+        models: {
+          (
+            discriminatorValue: 'list',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+          ),
+          (
+            discriminatorValue: 'text',
+            model: StringModel(context: context),
+          ),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere((m) => m.name == 'toForm');
+
+      final generated = format(method.accept(emitter).toString());
+
+      const expectedMethod = r'''
+        @override
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          bool useQueryComponent = false,
+        }) {
+          final _$entryLists = <List<ParameterEntry>>[];
+          final _$values = <String>{};
+          if (list != null) {
+            final _$listForm = list!.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+            );
+            _$entryLists.add(_$listForm);
+            _$values.add(_$listForm.map((e) => e.value).join(','));
+          }
+          if (string != null) {
+            final _$stringForm = string!.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+            );
+            _$entryLists.add(_$stringForm);
+            _$values.add(_$stringForm.map((e) => e.value).join(','));
+          }
+          if (_$values.isEmpty) {
+            return const <ParameterEntry>[];
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Ambiguous anyOf form encoding for FlexValue: multiple values provided, anyOf requires exactly one value',
+            );
+          }
+          return _$entryLists.first;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
     test('generates encoding exception for MapModel in toLabel', () {
       final model = AnyOfModel(
         isDeprecated: false,

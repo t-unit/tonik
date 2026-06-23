@@ -424,6 +424,22 @@ void main() {
       },
     );
 
+    test(
+      'FormStringEncoder distinguishes literal + (%2B) from space (+) when '
+      'useQueryComponent=true',
+      () {
+        expect(
+          'a+b c'.toForm(
+            'p',
+            explode: false,
+            allowEmpty: true,
+            useQueryComponent: true,
+          ),
+          const <ParameterEntry>[(name: 'p', value: 'a%2Bb+c')],
+        );
+      },
+    );
+
     test('FormStringListEncoder encodes items with + (explode=true)', () {
       expect(
         ['hello world', 'foo bar'].toForm(

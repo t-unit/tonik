@@ -2152,7 +2152,7 @@ void main() {
                     paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
-                    useQueryComponent: true,
+                    useQueryComponent: useQueryComponent,
                   ),
                   ValueStr(:final value) => value.toForm(
                     paramName,

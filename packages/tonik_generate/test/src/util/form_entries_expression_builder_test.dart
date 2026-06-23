@@ -339,7 +339,11 @@ void main() {
       return !body.contains('EncodingException') && !body.contains('.map(');
     }
 
-    List<Model> encodableElements() => <Model>[
+    // One instance of every concrete Model subtype. Adding a new Model subtype
+    // forces an update here, and the assertions below pin every instance
+    // against buildUriEncodeExpression's behaviour so the two switch statements
+    // cannot drift apart.
+    List<Model> allConcreteModels() => <Model>[
       StringModel(context: context),
       BooleanModel(context: context),
       DateTimeModel(context: context),
@@ -350,7 +354,9 @@ void main() {
       DoubleModel(context: context),
       NumberModel(context: context),
       Base64Model(context: context),
+      BinaryModel(context: context),
       AnyModel(context: context),
+      NeverModel(context: context),
       EnumModel<String>(
         values: const {},
         isNullable: false,
@@ -376,22 +382,72 @@ void main() {
         isDeprecated: false,
         examples: const [],
       ),
+      MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+      ),
+      ListModel(
+        content: StringModel(context: context),
+        context: context,
+        examples: const [],
+      ),
+      ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: const [],
+        context: context,
+        examples: const [],
+      ),
+      AliasModel(
+        name: 'AliasString',
+        model: StringModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      ),
     ];
 
-    test('every encodable element type matches buildUriEncodeExpression', () {
-      for (final model in encodableElements()) {
-        expect(
-          isUriEncodableElement(model),
-          isTrue,
-          reason: '${model.runtimeType} should be element-encodable',
-        );
-        expect(
-          encodesToSingleValue(model),
-          isTrue,
-          reason: '${model.runtimeType} should uri-encode to a single value',
-        );
-      }
-    });
+    test(
+      'every element classified encodable uri-encodes to a single value',
+      () {
+        // Catches a scalar added to isUriEncodableElement but not wired to a
+        // single-value arm of buildUriEncodeExpression.
+        for (final model in allConcreteModels()) {
+          if (!isUriEncodableElement(model)) continue;
+          expect(
+            encodesToSingleValue(model),
+            isTrue,
+            reason:
+                '${model.runtimeType} is element-encodable but does not '
+                'uri-encode to a single value',
+          );
+        }
+      },
+    );
+
+    test(
+      'every scalar arm of buildUriEncodeExpression is element-encodable',
+      () {
+        // Catches a scalar added to buildUriEncodeExpression's direct
+        // uriEncode/encodeAnyToUri arm but forgotten in isUriEncodableElement.
+        // Collection and object types emit a single uriEncode call too but are
+        // deliberately not element-encodable; BinaryModel is the documented
+        // single-value divergence below.
+        const nonElementTypes = [MapModel, ListModel, ClassModel, BinaryModel];
+        for (final model in allConcreteModels()) {
+          if (nonElementTypes.contains(model.runtimeType)) continue;
+          if (!encodesToSingleValue(model)) continue;
+          expect(
+            isUriEncodableElement(model),
+            isTrue,
+            reason:
+                '${model.runtimeType} uri-encodes to a single value but is '
+                'not classified as element-encodable',
+          );
+        }
+      },
+    );
 
     test('AliasModel inherits the classification of its target', () {
       final encodable = AliasModel(

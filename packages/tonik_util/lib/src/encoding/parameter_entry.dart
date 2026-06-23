@@ -5,7 +5,7 @@
 ///
 /// An empty `name` denotes a bare value: the entry renders as just `value`
 /// with no `name=` prefix. This is how scalar form bodies (a top-level
-/// primitive/string urlencoded body) are emitted, and the body/string joiners
-/// honor it explicitly. Real parameter and property names are never empty, so
-/// the query and cookie joiners assume a non-empty `name`.
+/// primitive/string urlencoded body) are emitted, and the urlencoded-body
+/// joiner honors it explicitly. Real parameter and property names are never
+/// empty, so the query and cookie joiners assume a non-empty `name`.
 typedef ParameterEntry = ({String name, String value});

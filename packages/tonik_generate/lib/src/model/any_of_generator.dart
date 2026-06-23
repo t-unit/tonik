@@ -1392,7 +1392,7 @@ class AnyOfGenerator {
               paramName: refer('paramName'),
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
-              useQueryComponent: literalBool(true),
+              useQueryComponent: refer('useQueryComponent'),
             )
           : null;
       if (listEntries != null) {
