@@ -1464,34 +1464,41 @@ void main() {
 
       const expectedToForm = r'''
         @override
-        String toForm({
+        List<ParameterEntry> toForm(
+          String paramName, {
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
         }) {
+          final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           if (list != null) {
             final _$listForm = list!
-                .map((e) => e.toForm(explode: explode, allowEmpty: allowEmpty))
+                .map(
+                  (e) => e.uriEncode(allowEmpty: allowEmpty, useQueryComponent: true),
+                )
                 .toList()
                 .toForm(
+                  paramName,
                   explode: explode,
                   allowEmpty: allowEmpty,
+                  useQueryComponent: true,
                   alreadyEncoded: true,
                 );
-            _$values.add(_$listForm);
+            _$entryLists.add(_$listForm);
+            _$values.add(_$listForm.map((e) => e.value).join(','));
           }
           if (_$values.length > 1) {
             throw EncodingException(
               r'Inconsistent allOf form encoding: all values must encode to the same result',
             );
           }
-          if (_$values.isEmpty) {
+          if (_$entryLists.isEmpty) {
             throw EncodingException(
               r'Cannot encode AllOfNullableList to encoding: all properties are null',
             );
           }
-          return _$values.first;
+          return _$entryLists.first;
         }
       ''';
 
@@ -2601,7 +2608,8 @@ void main() {
 
         const expectedToForm = r'''
           @override
-          String toForm({
+          List<ParameterEntry> toForm(
+            String paramName, {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
@@ -2611,27 +2619,32 @@ void main() {
                 r'Cannot encode Combined: mixing simple values (primitives/enums) and complex types is not supported',
               );
             }
+            final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             if (status != null) {
               final _$statusForm = status!.toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
               );
-              _$values.add(_$statusForm);
+              _$entryLists.add(_$statusForm);
+              _$values.add(_$statusForm.map((e) => e.value).join(','));
             }
             final _$stringForm = string.toForm(
+              paramName,
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
             );
-            _$values.add(_$stringForm);
+            _$entryLists.add(_$stringForm);
+            _$values.add(_$stringForm.map((e) => e.value).join(','));
             if (_$values.length > 1) {
               throw EncodingException(
                 r'Inconsistent allOf form encoding for Combined: all values must encode to the same result',
               );
             }
-            return _$values.first;
+            return _$entryLists.first;
           }
         ''';
 

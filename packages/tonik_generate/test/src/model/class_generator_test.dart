@@ -1314,7 +1314,8 @@ factory ModelWithSimpleListRoundtrip.fromForm(
           ''';
 
           const expectedToFormMethod = '''
-String toForm({
+List<ParameterEntry> toForm(
+String paramName, {
 required bool explode,
 required bool allowEmpty,
 bool useQueryComponent = false,
@@ -1323,6 +1324,7 @@ return parameterProperties(
 allowEmpty: allowEmpty,
 useQueryComponent: useQueryComponent,
 ).toForm(
+paramName,
 explode: explode,
 allowEmpty: allowEmpty,
 alreadyEncoded: true,
@@ -1423,7 +1425,12 @@ Map<String, String> parameterProperties({
           (m) => m.name == 'toForm',
         );
 
-        expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
+        expect(
+          toFormMethod.returns?.accept(emitter).toString(),
+          'List<ParameterEntry>',
+        );
+        expect(toFormMethod.requiredParameters.length, 1);
+        expect(toFormMethod.requiredParameters[0].name, 'paramName');
         expect(toFormMethod.optionalParameters.length, 3);
         expect(toFormMethod.optionalParameters[0].name, 'explode');
         expect(toFormMethod.optionalParameters[0].required, isTrue);
@@ -1462,8 +1469,8 @@ Map<String, String> parameterProperties({
         final result = generator.generateClass(model);
 
         const expectedToFormBody = '''
-          String toForm({required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 
@@ -1485,8 +1492,8 @@ Map<String, String> parameterProperties({
         final result = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-          String toForm({required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 
@@ -1733,8 +1740,8 @@ Map<String, String> parameterProperties({
           final result = generator.generateClass(model);
 
           const expectedToFormMethod = '''
-          String toForm({required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 

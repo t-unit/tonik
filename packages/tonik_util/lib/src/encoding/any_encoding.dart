@@ -233,57 +233,54 @@ String encodeAnyToForm(
     return '';
   }
   if (value is ParameterEncodable) {
-    return value.toForm(
+    return _formEntriesToString(
+      value.toForm(
+        '',
+        explode: explode,
+        allowEmpty: allowEmpty,
+        useQueryComponent: useQueryComponent,
+      ),
       explode: explode,
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
     );
   }
   if (value is String) {
-    return value.toForm(
-      explode: explode,
+    return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   }
   if (value is int) {
-    return value.toForm(
-      explode: explode,
+    return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   }
   if (value is double) {
-    return value.toForm(
-      explode: explode,
+    return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   }
   if (value is bool) {
-    return value.toForm(
-      explode: explode,
+    return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   }
   if (value is DateTime) {
-    return value.toForm(
-      explode: explode,
+    return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   }
   if (value is Uri) {
-    return value.toForm(
-      explode: explode,
+    return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
   }
   if (value is BigDecimal) {
-    return value.toForm(
-      explode: explode,
+    return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
@@ -301,17 +298,23 @@ String encodeAnyToForm(
           useQueryComponent: useQueryComponent,
         ),
     };
-    return encoded.toForm(
+    return _formEntriesToString(
+      encoded.toForm(
+        '',
+        explode: explode,
+        allowEmpty: allowEmpty,
+        alreadyEncoded: true,
+        useQueryComponent: useQueryComponent,
+      ),
       explode: explode,
-      allowEmpty: allowEmpty,
-      alreadyEncoded: true,
-      useQueryComponent: useQueryComponent,
     );
   }
   if (value is List<dynamic>) {
     if (value.isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
+    // Lists render comma-separated within an any value regardless of explode;
+    // the repeated-key form is applied at the parameter layer above, not here.
     final encoded = value
         .map(
           (item) => encodeAnyToForm(
@@ -322,8 +325,7 @@ String encodeAnyToForm(
           ),
         )
         .toList();
-    return encoded.toForm(
-      explode: explode,
+    return encoded.uriEncode(
       allowEmpty: allowEmpty,
       alreadyEncoded: true,
       useQueryComponent: useQueryComponent,
@@ -333,6 +335,19 @@ String encodeAnyToForm(
     'Cannot encode ${value.runtimeType} to form style',
   );
 }
+
+/// Flattens form [ParameterEntry] list back into the single-string rendering
+/// used when an object/value is nested inside an `any` structure: `k=v&k=v`
+/// for explode=true, and the joined comma form for explode=false (where the
+/// list holds a single entry whose value already carries the commas).
+String _formEntriesToString(
+  List<ParameterEntry> entries, {
+  required bool explode,
+}) => explode
+    ? entries
+          .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+          .join('&')
+    : entries.map((e) => e.value).join(',');
 
 /// Encodes any value to deep object style. Used for AnyModel fields.
 ///

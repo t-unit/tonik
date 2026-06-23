@@ -444,7 +444,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toForm({
+        List<ParameterEntry> toForm(
+          String paramName, {
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
@@ -453,6 +454,7 @@ void main() {
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
           ).toForm(
+            paramName,
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,

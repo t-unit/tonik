@@ -176,22 +176,37 @@ void main() {
     group('form encoding', () {
       test('toForm returns URL-encoded ISO date string', () {
         final date = Date(2024, 3, 15);
-        final encoded = date.toForm(explode: false, allowEmpty: true);
+        final encoded = date
+            .toForm('p', explode: false, allowEmpty: true)
+            .single
+            .value;
         expect(encoded, '2024-03-15');
       });
 
       test('toForm handles explode parameter', () {
         final date = Date(2024, 12, 31);
-        final encodedNoExplode = date.toForm(explode: false, allowEmpty: true);
-        final encodedExplode = date.toForm(explode: true, allowEmpty: true);
+        final encodedNoExplode = date
+            .toForm('p', explode: false, allowEmpty: true)
+            .single
+            .value;
+        final encodedExplode = date
+            .toForm('p', explode: true, allowEmpty: true)
+            .single
+            .value;
         expect(encodedNoExplode, '2024-12-31');
         expect(encodedExplode, '2024-12-31');
       });
 
       test('toForm handles allowEmpty parameter', () {
         final date = Date(2024, 1, 1);
-        final encoded1 = date.toForm(explode: false, allowEmpty: true);
-        final encoded2 = date.toForm(explode: false, allowEmpty: false);
+        final encoded1 = date
+            .toForm('p', explode: false, allowEmpty: true)
+            .single
+            .value;
+        final encoded2 = date
+            .toForm('p', explode: false, allowEmpty: false)
+            .single
+            .value;
         expect(encoded1, '2024-01-01');
         expect(encoded2, '2024-01-01');
       });
@@ -265,7 +280,10 @@ void main() {
 
       test('round-trip form encoding preserves date', () {
         final originalDate = Date(2024, 7, 4);
-        final encoded = originalDate.toForm(explode: false, allowEmpty: true);
+        final encoded = originalDate
+            .toForm('p', explode: false, allowEmpty: true)
+            .single
+            .value;
         final decodedDate = Date.fromForm(encoded);
 
         expect(decodedDate.year, originalDate.year);
@@ -275,7 +293,10 @@ void main() {
 
       test('round-trip with URL encoding preserves date', () {
         final originalDate = Date(2024, 12, 25);
-        final encoded = originalDate.toForm(explode: true, allowEmpty: false);
+        final encoded = originalDate
+            .toForm('p', explode: true, allowEmpty: false)
+            .single
+            .value;
         final urlEncoded = Uri.encodeQueryComponent(encoded);
         final decodedDate = Date.fromForm(urlEncoded);
 
@@ -286,7 +307,10 @@ void main() {
 
       test('handles leap year dates correctly', () {
         final leapDate = Date(2024, 2, 29);
-        final encoded = leapDate.toForm(explode: false, allowEmpty: true);
+        final encoded = leapDate
+            .toForm('p', explode: false, allowEmpty: true)
+            .single
+            .value;
         final decoded = Date.fromForm(encoded);
 
         expect(decoded.year, 2024);
@@ -304,7 +328,10 @@ void main() {
         ];
 
         for (final testDate in testCases) {
-          final encoded = testDate.toForm(explode: false, allowEmpty: true);
+          final encoded = testDate
+              .toForm('p', explode: false, allowEmpty: true)
+              .single
+              .value;
           final decoded = Date.fromForm(encoded);
 
           expect(decoded.year, testDate.year);
@@ -318,10 +345,10 @@ void main() {
         'when useQueryComponent is false',
         () {
           final date = Date(2024, 3, 15);
-          final encoded = date.toForm(
-            explode: false,
-            allowEmpty: true,
-          );
+          final encoded = date
+              .toForm('p', explode: false, allowEmpty: true)
+              .single
+              .value;
           expect(encoded, Uri.encodeComponent('2024-03-15'));
         },
       );
@@ -331,11 +358,15 @@ void main() {
         'when useQueryComponent is true',
         () {
           final date = Date(2024, 3, 15);
-          final encoded = date.toForm(
-            explode: false,
-            allowEmpty: true,
-            useQueryComponent: true,
-          );
+          final encoded = date
+              .toForm(
+                'p',
+                explode: false,
+                allowEmpty: true,
+                useQueryComponent: true,
+              )
+              .single
+              .value;
           expect(encoded, Uri.encodeQueryComponent('2024-03-15'));
         },
       );

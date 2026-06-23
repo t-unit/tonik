@@ -46,11 +46,19 @@ abstract interface class SimpleEncodable {
 abstract interface class FormEncodable {
   /// Encodes this value using form style parameter encoding.
   ///
-  /// When [explode] is true, object properties become separate parameters.
+  /// Form encoding always yields a list of parameter entries: the wire form
+  /// (query string, cookie, urlencoded body) is a set of `name=value` pairs
+  /// that the caller joins with the separator for its context.
+  ///
+  /// The [paramName] is the parameter name carried by single-value entries.
+  /// When [explode] is true, object properties become separate entries keyed
+  /// by the bare property name (and list items repeat under [paramName]);
+  /// when false the whole value collapses into one entry named [paramName].
   /// When [allowEmpty] is false, empty values throw an exception.
   /// When [useQueryComponent] is true, uses '+' for spaces
   /// (application/x-www-form-urlencoded encoding).
-  String toForm({
+  List<ParameterEntry> toForm(
+    String paramName, {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,

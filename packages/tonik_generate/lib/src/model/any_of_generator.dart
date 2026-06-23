@@ -10,6 +10,7 @@ import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
@@ -17,7 +18,6 @@ import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
-import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
@@ -320,20 +320,18 @@ class AnyOfGenerator {
     required String fieldName,
     required Model fieldModel,
     required String tmpVarName,
-    required bool isForm,
     required bool needsValues,
     required bool needsMapValues,
     required String className,
     String? discriminatorValue,
   }) {
-    final toMethodName = isForm ? 'toForm' : 'toSimple';
+    const toMethodName = 'toSimple';
     final codes = <Code>[];
 
     if (fieldModel.resolved is AnyModel) {
       codes.add(
         generateEncodingExceptionExpression(
-          'AnyModel variant of $className cannot be '
-          '${isForm ? 'form' : 'simple'}-encoded',
+          'AnyModel variant of $className cannot be simple-encoded',
           raw: true,
         ).statement,
       );
@@ -344,8 +342,7 @@ class AnyOfGenerator {
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.toBase64String().$toMethodName( '
-          'explode: explode, allowEmpty: allowEmpty'
-          '${isForm ? ', useQueryComponent: useQueryComponent' : ''});',
+          'explode: explode, allowEmpty: allowEmpty);',
         ),
       );
       if (needsValues) {
@@ -354,15 +351,14 @@ class AnyOfGenerator {
     } else if (fieldModel is BinaryModel) {
       codes.add(
         generateEncodingExceptionExpression(
-          'Binary data cannot be ${isForm ? 'form' : 'simple'}-encoded',
+          'Binary data cannot be simple-encoded',
         ).statement,
       );
     } else if (fieldModel.encodingShape == EncodingShape.simple) {
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.$toMethodName( '
-          'explode: explode, allowEmpty: allowEmpty'
-          '${isForm ? ', useQueryComponent: useQueryComponent' : ''});',
+          'explode: explode, allowEmpty: allowEmpty);',
         ),
       );
       if (needsValues) {
@@ -371,13 +367,10 @@ class AnyOfGenerator {
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
       // Lists with simple content can be encoded directly
       if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
-        final buildExpr = isForm
-            ? buildFormParameterExpression
-            : buildSimpleParameterExpression;
         codes.add(
           Block.of([
             Code('final $tmpVarName = '),
-            buildExpr(
+            buildSimpleParameterExpression(
               refer(fieldName).nullChecked,
               fieldModel,
               explode: refer('explode'),
@@ -401,10 +394,10 @@ class AnyOfGenerator {
               .statement,
         );
       } else if (fieldModel is MapModel) {
-        // Map types cannot be simple/form-encoded
+        // Map types cannot be simple-encoded
         codes.add(
           generateEncodingExceptionExpression(
-            'Map types cannot be ${isForm ? 'form' : 'simple'}-encoded',
+            'Map types cannot be simple-encoded',
           ).statement,
         );
       } else {
@@ -443,8 +436,7 @@ class AnyOfGenerator {
         codes.add(
           Code(
             '_\$values.add($fieldName!.$toMethodName('
-            'explode: explode, allowEmpty: allowEmpty'
-            '${isForm ? ', useQueryComponent: useQueryComponent' : ''}));',
+            'explode: explode, allowEmpty: allowEmpty));',
           ),
         );
       }
@@ -1027,7 +1019,6 @@ class AnyOfGenerator {
             fieldName: name,
             fieldModel: n.property.model,
             tmpVarName: '_\$${name}Simple',
-            isForm: false,
             needsValues: needsValues,
             needsMapValues: needsMapValues,
             className: className,
@@ -1125,6 +1116,392 @@ class AnyOfGenerator {
         ..body = Block.of(body),
     );
   }
+
+  Method _buildToFormMethod(
+    String className,
+    AnyOfModel model,
+    List<({String normalizedName, Property property})> normalizedProperties,
+  ) {
+    final hasRuntimeChecks = normalizedProperties.any(
+      (prop) => prop.property.model.encodingShape == EncodingShape.mixed,
+    );
+
+    final needsValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          if (model is ListModel) {
+            return model.hasSimpleContent;
+          }
+          return model.encodingShape == EncodingShape.simple;
+        });
+    final needsMapValues =
+        hasRuntimeChecks ||
+        normalizedProperties.any((prop) {
+          final model = prop.property.model;
+          if (model is ListModel) {
+            return !model.hasSimpleContent;
+          }
+          return model.encodingShape != EncodingShape.simple;
+        });
+
+    final body = <Code>[];
+
+    if (needsValues) {
+      body
+        ..add(
+          declareFinal(r'_$entryLists')
+              .assign(
+                literalList([], _parameterEntryListType()),
+              )
+              .statement,
+        )
+        ..add(
+          declareFinal(
+            r'_$values',
+          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
+        );
+    }
+
+    if (needsMapValues) {
+      body.add(
+        declareFinal(
+          r'_$mapValues',
+        ).assign(literalList([], buildMapStringStringType())).statement,
+      );
+    }
+
+    final hasDiscriminator = model.discriminator != null;
+    final discMap = _discriminatorMap(model);
+
+    final hasComplexFields =
+        hasDiscriminator &&
+        normalizedProperties.any(
+          (prop) => prop.property.model.encodingShape != EncodingShape.simple,
+        );
+
+    if (hasComplexFields) {
+      body
+        ..add(
+          TypeReference(
+            (b) => b
+              ..symbol = 'String'
+              ..url = 'dart:core'
+              ..isNullable = true,
+          ).code,
+        )
+        ..add(const Code(r' _$discriminatorValue;'));
+    }
+
+    for (final n in normalizedProperties) {
+      final name = n.normalizedName;
+      final discValue = discMap[n.property.model];
+
+      body
+        ..add(Code('if ($name != null) {'))
+        ..addAll(
+          _generateFieldFormEncoding(
+            fieldName: name,
+            fieldModel: n.property.model,
+            needsMapValues: needsMapValues,
+            className: className,
+            discriminatorValue: hasDiscriminator ? discValue : null,
+          ),
+        )
+        ..add(const Code('}'));
+    }
+
+    final mergeBlocks = <Code>[
+      const Code(r'final _$map = '),
+      buildEmptyMapStringString().statement,
+    ];
+
+    if (needsMapValues) {
+      mergeBlocks.add(
+        const Code(
+          r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }',
+        ),
+      );
+    }
+    if (hasDiscriminator) {
+      mergeBlocks.addAll([
+        const Code(r'final _$discValue = _$discriminatorValue; '),
+        const Code(r'if (_$discValue != null) { '),
+        Code(
+          r'_$map.putIfAbsent('
+          '${specLiteralStringCode(model.discriminator!)}, () => ',
+        ),
+        const Code(r'_$discValue'),
+        const Code(');'),
+        const Code(' }'),
+      ]);
+    }
+    mergeBlocks
+      ..add(const Code(r'return _$map.toForm('))
+      ..addAll([
+        const Code('paramName, '),
+        const Code('explode: explode, '),
+        const Code('allowEmpty: allowEmpty, '),
+        const Code('alreadyEncoded: true, '),
+        const Code('useQueryComponent: useQueryComponent'),
+        const Code(');'),
+      ]);
+
+    if (needsValues && needsMapValues) {
+      body.addAll([
+        const Code(
+          r'if (_$values.isEmpty && _$mapValues.isEmpty) { '
+          'return const <',
+        ),
+        refer('ParameterEntry', 'package:tonik_util/tonik_util.dart').code,
+        const Code('>[];}'),
+        const Code(r'if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf form encoding for $className: '
+          'mixing simple and complex values',
+          raw: true,
+        ).statement,
+        const Code('}'),
+        const Code(r'if (_$values.isNotEmpty) {'),
+        const Code(r'if (_$values.length > 1) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf form encoding for $className: '
+          'multiple values provided, anyOf requires exactly one value',
+          raw: true,
+        ).statement,
+        const Code('}'),
+        const Code(r'return _$entryLists.first;'),
+        const Code('} else {'),
+        ...mergeBlocks,
+        const Code('}'),
+      ]);
+    } else if (needsValues) {
+      body.addAll([
+        const Code(r'if (_$values.isEmpty) {return const <'),
+        refer('ParameterEntry', 'package:tonik_util/tonik_util.dart').code,
+        const Code('>[];}'),
+        const Code(r'if (_$values.length > 1) {'),
+        generateEncodingExceptionExpression(
+          'Ambiguous anyOf form encoding for $className: '
+          'multiple values provided, anyOf requires exactly one value',
+          raw: true,
+        ).statement,
+        const Code('}'),
+        const Code(r'return _$entryLists.first;'),
+      ]);
+    } else if (needsMapValues) {
+      body.addAll(mergeBlocks);
+    } else {
+      body.addAll([
+        const Code('return const <'),
+        refer('ParameterEntry', 'package:tonik_util/tonik_util.dart').code,
+        const Code('>[];'),
+      ]);
+    }
+
+    return Method(
+      (b) => b
+        ..annotations.add(refer('override', 'dart:core'))
+        ..name = 'toForm'
+        ..returns = buildParameterEntryListType()
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
+        ..optionalParameters.addAll(buildFormEncodingParameters())
+        ..lambda = false
+        ..body = Block.of(body),
+    );
+  }
+
+  List<Code> _generateFieldFormEncoding({
+    required String fieldName,
+    required Model fieldModel,
+    required bool needsMapValues,
+    required String className,
+    String? discriminatorValue,
+  }) {
+    final codes = <Code>[];
+
+    if (fieldModel.resolved is AnyModel) {
+      codes.add(
+        generateEncodingExceptionExpression(
+          'AnyModel variant of $className cannot be form-encoded',
+          raw: true,
+        ).statement,
+      );
+      return codes;
+    }
+
+    void addSimpleEntries(Expression entries) {
+      codes
+        ..add(Code('final _\$${fieldName}Form = '))
+        ..add(entries.statement)
+        ..add(Code(r'_$entryLists.add(_$' '${fieldName}Form);'))
+        ..add(
+          Code(
+            r'_$values.add(_$'
+            '${fieldName}Form.map((e) => e.value).join(',
+          ),
+        )
+        ..add(literalString(',').code)
+        ..add(const Code('));'));
+    }
+
+    if (fieldModel.resolved is Base64Model) {
+      addSimpleEntries(
+        refer(fieldName)
+            .nullChecked
+            .property('toBase64String')
+            .call([])
+            .property('toForm')
+            .call(
+              [refer('paramName')],
+              {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+              },
+            ),
+      );
+    } else if (fieldModel is BinaryModel) {
+      codes.add(
+        generateEncodingExceptionExpression(
+          'Binary data cannot be form-encoded',
+        ).statement,
+      );
+    } else if (fieldModel.encodingShape == EncodingShape.simple) {
+      addSimpleEntries(
+        refer(fieldName).nullChecked.property('toForm').call(
+          [refer('paramName')],
+          {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+            'useQueryComponent': refer('useQueryComponent'),
+          },
+        ),
+      );
+    } else if (fieldModel.encodingShape == EncodingShape.complex) {
+      final listEntries = fieldModel is ListModel && fieldModel.hasSimpleContent
+          ? buildFormEntriesValueExpression(
+              refer(fieldName).nullChecked,
+              fieldModel,
+              paramName: refer('paramName'),
+              explode: refer('explode'),
+              allowEmpty: refer('allowEmpty'),
+              useQueryComponent: true,
+            )
+          : null;
+      if (listEntries != null) {
+        addSimpleEntries(listEntries);
+      } else if (fieldModel is ListModel) {
+        codes.add(
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists with complex content are not supported for encoding',
+                ),
+              ])
+              .thrown
+              .statement,
+        );
+      } else if (fieldModel is MapModel) {
+        codes.add(
+          generateEncodingExceptionExpression(
+            'Map types cannot be form-encoded',
+          ).statement,
+        );
+      } else {
+        codes.add(
+          Code(
+            'final _\$${fieldName}Form = '
+            '$fieldName!.parameterProperties('
+            'allowEmpty: allowEmpty);',
+          ),
+        );
+        if (needsMapValues) {
+          codes.add(Code('_\$mapValues.add(_\$${fieldName}Form);'));
+        }
+        if (discriminatorValue != null) {
+          codes.add(
+            Code(
+              r'_$discriminatorValue ??= '
+              '${specLiteralStringCode(discriminatorValue)};',
+            ),
+          );
+        }
+      }
+    } else {
+      final encodingShapeRef = refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      );
+
+      codes
+        ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('simple').code)
+        ..add(const Code(':'));
+      addSimpleEntries(
+        refer(fieldName).nullChecked.property('toForm').call(
+          [refer('paramName')],
+          {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+            'useQueryComponent': refer('useQueryComponent'),
+          },
+        ),
+      );
+      codes
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('complex').code)
+        ..add(const Code(':'))
+        ..add(
+          Code(
+            'final _\$${fieldName}Form = '
+            '$fieldName!.parameterProperties('
+            'allowEmpty: allowEmpty);',
+          ),
+        );
+      if (needsMapValues) {
+        codes.add(Code('_\$mapValues.add(_\$${fieldName}Form);'));
+      }
+      if (discriminatorValue != null) {
+        codes.add(
+          Code(
+            r'_$discriminatorValue ??= '
+            '${specLiteralStringCode(discriminatorValue)};',
+          ),
+        );
+      }
+      codes
+        ..add(const Code('break;'))
+        ..add(const Code('case '))
+        ..add(encodingShapeRef.property('mixed').code)
+        ..add(const Code(':'))
+        ..add(
+          generateEncodingExceptionExpression(
+            'Cannot encode field with mixed encoding shape',
+          ).statement,
+        )
+        ..add(const Code('}'));
+    }
+
+    return codes;
+  }
+
+  TypeReference _parameterEntryListType() => TypeReference(
+    (b) => b
+      ..symbol = 'List'
+      ..url = 'dart:core'
+      ..types.add(
+        refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+      ),
+  );
 
   /// Builds a fromSimple or fromForm factory constructor for anyOf.
   Constructor _buildFromValueConstructor({
@@ -1315,178 +1692,6 @@ class AnyOfGenerator {
         ..name = 'currentEncodingShape'
         ..type = MethodType.getter
         ..returns = encodingShapeType
-        ..lambda = false
-        ..body = Block.of(body),
-    );
-  }
-
-  Method _buildToFormMethod(
-    String className,
-    AnyOfModel model,
-    List<({String normalizedName, Property property})> normalizedProperties,
-  ) {
-    final hasRuntimeChecks = normalizedProperties.any((prop) {
-      return prop.property.model.encodingShape == EncodingShape.mixed;
-    });
-
-    final needsValues =
-        hasRuntimeChecks ||
-        normalizedProperties.any((prop) {
-          final model = prop.property.model;
-          if (model is ListModel) {
-            return model.hasSimpleContent;
-          }
-          return model.encodingShape == EncodingShape.simple;
-        });
-    final needsMapValues =
-        hasRuntimeChecks ||
-        normalizedProperties.any((prop) {
-          final model = prop.property.model;
-          if (model is ListModel) {
-            return !model.hasSimpleContent;
-          }
-          return model.encodingShape != EncodingShape.simple;
-        });
-
-    final body = <Code>[];
-
-    if (needsValues) {
-      body.add(
-        declareFinal(
-          r'_$values',
-        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
-      );
-    }
-
-    if (needsMapValues) {
-      body.add(
-        declareFinal(
-          r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
-      );
-    }
-
-    final hasDiscriminator = model.discriminator != null;
-    final discMap = _discriminatorMap(model);
-    if (hasDiscriminator) {
-      body
-        ..add(
-          TypeReference(
-            (b) => b
-              ..symbol = 'String'
-              ..url = 'dart:core'
-              ..isNullable = true,
-          ).code,
-        )
-        ..add(const Code(r' _$discriminatorValue;'));
-    }
-
-    for (final n in normalizedProperties) {
-      final name = n.normalizedName;
-      final discValue = discMap[n.property.model];
-
-      body
-        ..add(Code('if ($name != null) {'))
-        ..addAll(
-          _generateFieldEncoding(
-            fieldName: name,
-            fieldModel: n.property.model,
-            tmpVarName: '_\$${name}Form',
-            isForm: true,
-            needsValues: needsValues,
-            needsMapValues: needsMapValues,
-            className: className,
-            discriminatorValue: hasDiscriminator ? discValue : null,
-          ),
-        )
-        ..add(const Code('}'));
-    }
-
-    final mergeBlocks = <Code>[
-      const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
-    ];
-
-    if (needsMapValues) {
-      mergeBlocks.add(
-        const Code(
-          r'for (final _$m in _$mapValues) { _$map.addAll(_$m); }',
-        ),
-      );
-    }
-
-    if (hasDiscriminator) {
-      mergeBlocks.addAll([
-        const Code(r'final _$discValue = _$discriminatorValue; '),
-        const Code(r'if (_$discValue != null) { '),
-        Code(
-          r'_$map.putIfAbsent('
-          '${specLiteralStringCode(model.discriminator!)}, () => ',
-        ),
-        const Code(r'_$discValue'),
-        const Code(');'),
-        const Code(' }'),
-      ]);
-    }
-    mergeBlocks
-      ..add(const Code(r'return _$map.toForm('))
-      ..addAll([
-        const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true, '),
-        const Code('useQueryComponent: useQueryComponent'),
-        const Code(');'),
-      ]);
-
-    if (needsValues && needsMapValues) {
-      body.addAll([
-        const Code(
-          r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';",
-        ),
-        const Code(r'if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf form encoding for $className: '
-          'mixing simple and complex values',
-          raw: true,
-        ).statement,
-        const Code('}'),
-        const Code(r'if (_$values.isNotEmpty) {'),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf form encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
-        const Code(r'return _$values.first;'),
-        const Code('} else {'),
-        ...mergeBlocks,
-        const Code('}'),
-      ]);
-    } else if (needsValues) {
-      body.addAll([
-        const Code(r"if (_$values.isEmpty) return '';"),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf form encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
-        const Code(r'return _$values.first;'),
-      ]);
-    } else if (needsMapValues) {
-      body.addAll(mergeBlocks);
-    } else {
-      body.add(const Code("return '';"));
-    }
-
-    return Method(
-      (b) => b
-        ..annotations.add(refer('override', 'dart:core'))
-        ..name = 'toForm'
-        ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildFormEncodingParameters())
         ..lambda = false
         ..body = Block.of(body),
     );

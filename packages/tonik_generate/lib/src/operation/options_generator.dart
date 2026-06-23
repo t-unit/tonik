@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
@@ -413,183 +414,43 @@ class OptionsGenerator {
     final paramName = cookie.normalizedName;
     final explode = cookie.parameter.explode;
 
-    // Resolve aliases so a cookie schema declared via $ref to a list/map/any
-    // schema is routed to the correct encoding branch. .resolved follows
-    // nested alias chains automatically.
-    final resolvedModel = model.resolved;
-
-    if (resolvedModel is ListModel) {
-      final contentModel = resolvedModel.content.resolved;
-
-      if (contentModel is Base64Model) {
-        final encodedValue = refer(paramName)
-            .property('map')
-            .call([
-              Method(
-                (b) => b
-                  ..lambda = true
-                  ..requiredParameters.add(
-                    Parameter((b) => b..name = 'e'),
-                  )
-                  ..body = refer('e').property('toBase64String').call([]).code,
-              ).closure,
-            ])
-            .property('toList')
-            .call([])
-            .property('toForm')
-            .call([], {
-              'explode': literalBool(explode),
-              'allowEmpty': literalBool(true),
-            });
-        bodyStatements.add(
-          refer(r'_$cookieParts').property('add').call([
-            literalList([
-              specLiteralString('$rawName='),
-              encodedValue,
-            ]).property('join').call([]),
-          ]).statement,
-        );
-        return;
-      }
-
-      if (contentModel is BinaryModel) {
-        bodyStatements.add(
-          generateEncodingExceptionExpression(
-            'Binary data cannot be form-encoded for cookie $rawName',
-          ).statement,
-        );
-        return;
-      }
-
-      if (contentModel is StringModel) {
-        final encodedValue = refer(paramName).property('toForm').call([], {
-          'explode': literalBool(explode),
-          'allowEmpty': literalBool(true),
-        });
-        bodyStatements.add(
-          refer(r'_$cookieParts').property('add').call([
-            literalList([
-              specLiteralString('$rawName='),
-              encodedValue,
-            ]).property('join').call([]),
-          ]).statement,
-        );
-        return;
-      }
-
-      if (contentModel is AnyModel) {
-        bodyStatements.add(
-          refer(r'_$cookieParts').property('add').call([
-            literalList([
-              specLiteralString('$rawName='),
-              refer(paramName)
-                  .property('map')
-                  .call([
-                    Method(
-                      (b) => b
-                        ..lambda = true
-                        ..requiredParameters.add(
-                          Parameter((b) => b..name = 'e'),
-                        )
-                        ..body =
-                            refer(
-                                  'encodeAnyToForm',
-                                  'package:tonik_util/tonik_util.dart',
-                                )
-                                .call(
-                                  [refer('e')],
-                                  {
-                                    'explode': literalBool(explode),
-                                    'allowEmpty': literalBool(true),
-                                  },
-                                )
-                                .code,
-                    ).closure,
-                  ])
-                  .property('toList')
-                  .call([])
-                  .property('toForm')
-                  .call([], {
-                    'explode': literalBool(explode),
-                    'allowEmpty': literalBool(true),
-                    'alreadyEncoded': literalBool(true),
-                  }),
-            ]).property('join').call([]),
-          ]).statement,
-        );
-        return;
-      }
-
+    final resolved = model.resolved;
+    final isBinary =
+        resolved is BinaryModel ||
+        (resolved is ListModel && resolved.content.resolved is BinaryModel);
+    if (isBinary) {
       bodyStatements.add(
-        refer(r'_$cookieParts').property('add').call([
-          literalList([
-            specLiteralString('$rawName='),
-            refer(paramName)
-                .property('map')
-                .call([
-                  Method(
-                    (b) => b
-                      ..lambda = true
-                      ..requiredParameters.add(
-                        Parameter((b) => b..name = 'e'),
-                      )
-                      ..body = refer('e').property('toForm').call([], {
-                        'explode': literalBool(explode),
-                        'allowEmpty': literalBool(true),
-                      }).code,
-                  ).closure,
-                ])
-                .property('toList')
-                .call([])
-                .property('toForm')
-                .call([], {
-                  'explode': literalBool(explode),
-                  'allowEmpty': literalBool(true),
-                  'alreadyEncoded': literalBool(true),
-                }),
-          ]).property('join').call([]),
-        ]).statement,
+        generateEncodingExceptionExpression(
+          'Binary data cannot be form-encoded for cookie $rawName',
+        ).statement,
+      );
+      return;
+    }
+    if (resolved is NeverModel ||
+        (resolved is ListModel && resolved.content.resolved is NeverModel)) {
+      bodyStatements.add(
+        generateEncodingExceptionExpression(
+          'Cannot encode NeverModel - this type does not permit any value '
+          'for cookie $rawName',
+        ).statement,
       );
       return;
     }
 
-    // MapModel: convert values to Map<String, String> before calling toForm.
-    if (resolvedModel is MapModel) {
-      final converted = buildMapToStringMapExpression(
-        refer(paramName),
-        resolvedModel,
-        isNullable: false,
-      );
-
-      if (converted == null) {
-        // Unsupported map value types (ClassModel, ListModel, nested MapModel,
-        // BinaryModel, NeverModel) cannot be form-encoded.
-        bodyStatements.add(
-          generateEncodingExceptionExpression(
-            'Map with complex value types cannot be form-encoded '
-            'for cookie $rawName',
-          ).statement,
-        );
-        return;
-      }
-
-      final encodedValue = converted.property('toForm').call([], {
-        'explode': literalBool(explode),
-        'allowEmpty': literalBool(true),
-      });
+    if (resolved is MapModel &&
+        !isMapValueTypeSimplyEncodable(resolved.valueModel)) {
       bodyStatements.add(
-        refer(r'_$cookieParts').property('add').call([
-          literalList([
-            specLiteralString('$rawName='),
-            encodedValue,
-          ]).property('join').call([]),
-        ]).statement,
+        generateEncodingExceptionExpression(
+          'Map with complex value types cannot be form-encoded '
+          'for cookie $rawName',
+        ).statement,
       );
       return;
     }
 
-    // AnyModel: use encodeAnyToForm for runtime type dispatch.
-    if (resolvedModel is AnyModel) {
+    // AnyModel renders to a single string value via encodeAnyToForm, so it
+    // becomes a single `name=value` cookie part.
+    if (isAnyModelFormValue(model)) {
       final encodedValue =
           refer(
             'encodeAnyToForm',
@@ -612,46 +473,37 @@ class OptionsGenerator {
       return;
     }
 
-    if (resolvedModel is Base64Model) {
-      final encodedValue = refer(paramName)
-          .property('toBase64String')
-          .call([])
-          .property('toForm')
-          .call([], {
-            'explode': literalBool(explode),
-            'allowEmpty': literalBool(true),
-          });
-      bodyStatements.add(
-        refer(r'_$cookieParts').property('add').call([
-          literalList([
-            specLiteralString('$rawName='),
-            encodedValue,
-          ]).property('join').call([]),
-        ]).statement,
-      );
-      return;
-    }
+    final entries = buildFormEntriesValueExpression(
+      refer(paramName),
+      model,
+      paramName: specLiteralString(rawName),
+      explode: literalBool(explode),
+      allowEmpty: literalBool(true),
+    );
 
-    if (resolvedModel is BinaryModel) {
+    if (entries == null) {
       bodyStatements.add(
         generateEncodingExceptionExpression(
-          'Binary data cannot be form-encoded for cookie $rawName',
+          'Unsupported model type for form-encoded cookie $rawName',
         ).statement,
       );
       return;
     }
 
-    final encodedValue = refer(paramName).property('toForm').call([], {
-      'explode': literalBool(explode),
-      'allowEmpty': literalBool(true),
-    });
     bodyStatements.add(
-      refer(r'_$cookieParts').property('add').call([
-        literalList([
-          specLiteralString('$rawName='),
-          encodedValue,
-        ]).property('join').call([]),
-      ]).statement,
+      refer(r'_$cookieParts')
+          .property('addAll')
+          .call([
+            entries.property('map').call([
+              Method(
+                (b) => b
+                  ..lambda = true
+                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                  ..body = const Code(r"'${e.name}=${e.value}'"),
+              ).closure,
+            ]),
+          ])
+          .statement,
     );
   }
 

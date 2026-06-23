@@ -298,8 +298,10 @@ void main() {
         contains(
           collapseWhitespace(r'''
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [r'session_id=', sessionId.toForm(explode: false, allowEmpty: true)].join(),
+              _$cookieParts.addAll(
+                sessionId
+                    .toForm(r'session_id', explode: false, allowEmpty: true)
+                    .map((e) => '${e.name}=${e.value}'),
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -390,11 +392,15 @@ void main() {
         contains(
           collapseWhitespace(r'''
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [r'session_id=', sessionId.toForm(explode: false, allowEmpty: true)].join(),
+              _$cookieParts.addAll(
+                sessionId
+                    .toForm(r'session_id', explode: false, allowEmpty: true)
+                    .map((e) => '${e.name}=${e.value}'),
               );
-              _$cookieParts.add(
-                [r'user_id=', userId.toForm(explode: false, allowEmpty: true)].join(),
+              _$cookieParts.addAll(
+                userId
+                    .toForm(r'user_id', explode: false, allowEmpty: true)
+                    .map((e) => '${e.name}=${e.value}'),
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -460,11 +466,10 @@ void main() {
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
             if (optionalSession != null) {
-              _$cookieParts.add(
-                [
-                  r'optional_session=',
-                  optionalSession.toForm(explode: false, allowEmpty: true),
-                ].join(),
+              _$cookieParts.addAll(
+                optionalSession
+                    .toForm(r'optional_session', explode: false, allowEmpty: true)
+                    .map((e) => '${e.name}=${e.value}'),
               );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -530,8 +535,10 @@ void main() {
         contains(
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [r'page=', pageNum.toForm(explode: false, allowEmpty: true)].join(),
+            _$cookieParts.addAll(
+              pageNum
+                  .toForm(r'page', explode: false, allowEmpty: true)
+                  .map((e) => '${e.name}=${e.value}'),
             );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -600,8 +607,10 @@ void main() {
         contains(
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [r'tags=', tags.toForm(explode: false, allowEmpty: true)].join(),
+            _$cookieParts.addAll(
+              tags
+                  .toForm(r'tags', explode: false, allowEmpty: true)
+                  .map((e) => '${e.name}=${e.value}'),
             );
           '''),
         ),
@@ -683,10 +692,15 @@ void main() {
       expect(param.required, isTrue);
 
       // Check method body generates cookie with object encoding.
-      final methodString = method.accept(emitter).toString();
+      final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        contains(r"_$cookieParts.add([r'user=', user.toForm("),
+        contains(
+          collapseWhitespace(
+            r"_$cookieParts.addAll( user .toForm(r'user', explode: false, "
+            r"allowEmpty: true) .map((e) => '${e.name}=${e.value}'), );",
+          ),
+        ),
       );
     });
 
@@ -748,11 +762,10 @@ void main() {
         collapseWhitespace(methodString),
         contains(
           collapseWhitespace(r'''
-            _$cookieParts.add(
-              [
-                r'identifier=',
-                identifier.toForm(explode: false, allowEmpty: true),
-              ].join(),
+            _$cookieParts.addAll(
+              identifier
+                  .toForm(r'identifier', explode: false, allowEmpty: true)
+                  .map((e) => '${e.name}=${e.value}'),
             );
           '''),
         ),
@@ -817,8 +830,10 @@ void main() {
         collapseWhitespace(methodString),
         contains(
           collapseWhitespace(r'''
-            _$cookieParts.add(
-              [r'value=', value.toForm(explode: false, allowEmpty: true)].join(),
+            _$cookieParts.addAll(
+              value
+                  .toForm(r'value', explode: false, allowEmpty: true)
+                  .map((e) => '${e.name}=${e.value}'),
             );
           '''),
         ),
@@ -910,10 +925,15 @@ void main() {
       );
 
       // Check method body generates cookie with allOf encoding.
-      final methodString = method.accept(emitter).toString();
+      final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        contains(r"_$cookieParts.add([r'entity=', entity.toForm("),
+        contains(
+          collapseWhitespace(
+            r"_$cookieParts.addAll( entity .toForm(r'entity', explode: false, "
+            r"allowEmpty: true) .map((e) => '${e.name}=${e.value}'), );",
+          ),
+        ),
       );
     });
 
@@ -997,7 +1017,11 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        contains('profile.toForm(explode: false, allowEmpty: true)'),
+        contains(
+          collapseWhitespace(
+            ".toForm(r'profile', explode: false, allowEmpty: true)",
+          ),
+        ),
       );
     });
 
@@ -1059,14 +1083,12 @@ void main() {
         collapseWhitespace(methodString),
         contains(
           collapseWhitespace(r'''
-            _$cookieParts.add(
-              [
-                r'ids=',
-                ids
-                    .map((e) => e.toForm(explode: false, allowEmpty: true))
-                    .toList()
-                    .toForm(explode: false, allowEmpty: true, alreadyEncoded: true),
-              ].join(),
+            _$cookieParts.addAll(
+              ids
+                  .map((e) => e.uriEncode(allowEmpty: true))
+                  .toList()
+                  .toForm(r'ids', explode: false, allowEmpty: true, alreadyEncoded: true)
+                  .map((e) => '${e.name}=${e.value}'),
             );
           '''),
         ),

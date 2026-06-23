@@ -85,7 +85,11 @@ void main() {
         (m) => m.name == 'toForm',
       );
 
-      expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
+      expect(
+        toFormMethod.returns?.accept(emitter).toString(),
+        'List<ParameterEntry>',
+      );
+      expect(toFormMethod.requiredParameters.single.name, 'paramName');
       expect(toFormMethod.optionalParameters, hasLength(3));
       expect(
         toFormMethod.optionalParameters.map((p) => p.name),
@@ -576,31 +580,38 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+          final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           if (int != null) {
             final _$intForm = int!.toForm(
+              paramName,
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
             );
-            _$values.add(_$intForm);
+            _$entryLists.add(_$intForm);
+            _$values.add(_$intForm.map((e) => e.value).join(','));
           }
           if (string != null) {
             final _$stringForm = string!.toForm(
+              paramName,
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
             );
-            _$values.add(_$stringForm);
+            _$entryLists.add(_$stringForm);
+            _$values.add(_$stringForm.map((e) => e.value).join(','));
           }
-          if (_$values.isEmpty) return '';
+          if (_$values.isEmpty) {
+            return const <ParameterEntry>[];
+          }
           if (_$values.length > 1) {
             throw EncodingException(
               r'Ambiguous anyOf form encoding for Simple: multiple values provided, anyOf requires exactly one value',
             );
           }
-          return _$values.first;
+          return _$entryLists.first;
         }
       ''';
 
@@ -643,15 +654,18 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final _$mapValues = <Map<String, String>>[];
           if (a != null) {
             final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
             _$mapValues.add(_$aForm);
           }
           final _$map = <String, String>{};
-          for (final _$m in _$mapValues) { _$map.addAll(_$m); }
+          for (final _$m in _$mapValues) {
+            _$map.addAll(_$m);
+          }
           return _$map.toForm(
+            paramName,
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
@@ -719,18 +733,18 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
           final _$mapValues = <Map<String, String>>[];
           String? _$discriminatorValue;
           if (a != null) {
             final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
             _$mapValues.add(_$aForm);
-              _$discriminatorValue ??= r'a';
+            _$discriminatorValue ??= r'a';
           }
           if (b != null) {
             final _$bForm = b!.parameterProperties(allowEmpty: allowEmpty);
             _$mapValues.add(_$bForm);
-              _$discriminatorValue ??= r'b';
+            _$discriminatorValue ??= r'b';
           }
           final _$map = <String, String>{};
           for (final _$m in _$mapValues) {
@@ -741,6 +755,7 @@ void main() {
             _$map.putIfAbsent(r'type', () => _$discValue);
           }
           return _$map.toForm(
+            paramName,
             explode: explode,
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
@@ -789,44 +804,46 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+          final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           final _$mapValues = <Map<String, String>>[];
-
           if (data != null) {
             final _$dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
             _$mapValues.add(_$dataForm);
           }
-
           if (string != null) {
             final _$stringForm = string!.toForm(
+              paramName,
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
             );
-            _$values.add(_$stringForm);
+            _$entryLists.add(_$stringForm);
+            _$values.add(_$stringForm.map((e) => e.value).join(','));
           }
-
-          if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+          if (_$values.isEmpty && _$mapValues.isEmpty) {
+            return const <ParameterEntry>[];
+          }
           if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
             throw EncodingException(
               r'Ambiguous anyOf form encoding for Mixed: mixing simple and complex values',
             );
           }
-
           if (_$values.isNotEmpty) {
             if (_$values.length > 1) {
               throw EncodingException(
                 r'Ambiguous anyOf form encoding for Mixed: multiple values provided, anyOf requires exactly one value',
               );
             }
-            return _$values.first;
+            return _$entryLists.first;
           } else {
             final _$map = <String, String>{};
             for (final _$m in _$mapValues) {
               _$map.addAll(_$m);
             }
             return _$map.toForm(
+              paramName,
               explode: explode,
               allowEmpty: allowEmpty,
               alreadyEncoded: true,
@@ -954,20 +971,27 @@ void main() {
         final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
-          String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            bool useQueryComponent = false,
+          }) {
+            final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, String>>[];
             if (innerChoice != null) {
               switch (innerChoice!.currentEncodingShape) {
-              case EncodingShape.simple:
-                _$values.add(
-                  innerChoice!.toForm(
+                case EncodingShape.simple:
+                  final _$innerChoiceForm = innerChoice!.toForm(
+                    paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
-                  ),
-                );
-                break;
+                  );
+                  _$entryLists.add(_$innerChoiceForm);
+                  _$values.add(_$innerChoiceForm.map((e) => e.value).join(','));
+                  break;
                 case EncodingShape.complex:
                   final _$innerChoiceForm = innerChoice!.parameterProperties(
                     allowEmpty: allowEmpty,
@@ -982,13 +1006,17 @@ void main() {
             }
             if (string != null) {
               final _$stringForm = string!.toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
               );
-              _$values.add(_$stringForm);
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
             }
-            if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+            if (_$values.isEmpty && _$mapValues.isEmpty) {
+              return const <ParameterEntry>[];
+            }
             if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
               throw EncodingException(
                 r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
@@ -1000,13 +1028,14 @@ void main() {
                   r'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
                 );
               }
-              return _$values.first;
+              return _$entryLists.first;
             } else {
               final _$map = <String, String>{};
               for (final _$m in _$mapValues) {
                 _$map.addAll(_$m);
               }
               return _$map.toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 alreadyEncoded: true,
@@ -1068,27 +1097,76 @@ void main() {
         final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
-          if (innerAnyOf != null) {
-            switch (innerAnyOf!.currentEncodingShape) {
-              case EncodingShape.simple:
-                _$values.add(
-                  innerAnyOf!.toForm(
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            bool useQueryComponent = false,
+          }) {
+            final _$entryLists = <List<ParameterEntry>>[];
+            final _$values = <String>{};
+            final _$mapValues = <Map<String, String>>[];
+            if (innerAnyOf != null) {
+              switch (innerAnyOf!.currentEncodingShape) {
+                case EncodingShape.simple:
+                  final _$innerAnyOfForm = innerAnyOf!.toForm(
+                    paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
-                  ),
-                );
-                break;
-              case EncodingShape.complex:
-                final _$innerAnyOfForm = innerAnyOf!.parameterProperties(
-                  allowEmpty: allowEmpty,
-                );
-                _$mapValues.add(_$innerAnyOfForm);
-                break;
-              case EncodingShape.mixed:
+                  );
+                  _$entryLists.add(_$innerAnyOfForm);
+                  _$values.add(_$innerAnyOfForm.map((e) => e.value).join(','));
+                  break;
+                case EncodingShape.complex:
+                  final _$innerAnyOfForm = innerAnyOf!.parameterProperties(
+                    allowEmpty: allowEmpty,
+                  );
+                  _$mapValues.add(_$innerAnyOfForm);
+                  break;
+                case EncodingShape.mixed:
+                  throw EncodingException(
+                    'Cannot encode field with mixed encoding shape',
+                  );
+              }
+            }
+            if (string != null) {
+              final _$stringForm = string!.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
+            }
+            if (_$values.isEmpty && _$mapValues.isEmpty) {
+              return const <ParameterEntry>[];
+            }
+            if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+              throw EncodingException(
+                r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
+              );
+            }
+            if (_$values.isNotEmpty) {
+              if (_$values.length > 1) {
                 throw EncodingException(
-                  'Cannot encode field with mixed encoding shape',
+                  r'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
                 );
+              }
+              return _$entryLists.first;
+            } else {
+              final _$map = <String, String>{};
+              for (final _$m in _$mapValues) {
+                _$map.addAll(_$m);
+              }
+              return _$map.toForm(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+                useQueryComponent: useQueryComponent,
+              );
             }
           }
         ''';
@@ -1135,7 +1213,13 @@ void main() {
         final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
-          String toForm({ required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+          List<ParameterEntry> toForm(
+            String paramName, {
+            required bool explode,
+            required bool allowEmpty,
+            bool useQueryComponent = false,
+          }) {
+            final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
             final _$mapValues = <Map<String, String>>[];
             if (myClass != null) {
@@ -1146,21 +1230,27 @@ void main() {
             }
             if (int != null) {
               final _$intForm = int!.toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
               );
-              _$values.add(_$intForm);
+              _$entryLists.add(_$intForm);
+              _$values.add(_$intForm.map((e) => e.value).join(','));
             }
             if (string != null) {
               final _$stringForm = string!.toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
               );
-              _$values.add(_$stringForm);
+              _$entryLists.add(_$stringForm);
+              _$values.add(_$stringForm.map((e) => e.value).join(','));
             }
-            if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+            if (_$values.isEmpty && _$mapValues.isEmpty) {
+              return const <ParameterEntry>[];
+            }
             if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
               throw EncodingException(
                 r'Ambiguous anyOf form encoding for TestAnyOf: mixing simple and complex values',
@@ -1172,13 +1262,14 @@ void main() {
                   r'Ambiguous anyOf form encoding for TestAnyOf: multiple values provided, anyOf requires exactly one value',
                 );
               }
-              return _$values.first;
+              return _$entryLists.first;
             } else {
               final _$map = <String, String>{};
               for (final _$m in _$mapValues) {
                 _$map.addAll(_$m);
               }
               return _$map.toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 alreadyEncoded: true,
@@ -1432,7 +1523,7 @@ void main() {
   });
 
   group('BinaryModel field encoding', () {
-    test('throws EncodingException for BinaryModel field in toForm', () {
+    test('throws for the binary variant and encodes the primitive variant', () {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'WithBinary',
@@ -1447,11 +1538,43 @@ void main() {
       final klass = generator.generateClass(model);
       final generated = format(klass.accept(emitter).toString());
 
+      const expectedMethod = r'''
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          bool useQueryComponent = false,
+        }) {
+          final _$entryLists = <List<ParameterEntry>>[];
+          final _$values = <String>{};
+          if (tonikFile != null) {
+            throw EncodingException('Binary data cannot be form-encoded');
+          }
+          if (string != null) {
+            final _$stringForm = string!.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+            );
+            _$entryLists.add(_$stringForm);
+            _$values.add(_$stringForm.map((e) => e.value).join(','));
+          }
+          if (_$values.isEmpty) {
+            return const <ParameterEntry>[];
+          }
+          if (_$values.length > 1) {
+            throw EncodingException(
+              r'Ambiguous anyOf form encoding for WithBinary: multiple values provided, anyOf requires exactly one value',
+            );
+          }
+          return _$entryLists.first;
+        }
+      ''';
+
       expect(
-        generated,
-        contains(
-          "throw EncodingException('Binary data cannot be form-encoded')",
-        ),
+        collapseWhitespace(generated),
+        contains(collapseWhitespace(expectedMethod)),
       );
     });
   });

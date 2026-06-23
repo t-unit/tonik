@@ -294,7 +294,10 @@ void main() {
         name: 'Test',
         password: 'pass',
       );
-      final form = user.toForm(explode: true, allowEmpty: true);
+      final form = user
+          .toForm('user', explode: true, allowEmpty: true)
+          .map((e) => '${e.name}=${e.value}')
+          .join('&');
 
       expect(form.contains('id='), isFalse);
       expect(form.contains('createdAt='), isFalse);

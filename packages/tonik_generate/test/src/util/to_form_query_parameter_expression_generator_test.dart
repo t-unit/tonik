@@ -131,10 +131,9 @@ void main() {
         final generated = emitCodes(codes);
         final expected = format(r'''
           test() {
-            _$entries.add((
-              name: r'mapParam',
-              value: mapParam.toForm(explode: false, allowEmpty: true),
-            ));
+            _$entries.addAll(
+              mapParam.toForm(r'mapParam', explode: false, allowEmpty: true),
+            );
           }
         ''');
 
@@ -165,12 +164,11 @@ void main() {
         final generated = emitCodes(codes);
         final expected = format(r'''
           test() {
-            _$entries.add((
-              name: r'mapParam',
-              value: mapParam
+            _$entries.addAll(
+              mapParam
                   .map((k, v) => _i1.MapEntry(k, v.toString()))
-                  .toForm(explode: false, allowEmpty: true),
-            ));
+                  .toForm(r'mapParam', explode: false, allowEmpty: true),
+            );
           }
         ''');
 
@@ -241,12 +239,46 @@ void main() {
         final generated = emitCodes(codes);
         final expected = format(r'''
           test() {
+            _$entries.addAll(
+              base64Param.toBase64String().toForm(
+                r'base64Param',
+                explode: false,
+                allowEmpty: true,
+              ),
+            );
+          }
+        ''');
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expected),
+        );
+      });
+
+      test('AnyModel appends a single encodeAnyToForm entry', () {
+        final parameter = createParameter(
+          name: 'anyParam',
+          rawName: 'anyParam',
+          model: AnyModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToFormQueryParameterCode(
+          'anyParam',
+          parameter,
+        );
+
+        final generated = emitCodes(codes);
+        final expected = format(r'''
+          test() {
             _$entries.add((
-              name: r'base64Param',
-              value: base64Param.toBase64String().toForm(
-                    explode: false,
-                    allowEmpty: true,
-                  ),
+              name: r'anyParam',
+              value: _i1.encodeAnyToForm(
+                anyParam,
+                explode: false,
+                allowEmpty: true,
+              ),
             ));
           }
         ''');
@@ -365,13 +397,12 @@ void main() {
           final generated = emitCodes(codes);
           final expected = format(r'''
             test() {
-              _$entries.add((
-                name: r'base64ListParam',
-                value: base64ListParam
+              _$entries.addAll(
+                base64ListParam
                     .map((e) => e.toBase64String())
                     .toList()
-                    .toForm(explode: false, allowEmpty: true),
-              ));
+                    .toForm(r'base64ListParam', explode: false, allowEmpty: true),
+              );
             }
           ''');
 
@@ -534,12 +565,15 @@ void main() {
           const expectedBody = r'''
             test() {
               _$entries.addAll(
-                queryType.map(
-                  (e) => (
-                    name: r'queryType',
-                    value: e?.toForm(explode: true, allowEmpty: false) ?? '',
-                  ),
-                ),
+                queryType
+                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: false))
+                    .toList()
+                    .toForm(
+                      r'queryType',
+                      explode: true,
+                      allowEmpty: false,
+                      alreadyEncoded: true,
+                    ),
               );
             }
           ''';
@@ -579,10 +613,15 @@ void main() {
           const expectedBody = r'''
             test() {
               _$entries.addAll(
-                values.map(
-                  (e) => (name: r'values',
-                    value: e.toForm(explode: true, allowEmpty: false)),
-                ),
+                values
+                    .map((e) => e.uriEncode(allowEmpty: false))
+                    .toList()
+                    .toForm(
+                      r'values',
+                      explode: true,
+                      allowEmpty: false,
+                      alreadyEncoded: true,
+                    ),
               );
             }
           ''';
@@ -628,13 +667,12 @@ void main() {
 
           const expectedBody = r'''
             test() {
-              _$entries.add((
-                name: r'ids',
-                value: ids
-                    .map((e) => e?.toForm(explode: false, allowEmpty: true))
+              _$entries.addAll(
+                ids
+                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
                     .toList()
-                    .toForm(explode: false, allowEmpty: true),
-              ));
+                    .toForm(r'ids', explode: false, allowEmpty: true, alreadyEncoded: true),
+              );
             }
           ''';
 

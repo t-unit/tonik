@@ -5459,7 +5459,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
+            for (final item in body.tags.uriEncode(allowEmpty: true, alreadyEncoded: true)) {
               _$formData.fields.add(MapEntry(r'tags', item));
             }
             return _$formData;
@@ -5868,7 +5868,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            for (final item in body.codes.map((item) => item.uriEncode(allowEmpty: true)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
+            for (final item in body.codes.map((item) => item.uriEncode(allowEmpty: true)).toList().uriEncode(allowEmpty: true, alreadyEncoded: true)) {
               _$formData.fields.add(MapEntry(r'codes', item));
             }
             return _$formData;
@@ -6059,7 +6059,7 @@ void main() {
           format(r'''
           void test() {
             final _$formData = FormData();
-            for (final item in body.scores.map((item) => jsonEncode(item)).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
+            for (final item in body.scores.map((item) => jsonEncode(item)).toList().uriEncode(allowEmpty: true, alreadyEncoded: true)) {
               _$formData.fields.add(MapEntry(r'scores', item));
             }
             return _$formData;
@@ -8669,7 +8669,7 @@ void main() {
             final _$formData = FormData();
             final _$tagsHeaders = <String, List<String>>{};
             _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
-            for (final item in body.tags.toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
+            for (final item in body.tags.uriEncode(allowEmpty: true, alreadyEncoded: true)) {
               _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
             }
             return _$formData;
@@ -9314,7 +9314,7 @@ void main() {
             final _$formData = FormData();
             final _$datesHeaders = <String, List<String>>{};
             _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
-            for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toForm(explode: false, allowEmpty: true, alreadyEncoded: true)) {
+            for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().uriEncode(allowEmpty: true, alreadyEncoded: true)) {
               _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(item, headers: _$datesHeaders)));
             }
             return _$formData;

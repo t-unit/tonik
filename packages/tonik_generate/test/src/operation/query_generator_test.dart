@@ -69,7 +69,7 @@ void main() {
 
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -168,10 +168,7 @@ void main() {
         String? _queryParameters({AnonymousModel? filter}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.add((
-              name: r'filter',
-              value: filter.toForm(explode: false, allowEmpty: true),
-            ));
+            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: true));
           }
           if (_$entries.isEmpty) {
             return null;
@@ -193,7 +190,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -264,7 +261,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -337,7 +334,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -408,7 +405,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -541,7 +538,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -608,10 +605,7 @@ void main() {
         String? _queryParameters({AnonymousModel? filter, List<String>? tags}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.add((
-              name: r'filter',
-              value: filter.toForm(explode: true, allowEmpty: true),
-            ));
+            _$entries.addAll(filter.toForm(r'filter', explode: true, allowEmpty: true));
           }
           if (tags != null) {
             for (final value in tags.toSpaceDelimited(
@@ -642,7 +636,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -688,10 +682,7 @@ void main() {
       const expectedMethod = r'''
         String? _queryParameters({required AnonymousModel filter}) {
           final _$entries = <ParameterEntry>[];
-          _$entries.add((
-            name: r'filter',
-            value: filter.toForm(explode: false, allowEmpty: false),
-          ));
+          _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false));
           if (_$entries.isEmpty) {
             return null;
           }
@@ -712,7 +703,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -759,10 +750,7 @@ void main() {
         String? _queryParameters({AnonymousModel? filter}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.add((
-              name: r'filter',
-              value: filter.toForm(explode: false, allowEmpty: false),
-            ));
+            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false));
           }
           if (_$entries.isEmpty) {
             return null;
@@ -784,7 +772,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -883,28 +871,16 @@ void main() {
         }) {
           final _$entries = <ParameterEntry>[];
           if (name != null) {
-            _$entries.add((
-              name: r'name',
-              value: name.toForm(explode: false, allowEmpty: false),
-            ));
+            _$entries.addAll(name.toForm(r'name', explode: false, allowEmpty: false));
           }
           if (tags != null) {
-            _$entries.add((
-              name: r'tags',
-              value: tags.toForm(explode: false, allowEmpty: false),
-            ));
+            _$entries.addAll(tags.toForm(r'tags', explode: false, allowEmpty: false));
           }
           if (age != null) {
-            _$entries.add((
-              name: r'age',
-              value: age.toForm(explode: false, allowEmpty: false),
-            ));
+            _$entries.addAll(age.toForm(r'age', explode: false, allowEmpty: false));
           }
           if (active != null) {
-            _$entries.add((
-              name: r'active',
-              value: active.toForm(explode: false, allowEmpty: false),
-            ));
+            _$entries.addAll(active.toForm(r'active', explode: false, allowEmpty: false));
           }
           if (_$entries.isEmpty) {
             return null;
@@ -929,7 +905,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -997,16 +973,10 @@ void main() {
         String? _queryParameters({AnonymousModel? filter, AnonymousModel2? range}) {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
-            _$entries.add((
-              name: r'filter',
-              value: filter.toForm(explode: false, allowEmpty: false),
-            ));
+            _$entries.addAll(filter.toForm(r'filter', explode: false, allowEmpty: false));
           }
           if (range != null) {
-            _$entries.add((
-              name: r'range',
-              value: range.toForm(explode: false, allowEmpty: false),
-            ));
+            _$entries.addAll(range.toForm(r'range', explode: false, allowEmpty: false));
           }
           if (_$entries.isEmpty) {
             return null;
@@ -1029,7 +999,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -1173,10 +1143,7 @@ void main() {
         }) {
           final _$entries = <ParameterEntry>[];
           if (color != null) {
-            _$entries.add((
-              name: r'color',
-              value: color.toForm(explode: false, allowEmpty: true),
-            ));
+            _$entries.addAll(color.toForm(r'color', explode: false, allowEmpty: true));
           }
           _$entries.addAll(
             value.toDeepObject(r'value', explode: false, allowEmpty: true),
@@ -1226,7 +1193,7 @@ void main() {
       expect(method, isA<Method>());
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -1286,9 +1253,15 @@ void main() {
          String? _queryParameters({required List<AnonymousModel> colors}) {
             final _$entries = <ParameterEntry>[];
             _$entries.addAll(
-              colors.map(
-                (e) => (name: r'colors', value: e.toForm(explode: true, allowEmpty: false)),
-              ),
+              colors
+                  .map((e) => e.uriEncode(allowEmpty: false))
+                  .toList()
+                  .toForm(
+                    r'colors',
+                    explode: true,
+                    allowEmpty: false,
+                    alreadyEncoded: true,
+                  ),
             );
             if (_$entries.isEmpty) {
               return null;
@@ -1312,7 +1285,7 @@ void main() {
       expect(method.optionalParameters.first.required, isTrue);
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -1375,11 +1348,9 @@ void main() {
       const expectedMethod = r'''
           String? _queryParameters({required List<List<AnonymousModel>> matrix}) {
             final _$entries = <ParameterEntry>[];
-            if (matrix.isNotEmpty) {
-              throw EncodingException(
-                'Form encoding only supports lists of simple types',
-              );
-            }
+            throw EncodingException(
+              'Unsupported model type for form query encoding.',
+            );
             if (_$entries.isEmpty) {
               return null;
             }
@@ -1397,7 +1368,7 @@ void main() {
       expect(method.optionalParameters.first.required, isTrue);
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -1468,7 +1439,7 @@ void main() {
         expect(method.optionalParameters.first.required, isTrue);
         expect(
           collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(expectedMethod),
+          collapseWhitespace(format(expectedMethod)),
         );
       },
     );
@@ -1578,7 +1549,7 @@ void main() {
         expect(method.optionalParameters.first.required, isTrue);
         expect(
           collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(expectedMethod),
+          collapseWhitespace(format(expectedMethod)),
         );
       },
     );
@@ -1673,7 +1644,7 @@ void main() {
         expect(method.optionalParameters.first.required, isTrue);
         expect(
           collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(expectedMethod),
+          collapseWhitespace(format(expectedMethod)),
         );
       },
     );
@@ -1755,7 +1726,7 @@ void main() {
         expect(method.optionalParameters.first.required, isTrue);
         expect(
           collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(expectedMethod),
+          collapseWhitespace(format(expectedMethod)),
         );
       },
     );
@@ -1830,7 +1801,7 @@ void main() {
       expect(method.optionalParameters.first.required, isTrue);
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -1917,7 +1888,7 @@ void main() {
       expect(method.optionalParameters.first.required, isTrue);
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -1982,7 +1953,7 @@ void main() {
       expect(method.optionalParameters.first.name, r'$class');
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -2057,7 +2028,7 @@ void main() {
       expect(method.optionalParameters.first.name, r'$void');
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
 
@@ -2129,7 +2100,7 @@ void main() {
       expect(method.optionalParameters.first.name, r'$price');
       expect(
         collapseWhitespace(format(method.accept(emitter).toString())),
-        collapseWhitespace(expectedMethod),
+        collapseWhitespace(format(expectedMethod)),
       );
     });
   });

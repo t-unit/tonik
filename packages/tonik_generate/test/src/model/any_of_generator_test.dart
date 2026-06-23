@@ -816,7 +816,10 @@ String toSimple({required bool explode, required bool allowEmpty}) {
           (m) => m.name == 'toForm',
         );
         expect(toFormMethod.name, 'toForm');
-        expect(toFormMethod.returns?.accept(emitter).toString(), 'String');
+        expect(
+          toFormMethod.returns?.accept(emitter).toString(),
+          'List<ParameterEntry>',
+        );
         expect(toFormMethod.optionalParameters.length, 3);
         expect(
           toFormMethod.optionalParameters.any((p) => p.name == 'explode'),
@@ -840,7 +843,8 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 
         const expectedMethod = r'''
 @override
-String toForm({
+List<ParameterEntry> toForm(
+  String paramName, {
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
@@ -848,12 +852,16 @@ String toForm({
   final _$mapValues = <Map<String, String>>[];
   String? _$discriminatorValue;
   if (company != null) {
-    final _$companyForm = company!.parameterProperties(allowEmpty: allowEmpty);
+    final _$companyForm = company!.parameterProperties(
+      allowEmpty: allowEmpty,
+    );
     _$mapValues.add(_$companyForm);
     _$discriminatorValue ??= r'company';
   }
   if (person != null) {
-    final _$personForm = person!.parameterProperties(allowEmpty: allowEmpty);
+    final _$personForm = person!.parameterProperties(
+      allowEmpty: allowEmpty,
+    );
     _$mapValues.add(_$personForm);
     _$discriminatorValue ??= r'person';
   }
@@ -865,16 +873,11 @@ String toForm({
   if (_$discValue != null) {
     _$map.putIfAbsent(r'type', () => _$discValue);
   }
-  return _$map.toForm(
-    explode: explode,
-    allowEmpty: allowEmpty,
-    alreadyEncoded: true,
-    useQueryComponent: useQueryComponent,
-  );
+  return _$map.toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent);
 }
       ''';
 
-        expect(generated.trim(), expectedMethod.trim());
+        expect(generated.trim(), format(expectedMethod).trim());
       },
     );
 
@@ -2444,7 +2447,7 @@ Map<String, String> parameterProperties({
       );
     });
 
-    test('generates encoding exception for MapModel in toForm', () {
+    test('toForm dispatches on encoding shape for MapModel', () {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'FlexValue',
@@ -2473,13 +2476,64 @@ Map<String, String> parameterProperties({
 
       final generated = format(method.accept(emitter).toString());
 
+      const expectedMethod = r'''
+        @override
+        List<ParameterEntry> toForm(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          bool useQueryComponent = false,
+        }) {
+          final _$entryLists = <List<ParameterEntry>>[];
+          final _$values = <String>{};
+          final _$mapValues = <Map<String, String>>[];
+          if (map != null) {
+            throw EncodingException('Map types cannot be form-encoded');
+          }
+          if (string != null) {
+            final _$stringForm = string!.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              useQueryComponent: useQueryComponent,
+            );
+            _$entryLists.add(_$stringForm);
+            _$values.add(_$stringForm.map((e) => e.value).join(','));
+          }
+          if (_$values.isEmpty && _$mapValues.isEmpty) {
+            return const <ParameterEntry>[];
+          }
+          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
+            throw EncodingException(
+              r'Ambiguous anyOf form encoding for FlexValue: mixing simple and complex values',
+            );
+          }
+          if (_$values.isNotEmpty) {
+            if (_$values.length > 1) {
+              throw EncodingException(
+                r'Ambiguous anyOf form encoding for FlexValue: multiple values provided, anyOf requires exactly one value',
+              );
+            }
+            return _$entryLists.first;
+          } else {
+            final _$map = <String, String>{};
+            for (final _$m in _$mapValues) {
+              _$map.addAll(_$m);
+            }
+            return _$map.toForm(
+              paramName,
+              explode: explode,
+              allowEmpty: allowEmpty,
+              alreadyEncoded: true,
+              useQueryComponent: useQueryComponent,
+            );
+          }
+        }
+      ''';
+
       expect(
         collapseWhitespace(generated),
-        contains(
-          collapseWhitespace(
-            "throw EncodingException('Map types cannot be form-encoded')",
-          ),
-        ),
+        contains(collapseWhitespace(expectedMethod)),
       );
     });
 
@@ -3001,26 +3055,34 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 
         const expectedMethod = r'''
 @override
-String toForm({
+List<ParameterEntry> toForm(
+  String paramName, {
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
 }) {
+  final _$entryLists = <List<ParameterEntry>>[];
   final _$values = <String>{};
   final _$mapValues = <Map<String, String>>[];
   if (tonikFile != null) {
     final _$tonikFileForm = tonikFile!.toBase64String().toForm(
+      paramName,
       explode: explode,
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     );
-    _$values.add(_$tonikFileForm);
+    _$entryLists.add(_$tonikFileForm);
+    _$values.add(_$tonikFileForm.map((e) => e.value).join(','));
   }
   if (text != null) {
-    final _$textForm = text!.parameterProperties(allowEmpty: allowEmpty);
+    final _$textForm = text!.parameterProperties(
+      allowEmpty: allowEmpty,
+    );
     _$mapValues.add(_$textForm);
   }
-  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$values.isEmpty && _$mapValues.isEmpty) {
+    return const <ParameterEntry>[];
+  }
   if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
     throw EncodingException(
       r'Ambiguous anyOf form encoding for AnyOfBase64: mixing simple and complex values',
@@ -3032,13 +3094,14 @@ String toForm({
         r'Ambiguous anyOf form encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value',
       );
     }
-    return _$values.first;
+    return _$entryLists.first;
   } else {
     final _$map = <String, String>{};
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
     return _$map.toForm(
+      paramName,
       explode: explode,
       allowEmpty: allowEmpty,
       alreadyEncoded: true,
@@ -3298,18 +3361,20 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       expect(generated.trim(), format(expected).trim());
     });
 
-    test('toForm throws EncodingException for AnyModel field', () {
+    test('toForm dispatches on encoding shape for AnyModel field', () {
       final klass = generator.generateClass(makeMixedFilter());
       final method = klass.methods.firstWhere((m) => m.name == 'toForm');
       final generated = format(method.accept(emitter).toString());
 
       const expected = r'''
 @override
-String toForm({
+List<ParameterEntry> toForm(
+  String paramName, {
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
 }) {
+  final _$entryLists = <List<ParameterEntry>>[];
   final _$values = <String>{};
   final _$mapValues = <Map<String, String>>[];
   if (object != null) {
@@ -3323,7 +3388,9 @@ String toForm({
     );
     _$mapValues.add(_$detailedFilterForm);
   }
-  if (_$values.isEmpty && _$mapValues.isEmpty) return '';
+  if (_$values.isEmpty && _$mapValues.isEmpty) {
+    return const <ParameterEntry>[];
+  }
   if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
     throw EncodingException(
       r'Ambiguous anyOf form encoding for MixedFilter: mixing simple and complex values',
@@ -3335,13 +3402,14 @@ String toForm({
         r'Ambiguous anyOf form encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
       );
     }
-    return _$values.first;
+    return _$entryLists.first;
   } else {
     final _$map = <String, String>{};
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
     return _$map.toForm(
+      paramName,
       explode: explode,
       allowEmpty: allowEmpty,
       alreadyEncoded: true,

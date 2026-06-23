@@ -131,8 +131,6 @@ class DataGenerator {
                   'value',
                   c.model,
                   useQueryComponent: true,
-                  explodeLiteral: true,
-                  allowEmptyLiteral: true,
                 ).code,
               )
               ..add(const Code(','));
@@ -282,8 +280,6 @@ class DataGenerator {
           'body',
           model,
           useQueryComponent: true,
-          explodeLiteral: true,
-          allowEmptyLiteral: true,
           isNullable: !isRequired,
         );
         bodyCode

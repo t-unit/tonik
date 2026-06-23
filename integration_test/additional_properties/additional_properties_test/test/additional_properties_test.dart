@@ -613,7 +613,7 @@ void main() {
         },
       );
       expect(
-        () => obj.toForm(explode: true, allowEmpty: true),
+        () => obj.toForm('p', explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
     });
@@ -682,7 +682,7 @@ void main() {
         metadata: {'key': 'value'},
       );
       expect(
-        () => obj.toForm(explode: true, allowEmpty: true),
+        () => obj.toForm('p', explode: true, allowEmpty: true),
         throwsA(isA<EncodingException>()),
       );
     });

@@ -275,7 +275,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'class=name=test&age=1',
+        'name=test&age=1',
       );
     });
 
@@ -317,7 +317,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'classAlias=name=test&age=1',
+        'name=test&age=1',
       );
     });
 
@@ -342,7 +342,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'anyOfComplex=name=test&age=1',
+        'name=test&age=1',
       );
     });
 
@@ -369,7 +369,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'oneOfComplex=value=test&amount=1',
+        'value=test&amount=1',
       );
     });
 
@@ -397,7 +397,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'allOfComplex=name=test&age=1&value=test&amount=1',
+        'name=test&age=1&value=test&amount=1',
       );
     });
   });
@@ -657,7 +657,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'nullableClass=name=test',
+        'name=test',
       );
     });
 

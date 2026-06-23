@@ -695,8 +695,8 @@ Code _buildListFieldAddition(
     );
   }
 
-  // explode: false — map items to strings, run through the style encoder,
-  // then for-loop over the (single-element) result.
+  // explode: false — map items to strings, then run through the style encoder.
+  // Form style joins the items into a single comma-separated string value.
   final encoderExpr = _buildEncoderExpr(
     accessor,
     itemExpr,
@@ -1007,14 +1007,20 @@ Expression _buildEncoderExpr(
     listExpr = refer(accessor);
   }
 
+  // Form style produces a single comma-joined string value via uriEncode;
+  // the delimited styles keep their dedicated encoders.
   final encoderMethod = switch (style) {
     MultipartEncodingStyle.spaceDelimited => 'toSpaceDelimited',
     MultipartEncodingStyle.pipeDelimited => 'toPipeDelimited',
-    _ => 'toForm',
+    _ => 'uriEncode',
   };
 
+  final isDelimited =
+      style == MultipartEncodingStyle.spaceDelimited ||
+      style == MultipartEncodingStyle.pipeDelimited;
+
   final namedArgs = <String, Expression>{
-    'explode': literalFalse,
+    if (isDelimited) 'explode': literalFalse,
     'allowEmpty': literalTrue,
     'alreadyEncoded': literalTrue,
   };
