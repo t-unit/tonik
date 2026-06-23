@@ -44,16 +44,11 @@ abstract interface class SimpleEncodable {
 /// Marker interface for types that support form-style encoding
 /// (RFC 6570 Section 3.2.8).
 abstract interface class FormEncodable {
-  /// Encodes this value using form style parameter encoding.
+  /// Encodes this value using form style parameter encoding, yielding a list
+  /// of `name=value` entries named [paramName] that the caller joins.
   ///
-  /// Form encoding always yields a list of parameter entries: the wire form
-  /// (query string, cookie, urlencoded body) is a set of `name=value` pairs
-  /// that the caller joins with the separator for its context.
-  ///
-  /// The [paramName] is the parameter name carried by single-value entries.
-  /// When [explode] is true, object properties become separate entries keyed
-  /// by the bare property name (and list items repeat under [paramName]);
-  /// when false the whole value collapses into one entry named [paramName].
+  /// When [explode] is true, object properties and list items become separate
+  /// entries; when false the whole value collapses into one entry.
   /// When [allowEmpty] is false, empty values throw an exception.
   /// When [useQueryComponent] is true, uses '+' for spaces
   /// (application/x-www-form-urlencoded encoding).

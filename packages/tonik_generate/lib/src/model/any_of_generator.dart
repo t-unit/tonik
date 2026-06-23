@@ -394,7 +394,6 @@ class AnyOfGenerator {
               .statement,
         );
       } else if (fieldModel is MapModel) {
-        // Map types cannot be simple-encoded
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be simple-encoded',

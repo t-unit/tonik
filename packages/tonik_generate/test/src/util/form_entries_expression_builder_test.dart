@@ -332,17 +332,11 @@ void main() {
         model,
         allowEmpty: literalBool(true),
       ).expression;
-      // buildUriEncodeExpression emits a single uriEncode/encodeAnyToUri value
-      // only when it neither throws an EncodingException nor recurses into a
-      // list/map sub-builder (which renders a `.map(` projection).
       final body = collapseWhitespace(bodyOf(expression));
       return !body.contains('EncodingException') && !body.contains('.map(');
     }
 
-    // One instance of every concrete Model subtype. Adding a new Model subtype
-    // forces an update here, and the assertions below pin every instance
-    // against buildUriEncodeExpression's behaviour so the two switch statements
-    // cannot drift apart.
+    // Enumerates every concrete Model subtype so the two switch statements cannot drift apart.
     List<Model> allConcreteModels() => <Model>[
       StringModel(context: context),
       BooleanModel(context: context),
@@ -411,8 +405,6 @@ void main() {
     test(
       'every element classified encodable uri-encodes to a single value',
       () {
-        // Catches a scalar added to isUriEncodableElement but not wired to a
-        // single-value arm of buildUriEncodeExpression.
         for (final model in allConcreteModels()) {
           if (!isUriEncodableElement(model)) continue;
           expect(
@@ -429,13 +421,7 @@ void main() {
     test(
       'every scalar arm of buildUriEncodeExpression is element-encodable',
       () {
-        // Catches a scalar added to buildUriEncodeExpression's direct
-        // uriEncode/encodeAnyToUri arm but forgotten in isUriEncodableElement.
-        // Collection types emit a single uriEncode call too but are
-        // deliberately not element-encodable; BinaryModel is the documented
-        // single-value divergence below. ClassModel does not single-value
-        // encode and is therefore already filtered by the encodesToSingleValue
-        // skip.
+        // Collections and BinaryModel single-value encode but are deliberately not element-encodable.
         const nonElementTypes = [MapModel, ListModel, BinaryModel];
         for (final model in allConcreteModels()) {
           if (nonElementTypes.contains(model.runtimeType)) continue;

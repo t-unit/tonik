@@ -5,14 +5,9 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// Extensions for encoding values using form style parameter encoding.
 ///
-/// Form encoding always produces a list of [ParameterEntry] (`name=value`
-/// pairs). Callers join them with the separator for their context — `&` for
-/// query strings and urlencoded bodies, `; ` for cookies.
-/// - Primitives: a single entry `(paramName, value)`.
-/// - Arrays (explode=false): `(paramName, value1,value2,value3)`.
-/// - Arrays (explode=true): one entry per item, each named `paramName`.
-/// - Objects (explode=false): `(paramName, key1,value1,key2,value2)`.
-/// - Objects (explode=true): one entry per property, keyed by the bare key.
+/// Form encoding produces a list of [ParameterEntry] (`name=value` pairs) that
+/// callers join with the separator for their context — `&` for query strings
+/// and urlencoded bodies, `; ` for cookies.
 
 String _encodeValue(String value, {required bool useQueryComponent}) =>
     useQueryComponent
@@ -175,13 +170,6 @@ extension FormBigDecimalEncoder on BigDecimal {
 extension FormStringListEncoder on List<String> {
   /// Encodes this List value using form style encoding.
   ///
-  /// - explode=false: a single comma-separated entry named [paramName].
-  /// - explode=true: one entry per item, each named [paramName].
-  ///
-  /// The [allowEmpty] parameter controls whether empty lists are allowed:
-  /// empty lists with explode=false yield a single empty-value entry, with
-  /// explode=true yield no entries, and throw when [allowEmpty] is false.
-  ///
   /// The [alreadyEncoded] parameter indicates whether the items are already
   /// URI-encoded and should not be encoded again.
   List<ParameterEntry> toForm(
@@ -224,16 +212,8 @@ extension FormStringListEncoder on List<String> {
 extension FormStringMapEncoder on Map<String, String> {
   /// Encodes this Map value using form style encoding.
   ///
-  /// - explode=false: a single entry named [paramName] holding the
-  ///   comma-separated `key1,value1,key2,value2` rendering.
-  /// - explode=true: one entry per property, keyed by the (URL-encoded) key.
-  ///
-  /// The [allowEmpty] parameter controls whether empty maps are allowed:
-  /// empty maps with explode=false yield a single empty-value entry, with
-  /// explode=true yield no entries, and throw when [allowEmpty] is false.
-  ///
   /// The [alreadyEncoded] parameter indicates whether the values are already
-  /// URL-encoded. When `true`, values are not re-encoded to prevent double
+  /// URL-encoded, in which case they are not re-encoded to prevent double
   /// encoding.
   List<ParameterEntry> toForm(
     String paramName, {
@@ -274,10 +254,9 @@ extension FormStringMapEncoder on Map<String, String> {
 
 /// Extension for encoding binary data (`List<int>`).
 extension FormBinaryEncoder on List<int> {
-  /// Encodes binary data to a single UTF-8 string entry using form style.
+  /// Encodes binary data using form style encoding.
   ///
-  /// The [explode] parameter is accepted for consistency but has no effect
-  /// on binary encoding (binary data is treated as a primitive value).
+  /// The [explode] parameter has no effect; binary data is a primitive value.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,

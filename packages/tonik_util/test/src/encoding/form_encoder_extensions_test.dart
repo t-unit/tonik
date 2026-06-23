@@ -473,7 +473,6 @@ void main() {
     test(
       'FormBinaryEncoder encodes spaces with + when useQueryComponent=true',
       () {
-        // "Hello World"
         const value = [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100];
         expect(
           value.toForm(

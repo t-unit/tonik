@@ -4,11 +4,6 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 
-/// Builds the expression that encodes a `application/x-www-form-urlencoded`
-/// request body to its wire string.
-///
-/// Object bodies expand (per `explode: true`) to one `key=value` field each,
-/// joined with `&`. [useQueryComponent] uses `+` for spaces.
 BuiltExpression buildToFormValueExpression(
   String valueExpression,
   Model model, {
@@ -35,7 +30,6 @@ BuiltExpression buildToFormValueExpression(
     );
   }
 
-  // AnyModel renders directly to the body string via encodeAnyToForm.
   if (isAnyModelFormValue(model)) {
     return BuiltExpression.simple(
       refer('encodeAnyToForm', 'package:tonik_util/tonik_util.dart').call(
@@ -66,8 +60,7 @@ BuiltExpression buildToFormValueExpression(
     );
   }
 
-  // A nullable body must collapse to null rather than throw, so guard the
-  // receiver before rendering the entries to a body string.
+  // A nullable body must collapse to null rather than throw.
   final body = _entriesToBody(entries);
   return BuiltExpression.simple(
     isNullable

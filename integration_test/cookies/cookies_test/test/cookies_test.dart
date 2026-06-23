@@ -479,7 +479,6 @@ void main() {
       final response = await api.testArrayCookie(tags: []);
 
       expect(response, isA<TonikSuccess<void>>());
-      // An exploded empty array yields no entries, so no Cookie header.
       expect(getCookieHeader(response), isNull);
     });
 
@@ -612,7 +611,6 @@ void main() {
       final response = await api.testMapIntegerCookie(prefs: {});
 
       expect(response, isA<TonikSuccess<void>>());
-      // An exploded empty map yields no entries, so no Cookie header.
       expect(getCookieHeader(response), isNull);
     });
 

@@ -313,8 +313,8 @@ String encodeAnyToForm(
     if (value.isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    // Lists render comma-separated within an any value regardless of explode;
-    // the repeated-key form is applied at the parameter layer above, not here.
+    // Lists render comma-separated regardless of explode; the repeated-key
+    // form is applied at the parameter layer above, not here.
     final encoded = value
         .map(
           (item) => encodeAnyToForm(
@@ -336,10 +336,6 @@ String encodeAnyToForm(
   );
 }
 
-/// Flattens form [ParameterEntry] list back into the single-string rendering
-/// used when an object/value is nested inside an `any` structure: `k=v&k=v`
-/// for explode=true, and the joined comma form for explode=false (where the
-/// list holds a single entry whose value already carries the commas).
 String _formEntriesToString(
   List<ParameterEntry> entries, {
   required bool explode,

@@ -88,9 +88,6 @@ class Date {
       uriEncode(allowEmpty: allowEmpty);
 
   /// Converts this [Date] to a form-encoded parameter entry.
-  ///
-  /// Dates are primitives, so this is always a single entry named [paramName]
-  /// holding the ISO 8601 date (YYYY-MM-DD) with proper URL encoding.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,

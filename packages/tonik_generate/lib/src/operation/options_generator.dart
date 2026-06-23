@@ -448,8 +448,6 @@ class OptionsGenerator {
       return;
     }
 
-    // AnyModel renders to a single string value via encodeAnyToForm, so it
-    // becomes a single `name=value` cookie part.
     if (isAnyModelFormValue(model)) {
       final encodedValue =
           refer(

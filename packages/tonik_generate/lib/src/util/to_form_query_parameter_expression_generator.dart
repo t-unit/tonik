@@ -6,11 +6,6 @@ import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-/// Builds the statements that append a form-style query parameter's entries to
-/// the `_$entries` list. Every supported value resolves to a
-/// `List<ParameterEntry>` appended via `_$entries.addAll(...)`, so a
-/// `style: form, explode: true` object emits each property as its own
-/// top-level key rather than a single wrapped `name=...` entry.
 BuiltStatements buildToFormQueryParameterCode(
   String parameterName,
   QueryParameterObject parameter, {
@@ -50,8 +45,6 @@ List<Code> _buildToFormQueryParameterCode(
     ];
   }
 
-  // AnyModel renders to a single string value via encodeAnyToForm, so it is
-  // appended as a single entry keyed by the parameter name.
   if (isAnyModelFormValue(model)) {
     return [
       const Code(r'_$entries.add(('),

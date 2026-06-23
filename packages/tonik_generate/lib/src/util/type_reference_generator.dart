@@ -184,7 +184,6 @@ TypeReference buildMapStringStringType() => TypeReference(
     ]),
 );
 
-/// Returns a TypeReference for [List<ParameterEntry>].
 TypeReference buildParameterEntryListType() => TypeReference(
   (b) => b
     ..symbol = 'List'
