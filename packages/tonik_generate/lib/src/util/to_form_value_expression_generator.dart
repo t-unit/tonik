@@ -77,20 +77,9 @@ BuiltExpression buildToFormValueExpression(
 }
 
 Expression _entriesToBody(Expression entries) {
-  // Scalar bodies produce a single entry with an empty name, whose wire form is
-  // the bare value; only keyed (object/exploded) entries render as `name=value`.
   return entries
       .property('map')
-      .call([
-        Method(
-          (b) => b
-            ..lambda = true
-            ..requiredParameters.add(Parameter((p) => p..name = 'e'))
-            ..body = const Code(
-              r"e.name.isEmpty ? e.value : '${e.name}=${e.value}'",
-            ),
-        ).closure,
-      ])
+      .call([formEntryToWireString()])
       .property('join')
       .call([literalString('&')]);
 }

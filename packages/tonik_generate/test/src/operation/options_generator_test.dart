@@ -1216,7 +1216,7 @@ void main() {
             _$cookieParts.addAll(
   sessionId
 .toForm(r'session_id', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1280,7 +1280,7 @@ void main() {
               _$cookieParts.addAll(
   trackingId
 .toForm(r'tracking_id', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -1367,12 +1367,12 @@ void main() {
             _$cookieParts.addAll(
   sessionId
 .toForm(r'session_id', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             _$cookieParts.addAll(
   userId
 .toForm(r'user_id', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1435,7 +1435,7 @@ void main() {
             _$cookieParts.addAll(
   pageNum
 .toForm(r'page_num', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1505,7 +1505,7 @@ void main() {
             _$cookieParts.addAll(
   labels
 .toForm(r'labels', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1576,7 +1576,7 @@ void main() {
   prefs
                     .map((k, v) => MapEntry(k, v.toString()))
                     .toForm(r'prefs', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1648,7 +1648,7 @@ void main() {
   settings
                       .map((k, v) => MapEntry(k, v.toString()))
                       .toForm(r'settings', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -1965,7 +1965,7 @@ void main() {
                       allowEmpty: true,
                       alreadyEncoded: true,
                     )
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2111,7 +2111,7 @@ void main() {
           final _$cookieParts = <String>[];
           _$cookieParts.addAll(
   token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
           if (_$cookieParts.isNotEmpty) {
             _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2262,7 +2262,7 @@ void main() {
                     .map((e) => e.toBase64String())
                     .toList()
                     .toForm(r'tokens', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2411,7 +2411,7 @@ void main() {
           if (token != null) {
             _$cookieParts.addAll(
   token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
           }
           if (_$cookieParts.isNotEmpty) {
@@ -2566,7 +2566,7 @@ void main() {
                       .map((e) => e.toBase64String())
                       .toList()
                       .toForm(r'tokens', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -2736,7 +2736,7 @@ void main() {
             _$cookieParts.addAll(
   tracker
 .toForm(r'tracker', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2821,7 +2821,7 @@ void main() {
               _$cookieParts.addAll(
   tags
 .toForm(r'tags', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2911,7 +2911,7 @@ void main() {
                         allowEmpty: true,
                         alreadyEncoded: true,
                       )
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3010,7 +3010,7 @@ void main() {
                         allowEmpty: true,
                         alreadyEncoded: true,
                       )
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3101,7 +3101,7 @@ void main() {
                           allowEmpty: true,
                           alreadyEncoded: true,
                         )
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               }
               if (_$cookieParts.isNotEmpty) {
@@ -3185,7 +3185,7 @@ void main() {
   prefs
                     .map((k, v) => MapEntry(k, v.toString()))
                     .toForm(r'prefs', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3352,7 +3352,7 @@ void main() {
                         allowEmpty: true,
                         alreadyEncoded: true,
                       )
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3438,7 +3438,7 @@ void main() {
               _$cookieParts.addAll(
   names
 .toForm(r'names', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3612,7 +3612,7 @@ void main() {
   prefs
                       .map((k, v) => MapEntry(k, v.toString()))
                       .toForm(r'prefs', explode: false, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -3768,7 +3768,7 @@ void main() {
               final _$cookieParts = <String>[];
               _$cookieParts.addAll(
   token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3933,7 +3933,7 @@ void main() {
                       .map((e) => e.toBase64String())
                       .toList()
                       .toForm(r'tokens', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -4098,7 +4098,7 @@ void main() {
               if (token != null) {
                 _$cookieParts.addAll(
   token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               }
               if (_$cookieParts.isNotEmpty) {
@@ -4271,7 +4271,7 @@ void main() {
                         .map((e) => e.toBase64String())
                         .toList()
                         .toForm(r'tokens', explode: true, allowEmpty: true)
-      .map((e) => '${e.name}=${e.value}'),
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
               }
               if (_$cookieParts.isNotEmpty) {

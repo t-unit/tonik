@@ -431,10 +431,12 @@ void main() {
       () {
         // Catches a scalar added to buildUriEncodeExpression's direct
         // uriEncode/encodeAnyToUri arm but forgotten in isUriEncodableElement.
-        // Collection and object types emit a single uriEncode call too but are
+        // Collection types emit a single uriEncode call too but are
         // deliberately not element-encodable; BinaryModel is the documented
-        // single-value divergence below.
-        const nonElementTypes = [MapModel, ListModel, ClassModel, BinaryModel];
+        // single-value divergence below. ClassModel does not single-value
+        // encode and is therefore already filtered by the encodesToSingleValue
+        // skip.
+        const nonElementTypes = [MapModel, ListModel, BinaryModel];
         for (final model in allConcreteModels()) {
           if (nonElementTypes.contains(model.runtimeType)) continue;
           if (!encodesToSingleValue(model)) continue;

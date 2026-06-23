@@ -56,7 +56,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -173,7 +173,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -244,7 +244,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -317,7 +317,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -388,7 +388,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -519,7 +519,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -618,7 +618,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -686,7 +686,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -755,7 +755,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -885,7 +885,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -981,7 +981,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1173,7 +1173,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1266,7 +1266,7 @@ void main() {
             if (_$entries.isEmpty) {
               return null;
             }
-            return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+            return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1354,7 +1354,7 @@ void main() {
             if (_$entries.isEmpty) {
               return null;
             }
-            return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+            return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1420,7 +1420,7 @@ void main() {
             if (_$entries.isEmpty) {
               return null;
             }
-            return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+            return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1530,7 +1530,7 @@ void main() {
              if (_$entries.isEmpty) {
                return null;
              }
-             return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+             return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
            }
          ''';
 
@@ -1625,7 +1625,7 @@ void main() {
              if (_$entries.isEmpty) {
                return null;
              }
-             return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+             return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
            }
          ''';
 
@@ -1707,7 +1707,7 @@ void main() {
             if (_$entries.isEmpty) {
               return null;
             }
-            return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+            return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
           }
         ''';
 
@@ -1781,7 +1781,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1868,7 +1868,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -1935,7 +1935,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -2010,7 +2010,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 
@@ -2082,7 +2082,7 @@ void main() {
           if (_$entries.isEmpty) {
             return null;
           }
-          return _$entries.map((e) => '${e.name}=${e.value}').join('&');
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
         }
       ''';
 

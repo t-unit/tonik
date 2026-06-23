@@ -220,6 +220,18 @@ bool _isUriEncodableElement(Model model) {
 /// caller as one entry) rather than a `List<ParameterEntry>`.
 bool isAnyModelFormValue(Model model) => model.resolved is AnyModel;
 
+/// Closure rendering one `ParameterEntry` to its wire form.
+///
+/// An empty-name entry denotes a bare value with no `name=` prefix; this is the
+/// single guarded form shared by the query, cookie, and urlencoded-body
+/// joiners so an empty name renders consistently everywhere.
+Expression formEntryToWireString() => Method(
+  (b) => b
+    ..lambda = true
+    ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+    ..body = const Code(r"e.name.isEmpty ? e.value : '${e.name}=${e.value}'"),
+).closure;
+
 /// Returns the encoding-exception message for a model that cannot be
 /// form-encoded as entries, or null when the model is encodable.
 String? formEntriesUnsupportedReason(Model model) {

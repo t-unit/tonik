@@ -1,6 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/to_deep_object_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_delimited_query_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_form_query_parameter_expression_generator.dart';
@@ -147,14 +148,7 @@ class QueryGenerator {
       const Code('}'),
       refer(r'_$entries')
           .property('map')
-          .call([
-            Method(
-              (b) => b
-                ..lambda = true
-                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                ..body = const Code(r"'${e.name}=${e.value}'"),
-            ).closure,
-          ])
+          .call([formEntryToWireString()])
           .property('join')
           .call([literalString('&')])
           .returned

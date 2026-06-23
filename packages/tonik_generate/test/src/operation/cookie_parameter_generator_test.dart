@@ -301,7 +301,7 @@ void main() {
               _$cookieParts.addAll(
                 sessionId
                     .toForm(r'session_id', explode: false, allowEmpty: true)
-                    .map((e) => '${e.name}=${e.value}'),
+                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -395,12 +395,12 @@ void main() {
               _$cookieParts.addAll(
                 sessionId
                     .toForm(r'session_id', explode: false, allowEmpty: true)
-                    .map((e) => '${e.name}=${e.value}'),
+                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
               );
               _$cookieParts.addAll(
                 userId
                     .toForm(r'user_id', explode: false, allowEmpty: true)
-                    .map((e) => '${e.name}=${e.value}'),
+                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -469,7 +469,7 @@ void main() {
               _$cookieParts.addAll(
                 optionalSession
                     .toForm(r'optional_session', explode: false, allowEmpty: true)
-                    .map((e) => '${e.name}=${e.value}'),
+                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
               );
             }
             if (_$cookieParts.isNotEmpty) {
@@ -538,7 +538,7 @@ void main() {
             _$cookieParts.addAll(
               pageNum
                   .toForm(r'page', explode: false, allowEmpty: true)
-                  .map((e) => '${e.name}=${e.value}'),
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
             );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -610,7 +610,7 @@ void main() {
             _$cookieParts.addAll(
               tags
                   .toForm(r'tags', explode: false, allowEmpty: true)
-                  .map((e) => '${e.name}=${e.value}'),
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
             );
           '''),
         ),
@@ -698,7 +698,8 @@ void main() {
         contains(
           collapseWhitespace(
             r"_$cookieParts.addAll( user .toForm(r'user', explode: false, "
-            r"allowEmpty: true) .map((e) => '${e.name}=${e.value}'), );",
+            'allowEmpty: true) .map((e) => e.name.isEmpty ? e.value : '
+            r"'${e.name}=${e.value}'), );",
           ),
         ),
       );
@@ -765,7 +766,7 @@ void main() {
             _$cookieParts.addAll(
               identifier
                   .toForm(r'identifier', explode: false, allowEmpty: true)
-                  .map((e) => '${e.name}=${e.value}'),
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
             );
           '''),
         ),
@@ -833,7 +834,7 @@ void main() {
             _$cookieParts.addAll(
               value
                   .toForm(r'value', explode: false, allowEmpty: true)
-                  .map((e) => '${e.name}=${e.value}'),
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
             );
           '''),
         ),
@@ -931,7 +932,8 @@ void main() {
         contains(
           collapseWhitespace(
             r"_$cookieParts.addAll( entity .toForm(r'entity', explode: false, "
-            r"allowEmpty: true) .map((e) => '${e.name}=${e.value}'), );",
+            'allowEmpty: true) .map((e) => e.name.isEmpty ? e.value : '
+            r"'${e.name}=${e.value}'), );",
           ),
         ),
       );
@@ -1088,7 +1090,7 @@ void main() {
                   .map((e) => e.uriEncode(allowEmpty: true))
                   .toList()
                   .toForm(r'ids', explode: false, allowEmpty: true, alreadyEncoded: true)
-                  .map((e) => '${e.name}=${e.value}'),
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
             );
           '''),
         ),

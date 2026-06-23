@@ -494,14 +494,7 @@ class OptionsGenerator {
       refer(r'_$cookieParts')
           .property('addAll')
           .call([
-            entries.property('map').call([
-              Method(
-                (b) => b
-                  ..lambda = true
-                  ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-                  ..body = const Code(r"'${e.name}=${e.value}'"),
-              ).closure,
-            ]),
+            entries.property('map').call([formEntryToWireString()]),
           ])
           .statement,
     );
