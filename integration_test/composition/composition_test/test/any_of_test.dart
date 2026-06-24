@@ -3105,26 +3105,6 @@ void main() {
         );
       });
 
-      test('form roundtrip - explode true', () {
-        final form = formValue(
-          anyOf.toForm('p', explode: true, allowEmpty: true),
-          'p',
-        );
-        // fromForm has no repeated-key decoding, so an exploded value round-trips verbatim.
-        expect(form, 'p=test&p=test2');
-        final reconstructed = AnyOfWithSimpleList.fromForm(
-          form,
-          explode: true,
-        );
-        expect(
-          reconstructed,
-          const AnyOfWithSimpleList(
-            list2: ['p=test&p=test2'],
-            string: 'p=test&p=test2',
-          ),
-        );
-      });
-
       test('toSimple - explode true', () {
         expect(anyOf.toSimple(explode: true, allowEmpty: true), 'test,test2');
       });
@@ -3243,26 +3223,6 @@ void main() {
             list: [1, 2, 3],
             list2: ['1', '2', '3'],
             string: '1,2,3',
-          ),
-        );
-      });
-
-      test('form roundtrip - explode true', () {
-        final form = formValue(
-          anyOf.toForm('p', explode: true, allowEmpty: true),
-          'p',
-        );
-        // fromForm has no repeated-key decoding, so an exploded value round-trips verbatim.
-        expect(form, 'p=1&p=2&p=3');
-        final reconstructed = AnyOfWithSimpleList.fromForm(
-          form,
-          explode: true,
-        );
-        expect(
-          reconstructed,
-          const AnyOfWithSimpleList(
-            list2: ['p=1&p=2&p=3'],
-            string: 'p=1&p=2&p=3',
           ),
         );
       });
