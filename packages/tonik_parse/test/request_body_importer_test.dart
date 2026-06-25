@@ -156,9 +156,6 @@ void main() {
   });
 
   test('imports request body with json-like content', () {
-    // This test verifies backward compatibility: custom JSON-like content
-    // types are no longer auto-detected by 'contains(json)'. They need
-    // explicit config.
     final api = Importer().import(fileContent);
     final jsonLikeBody = api.requestBodies.firstWhereOrNull(
       (r) => r.name == 'JsonLikeBody',
@@ -169,12 +166,17 @@ void main() {
 
     final body = jsonLikeBody as RequestBodyObject?;
     expect(body?.isRequired, isTrue);
-    // Without explicit contentTypes config, unknown types default to bytes
     expect(body?.content, hasLength(2));
 
-    for (final content in body?.content ?? <RequestContent>[]) {
-      expect(content.contentType, ContentType.bytes);
-    }
+    final jsonSuffixContent = body?.content.firstWhere(
+      (c) => c.rawContentType == 'alto-endpointcost+json',
+    );
+    expect(jsonSuffixContent?.contentType, ContentType.json);
+
+    final unknownContent = body?.content.firstWhere(
+      (c) => c.rawContentType == 'application/vnd.custom+type',
+    );
+    expect(unknownContent?.contentType, ContentType.bytes);
   });
 
   test('imports custom content type with configuration', () {

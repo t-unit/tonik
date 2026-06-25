@@ -31,6 +31,9 @@ core.ContentType resolveContentType(
       return core.ContentType.form;
     case 'multipart/form-data':
       return core.ContentType.multipart;
+    // RFC 6839 structured syntax suffix: any "*/*+json" media type is JSON.
+    case final type when type.endsWith('+json'):
+      return core.ContentType.json;
     default:
       log.warning(
         'Unknown content type "$mediaType", defaulting to bytes. '

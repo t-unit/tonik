@@ -107,6 +107,7 @@ rm -rf composition/composition_api
 rm -rf query_parameters/query_parameters_api
 rm -rf path_encoding/path_encoding_api
 rm -rf binary_models/binary_models_api
+rm -rf structured_syntax_suffix/structured_syntax_suffix_api
 rm -rf form_urlencoded/form_urlencoded_api
 rm -rf boolean_schemas/boolean_schemas_api
 rm -rf type_arrays/type_arrays_api
@@ -181,6 +182,9 @@ add_dependency_overrides_recursive "path_encoding/path_encoding_api"
 
 $TONIK_BINARY --config binary_models/tonik.yaml -p binary_models_api -s binary_models/openapi.yaml -o binary_models
 add_dependency_overrides_recursive "binary_models/binary_models_api"
+
+$TONIK_BINARY -p structured_syntax_suffix_api -s structured_syntax_suffix/openapi.yaml -o structured_syntax_suffix
+add_dependency_overrides_recursive "structured_syntax_suffix/structured_syntax_suffix_api"
 
 $TONIK_BINARY --config form_urlencoded/tonik_custom.yaml
 add_dependency_overrides_recursive "form_urlencoded/form_urlencoded_api"
@@ -278,6 +282,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   cd query_parameters/query_parameters_api && dart pub get &
   cd path_encoding/path_encoding_api && dart pub get &
   cd binary_models/binary_models_api && dart pub get &
+  cd structured_syntax_suffix/structured_syntax_suffix_api && dart pub get &
   cd form_urlencoded/form_urlencoded_api && dart pub get &
   cd boolean_schemas/boolean_schemas_api && dart pub get &
   cd type_arrays/type_arrays_api && dart pub get &
@@ -340,6 +345,7 @@ restore_test_package_overrides "composition/composition_test/pubspec.yaml" "../.
 restore_test_package_overrides "query_parameters/query_parameters_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "path_encoding/path_encoding_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "binary_models/binary_models_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "structured_syntax_suffix/structured_syntax_suffix_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "form_urlencoded/form_urlencoded_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "boolean_schemas/boolean_schemas_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "type_arrays/type_arrays_test/pubspec.yaml" "../../../packages/tonik_util"
@@ -381,6 +387,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd query_parameters/query_parameters_test && dart pub get &
   cd path_encoding/path_encoding_test && dart pub get &
   cd binary_models/binary_models_test && dart pub get &
+  cd structured_syntax_suffix/structured_syntax_suffix_test && dart pub get &
   cd form_urlencoded/form_urlencoded_test && dart pub get &
   cd boolean_schemas/boolean_schemas_test && dart pub get &
   cd type_arrays/type_arrays_test && dart pub get &

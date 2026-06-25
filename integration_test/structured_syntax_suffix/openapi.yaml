@@ -1,0 +1,54 @@
+openapi: 3.1.0
+info:
+  title: Structured Syntax Suffix API
+  description: |-
+    Test API verifying that media types using the RFC 6839 structured syntax
+    suffix `+json` (e.g. application/vnd.api+json) are treated as JSON and
+    decoded into the declared schema instead of being returned as raw bytes.
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080/api/v1
+tags:
+  - name: widgets
+    description: Widget operations
+paths:
+  /widget:
+    get:
+      tags:
+        - widgets
+      summary: Get a widget
+      description: Returns a widget using the application/vnd.api+json media type.
+      operationId: getWidget
+      responses:
+        '200':
+          description: Widget retrieved successfully
+          content:
+            application/vnd.api+json:
+              schema:
+                $ref: '#/components/schemas/Widget'
+  /problem:
+    get:
+      tags:
+        - widgets
+      summary: Get a problem document
+      description: Returns a widget using the application/problem+json media type.
+      operationId: getProblem
+      responses:
+        '200':
+          description: Problem document retrieved successfully
+          content:
+            application/problem+json:
+              schema:
+                $ref: '#/components/schemas/Widget'
+components:
+  schemas:
+    Widget:
+      type: object
+      required:
+        - id
+        - name
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
