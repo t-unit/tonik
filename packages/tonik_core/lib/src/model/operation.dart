@@ -40,8 +40,20 @@ class Operation {
   Set<SecurityScheme> securitySchemes;
 }
 
-sealed class ResponseStatus {
+sealed class ResponseStatus implements Comparable<ResponseStatus> {
   const ResponseStatus();
+
+  int get _specificityRank => switch (this) {
+    ExplicitResponseStatus() => 0,
+    RangeResponseStatus() => 1,
+    DefaultResponseStatus() => 2,
+  };
+
+  // Explicit codes take precedence over ranges, ranges over `default`, so the
+  // most specific status sorts first.
+  @override
+  int compareTo(ResponseStatus other) =>
+      _specificityRank.compareTo(other._specificityRank);
 }
 
 @immutable

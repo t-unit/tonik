@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
@@ -41,7 +42,10 @@ class ParseGenerator {
     // Check if we have a default response with null content type
     var hasDefaultWithNullContentType = false;
 
-    for (final entry in _orderedBySpecificity(responses)) {
+    final entries = responses.entries.toList();
+    mergeSort(entries, compare: (a, b) => a.key.compareTo(b.key));
+
+    for (final entry in entries) {
       final status = entry.key;
       final response = entry.value;
       final contentTypes = _getContentTypes(response);
@@ -134,29 +138,6 @@ class ParseGenerator {
         ..lambda = false
         ..body = switchBody,
     );
-  }
-
-  // Explicit status codes must win over ranges, ranges over `default`; switch
-  // arms match top-to-bottom, so emit most-specific first.
-  List<MapEntry<ResponseStatus, Response>> _orderedBySpecificity(
-    Map<ResponseStatus, Response> responses,
-  ) {
-    final explicit = <MapEntry<ResponseStatus, Response>>[];
-    final ranges = <MapEntry<ResponseStatus, Response>>[];
-    final defaults = <MapEntry<ResponseStatus, Response>>[];
-
-    for (final entry in responses.entries) {
-      switch (entry.key) {
-        case ExplicitResponseStatus():
-          explicit.add(entry);
-        case RangeResponseStatus():
-          ranges.add(entry);
-        case DefaultResponseStatus():
-          defaults.add(entry);
-      }
-    }
-
-    return [...explicit, ...ranges, ...defaults];
   }
 
   Code _casePattern(ResponseStatus status, String? contentType) {

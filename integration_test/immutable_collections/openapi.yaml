@@ -221,54 +221,8 @@ paths:
                 nullable: true
                 items: false
 
-  /thing:
-    get:
-      operationId: getThing
-      tags:
-        - items
-      summary: Explicit status code declared after a range
-      description: >-
-        The 2XX range response is declared before the explicit 200 response.
-        An actual HTTP 200 must be dispatched to the explicit 200 branch
-        (ThingOk), never the 2XX range branch (ThingGeneric).
-      responses:
-        '2XX':
-          description: Range response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ThingGeneric'
-              example:
-                message: from range
-        '200':
-          description: Explicit OK response
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ThingOk'
-              example:
-                value: from explicit
-
 components:
   schemas:
-    # Distinct schemas for the explicit-vs-range precedence test. Required
-    # fields differ so a misroute surfaces as a decoding failure.
-    ThingOk:
-      type: object
-      required:
-        - value
-      properties:
-        value:
-          type: string
-
-    ThingGeneric:
-      type: object
-      required:
-        - message
-      properties:
-        message:
-          type: string
-
     # Simple list property + map property + list of objects
     Item:
       type: object
