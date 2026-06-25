@@ -136,11 +136,8 @@ class ParseGenerator {
     );
   }
 
-  // OAS requires an explicit status code to take precedence over a range, and a
-  // range over `default`. Dart `switch` arms match top-to-bottom, so emitting
-  // explicit arms first, then ranges, then default makes the most specific
-  // match win regardless of spec-declaration order. Bucketing preserves the
-  // spec-iteration order within each class.
+  // Explicit status codes must win over ranges, ranges over `default`; switch
+  // arms match top-to-bottom, so emit most-specific first.
   List<MapEntry<ResponseStatus, Response>> _orderedBySpecificity(
     Map<ResponseStatus, Response> responses,
   ) {

@@ -989,6 +989,234 @@ String _parseResponse(Response<List<int>> response) {
       },
     );
 
+    test(
+      'emits explicit, then range, then default arms when declared in reverse '
+      'specificity order',
+      () {
+        final okModel = ClassModel(
+          isDeprecated: false,
+          name: 'Ok',
+          properties: [
+            Property(
+              name: 'value',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+        final genericModel = ClassModel(
+          isDeprecated: false,
+          name: 'Generic',
+          properties: [
+            Property(
+              name: 'message',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+        final operation = Operation(
+          operationId: 'getThing',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/thing',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const DefaultResponseStatus(): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: const {},
+            ),
+            const RangeResponseStatus(min: 200, max: 299): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: genericModel,
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: okModel,
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+          GetThingResponse _parseResponse(Response<List<int>> response) {
+            final _$mediaType = extractMediaType(response.headers.value('content-type'));
+            switch ((response.statusCode, _$mediaType)) {
+              case (200, r'application/json'):
+                final _$json = decodeResponseJson<Object?>(response.data);
+                final _$body = Ok.fromJson(_$json);
+                return GetThingResponse200(body: _$body);
+              case (var status, r'application/json') when status != null && status >= 200 && status <= 299:
+                final _$json = decodeResponseJson<Object?>(response.data);
+                final _$body = Generic.fromJson(_$json);
+                return GetThingResponse2XX(body: _$body);
+              case (_, _):
+                return GetThingResponseDefault();
+            }
+          }
+        ''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'preserves spec-declaration order between two same-specificity explicit '
+      'arms',
+      () {
+        final okModel = ClassModel(
+          isDeprecated: false,
+          name: 'Ok',
+          properties: [
+            Property(
+              name: 'value',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+        final createdModel = ClassModel(
+          isDeprecated: false,
+          name: 'Created',
+          properties: [
+            Property(
+              name: 'id',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+        final operation = Operation(
+          operationId: 'getThing',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/thing',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: okModel,
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+            const ExplicitResponseStatus(statusCode: 201): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: createdModel,
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+          GetThingResponse _parseResponse(Response<List<int>> response) {
+            final _$mediaType = extractMediaType(response.headers.value('content-type'));
+            switch ((response.statusCode, _$mediaType)) {
+              case (200, r'application/json'):
+                final _$json = decodeResponseJson<Object?>(response.data);
+                final _$body = Ok.fromJson(_$json);
+                return GetThingResponse200(body: _$body);
+              case (201, r'application/json'):
+                final _$json = decodeResponseJson<Object?>(response.data);
+                final _$body = Created.fromJson(_$json);
+                return GetThingResponse201(body: _$body);
+              default:
+                final _$content = response.headers.value('content-type') ?? 'not specified';
+                final _$matched = _$mediaType ?? 'none';
+                final _$status = response.statusCode;
+                throw ResponseDecodingException(
+                  'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+                );
+            }
+          }
+        ''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
     test('generates for response with alias', () {
       final classModel = ClassModel(
         isDeprecated: false,
