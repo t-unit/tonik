@@ -41,7 +41,7 @@ class ParseGenerator {
     // Check if we have a default response with null content type
     var hasDefaultWithNullContentType = false;
 
-    for (final entry in responses.entries) {
+    for (final entry in _orderedBySpecificity(responses)) {
       final status = entry.key;
       final response = entry.value;
       final contentTypes = _getContentTypes(response);
@@ -134,6 +134,32 @@ class ParseGenerator {
         ..lambda = false
         ..body = switchBody,
     );
+  }
+
+  // OAS requires an explicit status code to take precedence over a range, and a
+  // range over `default`. Dart `switch` arms match top-to-bottom, so emitting
+  // explicit arms first, then ranges, then default makes the most specific
+  // match win regardless of spec-declaration order. Bucketing preserves the
+  // spec-iteration order within each class.
+  List<MapEntry<ResponseStatus, Response>> _orderedBySpecificity(
+    Map<ResponseStatus, Response> responses,
+  ) {
+    final explicit = <MapEntry<ResponseStatus, Response>>[];
+    final ranges = <MapEntry<ResponseStatus, Response>>[];
+    final defaults = <MapEntry<ResponseStatus, Response>>[];
+
+    for (final entry in responses.entries) {
+      switch (entry.key) {
+        case ExplicitResponseStatus():
+          explicit.add(entry);
+        case RangeResponseStatus():
+          ranges.add(entry);
+        case DefaultResponseStatus():
+          defaults.add(entry);
+      }
+    }
+
+    return [...explicit, ...ranges, ...defaults];
   }
 
   Code _casePattern(ResponseStatus status, String? contentType) {
