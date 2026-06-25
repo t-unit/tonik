@@ -5,11 +5,9 @@ import 'package:immutable_collections_api/immutable_collections_api.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
-// The /thing operation declares a 2XX range response before the explicit 200
-// response. Imposter cannot serve range status codes, so this suite drives the
-// generated client against an inline HTTP server that returns a ThingOk-shaped
-// body for 200 and a ThingGeneric-shaped body for other 2XX codes. A 200 must
-// be routed to the explicit branch, never the range branch.
+// Imposter can't return a caller-selected status code, so this suite uses an
+// inline HTTP server to drive both the 200 and 299 cases against the generated
+// client.
 void main() {
   late HttpServer server;
   late String baseUrl;
