@@ -65,7 +65,12 @@ void main() {
       expect(result, core.ContentType.json);
     });
 
-    test('resolves +json structured syntax suffix types to json', () {
+    test('resolves +json structured syntax suffix types to json '
+        'without warning', () {
+      final records = <LogRecord>[];
+      final sub = log.onRecord.listen(records.add);
+      addTearDown(sub.cancel);
+
       for (final mediaType in [
         'application/vnd.api+json',
         'application/ld+json',
@@ -79,6 +84,8 @@ void main() {
           reason: mediaType,
         );
       }
+
+      expect(records, isEmpty);
     });
 
     test('resolves +json suffix with parameters stripped', () {

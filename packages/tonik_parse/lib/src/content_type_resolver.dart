@@ -31,7 +31,8 @@ core.ContentType resolveContentType(
       return core.ContentType.form;
     case 'multipart/form-data':
       return core.ContentType.multipart;
-    // RFC 6839 structured syntax suffix: any "*/*+json" media type is JSON.
+    // "+json" suffix types like vnd.api+json or problem+json carry a JSON
+    // payload despite not being literally application/json.
     case final type when type.endsWith('+json'):
       return core.ContentType.json;
     default:
