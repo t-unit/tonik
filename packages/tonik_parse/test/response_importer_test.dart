@@ -237,13 +237,18 @@ void main() {
 
     expect(jsonLikeResponse, isNotNull);
     expect(jsonLikeResponse, isA<ResponseObject>());
-    // Without explicit contentTypes config, unknown types default to bytes
     final bodies = (jsonLikeResponse as ResponseObject?)?.bodies;
     expect(bodies, hasLength(2));
 
-    for (final body in bodies!) {
-      expect(body.contentType, ContentType.bytes);
-    }
+    final jsonSuffixBody = bodies?.firstWhere(
+      (b) => b.rawContentType == 'alto-endpointcost+json',
+    );
+    expect(jsonSuffixBody?.contentType, ContentType.json);
+
+    final unknownBody = bodies?.firstWhere(
+      (b) => b.rawContentType == 'application/vnd.custom+type',
+    );
+    expect(unknownBody?.contentType, ContentType.bytes);
   });
 
   test('imports custom content type response with configuration', () {

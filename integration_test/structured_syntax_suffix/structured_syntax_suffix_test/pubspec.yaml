@@ -1,0 +1,24 @@
+name: structured_syntax_suffix_test
+description: A test suite for the structured syntax suffix API.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  structured_syntax_suffix_api:
+    path: ../structured_syntax_suffix_api
+  dio: ^5.8.0
+  path: ^1.9.1
+  tonik_util: ^0.1.0
+
+dev_dependencies:
+  test: ^1.25.15
+  test_helpers:
+    path: ../../test_helpers
+  very_good_analysis: ^10.2.0
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

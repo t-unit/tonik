@@ -108,6 +108,11 @@ melos:
         cd integration_test/binary_models/binary_models_test
         dart test
 
+    test-integration-structured-syntax-suffix:
+      run: |
+        cd integration_test/structured_syntax_suffix/structured_syntax_suffix_test
+        dart test
+
     test-integration-form-urlencoded:
       run: |
         cd integration_test/form_urlencoded/form_urlencoded_test
@@ -248,6 +253,7 @@ melos:
         melos run test-integration-query-parameters
         melos run test-integration-path-encoding
         melos run test-integration-binary-models
+        melos run test-integration-structured-syntax-suffix
         melos run test-integration-form-urlencoded
         melos run test-integration-boolean-schemas
         melos run test-integration-type-arrays

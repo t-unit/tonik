@@ -31,6 +31,10 @@ core.ContentType resolveContentType(
       return core.ContentType.form;
     case 'multipart/form-data':
       return core.ContentType.multipart;
+    // "+json" suffix types like vnd.api+json or problem+json carry a JSON
+    // payload despite not being literally application/json.
+    case final type when type.endsWith('+json'):
+      return core.ContentType.json;
     default:
       log.warning(
         'Unknown content type "$mediaType", defaulting to bytes. '
