@@ -1105,8 +1105,8 @@ String _parseResponse(Response<List<int>> response) {
     );
 
     test(
-      'preserves spec-declaration order between two same-specificity explicit '
-      'arms',
+      'orders two same-specificity explicit arms by status code regardless of '
+      'declaration order',
       () {
         final okModel = ClassModel(
           isDeprecated: false,
@@ -1156,20 +1156,6 @@ String _parseResponse(Response<List<int>> response) {
           pathParameters: const {},
           cookieParameters: const {},
           responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: null,
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: okModel,
-                  rawContentType: 'application/json',
-                  contentType: ContentType.json,
-                  examples: const [],
-                ),
-              },
-            ),
             const ExplicitResponseStatus(statusCode: 201): ResponseObject(
               name: null,
               context: context,
@@ -1178,6 +1164,20 @@ String _parseResponse(Response<List<int>> response) {
               bodies: {
                 ResponseBody(
                   model: createdModel,
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: okModel,
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],

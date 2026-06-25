@@ -1,5 +1,4 @@
 import 'package:code_builder/code_builder.dart';
-import 'package:collection/collection.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
@@ -42,8 +41,8 @@ class ParseGenerator {
     // Check if we have a default response with null content type
     var hasDefaultWithNullContentType = false;
 
-    final entries = responses.entries.toList();
-    mergeSort(entries, compare: (a, b) => a.key.compareTo(b.key));
+    final entries = responses.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
 
     for (final entry in entries) {
       final status = entry.key;

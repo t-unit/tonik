@@ -1,4 +1,3 @@
-import 'package:collection/collection.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 
@@ -23,22 +22,31 @@ void main() {
       expect(defaultStatus.compareTo(explicit), greaterThan(0));
     });
 
-    test('same specificity class compares equal regardless of value', () {
-      const otherExplicit = ExplicitResponseStatus(statusCode: 404);
-      const otherRange = RangeResponseStatus(min: 400, max: 499);
-
-      expect(explicit.compareTo(otherExplicit), 0);
-      expect(range.compareTo(otherRange), 0);
-      expect(defaultStatus.compareTo(const DefaultResponseStatus()), 0);
+    test('two explicit statuses order by status code', () {
+      const created = ExplicitResponseStatus(statusCode: 201);
+      expect(explicit.compareTo(created), lessThan(0));
+      expect(created.compareTo(explicit), greaterThan(0));
     });
 
-    test('sorting a shuffled input yields explicit, then range, then '
-        'default', () {
-      final shuffled = <ResponseStatus>[defaultStatus, range, explicit];
+    test('two ranges order by lower bound', () {
+      const clientError = RangeResponseStatus(min: 400, max: 499);
+      expect(range.compareTo(clientError), lessThan(0));
+      expect(clientError.compareTo(range), greaterThan(0));
+    });
 
-      mergeSort(shuffled);
+    test('standard sort yields explicit, then range, then default, ordered by '
+        'status value within each class', () {
+      const created = ExplicitResponseStatus(statusCode: 201);
+      const clientError = RangeResponseStatus(min: 400, max: 499);
+      final statuses = <ResponseStatus>[
+        defaultStatus,
+        clientError,
+        range,
+        created,
+        explicit,
+      ]..sort();
 
-      expect(shuffled, [explicit, range, defaultStatus]);
+      expect(statuses, [explicit, created, range, clientError, defaultStatus]);
     });
   });
 }
