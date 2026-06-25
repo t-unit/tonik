@@ -1213,9 +1213,11 @@ void main() {
         contains(
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [r'session_id=', sessionId.toForm(explode: false, allowEmpty: true)].join(),
-            );
+            _$cookieParts.addAll(
+  sessionId
+.toForm(r'session_id', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -1275,12 +1277,11 @@ void main() {
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
             if (trackingId != null) {
-              _$cookieParts.add(
-                [
-                  r'tracking_id=',
-                  trackingId.toForm(explode: false, allowEmpty: true),
-                ].join(),
-              );
+              _$cookieParts.addAll(
+  trackingId
+.toForm(r'tracking_id', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1363,12 +1364,16 @@ void main() {
         contains(
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [r'session_id=', sessionId.toForm(explode: false, allowEmpty: true)].join(),
-            );
-            _$cookieParts.add(
-              [r'user_id=', userId.toForm(explode: false, allowEmpty: true)].join(),
-            );
+            _$cookieParts.addAll(
+  sessionId
+.toForm(r'session_id', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
+            _$cookieParts.addAll(
+  userId
+.toForm(r'user_id', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -1427,9 +1432,11 @@ void main() {
         contains(
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [r'page_num=', pageNum.toForm(explode: false, allowEmpty: true)].join(),
-            );
+            _$cookieParts.addAll(
+  pageNum
+.toForm(r'page_num', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -1495,9 +1502,11 @@ void main() {
         contains(
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [r'labels=', labels.toForm(explode: false, allowEmpty: true)].join(),
-            );
+            _$cookieParts.addAll(
+  labels
+.toForm(r'labels', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -1563,14 +1572,12 @@ void main() {
         contains(
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [
-                r'prefs=',
-                prefs
+            _$cookieParts.addAll(
+  prefs
                     .map((k, v) => MapEntry(k, v.toString()))
-                    .toForm(explode: true, allowEmpty: true),
-              ].join(),
-            );
+                    .toForm(r'prefs', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -1637,14 +1644,12 @@ void main() {
           collapseWhitespace(r'''
             final _$cookieParts = <String>[];
             if (settings != null) {
-              _$cookieParts.add(
-                [
-                  r'settings=',
-                  settings
+              _$cookieParts.addAll(
+  settings
                       .map((k, v) => MapEntry(k, v.toString()))
-                      .toForm(explode: false, allowEmpty: true),
-                ].join(),
-              );
+                      .toForm(r'settings', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -1713,6 +1718,114 @@ void main() {
       );
     });
 
+    test('generates throw for NeverModel cookie', () {
+      final cookieParam = CookieParameterObject(
+        name: 'data',
+        rawName: 'data',
+        description: 'Never data',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: NeverModel(context: context),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final operation = Operation(
+        operationId: 'withNeverCookie',
+        context: context,
+        summary: 'With never cookie',
+        description: 'Operation with NeverModel cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/never-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'data', parameter: cookieParam),
+      ]);
+
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            throw EncodingException(
+              'Cannot encode NeverModel - this type does not permit any value for cookie data',
+            );
+          '''),
+        ),
+      );
+    });
+
+    test('generates throw for cookie with list of complex content', () {
+      final cookieParam = CookieParameterObject(
+        name: 'data',
+        rawName: 'data',
+        description: 'List of objects',
+        isRequired: true,
+        isDeprecated: false,
+        explode: false,
+        model: ListModel(
+          content: ClassModel(
+            name: 'Item',
+            properties: const [],
+            context: context,
+            isDeprecated: false,
+            examples: const [],
+          ),
+          context: context,
+          examples: const [],
+        ),
+        encoding: CookieParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final operation = Operation(
+        operationId: 'withComplexListCookie',
+        context: context,
+        summary: 'With complex list cookie',
+        description: 'Operation with complex list cookie',
+        tags: const {},
+        isDeprecated: false,
+        path: '/complex-list-cookie',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: {cookieParam},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final method = generator.generateOptionsMethod(operation, [], [
+        (normalizedName: 'data', parameter: cookieParam),
+      ]);
+
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        contains(
+          collapseWhitespace('''
+            throw EncodingException(
+              'Unsupported model type for form-encoded cookie data',
+            );
+          '''),
+        ),
+      );
+    });
+
     test(
       'generates Cookie header for required AnyModel cookie parameter',
       () {
@@ -1764,11 +1877,8 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             _$cookieParts.add(
-              [
-                r'data=',
-                encodeAnyToForm(data, explode: false, allowEmpty: true),
-              ].join(),
-            );
+  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true)].join(),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -1843,22 +1953,20 @@ void main() {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [
-                r'items=',
-                items
+            _$cookieParts.addAll(
+  items
                     .map(
                       (e) =>
-                          encodeAnyToForm(e, explode: false, allowEmpty: true),
+                          encodeAnyToUri(e, allowEmpty: true),
                     )
                     .toList()
-                    .toForm(
+                    .toForm(r'items', 
                       explode: false,
                       allowEmpty: true,
                       alreadyEncoded: true,
-                    ),
-              ].join(),
-            );
+                    )
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -1931,11 +2039,8 @@ void main() {
             final _$cookieParts = <String>[];
             if (metadata != null) {
               _$cookieParts.add(
-                [
-                  r'metadata=',
-                  encodeAnyToForm(metadata, explode: false, allowEmpty: true),
-                ].join(),
-              );
+  [r'metadata=', encodeAnyToForm(metadata, explode: false, allowEmpty: true)].join(),
+);
             }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2004,12 +2109,10 @@ void main() {
           final _$headers = <String, dynamic>{};
           _$headers['Accept'] = r'*/*';
           final _$cookieParts = <String>[];
-          _$cookieParts.add(
-            [
-              r'token=',
-              token.toBase64String().toForm(explode: true, allowEmpty: true),
-            ].join(),
-          );
+          _$cookieParts.addAll(
+  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
           if (_$cookieParts.isNotEmpty) {
             _$headers[r'Cookie'] = _$cookieParts.join('; ');
           }
@@ -2154,15 +2257,13 @@ void main() {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [
-                r'tokens=',
-                tokens
+            _$cookieParts.addAll(
+  tokens
                     .map((e) => e.toBase64String())
                     .toList()
-                    .toForm(explode: false, allowEmpty: true),
-              ].join(),
-            );
+                    .toForm(r'tokens', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -2308,12 +2409,10 @@ void main() {
           _$headers['Accept'] = r'*/*';
           final _$cookieParts = <String>[];
           if (token != null) {
-            _$cookieParts.add(
-              [
-                r'token=',
-                token.toBase64String().toForm(explode: true, allowEmpty: true),
-              ].join(),
-            );
+            _$cookieParts.addAll(
+  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
           }
           if (_$cookieParts.isNotEmpty) {
             _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2462,15 +2561,13 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             if (tokens != null) {
-              _$cookieParts.add(
-                [
-                  r'tokens=',
-                  tokens
+              _$cookieParts.addAll(
+  tokens
                       .map((e) => e.toBase64String())
                       .toList()
-                      .toForm(explode: false, allowEmpty: true),
-                ].join(),
-              );
+                      .toForm(r'tokens', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -2636,9 +2733,11 @@ void main() {
             throw EncodingException(
               'Binary data cannot be form-encoded for cookie binaryData',
             );
-            _$cookieParts.add(
-              [r'tracker=', tracker.toForm(explode: true, allowEmpty: true)].join(),
-            );
+            _$cookieParts.addAll(
+  tracker
+.toForm(r'tracker', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -2719,9 +2818,11 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [r'tags=', tags.toForm(explode: false, allowEmpty: true)].join(),
-              );
+              _$cookieParts.addAll(
+  tags
+.toForm(r'tags', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
@@ -2801,19 +2902,17 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [
-                  r'numbers=',
-                  numbers
-                      .map((e) => e.toForm(explode: false, allowEmpty: true))
+              _$cookieParts.addAll(
+  numbers
+                      .map((e) => e.uriEncode(allowEmpty: true))
                       .toList()
-                      .toForm(
+                      .toForm(r'numbers', 
                         explode: false,
                         allowEmpty: true,
                         alreadyEncoded: true,
-                      ),
-                ].join(),
-              );
+                      )
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
@@ -2902,19 +3001,17 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [
-                  r'flags=',
-                  flags
-                      .map((e) => e.toForm(explode: false, allowEmpty: true))
+              _$cookieParts.addAll(
+  flags
+                      .map((e) => e.uriEncode(allowEmpty: true))
                       .toList()
-                      .toForm(
+                      .toForm(r'flags', 
                         explode: false,
                         allowEmpty: true,
                         alreadyEncoded: true,
-                      ),
-                ].join(),
-              );
+                      )
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
@@ -2995,19 +3092,17 @@ void main() {
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
               if (numbers != null) {
-                _$cookieParts.add(
-                  [
-                    r'numbers=',
-                    numbers
-                        .map((e) => e.toForm(explode: false, allowEmpty: true))
+                _$cookieParts.addAll(
+  numbers
+                        .map((e) => e.uriEncode(allowEmpty: true))
                         .toList()
-                        .toForm(
+                        .toForm(r'numbers', 
                           explode: false,
                           allowEmpty: true,
                           alreadyEncoded: true,
-                        ),
-                  ].join(),
-                );
+                        )
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               }
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3086,14 +3181,12 @@ void main() {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
-            _$cookieParts.add(
-              [
-                r'prefs=',
-                prefs
+            _$cookieParts.addAll(
+  prefs
                     .map((k, v) => MapEntry(k, v.toString()))
-                    .toForm(explode: false, allowEmpty: true),
-              ].join(),
-            );
+                    .toForm(r'prefs', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -3167,11 +3260,8 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             _$cookieParts.add(
-              [
-                r'data=',
-                encodeAnyToForm(data, explode: false, allowEmpty: true),
-              ].join(),
-            );
+  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true)].join(),
+);
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
@@ -3250,22 +3340,20 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [
-                  r'items=',
-                  items
+              _$cookieParts.addAll(
+  items
                       .map(
                         (e) =>
-                            encodeAnyToForm(e, explode: false, allowEmpty: true),
+                            encodeAnyToUri(e, allowEmpty: true),
                       )
                       .toList()
-                      .toForm(
+                      .toForm(r'items', 
                         explode: false,
                         allowEmpty: true,
                         alreadyEncoded: true,
-                      ),
-                ].join(),
-              );
+                      )
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
@@ -3347,9 +3435,11 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [r'names=', names.toForm(explode: true, allowEmpty: true)].join(),
-              );
+              _$cookieParts.addAll(
+  names
+.toForm(r'names', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
@@ -3518,14 +3608,12 @@ void main() {
             _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             if (prefs != null) {
-              _$cookieParts.add(
-                [
-                  r'prefs=',
-                  prefs
+              _$cookieParts.addAll(
+  prefs
                       .map((k, v) => MapEntry(k, v.toString()))
-                      .toForm(explode: false, allowEmpty: true),
-                ].join(),
-              );
+                      .toForm(r'prefs', explode: false, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
             }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3601,11 +3689,8 @@ void main() {
             final _$cookieParts = <String>[];
             if (data != null) {
               _$cookieParts.add(
-                [
-                  r'data=',
-                  encodeAnyToForm(data, explode: false, allowEmpty: true),
-                ].join(),
-              );
+  [r'data=', encodeAnyToForm(data, explode: false, allowEmpty: true)].join(),
+);
             }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3681,12 +3766,10 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [
-                  r'token=',
-                  token.toBase64String().toForm(explode: true, allowEmpty: true),
-                ].join(),
-              );
+              _$cookieParts.addAll(
+  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
@@ -3845,15 +3928,13 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
-              _$cookieParts.add(
-                [
-                  r'tokens=',
-                  tokens
+              _$cookieParts.addAll(
+  tokens
                       .map((e) => e.toBase64String())
                       .toList()
-                      .toForm(explode: true, allowEmpty: true),
-                ].join(),
-              );
+                      .toForm(r'tokens', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
               }
@@ -4015,12 +4096,10 @@ void main() {
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
               if (token != null) {
-                _$cookieParts.add(
-                  [
-                    r'token=',
-                    token.toBase64String().toForm(explode: true, allowEmpty: true),
-                  ].join(),
-                );
+                _$cookieParts.addAll(
+  token.toBase64String().toForm(r'token', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               }
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -4187,15 +4266,13 @@ void main() {
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
               if (tokens != null) {
-                _$cookieParts.add(
-                  [
-                    r'tokens=',
-                    tokens
+                _$cookieParts.addAll(
+  tokens
                         .map((e) => e.toBase64String())
                         .toList()
-                        .toForm(explode: true, allowEmpty: true),
-                  ].join(),
-                );
+                        .toForm(r'tokens', explode: true, allowEmpty: true)
+      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
+);
               }
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');

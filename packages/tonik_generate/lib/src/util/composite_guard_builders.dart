@@ -94,7 +94,14 @@ Method buildReadOnlyToFormMethod(Code exceptionBody) {
     (b) => b
       ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toForm'
-      ..returns = refer('String', 'dart:core')
+      ..returns = buildParameterEntryListType()
+      ..requiredParameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'paramName'
+            ..type = refer('String', 'dart:core'),
+        ),
+      )
       ..optionalParameters.addAll(buildFormEncodingParameters())
       ..lambda = true
       ..body = exceptionBody,

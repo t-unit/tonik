@@ -1336,8 +1336,9 @@ void main() {
 
       test('toForm', () {
         expectContainsBody(
-          'String toForm({ required bool explode, required bool allowEmpty, '
-          'bool useQueryComponent = false, }) => $throwExpr',
+          'List<ParameterEntry> toForm( String paramName, { required bool '
+          'explode, required bool allowEmpty, bool useQueryComponent = false, '
+          '}) => $throwExpr',
         );
       });
 

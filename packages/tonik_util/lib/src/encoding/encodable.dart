@@ -44,13 +44,16 @@ abstract interface class SimpleEncodable {
 /// Marker interface for types that support form-style encoding
 /// (RFC 6570 Section 3.2.8).
 abstract interface class FormEncodable {
-  /// Encodes this value using form style parameter encoding.
+  /// Encodes this value using form style parameter encoding, yielding a list
+  /// of `name=value` entries named [paramName] that the caller joins.
   ///
-  /// When [explode] is true, object properties become separate parameters.
+  /// When [explode] is true, object properties and list items become separate
+  /// entries; when false the whole value collapses into one entry.
   /// When [allowEmpty] is false, empty values throw an exception.
   /// When [useQueryComponent] is true, uses '+' for spaces
   /// (application/x-www-form-urlencoded encoding).
-  String toForm({
+  List<ParameterEntry> toForm(
+    String paramName, {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,

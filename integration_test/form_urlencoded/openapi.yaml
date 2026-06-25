@@ -273,6 +273,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/TypesForm'
 
+  /form/scalar:
+    post:
+      operationId: postScalarForm
+      tags:
+        - form
+      summary: Post a top-level primitive form-urlencoded body
+      description: Tests that a scalar body encodes as a bare value with no leading equals sign
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: string
+
   /custom/form:
     post:
       operationId: postCustomForm

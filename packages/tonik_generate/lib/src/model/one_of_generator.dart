@@ -8,6 +8,7 @@ import 'package:tonik_generate/src/util/composite_library_builder.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
@@ -15,7 +16,6 @@ import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
-import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
@@ -1097,202 +1097,131 @@ class OneOfGenerator {
     OneOfModel model,
     Map<DiscriminatedModel, String> variantNames,
   ) {
+    final emptyEntries = <Code>[
+      const Code('const <'),
+      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart').code,
+      const Code('>[]'),
+    ];
+
+    Expression? listEntriesExpr(ListModel listModel) =>
+        buildFormEntriesValueExpression(
+          refer('value'),
+          listModel,
+          paramName: refer('paramName'),
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+          useQueryComponent: refer('useQueryComponent'),
+        );
+
     final caseCodes = <Code>[];
 
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
-
       final encodingShape = m.model.encodingShape;
       final discriminatorValue = m.discriminatorValue;
+      final isNullable = m.model.isEffectivelyNullable;
+      final listEntries =
+          resolvedType is ListModel && resolvedType.hasSimpleContent
+          ? listEntriesExpr(resolvedType)
+          : null;
+
+      void addValueArm(Iterable<Code> valueCodes) {
+        caseCodes.add(Code('$variantName(:final value) => '));
+        if (isNullable) {
+          caseCodes
+            ..add(const Code('value == null ? '))
+            ..addAll(emptyEntries)
+            ..add(const Code(' : '));
+        }
+        caseCodes
+          ..addAll(valueCodes)
+          ..add(const Code(','));
+      }
+
+      void addThrowArm(String message) {
+        caseCodes
+          ..add(Code('$variantName() => '))
+          ..add(generateEncodingExceptionExpression(message).code)
+          ..add(const Code(','));
+      }
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
-        caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
-          generateEncodingExceptionExpression(
-            '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
-            ' variant cannot be form-encoded',
-          ).code,
-          const Code(','),
-        ]);
+        addThrowArm(
+          '${resolvedType is AnyModel ? 'AnyModel' : 'NeverModel'}'
+          ' variant cannot be form-encoded',
+        );
       } else if (model.discriminator != null &&
           encodingShape != EncodingShape.simple &&
           discriminatorValue != null &&
           resolvedType is! ListModel &&
           resolvedType is! MapModel) {
-        final isNullable = m.model.isEffectivelyNullable;
+        final discriminatedMap = <Code>[
+          const Code('{'),
+          const Code('...'),
+          refer('value').property('parameterProperties').call([], {
+            'allowEmpty': refer('allowEmpty'),
+          }).code,
+          const Code(','),
+          Code(
+            '${specLiteralStringCode(model.discriminator!)}: '
+            '${specLiteralStringCode(discriminatorValue)},',
+          ),
+          const Code('}'),
+          const Code(
+            '.toForm(paramName, explode: explode, allowEmpty: allowEmpty, '
+            'alreadyEncoded: true, useQueryComponent: useQueryComponent)',
+          ),
+        ];
 
         if (encodingShape == EncodingShape.mixed) {
-          caseCodes.add(
-            Code.scope(
-              (allocate) => '${allocate(refer(variantName))}(:final value) => ',
-            ),
-          );
-
-          if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
-          }
-
-          caseCodes.addAll([
+          addValueArm([
             refer('value')
                 .property('currentEncodingShape')
                 .equalTo(refer('EncodingShape').property('complex'))
                 .code,
-            const Code('? {'),
-            const Code('...'),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
-            const Code(','),
-            Code(
-              '${specLiteralStringCode(model.discriminator!)}: '
-              '${specLiteralStringCode(discriminatorValue)},',
-            ),
-            const Code('}'),
-            const Code(
-              '.toForm(explode: explode, allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent) : ',
-            ),
-            refer('value').property('toForm').call([], {
+            const Code('? '),
+            ...discriminatedMap,
+            const Code(' : '),
+            refer('value').property('toForm').call([refer('paramName')], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
               'useQueryComponent': refer('useQueryComponent'),
             }).code,
-            const Code(','),
           ]);
         } else {
-          caseCodes.add(
-            Code.scope(
-              (allocate) => '${allocate(refer(variantName))}(:final value) => ',
-            ),
-          );
-
-          if (isNullable) {
-            caseCodes.addAll([
-              const Code("value == null ? '' : "),
-            ]);
-          }
-
-          caseCodes.addAll([
-            const Code('{'),
-            const Code('...'),
-            refer('value').property('parameterProperties').call([], {
-              'allowEmpty': refer('allowEmpty'),
-            }).code,
-            const Code(','),
-            Code(
-              '${specLiteralStringCode(model.discriminator!)}: '
-              '${specLiteralStringCode(discriminatorValue)},',
-            ),
-            const Code('}'),
-            const Code(
-              '.toForm(explode: '
-              'explode, allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent),',
-            ),
-          ]);
+          addValueArm(discriminatedMap);
         }
-      } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
-        // Lists with simple content can be encoded using helper
-        final isNullableList = m.model.isEffectivelyNullable;
-
-        caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
-          ),
-          if (isNullableList) const Code("value == null ? '' : "),
-          buildFormParameterExpression(
-            refer('value'),
-            m.model.resolved as ListModel,
-            explode: refer('explode'),
-            allowEmpty: refer('allowEmpty'),
-          ).code,
-          const Code(','),
-        ]);
-      } else if (m.model.resolved is ListModel) {
-        // Lists with complex content cannot be encoded
-        caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
-          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-              .call([
-                literalString(
-                  'Lists with complex content are not supported for encoding',
-                ),
-              ])
-              .thrown
-              .code,
-          const Code(','),
-        ]);
-      } else if (m.model.resolved is Base64Model) {
-        final isNullable = m.model.isEffectivelyNullable;
-
-        caseCodes.add(Code('$variantName(:final value) => '));
-
-        if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
-        }
-
-        caseCodes.addAll([
-          refer(
-            'value',
-          ).property('toBase64String').call([]).property('toForm').call([], {
-            'explode': refer('explode'),
-            'allowEmpty': refer('allowEmpty'),
-            'useQueryComponent': refer('useQueryComponent'),
-          }).code,
-          const Code(','),
-        ]);
-      } else if (m.model.resolved is BinaryModel) {
-        caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
-          generateEncodingExceptionExpression(
-            'Binary data cannot be form-encoded',
-          ).code,
-          const Code(','),
-        ]);
-      } else if (m.model.resolved is MapModel) {
-        // Map types cannot be form-encoded
-        caseCodes.addAll([
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}() => ',
-          ),
-          generateEncodingExceptionExpression(
-            'Map types cannot be form-encoded',
-          ).code,
-          const Code(','),
-        ]);
-      } else {
-        final isNullable = m.model.isEffectivelyNullable;
-
-        caseCodes.add(
-          Code.scope(
-            (allocate) => '${allocate(refer(variantName))}(:final value) => ',
-          ),
+      } else if (listEntries != null) {
+        addValueArm([listEntries.code]);
+      } else if (resolvedType is ListModel) {
+        addThrowArm(
+          'Lists with complex content are not supported for encoding',
         );
-
-        if (isNullable) {
-          caseCodes.addAll([
-            const Code("value == null ? '' : "),
-          ]);
-        }
-
-        caseCodes.addAll([
-          refer('value').property('toForm').call([], {
+      } else if (resolvedType is Base64Model) {
+        addValueArm([
+          refer('value')
+              .property('toBase64String')
+              .call([])
+              .property('toForm')
+              .call([refer('paramName')], {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+              })
+              .code,
+        ]);
+      } else if (resolvedType is BinaryModel) {
+        addThrowArm('Binary data cannot be form-encoded');
+      } else if (resolvedType is MapModel) {
+        addThrowArm('Map types cannot be form-encoded');
+      } else {
+        addValueArm([
+          refer('value').property('toForm').call([refer('paramName')], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
             'useQueryComponent': refer('useQueryComponent'),
           }).code,
-          const Code(','),
         ]);
       }
     }
@@ -1307,7 +1236,14 @@ class OneOfGenerator {
       (b) => b
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toForm'
-        ..returns = refer('String', 'dart:core')
+        ..returns = buildParameterEntryListType()
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
         ..optionalParameters.addAll(buildFormEncodingParameters())
         ..lambda = false
         ..body = body,

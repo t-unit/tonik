@@ -42,15 +42,19 @@ class TestEncodableModel implements ParameterEncodable {
   }
 
   @override
-  String toForm({
+  List<ParameterEntry> toForm(
+    String paramName, {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
   }) {
     if (explode) {
-      return 'name=$name&value=$value';
+      return [
+        (name: 'name', value: name),
+        (name: 'value', value: value.toString()),
+      ];
     }
-    return 'name,$name,value,$value';
+    return [(name: paramName, value: 'name,$name,value,$value')];
   }
 
   @override
@@ -99,14 +103,20 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
   final String rawValue;
 
   @override
-  String toForm({
+  List<ParameterEntry> toForm(
+    String paramName, {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
   }) {
-    return useQueryComponent
-        ? Uri.encodeQueryComponent(rawValue)
-        : Uri.encodeComponent(rawValue);
+    return [
+      (
+        name: paramName,
+        value: useQueryComponent
+            ? Uri.encodeQueryComponent(rawValue)
+            : Uri.encodeComponent(rawValue),
+      ),
+    ];
   }
 
   @override
@@ -997,6 +1007,15 @@ void main() {
         expect(withoutQuery, 'hello%20world');
         expect(withQuery, 'hello+world');
         expect(withoutQuery == withQuery, isFalse);
+      });
+
+      test('renders bare value for empty-name entry with explode=true', () {
+        const model = QueryComponentAwareEncodable('hello world');
+
+        expect(
+          encodeAnyToForm(model, explode: true, allowEmpty: true),
+          'hello%20world',
+        );
       });
     });
 

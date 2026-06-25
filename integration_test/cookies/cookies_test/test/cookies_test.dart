@@ -457,7 +457,7 @@ void main() {
       final response = await api.testArrayCookie(tags: ['a', 'b', 'c']);
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'tags=a,b,c');
+      expect(getCookieHeader(response), 'tags=a; tags=b; tags=c');
     });
 
     test('array of strings with special characters', () async {
@@ -470,7 +470,7 @@ void main() {
       // Values should be URL-encoded.
       expect(
         getCookieHeader(response),
-        'tags=hello%20world,a%3Db,special%26chars',
+        'tags=hello%20world; tags=a%3Db; tags=special%26chars',
       );
     });
 
@@ -479,8 +479,7 @@ void main() {
       final response = await api.testArrayCookie(tags: []);
 
       expect(response, isA<TonikSuccess<void>>());
-      // Empty array should result in empty value.
-      expect(getCookieHeader(response), 'tags=');
+      expect(getCookieHeader(response), isNull);
     });
 
     test('array of integers cookie', () async {
@@ -488,7 +487,7 @@ void main() {
       final response = await api.testArrayIntegerCookie(ids: [1, 2, 3, 100]);
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'ids=1,2,3,100');
+      expect(getCookieHeader(response), 'ids=1; ids=2; ids=3; ids=100');
     });
 
     test('single element array cookie', () async {
@@ -508,7 +507,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'user=id=1&name=John');
+      expect(getCookieHeader(response), 'id=1; name=John');
     });
 
     test('object cookie with special characters in values', () async {
@@ -518,7 +517,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'user=id=42&name=John%20Doe');
+      expect(getCookieHeader(response), 'id=42; name=John%20Doe');
     });
   });
 
@@ -574,7 +573,7 @@ void main() {
 
       expect(response, isA<TonikSuccess<void>>());
       // AllOf encodes all properties (form style, explode: true).
-      expect(getCookieHeader(response), 'entity=id=1&name=Test');
+      expect(getCookieHeader(response), 'id=1; name=Test');
     });
   });
 
@@ -586,7 +585,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'labels=color=blue&size=large');
+      expect(getCookieHeader(response), 'color=blue; size=large');
     });
 
     test('map with integer values', () async {
@@ -596,7 +595,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'prefs=volume=80&brightness=50');
+      expect(getCookieHeader(response), 'volume=80; brightness=50');
     });
 
     test('map with single entry', () async {
@@ -604,7 +603,7 @@ void main() {
       final response = await api.testMapIntegerCookie(prefs: {'volume': 80});
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'prefs=volume=80');
+      expect(getCookieHeader(response), 'volume=80');
     });
 
     test('empty map', () async {
@@ -612,7 +611,7 @@ void main() {
       final response = await api.testMapIntegerCookie(prefs: {});
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'prefs=');
+      expect(getCookieHeader(response), isNull);
     });
 
     test('optional map when provided', () async {
@@ -622,7 +621,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'settings=timeout=30');
+      expect(getCookieHeader(response), 'timeout=30');
     });
 
     test('optional map when not provided', () async {
@@ -673,7 +672,7 @@ void main() {
       final response = await api.testArrayAnyCookie(items: ['a', 1, true]);
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'items=a,1,true');
+      expect(getCookieHeader(response), 'items=a; items=1; items=true');
     });
   });
 
@@ -685,7 +684,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'flags=true,false,true');
+      expect(getCookieHeader(response), 'flags=true; flags=false; flags=true');
     });
 
     test('nested alias to list of integers encodes as form list', () async {
@@ -693,7 +692,7 @@ void main() {
       final response = await api.testAliasIntListCookie(numbers: [1, 2, 3]);
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'numbers=1,2,3');
+      expect(getCookieHeader(response), 'numbers=1; numbers=2; numbers=3');
     });
 
     test('alias to list of strings', () async {
@@ -703,7 +702,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'names=alice,bob,carol');
+      expect(getCookieHeader(response), 'names=alice; names=bob; names=carol');
     });
 
     test('optional alias to list of integers when provided', () async {
@@ -713,7 +712,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'numbers=10,20');
+      expect(getCookieHeader(response), 'numbers=10; numbers=20');
     });
 
     test('optional alias to list of integers when not provided', () async {
@@ -731,7 +730,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'prefs=volume=80&brightness=50');
+      expect(getCookieHeader(response), 'volume=80; brightness=50');
     });
 
     test('alias to AnyModel scalar', () async {
@@ -749,7 +748,7 @@ void main() {
       );
 
       expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'items=a,1,true');
+      expect(getCookieHeader(response), 'items=a; items=1; items=true');
     });
   });
 
@@ -767,7 +766,7 @@ void main() {
       expect(response, isA<TonikSuccess<void>>());
       expect(
         getCookieHeader(response),
-        'binaryToken=aGk%3D; binaryTokens=YQ%3D%3D,YmM%3D',
+        'binaryToken=aGk%3D; binaryTokens=YQ%3D%3D; binaryTokens=YmM%3D',
       );
     });
   });

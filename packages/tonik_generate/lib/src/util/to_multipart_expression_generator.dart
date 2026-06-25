@@ -695,8 +695,6 @@ Code _buildListFieldAddition(
     );
   }
 
-  // explode: false — map items to strings, run through the style encoder,
-  // then for-loop over the (single-element) result.
   final encoderExpr = _buildEncoderExpr(
     accessor,
     itemExpr,
@@ -1010,11 +1008,15 @@ Expression _buildEncoderExpr(
   final encoderMethod = switch (style) {
     MultipartEncodingStyle.spaceDelimited => 'toSpaceDelimited',
     MultipartEncodingStyle.pipeDelimited => 'toPipeDelimited',
-    _ => 'toForm',
+    _ => 'uriEncode',
   };
 
+  final isDelimited =
+      style == MultipartEncodingStyle.spaceDelimited ||
+      style == MultipartEncodingStyle.pipeDelimited;
+
   final namedArgs = <String, Expression>{
-    'explode': literalFalse,
+    if (isDelimited) 'explode': literalFalse,
     'allowEmpty': literalTrue,
     'alreadyEncoded': literalTrue,
   };

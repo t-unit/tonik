@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
@@ -6,1018 +7,304 @@ import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
 
 void main() {
+  late Context context;
   late DartEmitter emitter;
-  late DartEmitter scopedEmitter;
+
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
-    emitter = DartEmitter(useNullSafetySyntax: true);
-    scopedEmitter = DartEmitter(
+    context = Context.initial();
+    emitter = DartEmitter(
       useNullSafetySyntax: true,
       allocator: CorePrefixedAllocator(),
     );
   });
 
-  String emit(BuiltExpression built) =>
-      built.expression.accept(emitter).toString();
+  String bodyOf(BuiltExpression built) {
+    final method = Method(
+      (b) => b
+        ..name = 'test'
+        ..body = built.expression.statement,
+    );
+    return format(method.accept(emitter).toString());
+  }
 
-  String scopedEmit(BuiltExpression built) =>
-      built.expression.accept(scopedEmitter).toString();
-
-  group('buildToFormPropertyExpression', () {
-    late Context context;
-
-    setUp(() {
-      context = Context.initial();
-    });
-
-    group('primitive types', () {
-      test('generates correct expression for StringModel', () {
-        final property = Property(
-          name: 'name',
-          model: StringModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('name', property);
-        expect(
-          emit(result),
-          'name.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for nullable StringModel', () {
-        final property = Property(
-          name: 'name',
-          model: StringModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('name', property);
-        expect(
-          emit(result),
-          'name?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for IntegerModel', () {
-        final property = Property(
-          name: 'count',
-          model: IntegerModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('count', property);
-        expect(
-          emit(result),
-          'count.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for nullable IntegerModel', () {
-        final property = Property(
-          name: 'count',
-          model: IntegerModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('count', property);
-        expect(
-          emit(result),
-          'count?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for DoubleModel', () {
-        final property = Property(
-          name: 'price',
-          model: DoubleModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('price', property);
-        expect(
-          emit(result),
-          'price.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for nullable DoubleModel', () {
-        final property = Property(
-          name: 'price',
-          model: DoubleModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('price', property);
-        expect(
-          emit(result),
-          'price?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for NumberModel', () {
-        final property = Property(
-          name: 'value',
-          model: NumberModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('value', property);
-        expect(
-          emit(result),
-          'value.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for BooleanModel', () {
-        final property = Property(
-          name: 'active',
-          model: BooleanModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('active', property);
-        expect(
-          emit(result),
-          'active.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for nullable BooleanModel', () {
-        final property = Property(
-          name: 'active',
-          model: BooleanModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('active', property);
-        expect(
-          emit(result),
-          'active?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for DateTimeModel', () {
-        final property = Property(
-          name: 'timestamp',
-          model: DateTimeModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('timestamp', property);
-        expect(
-          emit(result),
-          'timestamp.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for nullable DateTimeModel', () {
-        final property = Property(
-          name: 'timestamp',
-          model: DateTimeModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('timestamp', property);
-        expect(
-          emit(result),
-          'timestamp?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for DateModel', () {
-        final property = Property(
-          name: 'date',
-          model: DateModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('date', property);
-        expect(
-          emit(result),
-          'date.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for nullable DateModel', () {
-        final property = Property(
-          name: 'date',
-          model: DateModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('date', property);
-        expect(
-          emit(result),
-          'date?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for DecimalModel', () {
-        final property = Property(
-          name: 'amount',
-          model: DecimalModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('amount', property);
-        expect(
-          emit(result),
-          'amount.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for nullable DecimalModel', () {
-        final property = Property(
-          name: 'amount',
-          model: DecimalModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('amount', property);
-        expect(
-          emit(result),
-          'amount?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for UriModel', () {
-        final property = Property(
-          name: 'url',
-          model: UriModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('url', property);
-        expect(
-          emit(result),
-          'url.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for nullable UriModel', () {
-        final property = Property(
-          name: 'url',
-          model: UriModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('url', property);
-        expect(
-          emit(result),
-          'url?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-    });
-
-    group('required nullable properties', () {
-      test(
-        'generates correct expression for required nullable StringModel',
-        () {
-          final property = Property(
-            name: 'name',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          );
-
-          final result = buildToFormPropertyExpression('name', property);
-          expect(
-            emit(result),
-            equals(
-              "name?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
-            ),
-          );
-        },
+  group('buildToFormValueExpression', () {
+    test('ClassModel body expands entries to a joined key=value string', () {
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: const [],
+        context: context,
+        examples: const [],
       );
 
-      test(
-        'generates correct expression for required nullable IntegerModel',
-        () {
-          final property = Property(
-            name: 'count',
-            model: IntegerModel(context: context),
-            isRequired: true,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          );
-
-          final result = buildToFormPropertyExpression('count', property);
-          expect(
-            emit(result),
-            equals(
-              "count?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
-            ),
-          );
-        },
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
       );
 
-      test(
-        'generates correct expression for required nullable DoubleModel',
-        () {
-          final property = Property(
-            name: 'price',
-            model: DoubleModel(context: context),
-            isRequired: true,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          );
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
 
-          final result = buildToFormPropertyExpression('price', property);
-          expect(
-            emit(result),
-            equals(
-              "price?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
-            ),
-          );
-        },
-      );
-
-      test(
-        'generates correct expression for required nullable BooleanModel',
-        () {
-          final property = Property(
-            name: 'active',
-            model: BooleanModel(context: context),
-            isRequired: true,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          );
-
-          final result = buildToFormPropertyExpression('active', property);
-          expect(
-            emit(result),
-            equals(
-              '''active?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? '\'''',
-            ),
-          );
-        },
-      );
-
-      test(
-        'generates correct expression for required nullable DateTimeModel',
-        () {
-          final property = Property(
-            name: 'timestamp',
-            model: DateTimeModel(context: context),
-            isRequired: true,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          );
-
-          final result = buildToFormPropertyExpression('timestamp', property);
-          expect(
-            emit(result),
-            equals(
-              'timestamp?.toForm(explode: explode, '
-              "allowEmpty: allowEmpty, ) ?? ''",
-            ),
-          );
-        },
-      );
-
-      test('generates correct expression for required nullable DateModel', () {
-        final property = Property(
-          name: 'date',
-          model: DateModel(context: context),
-          isRequired: true,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('date', property);
-        expect(
-          emit(result),
-          equals(
-            "date?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
-          ),
-        );
-      });
-
-      test(
-        'generates correct expression for required nullable DecimalModel',
-        () {
-          final property = Property(
-            name: 'amount',
-            model: DecimalModel(context: context),
-            isRequired: true,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          );
-
-          final result = buildToFormPropertyExpression('amount', property);
-          expect(
-            emit(result),
-            equals(
-              '''amount?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? '\'''',
-            ),
-          );
-        },
-      );
-
-      test('generates correct expression for required nullable UriModel', () {
-        final property = Property(
-          name: 'url',
-          model: UriModel(context: context),
-          isRequired: true,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('url', property);
-        expect(
-          emit(result),
-          equals(
-            "url?.toForm(explode: explode, allowEmpty: allowEmpty, ) ?? ''",
-          ),
-        );
-      });
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    group('complex types', () {
-      test('generates correct expression for ListModel', () {
-        final property = Property(
-          name: 'items',
-          model: ListModel(
-            content: StringModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('nullable ClassModel body null-checks before encoding', () {
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
 
-        final result = buildToFormPropertyExpression('items', property);
-        expect(
-          emit(result),
-          'items.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+        isNullable: true,
+      );
 
-      test('generates correct expression for ClassModel', () {
-        final property = Property(
-          name: 'nested',
-          model: ClassModel(
-            isDeprecated: false,
-            name: 'NestedClass',
-            properties: const [],
-            context: context,
-            examples: const [],
-          ),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
+      final expected = format(r'''
+        test() {
+          body == null
+              ? null
+              : body!
+                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
+        }
+      ''');
 
-        final result = buildToFormPropertyExpression('nested', property);
-        expect(
-          emit(result),
-          'nested.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('generates correct expression for EnumModel', () {
-        final property = Property(
-          name: 'status',
-          model: EnumModel<String>(
-            isDeprecated: false,
-            name: 'Status',
-            values: {
-              const EnumEntry(value: 'active'),
-              const EnumEntry(value: 'inactive'),
-            },
-            isNullable: false,
-            context: context,
-            examples: const [],
-          ),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('status', property);
-        expect(
-          emit(result),
-          'status.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    group('AliasModel handling', () {
-      test('unwraps AliasModel to underlying primitive', () {
-        final property = Property(
-          name: 'userId',
-          model: AliasModel(
-            name: 'UserId',
-            model: StringModel(context: context),
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          ),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
+    test('AnyModel body renders directly via encodeAnyToForm', () {
+      final result = buildToFormValueExpression(
+        'body',
+        AnyModel(context: context),
+        useQueryComponent: true,
+      );
 
-        final result = buildToFormPropertyExpression('userId', property);
-        expect(
-          emit(result),
-          'userId.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('unwraps nullable AliasModel to underlying primitive', () {
-        final property = Property(
-          name: 'userId',
-          model: AliasModel(
-            name: 'UserId',
-            model: StringModel(context: context),
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          ),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('userId', property);
-        expect(
-          emit(result),
-          'userId?.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('handles AliasModel wrapping complex type', () {
-        final property = Property(
-          name: 'users',
-          model: AliasModel(
-            name: 'UserList',
-            model: ListModel(
-              content: StringModel(context: context),
-              context: context,
-              examples: const [],
-            ),
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          ),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('users', property);
-        expect(
-          emit(result),
-          'users.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-    });
-
-    group('AnyModel', () {
-      test('generates encodeAnyToForm call referencing scope variables', () {
-        final property = Property(
-          name: 'data',
-          model: AnyModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('data', property);
-        expect(
-          emit(result),
-          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('nullable AnyModel still routes through encodeAnyToForm', () {
-        final property = Property(
-          name: 'data',
-          model: AnyModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('data', property);
-        expect(
-          emit(result),
-          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('uses literal explode/allowEmpty when buildToFormValueExpression '
-          'is called with literals', () {
-        final result = buildToFormValueExpression(
-          'value',
-          AnyModel(context: context),
-          useQueryComponent: false,
-          explodeLiteral: true,
-          allowEmptyLiteral: false,
-        );
-        expect(
-          emit(result),
-          'encodeAnyToForm(value, explode: true, allowEmpty: false, )',
-        );
-      });
-
-      test('threads useQueryComponent: true into encodeAnyToForm when set', () {
-        final result = buildToFormValueExpression(
-          'value',
-          AnyModel(context: context),
-          useQueryComponent: true,
-          explodeLiteral: true,
-          allowEmptyLiteral: true,
-        );
-        expect(
-          emit(result),
-          'encodeAnyToForm(value, explode: true, allowEmpty: true, '
-          'useQueryComponent: true, )',
-        );
-      });
-
-      test('omits useQueryComponent from encodeAnyToForm when false', () {
-        final property = Property(
-          name: 'data',
-          model: AnyModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('data', property);
-        expect(
-          emit(result),
-          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('required + nullable AnyModel does NOT emit ifNullThen wrap', () {
-        final property = Property(
-          name: 'data',
-          model: AnyModel(context: context),
-          isRequired: true,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('data', property);
-        final emitted = emit(result);
-
-        expect(
-          emitted,
-          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('required + nullable AnyModel through AliasModel does NOT emit '
-          'ifNullThen wrap', () {
-        final property = Property(
-          name: 'data',
-          model: AliasModel(
-            name: 'AnyAlias',
-            model: AnyModel(context: context),
-            context: context,
-            examples: const [],
-            defaultValue: null,
-          ),
-          isRequired: true,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('data', property);
-        final emitted = emit(result);
-
-        expect(
-          emitted,
-          'encodeAnyToForm(data, explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-    });
-
-    group('useQueryComponent parameter', () {
-      test('omits useQueryComponent when false (default)', () {
-        final property = Property(
-          name: 'name',
-          model: StringModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression('name', property);
-        expect(
-          emit(result),
-          'name.toForm(explode: explode, allowEmpty: allowEmpty, )',
-        );
-      });
-
-      test('includes useQueryComponent: true when explicitly set', () {
-        final property = Property(
-          name: 'name',
-          model: StringModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression(
-          'name',
-          property,
-          useQueryComponent: true,
-        );
-        expect(
-          emit(result),
-          'name.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true, )',
-        );
-      });
-
-      test('includes useQueryComponent: true for nullable property', () {
-        final property = Property(
-          name: 'name',
-          model: StringModel(context: context),
-          isRequired: false,
-          isNullable: true,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression(
-          'name',
-          property,
-          useQueryComponent: true,
-        );
-        expect(
-          emit(result),
-          'name?.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true, )',
-        );
-      });
-
-      test(
-        'includes useQueryComponent: true for required nullable property',
-        () {
-          final property = Property(
-            name: 'name',
-            model: StringModel(context: context),
-            isRequired: true,
-            isNullable: true,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: null,
-          );
-
-          final result = buildToFormPropertyExpression(
-            'name',
-            property,
+      final expected = format('''
+        test() {
+          _i1.encodeAnyToForm(
+            body,
+            explode: true,
+            allowEmpty: true,
             useQueryComponent: true,
           );
-          expect(
-            emit(result),
-            'name?.toForm(explode: explode, allowEmpty: allowEmpty, '
-            "useQueryComponent: true, ) ?? ''",
-          );
-        },
-      );
+        }
+      ''');
 
-      test('includes useQueryComponent: true for integer property', () {
-        final property = Property(
-          name: 'count',
-          model: IntegerModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression(
-          'count',
-          property,
-          useQueryComponent: true,
-        );
-        expect(
-          emit(result),
-          'count.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true, )',
-        );
-      });
-
-      test('includes useQueryComponent: true for DateTime property', () {
-        final property = Property(
-          name: 'timestamp',
-          model: DateTimeModel(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression(
-          'timestamp',
-          property,
-          useQueryComponent: true,
-        );
-        expect(
-          emit(result),
-          'timestamp.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true, )',
-        );
-      });
-
-      test('includes useQueryComponent: true for AliasModel property', () {
-        final aliasModel = AliasModel(
-          name: 'UserID',
-          model: StringModel(context: context),
-          context: context,
-          examples: const [],
-          defaultValue: null,
-        );
-        final property = Property(
-          name: 'userId',
-          model: aliasModel,
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
-
-        final result = buildToFormPropertyExpression(
-          'userId',
-          property,
-          useQueryComponent: true,
-        );
-        expect(
-          emit(result),
-          'userId.toForm(explode: explode, allowEmpty: allowEmpty, '
-          'useQueryComponent: true, )',
-        );
-      });
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    group('unsupported model types generate runtime throws', () {
-      test('BinaryModel generates encoding exception', () {
-        final property = Property(
-          name: 'file',
-          model: BinaryModel(context: context),
-          isRequired: true,
-          isNullable: false,
+    test('AnyModel body omits useQueryComponent when false', () {
+      final result = buildToFormValueExpression(
+        'body',
+        AnyModel(context: context),
+        useQueryComponent: false,
+      );
+
+      final expected = format('''
+        test() {
+          _i1.encodeAnyToForm(body, explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('MapModel body throws an encoding exception', () {
+      final model = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format('''
+        test() {
+          throw _i1.EncodingException('Form encoding not supported for map types.');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('BinaryModel body throws an encoding exception', () {
+      final result = buildToFormValueExpression(
+        'body',
+        BinaryModel(context: context),
+        useQueryComponent: true,
+      );
+
+      final expected = format('''
+        test() {
+          throw _i1.EncodingException('Binary data cannot be form-encoded.');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('NeverModel body throws an encoding exception', () {
+      final result = buildToFormValueExpression(
+        'body',
+        NeverModel(context: context),
+        useQueryComponent: true,
+      );
+
+      final expected = format('''
+        test() {
+          throw _i1.EncodingException(
+            'Cannot encode NeverModel - this type does not permit any value.',
+          );
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('list with complex content throws an unsupported encoding '
+        'exception', () {
+      final model = ListModel(
+        content: ClassModel(
+          name: 'Item',
+          properties: const [],
+          context: context,
           isDeprecated: false,
           examples: const [],
-          defaultValue: null,
-        );
+        ),
+        context: context,
+        examples: const [],
+      );
 
-        final result = buildToFormPropertyExpression(
-          'file',
-          property,
-        );
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
 
-        expect(
-          scopedEmit(result),
-          '''throw  _i1.EncodingException('Form encoding not supported for binary types.')''',
-        );
-      });
+      final expected = format('''
+        test() {
+          throw _i1.EncodingException(
+            'Unsupported model type for form encoding.',
+          );
+        }
+      ''');
 
-      test('Base64Model generates encoding exception', () {
-        final property = Property(
-          name: 'file',
-          model: Base64Model(context: context),
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        );
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
 
-        final result = buildToFormPropertyExpression(
-          'file',
-          property,
-        );
+    test('StringModel body renders the bare value without a key', () {
+      final result = buildToFormValueExpression(
+        'body',
+        StringModel(context: context),
+        useQueryComponent: true,
+      );
 
-        expect(
-          scopedEmit(result),
-          '''throw  _i1.EncodingException('Form encoding not supported for binary types.')''',
-        );
-      });
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('IntegerModel body renders the bare value without a key', () {
+      final result = buildToFormValueExpression(
+        'body',
+        IntegerModel(context: context),
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('EnumModel body renders the bare value without a key', () {
+      final model = EnumModel<String>(
+        name: 'Status',
+        values: {
+          const EnumEntry<String>(value: 'active'),
+          const EnumEntry<String>(value: 'inactive'),
+        },
+        isNullable: false,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ListModel body renders comma-joined values without a key', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
   });
 }

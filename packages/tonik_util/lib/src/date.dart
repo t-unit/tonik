@@ -2,6 +2,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_util/src/decoding/form_decoder.dart';
 import 'package:tonik_util/src/decoding/json_decoder.dart';
 import 'package:tonik_util/src/decoding/simple_decoder.dart';
+import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 /// A class representing a date without time information.
 ///
@@ -86,14 +87,21 @@ class Date {
   String toSimple({required bool explode, required bool allowEmpty}) =>
       uriEncode(allowEmpty: allowEmpty);
 
-  /// Converts this [Date] to a form-encoded string.
-  ///
-  /// Returns the date in ISO 8601 format (YYYY-MM-DD) with proper URL encoding.
-  String toForm({
+  /// Converts this [Date] to a form-encoded parameter entry.
+  List<ParameterEntry> toForm(
+    String paramName, {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
-  }) => uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  }) => [
+    (
+      name: paramName,
+      value: uriEncode(
+        allowEmpty: allowEmpty,
+        useQueryComponent: useQueryComponent,
+      ),
+    ),
+  ];
 
   /// Converts this [Date] to a label-encoded string.
   ///

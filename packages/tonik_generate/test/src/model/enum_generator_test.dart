@@ -1225,7 +1225,12 @@ void main() {
           (m) => m.name == 'toForm',
         );
 
-        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(
+          toForm.returns?.accept(DartEmitter()).toString(),
+          'List<ParameterEntry>',
+        );
+        expect(toForm.requiredParameters, hasLength(1));
+        expect(toForm.requiredParameters.single.name, 'paramName');
         expect(toForm.optionalParameters, hasLength(3));
 
         final explodeParam = toForm.optionalParameters.firstWhere(
@@ -1259,7 +1264,8 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+          'rawValue.toForm(paramName, explode: explode, '
+          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1283,13 +1289,18 @@ void main() {
           (m) => m.name == 'toForm',
         );
 
-        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(
+          toForm.returns?.accept(DartEmitter()).toString(),
+          'List<ParameterEntry>',
+        );
+        expect(toForm.requiredParameters.single.name, 'paramName');
         expect(toForm.optionalParameters, hasLength(3));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+          'rawValue.toForm(paramName, explode: explode, '
+          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1312,13 +1323,18 @@ void main() {
           (m) => m.name == 'toForm',
         );
 
-        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(
+          toForm.returns?.accept(DartEmitter()).toString(),
+          'List<ParameterEntry>',
+        );
+        expect(toForm.requiredParameters.single.name, 'paramName');
         expect(toForm.optionalParameters, hasLength(3));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+          'rawValue.toForm(paramName, explode: explode, '
+          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1342,13 +1358,18 @@ void main() {
           (m) => m.name == 'toForm',
         );
 
-        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(
+          toForm.returns?.accept(DartEmitter()).toString(),
+          'List<ParameterEntry>',
+        );
+        expect(toForm.requiredParameters.single.name, 'paramName');
         expect(toForm.optionalParameters, hasLength(3));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+          'rawValue.toForm(paramName, explode: explode, '
+          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1972,7 +1993,11 @@ void main() {
           (m) => m.name == 'toForm',
         );
 
-        expect(toForm.returns?.accept(DartEmitter()).toString(), 'String');
+        expect(
+          toForm.returns?.accept(DartEmitter()).toString(),
+          'List<ParameterEntry>',
+        );
+        expect(toForm.requiredParameters.single.name, 'paramName');
         expect(toForm.lambda, isFalse);
         expect(toForm.optionalParameters, hasLength(3));
 
@@ -1981,7 +2006,7 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
+          return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });

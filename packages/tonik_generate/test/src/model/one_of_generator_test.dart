@@ -2108,7 +2108,7 @@ void main() {
 
     test(
       'toForm with discriminator and ListModel with simple content '
-      'uses buildFormParameterExpression',
+      'dispatches on encoding shape',
       () {
         final model = OneOfModel(
           isDeprecated: false,
@@ -2141,17 +2141,21 @@ void main() {
           contains(
             collapseWhitespace('''
               @override
-              String toForm({
+              List<ParameterEntry> toForm(
+                String paramName, {
                 required bool explode,
                 required bool allowEmpty,
                 bool useQueryComponent = false,
               }) {
                 return switch (this) {
                   ValueList(:final value) => value.toForm(
+                    paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
                   ),
                   ValueStr(:final value) => value.toForm(
+                    paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
@@ -2166,7 +2170,7 @@ void main() {
 
     test(
       'toForm with discriminator and ListModel with complex content '
-      'throws EncodingException',
+      'dispatches on encoding shape',
       () {
         final model = OneOfModel(
           isDeprecated: false,
@@ -2204,7 +2208,8 @@ void main() {
           contains(
             collapseWhitespace('''
               @override
-              String toForm({
+              List<ParameterEntry> toForm(
+                String paramName, {
                 required bool explode,
                 required bool allowEmpty,
                 bool useQueryComponent = false,
@@ -2214,6 +2219,7 @@ void main() {
                     'Lists with complex content are not supported for encoding',
                   ),
                   ValueStr(:final value) => value.toForm(
+                    paramName,
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
@@ -2785,7 +2791,7 @@ void main() {
       );
     });
 
-    test('toForm throws EncodingException for MapModel', () {
+    test('toForm dispatches on encoding shape for MapModel', () {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
@@ -2820,9 +2826,25 @@ void main() {
         collapseWhitespace(generated),
         contains(
           collapseWhitespace('''
-            ValueTags() => throw EncodingException(
-              'Map types cannot be form-encoded',
-            ),
+            @override
+            List<ParameterEntry> toForm(
+              String paramName, {
+              required bool explode,
+              required bool allowEmpty,
+              bool useQueryComponent = false,
+            }) {
+              return switch (this) {
+                ValueTags() => throw EncodingException(
+                  'Map types cannot be form-encoded',
+                ),
+                ValueString(:final value) => value.toForm(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  useQueryComponent: useQueryComponent,
+                ),
+              };
+            }
           '''),
         ),
       );
@@ -3108,7 +3130,7 @@ bool operator ==(Object other) {
       );
     });
 
-    test('toForm throws EncodingException for AnyModel', () {
+    test('toForm dispatches on encoding shape for AnyModel', () {
       final model = OneOfModel(
         isDeprecated: false,
         name: 'Value',
@@ -3128,9 +3150,25 @@ bool operator ==(Object other) {
         collapseWhitespace(generated),
         contains(
           collapseWhitespace('''
-            ValueUnknown() => throw EncodingException(
-              'AnyModel variant cannot be form-encoded',
-            ),
+            @override
+            List<ParameterEntry> toForm(
+              String paramName, {
+              required bool explode,
+              required bool allowEmpty,
+              bool useQueryComponent = false,
+            }) {
+              return switch (this) {
+                ValueUnknown() => throw EncodingException(
+                  'AnyModel variant cannot be form-encoded',
+                ),
+                ValueString(:final value) => value.toForm(
+                  paramName,
+                  explode: explode,
+                  allowEmpty: allowEmpty,
+                  useQueryComponent: useQueryComponent,
+                ),
+              };
+            }
           '''),
         ),
       );
@@ -3801,18 +3839,21 @@ bool operator ==(Object other) {
 
         const expectedMethod = '''
           @override
-          String toForm({
+          List<ParameterEntry> toForm(
+            String paramName, {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
           }) {
             return switch (this) {
               ValueBase64(:final value) => value.toBase64String().toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
               ),
               ValueText(:final value) => value.toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
@@ -3829,7 +3870,7 @@ bool operator ==(Object other) {
     );
 
     test(
-      'toForm wraps nullable Base64Model variant in null check',
+      'toForm dispatches on encoding shape with nullable Base64Model variant',
       () {
         final classModel = ClassModel(
           isDeprecated: false,
@@ -3879,20 +3920,24 @@ bool operator ==(Object other) {
 
         const expectedMethod = '''
           @override
-          String toForm({
+          List<ParameterEntry> toForm(
+            String paramName, {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
           }) {
             return switch (this) {
-              ValueNullableData(:final value) => value == null
-                  ? ''
-                  : value.toBase64String().toForm(
-                      explode: explode,
-                      allowEmpty: allowEmpty,
-                      useQueryComponent: useQueryComponent,
-                    ),
+              ValueNullableData(:final value) =>
+                value == null
+                    ? const <ParameterEntry>[]
+                    : value.toBase64String().toForm(
+                        paramName,
+                        explode: explode,
+                        allowEmpty: allowEmpty,
+                        useQueryComponent: useQueryComponent,
+                      ),
               ValueText(:final value) => value.toForm(
+                paramName,
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,

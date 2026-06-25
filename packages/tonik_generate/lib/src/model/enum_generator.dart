@@ -458,11 +458,19 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
         (b) => b
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toForm'
-          ..returns = refer('String', 'dart:core')
+          ..returns = buildParameterEntryListType()
           ..lambda = true
+          ..requiredParameters.add(
+            Parameter(
+              (b) => b
+                ..name = 'paramName'
+                ..type = refer('String', 'dart:core'),
+            ),
+          )
           ..optionalParameters.addAll(buildFormEncodingParameters())
           ..body = const Code(
-            'rawValue.toForm(explode: explode, allowEmpty: allowEmpty)',
+            'rawValue.toForm(paramName, explode: explode, '
+            'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
           ),
       );
     }
@@ -471,8 +479,15 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
       (b) => b
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toForm'
-        ..returns = refer('String', 'dart:core')
+        ..returns = buildParameterEntryListType()
         ..lambda = false
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
         ..optionalParameters.addAll(buildFormEncodingParameters())
         ..body = Block.of([
           Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
@@ -483,7 +498,7 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
           const Code('}'),
           const Code(
             '''
-return rawValue.toForm(explode: explode, allowEmpty: allowEmpty);
+return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 ''',
           ),
         ]),

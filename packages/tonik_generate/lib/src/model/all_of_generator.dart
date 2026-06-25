@@ -11,6 +11,7 @@ import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
@@ -18,7 +19,6 @@ import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/known_keys_collector.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
-import 'package:tonik_generate/src/util/to_form_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
@@ -1733,431 +1733,225 @@ for (final _\$e in $apFieldName.entries) {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    // Check if any of the models have dynamic encoding shapes
-    final hasDynamicModels = normalizedProperties.any((prop) {
-      return prop.property.model.encodingShape == EncodingShape.mixed;
-    });
-
-    if (hasDynamicModels) {
-      // Check if we have DIRECT primitives
-      // (not dynamic models that might be simple).
-      final hasDirectPrimitives = normalizedProperties.any((prop) {
-        final model = prop.property.model;
-        return model.encodingShape == EncodingShape.simple &&
-            model.encodingShape != EncodingShape.mixed;
-      });
-
-      // If we have direct primitives mixed with dynamic models,
-      // we need runtime validation.
-      // The dynamic models might be in simple state, making the entire
-      // allOf simple and encodable.
-      if (hasDirectPrimitives) {
-        final encodingShapeType = refer(
-          'EncodingShape',
-          'package:tonik_util/tonik_util.dart',
-        );
-
-        final bodyCode = <Code>[
-          const Code('if (currentEncodingShape == '),
-          encodingShapeType.property('mixed').code,
-          const Code(') {'),
-          generateEncodingExceptionExpression(
-            'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
-            raw: true,
-          ).statement,
-          const Code('}'),
-          declareFinal(
-            r'_$values',
-          ).assign(literalSet([], refer('String', 'dart:core'))).statement,
-        ];
-
-        // Call toForm on each property and collect results.
-        final allNullableForm = normalizedProperties.every((prop) {
-          return prop.property.isNullable ||
-              !prop.property.isRequired ||
-              prop.property.model.isEffectivelyNullable;
-        });
-        for (final prop in normalizedProperties) {
-          final isNullable =
-              prop.property.isNullable ||
-              !prop.property.isRequired ||
-              prop.property.model.isEffectivelyNullable;
-          final receiver = isNullable
-              ? refer(prop.normalizedName).nullChecked
-              : refer(prop.normalizedName);
-          bodyCode.addAll([
-            if (isNullable) Code('if (${prop.normalizedName} != null) {'),
-            declareFinal('_\$${prop.normalizedName}Form')
-                .assign(
-                  receiver.property('toForm').call([], {
-                    'explode': refer('explode'),
-                    'allowEmpty': refer('allowEmpty'),
-                    'useQueryComponent': refer('useQueryComponent'),
-                  }),
-                )
-                .statement,
-            refer(r'_$values').property('add').call([
-              refer('_\$${prop.normalizedName}Form'),
-            ]).statement,
-            if (isNullable) const Code('}'),
-          ]);
-        }
-
-        bodyCode.addAll([
-          const Code(r'if (_$values.length > 1) {'),
-          generateEncodingExceptionExpression(
-            'Inconsistent allOf form encoding for $className: '
-            'all values must encode to the same result',
-            raw: true,
-          ).statement,
-          const Code('}'),
-          if (allNullableForm) ...[
-            const Code(r'if (_$values.isEmpty) {'),
-            generateEncodingExceptionExpression(
-              'Cannot encode $className to encoding: all properties are null',
-              raw: true,
-            ).statement,
-            const Code('}'),
-          ],
-          const Code(r'return _$values.first;'),
-        ]);
-
-        return Method(
-          (b) => b
-            ..annotations.add(refer('override', 'dart:core'))
-            ..name = 'toForm'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildFormEncodingParameters())
-            ..lambda = false
-            ..body = Block.of(bodyCode),
-        );
-      }
-
-      // No direct primitives, only dynamic models that could be mixed at
-      // runtime. Generate runtime check and delegate to parameterProperties.
-      final encodingShapeType = refer(
-        'EncodingShape',
-        'package:tonik_util/tonik_util.dart',
-      );
-
-      final bodyCode = <Code>[
-        const Code('if (currentEncodingShape == '),
-        encodingShapeType.property('mixed').code,
-        const Code(') {'),
-        generateEncodingExceptionExpression(
-          'Cannot encode $className: mixing simple values (primitives/enums) and complex types is not supported',
-          raw: true,
-        ).statement,
-        const Code('}'),
-        refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
-            .property('toForm')
-            .call([], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-              'alreadyEncoded': literalBool(true),
-              'useQueryComponent': refer('useQueryComponent'),
-            })
-            .returned
-            .statement,
-      ];
-
-      return Method(
-        (b) => b
-          ..annotations.add(refer('override', 'dart:core'))
-          ..name = 'toForm'
-          ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildFormEncodingParameters())
-          ..lambda = false
-          ..body = Block.of(bodyCode),
-      );
-    }
-
-    final dynamicModels = normalizedProperties.where((prop) {
-      final shape = prop.property.model.encodingShape;
-      return shape == EncodingShape.mixed;
-    }).toList();
-
-    final hasDynamicModelsOld = dynamicModels.isNotEmpty;
-    final needsRuntimeValidation = hasDynamicModelsOld && model.hasSimpleTypes;
-
-    if (needsRuntimeValidation) {
-      final encodingShapeType = refer(
-        'EncodingShape',
-        'package:tonik_util/tonik_util.dart',
-      );
-      final validationCode = <Code>[];
-
-      for (final prop in dynamicModels) {
-        validationCode.addAll([
-          Code('if (${prop.normalizedName}.currentEncodingShape != '),
-          encodingShapeType.property('simple').code,
-          const Code(') {'),
-          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-              .call([
-                literalString(
-                  'Cannot encode mixed allOf ${model.name}: '
-                  '${prop.normalizedName} is complex',
-                ),
-              ])
-              .thrown
-              .statement,
-          const Code('}'),
-        ]);
-      }
-
-      final primaryField = normalizedProperties.first;
-      final isPrimaryFieldNullable =
-          primaryField.property.isNullable ||
-          !primaryField.property.isRequired ||
-          primaryField.property.model.isEffectivelyNullable;
-      final primaryFormRtReceiver = isPrimaryFieldNullable
-          ? refer(primaryField.normalizedName).nullChecked
-          : refer(primaryField.normalizedName);
-      validationCode.addAll([
-        primaryFormRtReceiver
-            .property('toForm')
-            .call([], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-              'useQueryComponent': refer('useQueryComponent'),
-            })
-            .returned
-            .statement,
-      ]);
-
-      return Method(
-        (b) => b
-          ..annotations.add(refer('override', 'dart:core'))
-          ..name = 'toForm'
-          ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildFormEncodingParameters())
-          ..lambda = false
-          ..body = Block.of(validationCode),
-      );
-    }
-
-    if (model.hasComplexTypes) {
-      final encodingShapeType = refer(
-        'EncodingShape',
-        'package:tonik_util/tonik_util.dart',
-      );
-
-      // Find all dynamic types (anyOf/oneOf) that need runtime validation.
-      final allDynamicModels = normalizedProperties.where((prop) {
-        return prop.property.model.encodingShape == EncodingShape.mixed;
-      }).toList();
-
-      // If there are NO dynamic models AND we still have simple+complex mix,
-      // it means we have a truly mixed allOf (primitive + class) which cannot
-      // be encoded.
-      if (allDynamicModels.isEmpty && model.hasSimpleTypes) {
-        return Method(
-          (b) => b
-            ..annotations.add(refer('override', 'dart:core'))
-            ..name = 'toForm'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildFormEncodingParameters())
-            ..lambda = false
-            ..body = generateEncodingExceptionExpression(
-              'Form encoding not supported: contains complex types',
-            ).statement,
-        );
-      }
-
-      if (allDynamicModels.isEmpty) {
-        // Check if all complex types are lists with simple content
-        final allComplexAreSimpleLists = normalizedProperties
-            .where(
-              (p) => p.property.model.encodingShape == EncodingShape.complex,
-            )
-            .every(
-              (p) =>
-                  p.property.model.resolved is ListModel &&
-                  (p.property.model.resolved as ListModel).hasSimpleContent,
-            );
-
-        if (allComplexAreSimpleLists) {
-          // Lists with simple content can be encoded directly with toForm
-          final valueCollectionCode = <Code>[
-            declareFinal(
-              r'_$values',
-            ).assign(literalSet([], refer('String', 'dart:core'))).statement,
-          ];
-
-          final allNullableFormList = normalizedProperties.every((prop) {
-            return prop.property.isNullable ||
-                !prop.property.isRequired ||
-                prop.property.model.isEffectivelyNullable;
-          });
-          for (final prop in normalizedProperties) {
-            final isFieldNullable =
-                prop.property.isNullable ||
-                !prop.property.isRequired ||
-                prop.property.model.isEffectivelyNullable;
-            final receiver = isFieldNullable
-                ? refer(prop.normalizedName).nullChecked
-                : refer(prop.normalizedName);
-            valueCollectionCode.addAll([
-              if (isFieldNullable)
-                Code('if (${prop.normalizedName} != null) {'),
-              declareFinal('_\$${prop.normalizedName}Form')
-                  .assign(
-                    buildFormParameterExpression(
-                      receiver,
-                      prop.property.model,
-                      explode: refer('explode'),
-                      allowEmpty: refer('allowEmpty'),
-                    ).expression,
-                  )
-                  .statement,
-              refer(r'_$values').property('add').call([
-                refer('_\$${prop.normalizedName}Form'),
-              ]).statement,
-              if (isFieldNullable) const Code('}'),
-            ]);
-          }
-
-          valueCollectionCode.addAll([
-            const Code(r'if (_$values.length > 1) {'),
-            generateEncodingExceptionExpression(
-              'Inconsistent allOf form encoding: '
-              'all values must encode to the same result',
-              raw: true,
-            ).statement,
-            const Code('}'),
-            if (allNullableFormList) ...[
-              const Code(r'if (_$values.isEmpty) {'),
-              generateEncodingExceptionExpression(
-                'Cannot encode $className to encoding: all properties are null',
-                raw: true,
-              ).statement,
-              const Code('}'),
-            ],
-            const Code(r'return _$values.first;'),
-          ]);
-
-          return Method(
-            (b) => b
-              ..annotations.add(refer('override', 'dart:core'))
-              ..name = 'toForm'
-              ..returns = refer('String', 'dart:core')
-              ..optionalParameters.addAll(buildFormEncodingParameters())
-              ..lambda = false
-              ..body = Block.of(valueCollectionCode),
-          );
-        }
-
-        // For non-list complex types, use parameterProperties
-        return Method(
-          (b) => b
-            ..annotations.add(refer('override', 'dart:core'))
-            ..name = 'toForm'
-            ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildFormEncodingParameters())
-            ..lambda = false
-            ..body = refer('parameterProperties')
-                .call([], {'allowEmpty': refer('allowEmpty')})
-                .property('toForm')
-                .call([], {
-                  'explode': refer('explode'),
-                  'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
-                  'useQueryComponent': refer('useQueryComponent'),
-                })
-                .returned
-                .statement,
-        );
-      }
-
-      // If we have dynamic models, validate and delegate to
-      // parameterProperties.
-      final bodyCode = <Code>[];
-
-      // Validate that all dynamic models (anyOf/oneOf) are in complex state.
-      for (final prop in allDynamicModels) {
-        bodyCode.addAll([
-          Code('if (${prop.normalizedName}.currentEncodingShape != '),
-          encodingShapeType.property('complex').code,
-          const Code(') {'),
-          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-              .call([
-                literalString(
-                  'Cannot encode mixed allOf ${model.name}: '
-                  '${prop.normalizedName} is not complex',
-                ),
-              ])
-              .thrown
-              .statement,
-          const Code('}'),
-        ]);
-      }
-
-      bodyCode.add(
-        refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
-            .property('toForm')
-            .call([], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-              'alreadyEncoded': literalBool(true),
-              'useQueryComponent': refer('useQueryComponent'),
-            })
-            .returned
-            .statement,
-      );
-
-      return Method(
-        (b) => b
-          ..annotations.add(refer('override', 'dart:core'))
-          ..name = 'toForm'
-          ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildFormEncodingParameters())
-          ..lambda = false
-          ..body = Block.of(bodyCode),
-      );
-    }
-
-    if (normalizedProperties.isEmpty) {
-      return Method(
-        (b) => b
-          ..annotations.add(refer('override', 'dart:core'))
-          ..name = 'toForm'
-          ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildFormEncodingParameters())
-          ..lambda = false
-          ..body = const Code("return '';"),
-      );
-    }
-
-    final primaryField = normalizedProperties.first;
-    final isPrimaryFieldNullable =
-        primaryField.property.isNullable ||
-        !primaryField.property.isRequired ||
-        primaryField.property.model.isEffectivelyNullable;
-    final primaryFormReceiver = isPrimaryFieldNullable
-        ? refer(primaryField.normalizedName).nullChecked
-        : refer(primaryField.normalizedName);
-
-    return Method(
+    Method form(Iterable<Code> body) => Method(
       (b) => b
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toForm'
-        ..returns = refer('String', 'dart:core')
+        ..returns = buildParameterEntryListType()
+        ..requiredParameters.add(
+          Parameter(
+            (b) => b
+              ..name = 'paramName'
+              ..type = refer('String', 'dart:core'),
+          ),
+        )
         ..optionalParameters.addAll(buildFormEncodingParameters())
         ..lambda = false
-        ..body = Block.of([
-          primaryFormReceiver
-              .property('toForm')
-              .call([], {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-                'useQueryComponent': refer('useQueryComponent'),
-              })
-              .returned
-              .statement,
-        ]),
+        ..body = Block.of(body),
     );
+
+    final emptyEntries = <Code>[
+      const Code('return const <'),
+      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart').code,
+      const Code('>[];'),
+    ];
+
+    bool isNullableProp(({String normalizedName, Property property}) prop) =>
+        prop.property.isNullable ||
+        !prop.property.isRequired ||
+        prop.property.model.isEffectivelyNullable;
+
+    final mixedGuard = <Code>[
+      const Code('if (currentEncodingShape == '),
+      refer(
+        'EncodingShape',
+        'package:tonik_util/tonik_util.dart',
+      ).property('mixed').code,
+      const Code(') {'),
+      generateEncodingExceptionExpression(
+        'Cannot encode $className: mixing simple values '
+        '(primitives/enums) and complex types is not supported',
+        raw: true,
+      ).statement,
+      const Code('}'),
+    ];
+
+    Expression propFormEntries(Expression receiver, Model propModel) {
+      final resolved = propModel.resolved;
+      if (resolved is ListModel && resolved.hasSimpleContent) {
+        final entries = buildFormEntriesValueExpression(
+          receiver,
+          propModel,
+          paramName: refer('paramName'),
+          explode: refer('explode'),
+          allowEmpty: refer('allowEmpty'),
+          useQueryComponent: refer('useQueryComponent'),
+        );
+        if (entries != null) return entries;
+        return generateEncodingExceptionExpression(
+          'Lists with complex content are not supported for encoding',
+        );
+      }
+      return receiver.property('toForm').call([refer('paramName')], {
+        'explode': refer('explode'),
+        'allowEmpty': refer('allowEmpty'),
+        'useQueryComponent': refer('useQueryComponent'),
+      });
+    }
+
+    List<Code> collectAndReturn(
+      Iterable<({String normalizedName, Property property})> props, {
+      required String inconsistentMessage,
+    }) {
+      final code = <Code>[
+        declareFinal(r'_$entryLists')
+            .assign(literalList([], buildParameterEntryListType()))
+            .statement,
+        declareFinal(r'_$values')
+            .assign(literalSet([], refer('String', 'dart:core')))
+            .statement,
+      ];
+
+      final allNullable = props.every(isNullableProp);
+
+      for (final prop in props) {
+        final nullable = isNullableProp(prop);
+        final receiver = nullable
+            ? refer(prop.normalizedName).nullChecked
+            : refer(prop.normalizedName);
+        final entries = propFormEntries(receiver, prop.property.model);
+        code.addAll([
+          if (nullable) Code('if (${prop.normalizedName} != null) {'),
+          declareFinal('_\$${prop.normalizedName}Form')
+              .assign(entries)
+              .statement,
+          refer(r'_$entryLists').property('add').call([
+            refer('_\$${prop.normalizedName}Form'),
+          ]).statement,
+          refer(r'_$values').property('add').call([
+            refer('_\$${prop.normalizedName}Form')
+                .property('map')
+                .call([
+                  Method(
+                    (b) => b
+                      ..requiredParameters.add(
+                        Parameter((p) => p..name = 'e'),
+                      )
+                      ..body = refer('e').property('value').code,
+                  ).closure,
+                ])
+                .property('join')
+                .call([literalString(',')]),
+          ]).statement,
+          if (nullable) const Code('}'),
+        ]);
+      }
+
+      code.addAll([
+        const Code(r'if (_$values.length > 1) {'),
+        generateEncodingExceptionExpression(
+          inconsistentMessage,
+          raw: true,
+        ).statement,
+        const Code('}'),
+        if (allNullable) ...[
+          const Code(r'if (_$entryLists.isEmpty) {'),
+          generateEncodingExceptionExpression(
+            'Cannot encode $className to encoding: all properties are null',
+            raw: true,
+          ).statement,
+          const Code('}'),
+        ],
+        const Code(r'return _$entryLists.first;'),
+      ]);
+
+      return code;
+    }
+
+    final delegateToParameterProperties = refer('parameterProperties')
+        .call([], {
+          'allowEmpty': refer('allowEmpty'),
+        })
+        .property('toForm')
+        .call([refer('paramName')], {
+          'explode': refer('explode'),
+          'allowEmpty': refer('allowEmpty'),
+          'alreadyEncoded': literalBool(true),
+          'useQueryComponent': refer('useQueryComponent'),
+        })
+        .returned
+        .statement;
+
+    final hasDynamicModels = normalizedProperties.any(
+      (prop) => prop.property.model.encodingShape == EncodingShape.mixed,
+    );
+
+    if (hasDynamicModels) {
+      final hasDirectPrimitives = normalizedProperties.any(
+        (prop) => prop.property.model.encodingShape == EncodingShape.simple,
+      );
+
+      if (hasDirectPrimitives) {
+        return form([
+          ...mixedGuard,
+          ...collectAndReturn(
+            normalizedProperties,
+            inconsistentMessage:
+                'Inconsistent allOf form encoding for $className: '
+                'all values must encode to the same result',
+          ),
+        ]);
+      }
+
+      return form([...mixedGuard, delegateToParameterProperties]);
+    }
+
+    if (model.hasComplexTypes) {
+      if (model.hasSimpleTypes) {
+        return form([
+          generateEncodingExceptionExpression(
+            'Form encoding not supported: contains complex types',
+          ).statement,
+        ]);
+      }
+
+      final allComplexAreSimpleLists = normalizedProperties
+          .where((p) => p.property.model.encodingShape == EncodingShape.complex)
+          .every(
+            (p) =>
+                p.property.model.resolved is ListModel &&
+                (p.property.model.resolved as ListModel).hasSimpleContent,
+          );
+
+      if (allComplexAreSimpleLists) {
+        return form(
+          collectAndReturn(
+            normalizedProperties,
+            inconsistentMessage:
+                'Inconsistent allOf form encoding: '
+                'all values must encode to the same result',
+          ),
+        );
+      }
+
+      return form([delegateToParameterProperties]);
+    }
+
+    if (normalizedProperties.isEmpty) {
+      return form(emptyEntries);
+    }
+
+    final primaryField = normalizedProperties.first;
+    final primaryReceiver = isNullableProp(primaryField)
+        ? refer(primaryField.normalizedName).nullChecked
+        : refer(primaryField.normalizedName);
+
+    return form([
+      propFormEntries(
+        primaryReceiver,
+        primaryField.property.model,
+      ).returned.statement,
+    ]);
   }
 
   Method _buildToLabelMethod(

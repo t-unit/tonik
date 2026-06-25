@@ -2,6 +2,8 @@ import 'package:composition_api/composition_api.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
+import 'form_value_helper.dart';
+
 void main() {
   group('PetChoice (oneOf with inherited discriminator)', () {
     group('Cat variant', () {
@@ -48,7 +50,7 @@ void main() {
       });
 
       test('toForm - explode true', () {
-        final form = petChoice.toForm(explode: true, allowEmpty: true);
+        final form = formValue(petChoice.toForm('p', explode: true, allowEmpty: true), 'p');
         expect(form, contains('petType=cat'));
         expect(form, contains('name=Whiskers'));
         expect(form, contains('meow=purr'));
@@ -110,7 +112,7 @@ void main() {
       });
 
       test('toForm - explode true', () {
-        final form = petChoice.toForm(explode: true, allowEmpty: true);
+        final form = formValue(petChoice.toForm('p', explode: true, allowEmpty: true), 'p');
         expect(form, contains('petType=dog'));
         expect(form, contains('name=Buddy'));
         expect(form, contains('bark=woof'));

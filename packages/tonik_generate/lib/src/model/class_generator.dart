@@ -1992,7 +1992,14 @@ if ($name != null) {
     (b) => b
       ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toForm'
-      ..returns = refer('String', 'dart:core')
+      ..returns = buildParameterEntryListType()
+      ..requiredParameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'paramName'
+            ..type = refer('String', 'dart:core'),
+        ),
+      )
       ..optionalParameters.addAll(buildFormEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
@@ -2001,12 +2008,15 @@ if ($name != null) {
               'useQueryComponent': refer('useQueryComponent'),
             })
             .property('toForm')
-            .call([], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-              'alreadyEncoded': literalBool(true),
-              'useQueryComponent': refer('useQueryComponent'),
-            })
+            .call(
+              [refer('paramName')],
+              {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'alreadyEncoded': literalBool(true),
+                'useQueryComponent': refer('useQueryComponent'),
+              },
+            )
             .returned
             .statement,
       ]),

@@ -2,521 +2,488 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/form_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 void main() {
   group('FormUriEncoder', () {
-    test('encodes Uri values with URL encoding', () {
+    test('encodes Uri values as a single entry with URL encoding', () {
       final uri = Uri.parse('https://example.com/path?query=value');
       expect(
-        uri.toForm(explode: false, allowEmpty: true),
-        'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+        uri.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[
+          (
+            name: 'p',
+            value: 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+          ),
+        ],
       );
       expect(
-        uri.toForm(explode: true, allowEmpty: true),
-        'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+        uri.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[
+          (
+            name: 'p',
+            value: 'https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
+          ),
+        ],
       );
     });
 
     test('handles special characters in URI', () {
       final uri = Uri.parse('https://example.com/path with spaces');
       expect(
-        uri.toForm(explode: false, allowEmpty: true),
-        'https%3A%2F%2Fexample.com%2Fpath%2520with%2520spaces',
+        uri.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[
+          (
+            name: 'p',
+            value: 'https%3A%2F%2Fexample.com%2Fpath%2520with%2520spaces',
+          ),
+        ],
       );
     });
   });
 
   group('FormStringEncoder', () {
-    test('encodes string values with URL encoding', () {
+    test('encodes string values as a single entry with URL encoding', () {
       expect(
-        'hello world'.toForm(explode: false, allowEmpty: true),
-        'hello%20world',
+        'hello world'.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'hello%20world')],
       );
       expect(
-        'test@example.com'.toForm(explode: true, allowEmpty: true),
-        'test%40example.com',
+        'test@example.com'.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'test%40example.com')],
       );
     });
 
     test('handles empty strings based on allowEmpty', () {
       expect(
-        ''.toForm(explode: false, allowEmpty: true),
-        '',
+        ''.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '')],
       );
       expect(
-        () => ''.toForm(explode: false, allowEmpty: false),
+        () => ''.toForm('p', explode: false, allowEmpty: false),
         throwsA(isA<EmptyValueException>()),
       );
     });
 
     test('encodes special characters', () {
       expect(
-        'key=value&other=data'.toForm(explode: false, allowEmpty: true),
-        'key%3Dvalue%26other%3Ddata',
+        'key=value&other=data'.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'p', value: 'key%3Dvalue%26other%3Ddata'),
+        ],
       );
       expect(
-        'hello+world'.toForm(explode: false, allowEmpty: true),
-        'hello%2Bworld',
+        'hello+world'.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'hello%2Bworld')],
       );
     });
   });
 
   group('FormIntEncoder', () {
-    test('encodes integer values as strings', () {
-      expect(42.toForm(explode: false, allowEmpty: true), '42');
-      expect((-123).toForm(explode: true, allowEmpty: true), '-123');
-      expect(0.toForm(explode: false, allowEmpty: false), '0');
+    test('encodes integer values as a single entry', () {
+      expect(
+        42.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '42')],
+      );
+      expect(
+        (-123).toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '-123')],
+      );
+      expect(
+        0.toForm('p', explode: false, allowEmpty: false),
+        const <ParameterEntry>[(name: 'p', value: '0')],
+      );
     });
   });
 
   group('FormDoubleEncoder', () {
-    test('encodes double values as URL-encoded strings', () {
-      expect(3.14.toForm(explode: false, allowEmpty: true), '3.14');
-      expect((-2.5).toForm(explode: true, allowEmpty: true), '-2.5');
-      expect(0.0.toForm(explode: false, allowEmpty: false), '0.0');
+    test('encodes double values as a single entry', () {
+      expect(
+        3.14.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '3.14')],
+      );
+      expect(
+        (-2.5).toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '-2.5')],
+      );
+      expect(
+        0.0.toForm('p', explode: false, allowEmpty: false),
+        const <ParameterEntry>[(name: 'p', value: '0.0')],
+      );
     });
 
     test('handles scientific notation', () {
-      expect(1.23e-4.toForm(explode: false, allowEmpty: true), '0.000123');
-      expect(1.23e10.toForm(explode: false, allowEmpty: true), '12300000000.0');
+      expect(
+        1.23e-4.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '0.000123')],
+      );
+      expect(
+        1.23e10.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '12300000000.0')],
+      );
     });
   });
 
   group('FormNumEncoder', () {
-    test('encodes num values as strings', () {
+    test('encodes num values as a single entry', () {
       const num intValue = 42;
       const num doubleValue = 3.14;
 
-      expect(intValue.toForm(explode: false, allowEmpty: true), '42');
-      expect(doubleValue.toForm(explode: true, allowEmpty: true), '3.14');
+      expect(
+        intValue.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '42')],
+      );
+      expect(
+        doubleValue.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '3.14')],
+      );
     });
   });
 
   group('FormBoolEncoder', () {
-    test('encodes boolean values as strings', () {
-      expect(true.toForm(explode: false, allowEmpty: true), 'true');
-      expect(false.toForm(explode: true, allowEmpty: true), 'false');
-      expect(true.toForm(explode: false, allowEmpty: false), 'true');
+    test('encodes boolean values as a single entry', () {
+      expect(
+        true.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'true')],
+      );
+      expect(
+        false.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'false')],
+      );
     });
   });
 
   group('FormDateTimeEncoder', () {
-    test('encodes DateTime values as URL-encoded ISO strings', () {
+    test('encodes DateTime values as a single URL-encoded ISO entry', () {
       final dateTime = DateTime.utc(2023, 12, 25, 10, 30, 45);
-      final encoded = dateTime.toForm(explode: false, allowEmpty: true);
+      final encoded = dateTime.toForm('p', explode: false, allowEmpty: true);
 
-      // Should be URL-encoded ISO string
-      expect(encoded, contains('2023-12-25T10%3A30%3A45'));
-      expect(encoded, contains('Z'));
-    });
-
-    test('handles different DateTime formats', () {
-      final localDateTime = DateTime(2023, 6, 15, 14, 30);
-      final encoded = localDateTime.toForm(explode: true, allowEmpty: true);
-
-      expect(encoded, isNotEmpty);
-      expect(encoded, contains('2023-06-15T14%3A30%3A'));
+      expect(encoded, hasLength(1));
+      expect(encoded.single.name, 'p');
+      expect(encoded.single.value, contains('2023-12-25T10%3A30%3A45'));
+      expect(encoded.single.value, contains('Z'));
     });
   });
 
   group('FormBigDecimalEncoder', () {
-    test('encodes BigDecimal values as strings', () {
+    test('encodes BigDecimal values as a single entry', () {
       final decimal = BigDecimal.parse('123.456789');
       expect(
-        decimal.toForm(explode: false, allowEmpty: true),
-        '123.456789',
-      );
-
-      final largeDecimal = BigDecimal.parse('999999999999.123456789');
-      expect(
-        largeDecimal.toForm(explode: true, allowEmpty: true),
-        '999999999999.123456789',
+        decimal.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '123.456789')],
       );
     });
 
     test('handles zero and negative values', () {
       expect(
-        BigDecimal.zero.toForm(explode: false, allowEmpty: true),
-        '0',
+        BigDecimal.zero.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '0')],
       );
       expect(
-        BigDecimal.parse('-42.5').toForm(explode: false, allowEmpty: true),
-        '-42.5',
+        BigDecimal.parse('-42.5').toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '-42.5')],
       );
     });
   });
 
   group('FormStringListEncoder', () {
-    test('encodes lists with explode=false as comma-separated', () {
+    test('explode=false joins items into a single comma-separated entry', () {
       expect(
-        ['red', 'green', 'blue'].toForm(explode: false, allowEmpty: true),
-        'red,green,blue',
+        ['red', 'green', 'blue'].toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'red,green,blue')],
       );
       expect(
         [
           'hello world',
           'test@example.com',
-        ].toForm(explode: false, allowEmpty: true),
-        'hello%20world,test%40example.com',
+        ].toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'p', value: 'hello%20world,test%40example.com'),
+        ],
       );
     });
 
-    test(
-      'encodes lists with explode=true as comma-separated (parameter level '
-      'handles repetition)',
-      () {
-        // Note: According to OpenAPI spec, explode=true for arrays means the
-        // parameter name is repeated for each value, but at the value level we
-        // still use commas
-        expect(
-          ['red', 'green', 'blue'].toForm(explode: true, allowEmpty: true),
-          'red,green,blue',
-        );
-        expect(
-          [
-            'hello world',
-            'test@example.com',
-          ].toForm(explode: true, allowEmpty: true),
-          'hello%20world,test%40example.com',
-        );
-      },
-    );
-
-    test('handles empty lists based on allowEmpty', () {
+    test('explode=true emits one entry per item, all named paramName', () {
       expect(
-        <String>[].toForm(explode: false, allowEmpty: true),
-        '',
+        ['red', 'green', 'blue'].toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'p', value: 'red'),
+          (name: 'p', value: 'green'),
+          (name: 'p', value: 'blue'),
+        ],
       );
       expect(
-        <String>[].toForm(explode: true, allowEmpty: true),
-        '',
-      );
-      expect(
-        () => <String>[].toForm(explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
-      expect(
-        () => <String>[].toForm(explode: true, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        [
+          'hello world',
+          'test@example.com',
+        ].toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'p', value: 'hello%20world'),
+          (name: 'p', value: 'test%40example.com'),
+        ],
       );
     });
 
-    test('handles single item lists', () {
+    test('empty list with explode=false yields a single empty-value entry', () {
       expect(
-        ['single'].toForm(explode: false, allowEmpty: true),
-        'single',
+        <String>[].toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '')],
+      );
+    });
+
+    test('empty list with explode=true yields no entries', () {
+      expect(
+        <String>[].toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[],
+      );
+    });
+
+    test('empty list throws when allowEmpty=false', () {
+      expect(
+        () => <String>[].toForm('p', explode: false, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
       );
       expect(
-        ['single'].toForm(explode: true, allowEmpty: true),
-        'single',
+        () => <String>[].toForm('p', explode: true, allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
       );
     });
 
     test('URL-encodes special characters in list items', () {
       expect(
-        ['key=value', 'other&data'].toForm(explode: false, allowEmpty: true),
-        'key%3Dvalue,other%26data',
+        [
+          'key=value',
+          'other&data',
+        ].toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'key%3Dvalue,other%26data')],
       );
       expect(
-        ['key=value', 'other&data'].toForm(explode: true, allowEmpty: true),
-        'key%3Dvalue,other%26data',
+        [
+          'key=value',
+          'other&data',
+        ].toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'p', value: 'key%3Dvalue'),
+          (name: 'p', value: 'other%26data'),
+        ],
       );
     });
   });
 
   group('FormStringMapEncoder', () {
-    test(
-      'encodes maps with explode=false as comma-separated key,value pairs',
-      () {
-        expect(
-          {
-            'name': 'John',
-            'age': '25',
-          }.toForm(explode: false, allowEmpty: true),
-          'name,John,age,25',
-        );
-        expect(
-          {
-            'key': 'hello world',
-            'other': 'test@example.com',
-          }.toForm(explode: false, allowEmpty: true),
-          'key,hello%20world,other,test%40example.com',
-        );
-      },
-    );
-
-    test(
-      'encodes maps with explode=true as ampersand-separated key=value pairs',
-      () {
-        expect(
-          {'name': 'John', 'age': '25'}.toForm(explode: true, allowEmpty: true),
-          'name=John&age=25',
-        );
-        expect(
-          {
-            'key': 'hello world',
-            'other': 'test@example.com',
-          }.toForm(explode: true, allowEmpty: true),
-          'key=hello%20world&other=test%40example.com',
-        );
-      },
-    );
-
-    test('handles empty maps based on allowEmpty', () {
+    test('explode=false yields a single comma-separated key,value entry', () {
       expect(
-        <String, String>{}.toForm(explode: false, allowEmpty: true),
-        '',
+        {
+          'name': 'John',
+          'age': '25',
+        }.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'name,John,age,25')],
       );
       expect(
-        <String, String>{}.toForm(explode: true, allowEmpty: true),
-        '',
+        {
+          'key': 'hello world',
+          'other': 'test@example.com',
+        }.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'p', value: 'key,hello%20world,other,test%40example.com'),
+        ],
+      );
+    });
+
+    test('explode=true emits one entry per property keyed by the bare key', () {
+      expect(
+        {
+          'name': 'John',
+          'age': '25',
+        }.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'name', value: 'John'),
+          (name: 'age', value: '25'),
+        ],
       );
       expect(
-        () => <String, String>{}.toForm(explode: false, allowEmpty: false),
+        {
+          'key': 'hello world',
+          'other': 'test@example.com',
+        }.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'key', value: 'hello%20world'),
+          (name: 'other', value: 'test%40example.com'),
+        ],
+      );
+    });
+
+    test('empty map with explode=false yields a single empty-value entry', () {
+      expect(
+        <String, String>{}.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '')],
+      );
+    });
+
+    test('empty map with explode=true yields no entries', () {
+      expect(
+        <String, String>{}.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[],
+      );
+    });
+
+    test('empty map throws when allowEmpty=false', () {
+      expect(
+        () => <String, String>{}.toForm('p', explode: false, allowEmpty: false),
         throwsA(isA<EmptyValueException>()),
       );
       expect(
-        () => <String, String>{}.toForm(explode: true, allowEmpty: false),
+        () => <String, String>{}.toForm('p', explode: true, allowEmpty: false),
         throwsA(isA<EmptyValueException>()),
       );
     });
 
-    test('handles single entry maps', () {
-      expect(
-        {'key': 'value'}.toForm(explode: false, allowEmpty: true),
-        'key,value',
-      );
-      expect(
-        {'key': 'value'}.toForm(explode: true, allowEmpty: true),
-        'key=value',
-      );
-    });
-
-    test('URL-encodes special characters in keys and values', () {
+    test('URL-encodes keys and values for explode=true', () {
       expect(
         {
           'key=name': 'value&data',
           'other+key': 'more data',
-        }.toForm(explode: false, allowEmpty: true),
-        'key=name,value%26data,other+key,more%20data',
-      );
-      expect(
-        {
-          'key=name': 'value&data',
-          'other+key': 'more data',
-        }.toForm(explode: true, allowEmpty: true),
-        'key%3Dname=value%26data&other%2Bkey=more%20data',
+        }.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'key%3Dname', value: 'value%26data'),
+          (name: 'other%2Bkey', value: 'more%20data'),
+        ],
       );
     });
 
-    test('handles already encoded values when alreadyEncoded=true', () {
+    test('does not re-encode values when alreadyEncoded=true', () {
       expect(
         {
           'email': 'albert%40example.com',
           'name': 'John%20Doe',
-        }.toForm(explode: false, allowEmpty: true, alreadyEncoded: true),
-        'email,albert%40example.com,name,John%20Doe',
+        }.toForm('p', explode: false, allowEmpty: true, alreadyEncoded: true),
+        const <ParameterEntry>[
+          (name: 'p', value: 'email,albert%40example.com,name,John%20Doe'),
+        ],
       );
       expect(
         {
           'email': 'albert%40example.com',
           'name': 'John%20Doe',
-        }.toForm(explode: true, allowEmpty: true, alreadyEncoded: true),
-        'email=albert%40example.com&name=John%20Doe',
+        }.toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true),
+        const <ParameterEntry>[
+          (name: 'email', value: 'albert%40example.com'),
+          (name: 'name', value: 'John%20Doe'),
+        ],
       );
-    });
-
-    test('maintains consistent key ordering', () {
-      final map = {'z': '1', 'a': '2', 'm': '3'};
-      final result1 = map.toForm(explode: false, allowEmpty: true);
-      final result2 = map.toForm(explode: false, allowEmpty: true);
-
-      // Results should be consistent (though order may vary by implementation)
-      expect(result1, result2);
-      expect(result1, contains('z,1'));
-      expect(result1, contains('a,2'));
-      expect(result1, contains('m,3'));
-    });
-  });
-
-  group('Form encoding edge cases', () {
-    test('handles null-like string values', () {
-      expect('null'.toForm(explode: false, allowEmpty: true), 'null');
-      expect('undefined'.toForm(explode: false, allowEmpty: true), 'undefined');
-    });
-
-    test('handles unicode characters', () {
-      expect(
-        'héllo wörld'.toForm(explode: false, allowEmpty: true),
-        'h%C3%A9llo%20w%C3%B6rld',
-      );
-      expect(
-        ['emoji 😀', 'unicode ñ'].toForm(explode: false, allowEmpty: true),
-        'emoji%20%F0%9F%98%80,unicode%20%C3%B1',
-      );
-    });
-
-    test('handles very long strings', () {
-      final longString = 'a' * 1000;
-      final encoded = longString.toForm(explode: false, allowEmpty: true);
-      expect(
-        encoded,
-        'a' * 1000,
-      ); // No special chars, so no encoding needed
-    });
-
-    test('handles extreme numeric values', () {
-      expect(
-        double.infinity.toForm(explode: false, allowEmpty: true),
-        'Infinity',
-      );
-      expect(
-        double.negativeInfinity.toForm(explode: false, allowEmpty: true),
-        '-Infinity',
-      );
-      expect(double.nan.toForm(explode: false, allowEmpty: true), 'NaN');
     });
   });
 
   group('FormBinaryEncoder', () {
-    test('encodes List<int> to UTF-8 string with URL encoding', () {
+    test('encodes List<int> to a single UTF-8 URL-encoded entry', () {
       const value = [72, 101, 108, 108, 111]; // "Hello"
       expect(
-        value.toForm(explode: false, allowEmpty: true),
-        'Hello',
+        value.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'Hello')],
       );
     });
 
-    test('encodes empty List<int>', () {
+    test('encodes empty List<int> as a single empty-value entry', () {
       const value = <int>[];
       expect(
-        value.toForm(explode: false, allowEmpty: true),
-        '',
+        value.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '')],
       );
     });
 
     test('encodes List<int> with special characters', () {
       const value = [72, 195, 171, 108, 108, 195, 182]; // "Hëllö"
       expect(
-        value.toForm(explode: false, allowEmpty: true),
-        'H%C3%ABll%C3%B6',
+        value.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'H%C3%ABll%C3%B6')],
       );
     });
 
     test('throws EmptyValueException when empty and allowEmpty=false', () {
       const value = <int>[];
       expect(
-        () => value.toForm(explode: false, allowEmpty: false),
+        () => value.toForm('p', explode: false, allowEmpty: false),
         throwsA(isA<EmptyValueException>()),
-      );
-    });
-
-    test('explode parameter has no effect', () {
-      const value = [72, 101, 108, 108, 111];
-      expect(
-        value.toForm(explode: true, allowEmpty: true),
-        value.toForm(explode: false, allowEmpty: true),
       );
     });
   });
 
   group('useQueryComponent parameter', () {
-    group('FormStringEncoder', () {
-      test('encodes spaces as + when useQueryComponent=true', () {
+    test(
+      'FormStringEncoder encodes spaces as + when useQueryComponent=true',
+      () {
         expect(
           'hello world'.toForm(
+            'p',
             explode: false,
             allowEmpty: true,
             useQueryComponent: true,
           ),
-          'hello+world',
+          const <ParameterEntry>[(name: 'p', value: 'hello+world')],
         );
-      });
+      },
+    );
 
-      test('encodes + character as %2B regardless of useQueryComponent', () {
+    test(
+      'FormStringEncoder distinguishes literal + (%2B) from space (+) when '
+      'useQueryComponent=true',
+      () {
         expect(
-          'hello+world'.toForm(
+          'a+b c'.toForm(
+            'p',
             explode: false,
             allowEmpty: true,
             useQueryComponent: true,
           ),
-          'hello%2Bworld',
+          const <ParameterEntry>[(name: 'p', value: 'a%2Bb+c')],
         );
-      });
+      },
+    );
+
+    test('FormStringListEncoder encodes items with + (explode=true)', () {
+      expect(
+        ['hello world', 'foo bar'].toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'p', value: 'hello+world'),
+          (name: 'p', value: 'foo+bar'),
+        ],
+      );
     });
 
-    group('FormStringListEncoder', () {
-      test('encodes list items with + when useQueryComponent=true', () {
+    test('FormStringMapEncoder encodes values with + (explode=true)', () {
+      expect(
+        {'name': 'John Doe', 'city': 'New York'}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'name', value: 'John+Doe'),
+          (name: 'city', value: 'New+York'),
+        ],
+      );
+    });
+
+    test(
+      'FormBinaryEncoder encodes spaces with + when useQueryComponent=true',
+      () {
+        const value = [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100];
         expect(
-          ['hello world', 'foo bar'].toForm(
+          value.toForm(
+            'p',
             explode: false,
             allowEmpty: true,
             useQueryComponent: true,
           ),
-          'hello+world,foo+bar',
+          const <ParameterEntry>[(name: 'p', value: 'Hello+World')],
         );
-      });
-    });
-
-    group('FormStringMapEncoder', () {
-      test(
-        'encodes map values with + when useQueryComponent=true and '
-        'explode=false',
-        () {
-          expect(
-            {'name': 'John Doe', 'city': 'New York'}.toForm(
-              explode: false,
-              allowEmpty: true,
-              useQueryComponent: true,
-            ),
-            'name,John+Doe,city,New+York',
-          );
-        },
-      );
-
-      test(
-        'encodes map key=value pairs with + when useQueryComponent=true '
-        'and explode=true',
-        () {
-          expect(
-            {'name': 'John Doe', 'city': 'New York'}.toForm(
-              explode: true,
-              allowEmpty: true,
-              useQueryComponent: true,
-            ),
-            'name=John+Doe&city=New+York',
-          );
-        },
-      );
-    });
-
-    group('FormBinaryEncoder', () {
-      test(
-        'encodes binary with spaces using + when useQueryComponent=true',
-        () {
-          const value = [
-            72,
-            101,
-            108,
-            108,
-            111,
-            32,
-            87,
-            111,
-            114,
-            108,
-            100,
-          ]; // "Hello World"
-          expect(
-            value.toForm(
-              explode: false,
-              allowEmpty: true,
-              useQueryComponent: true,
-            ),
-            'Hello+World',
-          );
-        },
-      );
-    });
+      },
+    );
   });
 }

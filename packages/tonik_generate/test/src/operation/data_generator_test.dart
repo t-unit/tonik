@@ -1034,9 +1034,12 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? _data({required Pet body}) {
-            return body.toForm(explode: true, allowEmpty: true, useQueryComponent: true);
+            return body
+                .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                .join('&');
           }
         ''';
 
@@ -1096,9 +1099,14 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? _data({Pet? body}) {
-            return body?.toForm(explode: true, allowEmpty: true, useQueryComponent: true);
+            return body == null
+                ? null
+                : body!
+                    .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                    .join('&');
           }
         ''';
 
@@ -1452,11 +1460,14 @@ void main() {
           securitySchemes: const {},
         );
 
-        const expectedMethod = '''
+        const expectedMethod = r'''
           Object? _data({required CreateUser body}) {
             return switch (body) {
               final CreateUserJson value => value.value.toJson(),
-              final CreateUserXWwwFormUrlencoded value => value.value.toForm(explode: true, allowEmpty: true, useQueryComponent: true),
+              final CreateUserXWwwFormUrlencoded value => value.value
+                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&'),
             };
           }
         ''';
@@ -1523,12 +1534,15 @@ void main() {
             securitySchemes: const {},
           );
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
             Object? _data({UpdateItem? body}) {
               if (body == null) return null;
               return switch (body) {
                 final UpdateItemJson value => value.value.toJson(),
-                final UpdateItemXWwwFormUrlencoded value => value.value.toForm(explode: true, allowEmpty: true, useQueryComponent: true),
+                final UpdateItemXWwwFormUrlencoded value => value.value
+                    .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                    .join('&'),
               };
             }
           ''';

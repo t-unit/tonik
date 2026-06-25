@@ -184,6 +184,15 @@ TypeReference buildMapStringStringType() => TypeReference(
     ]),
 );
 
+TypeReference buildParameterEntryListType() => TypeReference(
+  (b) => b
+    ..symbol = 'List'
+    ..url = 'dart:core'
+    ..types.add(
+      refer('ParameterEntry', 'package:tonik_util/tonik_util.dart'),
+    ),
+);
+
 /// Returns a Parameter for a boolean named parameter with default value.
 Parameter buildBoolParameter(
   String name, {
