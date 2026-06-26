@@ -1101,12 +1101,11 @@ void main() {
 
         const expectedMethod = r'''
           Object? _data({Pet? body}) {
-            return body == null
-                ? null
-                : body!
-                    .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
-                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
-                    .join('&');
+            if (body == null) return null;
+            return body
+                .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                .join('&');
           }
         ''';
 

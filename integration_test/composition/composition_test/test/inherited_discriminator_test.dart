@@ -50,7 +50,10 @@ void main() {
       });
 
       test('toForm - explode true', () {
-        final form = formValue(petChoice.toForm('p', explode: true, allowEmpty: true), 'p');
+        final form = formValue(
+          petChoice.toForm('p', explode: true, allowEmpty: true),
+          'p',
+        );
         expect(form, contains('petType=cat'));
         expect(form, contains('name=Whiskers'));
         expect(form, contains('meow=purr'));
@@ -112,7 +115,10 @@ void main() {
       });
 
       test('toForm - explode true', () {
-        final form = formValue(petChoice.toForm('p', explode: true, allowEmpty: true), 'p');
+        final form = formValue(
+          petChoice.toForm('p', explode: true, allowEmpty: true),
+          'p',
+        );
         expect(form, contains('petType=dog'));
         expect(form, contains('name=Buddy'));
         expect(form, contains('bark=woof'));
