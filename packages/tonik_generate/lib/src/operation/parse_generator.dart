@@ -41,7 +41,10 @@ class ParseGenerator {
     // Check if we have a default response with null content type
     var hasDefaultWithNullContentType = false;
 
-    for (final entry in responses.entries) {
+    final entries = responses.entries.toList()
+      ..sort((a, b) => a.key.compareTo(b.key));
+
+    for (final entry in entries) {
       final status = entry.key;
       final response = entry.value;
       final contentTypes = _getContentTypes(response);
