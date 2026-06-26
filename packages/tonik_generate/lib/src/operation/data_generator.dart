@@ -280,11 +280,15 @@ class DataGenerator {
           'body',
           model,
           useQueryComponent: true,
-          isNullable: !isRequired,
         );
         bodyCode
-          ..add(formExpr.code)
-          ..add(const Code(';'));
+          ..clear()
+          ..addAll([
+            if (!isRequired) const Code('if (body == null) return null;\n'),
+            const Code('return '),
+            formExpr.code,
+            const Code(';'),
+          ]);
       case ContentType.multipart:
         bodyCode
           ..clear()

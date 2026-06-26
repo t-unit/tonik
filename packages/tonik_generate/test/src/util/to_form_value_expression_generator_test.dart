@@ -59,36 +59,6 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    test('nullable ClassModel body null-checks before encoding', () {
-      final model = ClassModel(
-        name: 'Form',
-        isDeprecated: false,
-        properties: const [],
-        context: context,
-        examples: const [],
-      );
-
-      final result = buildToFormValueExpression(
-        'body',
-        model,
-        useQueryComponent: true,
-        isNullable: true,
-      );
-
-      final expected = format(r'''
-        test() {
-          body == null
-              ? null
-              : body!
-                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
-                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
-                  .join('&');
-        }
-      ''');
-
-      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
-    });
-
     test('AnyModel body renders directly via encodeAnyToForm', () {
       final result = buildToFormValueExpression(
         'body',

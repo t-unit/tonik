@@ -10,7 +10,6 @@ BuiltExpression buildToFormValueExpression(
   required bool useQueryComponent,
   bool explodeLiteral = true,
   bool allowEmptyLiteral = true,
-  bool isNullable = false,
 }) {
   final receiver = refer(valueExpression);
   final resolved = model.resolved;
@@ -44,7 +43,7 @@ BuiltExpression buildToFormValueExpression(
   }
 
   final entries = buildFormEntriesValueExpression(
-    isNullable ? receiver.nullChecked : receiver,
+    receiver,
     model,
     paramName: literalString(''),
     explode: literalBool(explodeLiteral),
@@ -60,13 +59,7 @@ BuiltExpression buildToFormValueExpression(
     );
   }
 
-  // A nullable body must collapse to null rather than throw.
-  final body = _entriesToBody(entries);
-  return BuiltExpression.simple(
-    isNullable
-        ? receiver.equalTo(literalNull).conditional(literalNull, body)
-        : body,
-  );
+  return BuiltExpression.simple(_entriesToBody(entries));
 }
 
 Expression _entriesToBody(Expression entries) {
