@@ -565,6 +565,25 @@ void main() {
       );
     });
 
+    test('throws for int list with a non-finite double', () {
+      final json = <Object?>[double.infinity];
+      expect(
+        () => json.decodeJsonList<int>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('surfaces the offending element when a double list element is '
+        'invalid', () {
+      final json = jsonDecode('["x"]') as Object?;
+      expect(
+        () => json.decodeJsonList<double>(),
+        throwsA(
+          isA<InvalidTypeException>().having((e) => e.value, 'value', 'x'),
+        ),
+      );
+    });
+
     test('decodes int list of integer-valued JSON numbers', () {
       final json = jsonDecode('[1,2,3]') as Object?;
       expect(json.decodeJsonList<int>(), [1, 2, 3]);
