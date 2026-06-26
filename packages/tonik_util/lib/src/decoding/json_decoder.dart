@@ -246,7 +246,11 @@ extension JsonDecoder on Object? {
 
   /// Decodes a JSON value to a List of type [T].
   ///
-  /// Throws [InvalidTypeException] if the value is not a list or is null.
+  /// For `double` and `int` elements, JSON numbers are coerced the same way as
+  /// the scalar [decodeJsonDouble]/[decodeJsonInt] decoders: integer JSON
+  /// numbers satisfy a `double` list, and whole-number doubles satisfy an `int`
+  /// list. Throws [InvalidTypeException] if the value is not a list, is null,
+  /// or contains an element that cannot be coerced to [T].
   List<T> decodeJsonList<T>({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
@@ -264,6 +268,21 @@ extension JsonDecoder on Object? {
     }
 
     final list = this! as List;
+
+    if (T == double) {
+      return [
+        for (final Object? element in list)
+          element.decodeJsonDouble(context: context) as T,
+      ];
+    }
+
+    if (T == int) {
+      return [
+        for (final Object? element in list)
+          element.decodeJsonInt(context: context) as T,
+      ];
+    }
+
     final mapped = list.whereType<T>();
 
     if (mapped.length != list.length) {
