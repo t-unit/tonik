@@ -702,6 +702,25 @@ void main() {
         expect(result.timeZoneName, 'UTC');
       });
 
+      test('should parse compact basic form with lowercase t separator', () {
+        final lower = OffsetDateTime.parse('20240115t103000Z');
+        final upper = OffsetDateTime.parse('20240115T103000Z');
+
+        expect(lower.isUtc, isTrue);
+        expect(lower.isAtSameMomentAs(upper), isTrue);
+        expect(lower.millisecondsSinceEpoch, upper.millisecondsSinceEpoch);
+      });
+
+      test('should accept lowercase t separator with fractional seconds', () {
+        final lower = OffsetDateTime.parse('2024-01-15t10:30:00.123Z');
+        final upper = OffsetDateTime.parse('2024-01-15T10:30:00.123Z');
+
+        expect(lower.isUtc, isTrue);
+        expect(lower.millisecond, 123);
+        expect(lower.isAtSameMomentAs(upper), isTrue);
+        expect(lower.millisecondsSinceEpoch, upper.millisecondsSinceEpoch);
+      });
+
       test('should parse UTC datetime with microseconds', () {
         // Arrange & Act
         const input = '2023-12-25T15:30:45.123456Z';
