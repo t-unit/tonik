@@ -132,41 +132,37 @@ extension JsonDecoder on Object? {
 
   /// Decodes a JSON value to an int.
   ///
+  /// `jsonDecode` yields a [double] for numbers written in fractional or
+  /// exponent form (e.g. `10.0`, `1e1`); such whole-number doubles denote an
+  /// integer and are accepted, matching JSON Schema's `integer` definition.
   /// Throws [InvalidTypeException] if the value is not a valid int or is null.
   int decodeJsonInt({String? context}) {
-    if (this == null) {
-      throw InvalidTypeException(
-        value: 'null',
-        targetType: int,
-        context: context,
-      );
+    final value = this;
+    if (value is int) {
+      return value;
     }
-    if (this is! int) {
-      throw InvalidTypeException(
-        value: toString(),
-        targetType: int,
-        context: context,
-      );
+    if (value is double &&
+        value.isFinite &&
+        value == value.truncateToDouble()) {
+      return value.toInt();
     }
-    return this! as int;
+    throw InvalidTypeException(
+      value: value == null ? 'null' : toString(),
+      targetType: int,
+      context: context,
+    );
   }
 
   /// Decodes a JSON value to a nullable int.
   ///
-  /// Returns null if the value is null or an empty string.
+  /// Returns null if the value is null.
+  /// Accepts whole-number doubles like [decodeJsonInt].
   /// Throws [InvalidTypeException] if the value is not a valid int.
   int? decodeJsonNullableInt({String? context}) {
     if (this == null) {
       return null;
     }
-    if (this is! int) {
-      throw InvalidTypeException(
-        value: toString(),
-        targetType: int,
-        context: context,
-      );
-    }
-    return this! as int;
+    return decodeJsonInt(context: context);
   }
 
   /// Decodes a JSON value to a num.

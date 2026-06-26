@@ -150,7 +150,13 @@ void main() {
         );
         expect(
           () => null.decodeJsonInt(),
-          throwsA(isA<InvalidTypeException>()),
+          throwsA(
+            isA<InvalidTypeException>().having(
+              (e) => e.value,
+              'value',
+              'null',
+            ),
+          ),
         );
       });
 
@@ -160,6 +166,74 @@ void main() {
         expect(null.decodeJsonNullableInt(), isNull);
         expect(
           () => 'foo'.decodeJsonNullableInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('decodes whole-number double JSON values as int', () {
+        expect((10.0 as Object?).decodeJsonInt(), 10);
+        expect((1e1 as Object?).decodeJsonInt(), 10);
+        expect((-3.0 as Object?).decodeJsonInt(), -3);
+        expect((0.0 as Object?).decodeJsonInt(), 0);
+      });
+
+      test('decodes nullable whole-number double JSON values as int', () {
+        expect((10.0 as Object?).decodeJsonNullableInt(), 10);
+        expect((1e1 as Object?).decodeJsonNullableInt(), 10);
+        expect((-3.0 as Object?).decodeJsonNullableInt(), -3);
+        expect((0.0 as Object?).decodeJsonNullableInt(), 0);
+        expect(null.decodeJsonNullableInt(), isNull);
+      });
+
+      test('throws on fractional double carrying the source value', () {
+        expect(
+          () => (1.5 as Object?).decodeJsonInt(),
+          throwsA(
+            isA<InvalidTypeException>().having((e) => e.value, 'value', '1.5'),
+          ),
+        );
+        expect(
+          () => (1.5 as Object?).decodeJsonNullableInt(),
+          throwsA(
+            isA<InvalidTypeException>().having((e) => e.value, 'value', '1.5'),
+          ),
+        );
+      });
+
+      test('throws on non-finite double', () {
+        expect(
+          () => (double.nan as Object?).decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (double.infinity as Object?).decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (-double.infinity as Object?).decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (double.nan as Object?).decodeJsonNullableInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (double.infinity as Object?).decodeJsonNullableInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (-double.infinity as Object?).decodeJsonNullableInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('throws on non-numeric types', () {
+        expect(
+          () => true.decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => true.decodeJsonNullableInt(),
           throwsA(isA<InvalidTypeException>()),
         );
       });
