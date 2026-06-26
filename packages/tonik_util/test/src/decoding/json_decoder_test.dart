@@ -150,7 +150,13 @@ void main() {
         );
         expect(
           () => null.decodeJsonInt(),
-          throwsA(isA<InvalidTypeException>()),
+          throwsA(
+            isA<InvalidTypeException>().having(
+              (e) => e.value,
+              'value',
+              'null',
+            ),
+          ),
         );
       });
 
@@ -179,14 +185,18 @@ void main() {
         expect(null.decodeJsonNullableInt(), isNull);
       });
 
-      test('throws on fractional double', () {
+      test('throws on fractional double carrying the source value', () {
         expect(
           () => (1.5 as Object?).decodeJsonInt(),
-          throwsA(isA<InvalidTypeException>()),
+          throwsA(
+            isA<InvalidTypeException>().having((e) => e.value, 'value', '1.5'),
+          ),
         );
         expect(
           () => (1.5 as Object?).decodeJsonNullableInt(),
-          throwsA(isA<InvalidTypeException>()),
+          throwsA(
+            isA<InvalidTypeException>().having((e) => e.value, 'value', '1.5'),
+          ),
         );
       });
 
