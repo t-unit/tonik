@@ -79,8 +79,12 @@ class OffsetDateTime implements DateTime {
       );
     }
 
-    // Handle different separator formats (T or space)
-    final normalizedInput = input.replaceFirst(' ', 'T');
+    // DateTime.parse rejects the RFC 3339 lowercase 't' separator. Only a 't'
+    // sitting between two digits is the genuine date/time separator; matching
+    // bare 't' would clobber non-separator characters in malformed input.
+    final normalizedInput = input
+        .replaceFirst(' ', 'T')
+        .replaceFirst(RegExp(r'(?<=\d)t(?=\d)'), 'T');
 
     // Check if it has timezone offset (±HH:MM or ±HHMM)
     final timezoneRegex = RegExp(r'[+-]\d{2}:?\d{2}$');

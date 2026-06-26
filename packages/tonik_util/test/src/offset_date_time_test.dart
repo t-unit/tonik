@@ -702,6 +702,25 @@ void main() {
         expect(result.timeZoneName, 'UTC');
       });
 
+      test('should parse compact basic form with lowercase t separator', () {
+        final lower = OffsetDateTime.parse('20240115t103000Z');
+        final upper = OffsetDateTime.parse('20240115T103000Z');
+
+        expect(lower.isUtc, isTrue);
+        expect(lower.isAtSameMomentAs(upper), isTrue);
+        expect(lower.millisecondsSinceEpoch, upper.millisecondsSinceEpoch);
+      });
+
+      test('should accept lowercase t separator with fractional seconds', () {
+        final lower = OffsetDateTime.parse('2024-01-15t10:30:00.123Z');
+        final upper = OffsetDateTime.parse('2024-01-15T10:30:00.123Z');
+
+        expect(lower.isUtc, isTrue);
+        expect(lower.millisecond, 123);
+        expect(lower.isAtSameMomentAs(upper), isTrue);
+        expect(lower.millisecondsSinceEpoch, upper.millisecondsSinceEpoch);
+      });
+
       test('should parse UTC datetime with microseconds', () {
         // Arrange & Act
         const input = '2023-12-25T15:30:45.123456Z';
@@ -719,6 +738,33 @@ void main() {
         expect(result.millisecond, 123);
         expect(result.microsecond, 456);
         expect(result.timeZoneName, 'UTC');
+      });
+
+      test('should accept lowercase t separator with Z suffix as UTC', () {
+        final lower = OffsetDateTime.parse('2024-01-15t10:30:00Z');
+        final upper = OffsetDateTime.parse('2024-01-15T10:30:00Z');
+
+        expect(lower.isUtc, isTrue);
+        expect(lower.isAtSameMomentAs(upper), isTrue);
+        expect(lower.millisecondsSinceEpoch, upper.millisecondsSinceEpoch);
+      });
+
+      test('should accept lowercase t with lowercase z suffix as UTC', () {
+        final lower = OffsetDateTime.parse('2024-01-15t10:30:00z');
+        final upper = OffsetDateTime.parse('2024-01-15T10:30:00Z');
+
+        expect(lower.isUtc, isTrue);
+        expect(lower.timeZoneOffset, Duration.zero);
+        expect(lower.isAtSameMomentAs(upper), isTrue);
+        expect(lower.millisecondsSinceEpoch, upper.millisecondsSinceEpoch);
+      });
+
+      test('should accept uppercase T with lowercase z suffix as UTC', () {
+        final result = OffsetDateTime.parse('2024-01-15T10:30:00z');
+        final upper = OffsetDateTime.parse('2024-01-15T10:30:00Z');
+
+        expect(result.isUtc, isTrue);
+        expect(result.isAtSameMomentAs(upper), isTrue);
       });
     });
 
@@ -773,6 +819,22 @@ void main() {
         // Should match system timezone for milliseconds format
         final expectedLocalTime = DateTime.parse(input);
         expect(result.timeZoneOffset, expectedLocalTime.timeZoneOffset);
+      });
+
+      test('should accept lowercase t separator without timezone', () {
+        final result = OffsetDateTime.parse('2024-01-15t10:30:00');
+        final upper = OffsetDateTime.parse('2024-01-15T10:30:00');
+
+        expect(result.year, 2024);
+        expect(result.month, 1);
+        expect(result.day, 15);
+        expect(result.hour, 10);
+        expect(result.minute, 30);
+        expect(result.second, 0);
+
+        final expectedLocalTime = DateTime.parse('2024-01-15T10:30:00');
+        expect(result.timeZoneOffset, expectedLocalTime.timeZoneOffset);
+        expect(result.isAtSameMomentAs(upper), isTrue);
       });
     });
 
@@ -851,6 +913,30 @@ void main() {
         expect(result.millisecond, 123);
         expect(result.microsecond, 456);
       });
+
+      test('should accept lowercase t separator with offset and colon', () {
+        final lower = OffsetDateTime.parse('2024-01-15t10:30:00+05:30');
+        final upper = OffsetDateTime.parse('2024-01-15T10:30:00+05:30');
+
+        expect(lower.timeZoneName, 'UTC+05:30');
+        expect(lower.timeZoneOffset.inMinutes, 330);
+        expect(lower.hour, 10);
+        expect(lower.minute, 30);
+        expect(lower.isAtSameMomentAs(upper), isTrue);
+        expect(lower.millisecondsSinceEpoch, upper.millisecondsSinceEpoch);
+      });
+
+      test('should accept lowercase t separator with offset without colon', () {
+        final lower = OffsetDateTime.parse('2024-01-15t10:30:00+0530');
+        final upper = OffsetDateTime.parse('2024-01-15T10:30:00+0530');
+
+        expect(lower.timeZoneName, 'UTC+05:30');
+        expect(lower.timeZoneOffset.inMinutes, 330);
+        expect(lower.hour, 10);
+        expect(lower.minute, 30);
+        expect(lower.isAtSameMomentAs(upper), isTrue);
+        expect(lower.millisecondsSinceEpoch, upper.millisecondsSinceEpoch);
+      });
     });
 
     group('error handling', () {
@@ -900,6 +986,20 @@ void main() {
           () => OffsetDateTime.parse('2023-12-25T15:30:45+05:60'),
           // Invalid minutes
           throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('should not replace a non-separator lowercase t in malformed '
+          'input', () {
+        expect(
+          () => OffsetDateTime.parse('not a date'),
+          throwsA(
+            isA<InvalidFormatException>().having(
+              (e) => e.value,
+              'value',
+              'notTa date',
+            ),
+          ),
         );
       });
     });
