@@ -643,6 +643,90 @@ void main() {
       );
     });
 
+    group('for list of nullable items', () {
+      AliasModel nullableItem(Model model) => AliasModel(
+        model: model,
+        context: context,
+        isNullable: true,
+        defaultValue: null,
+        examples: const [],
+      );
+
+      String encode(Model itemModel) => emit(
+        buildToJsonPropertyExpression(
+          'items',
+          Property(
+            name: 'items',
+            model: ListModel(
+              content: nullableItem(itemModel),
+              context: context,
+              examples: const [],
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          nameManager: nameManager,
+        ),
+      );
+
+      test('string items pass through preserving null elements', () {
+        expect(encode(StringModel(context: context)), 'items');
+      });
+
+      test('date-time items null-safe encode each element', () {
+        expect(
+          encode(DateTimeModel(context: context)),
+          'items.map((e) => e?.toTimeZonedIso8601String()).toList()',
+        );
+      });
+
+      test('int items pass through preserving null elements', () {
+        expect(encode(IntegerModel(context: context)), 'items');
+      });
+
+      test('enum items null-safe encode each element', () {
+        final enumModel = EnumModel<String>(
+          name: 'Status',
+          values: {
+            const EnumEntry(value: 'active'),
+            const EnumEntry(value: 'inactive'),
+          },
+          isNullable: false,
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        );
+        expect(
+          encode(enumModel),
+          'items.map((e) => e?.toJson()).toList()',
+        );
+      });
+
+      test('base64 items null-safe encode each element', () {
+        expect(
+          encode(Base64Model(context: context)),
+          'items.map((e) => e?.toBytes().encodeToBase64String()).toList()',
+        );
+      });
+
+      test('class items null-safe encode each element', () {
+        final classModel = ClassModel(
+          name: 'Address',
+          isDeprecated: false,
+          properties: const [],
+          context: context,
+          examples: const [],
+        );
+        expect(
+          encode(classModel),
+          'items.map((e) => e?.toJson()).toList()',
+        );
+      });
+    });
+
     test('for nullable List<DecimalModel> property', () {
       final property = Property(
         name: 'lineItems',

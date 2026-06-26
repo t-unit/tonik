@@ -876,9 +876,23 @@ class ModelImporter {
   ) {
     final items = schema.items;
     final modelContext = context.push('array');
-    shell.content = items == null
-        ? AnyModel(context: modelContext)
-        : _resolveSchemaRef(null, items, modelContext);
+    if (items == null) {
+      shell.content = AnyModel(context: modelContext);
+      return;
+    }
+
+    var content = _resolveSchemaRef(null, items, modelContext);
+    final itemsNullable = items.isNullable ?? items.type.contains('null');
+    if (itemsNullable && !content.isEffectivelyNullable) {
+      content = AliasModel(
+        model: content,
+        context: modelContext,
+        isNullable: true,
+        defaultValue: null,
+        examples: const [],
+      );
+    }
+    shell.content = content;
   }
 
   /// Populates a ClassModel shell.
@@ -1617,9 +1631,23 @@ class ModelImporter {
       models.add(listModel);
     }
 
-    listModel.content = items == null
-        ? AnyModel(context: modelContext)
-        : _resolveSchemaRef(null, items, modelContext);
+    if (items == null) {
+      listModel.content = AnyModel(context: modelContext);
+      return listModel;
+    }
+
+    var content = _resolveSchemaRef(null, items, modelContext);
+    final itemsNullable = items.isNullable ?? items.type.contains('null');
+    if (itemsNullable && !content.isEffectivelyNullable) {
+      content = AliasModel(
+        model: content,
+        context: modelContext,
+        isNullable: true,
+        defaultValue: null,
+        examples: const [],
+      );
+    }
+    listModel.content = content;
 
     return listModel;
   }

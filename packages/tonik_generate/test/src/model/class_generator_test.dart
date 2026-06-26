@@ -886,6 +886,49 @@ void main() {
         expect(field.annotations, isEmpty);
       });
 
+      test('generates list of nullable strings property', () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Profile',
+          properties: [
+            Property(
+              name: 'nicknames',
+              model: ListModel(
+                content: AliasModel(
+                  model: StringModel(context: context),
+                  context: context,
+                  isNullable: true,
+                  defaultValue: null,
+                  examples: const [],
+                ),
+                context: context,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final field = result.fields.first;
+        final fieldType = field.type! as TypeReference;
+
+        expect(field.name, 'nicknames');
+        expect(fieldType.symbol, 'List');
+        expect(fieldType.isNullable, isFalse);
+        expect(fieldType.types, hasLength(1));
+
+        final itemType = fieldType.types.first as TypeReference;
+        expect(itemType.symbol, 'String');
+        expect(itemType.isNullable, isTrue);
+      });
+
       test('generates nested class property', () {
         final model = ClassModel(
           isDeprecated: false,

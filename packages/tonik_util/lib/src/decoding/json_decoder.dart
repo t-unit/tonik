@@ -283,6 +283,22 @@ extension JsonDecoder on Object? {
       ];
     }
 
+    // Nullable numeric items still need int↔double coercion; the whereType
+    // path below would skip it.
+    if (T == _typeOf<double?>()) {
+      return [
+        for (final Object? element in list)
+          element.decodeJsonNullableDouble(context: context) as T,
+      ];
+    }
+
+    if (T == _typeOf<int?>()) {
+      return [
+        for (final Object? element in list)
+          element.decodeJsonNullableInt(context: context) as T,
+      ];
+    }
+
     final mapped = list.whereType<T>();
 
     if (mapped.length != list.length) {
@@ -554,3 +570,5 @@ extension JsonDecoder on Object? {
     return decodeJsonMap(decodeValue, context: context);
   }
 }
+
+Type _typeOf<T>() => T;

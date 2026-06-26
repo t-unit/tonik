@@ -317,7 +317,41 @@ BuiltExpression _buildListFromJsonBody(
       : 'decodeJsonList';
 
   final unwrappedContent = content is AliasModel ? content.model : content;
+  final isItemNullable = content is AliasModel
+      ? content.isNullable
+      : content.isEffectivelyNullable;
   final inlineFunctions = <InlineHelper>[];
+
+  // For nullable item types whose element decoder cannot itself accept null
+  // (named models, temporal/decimal/uri primitives, binary), the list type
+  // argument must be Object? so the runtime decoder preserves nulls, and the
+  // per-element closure must short-circuit null before decoding.
+  Expression elementClosure(Expression decodeOfE) {
+    if (!isItemNullable) {
+      return Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body = decodeOfE.code,
+      ).closure;
+    }
+    return Method(
+      (b) => b
+        ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+        ..body = refer('e')
+            .equalTo(literalNull)
+            .conditional(literalNull, decodeOfE)
+            .code,
+    ).closure;
+  }
+
+  Expression mapList(Expression listExpr, Expression closure) =>
+      effectiveNullable
+      ? listExpr
+            .nullSafeProperty('map')
+            .call([closure])
+            .property('toList')
+            .call([])
+      : listExpr.property('map').call([closure]).property('toList').call([]);
 
   Expression result;
 
@@ -334,27 +368,13 @@ BuiltExpression _buildListFromJsonBody(
         useImmutableCollections: useImmutableCollections,
       );
       inlineFunctions.addAll(inner.inlineFunctions);
-      final mapFunction = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body = inner.unsafeRawBody.code,
-      ).closure;
+      final mapFunction = elementClosure(inner.unsafeRawBody);
       final listExpr = receiver.property(listDecoder).call(
         [],
         contextParam,
         [refer('Object?', 'dart:core')],
       );
-      result = effectiveNullable
-          ? listExpr
-                .nullSafeProperty('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([])
-          : listExpr
-                .property('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([]);
+      result = mapList(listExpr, mapFunction);
 
     case ClassModel() ||
         AllOfModel() ||
@@ -362,26 +382,19 @@ BuiltExpression _buildListFromJsonBody(
         AnyOfModel() ||
         EnumModel():
       final className = nameManager.modelName(unwrappedContent);
-      final mapFunction = refer(
+      final fromJson = refer(
         className,
         sourceFileUrl(package, 'model', className),
       ).property('fromJson');
+      final mapFunction = isItemNullable
+          ? elementClosure(fromJson.call([refer('e')]))
+          : fromJson;
       final listExpr = receiver.property(listDecoder).call(
         [],
         contextParam,
         [refer('Object?', 'dart:core')],
       );
-      result = effectiveNullable
-          ? listExpr
-                .nullSafeProperty('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([])
-          : listExpr
-                .property('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([]);
+      result = mapList(listExpr, mapFunction);
 
     case final MapModel mapModel:
       final inner = _buildMapFromJsonExpression(
@@ -395,112 +408,61 @@ BuiltExpression _buildListFromJsonBody(
         useImmutableCollections: useImmutableCollections,
       );
       inlineFunctions.addAll(inner.inlineFunctions);
-      final mapDecoderClosure = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body = inner.unsafeRawBody.code,
-      ).closure;
+      final mapDecoderClosure = elementClosure(inner.unsafeRawBody);
       final mapListExpr = receiver.property(listDecoder).call(
         [],
         contextParam,
         [refer('Object?', 'dart:core')],
       );
-      result = effectiveNullable
-          ? mapListExpr
-                .nullSafeProperty('map')
-                .call([mapDecoderClosure])
-                .property('toList')
-                .call([])
-          : mapListExpr
-                .property('map')
-                .call([mapDecoderClosure])
-                .property('toList')
-                .call([]);
+      result = mapList(mapListExpr, mapDecoderClosure);
 
     case DateTimeModel() || DateModel() || DecimalModel() || UriModel():
       final jsonType = _jsonTypeForPrimitive(unwrappedContent);
       final decodeMethod = _decodeMethodForPrimitive(unwrappedContent)!;
-      final mapFunction = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body = refer(
-            'e',
-          ).property(decodeMethod).call([], contextParam).code,
-      ).closure;
+      final mapFunction = elementClosure(
+        refer('e').property(decodeMethod).call([], contextParam),
+      );
+      final typeArg = isItemNullable
+          ? refer('Object?', 'dart:core')
+          : refer(jsonType, 'dart:core');
       final listExpr = receiver.property(listDecoder).call(
         [],
         contextParam,
-        [refer(jsonType, 'dart:core')],
+        [typeArg],
       );
-      result = effectiveNullable
-          ? listExpr
-                .nullSafeProperty('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([])
-          : listExpr
-                .property('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([]);
+      result = mapList(listExpr, mapFunction);
 
     case BinaryModel():
-      final mapFunction = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body =
-              refer(
-                'TonikFileBytes',
-                'package:tonik_util/tonik_util.dart',
-              ).call([
-                refer('e').property('decodeJsonBinary').call([], contextParam),
-              ]).code,
-      ).closure;
+      final mapFunction = elementClosure(
+        refer('TonikFileBytes', 'package:tonik_util/tonik_util.dart').call([
+          refer('e').property('decodeJsonBinary').call([], contextParam),
+        ]),
+      );
+      final typeArg = isItemNullable
+          ? refer('Object?', 'dart:core')
+          : refer('String', 'dart:core');
       final listExpr = receiver.property(listDecoder).call(
         [],
         contextParam,
-        [refer('String', 'dart:core')],
+        [typeArg],
       );
-      result = effectiveNullable
-          ? listExpr
-                .nullSafeProperty('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([])
-          : listExpr
-                .property('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([]);
+      result = mapList(listExpr, mapFunction);
 
     case Base64Model():
-      final mapFunction = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body =
-              refer(
-                'TonikFileBytes',
-                'package:tonik_util/tonik_util.dart',
-              ).call([
-                refer('e').property('decodeJsonBase64').call([], contextParam),
-              ]).code,
-      ).closure;
+      final mapFunction = elementClosure(
+        refer('TonikFileBytes', 'package:tonik_util/tonik_util.dart').call([
+          refer('e').property('decodeJsonBase64').call([], contextParam),
+        ]),
+      );
+      final typeArg = isItemNullable
+          ? refer('Object?', 'dart:core')
+          : refer('String', 'dart:core');
       final listExpr = receiver.property(listDecoder).call(
         [],
         contextParam,
-        [refer('String', 'dart:core')],
+        [typeArg],
       );
-      result = effectiveNullable
-          ? listExpr
-                .nullSafeProperty('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([])
-          : listExpr
-                .property('map')
-                .call([mapFunction])
-                .property('toList')
-                .call([]);
+      result = mapList(listExpr, mapFunction);
 
     case NeverModel():
       final throwExpr = generateJsonDecodingExceptionExpression(

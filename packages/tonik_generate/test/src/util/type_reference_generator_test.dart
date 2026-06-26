@@ -199,6 +199,36 @@ void main() {
         },
       );
 
+      test(
+        'returns List<String?> for ListModel whose content is an unnamed '
+        'nullable AliasModel over StringModel',
+        () {
+          final model = ListModel(
+            content: AliasModel(
+              model: StringModel(context: context),
+              context: context,
+              isNullable: true,
+              defaultValue: null,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+          );
+
+          final result = typeReference(model, nameManager, package);
+
+          expect(result.symbol, 'List');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isFalse);
+          expect(result.types, hasLength(1));
+
+          final innerType = result.types[0] as TypeReference;
+          expect(innerType.symbol, 'String');
+          expect(innerType.url, 'dart:core');
+          expect(innerType.isNullable, isTrue);
+        },
+      );
+
       test('returns TonikFile TypeReference for Base64Model', () {
         final model = Base64Model(context: context);
 
