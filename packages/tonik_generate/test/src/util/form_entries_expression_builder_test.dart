@@ -336,7 +336,8 @@ void main() {
       return !body.contains('EncodingException') && !body.contains('.map(');
     }
 
-    // Enumerates every concrete Model subtype so the two switch statements cannot drift apart.
+    // Enumerates every concrete Model subtype so the two switch statements
+    // cannot drift apart.
     List<Model> allConcreteModels() => <Model>[
       StringModel(context: context),
       BooleanModel(context: context),
@@ -421,7 +422,8 @@ void main() {
     test(
       'every scalar arm of buildUriEncodeExpression is element-encodable',
       () {
-        // Collections and BinaryModel single-value encode but are deliberately not element-encodable.
+        // Collections and BinaryModel single-value encode but are deliberately
+        // not element-encodable.
         const nonElementTypes = [MapModel, ListModel, BinaryModel];
         for (final model in allConcreteModels()) {
           if (nonElementTypes.contains(model.runtimeType)) continue;
