@@ -97,6 +97,25 @@ void main() {
   });
 
   group('Matrix style - Arrays', () {
+    test(
+      'nullable-string array percent-encodes elements and empties null',
+      () async {
+        final api = buildMatrixApi();
+        final response = await api.testMatrixArrayNullableString(
+          values: ['a b', null, 'c'],
+        );
+
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
+
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/matrix/array/nullable-string/;values=a%20b,,c',
+        );
+      },
+    );
+
     test('string array (explode=false) encodes as ;param=v1,v2,v3', () async {
       final api = buildMatrixApi();
       final response = await api.testMatrixArrayString(

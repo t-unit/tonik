@@ -226,6 +226,58 @@ void main() {
       );
     });
 
+    test('null-guards each element for List<String?>', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.map<String>((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('null-guards each element for List<int?>', () {
+      final model = ListModel(
+        content: IntegerModel(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.map<String>((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty)).toList().toMatrix(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates map and toMatrix call for List<Enum>', () {
       final enumModel = EnumModel(
         isDeprecated: false,

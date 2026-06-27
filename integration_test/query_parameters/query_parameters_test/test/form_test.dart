@@ -469,6 +469,33 @@ void main() {
         'listOneOfComplexMixed=1',
       );
     });
+
+    test('nullable string escapes special chars and encodes null as empty',
+        () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormList(
+        listNullableString: ['hello world', 'foo/bar', null],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listNullableString=hello%20world,foo%2Fbar,',
+      );
+    });
+
+    test('nullable integer encodes null element as empty', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormList(
+        listNullableInteger: [1, null, 2],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listNullableInteger=1,,2',
+      );
+    });
   });
 
   group('list - explode true', () {
@@ -513,6 +540,34 @@ void main() {
       expect(response, isA<TonikError<void>>());
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
+    });
+
+    test('nullable string escapes special chars and encodes null as empty',
+        () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormListExplode(
+        listNullableString: ['hello world', 'foo/bar', null],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listNullableString=hello%20world&listNullableString=foo%2Fbar'
+        '&listNullableString=',
+      );
+    });
+
+    test('nullable integer encodes null element as empty', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormListExplode(
+        listNullableInteger: [1, null, 2],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listNullableInteger=1&listNullableInteger=&listNullableInteger=2',
+      );
     });
   });
 

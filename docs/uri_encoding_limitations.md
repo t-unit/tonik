@@ -61,6 +61,17 @@ Actual:    ?filter%5Bcolor%5D=red&filter%5Bsize%5D=large
 
 The square brackets `[` and `]` are encoded as `%5B` and `%5D` respectively. While these brackets are part of the parameter name syntax in deepObject encoding, Dart's `Uri` class treats them as reserved characters that must be encoded.
 
+## Null Array Elements in Parameters
+
+OpenAPI's parameter styles (`form`, `simple`, `label`, `matrix`, `spaceDelimited`, `pipeDelimited`, `deepObject`) are based on RFC 6570 URI Templates, which have **no representation for a `null` element inside an array**. So when an array with nullable items (`items: { nullable: true }`, or `type: [T, "null"]` in OAS 3.1) is used as a path, query, or header parameter, there is no standard way to put `null` on the wire.
+
+Tonik handles this pragmatically:
+
+- **Sending a request:** a `null` element is encoded as an empty string. For example, `['a', null, 'b']` becomes `a,,b`.
+- **Reading a response:** an empty element cannot be reliably turned back into `null`. String items decode it as the empty string `''`; typed items (e.g. `List<int?>`) cannot decode an empty element and will report a decoding error.
+
+Nullable array items are fully supported in **JSON request and response bodies**, where `null` is a well-defined value. In **URL parameters** they are encoded best-effort but are not round-trippable, because the parameter styles themselves do not define null elements. If you control the API, prefer non-nullable array items for parameters.
+
 ## Why This Works in Practice
 
 Despite these encoding differences, **the generated clients work correctly** with most servers because:

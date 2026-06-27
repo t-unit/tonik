@@ -54,12 +54,13 @@ Expression _buildSimpleParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    ListModel(:final content) => _buildListSimpleExpression(
+    final ListModel m => _buildListSimpleExpression(
       valueExpression,
-      content,
+      m.content,
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
     AliasModel() => _buildSimpleParameterExpression(
       valueExpression,
@@ -111,6 +112,7 @@ Expression _buildListSimpleExpression(
   required Expression explode,
   required Expression allowEmpty,
   bool isNullable = false,
+  bool isContentNullable = false,
 }) {
   final listPropertyAccess = isNullable
       ? valueExpression.nullSafeProperty('toSimple')
@@ -120,14 +122,41 @@ Expression _buildListSimpleExpression(
       ? valueExpression.nullSafeProperty('map')
       : valueExpression.property('map');
 
+  // A null array element encodes to the empty string, coercing the element
+  // type back to non-null `String` for the whole-list `toSimple` extension.
+  Expression nullGuard(Expression encoded) => isContentNullable
+      ? refer('e').equalTo(literalNull).conditional(literalString(''), encoded)
+      : encoded;
+
   return switch (contentModel) {
-    StringModel() => listPropertyAccess.call(
+    StringModel() when !isContentNullable => listPropertyAccess.call(
       [],
       {
         'explode': explode,
         'allowEmpty': allowEmpty,
       },
     ),
+    StringModel() =>
+      listMapAccess
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e').ifNullThen(literalString('')).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toSimple')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+            },
+          ),
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
@@ -144,11 +173,13 @@ Expression _buildListSimpleExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = _buildSimpleParameterExpression(
-                  refer('e'),
-                  contentModel,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
+                ..body = nullGuard(
+                  _buildSimpleParameterExpression(
+                    refer('e'),
+                    contentModel,
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                  ),
                 ).code,
             ).closure,
           ])
@@ -169,6 +200,7 @@ Expression _buildListSimpleExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      isContentNullable: isContentNullable,
     ),
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
       listMapAccess

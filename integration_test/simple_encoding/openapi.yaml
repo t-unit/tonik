@@ -316,6 +316,87 @@ paths:
                 items:
                   type: boolean
 
+  /headers/roundtrip/lists/nullable:
+    get:
+      operationId: testHeaderRoundtripNullableLists
+      tags:
+        - simple-encoding
+      summary: Roundtrip test for simple lists with nullable items in headers
+      description: Tests encoding of arrays whose items are nullable
+      parameters:
+        - name: X-Nullable-String-List
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: true
+        - name: X-Nullable-Integer-List
+          in: header
+          style: simple
+          schema:
+            type: array
+            items:
+              type: integer
+              nullable: true
+      responses:
+        '200':
+          description: Echoed nullable list headers
+          headers:
+            X-Nullable-String-List:
+              schema:
+                type: array
+                items:
+                  type: string
+                  nullable: true
+            X-Nullable-Integer-List:
+              schema:
+                type: array
+                items:
+                  type: integer
+                  nullable: true
+
+  /simple/array/nullable-string/{values}:
+    get:
+      operationId: testSimplePathNullableStringArray
+      tags:
+        - simple-encoding
+      summary: Simple-style nullable-string array path parameter
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: array
+            items:
+              type: string
+              nullable: true
+      responses:
+        '200':
+          description: OK
+
+  /simple/array/nullable-integer/{values}:
+    get:
+      operationId: testSimplePathNullableIntegerArray
+      tags:
+        - simple-encoding
+      summary: Simple-style nullable-integer array path parameter
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: simple
+          schema:
+            type: array
+            items:
+              type: integer
+              nullable: true
+      responses:
+        '200':
+          description: OK
+
   /headers/roundtrip/lists/enums:
     get:
       operationId: testHeaderRoundtripEnumLists

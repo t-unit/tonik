@@ -199,6 +199,30 @@ void main() {
         },
       );
 
+      test(
+        'returns List<String?> for ListModel with isContentNullable',
+        () {
+          final model = ListModel(
+            content: StringModel(context: context),
+            isContentNullable: true,
+            context: context,
+            examples: const [],
+          );
+
+          final result = typeReference(model, nameManager, package);
+
+          expect(result.symbol, 'List');
+          expect(result.url, 'dart:core');
+          expect(result.isNullable, isFalse);
+          expect(result.types, hasLength(1));
+
+          final innerType = result.types[0] as TypeReference;
+          expect(innerType.symbol, 'String');
+          expect(innerType.url, 'dart:core');
+          expect(innerType.isNullable, isTrue);
+        },
+      );
+
       test('returns TonikFile TypeReference for Base64Model', () {
         final model = Base64Model(context: context);
 

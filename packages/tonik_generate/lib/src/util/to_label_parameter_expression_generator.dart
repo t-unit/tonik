@@ -54,12 +54,13 @@ Expression _buildLabelParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    ListModel(:final content) => _buildListLabelExpression(
+    final ListModel m => _buildListLabelExpression(
       valueExpression,
-      content,
+      m.content,
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
     AliasModel() => _buildLabelParameterExpression(
       valueExpression,
@@ -108,6 +109,7 @@ Expression _buildListLabelExpression(
   required Expression explode,
   required Expression allowEmpty,
   bool isNullable = false,
+  bool isContentNullable = false,
 }) {
   final listPropertyAccess = isNullable
       ? valueExpression.nullSafeProperty('toLabel')
@@ -117,14 +119,21 @@ Expression _buildListLabelExpression(
       ? valueExpression.nullSafeProperty('map')
       : valueExpression.property('map');
 
+  // A null array element encodes to the empty string, coercing the element
+  // type back to non-null `String` for the whole-list `toLabel` extension.
+  Expression nullGuard(Expression encoded) => isContentNullable
+      ? refer('e').equalTo(literalNull).conditional(literalString(''), encoded)
+      : encoded;
+
   return switch (contentModel) {
-    StringModel() => listPropertyAccess.call(
+    StringModel() when !isContentNullable => listPropertyAccess.call(
       [],
       {
         'explode': explode,
         'allowEmpty': allowEmpty,
       },
     ),
+    StringModel() ||
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
@@ -141,9 +150,11 @@ Expression _buildListLabelExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer('e').property('uriEncode').call([], {
-                  'allowEmpty': allowEmpty,
-                }).code,
+                ..body = nullGuard(
+                  refer('e').property('uriEncode').call([], {
+                    'allowEmpty': allowEmpty,
+                  }),
+                ).code,
             ).closure,
           ])
           .property('toList')
@@ -163,6 +174,7 @@ Expression _buildListLabelExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      isContentNullable: isContentNullable,
     ),
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
       listMapAccess

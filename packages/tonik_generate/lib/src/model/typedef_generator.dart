@@ -128,10 +128,16 @@ class TypedefGenerator {
           ..url = 'dart:core',
       );
     }
+    final isElementNullable = switch (owner) {
+      ListModel(:final isContentNullable) => isContentNullable,
+      MapModel(:final isValueNullable) => isValueNullable,
+      _ => false,
+    };
     return typeReference(
       content,
       nameManager,
       package,
+      isNullableOverride: isElementNullable,
       useImmutableCollections: useImmutableCollections,
     );
   }

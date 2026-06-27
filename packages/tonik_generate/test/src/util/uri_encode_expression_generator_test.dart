@@ -593,6 +593,98 @@ void main() {
       );
     });
 
+    test('null-guards each element for List<String?>', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value
+            .map((e) => e ?? '')
+            .toList()
+            .uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('null-guards each element for List<int?>', () {
+      final model = ListModel(
+        content: IntegerModel(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value
+            .map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty))
+            .toList()
+            .uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('null-guards each element for List<Enum?>', () {
+      final enumModel = EnumModel<String>(
+        name: 'TestEnum',
+        values: {
+          const EnumEntry(value: 'value1'),
+          const EnumEntry(value: 'value2'),
+        },
+        isNullable: false,
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final model = ListModel(
+        content: enumModel,
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value
+            .map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty))
+            .toList()
+            .uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates runtime throw for List<ClassModel>', () {
       final model = ListModel(
         content: ClassModel(

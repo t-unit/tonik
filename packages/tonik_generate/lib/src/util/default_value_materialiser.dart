@@ -106,6 +106,7 @@ Expression? _materialiseListDefault({
     itemModel,
     nameManager,
     package,
+    isNullableOverride: model.isContentNullable,
     useImmutableCollections: useImmutableCollections,
   );
   final literal = literalConstList(items, itemType);
@@ -142,6 +143,7 @@ Expression? _materialiseMapDefault({
     valueModel,
     nameManager,
     package,
+    isNullableOverride: model.isValueNullable,
     useImmutableCollections: useImmutableCollections,
   );
   final literal = literalConstMap(

@@ -1074,5 +1074,96 @@ void main() {
       expect(output.mergedTypeArrays, isNull);
       expect(output.deepNesting, isNull);
     });
+
+    test('arrayOfNullableStrings round-trips a null element', () async {
+      final api = buildApi();
+
+      const input = EdgeCases(
+        allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
+        integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
+        arrayOfNullableStrings: ['Ada', null, 'Grace'],
+      );
+
+      final result = await api.testEdgeCases(body: input);
+
+      expect(result, isA<TonikSuccess<EdgeCases>>());
+      final success = result as TonikSuccess<EdgeCases>;
+
+      final requestData =
+          success.response.requestOptions.data as Map<String, dynamic>;
+      expect(requestData['arrayOfNullableStrings'], ['Ada', null, 'Grace']);
+
+      final output = success.value;
+      expect(output.arrayOfNullableStrings, ['Ada', null, 'Grace']);
+    });
+
+    test(
+      'arrayWithNullableItemsViaFlag round-trips a null element',
+      () async {
+        final api = buildApi();
+
+        const input = EdgeCases(
+          allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
+          integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
+          arrayWithNullableItemsViaFlag: ['Ada', null, 'Grace'],
+        );
+
+        final result = await api.testEdgeCases(body: input);
+
+        expect(result, isA<TonikSuccess<EdgeCases>>());
+        final success = result as TonikSuccess<EdgeCases>;
+
+        final requestData =
+            success.response.requestOptions.data as Map<String, dynamic>;
+        expect(requestData['arrayWithNullableItemsViaFlag'], [
+          'Ada',
+          null,
+          'Grace',
+        ]);
+
+        final output = success.value;
+        expect(output.arrayWithNullableItemsViaFlag, ['Ada', null, 'Grace']);
+      },
+    );
+
+    test('arrayOfNullableInts round-trips a null element', () async {
+      final api = buildApi();
+
+      const input = EdgeCases(
+        allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
+        integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
+        arrayOfNullableInts: [1, null, 3],
+      );
+
+      final result = await api.testEdgeCases(body: input);
+
+      expect(result, isA<TonikSuccess<EdgeCases>>());
+      final success = result as TonikSuccess<EdgeCases>;
+
+      final output = success.value;
+      expect(output.arrayOfNullableInts, [1, null, 3]);
+    });
+
+    test('arrayOfNullableDates round-trips a null element', () async {
+      final api = buildApi();
+
+      final input = EdgeCases(
+        allPrimitives: const EdgeCasesAllPrimitivesOneOfModelString('test'),
+        integerAndNumber: const EdgeCasesIntegerAndNumberOneOfModelInt(1),
+        arrayOfNullableDates: [Date(1990, 5, 15), null, Date(2000, 1, 1)],
+      );
+
+      final result = await api.testEdgeCases(body: input);
+
+      expect(result, isA<TonikSuccess<EdgeCases>>());
+      final success = result as TonikSuccess<EdgeCases>;
+
+      final output = success.value;
+      expect(output.arrayOfNullableDates, [
+        Date(1990, 5, 15),
+        null,
+        Date(2000, 1, 1),
+      ]);
+    });
   });
 }

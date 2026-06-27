@@ -52,6 +52,8 @@ List<Code> _buildToDelimitedQueryParameterCode(
     explode: explode,
     allowEmpty: allowEmpty,
     encodingName: encodingName,
+    isContentNullable:
+        model.isContentNullable || model.content.isEffectivelyNullable,
   );
 }
 
@@ -63,13 +65,19 @@ List<Code> _buildDelimitedCode(
   required bool explode,
   required bool allowEmpty,
   required String encodingName,
+  required bool isContentNullable,
 }) {
   final methodName = encoding == QueryParameterEncoding.spaceDelimited
       ? 'toSpaceDelimited'
       : 'toPipeDelimited';
 
+  // A null array element encodes to the empty string, coercing the element
+  // type back to non-null `String` for the whole-list extension.
+  String nullGuard(String encoded) =>
+      isContentNullable ? "e == null ? '' : $encoded" : encoded;
+
   return switch (contentModel) {
-    StringModel() => _buildForLoop(
+    StringModel() when !isContentNullable => _buildForLoop(
       parameterName,
       rawName,
       methodName,
@@ -78,6 +86,7 @@ List<Code> _buildDelimitedCode(
       needsMapping: false,
     ),
 
+    StringModel() ||
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
@@ -93,8 +102,9 @@ List<Code> _buildDelimitedCode(
       explode,
       allowEmpty,
       needsMapping: true,
-      mapExpression:
-          'e.uriEncode(allowEmpty: $allowEmpty, useQueryComponent: true)',
+      mapExpression: nullGuard(
+        'e.uriEncode(allowEmpty: $allowEmpty, useQueryComponent: true)',
+      ),
     ),
 
     AllOfModel() ||
@@ -116,6 +126,7 @@ List<Code> _buildDelimitedCode(
       explode: explode,
       allowEmpty: allowEmpty,
       encodingName: encodingName,
+      isContentNullable: isContentNullable,
     ),
 
     _ => [

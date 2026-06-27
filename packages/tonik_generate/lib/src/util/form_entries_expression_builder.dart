@@ -62,13 +62,14 @@ Expression? buildFormEntriesValueExpression(
       // Conversion does not URI-encode, so the Map extension must still encode.
       return toForm(converted);
 
-    case ListModel(:final content):
+    case final ListModel m:
       return _buildListFormEntriesExpression(
         receiver,
-        content,
+        m.content,
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
-        isContentNullable: content.isEffectivelyNullable,
+        isContentNullable:
+            m.isContentNullable || m.content.isEffectivelyNullable,
         toForm: toForm,
       );
 

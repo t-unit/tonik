@@ -57,13 +57,14 @@ Expression _buildMatrixParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    ListModel(:final content) => _buildListMatrixExpression(
+    final ListModel m => _buildListMatrixExpression(
       valueExpression,
-      content,
+      m.content,
       paramName: paramName,
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
     AliasModel() => _buildMatrixParameterExpression(
       valueExpression,
@@ -161,6 +162,7 @@ Expression _buildListMatrixExpression(
   required Expression explode,
   required Expression allowEmpty,
   bool isNullable = false,
+  bool isContentNullable = false,
 }) {
   final listPropertyAccess = isNullable
       ? valueExpression.nullSafeProperty('toMatrix')
@@ -170,14 +172,21 @@ Expression _buildListMatrixExpression(
       ? valueExpression.nullSafeProperty('map')
       : valueExpression.property('map');
 
+  // A null array element encodes to the empty string, coercing the element
+  // type back to non-null `String` for the whole-list `toMatrix` extension.
+  Expression nullGuard(Expression encoded) => isContentNullable
+      ? refer('e').equalTo(literalNull).conditional(literalString(''), encoded)
+      : encoded;
+
   return switch (contentModel) {
-    StringModel() => listPropertyAccess.call(
+    StringModel() when !isContentNullable => listPropertyAccess.call(
       [paramName],
       {
         'explode': explode,
         'allowEmpty': allowEmpty,
       },
     ),
+    StringModel() ||
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
@@ -195,9 +204,11 @@ Expression _buildListMatrixExpression(
                   ..requiredParameters.add(
                     Parameter((b) => b..name = 'e'),
                   )
-                  ..body = refer('e').property('uriEncode').call(
-                    [],
-                    {'allowEmpty': allowEmpty},
+                  ..body = nullGuard(
+                    refer('e').property('uriEncode').call(
+                      [],
+                      {'allowEmpty': allowEmpty},
+                    ),
                   ).code,
               ).closure,
             ],
@@ -222,6 +233,7 @@ Expression _buildListMatrixExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      isContentNullable: isContentNullable,
     ),
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
       listMapAccess

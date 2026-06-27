@@ -603,6 +603,76 @@ void main() {
       final json = jsonDecode('[1,2.0]') as Object?;
       expect(json.decodeJsonNullableList<int>(), [1, 2]);
     });
+
+    test('decodes String? list preserving null elements', () {
+      final json = jsonDecode('["Ada",null,"Grace"]') as Object?;
+      expect(json.decodeJsonList<String?>(), ['Ada', null, 'Grace']);
+    });
+
+    test('decodes nullable String? list preserving null elements', () {
+      final json = jsonDecode('["Ada",null,"Grace"]') as Object?;
+      expect(json.decodeJsonNullableList<String?>(), ['Ada', null, 'Grace']);
+    });
+
+    test('rejects a null element for non-nullable String list', () {
+      final json = jsonDecode('["Ada",null]') as Object?;
+      expect(
+        () => json.decodeJsonList<String>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws for String? list with a wrong-typed non-null element', () {
+      final json = jsonDecode('["Ada",null,42]') as Object?;
+      expect(
+        () => json.decodeJsonList<String?>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws for bool? list with a wrong-typed non-null element', () {
+      final json = jsonDecode('[true,null,"x"]') as Object?;
+      expect(
+        () => json.decodeJsonList<bool?>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('decodes num? list preserving null with int and double elements', () {
+      final json = jsonDecode('[1,null,2.5]') as Object?;
+      expect(json.decodeJsonList<num?>(), [1, null, 2.5]);
+    });
+
+    test('decodes int? list preserving null and coercing whole doubles', () {
+      final json = jsonDecode('[1,null,2.0]') as Object?;
+      expect(json.decodeJsonList<int?>(), [1, null, 2]);
+    });
+
+    test('decodes double? list preserving null and coercing integers', () {
+      final json = jsonDecode('[1,null,2.5]') as Object?;
+      expect(json.decodeJsonList<double?>(), [1.0, null, 2.5]);
+    });
+
+    test('throws for int? list with a fractional double element', () {
+      final json = jsonDecode('[1.5,null]') as Object?;
+      expect(
+        () => json.decodeJsonList<int?>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws for double? list with a string element', () {
+      final json = jsonDecode('["x",null]') as Object?;
+      expect(
+        () => json.decodeJsonList<double?>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('decodes bool? list preserving null elements', () {
+      final json = jsonDecode('[true,null,false]') as Object?;
+      expect(json.decodeJsonList<bool?>(), [true, null, false]);
+    });
   });
 
   group('decodeMap', () {

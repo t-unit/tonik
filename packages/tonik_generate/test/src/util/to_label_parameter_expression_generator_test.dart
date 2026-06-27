@@ -218,6 +218,56 @@ void main() {
       );
     });
 
+    test('null-guards each element for List<String?>', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildLabelParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty)).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('null-guards each element for List<int?>', () {
+      final model = ListModel(
+        content: IntegerModel(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildLabelParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.map((e) => e == null ? '' : e.uriEncode(allowEmpty: allowEmpty)).toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates map and toLabel call for List<Enum>', () {
       final enumModel = EnumModel(
         isDeprecated: false,

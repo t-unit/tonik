@@ -852,18 +852,9 @@ class ModelImporter {
     if (ap == true) {
       shell.valueModel = AnyModel(context: mapContext);
     } else if (ap is Schema) {
-      var valueModel = _resolveSchemaRef(null, ap, mapContext);
-      final apNullable = ap.isNullable ?? ap.type.contains('null');
-      if (apNullable && !valueModel.isEffectivelyNullable) {
-        valueModel = AliasModel(
-          model: valueModel,
-          context: mapContext,
-          isNullable: true,
-          defaultValue: null,
-          examples: const [],
-        );
-      }
-      shell.valueModel = valueModel;
+      shell
+        ..valueModel = _resolveSchemaRef(null, ap, mapContext)
+        ..isValueNullable = ap.isNullable ?? ap.type.contains('null');
     }
   }
 
@@ -876,9 +867,14 @@ class ModelImporter {
   ) {
     final items = schema.items;
     final modelContext = context.push('array');
-    shell.content = items == null
-        ? AnyModel(context: modelContext)
-        : _resolveSchemaRef(null, items, modelContext);
+    if (items == null) {
+      shell.content = AnyModel(context: modelContext);
+      return;
+    }
+
+    shell
+      ..content = _resolveSchemaRef(null, items, modelContext)
+      ..isContentNullable = items.isNullable ?? items.type.contains('null');
   }
 
   /// Populates a ClassModel shell.
@@ -1418,28 +1414,20 @@ class ModelImporter {
       final ap = schema.additionalProperties;
       final mapContext = context.push(name ?? 'map');
       Model valueModel;
+      var isValueNullable = false;
       if (ap == true) {
         valueModel = AnyModel(context: mapContext);
       } else {
         final apSchema = ap! as Schema;
         valueModel = _resolveSchemaRef(null, apSchema, mapContext);
-        final apNullable =
-            apSchema.isNullable ?? apSchema.type.contains('null');
-        if (apNullable && !valueModel.isEffectivelyNullable) {
-          valueModel = AliasModel(
-            model: valueModel,
-            context: mapContext,
-            isNullable: true,
-            defaultValue: null,
-            examples: const [],
-          );
-        }
+        isValueNullable = apSchema.isNullable ?? apSchema.type.contains('null');
       }
       final model = MapModel(
         valueModel: valueModel,
         context: context,
         name: name,
         isNullable: schema.isNullable ?? hasNullType,
+        isValueNullable: isValueNullable,
         isReadOnly: schema.isReadOnly ?? false,
         isWriteOnly: schema.isWriteOnly ?? false,
         examples: exampleImporter.fromSchema(schema),
@@ -1617,9 +1605,14 @@ class ModelImporter {
       models.add(listModel);
     }
 
-    listModel.content = items == null
-        ? AnyModel(context: modelContext)
-        : _resolveSchemaRef(null, items, modelContext);
+    if (items == null) {
+      listModel.content = AnyModel(context: modelContext);
+      return listModel;
+    }
+
+    listModel
+      ..content = _resolveSchemaRef(null, items, modelContext)
+      ..isContentNullable = items.isNullable ?? items.type.contains('null');
 
     return listModel;
   }

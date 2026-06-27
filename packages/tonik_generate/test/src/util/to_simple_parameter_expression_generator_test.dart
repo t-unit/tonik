@@ -1011,4 +1011,90 @@ void main() {
       );
     });
   });
+
+  group('nullable list content', () {
+    test('null-guards each element for List<String?>', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      const expected = '''
+        test() {
+          final result = value
+              .map((e) => e ?? '')
+              .toList()
+              .toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('null-guards each element for List<int?>', () {
+      final model = ListModel(
+        content: IntegerModel(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      const expected = '''
+        test() {
+          final result = value
+              .map(
+                (e) => e == null
+                    ? ''
+                    : e.toSimple(explode: explode, allowEmpty: allowEmpty),
+              )
+              .toList()
+              .toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+  });
 }
