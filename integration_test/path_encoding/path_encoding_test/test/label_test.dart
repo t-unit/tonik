@@ -97,6 +97,25 @@ void main() {
   });
 
   group('Label style - Arrays', () {
+    test(
+      'nullable-string array percent-encodes elements and empties null',
+      () async {
+        final api = buildLabelApi();
+        final response = await api.testLabelArrayNullableString(
+          values: ['a b', null, 'c'],
+        );
+
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
+
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/label/array/nullable-string/.a%20b,,c',
+        );
+      },
+    );
+
     test('string array (explode=false) encodes as .val1,val2,val3', () async {
       final api = buildLabelApi();
       final response = await api.testLabelArrayString(

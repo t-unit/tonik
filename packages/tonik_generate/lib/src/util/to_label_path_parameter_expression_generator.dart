@@ -40,12 +40,46 @@ Expression _buildToLabelPathParameterExpression(
   if (model is ListModel) {
     final content = model.content;
     final contentModel = content.resolved;
+    final isContentNullable = content.isEffectivelyNullable;
 
-    if (contentModel is StringModel) {
+    if (contentModel is StringModel && !isContentNullable) {
       return valueRef.property('toLabel').call([], {
         'explode': explode,
         'allowEmpty': allowEmpty,
       });
+    }
+
+    if (contentModel is StringModel) {
+      return valueRef
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(
+                  Parameter((b) => b..name = 'e'),
+                )
+                ..body = refer('e')
+                    .equalTo(literalNull)
+                    .conditional(
+                      literalString(''),
+                      refer('e').property('uriEncode').call([], {
+                        'allowEmpty': allowEmpty,
+                      }),
+                    )
+                    .code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('toLabel')
+          .call(
+            [],
+            {
+              'explode': explode,
+              'allowEmpty': allowEmpty,
+              'alreadyEncoded': literalTrue,
+            },
+          );
     }
 
     if (contentModel is Base64Model) {

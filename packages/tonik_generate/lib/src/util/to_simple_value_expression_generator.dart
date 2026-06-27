@@ -214,6 +214,7 @@ Expression _buildSimpleSerializationExpression(
       isNullable: isNullable,
       explode: explode,
       allowEmpty: allowEmpty,
+      isContentNullable: model.content.isEffectivelyNullable,
     ),
 
     // Alias models delegate to their underlying type
@@ -246,6 +247,7 @@ Expression _handleListExpression(
   required bool isNullable,
   required bool explode,
   required bool allowEmpty,
+  required bool isContentNullable,
 }) {
   final toSimpleArgs = <String, Expression>{
     'explode': literalBool(explode),
@@ -260,7 +262,26 @@ Expression _handleListExpression(
     }
   }
 
-  // Handle different content models
+  Expression mapAccess() =>
+      isNullable ? receiver.nullSafeProperty('map') : receiver.property('map');
+
+  // A null array element encodes to the empty string, coercing the element type
+  // back to non-null `String` so the whole-list extension call matches.
+  Expression nullGuard(Expression encoded) => isContentNullable
+      ? refer('e').equalTo(literalNull).conditional(literalString(''), encoded)
+      : encoded;
+
+  Expression mappedList(Expression body) => mapAccess()
+      .call([
+        Method(
+          (b) => b
+            ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+            ..body = body.code,
+        ).closure,
+      ])
+      .property('toList')
+      .call([]);
+
   return switch (contentModel) {
     NeverModel() => generateEncodingExceptionExpression(
       'Cannot encode List<NeverModel> - this type does not permit any value.',
@@ -270,33 +291,24 @@ Expression _handleListExpression(
       'Nested lists are not supported for simple encoding.',
     ),
 
-    // For List<String>, use the extension directly
-    StringModel() => callToSimpleOnList(receiver),
+    StringModel() when !isContentNullable => callToSimpleOnList(receiver),
 
-    // For primitive lists (int, double, num, bool), convert to strings first
-    IntegerModel() || DoubleModel() || NumberModel() || BooleanModel() => () {
-      final mapClosure = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((p) => p..name = 'e'))
-          ..body = refer('e').property('toString').call([]).code,
-      ).closure;
+    StringModel() => mappedList(
+      refer('e').ifNullThen(literalString('')),
+    ).property('toSimple').call([], toSimpleArgs),
 
-      final mappedList = isNullable
-          ? receiver
-                .nullSafeProperty('map')
-                .call([mapClosure])
-                .property('toList')
-                .call([])
-          : receiver
-                .property('map')
-                .call([mapClosure])
-                .property('toList')
-                .call([]);
+    IntegerModel() || DoubleModel() || NumberModel() || BooleanModel() =>
+      mappedList(
+        nullGuard(
+          refer('e').property('uriEncode').call([], {
+            'allowEmpty': literalBool(allowEmpty),
+          }),
+        ),
+      ).property('toSimple').call([], {
+        ...toSimpleArgs,
+        'alreadyEncoded': literalBool(true),
+      }),
 
-      return mappedList.property('toSimple').call([], toSimpleArgs);
-    }(),
-
-    // For complex types (DateTime, BigDecimal, Uri, etc.), use toSimple method
     DateTimeModel() ||
     DecimalModel() ||
     UriModel() ||
@@ -305,73 +317,35 @@ Expression _handleListExpression(
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => () {
-      final innerExpr = _buildSimpleSerializationExpression(
-        refer('e'),
-        contentModel,
-        isNullable: false,
-        explode: explode,
-        allowEmpty: allowEmpty,
-      );
+    AnyOfModel() => mappedList(
+      nullGuard(
+        _buildSimpleSerializationExpression(
+          refer('e'),
+          contentModel,
+          isNullable: false,
+          explode: explode,
+          allowEmpty: allowEmpty,
+        ),
+      ),
+    ).property('toSimple').call([], toSimpleArgs),
 
-      final mapClosure = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((p) => p..name = 'e'))
-          ..body = innerExpr.code,
-      ).closure;
-
-      final mappedList = isNullable
-          ? receiver
-                .nullSafeProperty('map')
-                .call([mapClosure])
-                .property('toList')
-                .call([])
-          : receiver
-                .property('map')
-                .call([mapClosure])
-                .property('toList')
-                .call([]);
-
-      return mappedList.property('toSimple').call([], toSimpleArgs);
-    }(),
-
-    // For alias models, delegate to the underlying type
     AliasModel() => _handleListExpression(
       receiver,
       contentModel.model,
       isNullable: isNullable,
       explode: explode,
       allowEmpty: allowEmpty,
+      isContentNullable: isContentNullable,
     ),
 
-    AnyModel() => callToSimpleOnList(receiver), // Pass through list as-is
-    // Base64Model: each element → toBase64String(), then list toSimple
-    Base64Model() => () {
-      final mapClosure = Method(
-        (b) => b
-          ..requiredParameters.add(Parameter((p) => p..name = 'e'))
-          ..body = refer('e').property('toBase64String').call([]).code,
-      ).closure;
+    AnyModel() => callToSimpleOnList(receiver),
+    Base64Model() => mappedList(
+      refer('e').property('toBase64String').call([]),
+    ).property('toSimple').call([], {
+      ...toSimpleArgs,
+      'alreadyEncoded': literalBool(true),
+    }),
 
-      final mappedList = isNullable
-          ? receiver
-                .nullSafeProperty('map')
-                .call([mapClosure])
-                .property('toList')
-                .call([])
-          : receiver
-                .property('map')
-                .call([mapClosure])
-                .property('toList')
-                .call([]);
-
-      return mappedList.property('toSimple').call([], {
-        ...toSimpleArgs,
-        'alreadyEncoded': literalBool(true),
-      });
-    }(),
-
-    // MapModel: each element → convert to string map, then simple-encode
     MapModel() => _buildListMapContentSimpleExpression(
       receiver,
       contentModel,

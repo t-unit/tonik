@@ -982,6 +982,96 @@ void main() {
         },
       );
     });
+
+    group('nullable list content', () {
+      test('null-guards each element for List<String?>', () {
+        final model = ListModel(
+          content: AliasModel(
+            model: StringModel(context: context),
+            context: context,
+            examples: const [],
+            defaultValue: null,
+            isNullable: true,
+          ),
+          context: context,
+          examples: const [],
+        );
+
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
+
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
+          test() {
+            final result = value
+                .map((e) => e ?? '')
+                .toList()
+                .toSimple(explode: false, allowEmpty: true);
+          }
+        ''');
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expected),
+        );
+      });
+
+      test('null-guards each element for List<int?>', () {
+        final model = ListModel(
+          content: AliasModel(
+            model: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+            defaultValue: null,
+            isNullable: true,
+          ),
+          context: context,
+          examples: const [],
+        );
+
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
+
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
+          test() {
+            final result = value
+                .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
+                .toList()
+                .toSimple(explode: false, allowEmpty: true, alreadyEncoded: true);
+          }
+        ''');
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expected),
+        );
+      });
+    });
   });
 
   group('buildToSimplePathParameterExpression with nullable model', () {

@@ -352,6 +352,40 @@ void main() {
     );
 
     test(
+      'pre-encodes each element for array of nullable strings',
+      () {
+        final parameter = PathParameterObject(
+          name: 'values',
+          rawName: 'values',
+          description: null,
+          model: ListModel(
+            context: context,
+            content: AliasModel(
+              model: StringModel(context: context),
+              context: context,
+              examples: const [],
+              defaultValue: null,
+              isNullable: true,
+            ),
+            examples: const [],
+          ),
+          encoding: PathParameterEncoding.label,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
+        expect(
+          emit(buildToLabelPathParameterExpression('values', parameter)),
+          '''values.map((e) => e == null ? '' : e.uriEncode(allowEmpty: false)).toList().toLabel(explode: false, allowEmpty: false, alreadyEncoded: true, )''',
+        );
+      },
+    );
+
+    test(
       'generates toLabel expression for array of integers '
       '(maps to uriEncode first)',
       () {
