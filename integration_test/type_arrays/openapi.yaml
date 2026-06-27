@@ -373,7 +373,14 @@ components:
           type: array
           items:
             type: [integer, 'null']
-        
+
+        arrayOfNullableDates:
+          type: array
+          items:
+            type: string
+            format: date
+            nullable: true
+
         # Type array in allOf merging
         mergedTypeArrays:
           allOf:

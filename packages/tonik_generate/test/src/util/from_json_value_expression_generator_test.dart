@@ -556,7 +556,7 @@ void main() {
         expect(
           decode(DateModel(context: context)),
           'value.decodeJsonList<Object?>()'
-          '.map((e) => e == null ? null : e.decodeJsonDate()).toList()',
+          '.map((e) => e?.decodeJsonDate()).toList()',
         );
       });
 
@@ -564,7 +564,7 @@ void main() {
         expect(
           decode(DateTimeModel(context: context)),
           'value.decodeJsonList<Object?>()'
-          '.map((e) => e == null ? null : e.decodeJsonDateTime()).toList()',
+          '.map((e) => e?.decodeJsonDateTime()).toList()',
         );
       });
 
@@ -572,7 +572,7 @@ void main() {
         expect(
           decode(DecimalModel(context: context)),
           'value.decodeJsonList<Object?>()'
-          '.map((e) => e == null ? null : e.decodeJsonBigDecimal()).toList()',
+          '.map((e) => e?.decodeJsonBigDecimal()).toList()',
         );
       });
 
@@ -580,7 +580,7 @@ void main() {
         expect(
           decode(UriModel(context: context)),
           'value.decodeJsonList<Object?>()'
-          '.map((e) => e == null ? null : e.decodeJsonUri()).toList()',
+          '.map((e) => e?.decodeJsonUri()).toList()',
         );
       });
 

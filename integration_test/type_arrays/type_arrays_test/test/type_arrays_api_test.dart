@@ -1143,5 +1143,27 @@ void main() {
       final output = success.value;
       expect(output.arrayOfNullableInts, [1, null, 3]);
     });
+
+    test('arrayOfNullableDates round-trips a null element', () async {
+      final api = buildApi();
+
+      final input = EdgeCases(
+        allPrimitives: const EdgeCasesAllPrimitivesOneOfModelString('test'),
+        integerAndNumber: const EdgeCasesIntegerAndNumberOneOfModelInt(1),
+        arrayOfNullableDates: [Date(1990, 5, 15), null, Date(2000, 1, 1)],
+      );
+
+      final result = await api.testEdgeCases(body: input);
+
+      expect(result, isA<TonikSuccess<EdgeCases>>());
+      final success = result as TonikSuccess<EdgeCases>;
+
+      final output = success.value;
+      expect(output.arrayOfNullableDates, [
+        Date(1990, 5, 15),
+        null,
+        Date(2000, 1, 1),
+      ]);
+    });
   });
 }

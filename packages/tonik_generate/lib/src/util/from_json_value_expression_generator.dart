@@ -342,6 +342,21 @@ BuiltExpression _buildListFromJsonBody(
     ).closure;
   }
 
+  // Decoders invoked directly on the element collapse to a null-aware call
+  // when items are nullable; `?.` expresses the short-circuit without the
+  // ternary the analyzer would flag.
+  Expression methodOnElementClosure(String method) {
+    final receiver = refer('e');
+    final body = isItemNullable
+        ? receiver.nullSafeProperty(method).call([], contextParam)
+        : receiver.property(method).call([], contextParam);
+    return Method(
+      (b) => b
+        ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+        ..body = body.code,
+    ).closure;
+  }
+
   Expression mapList(Expression listExpr, Expression closure) =>
       effectiveNullable
       ? listExpr
@@ -417,9 +432,7 @@ BuiltExpression _buildListFromJsonBody(
     case DateTimeModel() || DateModel() || DecimalModel() || UriModel():
       final jsonType = _jsonTypeForPrimitive(unwrappedContent);
       final decodeMethod = _decodeMethodForPrimitive(unwrappedContent)!;
-      final mapFunction = elementClosure(
-        refer('e').property(decodeMethod).call([], contextParam),
-      );
+      final mapFunction = methodOnElementClosure(decodeMethod);
       final typeArg = isItemNullable
           ? refer('Object?', 'dart:core')
           : refer(jsonType, 'dart:core');
