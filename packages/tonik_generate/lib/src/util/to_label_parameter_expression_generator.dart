@@ -54,13 +54,13 @@ Expression _buildLabelParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    ListModel(:final content) => _buildListLabelExpression(
+    final ListModel m => _buildListLabelExpression(
       valueExpression,
-      content,
+      m.content,
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
-      isContentNullable: content.isEffectivelyNullable,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
     AliasModel() => _buildLabelParameterExpression(
       valueExpression,

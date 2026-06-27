@@ -317,9 +317,8 @@ BuiltExpression _buildListFromJsonBody(
       : 'decodeJsonList';
 
   final unwrappedContent = content is AliasModel ? content.model : content;
-  final isItemNullable = content is AliasModel
-      ? content.isNullable
-      : content.isEffectivelyNullable;
+  final isItemNullable =
+      model.isContentNullable || content.isEffectivelyNullable;
   final inlineFunctions = <InlineHelper>[];
 
   // When items are nullable, the element decoder can't represent null itself,
@@ -480,7 +479,12 @@ BuiltExpression _buildListFromJsonBody(
       return BuiltExpression.simple(throwExpr);
 
     default:
-      final typeArg = typeReference(content, nameManager, package);
+      final typeArg = typeReference(
+        content,
+        nameManager,
+        package,
+        isNullableOverride: isItemNullable,
+      );
       result = receiver
           .property(listDecoder)
           .call([], contextParam, [typeArg]);
@@ -563,6 +567,7 @@ BuiltExpression _buildMapFromJsonBody(
     helperContext: helperContext,
     contextClass: contextClass,
     contextProperty: contextProperty,
+    isNullable: model.isValueNullable,
     useImmutableCollections: useImmutableCollections,
   );
 
@@ -709,6 +714,7 @@ BuiltExpression _buildTypedefHelperBody({
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
+        isNullable: mapModel.isValueNullable,
         useImmutableCollections: useImmutableCollections,
       );
       final decoderClosure = Method(

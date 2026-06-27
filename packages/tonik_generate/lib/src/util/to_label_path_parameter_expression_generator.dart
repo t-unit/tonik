@@ -40,7 +40,8 @@ Expression _buildToLabelPathParameterExpression(
   if (model is ListModel) {
     final content = model.content;
     final contentModel = content.resolved;
-    final isContentNullable = content.isEffectivelyNullable;
+    final isContentNullable =
+        model.isContentNullable || content.isEffectivelyNullable;
 
     if (contentModel is StringModel && !isContentNullable) {
       return valueRef.property('toLabel').call([], {

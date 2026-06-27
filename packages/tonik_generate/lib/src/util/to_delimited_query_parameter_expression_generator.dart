@@ -52,7 +52,8 @@ List<Code> _buildToDelimitedQueryParameterCode(
     explode: explode,
     allowEmpty: allowEmpty,
     encodingName: encodingName,
-    isContentNullable: model.content.isEffectivelyNullable,
+    isContentNullable:
+        model.isContentNullable || model.content.isEffectivelyNullable,
   );
 }
 

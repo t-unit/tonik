@@ -208,13 +208,13 @@ Expression _buildSimpleSerializationExpression(
     }(),
 
     // Lists need special handling
-    ListModel() => _handleListExpression(
+    final ListModel m => _handleListExpression(
       receiver,
-      model.content,
+      m.content,
       isNullable: isNullable,
       explode: explode,
       allowEmpty: allowEmpty,
-      isContentNullable: model.content.isEffectivelyNullable,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
 
     // Alias models delegate to their underlying type

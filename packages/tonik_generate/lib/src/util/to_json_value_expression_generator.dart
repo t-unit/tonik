@@ -345,8 +345,7 @@ BuiltExpression _handleListExpressionBody(
   }
 
   final isContentNullable =
-      contentModel.isEffectivelyNullable ||
-      (contentModel is AliasModel && contentModel.isNullable);
+      model.isContentNullable || contentModel.isEffectivelyNullable;
 
   final innerBuilt = _buildSerializationExpression(
     refer('e'),
@@ -493,8 +492,7 @@ BuiltExpression _handleMapExpressionBody(
   }
 
   final isValueNullable =
-      valueModel.isEffectivelyNullable ||
-      (valueModel is AliasModel && valueModel.isNullable);
+      model.isValueNullable || valueModel.isEffectivelyNullable;
 
   final innerBuilt = _buildSerializationExpression(
     refer('v'),

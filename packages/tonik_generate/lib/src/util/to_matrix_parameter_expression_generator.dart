@@ -57,14 +57,14 @@ Expression _buildMatrixParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    ListModel(:final content) => _buildListMatrixExpression(
+    final ListModel m => _buildListMatrixExpression(
       valueExpression,
-      content,
+      m.content,
       paramName: paramName,
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
-      isContentNullable: content.isEffectivelyNullable,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
     AliasModel() => _buildMatrixParameterExpression(
       valueExpression,

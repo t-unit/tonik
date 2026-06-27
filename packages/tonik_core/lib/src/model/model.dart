@@ -136,6 +136,7 @@ class MapModel extends Model with NamedModel {
     this.name,
     this.nameOverride,
     this.isNullable = false,
+    this.isValueNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
   });
@@ -146,6 +147,10 @@ class MapModel extends Model with NamedModel {
   String? nameOverride;
   Model valueModel;
   bool isNullable;
+
+  /// Describes the value, not the map itself, so it does not affect
+  /// [isEffectivelyNullable] — mirrors [Property.isNullable].
+  bool isValueNullable;
   bool isReadOnly;
   bool isWriteOnly;
   List<Example> examples;
@@ -156,7 +161,8 @@ class MapModel extends Model with NamedModel {
   @override
   String toString() =>
       'MapModel{name: $name, nameOverride: $nameOverride, '
-      'valueModel: ${valueModel._ref}, examples: $examples}';
+      'valueModel: ${valueModel._ref}, isValueNullable: $isValueNullable, '
+      'examples: $examples}';
 }
 
 class AliasModel extends Model with NamedModel {
@@ -241,6 +247,7 @@ class ListModel extends Model with NamedModel {
     this.name,
     this.nameOverride,
     this.isNullable = false,
+    this.isContentNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
   });
@@ -252,6 +259,10 @@ class ListModel extends Model with NamedModel {
   @override
   String? nameOverride;
   bool isNullable;
+
+  /// Describes the item, not the list itself, so it does not affect
+  /// [isEffectivelyNullable] — mirrors [Property.isNullable].
+  bool isContentNullable;
   bool isReadOnly;
   bool isWriteOnly;
   List<Example> examples;
@@ -264,7 +275,8 @@ class ListModel extends Model with NamedModel {
   @override
   String toString() =>
       'ListModel{name: $name, nameOverride: $nameOverride, '
-      'content: ${content._ref}, examples: $examples}';
+      'content: ${content._ref}, isContentNullable: $isContentNullable, '
+      'examples: $examples}';
 }
 
 class ClassModel extends Model with NamedModel {

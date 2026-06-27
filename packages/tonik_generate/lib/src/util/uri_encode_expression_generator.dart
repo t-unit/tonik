@@ -65,13 +65,13 @@ Expression _buildUriEncodeExpression(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     ),
-    ListModel(:final content) => _buildListUriEncodeExpression(
+    final ListModel m => _buildListUriEncodeExpression(
       valueExpression,
-      content,
+      m.content,
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
-      isContentNullable: content.isEffectivelyNullable,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
     AliasModel() => _buildUriEncodeExpression(
       valueExpression,

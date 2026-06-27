@@ -172,7 +172,7 @@ void main() {
     expect(inner.content, isA<AnyModel>());
   });
 
-  test('named array with OAS 3.0 nullable items wraps content as nullable', () {
+  test('named array with OAS 3.0 nullable items sets isContentNullable', () {
     const spec = {
       'openapi': '3.0.0',
       'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -193,13 +193,11 @@ void main() {
       (m) => m.name == 'NicknameList',
     );
 
-    expect(model.content, isA<AliasModel>());
-    final content = model.content as AliasModel;
-    expect(content.isNullable, isTrue);
-    expect(content.model, isA<StringModel>());
+    expect(model.isContentNullable, isTrue);
+    expect(model.content, isA<StringModel>());
   });
 
-  test('named array with OAS 3.1 null type items wraps content nullable', () {
+  test('named array with OAS 3.1 null type items sets isContentNullable', () {
     const spec = {
       'openapi': '3.1.0',
       'info': {'title': 'Test API', 'version': '1.0.0'},
@@ -222,9 +220,7 @@ void main() {
       (m) => m.name == 'NicknameList',
     );
 
-    expect(model.content, isA<AliasModel>());
-    final content = model.content as AliasModel;
-    expect(content.isNullable, isTrue);
-    expect(content.model, isA<StringModel>());
+    expect(model.isContentNullable, isTrue);
+    expect(model.content, isA<StringModel>());
   });
 }

@@ -203,13 +203,12 @@ void main() {
     expect(arrayWithNullableItems.isNullable, isFalse);
 
     final listModel = arrayWithNullableItems.model as ListModel;
-    expect(listModel.content, isA<AliasModel>());
-    expect(listModel.content.isEffectivelyNullable, isTrue);
-
-    final content = listModel.content as AliasModel;
-    expect(content.isNullable, isTrue);
-    expect(content.model, isA<StringModel>());
-    expect((content.model as StringModel).context.path, contains('array'));
+    expect(listModel.isContentNullable, isTrue);
+    expect(listModel.content, isA<StringModel>());
+    expect(
+      (listModel.content as StringModel).context.path,
+      contains('array'),
+    );
   });
 
   test('imports array with nullable items via nullable flag', () {
@@ -222,12 +221,8 @@ void main() {
     expect(arrayWithNullableItems.model, isA<ListModel>());
 
     final listModel = arrayWithNullableItems.model as ListModel;
-    expect(listModel.content, isA<AliasModel>());
-    expect(listModel.content.isEffectivelyNullable, isTrue);
-
-    final content = listModel.content as AliasModel;
-    expect(content.isNullable, isTrue);
-    expect(content.model, isA<StringModel>());
+    expect(listModel.isContentNullable, isTrue);
+    expect(listModel.content, isA<StringModel>());
   });
 
   test('adds inline type array OneOfModel to models set', () {

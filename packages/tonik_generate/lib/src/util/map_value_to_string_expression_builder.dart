@@ -20,7 +20,8 @@ Expression? buildMapToStringMapExpression(
   required bool isNullable,
 }) {
   final valueModel = model.valueModel;
-  final valueIsNullable = valueModel.isEffectivelyNullable;
+  final valueIsNullable =
+      model.isValueNullable || valueModel.isEffectivelyNullable;
   return _buildConversion(
     receiver,
     valueModel,

@@ -54,13 +54,13 @@ Expression _buildSimpleParameterExpression(
         'allowEmpty': allowEmpty,
       },
     ),
-    ListModel(:final content) => _buildListSimpleExpression(
+    final ListModel m => _buildListSimpleExpression(
       valueExpression,
-      content,
+      m.content,
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
-      isContentNullable: content.isEffectivelyNullable,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
     AliasModel() => _buildSimpleParameterExpression(
       valueExpression,
