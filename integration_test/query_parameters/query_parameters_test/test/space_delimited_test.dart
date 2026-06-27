@@ -534,7 +534,7 @@ void main() {
       );
     });
 
-    test('enum with internal space encodes as %20, not +', () async {
+    test('enum', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testSpaceDelimitedList(
         listEnum: [

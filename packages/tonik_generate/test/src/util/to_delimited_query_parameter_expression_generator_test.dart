@@ -54,7 +54,7 @@ void main() {
       );
     }
 
-    group('non-string primitive items encode spaces as %20', () {
+    group('enum and integer list items', () {
       EnumModel<String> stringEnum() => EnumModel<String>(
         isDeprecated: false,
         context: context,
@@ -66,8 +66,7 @@ void main() {
         examples: const [],
       );
 
-      test('spaceDelimited enum list (non-explode) omits '
-          'useQueryComponent', () {
+      test('generates spaceDelimited enum list (non-explode)', () {
         final parameter = createParameter(
           name: 'priorities',
           rawName: 'priorities',
@@ -109,7 +108,7 @@ void main() {
         );
       });
 
-      test('spaceDelimited enum list (explode) omits useQueryComponent', () {
+      test('generates spaceDelimited enum list (explode)', () {
         final parameter = createParameter(
           name: 'priorities',
           rawName: 'priorities',
@@ -152,8 +151,7 @@ void main() {
         );
       });
 
-      test('spaceDelimited integer list (non-explode) omits '
-          'useQueryComponent', () {
+      test('generates spaceDelimited integer list (non-explode)', () {
         final parameter = createParameter(
           name: 'ids',
           rawName: 'ids',
@@ -195,8 +193,7 @@ void main() {
         );
       });
 
-      test('pipeDelimited enum list (non-explode) omits '
-          'useQueryComponent', () {
+      test('generates pipeDelimited enum list (non-explode)', () {
         final parameter = createParameter(
           name: 'priorities',
           rawName: 'priorities',
@@ -238,7 +235,7 @@ void main() {
         );
       });
 
-      test('pipeDelimited enum list (explode) omits useQueryComponent', () {
+      test('generates pipeDelimited enum list (explode)', () {
         final parameter = createParameter(
           name: 'priorities',
           rawName: 'priorities',
@@ -281,8 +278,7 @@ void main() {
         );
       });
 
-      test('pipeDelimited integer list (non-explode) omits '
-          'useQueryComponent', () {
+      test('generates pipeDelimited integer list (non-explode)', () {
         final parameter = createParameter(
           name: 'ids',
           rawName: 'ids',
