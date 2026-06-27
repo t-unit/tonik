@@ -86,7 +86,6 @@ void main() {
         );
 
         final code = emitStatements(codes);
-        expect(code, isNot(contains('useQueryComponent')));
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
@@ -129,7 +128,6 @@ void main() {
         );
 
         final code = emitStatements(codes);
-        expect(code, isNot(contains('useQueryComponent')));
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
@@ -171,7 +169,6 @@ void main() {
         );
 
         final code = emitStatements(codes);
-        expect(code, isNot(contains('useQueryComponent')));
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
@@ -213,7 +210,6 @@ void main() {
         );
 
         final code = emitStatements(codes);
-        expect(code, isNot(contains('useQueryComponent')));
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
@@ -256,7 +252,6 @@ void main() {
         );
 
         final code = emitStatements(codes);
-        expect(code, isNot(contains('useQueryComponent')));
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
@@ -298,7 +293,6 @@ void main() {
         );
 
         final code = emitStatements(codes);
-        expect(code, isNot(contains('useQueryComponent')));
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
