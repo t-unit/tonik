@@ -622,6 +622,27 @@ void main() {
       );
     });
 
+    test('throws for String? list with a wrong-typed non-null element', () {
+      final json = jsonDecode('["Ada",null,42]') as Object?;
+      expect(
+        () => json.decodeJsonList<String?>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws for bool? list with a wrong-typed non-null element', () {
+      final json = jsonDecode('[true,null,"x"]') as Object?;
+      expect(
+        () => json.decodeJsonList<bool?>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('decodes num? list preserving null with int and double elements', () {
+      final json = jsonDecode('[1,null,2.5]') as Object?;
+      expect(json.decodeJsonList<num?>(), [1, null, 2.5]);
+    });
+
     test('decodes int? list preserving null and coercing whole doubles', () {
       final json = jsonDecode('[1,null,2.0]') as Object?;
       expect(json.decodeJsonList<int?>(), [1, null, 2]);

@@ -322,10 +322,9 @@ BuiltExpression _buildListFromJsonBody(
       : content.isEffectivelyNullable;
   final inlineFunctions = <InlineHelper>[];
 
-  // For nullable item types whose element decoder cannot itself accept null
-  // (named models, temporal/decimal/uri primitives, binary), the list type
-  // argument must be Object? so the runtime decoder preserves nulls, and the
-  // per-element closure must short-circuit null before decoding.
+  // When items are nullable, the element decoder can't represent null itself,
+  // so the list is decoded as Object? and each element short-circuits null
+  // before decoding.
   Expression elementClosure(Expression decodeOfE) {
     if (!isItemNullable) {
       return Method(
