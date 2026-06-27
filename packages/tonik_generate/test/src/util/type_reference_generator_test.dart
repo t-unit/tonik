@@ -200,17 +200,11 @@ void main() {
       );
 
       test(
-        'returns List<String?> for ListModel whose content is an unnamed '
-        'nullable AliasModel over StringModel',
+        'returns List<String?> for ListModel with isContentNullable',
         () {
           final model = ListModel(
-            content: AliasModel(
-              model: StringModel(context: context),
-              context: context,
-              isNullable: true,
-              defaultValue: null,
-              examples: const [],
-            ),
+            content: StringModel(context: context),
+            isContentNullable: true,
             context: context,
             examples: const [],
           );

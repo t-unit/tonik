@@ -360,13 +360,8 @@ void main() {
           description: null,
           model: ListModel(
             context: context,
-            content: AliasModel(
-              model: StringModel(context: context),
-              context: context,
-              examples: const [],
-              defaultValue: null,
-              isNullable: true,
-            ),
+            content: StringModel(context: context),
+            isContentNullable: true,
             examples: const [],
           ),
           encoding: PathParameterEncoding.label,

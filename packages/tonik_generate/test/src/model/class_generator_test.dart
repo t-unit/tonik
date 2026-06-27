@@ -894,13 +894,8 @@ void main() {
             Property(
               name: 'nicknames',
               model: ListModel(
-                content: AliasModel(
-                  model: StringModel(context: context),
-                  context: context,
-                  isNullable: true,
-                  defaultValue: null,
-                  examples: const [],
-                ),
+                content: StringModel(context: context),
+                isContentNullable: true,
                 context: context,
                 examples: const [],
               ),

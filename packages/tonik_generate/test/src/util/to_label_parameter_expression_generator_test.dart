@@ -220,13 +220,8 @@ void main() {
 
     test('null-guards each element for List<String?>', () {
       final model = ListModel(
-        content: AliasModel(
-          model: StringModel(context: context),
-          context: context,
-          examples: const [],
-          defaultValue: null,
-          isNullable: true,
-        ),
+        content: StringModel(context: context),
+        isContentNullable: true,
         context: context,
         examples: const [],
       );
@@ -250,13 +245,8 @@ void main() {
 
     test('null-guards each element for List<int?>', () {
       final model = ListModel(
-        content: AliasModel(
-          model: IntegerModel(context: context),
-          context: context,
-          examples: const [],
-          defaultValue: null,
-          isNullable: true,
-        ),
+        content: IntegerModel(context: context),
+        isContentNullable: true,
         context: context,
         examples: const [],
       );
