@@ -54,6 +54,277 @@ void main() {
       );
     }
 
+    group('non-string primitive items encode spaces as %20', () {
+      EnumModel<String> stringEnum() => EnumModel<String>(
+        isDeprecated: false,
+        context: context,
+        values: {
+          const EnumEntry(value: 'high priority'),
+          const EnumEntry(value: 'low priority'),
+        },
+        isNullable: false,
+        examples: const [],
+      );
+
+      test('spaceDelimited enum list (non-explode) omits '
+          'useQueryComponent', () {
+        final parameter = createParameter(
+          name: 'priorities',
+          rawName: 'priorities',
+          model: ListModel(
+            content: stringEnum(),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'priorities',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(code, isNot(contains('useQueryComponent')));
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in priorities
+                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toSpaceDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'priorities', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('spaceDelimited enum list (explode) omits useQueryComponent', () {
+        final parameter = createParameter(
+          name: 'priorities',
+          rawName: 'priorities',
+          model: ListModel(
+            content: stringEnum(),
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'priorities',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          explode: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(code, isNot(contains('useQueryComponent')));
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in priorities
+                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toSpaceDelimited(
+                      explode: true,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'priorities', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('spaceDelimited integer list (non-explode) omits '
+          'useQueryComponent', () {
+        final parameter = createParameter(
+          name: 'ids',
+          rawName: 'ids',
+          model: ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'ids',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(code, isNot(contains('useQueryComponent')));
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in ids
+                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toSpaceDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'ids', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('pipeDelimited enum list (non-explode) omits '
+          'useQueryComponent', () {
+        final parameter = createParameter(
+          name: 'priorities',
+          rawName: 'priorities',
+          model: ListModel(
+            content: stringEnum(),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'priorities',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(code, isNot(contains('useQueryComponent')));
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in priorities
+                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toPipeDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'priorities', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('pipeDelimited enum list (explode) omits useQueryComponent', () {
+        final parameter = createParameter(
+          name: 'priorities',
+          rawName: 'priorities',
+          model: ListModel(
+            content: stringEnum(),
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'priorities',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          explode: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(code, isNot(contains('useQueryComponent')));
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in priorities
+                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toPipeDelimited(
+                      explode: true,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'priorities', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('pipeDelimited integer list (non-explode) omits '
+          'useQueryComponent', () {
+        final parameter = createParameter(
+          name: 'ids',
+          rawName: 'ids',
+          model: ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'ids',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(code, isNot(contains('useQueryComponent')));
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in ids
+                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toPipeDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'ids', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+    });
+
     group('special characters in rawName', () {
       test(
         'generates valid code when rawName contains single quote '

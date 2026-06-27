@@ -533,6 +533,24 @@ void main() {
         'listOneOfComplexMixed=3%7C4%7C5',
       );
     });
+
+    test('enum with internal space encodes as %20, not +', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testPipeDelimitedList(
+        listEnum: [
+          PipeDelimitedListParametersArrayModel.highPriority,
+          PipeDelimitedListParametersArrayModel.urgent,
+          PipeDelimitedListParametersArrayModel.lowPriority,
+        ],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listEnum=high%20priority%7Curgent%7Clow%20priority',
+      );
+      expect(success.response.requestOptions.uri.query, isNot(contains('+')));
+    });
   });
 
   group('list - explode true', () {
