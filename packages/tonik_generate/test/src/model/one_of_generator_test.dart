@@ -4088,6 +4088,67 @@ bool operator ==(Object other) {
         );
       },
     );
+
+    test(
+      'uriEncode converts Base64Model variant via toBase64String',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (discriminatorValue: null, model: Base64Model(context: context)),
+          },
+          context: context,
+          examples: const [],
+        );
+
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final uriEncodeMethod = baseClass.methods.firstWhere(
+          (m) => m.name == 'uriEncode',
+        );
+        final generated = format(uriEncodeMethod.accept(emitter).toString());
+
+        const expectedMethod = '''
+          @override
+          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+            return switch (this) {
+              ValueBase64(:final value) => value.toBase64String().uriEncode(
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              ),
+              ValueText() => throw EncodingException(
+                r'Cannot uriEncode Value: variant contains complex type',
+              ),
+            };
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
   });
 
   group('recursion splicing', () {

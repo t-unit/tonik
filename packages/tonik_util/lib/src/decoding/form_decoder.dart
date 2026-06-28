@@ -238,8 +238,10 @@ extension FormDecoder on String? {
 
   /// Decodes a base64-encoded form string to binary data (`List<int>`).
   ///
-  /// Expects a valid base64-encoded string.
-  /// Throws [InvalidTypeException] if the value is null.
+  /// Base64 output can contain `+`, `/` and `=`, which are percent-encoded on
+  /// the wire, so the value is percent-decoded before base64 decoding, like
+  /// [decodeFormString].
+  /// Throws [InvalidTypeException] if the value is null or cannot be decoded.
   List<int> decodeFormBase64({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
@@ -251,7 +253,15 @@ extension FormDecoder on String? {
     if (this!.isEmpty) {
       return <int>[];
     }
-    return base64.decode(this!);
+    try {
+      return base64.decode(Uri.decodeQueryComponent(this!));
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: List<int>,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a base64-encoded form string to nullable binary data.

@@ -24,6 +24,7 @@ import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 /// A generator for creating Dart classes from allOf model definitions.
@@ -1440,9 +1441,10 @@ class AllOfGenerator {
     if (ap is TypedAdditionalProperties &&
         ap.valueModel.encodingShape == EncodingShape.simple) {
       final uriEncodeCall = ap.valueModel.isEffectivelyNullable
-          ? r'_$e.value?.uriEncode(allowEmpty: allowEmpty) '
-                "?? ''"
-          : r'_$e.value.uriEncode(allowEmpty: allowEmpty)';
+          ? '${uriEncodeReceiver(ap.valueModel, r'_$e.value?')}'
+                ".uriEncode(allowEmpty: allowEmpty) ?? ''"
+          : '${uriEncodeReceiver(ap.valueModel, r'_$e.value')}'
+                '.uriEncode(allowEmpty: allowEmpty)';
       return [
         Code('''
 for (final _\$e in $apFieldName.entries) {
@@ -1707,6 +1709,34 @@ for (final _\$e in $apFieldName.entries) {
     final primarySimpleReceiver = isPrimaryFieldNullable
         ? refer(primaryField.normalizedName).nullChecked
         : refer(primaryField.normalizedName);
+    final primaryResolved = primaryField.property.model.resolved;
+
+    final Code simpleBody;
+    if (primaryResolved is Base64Model) {
+      simpleBody = primarySimpleReceiver
+          .property('toBase64String')
+          .call([])
+          .property('toSimple')
+          .call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          })
+          .returned
+          .statement;
+    } else if (primaryResolved is BinaryModel) {
+      simpleBody = generateEncodingExceptionExpression(
+        'Binary data cannot be simple-encoded',
+      ).statement;
+    } else {
+      simpleBody = primarySimpleReceiver
+          .property('toSimple')
+          .call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          })
+          .returned
+          .statement;
+    }
 
     return Method(
       (b) => b
@@ -1715,16 +1745,7 @@ for (final _\$e in $apFieldName.entries) {
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
         ..lambda = false
-        ..body = Block.of([
-          primarySimpleReceiver
-              .property('toSimple')
-              .call([], {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-              })
-              .returned
-              .statement,
-        ]),
+        ..body = Block.of([simpleBody]),
     );
   }
 
@@ -1790,6 +1811,22 @@ for (final _\$e in $apFieldName.entries) {
         if (entries != null) return entries;
         return generateEncodingExceptionExpression(
           'Lists with complex content are not supported for encoding',
+        );
+      }
+      if (resolved is Base64Model) {
+        return receiver
+            .property('toBase64String')
+            .call([])
+            .property('toForm')
+            .call([refer('paramName')], {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+              'useQueryComponent': refer('useQueryComponent'),
+            });
+      }
+      if (resolved is BinaryModel) {
+        return generateEncodingExceptionExpression(
+          'Binary data cannot be form-encoded',
         );
       }
       return receiver.property('toForm').call([refer('paramName')], {
@@ -2194,6 +2231,34 @@ for (final _\$e in $apFieldName.entries) {
     final primaryLabelReceiver = isPrimaryFieldNullable
         ? refer(primaryField.normalizedName).nullChecked
         : refer(primaryField.normalizedName);
+    final primaryResolved = primaryField.property.model.resolved;
+
+    final Code labelBody;
+    if (primaryResolved is Base64Model) {
+      labelBody = primaryLabelReceiver
+          .property('toBase64String')
+          .call([])
+          .property('toLabel')
+          .call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          })
+          .returned
+          .statement;
+    } else if (primaryResolved is BinaryModel) {
+      labelBody = generateEncodingExceptionExpression(
+        'Binary data cannot be label-encoded',
+      ).statement;
+    } else {
+      labelBody = primaryLabelReceiver
+          .property('toLabel')
+          .call([], {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+          })
+          .returned
+          .statement;
+    }
 
     return Method(
       (b) => b
@@ -2202,14 +2267,7 @@ for (final _\$e in $apFieldName.entries) {
         ..returns = refer('String', 'dart:core')
         ..optionalParameters.addAll(buildEncodingParameters())
         ..lambda = false
-        ..body = primaryLabelReceiver
-            .property('toLabel')
-            .call([], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-            })
-            .returned
-            .statement,
+        ..body = labelBody,
     );
   }
 
@@ -2556,7 +2614,7 @@ for (final _\$e in $apFieldName.entries) {
             ? refer(simpleProp.normalizedName).nullChecked
             : refer(simpleProp.normalizedName);
         bodyCode.add(
-          receiver
+          uriEncodeReceiverExpression(simpleProp.property.model, receiver)
               .property('uriEncode')
               .call([], {
                 'allowEmpty': refer('allowEmpty'),
@@ -2681,10 +2739,12 @@ for (final _\$e in $apFieldName.entries) {
         if (isNullable) Code('if (${prop.normalizedName} != null) {'),
         declareFinal('_\$${prop.normalizedName}Encoded')
             .assign(
-              receiver.property('uriEncode').call([], {
-                'allowEmpty': refer('allowEmpty'),
-                'useQueryComponent': refer('useQueryComponent'),
-              }),
+              uriEncodeReceiverExpression(prop.property.model, receiver)
+                  .property('uriEncode')
+                  .call([], {
+                    'allowEmpty': refer('allowEmpty'),
+                    'useQueryComponent': refer('useQueryComponent'),
+                  }),
             )
             .statement,
         refer(r'_$values').property('add').call([

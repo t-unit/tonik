@@ -1658,8 +1658,91 @@ paths:
         '204':
           description: OK
 
+  /form-byte-object:
+    get:
+      operationId: testFormByteObject
+      tags:
+        - query
+      summary: Test form-style object with a base64 property
+      description: >-
+        Demonstrates an object query parameter whose byte property is
+        base64-encoded then percent-encoded on the wire
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/Filter'
+      responses:
+        '204':
+          description: OK
+
+  /form-byte-composite:
+    get:
+      operationId: testFormByteComposite
+      tags:
+        - query
+      summary: Test form-style composite lists with a base64 member
+      description: >-
+        Demonstrates anyOf, oneOf and allOf list query parameters whose byte
+        member is base64-encoded then percent-encoded on the wire
+      parameters:
+        - name: anyOfByte
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AnyOfByte'
+        - name: oneOfByte
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/OneOfByte'
+        - name: allOfByte
+          in: query
+          style: form
+          explode: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/AllOfByte'
+      responses:
+        '204':
+          description: OK
+
 components:
   schemas:
+    Filter:
+      type: object
+      required:
+        - signature
+      properties:
+        signature:
+          type: string
+          format: byte
+        label:
+          type: string
+    AnyOfByte:
+      anyOf:
+        - type: string
+          format: byte
+        - type: integer
+    OneOfByte:
+      oneOf:
+        - type: string
+          format: byte
+        - type: integer
+    AllOfByte:
+      allOf:
+        - type: string
+          format: byte
     Class:
       type: object
       required:

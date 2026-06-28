@@ -482,9 +482,35 @@ void main() {
         expect(decoded, original);
       });
 
+      test('percent-decodes base64 padding before decoding', () {
+        const encoded = '3q2%2B7w%3D%3D';
+        final result = encoded.decodeSimpleBase64();
+        expect(result, [0xDE, 0xAD, 0xBE, 0xEF]);
+      });
+
+      test('percent-decodes base64 forward slashes before decoding', () {
+        const encoded = '%2F%2F8%3D';
+        final result = encoded.decodeSimpleBase64();
+        expect(result, [0xFF, 0xFF]);
+      });
+
       test('throws InvalidTypeException if value is null', () {
         expect(
           () => null.decodeSimpleBase64(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('throws InvalidTypeException for non-base64 content', () {
+        expect(
+          () => 'not base64!'.decodeSimpleBase64(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
+      test('throws InvalidTypeException for malformed percent-escape', () {
+        expect(
+          () => '%ZZ'.decodeSimpleBase64(),
           throwsA(isA<InvalidTypeException>()),
         );
       });

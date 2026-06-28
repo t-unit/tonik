@@ -2060,5 +2060,445 @@ Map<String, String> parameterProperties({
         );
       },
     );
+
+    test(
+      'base64-encodes required non-null byte property before percent-encoding',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'signature',
+              model: Base64Model(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  _$result[r'signature'] = signature.toBase64String().uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'base64-encodes required nullable byte property before percent-encoding',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'signature',
+              model: Base64Model(context: context),
+              isRequired: true,
+              isNullable: true,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  if (signature != null) {
+    _$result[r'signature'] = signature!.toBase64String().uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  } else if (allowEmpty) {
+    _$result[r'signature'] = '';
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'base64-encodes optional byte property before percent-encoding',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'signature',
+              model: Base64Model(context: context),
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  if (signature != null) {
+    _$result[r'signature'] = signature!.toBase64String().uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  } else if (allowEmpty) {
+    _$result[r'signature'] = '';
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'base64-encodes byte additionalProperties values before '
+      'percent-encoding',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: Base64Model(context: context),
+          ),
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  _$result[r'name'] = name.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+  for (final _$e in additionalProperties.entries) {
+    _$result[_$e.key] = _$e.value.toBase64String().uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'base64-encodes byte property in list-shaped parameterProperties',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'signature',
+              model: Base64Model(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+                examples: const [],
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final method = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+        final methodCode = format(method.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  if (!allowLists && tags != null) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
+  final _$result = <String, String>{};
+  _$result[r'signature'] = signature.toBase64String().uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+  if (tags != null) {
+    _$result[r'tags'] = tags!.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  } else if (allowEmpty) {
+    _$result[r'tags'] = '';
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(methodCode),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'base64-encodes byte property in mixed-shape parameterProperties',
+      () {
+        final oneOfModel = OneOfModel(
+          isDeprecated: false,
+          name: 'StringOrClass',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'NestedClass',
+                properties: [
+                  Property(
+                    name: 'value',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                    examples: const [],
+                    defaultValue: null,
+                  ),
+                ],
+                context: context,
+                examples: const [],
+              ),
+            ),
+          },
+          context: context,
+          examples: const [],
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'ByteMixedContainer',
+          properties: [
+            Property(
+              name: 'signature',
+              model: Base64Model(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'value',
+              model: oneOfModel,
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final method = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+        final methodCode = format(method.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  _$result[r'signature'] = signature.toBase64String().uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+  if (value.currentEncodingShape == EncodingShape.simple) {
+    _$result[r'value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
+  } else {
+    throw EncodingException(
+      r'parameterProperties not supported for ByteMixedContainer: contains complex types',
+    );
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(methodCode),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'base64-encodes nullable byte additionalProperties values before '
+      'percent-encoding',
+      () {
+        final nullableByte = AliasModel(
+          name: 'NullableSignature',
+          model: Base64Model(context: context),
+          context: context,
+          isNullable: true,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Filter',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: nullableByte,
+          ),
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final method = result.methods.firstWhere(
+          (m) => m.name == 'parameterProperties',
+        );
+        final methodCode = format(method.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+}) {
+  final _$result = <String, String>{};
+  _$result[r'name'] = name.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+  for (final _$e in additionalProperties.entries) {
+    _$result[_$e.key] =
+        _$e.value?.toBase64String().uriEncode(
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+        ) ??
+        '';
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(methodCode),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
   });
 }

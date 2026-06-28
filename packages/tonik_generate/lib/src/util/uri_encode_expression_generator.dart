@@ -22,6 +22,20 @@ BuiltExpression buildUriEncodeExpression(
   );
 }
 
+/// A `format: byte` ([Base64Model]) value is percent-encoded from its base64
+/// text, not its raw bytes, so [receiver] is converted with `.toBase64String()`
+/// before `.uriEncode()`.
+String uriEncodeReceiver(Model model, String receiver) =>
+    model.resolved is Base64Model ? '$receiver.toBase64String()' : receiver;
+
+/// A `format: byte` ([Base64Model]) value is percent-encoded from its base64
+/// text, not its raw bytes, so [receiver] is converted with `.toBase64String()`
+/// before `.uriEncode()`.
+Expression uriEncodeReceiverExpression(Model model, Expression receiver) =>
+    model.resolved is Base64Model
+    ? receiver.property('toBase64String').call([])
+    : receiver;
+
 Expression _buildUriEncodeExpression(
   Expression valueExpression,
   Model model, {
@@ -41,13 +55,17 @@ Expression _buildUriEncodeExpression(
     NumberModel() ||
     BinaryModel() ||
     Base64Model() ||
-    EnumModel() => valueExpression.property('uriEncode').call(
-      [],
-      {
-        'allowEmpty': allowEmpty,
-        'useQueryComponent': ?useQueryComponent,
-      },
-    ),
+    EnumModel() =>
+      uriEncodeReceiverExpression(
+        model,
+        valueExpression,
+      ).property('uriEncode').call(
+        [],
+        {
+          'allowEmpty': allowEmpty,
+          'useQueryComponent': ?useQueryComponent,
+        },
+      ),
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
       refer(
         'encodeAnyToUri',

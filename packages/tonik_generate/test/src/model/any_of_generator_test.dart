@@ -3274,6 +3274,66 @@ String toLabel({required bool explode, required bool allowEmpty}) {
         expect(generated.trim(), format(expectedMethod).trim());
       },
     );
+
+    test(
+      'uriEncode converts Base64Model variant via toBase64String',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'Text',
+          properties: [
+            Property(
+              name: 'content',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final model = AnyOfModel(
+          isDeprecated: false,
+          name: 'AnyOfBase64',
+          models: {
+            (discriminatorValue: null, model: classModel),
+            (discriminatorValue: null, model: Base64Model(context: context)),
+          },
+          context: context,
+          examples: const [],
+        );
+
+        final klass = generator.generateClass(model);
+        final uriEncodeMethod = klass.methods.firstWhere(
+          (m) => m.name == 'uriEncode',
+        );
+        final generated = format(uriEncodeMethod.accept(emitter).toString());
+
+        const expectedMethod = '''
+@override
+String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+  if (tonikFile != null) {
+    return tonikFile!.toBase64String().uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+    );
+  }
+  if (text != null) {
+    throw EncodingException(
+      r'Cannot uriEncode AnyOfBase64: contains complex type',
+    );
+  }
+  throw EncodingException(r'Cannot uriEncode AnyOfBase64: no value set');
+}
+''';
+
+        expect(generated.trim(), format(expectedMethod).trim());
+      },
+    );
   });
 
   group('AnyModel in AnyOf', () {
