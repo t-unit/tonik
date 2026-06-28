@@ -47,6 +47,10 @@ void main() {
                 'type': ['string', 'null'],
               },
             },
+            'arrayWithNullableItemsViaFlag': {
+              'type': 'array',
+              'items': {'type': 'string', 'nullable': true},
+            },
           },
           'required': ['stringOrNumber', 'multiTypeEnum'],
         },
@@ -187,7 +191,7 @@ void main() {
     expect(listModel.content, isA<StringModel>());
   });
 
-  test('imports array with nullable items', () {
+  test('imports array with nullable items via type array', () {
     final api = Importer().import(fileContent);
 
     final model = api.models.first as ClassModel;
@@ -199,8 +203,26 @@ void main() {
     expect(arrayWithNullableItems.isNullable, isFalse);
 
     final listModel = arrayWithNullableItems.model as ListModel;
+    expect(listModel.isContentNullable, isTrue);
     expect(listModel.content, isA<StringModel>());
-    expect((listModel.content as StringModel).context.path, contains('array'));
+    expect(
+      (listModel.content as StringModel).context.path,
+      contains('array'),
+    );
+  });
+
+  test('imports array with nullable items via nullable flag', () {
+    final api = Importer().import(fileContent);
+
+    final model = api.models.first as ClassModel;
+    final arrayWithNullableItems = model.properties.firstWhere(
+      (p) => p.name == 'arrayWithNullableItemsViaFlag',
+    );
+    expect(arrayWithNullableItems.model, isA<ListModel>());
+
+    final listModel = arrayWithNullableItems.model as ListModel;
+    expect(listModel.isContentNullable, isTrue);
+    expect(listModel.content, isA<StringModel>());
   });
 
   test('adds inline type array OneOfModel to models set', () {

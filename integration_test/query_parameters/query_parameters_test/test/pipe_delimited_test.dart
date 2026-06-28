@@ -473,6 +473,19 @@ void main() {
       );
     });
 
+    test('nullableString percent-encodes elements and empties null', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testPipeDelimitedList(
+        listNullableString: ['a b/c', null, 'd'],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listNullableString=a+b%2Fc%7C%7Cd',
+      );
+    });
+
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedList(

@@ -29,25 +29,27 @@ TypeReference typeReference(
             m.content,
             nameManager,
             package,
+            isNullableOverride: m.isContentNullable,
             useImmutableCollections: useImmutableCollections,
           ),
         )
         ..isNullable = isNullableOverride || m.isNullable,
     ),
-    MapModel(:final valueModel) when model.name == null => TypeReference(
+    final MapModel m when model.name == null => TypeReference(
       (b) => b
         ..symbol = useImmutableCollections ? 'IMap' : 'Map'
         ..url = useImmutableCollections ? _ficUrl : 'dart:core'
         ..types.addAll([
           refer('String', 'dart:core'),
           typeReference(
-            valueModel,
+            m.valueModel,
             nameManager,
             package,
+            isNullableOverride: m.isValueNullable,
             useImmutableCollections: useImmutableCollections,
           ),
         ])
-        ..isNullable = isNullableOverride || model.isNullable,
+        ..isNullable = isNullableOverride || m.isNullable,
     ),
     final AliasModel m when m.name == null => typeReference(
       m.model,

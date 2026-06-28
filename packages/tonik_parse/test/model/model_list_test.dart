@@ -142,4 +142,85 @@ void main() {
     expect(model, isA<ListModel>());
     expect(model.content, isA<AnyModel>());
   });
+
+  test('imports inline array items without items as ListModel of AnyModel', () {
+    const spec = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'NestedOpenList': {
+            'type': 'array',
+            'items': {'type': 'array'},
+          },
+        },
+      },
+    };
+
+    final api = Importer().import(spec);
+
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'NestedOpenList',
+    );
+
+    expect(model, isA<ListModel>());
+    expect(model.content, isA<ListModel>());
+
+    final inner = model.content as ListModel;
+    expect(inner.name, isNull);
+    expect(inner.content, isA<AnyModel>());
+  });
+
+  test('named array with OAS 3.0 nullable items sets isContentNullable', () {
+    const spec = {
+      'openapi': '3.0.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'NicknameList': {
+            'type': 'array',
+            'items': {'type': 'string', 'nullable': true},
+          },
+        },
+      },
+    };
+
+    final api = Importer().import(spec);
+
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'NicknameList',
+    );
+
+    expect(model.isContentNullable, isTrue);
+    expect(model.content, isA<StringModel>());
+  });
+
+  test('named array with OAS 3.1 null type items sets isContentNullable', () {
+    const spec = {
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'NicknameList': {
+            'type': 'array',
+            'items': {
+              'type': ['string', 'null'],
+            },
+          },
+        },
+      },
+    };
+
+    final api = Importer().import(spec);
+
+    final model = api.models.whereType<ListModel>().firstWhere(
+      (m) => m.name == 'NicknameList',
+    );
+
+    expect(model.isContentNullable, isTrue);
+    expect(model.content, isA<StringModel>());
+  });
 }

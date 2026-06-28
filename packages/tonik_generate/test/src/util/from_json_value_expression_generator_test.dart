@@ -497,6 +497,179 @@ void main() {
       );
     });
 
+    group('list of nullable items', () {
+      AliasModel nullableItem(Model model) => AliasModel(
+        model: model,
+        context: context,
+        isNullable: true,
+        defaultValue: null,
+        examples: const [],
+      );
+
+      String decode(Model itemModel) => buildFromJsonValueExpression(
+        'value',
+        model: ListModel(
+          content: nullableItem(itemModel),
+          context: context,
+          examples: const [],
+        ),
+        nameManager: nameManager,
+        package: 'my_package',
+      ).accept(emitter).toString();
+
+      test('string items decode to a nullable element list', () {
+        expect(
+          decode(StringModel(context: context)),
+          'value.decodeJsonList<String?>()',
+        );
+      });
+
+      test('bool items decode to a nullable element list', () {
+        expect(
+          decode(BooleanModel(context: context)),
+          'value.decodeJsonList<bool?>()',
+        );
+      });
+
+      test('int items decode to a nullable element list', () {
+        expect(
+          decode(IntegerModel(context: context)),
+          'value.decodeJsonList<int?>()',
+        );
+      });
+
+      test('double items decode to a nullable element list', () {
+        expect(
+          decode(DoubleModel(context: context)),
+          'value.decodeJsonList<double?>()',
+        );
+      });
+
+      test('num items decode to a nullable element list', () {
+        expect(
+          decode(NumberModel(context: context)),
+          'value.decodeJsonList<num?>()',
+        );
+      });
+
+      test('date items short-circuit null per element', () {
+        expect(
+          decode(DateModel(context: context)),
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e?.decodeJsonDate()).toList()',
+        );
+      });
+
+      test('date-time items short-circuit null per element', () {
+        expect(
+          decode(DateTimeModel(context: context)),
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e?.decodeJsonDateTime()).toList()',
+        );
+      });
+
+      test('decimal items short-circuit null per element', () {
+        expect(
+          decode(DecimalModel(context: context)),
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e?.decodeJsonBigDecimal()).toList()',
+        );
+      });
+
+      test('uri items short-circuit null per element', () {
+        expect(
+          decode(UriModel(context: context)),
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e?.decodeJsonUri()).toList()',
+        );
+      });
+
+      test('binary items short-circuit null per element', () {
+        expect(
+          decode(BinaryModel(context: context)),
+          'value.decodeJsonList<Object?>().map((e) => '
+          'e == null ? null : TonikFileBytes(e.decodeJsonBinary())).toList()',
+        );
+      });
+
+      test('base64 items short-circuit null per element', () {
+        expect(
+          decode(Base64Model(context: context)),
+          'value.decodeJsonList<Object?>().map((e) => '
+          'e == null ? null : TonikFileBytes(e.decodeJsonBase64())).toList()',
+        );
+      });
+
+      test('class items short-circuit null per element', () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'User',
+          properties: const [],
+          examples: const [],
+        );
+        expect(
+          decode(classModel),
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e == null ? null : User.fromJson(e)).toList()',
+        );
+      });
+
+      test('enum items short-circuit null per element', () {
+        final enumModel = EnumModel(
+          isDeprecated: false,
+          context: context,
+          name: 'UserRole',
+          values: {
+            const EnumEntry(value: 'admin'),
+            const EnumEntry(value: 'user'),
+          },
+          isNullable: false,
+          examples: const [],
+        );
+        expect(
+          decode(enumModel),
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e == null ? null : UserRole.fromJson(e)).toList()',
+        );
+      });
+
+      test('composite items short-circuit null per element', () {
+        final oneOfModel = OneOfModel(
+          name: 'Pet',
+          models: const {},
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        );
+        expect(
+          decode(oneOfModel),
+          'value.decodeJsonList<Object?>()'
+          '.map((e) => e == null ? null : Pet.fromJson(e)).toList()',
+        );
+      });
+
+      test('map items short-circuit null per element', () {
+        final addressModel = ClassModel(
+          isDeprecated: false,
+          context: context,
+          name: 'Address',
+          properties: const [],
+          examples: const [],
+        );
+        final mapModel = MapModel(
+          valueModel: addressModel,
+          context: context,
+          examples: const [],
+        );
+        expect(
+          decode(mapModel),
+          'value.decodeJsonList<Object?>().map((e) => e == null ? null : '
+          'e.decodeJsonMap((v) => Address.fromJson(v))).toList()',
+        );
+      });
+    });
+
     test(
       'honors ListModel(isNullable: true) intrinsic nullability when the '
       'caller leaves isNullable at the default',

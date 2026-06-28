@@ -65,12 +65,13 @@ Expression _buildUriEncodeExpression(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     ),
-    ListModel(:final content) => _buildListUriEncodeExpression(
+    final ListModel m => _buildListUriEncodeExpression(
       valueExpression,
-      content,
+      m.content,
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
+      isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
     ),
     AliasModel() => _buildUriEncodeExpression(
       valueExpression,
@@ -89,17 +90,43 @@ Expression _buildListUriEncodeExpression(
   Expression valueExpression,
   Model contentModel, {
   required Expression allowEmpty,
+  required bool isContentNullable,
   Expression? useQueryComponent,
   bool useImmutableCollections = false,
 }) {
-  // When using immutable collections, the value is an IList which does not
-  // The .uriEncode() extension is defined on List, not IList.
-  // Unlock first to get a regular List that has the extension method.
+  // When using immutable collections, the value is an IList. The .uriEncode()
+  // extension is defined on List, not IList, so unlock to a regular List first.
   final listExpr = useImmutableCollections
       ? valueExpression.property('unlock')
       : valueExpression;
 
+  // A null array element encodes to the empty string, coercing the element type
+  // back to non-null `String` so the whole-list `uriEncode` extension matches.
+  Expression nullGuard(Expression encoded) => isContentNullable
+      ? refer('e').equalTo(literalNull).conditional(literalString(''), encoded)
+      : encoded;
+
   return switch (contentModel) {
+    StringModel() when isContentNullable =>
+      listExpr
+          .property('map')
+          .call([
+            Method(
+              (b) => b
+                ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+                ..body = refer('e').ifNullThen(literalString('')).code,
+            ).closure,
+          ])
+          .property('toList')
+          .call([])
+          .property('uriEncode')
+          .call(
+            [],
+            {
+              'allowEmpty': allowEmpty,
+              'useQueryComponent': ?useQueryComponent,
+            },
+          ),
     StringModel() => listExpr.property('uriEncode').call(
       [],
       {
@@ -126,11 +153,13 @@ Expression _buildListUriEncodeExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = _buildUriEncodeExpression(
-                  refer('e'),
-                  contentModel,
-                  allowEmpty: allowEmpty,
-                  useQueryComponent: useQueryComponent,
+                ..body = nullGuard(
+                  _buildUriEncodeExpression(
+                    refer('e'),
+                    contentModel,
+                    allowEmpty: allowEmpty,
+                    useQueryComponent: useQueryComponent,
+                  ),
                 ).code,
             ).closure,
           ])
@@ -190,6 +219,7 @@ Expression _buildListUriEncodeExpression(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
+      isContentNullable: isContentNullable,
     ),
     _ => generateEncodingExceptionExpression(
       'Unsupported list content type for URI encoding.',

@@ -406,6 +406,41 @@ void main() {
       );
     });
 
+    test('generates toJson passing through a list of nullable strings', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Profile',
+        properties: [
+          Property(
+            name: 'nicknames',
+            model: ListModel(
+              content: StringModel(context: context),
+              isContentNullable: true,
+              context: context,
+              examples: const [],
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      const expectedMethod = '''
+        Object? toJson() => {r'nicknames': nicknames};
+        ''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
     test('generates toJson method with polymorphic model types', () {
       final baseModel = ClassModel(
         isDeprecated: false,
@@ -785,6 +820,47 @@ void main() {
     return User(
       name: _$map[r'name'].decodeJsonString(context: r'User.name'),
       bio: _$map[r'bio'].decodeJsonNullableString(context: r'User.bio'),
+    );
+  }''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
+    test('generates fromJson decoding a list of nullable strings', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        context: context,
+        name: 'Profile',
+        properties: [
+          Property(
+            name: 'nicknames',
+            model: ListModel(
+              content: StringModel(context: context),
+              isContentNullable: true,
+              context: context,
+              examples: const [],
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        examples: const [],
+      );
+
+      const expectedMethod = r'''
+  factory Profile.fromJson(Object? json) {
+    final _$map = json.decodeMap(context: r'Profile');
+    return Profile(
+      nicknames: _$map[r'nicknames'].decodeJsonList<String?>(
+        context: r'Profile.nicknames',
+      ),
     );
   }''';
 

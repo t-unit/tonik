@@ -129,7 +129,44 @@ void main() {
       final model = api.models.first;
       expect(model, isA<MapModel>());
       final mapModel = model as MapModel;
-      expect(mapModel.valueModel.isEffectivelyNullable, isTrue);
+      expect(mapModel.isValueNullable, isTrue);
+      expect(mapModel.valueModel, isA<StringModel>());
+    });
+
+    test('inline pure map property sets isValueNullable when value '
+        'is nullable', () {
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'Container': {
+              'type': 'object',
+              'properties': {
+                'lookup': {
+                  'type': 'object',
+                  'additionalProperties': {
+                    'type': 'string',
+                    'nullable': true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(spec);
+      final container = api.models.whereType<ClassModel>().firstWhere(
+        (m) => m.name == 'Container',
+      );
+      final lookup = container.properties.firstWhere((p) => p.name == 'lookup');
+
+      expect(lookup.model, isA<MapModel>());
+      final mapModel = lookup.model as MapModel;
+      expect(mapModel.isValueNullable, isTrue);
+      expect(mapModel.valueModel, isA<StringModel>());
     });
   });
 }

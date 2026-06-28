@@ -315,6 +315,92 @@ void main() {
       });
     });
 
+    group('nullable list content', () {
+      test('null-guards each element for List<String?>', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            isContentNullable: true,
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in tags
+                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toSpaceDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'tags', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('null-guards each element for List<int?>', () {
+        final parameter = createParameter(
+          name: 'ids',
+          rawName: 'ids',
+          model: ListModel(
+            content: IntegerModel(context: context),
+            isContentNullable: true,
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'ids',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in ids
+                    .map((e) => e == null ? '' : e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toPipeDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'ids', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+    });
+
     group('special characters in rawName', () {
       test(
         'generates valid code when rawName contains single quote '

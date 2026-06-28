@@ -63,7 +63,7 @@ void main() {
       expect(
         mapModel.toString(),
         'MapModel{name: Tags, nameOverride: null, '
-        'valueModel: StringModel, examples: []}',
+        'valueModel: StringModel, isValueNullable: false, examples: []}',
       );
     });
   });
