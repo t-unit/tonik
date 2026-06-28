@@ -477,7 +477,7 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedList(
         listOneOfPrimitive: [
-          const OneOfPrimitiveString('test'),
+          const OneOfPrimitiveString('white space'),
           const OneOfPrimitiveString('test2'),
         ],
       );
@@ -485,7 +485,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'listOneOfPrimitive=test%7Ctest2',
+        'listOneOfPrimitive=white%20space%7Ctest2',
       );
     });
 
@@ -549,7 +549,6 @@ void main() {
         success.response.requestOptions.uri.query,
         'listEnum=high%20priority%7Curgent%7Clow%20priority',
       );
-      expect(success.response.requestOptions.uri.query, isNot(contains('+')));
     });
   });
 
@@ -570,13 +569,13 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedListExplode(
-        listOneOfPrimitive: [const OneOfPrimitiveString('test')],
+        listOneOfPrimitive: [const OneOfPrimitiveString('white space')],
       );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'listOneOfPrimitive=test',
+        'listOneOfPrimitive=white%20space',
       );
     });
 
@@ -592,6 +591,23 @@ void main() {
       expect(response, isA<TonikError<void>>());
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
+    });
+
+    test('enum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testPipeDelimitedListExplode(
+        listEnum: [
+          PipeDelimitedListExplodeParametersArrayModel.highPriority,
+          PipeDelimitedListExplodeParametersArrayModel.urgent,
+          PipeDelimitedListExplodeParametersArrayModel.lowPriority,
+        ],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listEnum=high%20priority&listEnum=urgent&listEnum=low%20priority',
+      );
     });
   });
 
