@@ -1225,9 +1225,11 @@ class ClassGenerator {
     if (ap is TypedAdditionalProperties &&
         ap.valueModel.encodingShape == EncodingShape.simple) {
       final uriEncodeCall = ap.valueModel.isEffectivelyNullable
-          ? r'_$e.value?.uriEncode(allowEmpty: allowEmpty, '
+          ? '${uriEncodeReceiver(ap.valueModel, r'_$e.value?')}'
+                '.uriEncode(allowEmpty: allowEmpty, '
                 "useQueryComponent: useQueryComponent) ?? ''"
-          : r'_$e.value.uriEncode(allowEmpty: allowEmpty, '
+          : '${uriEncodeReceiver(ap.valueModel, r'_$e.value')}'
+                '.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent)';
       return [
         Code('''
@@ -1325,8 +1327,18 @@ for (final _\$e in $apFieldName.entries) {
         continue;
       }
 
-      if (isRequired && !isNullable) {
-        if (isFieldNullable) {
+      if (isRequired && !isNullable && !isFieldNullable) {
+        propertyAssignments.add(
+          Code(
+            '_\$result[${specLiteralStringCode(propertyName)}] = '
+            '${uriEncodeReceiver(model, name)}.uriEncode('
+            'allowEmpty: allowEmpty, '
+            'useQueryComponent: useQueryComponent);',
+          ),
+        );
+      } else {
+        final checkedReceiver = uriEncodeReceiver(model, '$name!');
+        if (isRequired && !isNullable) {
           propertyAssignments
             ..add(Code('if ($name == null) {'))
             ..add(
@@ -1339,37 +1351,20 @@ for (final _\$e in $apFieldName.entries) {
             ..add(
               Code(
                 '_\$result[${specLiteralStringCode(propertyName)}] = '
-                '$name!.uriEncode(allowEmpty: allowEmpty, '
+                '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent);',
               ),
             );
         } else {
           propertyAssignments.add(
-            Code(
-              '_\$result[${specLiteralStringCode(propertyName)}] = '
-              '$name.uriEncode(allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent);',
-            ),
+            Code('''
+if ($name != null) {
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+} else if (allowEmpty) {
+  _\$result[${specLiteralStringCode(propertyName)}] = '';
+}'''),
           );
         }
-      } else if (isRequired && isNullable) {
-        propertyAssignments.add(
-          Code('''
-if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
-} else if (allowEmpty) {
-  _\$result[${specLiteralStringCode(propertyName)}] = '';
-}'''),
-        );
-      } else {
-        propertyAssignments.add(
-          Code('''
-if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
-} else if (allowEmpty) {
-  _\$result[${specLiteralStringCode(propertyName)}] = '';
-}'''),
-        );
       }
     }
 
@@ -1435,8 +1430,18 @@ if ($name != null) {
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
 
       if (fieldModel.encodingShape == EncodingShape.simple) {
-        if (isRequired && !isNullable) {
-          if (isFieldNullable) {
+        if (isRequired && !isNullable && !isFieldNullable) {
+          propertyAssignments.add(
+            Code(
+              '_\$result[${specLiteralStringCode(propertyName)}] = '
+              '${uriEncodeReceiver(fieldModel, name)}.uriEncode('
+              'allowEmpty: allowEmpty, '
+              'useQueryComponent: useQueryComponent);',
+            ),
+          );
+        } else {
+          final checkedReceiver = uriEncodeReceiver(fieldModel, '$name!');
+          if (isRequired && !isNullable) {
             propertyAssignments
               ..add(Code('if ($name == null) {'))
               ..add(
@@ -1449,28 +1454,20 @@ if ($name != null) {
               ..add(
                 Code(
                   '_\$result[${specLiteralStringCode(propertyName)}] = '
-                  '$name!.uriEncode(allowEmpty: allowEmpty, '
+                  '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
                   'useQueryComponent: useQueryComponent);',
                 ),
               );
           } else {
             propertyAssignments.add(
-              Code(
-                '_\$result[${specLiteralStringCode(propertyName)}] = '
-                '$name.uriEncode(allowEmpty: allowEmpty, '
-                'useQueryComponent: useQueryComponent);',
-              ),
-            );
-          }
-        } else {
-          propertyAssignments.add(
-            Code('''
+              Code('''
 if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
 } else if (allowEmpty) {
   _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
-          );
+            );
+          }
         }
       } else if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         final valueRef = (isRequired && !isNullable)
@@ -1601,8 +1598,18 @@ if ($name != null) {
       }
 
       if (model.encodingShape == .simple) {
-        if (isRequired && !isNullable) {
-          if (isFieldNullable) {
+        if (isRequired && !isNullable && !isFieldNullable) {
+          propertyAssignments.add(
+            Code(
+              '_\$result[${specLiteralStringCode(propertyName)}] = '
+              '${uriEncodeReceiver(model, name)}.uriEncode('
+              'allowEmpty: allowEmpty, '
+              'useQueryComponent: useQueryComponent);',
+            ),
+          );
+        } else {
+          final checkedReceiver = uriEncodeReceiver(model, '$name!');
+          if (isRequired && !isNullable) {
             propertyAssignments
               ..add(Code('if ($name == null) {'))
               ..add(
@@ -1615,37 +1622,20 @@ if ($name != null) {
               ..add(
                 Code(
                   '_\$result[${specLiteralStringCode(propertyName)}] = '
-                  '$name!.uriEncode(allowEmpty: allowEmpty, '
+                  '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
                   'useQueryComponent: useQueryComponent);',
                 ),
               );
           } else {
             propertyAssignments.add(
-              Code(
-                '_\$result[${specLiteralStringCode(propertyName)}] = '
-                '$name.uriEncode(allowEmpty: allowEmpty, '
-                'useQueryComponent: useQueryComponent);',
-              ),
+              Code('''
+if ($name != null) {
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+} else if (allowEmpty) {
+  _\$result[${specLiteralStringCode(propertyName)}] = '';
+}'''),
             );
           }
-        } else if (isRequired && isNullable) {
-          propertyAssignments.add(
-            Code('''
-if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
-} else if (allowEmpty) {
-  _\$result[${specLiteralStringCode(propertyName)}] = '';
-}'''),
-          );
-        } else {
-          propertyAssignments.add(
-            Code('''
-if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
-} else if (allowEmpty) {
-  _\$result[${specLiteralStringCode(propertyName)}] = '';
-}'''),
-          );
         }
       } else {
         final isFieldNullable = isNullable || !isRequired;

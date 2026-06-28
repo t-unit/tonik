@@ -21,6 +21,7 @@ import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 /// A generator for creating sealed Dart classes from OneOf model definitions.
@@ -1877,10 +1878,13 @@ class OneOfGenerator {
         }
 
         caseCodes.addAll([
-          refer('value').property('uriEncode').call([], {
-            'allowEmpty': refer('allowEmpty'),
-            'useQueryComponent': refer('useQueryComponent'),
-          }).code,
+          uriEncodeReceiverExpression(modelType, refer('value'))
+              .property('uriEncode')
+              .call([], {
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+              })
+              .code,
           const Code(','),
         ]);
       }

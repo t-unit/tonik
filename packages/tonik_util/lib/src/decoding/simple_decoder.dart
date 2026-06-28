@@ -240,8 +240,10 @@ extension SimpleDecoder on String? {
 
   /// Decodes a base64-encoded string to binary data (`List<int>`).
   ///
-  /// Expects a valid base64-encoded string.
-  /// Throws [InvalidTypeException] if the value is null.
+  /// The base64 alphabet and padding are percent-encoded on the wire, so the
+  /// value is percent-decoded before base64 decoding, like
+  /// [decodeSimpleString].
+  /// Throws [InvalidTypeException] if the value is null or not valid base64.
   List<int> decodeSimpleBase64({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
@@ -253,7 +255,15 @@ extension SimpleDecoder on String? {
     if (this!.isEmpty) {
       return <int>[];
     }
-    return base64.decode(this!);
+    try {
+      return base64.decode(Uri.decodeComponent(this!));
+    } on Object {
+      throw InvalidTypeException(
+        value: this!,
+        targetType: List<int>,
+        context: context,
+      );
+    }
   }
 
   /// Decodes a base64-encoded string to nullable binary data.

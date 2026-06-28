@@ -167,7 +167,7 @@ void main() {
       );
     });
 
-    test('generates uriEncode call for Base64Model', () {
+    test('base64-encodes Base64Model before uriEncode', () {
       final model = Base64Model(context: context);
       final expression = buildUriEncodeExpression(
         refer('value'),
@@ -177,7 +177,30 @@ void main() {
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.toBase64String().uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('base64-encodes Base64Model with useQueryComponent', () {
+      final model = Base64Model(context: context);
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        useQueryComponent: refer('useQueryComponent'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.toBase64String().uriEncode(
+          allowEmpty: allowEmpty,
+          useQueryComponent: useQueryComponent,
+        );
       ''';
 
       expect(
@@ -469,7 +492,7 @@ void main() {
       );
     });
 
-    test('generates map expression for List<Base64Model>', () {
+    test('base64-encodes each element for List<Base64Model>', () {
       final model = ListModel(
         content: Base64Model(context: context),
         context: context,
@@ -484,7 +507,7 @@ void main() {
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
         final result = value
-            .map((e) => e.uriEncode(allowEmpty: allowEmpty))
+            .map((e) => e.toBase64String().uriEncode(allowEmpty: allowEmpty))
             .toList()
             .uriEncode(allowEmpty: allowEmpty);
       ''';

@@ -2509,6 +2509,294 @@ void main() {
         );
       },
     );
+
+    test(
+      'base64-encodes byte property before uriEncode',
+      () {
+        final byteAlias = AliasModel(
+          name: 'Signature',
+          model: Base64Model(context: context),
+          context: context,
+          isNullable: true,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'AllOfNullableByte',
+          models: {byteAlias},
+          context: context,
+          examples: const [],
+        );
+
+        nameManager.prime(
+          models: {model, byteAlias},
+          requestBodies: const <RequestBody>[],
+          responses: const <Response>[],
+          operations: const <Operation>[],
+          tags: const <Tag>[],
+          servers: const <Server>[],
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final generated = format(combinedClass.accept(emitter).toString());
+
+        const expectedUriEncode = r'''
+          @override
+          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+            final _$values = <String>{};
+            if (signature != null) {
+              final _$signatureEncoded = signature!.toBase64String().uriEncode(
+                allowEmpty: allowEmpty,
+                useQueryComponent: useQueryComponent,
+              );
+              _$values.add(_$signatureEncoded);
+            }
+            if (_$values.length > 1) {
+              throw EncodingException(
+                r'Inconsistent allOf encoding for AllOfNullableByte: all values must encode to the same result',
+              );
+            }
+            if (_$values.isEmpty) {
+              throw EncodingException(
+                r'Cannot encode AllOfNullableByte to encoding: all properties are null',
+              );
+            }
+            return _$values.first;
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedUriEncode)),
+        );
+      },
+    );
+  });
+
+  group('byte member parameter styles', () {
+    AllOfModel byteModel() {
+      final byteAlias = AliasModel(
+        name: 'Signature',
+        model: Base64Model(context: context),
+        context: context,
+        isNullable: true,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfByte',
+        models: {byteAlias},
+        context: context,
+        examples: const [],
+      );
+      nameManager.prime(
+        models: {model, byteAlias},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
+      return model;
+    }
+
+    AllOfModel binaryModel() {
+      final model = AllOfModel(
+        isDeprecated: false,
+        name: 'AllOfBinary',
+        models: {BinaryModel(context: context)},
+        context: context,
+        examples: const [],
+      );
+      nameManager.prime(
+        models: {model},
+        requestBodies: const <RequestBody>[],
+        responses: const <Response>[],
+        operations: const <Operation>[],
+        tags: const <Tag>[],
+        servers: const <Server>[],
+      );
+      return model;
+    }
+
+    String methodSource(AllOfModel model, String methodName) {
+      final klass = generator.generateClass(model);
+      final method = klass.methods.firstWhere((m) => m.name == methodName);
+      return format(method.accept(emitter).toString());
+    }
+
+    test('toSimple base64-encodes byte member', () {
+      const expected = '''
+@override
+String toSimple({required bool explode, required bool allowEmpty}) {
+  return signature!.toBase64String().toSimple(
+    explode: explode,
+    allowEmpty: allowEmpty,
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(methodSource(byteModel(), 'toSimple')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('toForm base64-encodes byte member', () {
+      const expected = '''
+@override
+List<ParameterEntry> toForm(
+  String paramName, {
+  required bool explode,
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+}) {
+  return signature!.toBase64String().toForm(
+    paramName,
+    explode: explode,
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(methodSource(byteModel(), 'toForm')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('toLabel base64-encodes byte member', () {
+      const expected = '''
+@override
+String toLabel({required bool explode, required bool allowEmpty}) {
+  return signature!.toBase64String().toLabel(
+    explode: explode,
+    allowEmpty: allowEmpty,
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(methodSource(byteModel(), 'toLabel')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('toMatrix base64-encodes byte member', () {
+      const expected = r'''
+@override
+String toMatrix(
+  String paramName, {
+  required bool explode,
+  required bool allowEmpty,
+}) {
+  final _$values = <String>{};
+  if (signature != null) {
+    final _$signatureMatrix = signature!.toBase64String().toMatrix(
+      paramName,
+      explode: explode,
+      allowEmpty: allowEmpty,
+    );
+    _$values.add(_$signatureMatrix);
+  }
+  if (_$values.length > 1) {
+    throw EncodingException(
+      r'Inconsistent allOf matrix encoding for AllOfByte: all values must encode to the same result',
+    );
+  }
+  if (_$values.isEmpty) {
+    throw EncodingException(
+      r'Cannot encode AllOfByte to encoding: all properties are null',
+    );
+  }
+  return _$values.first;
+}
+''';
+
+      expect(
+        collapseWhitespace(methodSource(byteModel(), 'toMatrix')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('toSimple throws for binary member', () {
+      const expected = '''
+@override
+String toSimple({required bool explode, required bool allowEmpty}) {
+  throw EncodingException('Binary data cannot be simple-encoded');
+}
+''';
+
+      expect(
+        collapseWhitespace(methodSource(binaryModel(), 'toSimple')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('toForm throws for binary member', () {
+      const expected = '''
+@override
+List<ParameterEntry> toForm(
+  String paramName, {
+  required bool explode,
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+}) {
+  return throw EncodingException('Binary data cannot be form-encoded');
+}
+''';
+
+      expect(
+        collapseWhitespace(methodSource(binaryModel(), 'toForm')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('toLabel throws for binary member', () {
+      const expected = '''
+@override
+String toLabel({required bool explode, required bool allowEmpty}) {
+  throw EncodingException('Binary data cannot be label-encoded');
+}
+''';
+
+      expect(
+        collapseWhitespace(methodSource(binaryModel(), 'toLabel')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('toMatrix throws for binary member', () {
+      const expected = r'''
+@override
+String toMatrix(
+  String paramName, {
+  required bool explode,
+  required bool allowEmpty,
+}) {
+  final _$values = <String>{};
+  final _$tonikFileMatrix = throw EncodingException(
+    'Binary data cannot be matrix-encoded',
+  );
+  _$values.add(_$tonikFileMatrix);
+  if (_$values.length > 1) {
+    throw EncodingException(
+      r'Inconsistent allOf matrix encoding for AllOfBinary: all values must encode to the same result',
+    );
+  }
+  return _$values.first;
+}
+''';
+
+      expect(
+        collapseWhitespace(methodSource(binaryModel(), 'toMatrix')),
+        collapseWhitespace(format(expected)),
+      );
+    });
   });
 
   group('toForm', () {
@@ -3899,6 +4187,142 @@ class Holder {
     );
     for (final _$e in additionalProperties.entries) {
       _$mergedProperties[_$e.key] = _$e.value.uriEncode(allowEmpty: allowEmpty);
+    }
+    return _$mergedProperties;
+  }''';
+
+          final combinedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(combinedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'base64-encodes typed byte additionalProperties values before '
+        'uriEncode',
+        () {
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'TypedByteExtended',
+            models: {
+              ClassModel(
+                isDeprecated: false,
+                name: 'Base',
+                context: context,
+                properties: [
+                  Property(
+                    name: 'name',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                    examples: const [],
+                    defaultValue: null,
+                  ),
+                ],
+                examples: const [],
+              ),
+            },
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: Base64Model(context: context),
+            ),
+            examples: const [],
+          );
+
+          const expectedMethod = r'''
+  Map<String, String> parameterProperties({
+    bool allowEmpty = true,
+    bool allowLists = true,
+  }) {
+    final _$mergedProperties = <String, String>{};
+    _$mergedProperties.addAll(
+      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+    );
+    for (final _$e in additionalProperties.entries) {
+      _$mergedProperties[_$e.key] = _$e.value.toBase64String().uriEncode(
+        allowEmpty: allowEmpty,
+      );
+    }
+    return _$mergedProperties;
+  }''';
+
+          final combinedClass = generator.generateClass(model);
+          expect(
+            collapseWhitespace(
+              format(combinedClass.accept(emitter).toString()),
+            ),
+            contains(collapseWhitespace(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'base64-encodes nullable typed byte additionalProperties values',
+        () {
+          final nullableByte = AliasModel(
+            name: 'NullableSignature',
+            model: Base64Model(context: context),
+            context: context,
+            isNullable: true,
+            examples: const [],
+            defaultValue: null,
+          );
+
+          final model = AllOfModel(
+            isDeprecated: false,
+            name: 'NullableByteExtended',
+            models: {
+              ClassModel(
+                isDeprecated: false,
+                name: 'Base',
+                context: context,
+                properties: [
+                  Property(
+                    name: 'name',
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isNullable: false,
+                    isDeprecated: false,
+                    examples: const [],
+                    defaultValue: null,
+                  ),
+                ],
+                examples: const [],
+              ),
+            },
+            context: context,
+            additionalProperties: TypedAdditionalProperties(
+              valueModel: nullableByte,
+            ),
+            examples: const [],
+          );
+
+          nameManager.prime(
+            models: {model, nullableByte},
+            requestBodies: const <RequestBody>[],
+            responses: const <Response>[],
+            operations: const <Operation>[],
+            tags: const <Tag>[],
+            servers: const <Server>[],
+          );
+
+          const expectedMethod = r'''
+  Map<String, String> parameterProperties({
+    bool allowEmpty = true,
+    bool allowLists = true,
+  }) {
+    final _$mergedProperties = <String, String>{};
+    _$mergedProperties.addAll(
+      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+    );
+    for (final _$e in additionalProperties.entries) {
+      _$mergedProperties[_$e.key] =
+          _$e.value?.toBase64String().uriEncode(allowEmpty: allowEmpty) ?? '';
     }
     return _$mergedProperties;
   }''';

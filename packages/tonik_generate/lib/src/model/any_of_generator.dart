@@ -23,6 +23,7 @@ import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.
 import 'package:tonik_generate/src/util/to_matrix_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_simple_parameter_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 @immutable
@@ -2362,11 +2363,13 @@ class AnyOfGenerator {
           ..add(const Code('}'));
       } else {
         // Simple or mixed types can call uriEncode
+        final receiver = uriEncodeReceiver(propertyModel, '$name!');
         body
           ..add(Code('if ($name != null) {'))
           ..add(
             Code(
-              '''return $name!.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);''',
+              'return $receiver.uriEncode(allowEmpty: allowEmpty, '
+              'useQueryComponent: useQueryComponent);',
             ),
           )
           ..add(const Code('}'));
