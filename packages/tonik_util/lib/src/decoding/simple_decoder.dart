@@ -240,10 +240,10 @@ extension SimpleDecoder on String? {
 
   /// Decodes a base64-encoded string to binary data (`List<int>`).
   ///
-  /// The base64 alphabet and padding are percent-encoded on the wire, so the
-  /// value is percent-decoded before base64 decoding, like
+  /// Base64 output can contain `+`, `/` and `=`, which are percent-encoded on
+  /// the wire, so the value is percent-decoded before base64 decoding, like
   /// [decodeSimpleString].
-  /// Throws [InvalidTypeException] if the value is null or not valid base64.
+  /// Throws [InvalidTypeException] if the value is null or cannot be decoded.
   List<int> decodeSimpleBase64({String? context}) {
     if (this == null) {
       throw InvalidTypeException(

@@ -2573,6 +2573,83 @@ void main() {
         );
       },
     );
+
+    test(
+      'base64-encodes byte property in dynamic-shape uriEncode',
+      () {
+        final byteAlias = AliasModel(
+          name: 'Signature',
+          model: Base64Model(context: context),
+          context: context,
+          isNullable: true,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        final statusOneOf = OneOfModel(
+          isDeprecated: false,
+          name: 'Status',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (
+              discriminatorValue: null,
+              model: ClassModel(
+                isDeprecated: false,
+                name: 'State',
+                properties: const [],
+                context: context,
+                examples: const [],
+              ),
+            ),
+          },
+          context: context,
+          examples: const [],
+        );
+
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'DynamicByte',
+          models: {byteAlias, statusOneOf},
+          context: context,
+          examples: const [],
+        );
+
+        nameManager.prime(
+          models: {model, byteAlias, statusOneOf},
+          requestBodies: const <RequestBody>[],
+          responses: const <Response>[],
+          operations: const <Operation>[],
+          tags: const <Tag>[],
+          servers: const <Server>[],
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final method = combinedClass.methods.firstWhere(
+          (m) => m.name == 'uriEncode',
+        );
+        final methodCode = format(method.accept(emitter).toString());
+
+        const expectedUriEncode = '''
+@override
+String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+  if (currentEncodingShape != EncodingShape.simple) {
+    throw EncodingException(
+      r'Cannot uriEncode DynamicByte: contains complex types',
+    );
+  }
+  return signature!.toBase64String().uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+  );
+}
+''';
+
+        expect(
+          collapseWhitespace(methodCode),
+          collapseWhitespace(format(expectedUriEncode)),
+        );
+      },
+    );
   });
 
   group('byte member parameter styles', () {

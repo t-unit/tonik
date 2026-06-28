@@ -22,16 +22,15 @@ BuiltExpression buildUriEncodeExpression(
   );
 }
 
-/// Adapts [receiver] for a `.uriEncode()` call. A `format: byte`
-/// ([Base64Model]) value is percent-encoded from its base64 text, not its raw
-/// bytes, so it is converted with `.toBase64String()` first.
+/// A `format: byte` ([Base64Model]) value is percent-encoded from its base64
+/// text, not its raw bytes, so [receiver] is converted with `.toBase64String()`
+/// before `.uriEncode()`.
 String uriEncodeReceiver(Model model, String receiver) =>
     model.resolved is Base64Model ? '$receiver.toBase64String()' : receiver;
 
-/// Adapts [receiver] for a `.uriEncode()` call, building a code_builder
-/// [Expression]. A `format: byte` ([Base64Model]) value is percent-encoded
-/// from its base64 text, not its raw bytes, so it is converted with
-/// `.toBase64String()` first.
+/// A `format: byte` ([Base64Model]) value is percent-encoded from its base64
+/// text, not its raw bytes, so [receiver] is converted with `.toBase64String()`
+/// before `.uriEncode()`.
 Expression uriEncodeReceiverExpression(Model model, Expression receiver) =>
     model.resolved is Base64Model
     ? receiver.property('toBase64String').call([])

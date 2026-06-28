@@ -238,9 +238,10 @@ extension FormDecoder on String? {
 
   /// Decodes a base64-encoded form string to binary data (`List<int>`).
   ///
-  /// The base64 alphabet and padding are percent-encoded on the wire, so the
-  /// value is percent-decoded before base64 decoding — like [decodeFormString].
-  /// Throws [InvalidTypeException] if the value is null or not valid base64.
+  /// Base64 output can contain `+`, `/` and `=`, which are percent-encoded on
+  /// the wire, so the value is percent-decoded before base64 decoding, like
+  /// [decodeFormString].
+  /// Throws [InvalidTypeException] if the value is null or cannot be decoded.
   List<int> decodeFormBase64({String? context}) {
     if (this == null) {
       throw InvalidTypeException(
