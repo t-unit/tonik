@@ -482,7 +482,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'listNullableString=a+b%2Fc%20%20d',
+        'listNullableString=a%20b%2Fc%20%20d',
       );
     });
 
