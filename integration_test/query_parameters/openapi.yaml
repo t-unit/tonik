@@ -720,6 +720,18 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/Class'
                 - type: integer
+        - name: listEnum
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - high priority
+                - low priority
+                - urgent
         - name: listNullableString
           in: query
           style: spaceDelimited
@@ -765,6 +777,18 @@ paths:
             type: array
             items:
               $ref: '#/components/schemas/OneOfComplex'
+        - name: listEnum
+          in: query
+          style: spaceDelimited
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - high priority
+                - low priority
+                - urgent
       responses:
         '204':
           description: OK
@@ -1083,6 +1107,18 @@ paths:
               oneOf:
                 - $ref: '#/components/schemas/Class'
                 - type: integer
+        - name: listEnum
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - high priority
+                - low priority
+                - urgent
         - name: listNullableString
           in: query
           style: pipeDelimited
@@ -1128,6 +1164,18 @@ paths:
             type: array
             items:
               $ref: '#/components/schemas/OneOfComplex'
+        - name: listEnum
+          in: query
+          style: pipeDelimited
+          explode: true
+          schema:
+            type: array
+            items:
+              type: string
+              enum:
+                - high priority
+                - low priority
+                - urgent
       responses:
         '204':
           description: OK

@@ -1150,7 +1150,7 @@ void main() {
           );
           if (ids != null) {
             for (final value in ids
-                .map((e) => e.uriEncode(allowEmpty: true, useQueryComponent: true))
+                .map((e) => e.uriEncode(allowEmpty: true))
                 .toList()
                 .toSpaceDelimited(
               explode: false,
@@ -1161,7 +1161,7 @@ void main() {
             }
           }
           for (final value in categories
-              .map((e) => e.uriEncode(allowEmpty: true, useQueryComponent: true))
+              .map((e) => e.uriEncode(allowEmpty: true))
               .toList()
               .toPipeDelimited(
             explode: false,
@@ -1856,7 +1856,7 @@ void main() {
         String? _queryParameters({required List<AnonymousModel> $enum}) {
           final _$entries = <ParameterEntry>[];
           for (final value in $enum
-              .map((e) => e.uriEncode(allowEmpty: false, useQueryComponent: true))
+              .map((e) => e.uriEncode(allowEmpty: false))
               .toList()
               .toPipeDelimited(
                 explode: false,

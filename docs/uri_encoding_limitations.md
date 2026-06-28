@@ -9,7 +9,7 @@ Tonik generates API clients that use Dart's standard `Uri` class for URL constru
 **Dart's `Uri` class always percent-encodes reserved characters in query strings according to RFC 3986.** This means:
 
 - Pipe characters (`|`) are always encoded as `%7C`
-- Space characters are always encoded as `%20`
+- Space characters are encoded as `%20` in the `spaceDelimited` and `pipeDelimited` styles
 - Other reserved characters (like `&`, `=`, `#`, etc.) are also percent-encoded
 
 This behavior is fundamental to Dart's URI handling and cannot be disabled or customized.

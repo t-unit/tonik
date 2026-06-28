@@ -482,7 +482,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'listNullableString=a+b%2Fc%7C%7Cd',
+        'listNullableString=a%20b%2Fc%7C%7Cd',
       );
     });
 
@@ -490,7 +490,7 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedList(
         listOneOfPrimitive: [
-          const OneOfPrimitiveString('test'),
+          const OneOfPrimitiveString('white space'),
           const OneOfPrimitiveString('test2'),
         ],
       );
@@ -498,7 +498,7 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'listOneOfPrimitive=test%7Ctest2',
+        'listOneOfPrimitive=white%20space%7Ctest2',
       );
     });
 
@@ -546,6 +546,23 @@ void main() {
         'listOneOfComplexMixed=3%7C4%7C5',
       );
     });
+
+    test('enum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testPipeDelimitedList(
+        listEnum: [
+          PipeDelimitedListParametersArrayModel.highPriority,
+          PipeDelimitedListParametersArrayModel.urgent,
+          PipeDelimitedListParametersArrayModel.lowPriority,
+        ],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listEnum=high%20priority%7Curgent%7Clow%20priority',
+      );
+    });
   });
 
   group('list - explode true', () {
@@ -565,13 +582,13 @@ void main() {
     test('oneOfPrimitive', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedListExplode(
-        listOneOfPrimitive: [const OneOfPrimitiveString('test')],
+        listOneOfPrimitive: [const OneOfPrimitiveString('white space')],
       );
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
       expect(
         success.response.requestOptions.uri.query,
-        'listOneOfPrimitive=test',
+        'listOneOfPrimitive=white%20space',
       );
     });
 
@@ -587,6 +604,23 @@ void main() {
       expect(response, isA<TonikError<void>>());
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
+    });
+
+    test('enum', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testPipeDelimitedListExplode(
+        listEnum: [
+          PipeDelimitedListExplodeParametersArrayModel.highPriority,
+          PipeDelimitedListExplodeParametersArrayModel.urgent,
+          PipeDelimitedListExplodeParametersArrayModel.lowPriority,
+        ],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listEnum=high%20priority&listEnum=urgent&listEnum=low%20priority',
+      );
     });
   });
 

@@ -102,9 +102,7 @@ List<Code> _buildDelimitedCode(
       explode,
       allowEmpty,
       needsMapping: true,
-      mapExpression: nullGuard(
-        'e.uriEncode(allowEmpty: $allowEmpty, useQueryComponent: true)',
-      ),
+      mapExpression: nullGuard('e.uriEncode(allowEmpty: $allowEmpty)'),
     ),
 
     AllOfModel() ||
