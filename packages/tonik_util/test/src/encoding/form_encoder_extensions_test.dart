@@ -574,6 +574,16 @@ void main() {
         3.14.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
         const <ParameterEntry>[(name: 'p', value: '3.14')],
       );
+      const num numValue = 3.14;
+      expect(
+        numValue.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p', value: '3.14')],
+      );
       expect(
         true.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
         const <ParameterEntry>[(name: 'p', value: 'true')],

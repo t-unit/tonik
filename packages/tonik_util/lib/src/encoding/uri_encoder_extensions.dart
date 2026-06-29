@@ -3,9 +3,11 @@ import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/datetime_extension.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 
-/// When [allowReserved] is false the result is byte-identical to
-/// [Uri.encodeQueryComponent] / [Uri.encodeComponent]; when true the reserved
-/// set passes through literally while space, `%`, and non-ASCII stay encoded.
+/// With [allowReserved] false the result is byte-identical to
+/// [Uri.encodeQueryComponent] / [Uri.encodeComponent] — call sites rely on
+/// this. With [allowReserved] true most reserved chars pass through literally,
+/// but the form delimiters `& = +` and brackets `[ ]` stay encoded, as do
+/// space, `%`, and non-ASCII.
 String _encodeUriValue(
   String value, {
   required bool allowReserved,
@@ -17,10 +19,9 @@ String _encodeUriValue(
         : Uri.encodeComponent(value);
   }
 
-  // Uri.encodeFull preserves reserved chars but also leaves the
-  // form-urlencoded delimiters & = + literal; as data they are never
-  // delimiters, so they must stay encoded. Encode literal + to %2B before
-  // rendering %20 as +, otherwise a data + and a space become
+  // Uri.encodeFull keeps reserved chars literal, but & and = are data here,
+  // not delimiters, so they must stay encoded. A literal + must become %2B
+  // before a space is rendered as +, otherwise a data + and a space would be
   // indistinguishable.
   var encoded = Uri.encodeFull(value)
       .replaceAll('+', '%2B')

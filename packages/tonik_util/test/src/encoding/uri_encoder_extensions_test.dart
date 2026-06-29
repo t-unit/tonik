@@ -282,6 +282,21 @@ void main() {
       );
     });
 
+    test(
+      'query mode escapes a literal percent so %20-looking input is not '
+      'collapsed to a space',
+      () {
+        expect(
+          'a%20b'.uriEncode(
+            allowEmpty: true,
+            useQueryComponent: true,
+            allowReserved: true,
+          ),
+          'a%2520b',
+        );
+      },
+    );
+
     test('Uri keeps reserved chars literal under allowReserved', () {
       final uri = Uri.parse('https://x.com/p?a=1&b=2');
       expect(
@@ -316,6 +331,13 @@ void main() {
       expect(
         value.uriEncode(allowEmpty: true),
         Uri.encodeComponent('a:b c'),
+      );
+    });
+
+    test('double routes through the helper, encoding + in its toString', () {
+      expect(
+        1e21.uriEncode(allowEmpty: false, allowReserved: true),
+        '1e%2B21',
       );
     });
 
