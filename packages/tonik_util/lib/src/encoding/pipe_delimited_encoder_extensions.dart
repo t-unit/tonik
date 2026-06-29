@@ -24,10 +24,14 @@ extension PipeDelimitedStringListEncoder on List<String> {
   ///
   /// The [alreadyEncoded] parameter indicates whether the list items are
   /// already URI-encoded and should not be encoded again.
+  ///
+  /// When [allowReserved] is true, RFC 3986 reserved characters are kept
+  /// literal in each item; the `|` delimiter is unaffected.
   List<String> toPipeDelimited({
     required bool explode,
     required bool allowEmpty,
     bool alreadyEncoded = false,
+    bool allowReserved = false,
   }) {
     if (isEmpty) {
       if (!allowEmpty) {
@@ -41,7 +45,10 @@ extension PipeDelimitedStringListEncoder on List<String> {
         return this;
       }
       return map(
-        (item) => item.uriEncode(allowEmpty: allowEmpty),
+        (item) => item.uriEncode(
+          allowEmpty: allowEmpty,
+          allowReserved: allowReserved,
+        ),
       ).toList();
     } else {
       if (alreadyEncoded) {
@@ -49,7 +56,10 @@ extension PipeDelimitedStringListEncoder on List<String> {
       }
       return [
         map(
-          (item) => item.uriEncode(allowEmpty: allowEmpty),
+          (item) => item.uriEncode(
+            allowEmpty: allowEmpty,
+            allowReserved: allowReserved,
+          ),
         ).join('|'),
       ];
     }
@@ -69,9 +79,13 @@ extension PipeDelimitedBinaryEncoder on List<int> {
   /// The [allowEmpty] parameter controls whether empty lists are allowed:
   /// - When `true`, empty lists return `['']`
   /// - When `false`, empty lists throw an exception
+  ///
+  /// When [allowReserved] is true, RFC 3986 reserved characters in the decoded
+  /// value are kept literal.
   List<String> toPipeDelimited({
     required bool explode,
     required bool allowEmpty,
+    bool allowReserved = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -79,7 +93,11 @@ extension PipeDelimitedBinaryEncoder on List<int> {
     if (isEmpty) {
       return [''];
     }
-    final str = decodeToString();
-    return [Uri.encodeComponent(str)];
+    return [
+      decodeToString().uriEncode(
+        allowEmpty: allowEmpty,
+        allowReserved: allowReserved,
+      ),
+    ];
   }
 }

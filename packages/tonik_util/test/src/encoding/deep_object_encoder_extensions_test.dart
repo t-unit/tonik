@@ -401,5 +401,73 @@ void main() {
         ]);
       });
     });
+
+    group('allowReserved', () {
+      test('keeps reserved chars literal except & = + in VALUE', () {
+        final result =
+            {
+              'q': 'a&b=c+d:e',
+            }.toDeepObject(
+              'p',
+              explode: true,
+              allowEmpty: true,
+              allowReserved: true,
+            );
+
+        expect(result, [
+          (name: 'p[q]', value: 'a%26b%3Dc%2Bd:e'),
+        ]);
+      });
+
+      test(
+        'key stays Uri.encodeComponent-encoded even under allowReserved',
+        () {
+          final result =
+              {
+                'a&b': 'c:d',
+              }.toDeepObject(
+                'p',
+                explode: true,
+                allowEmpty: true,
+                allowReserved: true,
+              );
+
+          expect(result, [
+            (name: 'p[a%26b]', value: 'c:d'),
+          ]);
+        },
+      );
+
+      test(
+        'default VALUE encoding is byte-identical to Uri.encodeComponent',
+        () {
+          const value = 'a&b=c+d:e';
+          expect(
+            {'q': value}.toDeepObject('p', explode: true, allowEmpty: true),
+            [(name: 'p[q]', value: Uri.encodeComponent(value))],
+          );
+        },
+      );
+
+      test('alreadyEncoded short-circuits regardless of allowReserved', () {
+        const map = {'q': 'a%26b'};
+        final withFlag = map.toDeepObject(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          allowReserved: true,
+        );
+        final without = map.toDeepObject(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+        );
+
+        expect(withFlag, without);
+        expect(withFlag, [(name: 'p[q]', value: 'a%26b')]);
+      });
+    });
   });
 }

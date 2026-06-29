@@ -1611,6 +1611,52 @@ void main() {
         );
       });
     });
+
+    group('allowReserved', () {
+      test('honors allowReserved for String primitives', () {
+        expect(
+          encodeAnyToForm(
+            'a&b=c:d',
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+          ),
+          'a%26b%3Dc:d',
+        );
+      });
+
+      test('honors allowReserved for nested list primitives', () {
+        expect(
+          encodeAnyToForm(
+            <dynamic>['a:b', 'c&d'],
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+          ),
+          'a:b,c%26d',
+        );
+      });
+
+      test('honors allowReserved for nested map primitives', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{'k': 'a&b:c'},
+            explode: true,
+            allowEmpty: true,
+            allowReserved: true,
+          ),
+          'k=a%26b:c',
+        );
+      });
+
+      test('default is byte-identical to Uri.encodeComponent for String', () {
+        const value = 'a&b=c+d:e';
+        expect(
+          encodeAnyToForm(value, explode: false, allowEmpty: true),
+          Uri.encodeComponent(value),
+        );
+      });
+    });
   });
 
   group('encodeAnyToDeepObject', () {
@@ -1825,6 +1871,38 @@ void main() {
           throwsA(isA<EncodingException>()),
         );
       });
+    });
+
+    group('allowReserved', () {
+      test('honors allowReserved for Map values, keys stay encoded', () {
+        final result = encodeAnyToDeepObject(
+          {'a&b': 'c&d:e'},
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+
+        expect(result, [
+          (name: 'p[a%26b]', value: 'c%26d:e'),
+        ]);
+      });
+
+      test(
+        'default Map value encoding is byte-identical to encodeComponent',
+        () {
+          const value = 'a&b=c+d:e';
+          expect(
+            encodeAnyToDeepObject(
+              {'q': value},
+              'p',
+              explode: true,
+              allowEmpty: true,
+            ),
+            [(name: 'p[q]', value: Uri.encodeComponent(value))],
+          );
+        },
+      );
     });
   });
 

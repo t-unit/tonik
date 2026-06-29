@@ -217,6 +217,11 @@ String encodeAnyToSimple(
 /// `Uri.encodeComponent` (spaces become `%20`); the same flag is threaded
 /// into recursive list/map element encoding.
 ///
+/// When [allowReserved] is true, RFC 3986 reserved characters in primitive
+/// values are kept literal; the flag is threaded into recursive list/map
+/// element encoding. The [ParameterEncodable] branch is intentionally not
+/// threaded — generated models honor the flag in a later step.
+///
 /// Note: when an unsupported nested element raises [EncodingException], the
 /// message identifies only the inner type — no path / key context is attached
 /// to indicate where in the structure the failure originated.
@@ -225,6 +230,7 @@ String encodeAnyToForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
+  bool allowReserved = false,
 }) {
   if (value == null) {
     if (!allowEmpty) {
@@ -247,42 +253,49 @@ String encodeAnyToForm(
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is int) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is double) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is bool) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is DateTime) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is Uri) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is BigDecimal) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is Map<String, dynamic>) {
@@ -296,6 +309,7 @@ String encodeAnyToForm(
           explode: explode,
           allowEmpty: allowEmpty,
           useQueryComponent: useQueryComponent,
+          allowReserved: allowReserved,
         ),
     };
     return _formEntriesToString(
@@ -322,6 +336,7 @@ String encodeAnyToForm(
             explode: explode,
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
           ),
         )
         .toList();
@@ -351,12 +366,18 @@ String _formEntriesToString(
 /// Generated models implementing [ParameterEncodable] encode themselves.
 /// `Map<String, String>` values use extension methods.
 ///
+/// When [allowReserved] is true, RFC 3986 reserved characters in the map
+/// VALUES are kept literal (keys stay `Uri.encodeComponent`-encoded). The
+/// [ParameterEncodable] branch is intentionally not threaded — generated
+/// models honor the flag in a later step.
+///
 /// Note: DeepObject style only makes sense for objects, not primitives.
 List<ParameterEntry> encodeAnyToDeepObject(
   Object? value,
   String paramName, {
   required bool explode,
   required bool allowEmpty,
+  bool allowReserved = false,
 }) {
   if (value == null) {
     if (!allowEmpty) {
@@ -376,6 +397,7 @@ List<ParameterEntry> encodeAnyToDeepObject(
       paramName,
       explode: explode,
       allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
     );
   }
   throw EncodingException(

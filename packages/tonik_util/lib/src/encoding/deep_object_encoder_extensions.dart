@@ -1,5 +1,6 @@
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
+import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// Extensions for encoding values using deepObject style parameter encoding.
 ///
@@ -21,6 +22,10 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
   /// The [allowEmpty] parameter controls whether empty maps are allowed.
   /// The [alreadyEncoded] parameter indicates values are already URI-encoded.
   ///
+  /// When [allowReserved] is true, RFC 3986 reserved characters in each VALUE
+  /// are kept literal. Keys remain `Uri.encodeComponent`-encoded because they
+  /// form part of the parameter name `name[key]`, as do the `[` `]` brackets.
+  ///
   /// Throws [EncodingException] if explode is false.
   /// Throws [EmptyValueException] if the map is empty and allowEmpty is false.
   List<ParameterEntry> toDeepObject(
@@ -28,6 +33,7 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
     required bool explode,
     required bool allowEmpty,
     bool alreadyEncoded = false,
+    bool allowReserved = false,
   }) {
     if (!explode) {
       throw const EncodingException(
@@ -47,7 +53,7 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
       final encodedKey = Uri.encodeComponent(e.key);
       final encodedValue = alreadyEncoded
           ? e.value
-          : Uri.encodeComponent(e.value);
+          : e.value.uriEncode(allowEmpty: true, allowReserved: allowReserved);
       return (name: '$paramName[$encodedKey]', value: encodedValue);
     }).toList();
   }
