@@ -159,6 +159,10 @@ void main() {
       final list = ['single'];
       expect(list.uriEncode(allowEmpty: true), 'single');
     });
+
+    test('encodes an empty item as an empty comma-joined segment', () {
+      expect(['', 'a'].uriEncode(allowEmpty: true), ',a');
+    });
   });
 
   group('StringMapUriEncoder', () {
@@ -210,6 +214,14 @@ void main() {
         map.uriEncode(allowEmpty: true),
         'key,not%20encoded',
       );
+    });
+
+    test('encodes an empty value as an empty comma-joined segment', () {
+      expect({'k': '', 'a': 'b'}.uriEncode(allowEmpty: true), 'k,,a,b');
+    });
+
+    test('encodes an empty key as an empty comma-joined segment', () {
+      expect({'': 'v', 'a': 'b'}.uriEncode(allowEmpty: true), ',v,a,b');
     });
   });
 
@@ -353,6 +365,117 @@ void main() {
         BigDecimal.parse('123.456')
             .uriEncode(allowEmpty: true, allowReserved: true),
         '123.456',
+      );
+    });
+
+    test('list keeps reserved chars literal but encodes & = + per item', () {
+      expect(
+        ['a:b', 'c&d', 'e=f', 'g+h'].uriEncode(
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        'a:b,c%26d,e%3Df,g%2Bh',
+      );
+    });
+
+    test('list default is byte-identical to encodeComponent per item', () {
+      const items = ['a:b', 'c&d', 'e=f', 'g+h', 'i j'];
+      expect(
+        items.uriEncode(allowEmpty: true),
+        items.map(Uri.encodeComponent).join(','),
+      );
+    });
+
+    test('list alreadyEncoded short-circuit is identical with/without flag', () {
+      const items = ['a:b', 'c&d'];
+      final without = items.uriEncode(allowEmpty: true, alreadyEncoded: true);
+      final with_ = items.uriEncode(
+        allowEmpty: true,
+        alreadyEncoded: true,
+        allowReserved: true,
+      );
+      expect(without, 'a:b,c&d');
+      expect(with_, without);
+    });
+
+    test('map keeps reserved chars literal but encodes & = + in keys and '
+        'values', () {
+      expect(
+        {'a&b': 'c=d', 'e:f': 'g+h'}.uriEncode(
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        'a%26b,c%3Dd,e:f,g%2Bh',
+      );
+    });
+
+    test('map encodeKeys false leaves keys untouched under allowReserved', () {
+      expect(
+        {'a&b': 'c=d'}.uriEncode(
+          allowEmpty: true,
+          allowReserved: true,
+          encodeKeys: false,
+        ),
+        'a&b,c%3Dd',
+      );
+    });
+
+    test('map default is byte-identical to encodeComponent per key/value', () {
+      const map = {'a&b': 'c:d', 'e=f': 'g+h'};
+      expect(
+        map.uriEncode(allowEmpty: true),
+        map.entries
+            .expand(
+              (e) => [Uri.encodeComponent(e.key), Uri.encodeComponent(e.value)],
+            )
+            .join(','),
+      );
+    });
+
+    test('map alreadyEncoded short-circuit is identical with/without flag', () {
+      const map = {'k': 'a:b'};
+      final without = map.uriEncode(allowEmpty: true, alreadyEncoded: true);
+      final with_ = map.uriEncode(
+        allowEmpty: true,
+        alreadyEncoded: true,
+        allowReserved: true,
+      );
+      expect(without, 'k,a:b');
+      expect(with_, without);
+    });
+
+    test('list query mode renders space as + and data + as %2B per item', () {
+      expect(
+        ['a b', 'c+d'].uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        'a+b,c%2Bd',
+      );
+    });
+
+    test('map query mode renders space as + and data + as %2B in keys and '
+        'values', () {
+      expect(
+        {'a b': 'c+d', 'e+f': 'g h'}.uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        'a+b,c%2Bd,e%2Bf,g+h',
+      );
+    });
+
+    test('map encodes reserved key while passing already-encoded value '
+        'through verbatim', () {
+      expect(
+        {'a&b': 'c%3Ad'}.uriEncode(
+          allowEmpty: true,
+          alreadyEncoded: true,
+          allowReserved: true,
+        ),
+        'a%26b,c%3Ad',
       );
     });
   });
