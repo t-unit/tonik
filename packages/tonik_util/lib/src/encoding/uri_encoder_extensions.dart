@@ -185,6 +185,7 @@ extension StringListUriEncoder on List<String> {
     required bool allowEmpty,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -199,9 +200,11 @@ extension StringListUriEncoder on List<String> {
     }
 
     return map(
-      (item) => useQueryComponent
-          ? Uri.encodeQueryComponent(item)
-          : Uri.encodeComponent(item),
+      (item) => _encodeUriValue(
+        item,
+        allowReserved: allowReserved,
+        useQueryComponent: useQueryComponent,
+      ),
     ).join(',');
   }
 }
@@ -214,6 +217,7 @@ extension StringMapUriEncoder on Map<String, String> {
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool encodeKeys = true,
+    bool allowReserved = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -223,20 +227,17 @@ extension StringMapUriEncoder on Map<String, String> {
       return '';
     }
 
-    String encodeKey(String key) => encodeKeys
-        ? (useQueryComponent
-              ? Uri.encodeQueryComponent(key)
-              : Uri.encodeComponent(key))
-        : key;
-    final encodeValue = useQueryComponent
-        ? Uri.encodeQueryComponent
-        : Uri.encodeComponent;
+    String encode(String value) => _encodeUriValue(
+      value,
+      allowReserved: allowReserved,
+      useQueryComponent: useQueryComponent,
+    );
 
     return entries
         .expand(
           (e) => [
-            encodeKey(e.key),
-            if (alreadyEncoded) e.value else encodeValue(e.value),
+            if (encodeKeys) encode(e.key) else e.key,
+            if (alreadyEncoded) e.value else encode(e.value),
           ],
         )
         .join(',');

@@ -598,5 +598,138 @@ void main() {
         const <ParameterEntry>[(name: 'p', value: '123.456')],
       );
     });
+
+    test('list explode=false keeps reserved literal, encodes & = + per '
+        'item', () {
+      expect(
+        ['a:b', 'c&d', 'e=f', 'g+h'].toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p', value: 'a:b,c%26d,e%3Df,g%2Bh')],
+      );
+    });
+
+    test('list explode=true keeps reserved literal, encodes & = + per '
+        'item', () {
+      expect(
+        ['a:b', 'c&d', 'e=f', 'g+h'].toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'p', value: 'a:b'),
+          (name: 'p', value: 'c%26d'),
+          (name: 'p', value: 'e%3Df'),
+          (name: 'p', value: 'g%2Bh'),
+        ],
+      );
+    });
+
+    test('list default is byte-identical to encodeComponent', () {
+      const items = ['a:b', 'c&d', 'e=f', 'g+h'];
+      expect(
+        items.toForm('p', explode: false, allowEmpty: true),
+        <ParameterEntry>[
+          (name: 'p', value: items.map(Uri.encodeComponent).join(',')),
+        ],
+      );
+      expect(
+        items.toForm('p', explode: true, allowEmpty: true),
+        <ParameterEntry>[
+          for (final item in items)
+            (name: 'p', value: Uri.encodeComponent(item)),
+        ],
+      );
+    });
+
+    test('list alreadyEncoded short-circuit is identical with/without '
+        'flag', () {
+      const items = ['a:b', 'c&d'];
+      final without = items.toForm(
+        'p',
+        explode: true,
+        allowEmpty: true,
+        alreadyEncoded: true,
+      );
+      final with_ = items.toForm(
+        'p',
+        explode: true,
+        allowEmpty: true,
+        alreadyEncoded: true,
+        allowReserved: true,
+      );
+      expect(without, const <ParameterEntry>[
+        (name: 'p', value: 'a:b'),
+        (name: 'p', value: 'c&d'),
+      ]);
+      expect(with_, without);
+    });
+
+    test('map explode=true keeps reserved literal, encodes & = + in keys and '
+        'values', () {
+      expect(
+        {'a&b': 'c:d', 'e:f': 'g=h'}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'a%26b', value: 'c:d'),
+          (name: 'e:f', value: 'g%3Dh'),
+        ],
+      );
+    });
+
+    test('map explode=false keeps reserved literal in values, keys '
+        'untouched', () {
+      expect(
+        {'a:b': 'c=d'}.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p', value: 'a:b,c%3Dd')],
+      );
+    });
+
+    test('map default is byte-identical to encodeComponent', () {
+      const map = {'a&b': 'c:d', 'e=f': 'g+h'};
+      expect(
+        map.toForm('p', explode: true, allowEmpty: true),
+        <ParameterEntry>[
+          for (final e in map.entries)
+            (
+              name: Uri.encodeComponent(e.key),
+              value: Uri.encodeComponent(e.value),
+            ),
+        ],
+      );
+    });
+
+    test('map alreadyEncoded short-circuit is identical with/without flag', () {
+      const map = {'k': 'a:b'};
+      final without = map.toForm(
+        'p',
+        explode: true,
+        allowEmpty: true,
+        alreadyEncoded: true,
+      );
+      final with_ = map.toForm(
+        'p',
+        explode: true,
+        allowEmpty: true,
+        alreadyEncoded: true,
+        allowReserved: true,
+      );
+      expect(without, const <ParameterEntry>[(name: 'k', value: 'a:b')]);
+      expect(with_, without);
+    });
   });
 }

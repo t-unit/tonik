@@ -9,10 +9,16 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 /// callers join with the separator for their context — `&` for query strings
 /// and urlencoded bodies, `; ` for cookies.
 
-String _encodeValue(String value, {required bool useQueryComponent}) =>
-    useQueryComponent
-        ? Uri.encodeQueryComponent(value)
-        : Uri.encodeComponent(value);
+// allowEmpty is true because the list/map-level empty checks already ran.
+String _encodeValue(
+  String value, {
+  required bool useQueryComponent,
+  bool allowReserved = false,
+}) => value.uriEncode(
+  allowEmpty: true,
+  useQueryComponent: useQueryComponent,
+  allowReserved: allowReserved,
+);
 
 /// Extension for encoding Uri values.
 extension FormUriEncoder on Uri {
@@ -194,6 +200,7 @@ extension FormStringListEncoder on List<String> {
     required bool allowEmpty,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -207,6 +214,7 @@ extension FormStringListEncoder on List<String> {
             allowEmpty: allowEmpty,
             alreadyEncoded: alreadyEncoded,
             useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
           ),
         ),
       ];
@@ -218,7 +226,11 @@ extension FormStringListEncoder on List<String> {
           name: paramName,
           value: alreadyEncoded
               ? item
-              : _encodeValue(item, useQueryComponent: useQueryComponent),
+              : _encodeValue(
+                  item,
+                  useQueryComponent: useQueryComponent,
+                  allowReserved: allowReserved,
+                ),
         ),
     ];
   }
@@ -237,6 +249,7 @@ extension FormStringMapEncoder on Map<String, String> {
     required bool allowEmpty,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -251,6 +264,7 @@ extension FormStringMapEncoder on Map<String, String> {
             alreadyEncoded: alreadyEncoded,
             encodeKeys: false,
             useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
           ),
         ),
       ];
@@ -259,10 +273,18 @@ extension FormStringMapEncoder on Map<String, String> {
     return [
       for (final e in entries)
         (
-          name: _encodeValue(e.key, useQueryComponent: useQueryComponent),
+          name: _encodeValue(
+            e.key,
+            useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
+          ),
           value: alreadyEncoded
               ? e.value
-              : _encodeValue(e.value, useQueryComponent: useQueryComponent),
+              : _encodeValue(
+                  e.value,
+                  useQueryComponent: useQueryComponent,
+                  allowReserved: allowReserved,
+                ),
         ),
     ];
   }
