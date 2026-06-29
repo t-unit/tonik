@@ -731,5 +731,67 @@ void main() {
       expect(without, const <ParameterEntry>[(name: 'k', value: 'a:b')]);
       expect(with_, without);
     });
+
+    test('list query mode renders space as + and data + as %2B per item '
+        '(explode=false)', () {
+      expect(
+        ['a b', 'c+d'].toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p', value: 'a+b,c%2Bd')],
+      );
+    });
+
+    test('list query mode renders space as + and data + as %2B per item '
+        '(explode=true)', () {
+      expect(
+        ['a b', 'c+d'].toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'p', value: 'a+b'),
+          (name: 'p', value: 'c%2Bd'),
+        ],
+      );
+    });
+
+    test('map query mode renders space as + and data + as %2B in keys and '
+        'values', () {
+      expect(
+        {'a b': 'c+d', 'e+f': 'g h'}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'a+b', value: 'c%2Bd'),
+          (name: 'e%2Bf', value: 'g+h'),
+        ],
+      );
+    });
+
+    test('map encodes reserved key while passing already-encoded value '
+        'through verbatim', () {
+      expect(
+        {'a&b': 'c%3Ad'}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'a%26b', value: 'c%3Ad')],
+      );
+    });
   });
 }

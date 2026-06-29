@@ -431,5 +431,40 @@ void main() {
       expect(without, 'k,a:b');
       expect(with_, without);
     });
+
+    test('list query mode renders space as + and data + as %2B per item', () {
+      expect(
+        ['a b', 'c+d'].uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        'a+b,c%2Bd',
+      );
+    });
+
+    test('map query mode renders space as + and data + as %2B in keys and '
+        'values', () {
+      expect(
+        {'a b': 'c+d', 'e+f': 'g h'}.uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        'a+b,c%2Bd,e%2Bf,g+h',
+      );
+    });
+
+    test('map encodes reserved key while passing already-encoded value '
+        'through verbatim', () {
+      expect(
+        {'a&b': 'c%3Ad'}.uriEncode(
+          allowEmpty: true,
+          alreadyEncoded: true,
+          allowReserved: true,
+        ),
+        'a%26b,c%3Ad',
+      );
+    });
   });
 }

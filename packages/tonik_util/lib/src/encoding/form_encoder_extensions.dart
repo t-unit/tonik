@@ -9,7 +9,7 @@ import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 /// callers join with the separator for their context — `&` for query strings
 /// and urlencoded bodies, `; ` for cookies.
 
-// allowEmpty is true because the list/map-level empty checks already ran.
+// Items, keys, and values may be empty strings; encode to '' rather than throw.
 String _encodeValue(
   String value, {
   required bool useQueryComponent,
