@@ -486,4 +486,117 @@ void main() {
       },
     );
   });
+
+  group('allowReserved parameter', () {
+    const allReserved = r":/?#[]@!$&'()*+,;=";
+
+    test('FormStringEncoder keeps reserved chars literal', () {
+      expect(
+        allReserved.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'p', value: r":/?#%5B%5D@!$%26'()*%2B,;%3D"),
+        ],
+      );
+    });
+
+    test('FormStringEncoder default is byte-identical to encodeComponent', () {
+      expect(
+        allReserved.toForm('p', explode: false, allowEmpty: true),
+        <ParameterEntry>[(name: 'p', value: Uri.encodeComponent(allReserved))],
+      );
+    });
+
+    test('FormStringEncoder composes with useQueryComponent', () {
+      expect(
+        'a+b c'.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p', value: 'a%2Bb+c')],
+      );
+    });
+
+    test('FormUriEncoder threads allowReserved into uriEncode', () {
+      final uri = Uri.parse('https://x.com/p?a=1&b=2');
+      expect(
+        uri.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'p', value: 'https://x.com/p?a%3D1%26b%3D2'),
+        ],
+      );
+    });
+
+    test('FormDateTimeEncoder threads allowReserved into uriEncode', () {
+      final dateTime = DateTime.utc(2023, 12, 25, 10, 30, 45);
+      expect(
+        dateTime.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        <ParameterEntry>[(name: 'p', value: dateTime.toIso8601String())],
+      );
+    });
+
+    test('FormBinaryEncoder threads allowReserved into uriEncode', () {
+      const value = [97, 58, 98, 32, 99]; // "a:b c"
+      expect(
+        value.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p', value: 'a:b%20c')],
+      );
+    });
+
+    test('numeric and bool encoders accept the flag as a no-op', () {
+      expect(
+        42.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: '42')],
+      );
+      expect(
+        3.14.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: '3.14')],
+      );
+      const num numValue = 3.14;
+      expect(
+        numValue.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p', value: '3.14')],
+      );
+      expect(
+        true.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: 'true')],
+      );
+      expect(
+        BigDecimal.parse('123.456').toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p', value: '123.456')],
+      );
+    });
+  });
 }

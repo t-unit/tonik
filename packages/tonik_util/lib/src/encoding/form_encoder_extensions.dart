@@ -22,12 +22,14 @@ extension FormUriEncoder on Uri {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -41,12 +43,14 @@ extension FormStringEncoder on String {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -60,12 +64,14 @@ extension FormIntEncoder on int {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -79,12 +85,14 @@ extension FormDoubleEncoder on double {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -98,12 +106,14 @@ extension FormNumEncoder on num {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -117,12 +127,14 @@ extension FormBoolEncoder on bool {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -136,12 +148,14 @@ extension FormDateTimeEncoder on DateTime {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -155,12 +169,14 @@ extension FormBigDecimalEncoder on BigDecimal {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -262,12 +278,14 @@ extension FormBinaryEncoder on List<int> {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];

@@ -3,6 +3,7 @@ import 'package:tonik_util/src/decoding/form_decoder.dart';
 import 'package:tonik_util/src/decoding/json_decoder.dart';
 import 'package:tonik_util/src/decoding/simple_decoder.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
+import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// A class representing a date without time information.
 ///
@@ -93,12 +94,14 @@ class Date {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) => [
     (
       name: paramName,
       value: uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
     ),
   ];
@@ -125,12 +128,12 @@ class Date {
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
-  }) {
-    final dateString = toString();
-    return useQueryComponent
-        ? Uri.encodeQueryComponent(dateString)
-        : Uri.encodeComponent(dateString);
-  }
+    bool allowReserved = false,
+  }) => toString().uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+    allowReserved: allowReserved,
+  );
 
   /// Creates a copy of this [Date] with the given fields replaced
   /// with new values.
