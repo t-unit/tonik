@@ -25,7 +25,7 @@ extension PipeDelimitedStringListEncoder on List<String> {
   /// The [alreadyEncoded] parameter indicates whether the list items are
   /// already URI-encoded and should not be encoded again.
   ///
-  /// When [allowReserved] is true, RFC 3986 reserved characters are kept
+  /// When [allowReserved] is true, most reserved characters are kept
   /// literal in each item; the `|` delimiter is unaffected.
   List<String> toPipeDelimited({
     required bool explode,
@@ -80,7 +80,7 @@ extension PipeDelimitedBinaryEncoder on List<int> {
   /// - When `true`, empty lists return `['']`
   /// - When `false`, empty lists throw an exception
   ///
-  /// When [allowReserved] is true, RFC 3986 reserved characters in the decoded
+  /// When [allowReserved] is true, most reserved characters in the decoded
   /// value are kept literal.
   List<String> toPipeDelimited({
     required bool explode,
@@ -95,7 +95,7 @@ extension PipeDelimitedBinaryEncoder on List<int> {
     }
     return [
       decodeToString().uriEncode(
-        allowEmpty: allowEmpty,
+        allowEmpty: true,
         allowReserved: allowReserved,
       ),
     ];

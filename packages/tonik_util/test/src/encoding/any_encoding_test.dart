@@ -1625,6 +1625,18 @@ void main() {
         );
       });
 
+      test('honors allowReserved for Uri values', () {
+        expect(
+          encodeAnyToForm(
+            Uri.parse('https://x/a?b=c&d=e'),
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+          ),
+          'https://x/a?b%3Dc%26d%3De',
+        );
+      });
+
       test('honors allowReserved for nested list primitives', () {
         expect(
           encodeAnyToForm(

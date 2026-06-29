@@ -217,10 +217,10 @@ String encodeAnyToSimple(
 /// `Uri.encodeComponent` (spaces become `%20`); the same flag is threaded
 /// into recursive list/map element encoding.
 ///
-/// When [allowReserved] is true, RFC 3986 reserved characters in primitive
+/// When [allowReserved] is true, most reserved characters in primitive
 /// values are kept literal; the flag is threaded into recursive list/map
 /// element encoding. The [ParameterEncodable] branch is intentionally not
-/// threaded — generated models honor the flag in a later step.
+/// threaded — those models manage their own value encoding.
 ///
 /// Note: when an unsupported nested element raises [EncodingException], the
 /// message identifies only the inner type — no path / key context is attached
@@ -366,10 +366,10 @@ String _formEntriesToString(
 /// Generated models implementing [ParameterEncodable] encode themselves.
 /// `Map<String, String>` values use extension methods.
 ///
-/// When [allowReserved] is true, RFC 3986 reserved characters in the map
+/// When [allowReserved] is true, most reserved characters in the map
 /// VALUES are kept literal (keys stay `Uri.encodeComponent`-encoded). The
-/// [ParameterEncodable] branch is intentionally not threaded — generated
-/// models honor the flag in a later step.
+/// [ParameterEncodable] branch is intentionally not threaded — those models
+/// manage their own value encoding.
 ///
 /// Note: DeepObject style only makes sense for objects, not primitives.
 List<ParameterEntry> encodeAnyToDeepObject(

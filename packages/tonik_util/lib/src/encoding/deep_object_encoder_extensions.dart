@@ -22,9 +22,10 @@ extension DeepObjectStringMapEncoder on Map<String, String> {
   /// The [allowEmpty] parameter controls whether empty maps are allowed.
   /// The [alreadyEncoded] parameter indicates values are already URI-encoded.
   ///
-  /// When [allowReserved] is true, RFC 3986 reserved characters in each VALUE
-  /// are kept literal. Keys remain `Uri.encodeComponent`-encoded because they
-  /// form part of the parameter name `name[key]`, as do the `[` `]` brackets.
+  /// When [allowReserved] is true, most reserved characters in each VALUE
+  /// are kept literal. Keys are `Uri.encodeComponent`-encoded because they
+  /// form part of the parameter name `name[key]`; the surrounding `[` `]` are
+  /// emitted literally as name structure.
   ///
   /// Throws [EncodingException] if explode is false.
   /// Throws [EmptyValueException] if the map is empty and allowEmpty is false.

@@ -171,6 +171,13 @@ void main() {
       final result = value.toPipeDelimited(explode: false, allowEmpty: true);
       expect(result, ['H%C3%ABll%C3%B6']);
     });
+
+    test('non-empty bytes decoding to empty string yield a single empty '
+        'string with allowEmpty=false', () {
+      const value = [0xEF, 0xBB, 0xBF]; // UTF-8 BOM, stripped on decode
+      final result = value.toPipeDelimited(explode: false, allowEmpty: false);
+      expect(result, ['']);
+    });
   });
 
   group('allowReserved', () {
