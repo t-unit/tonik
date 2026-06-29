@@ -249,6 +249,20 @@ void main() {
       );
     });
 
+    test(
+      'explode=true encodes an empty item to an empty value among populated '
+      'items',
+      () {
+        expect(
+          ['', 'a'].toForm('p', explode: true, allowEmpty: true),
+          const <ParameterEntry>[
+            (name: 'p', value: ''),
+            (name: 'p', value: 'a'),
+          ],
+        );
+      },
+    );
+
     test('URL-encodes special characters in list items', () {
       expect(
         [
@@ -335,6 +349,27 @@ void main() {
       expect(
         () => <String, String>{}.toForm('p', explode: true, allowEmpty: false),
         throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test(
+      'explode=true encodes an empty value to an empty value among populated '
+      'entries',
+      () {
+        expect(
+          {'k': '', 'a': 'b'}.toForm('p', explode: true, allowEmpty: true),
+          const <ParameterEntry>[
+            (name: 'k', value: ''),
+            (name: 'a', value: 'b'),
+          ],
+        );
+      },
+    );
+
+    test('explode=true encodes an empty key to an empty name', () {
+      expect(
+        {'': 'v'}.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: '', value: 'v')],
       );
     });
 
@@ -709,6 +744,17 @@ void main() {
               name: Uri.encodeComponent(e.key),
               value: Uri.encodeComponent(e.value),
             ),
+        ],
+      );
+      expect(
+        map.toForm('p', explode: false, allowEmpty: true),
+        <ParameterEntry>[
+          (
+            name: 'p',
+            value: map.entries
+                .expand((e) => [e.key, Uri.encodeComponent(e.value)])
+                .join(','),
+          ),
         ],
       );
     });

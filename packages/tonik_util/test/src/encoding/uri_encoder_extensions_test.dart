@@ -159,6 +159,10 @@ void main() {
       final list = ['single'];
       expect(list.uriEncode(allowEmpty: true), 'single');
     });
+
+    test('encodes an empty item as an empty comma-joined segment', () {
+      expect(['', 'a'].uriEncode(allowEmpty: true), ',a');
+    });
   });
 
   group('StringMapUriEncoder', () {
@@ -210,6 +214,14 @@ void main() {
         map.uriEncode(allowEmpty: true),
         'key,not%20encoded',
       );
+    });
+
+    test('encodes an empty value as an empty comma-joined segment', () {
+      expect({'k': '', 'a': 'b'}.uriEncode(allowEmpty: true), 'k,,a,b');
+    });
+
+    test('encodes an empty key as an empty comma-joined segment', () {
+      expect({'': 'v', 'a': 'b'}.uriEncode(allowEmpty: true), ',v,a,b');
     });
   });
 
