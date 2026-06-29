@@ -450,6 +450,23 @@ void main() {
         '2023-12-25',
       );
     });
+
+    test('threads allowReserved into uriEncode as a no-op', () {
+      final date = Date(2023, 12, 25);
+      expect(
+        date.uriEncode(allowEmpty: true, allowReserved: true),
+        '2023-12-25',
+      );
+    });
+
+    test('threads allowReserved into toForm as a no-op', () {
+      final date = Date(2023, 12, 25);
+      final encoded = date
+          .toForm('p', explode: false, allowEmpty: true, allowReserved: true)
+          .single
+          .value;
+      expect(encoded, '2023-12-25');
+    });
   });
 
   group('matrix encoding', () {

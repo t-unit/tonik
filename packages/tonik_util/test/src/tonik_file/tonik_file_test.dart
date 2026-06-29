@@ -226,6 +226,15 @@ void main() {
       const file = TonikFileBytes([]);
       expect(file.uriEncode(allowEmpty: true), '');
     });
+
+    test('keeps reserved chars literal when allowReserved is true', () {
+      // "a:b c" in UTF-8
+      const file = TonikFileBytes([97, 58, 98, 32, 99]);
+      expect(
+        file.uriEncode(allowEmpty: false, allowReserved: true),
+        'a:b%20c',
+      );
+    });
   });
 
   group('TonikFile sealed dispatch', () {

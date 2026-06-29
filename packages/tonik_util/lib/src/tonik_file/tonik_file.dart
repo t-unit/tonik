@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:collection/collection.dart';
 import 'package:meta/meta.dart';
 
+import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 import 'package:tonik_util/src/tonik_file/file_reader_stub.dart'
     if (dart.library.io) 'package:tonik_util/src/tonik_file/file_reader_io.dart'
     as reader;
@@ -38,6 +39,7 @@ sealed class TonikFile {
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
     final raw = toBytes();
     if (raw.isEmpty && !allowEmpty) {
@@ -46,9 +48,11 @@ sealed class TonikFile {
     if (raw.isEmpty) return '';
     const decoder = Utf8Decoder(allowMalformed: true);
     final str = decoder.convert(raw);
-    return useQueryComponent
-        ? Uri.encodeQueryComponent(str)
-        : Uri.encodeComponent(str);
+    return str.uriEncode(
+      allowEmpty: true,
+      useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
+    );
   }
 }
 

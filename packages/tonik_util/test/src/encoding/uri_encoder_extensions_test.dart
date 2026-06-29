@@ -212,4 +212,126 @@ void main() {
       );
     });
   });
+
+  group('allowReserved', () {
+    const allReserved = r":/?#[]@!$&'()*+,;=";
+
+    test('keeps the reserved set literal except & = + and [ ]', () {
+      expect(
+        allReserved.uriEncode(allowEmpty: true, allowReserved: true),
+        r":/?#%5B%5D@!$%26'()*%2B,;%3D",
+      );
+    });
+
+    test('still encodes space, percent, delimiters and non-ASCII', () {
+      expect('a b'.uriEncode(allowEmpty: true, allowReserved: true), 'a%20b');
+      expect('a%b'.uriEncode(allowEmpty: true, allowReserved: true), 'a%25b');
+      expect('a+b'.uriEncode(allowEmpty: true, allowReserved: true), 'a%2Bb');
+      expect('a&b'.uriEncode(allowEmpty: true, allowReserved: true), 'a%26b');
+      expect('a=b'.uriEncode(allowEmpty: true, allowReserved: true), 'a%3Db');
+      expect(
+        '你好'.uriEncode(allowEmpty: true, allowReserved: true),
+        '%E4%BD%A0%E5%A5%BD',
+      );
+    });
+
+    test('false is byte-identical to Uri.encodeComponent', () {
+      const inputs = [allReserved, 'a b', 'a+b c', 'a%b', '你好'];
+      for (final input in inputs) {
+        expect(
+          input.uriEncode(allowEmpty: true),
+          Uri.encodeComponent(input),
+        );
+      }
+    });
+
+    test('false is byte-identical to Uri.encodeQueryComponent', () {
+      const inputs = [allReserved, 'a b', 'a+b c', 'a%b', '你好'];
+      for (final input in inputs) {
+        expect(
+          input.uriEncode(allowEmpty: true, useQueryComponent: true),
+          Uri.encodeQueryComponent(input),
+        );
+      }
+    });
+
+    test('composes with useQueryComponent rendering space as +', () {
+      expect(
+        'a b'.uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        'a+b',
+      );
+      expect(
+        'a+b c'.uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        'a%2Bb+c',
+      );
+      expect(
+        'a&b=c'.uriEncode(
+          allowEmpty: true,
+          useQueryComponent: true,
+          allowReserved: true,
+        ),
+        'a%26b%3Dc',
+      );
+    });
+
+    test('Uri keeps reserved chars literal under allowReserved', () {
+      final uri = Uri.parse('https://x.com/p?a=1&b=2');
+      expect(
+        uri.uriEncode(allowEmpty: true, allowReserved: true),
+        'https://x.com/p?a%3D1%26b%3D2',
+      );
+      expect(
+        uri.uriEncode(allowEmpty: true),
+        Uri.encodeComponent(uri.toString()),
+      );
+    });
+
+    test('DateTime keeps colons literal under allowReserved', () {
+      final dateTime = DateTime.utc(2023, 12, 25, 10, 30, 45);
+      final iso = dateTime.toIso8601String();
+      expect(
+        dateTime.uriEncode(allowEmpty: true, allowReserved: true),
+        iso,
+      );
+      expect(
+        dateTime.uriEncode(allowEmpty: true),
+        Uri.encodeComponent(iso),
+      );
+    });
+
+    test('binary keeps reserved chars literal under allowReserved', () {
+      const value = [97, 58, 98, 32, 99]; // "a:b c"
+      expect(
+        value.uriEncode(allowEmpty: true, allowReserved: true),
+        'a:b%20c',
+      );
+      expect(
+        value.uriEncode(allowEmpty: true),
+        Uri.encodeComponent('a:b c'),
+      );
+    });
+
+    test('numeric and bool types accept the flag as a no-op', () {
+      expect(42.uriEncode(allowEmpty: true, allowReserved: true), '42');
+      expect(
+        (3.14 as num).uriEncode(allowEmpty: true, allowReserved: true),
+        '3.14',
+      );
+      expect(3.14.uriEncode(allowEmpty: true, allowReserved: true), '3.14');
+      expect(true.uriEncode(allowEmpty: true, allowReserved: true), 'true');
+      expect(
+        BigDecimal.parse('123.456')
+            .uriEncode(allowEmpty: true, allowReserved: true),
+        '123.456',
+      );
+    });
+  });
 }
