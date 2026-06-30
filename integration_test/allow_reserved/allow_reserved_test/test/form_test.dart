@@ -31,8 +31,9 @@ void main() {
   const value = 'a/b:c?d@e;f,g&h=i+j k#l[m]n';
 
   group('form allowReserved', () {
-    test('keeps the reserved set literal and encodes only the survivors',
-        () async {
+    test(
+        'keeps reserved survivors literal and encodes only the form '
+        'delimiters, space, and bracket/hash chars', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormAllowReserved(reserved: value);
 
@@ -79,8 +80,9 @@ void main() {
   const listValues = ['a/b:c?d@e;f', 'g&h=i+j k#l[m]n'];
 
   group('form allowReserved list', () {
-    test('keeps reserved survivors literal and encodes only the survivors',
-        () async {
+    test(
+        'keeps reserved survivors literal and encodes only the form '
+        'delimiters, space, and bracket/hash chars', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormAllowReservedList(
         reservedList: listValues,

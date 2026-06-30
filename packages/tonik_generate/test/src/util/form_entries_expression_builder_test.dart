@@ -211,6 +211,47 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
+    test('object form param omits allowReserved even when set', () {
+      final result = build(
+        ClassModel(
+          name: 'Form',
+          isDeprecated: false,
+          properties: const [],
+          context: context,
+          examples: const [],
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('composite form param omits allowReserved even when set', () {
+      final result = build(
+        OneOfModel(
+          models: const {},
+          isDeprecated: false,
+          examples: const [],
+          context: context,
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
     test('list element uriEncode adds allowReserved when set', () {
       final result = build(
         ListModel(

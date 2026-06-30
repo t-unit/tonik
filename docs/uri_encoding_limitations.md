@@ -7,8 +7,8 @@ For most parameter styles this means reserved characters in query strings are
 percent-encoded according to RFC 3986. For **form-style query parameters**,
 Tonik additionally honors OpenAPI's `allowReserved` property by encoding the
 value itself before handing it to `Uri`, so the reserved set is preserved on the
-wire. This applies to primitive and string values, arrays of primitive, string,
-or byte items, free-form objects (`additionalProperties`), and free-form
+wire. This applies to primitive, string, or byte values, arrays of primitive,
+string, or byte items, free-form objects (`additionalProperties`), and free-form
 (`Object`/`any`) values. Parameters whose schema is an object with defined
 properties, an enum, a composition, or an array of those do not yet honor it —
 see [Styles and schemas that do not yet honor
@@ -65,11 +65,10 @@ not a Tonik shortfall.
 | `%`       | `%25`   | A `%` outside a valid percent-encoded triple must be encoded. |
 
 The OpenAPI description of `allowReserved` makes the application responsible for
-`& = +` (the form-urlencoded delimiters) as well as `[ ] #`; OAS Appendix E is
-authoritative for the `& = +` set. Tonik encodes `& = +` **inside the value**
-itself (to `%26 %3D %2B`) rather than relying on Dart's `Uri`, because `Uri`
-treats them as structural and would otherwise leave a data `&` or `=`
-indistinguishable from a real delimiter.
+`& = +` (the form-urlencoded delimiters, per OAS Appendix E) as well as `[ ] #`.
+Tonik encodes `& = +` **inside the value** itself (to `%26 %3D %2B`) rather than
+relying on Dart's `Uri`, because `Uri` treats them as structural and would
+otherwise leave a data `&` or `=` indistinguishable from a real delimiter.
 
 ### Query strings and urlencoded request bodies
 
@@ -95,10 +94,14 @@ Within form style, parameters whose schema is an **object with defined
 properties**, an **enum**, or a **`oneOf` / `anyOf` / `allOf`** composition also
 do not yet honor `allowReserved`. Their values are serialized by the model's own
 encoding, which always percent-encodes the reserved set. The same applies to
-**arrays whose items** are enums, objects, or compositions: each element is
-serialized by its own encoding, which still percent-encodes the reserved set.
-Parameters honor `allowReserved` when their schema is a primitive, a string, an
-array of primitive, string, or byte items, a free-form object
+**arrays whose items** are enums, objects, compositions, or free-form
+(`Object`/`any`) values: each element is serialized by its own encoding, which
+still percent-encodes the reserved set. Note the asymmetry — a scalar
+free-form/`any` value *is* honored (it encodes through `encodeAnyToForm`), but an
+array of free-form/`any` items is not, because its elements route through
+`encodeAnyToUri`, which has no `allowReserved` parameter.
+Parameters honor `allowReserved` when their schema is a primitive, string, or
+byte value, an array of primitive, string, or byte items, a free-form object
 (`additionalProperties`), or a free-form `Object`/`any` value.
 
 ### `pipeDelimited` Style

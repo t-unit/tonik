@@ -74,6 +74,8 @@ Expression _buildUriEncodeExpression(
         },
       ),
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
+      // encodeAnyToUri has no allowReserved parameter, so the flag is not
+      // forwarded here.
       refer(
         'encodeAnyToUri',
         'package:tonik_util/tonik_util.dart',
