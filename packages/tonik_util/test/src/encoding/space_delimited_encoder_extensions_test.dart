@@ -204,5 +204,94 @@ void main() {
       final result = value.toSpaceDelimited(explode: false, allowEmpty: true);
       expect(result, ['H%C3%ABll%C3%B6']);
     });
+
+    test('non-empty bytes decoding to empty string yield a single empty '
+        'string with allowEmpty=false', () {
+      const value = [0xEF, 0xBB, 0xBF]; // UTF-8 BOM, stripped on decode
+      final result = value.toSpaceDelimited(explode: false, allowEmpty: false);
+      expect(result, ['']);
+    });
+  });
+
+  group('allowReserved', () {
+    test('reserved literal except & = + per item, explode=false', () {
+      final result = ['a:b', 'c&d=e+f'].toSpaceDelimited(
+        explode: false,
+        allowEmpty: true,
+        allowReserved: true,
+      );
+      expect(result, ['a:b%20c%26d%3De%2Bf']);
+    });
+
+    test('reserved literal except & = + per item, explode=true', () {
+      final result = ['a:b', 'c&d=e+f'].toSpaceDelimited(
+        explode: true,
+        allowEmpty: true,
+        allowReserved: true,
+      );
+      expect(result, ['a:b', 'c%26d%3De%2Bf']);
+    });
+
+    test('%20 delimiter is unaffected by allowReserved', () {
+      final result = ['a:b', 'c:d'].toSpaceDelimited(
+        explode: false,
+        allowEmpty: true,
+        allowReserved: true,
+      );
+      expect(result, ['a:b%20c:d']);
+    });
+
+    test('default byte-identical to encodeComponent, explode=false', () {
+      const items = ['a:b', 'c&d=e+f', 'x y'];
+      expect(
+        items.toSpaceDelimited(explode: false, allowEmpty: true),
+        [items.map(Uri.encodeComponent).join('%20')],
+      );
+    });
+
+    test('default byte-identical to encodeComponent, explode=true', () {
+      const items = ['a:b', 'c&d=e+f', 'x y'];
+      expect(
+        items.toSpaceDelimited(explode: true, allowEmpty: true),
+        items.map(Uri.encodeComponent).toList(),
+      );
+    });
+
+    test('binary keeps reserved chars literal under allowReserved', () {
+      const value = [97, 58, 98, 32, 99]; // "a:b c"
+      expect(
+        value.toSpaceDelimited(
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        ['a:b%20c'],
+      );
+    });
+
+    test('binary default is byte-identical to Uri.encodeComponent', () {
+      const value = [97, 58, 98, 32, 99]; // "a:b c"
+      expect(
+        value.toSpaceDelimited(explode: false, allowEmpty: true),
+        [Uri.encodeComponent('a:b c')],
+      );
+    });
+
+    test('alreadyEncoded short-circuits regardless of allowReserved', () {
+      const items = ['a%26b', 'c%3Dd'];
+      final withFlag = items.toSpaceDelimited(
+        explode: false,
+        allowEmpty: true,
+        alreadyEncoded: true,
+        allowReserved: true,
+      );
+      final without = items.toSpaceDelimited(
+        explode: false,
+        allowEmpty: true,
+        alreadyEncoded: true,
+      );
+      expect(withFlag, without);
+      expect(withFlag, ['a%26b%20c%3Dd']);
+    });
   });
 }

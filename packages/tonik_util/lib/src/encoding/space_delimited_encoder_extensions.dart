@@ -24,11 +24,15 @@ extension SpaceDelimitedStringListEncoder on List<String> {
   ///
   /// The [alreadyEncoded] parameter indicates whether the list items are
   /// already URI-encoded and should not be encoded again.
+  ///
+  /// When [allowReserved] is true, most reserved characters are kept
+  /// literal in each item; the `%20` delimiter is unaffected.
   List<String> toSpaceDelimited({
     required bool explode,
     required bool allowEmpty,
     bool alreadyEncoded = false,
     bool percentEncodeDelimiter = true,
+    bool allowReserved = false,
   }) {
     if (isEmpty) {
       if (!allowEmpty) {
@@ -42,7 +46,10 @@ extension SpaceDelimitedStringListEncoder on List<String> {
         return this;
       }
       return map(
-        (item) => item.uriEncode(allowEmpty: allowEmpty),
+        (item) => item.uriEncode(
+          allowEmpty: allowEmpty,
+          allowReserved: allowReserved,
+        ),
       ).toList();
     } else {
       final delimiter = alreadyEncoded && !percentEncodeDelimiter ? ' ' : '%20';
@@ -51,7 +58,10 @@ extension SpaceDelimitedStringListEncoder on List<String> {
       }
       return [
         map(
-          (item) => item.uriEncode(allowEmpty: allowEmpty),
+          (item) => item.uriEncode(
+            allowEmpty: allowEmpty,
+            allowReserved: allowReserved,
+          ),
         ).join('%20'),
       ];
     }
@@ -71,9 +81,13 @@ extension SpaceDelimitedBinaryEncoder on List<int> {
   /// The [allowEmpty] parameter controls whether empty lists are allowed:
   /// - When `true`, empty lists return `['']`
   /// - When `false`, empty lists throw an exception
+  ///
+  /// When [allowReserved] is true, most reserved characters in the decoded
+  /// value are kept literal.
   List<String> toSpaceDelimited({
     required bool explode,
     required bool allowEmpty,
+    bool allowReserved = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -81,7 +95,11 @@ extension SpaceDelimitedBinaryEncoder on List<int> {
     if (isEmpty) {
       return [''];
     }
-    final str = decodeToString();
-    return [Uri.encodeComponent(str)];
+    return [
+      decodeToString().uriEncode(
+        allowEmpty: true,
+        allowReserved: allowReserved,
+      ),
+    ];
   }
 }
