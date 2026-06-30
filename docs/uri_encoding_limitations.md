@@ -41,9 +41,11 @@ For form-style query parameters, Tonik honors this. Given a value such as
 ?path=a/b:c?d@e,f
 ```
 
-The reserved characters `/ : ? @ ; ,` (and the remaining RFC 3986 reserved
-characters, except `& = +`) pass through literally. A sibling parameter **without**
-`allowReserved` keeps the default behavior and is fully percent-encoded:
+The reserved characters `/ : ? @ ; ,` (and most other RFC 3986 reserved
+characters) pass through literally; the exceptions — `& = +`, `# [ ]`, space, and
+`%` — are percent-encoded as described under *Characters that are still encoded*
+below. A sibling parameter **without** `allowReserved` keeps the default behavior
+and is fully percent-encoded:
 
 ```
 ?path=a%2Fb%3Ac%3Fd%40e%2Cf
@@ -71,7 +73,7 @@ Tonik encodes `& = +` **inside the value** itself (to `%26 %3D %2B`) rather than
 relying on Dart's `Uri`, because `Uri` treats them as structural and would
 otherwise leave a data `&` or `=` indistinguishable from a real delimiter.
 
-### Query strings and urlencoded request bodies
+### urlencoded request bodies
 
 Encoding for `application/x-www-form-urlencoded` request bodies is planned for a
 later release.
@@ -89,8 +91,8 @@ properties**, an **enum**, or a **`oneOf` / `anyOf` / `allOf`** composition also
 do not yet honor `allowReserved`. Their values are serialized by the model's own
 encoding, which always percent-encodes the reserved set. The same applies to
 **arrays whose items** are enums, objects, compositions, or free-form
-(`Object`/`any`) values: each element is serialized by its own encoding, which
-still percent-encodes the reserved set. Note the asymmetry — a scalar free-form
+(`Object`/`any`) values: these item types are not encoded with `allowReserved`.
+Note the asymmetry — a scalar free-form
 (`Object`/`any`) value is honored, but an array of free-form/`any` items is not:
 each array element is serialized through an encoder that does not yet accept
 `allowReserved`.
