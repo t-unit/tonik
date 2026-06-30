@@ -105,6 +105,7 @@ rm -rf simple_encoding/simple_encoding_api
 rm -rf fastify_type_provider_zod/fastify_type_provider_zod_api
 rm -rf composition/composition_api
 rm -rf query_parameters/query_parameters_api
+rm -rf allow_reserved/allow_reserved_api
 rm -rf path_encoding/path_encoding_api
 rm -rf binary_models/binary_models_api
 rm -rf structured_syntax_suffix/structured_syntax_suffix_api
@@ -176,6 +177,9 @@ add_dependency_overrides_recursive "composition/composition_api"
 
 $TONIK_BINARY -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters
 add_dependency_overrides_recursive "query_parameters/query_parameters_api"
+
+$TONIK_BINARY -p allow_reserved_api -s allow_reserved/openapi.yaml -o allow_reserved
+add_dependency_overrides_recursive "allow_reserved/allow_reserved_api"
 
 $TONIK_BINARY -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding
 add_dependency_overrides_recursive "path_encoding/path_encoding_api"
@@ -280,6 +284,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   cd fastify_type_provider_zod/fastify_type_provider_zod_api && dart pub get &
   cd composition/composition_api && dart pub get &
   cd query_parameters/query_parameters_api && dart pub get &
+  cd allow_reserved/allow_reserved_api && dart pub get &
   cd path_encoding/path_encoding_api && dart pub get &
   cd binary_models/binary_models_api && dart pub get &
   cd structured_syntax_suffix/structured_syntax_suffix_api && dart pub get &
@@ -343,6 +348,7 @@ restore_test_package_overrides "simple_encoding/simple_encoding_test/pubspec.yam
 restore_test_package_overrides "fastify_type_provider_zod/fastify_type_provider_zod_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "composition/composition_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "query_parameters/query_parameters_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "allow_reserved/allow_reserved_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "path_encoding/path_encoding_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "binary_models/binary_models_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "structured_syntax_suffix/structured_syntax_suffix_test/pubspec.yaml" "../../../packages/tonik_util"
@@ -385,6 +391,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd fastify_type_provider_zod/fastify_type_provider_zod_test && dart pub get &
   cd composition/composition_test && dart pub get &
   cd query_parameters/query_parameters_test && dart pub get &
+  cd allow_reserved/allow_reserved_test && dart pub get &
   cd path_encoding/path_encoding_test && dart pub get &
   cd binary_models/binary_models_test && dart pub get &
   cd structured_syntax_suffix/structured_syntax_suffix_test && dart pub get &

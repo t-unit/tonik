@@ -10,6 +10,7 @@ BuiltExpression buildUriEncodeExpression(
   required Expression allowEmpty,
   Expression? useQueryComponent,
   bool useImmutableCollections = false,
+  bool allowReserved = false,
 }) {
   return BuiltExpression.simple(
     _buildUriEncodeExpression(
@@ -18,6 +19,7 @@ BuiltExpression buildUriEncodeExpression(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
+      allowReserved: allowReserved,
     ),
   );
 }
@@ -42,6 +44,7 @@ Expression _buildUriEncodeExpression(
   required Expression allowEmpty,
   Expression? useQueryComponent,
   bool useImmutableCollections = false,
+  bool allowReserved = false,
 }) {
   return switch (model) {
     StringModel() ||
@@ -64,6 +67,10 @@ Expression _buildUriEncodeExpression(
         {
           'allowEmpty': allowEmpty,
           'useQueryComponent': ?useQueryComponent,
+          // Generated enums override uriEncode without an allowReserved
+          // parameter, so the flag only applies to the built-in encoders.
+          if (allowReserved && model is! EnumModel)
+            'allowReserved': literalBool(true),
         },
       ),
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
@@ -97,6 +104,7 @@ Expression _buildUriEncodeExpression(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
       useImmutableCollections: useImmutableCollections,
+      allowReserved: allowReserved,
     ),
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for URI encoding.',

@@ -1,0 +1,76 @@
+openapi: 3.0.4
+info:
+  title: Allow Reserved API
+  description: >-
+    OpenAPI specification showcasing form query parameters that opt into
+    allowReserved, alongside sibling parameters that do not.
+  version: 1.0.0
+  contact:
+    name: Example
+    url: https://example.com
+    email: example@example.com
+
+servers:
+  - url: https://api.example.com/v1
+
+tags:
+  - name: query
+    description: Operations demonstrating allowReserved query parameters
+
+paths:
+  /form-allow-reserved:
+    get:
+      operationId: testFormAllowReserved
+      tags:
+        - query
+      summary: Test allowReserved form query parameters
+      description: >-
+        A form query parameter with allowReserved next to a sibling that keeps
+        the default full percent-encoding.
+      parameters:
+        - name: reserved
+          in: query
+          style: form
+          explode: false
+          allowReserved: true
+          schema:
+            type: string
+        - name: notReserved
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: No Content
+  /form-allow-reserved-list:
+    get:
+      operationId: testFormAllowReservedList
+      tags:
+        - query
+      summary: Test allowReserved form query array parameters
+      description: >-
+        A non-nullable array form query parameter with allowReserved next to a
+        sibling array that keeps the default full percent-encoding.
+      parameters:
+        - name: reservedList
+          in: query
+          style: form
+          explode: false
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: notReservedList
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: No Content

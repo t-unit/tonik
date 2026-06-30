@@ -11,6 +11,7 @@ BuiltStatements buildToFormQueryParameterCode(
   QueryParameterObject parameter, {
   bool explode = false,
   bool allowEmpty = true,
+  bool allowReserved = false,
 }) {
   return BuiltStatements.simple(
     _buildToFormQueryParameterCode(
@@ -18,6 +19,7 @@ BuiltStatements buildToFormQueryParameterCode(
       parameter,
       explode: explode,
       allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
     ),
   );
 }
@@ -27,6 +29,7 @@ List<Code> _buildToFormQueryParameterCode(
   QueryParameterObject parameter, {
   required bool explode,
   required bool allowEmpty,
+  required bool allowReserved,
 }) {
   final model = parameter.model;
   final rawName = parameter.rawName;
@@ -56,6 +59,7 @@ List<Code> _buildToFormQueryParameterCode(
             {
               'explode': literalBool(explode),
               'allowEmpty': literalBool(allowEmpty),
+              if (allowReserved) 'allowReserved': literalBool(true),
             },
           )
           .code,
@@ -69,6 +73,7 @@ List<Code> _buildToFormQueryParameterCode(
     paramName: specLiteralString(rawName),
     explode: literalBool(explode),
     allowEmpty: literalBool(allowEmpty),
+    allowReserved: allowReserved,
   );
 
   if (value == null) {

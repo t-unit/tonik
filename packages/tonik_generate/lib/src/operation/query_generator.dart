@@ -87,6 +87,7 @@ class QueryGenerator {
         resolvedParam,
         explode: resolvedParam.explode,
         allowEmpty: resolvedParam.allowEmptyValue,
+        allowReserved: resolvedParam.allowReserved,
       ).statements;
     }
 

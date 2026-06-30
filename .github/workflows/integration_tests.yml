@@ -135,6 +135,11 @@ jobs:
           cd integration_test/query_parameters/query_parameters_test
           dart test --concurrency=2
 
+      - name: Run allow reserved integration tests
+        run: |
+          cd integration_test/allow_reserved/allow_reserved_test
+          dart test --concurrency=2
+
       - name: Run type arrays integration tests
         run: |
           cd integration_test/type_arrays/type_arrays_test
