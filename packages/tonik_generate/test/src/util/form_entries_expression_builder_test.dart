@@ -186,6 +186,31 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
+    test('enum form param omits allowReserved even when set', () {
+      final result = build(
+        EnumModel<String>(
+          name: 'Color',
+          values: {
+            const EnumEntry<String>(value: 'red'),
+            const EnumEntry<String>(value: 'green'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          context: context,
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
     test('list element uriEncode adds allowReserved when set', () {
       final result = build(
         ListModel(
@@ -232,6 +257,28 @@ void main() {
         test() {
           value
               .map((e) => e.uriEncode(allowEmpty: true))
+              .toList()
+              .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('free-form list element omits allowReserved even when set', () {
+      final result = build(
+        ListModel(
+          content: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value
+              .map((e) => _i1.encodeAnyToUri(e, allowEmpty: true))
               .toList()
               .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
         }

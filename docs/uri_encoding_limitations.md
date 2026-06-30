@@ -7,10 +7,11 @@ For most parameter styles this means reserved characters in query strings are
 percent-encoded according to RFC 3986. For **form-style query parameters**,
 Tonik additionally honors OpenAPI's `allowReserved` property by encoding the
 value itself before handing it to `Uri`, so the reserved set is preserved on the
-wire. This applies to primitive, string, array, free-form object
-(`additionalProperties`), and free-form (`Object`/`any`) values. Parameters whose
-schema is an object with defined properties, an enum, or a composition do not yet
-honor it — see [Styles and schemas that do not yet honor
+wire. This applies to primitive and string values, arrays of primitive, string,
+or byte items, free-form objects (`additionalProperties`), and free-form
+(`Object`/`any`) values. Parameters whose schema is an object with defined
+properties, an enum, a composition, or an array of those do not yet honor it —
+see [Styles and schemas that do not yet honor
 `allowReserved`](#styles-and-schemas-that-do-not-yet-honor-allowreserved).
 
 This document explains exactly which characters are kept literal, which are
@@ -39,9 +40,9 @@ For form-style query parameters, Tonik honors this. Given a value such as
 ?path=a/b:c?d@e,f
 ```
 
-The reserved characters `/ : ? @ ; ,` (and the other RFC 3986 sub-delimiters)
-pass through literally. A sibling parameter **without** `allowReserved` keeps the
-default behavior and is fully percent-encoded:
+The reserved characters `/ : ? @ ; ,` (and other RFC 3986 sub-delimiters, but
+not `& = +`) pass through literally. A sibling parameter **without**
+`allowReserved` keeps the default behavior and is fully percent-encoded:
 
 ```
 ?path=a%2Fb%3Ac%3Fd%40e%2Cf
@@ -72,26 +73,33 @@ indistinguishable from a real delimiter.
 
 ### Query strings and urlencoded request bodies
 
-The same value encoding is used for query strings and for
-`application/x-www-form-urlencoded` request bodies (the latter is delivered by a
-later release). Both surfaces percent-encode the **same** `& = +` set. They
+This release applies the value encoding to query strings only. A later release
+will extend the same encoding to `application/x-www-form-urlencoded` request
+bodies. Both surfaces will percent-encode the **same** `& = +` set, and will
 differ in only two ways:
 
-- `# [ ]` are encoded in a query string but may stay literal in a request body.
-- A space renders as `%20` in a query string and as `+` in a urlencoded body.
+- `# [ ]` are encoded in a query string but will be allowed to stay literal in a
+  request body.
+- A space renders as `%20` in a query string and will render as `+` in a
+  urlencoded body.
 
 ## Styles and Schemas That Do Not Yet Honor `allowReserved`
 
 `allowReserved` is currently applied to **form-style** query parameters. The
 `spaceDelimited`, `pipeDelimited`, and `deepObject` styles still percent-encode
-reserved characters, because Dart's `Uri` class always encodes them and the value
-is not pre-encoded for these styles.
+reserved characters. The runtime already supports preserving the reserved set for
+these styles; the generated clients do not yet thread `allowReserved` through to
+them. A later release will wire it in.
 
 Within form style, parameters whose schema is an **object with defined
 properties**, an **enum**, or a **`oneOf` / `anyOf` / `allOf`** composition also
 do not yet honor `allowReserved`. Their values are serialized by the model's own
-encoding, which always percent-encodes the reserved set. Primitive, string,
-array, and free-form object (`additionalProperties`) parameters honor it.
+encoding, which always percent-encodes the reserved set. The same applies to
+**arrays whose items** are enums, objects, or compositions: each element is
+serialized by its own encoding, which still percent-encodes the reserved set.
+Parameters honor `allowReserved` when their schema is a primitive, a string, an
+array of primitive, string, or byte items, a free-form object
+(`additionalProperties`), or a free-form `Object`/`any` value.
 
 ### `pipeDelimited` Style
 

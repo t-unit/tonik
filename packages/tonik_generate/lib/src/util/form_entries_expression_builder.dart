@@ -49,8 +49,9 @@ Expression? buildFormEntriesValueExpression(
     case NumberModel():
       return toForm(receiver, reserved: allowReserved);
 
-    // Generated models (enums and composites) implement their own toForm and
-    // do not expose allowReserved; they manage their own value encoding.
+    // Generated models (enums, objects, and compositions) implement their own
+    // toForm and do not expose allowReserved; they manage their own value
+    // encoding.
     case EnumModel():
     case ClassModel():
     case AllOfModel():
