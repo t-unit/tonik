@@ -10,7 +10,8 @@ value itself before handing it to `Uri`, so the reserved set is preserved on the
 wire. This applies to primitive, string, or byte values, arrays of primitive,
 string, or byte items, free-form objects (`additionalProperties`), and free-form
 (`Object`/`any`) values. Parameters whose schema is an object with defined
-properties, an enum, a composition, or an array of those do not yet honor it —
+properties, an enum, a composition, an array of those, or an array of free-form
+(`Object`/`any`) items do not yet honor it —
 see [Styles and schemas that do not yet honor
 `allowReserved`](#styles-and-schemas-that-do-not-yet-honor-allowreserved).
 
@@ -40,8 +41,8 @@ For form-style query parameters, Tonik honors this. Given a value such as
 ?path=a/b:c?d@e,f
 ```
 
-The reserved characters `/ : ? @ ; ,` (and other RFC 3986 sub-delimiters, but
-not `& = +`) pass through literally. A sibling parameter **without**
+The reserved characters `/ : ? @ ; ,` (and the remaining RFC 3986 reserved
+characters, except `& = +`) pass through literally. A sibling parameter **without**
 `allowReserved` keeps the default behavior and is fully percent-encoded:
 
 ```
@@ -72,15 +73,8 @@ otherwise leave a data `&` or `=` indistinguishable from a real delimiter.
 
 ### Query strings and urlencoded request bodies
 
-This release applies the value encoding to query strings only. A later release
-will extend the same encoding to `application/x-www-form-urlencoded` request
-bodies. Both surfaces will percent-encode the **same** `& = +` set, and will
-differ in only two ways:
-
-- `# [ ]` are encoded in a query string but will be allowed to stay literal in a
-  request body.
-- A space renders as `%20` in a query string and will render as `+` in a
-  urlencoded body.
+Encoding for `application/x-www-form-urlencoded` request bodies is planned for a
+later release.
 
 ## Styles and Schemas That Do Not Yet Honor `allowReserved`
 
@@ -96,13 +90,10 @@ do not yet honor `allowReserved`. Their values are serialized by the model's own
 encoding, which always percent-encodes the reserved set. The same applies to
 **arrays whose items** are enums, objects, compositions, or free-form
 (`Object`/`any`) values: each element is serialized by its own encoding, which
-still percent-encodes the reserved set. Note the asymmetry — a scalar
-free-form/`any` value *is* honored (it encodes through `encodeAnyToForm`), but an
-array of free-form/`any` items is not, because its elements route through
-`encodeAnyToUri`, which has no `allowReserved` parameter.
-Parameters honor `allowReserved` when their schema is a primitive, string, or
-byte value, an array of primitive, string, or byte items, a free-form object
-(`additionalProperties`), or a free-form `Object`/`any` value.
+still percent-encodes the reserved set. Note the asymmetry — a scalar free-form
+(`Object`/`any`) value is honored, but an array of free-form/`any` items is not:
+each array element is serialized through an encoder that does not yet accept
+`allowReserved`.
 
 ### `pipeDelimited` Style
 

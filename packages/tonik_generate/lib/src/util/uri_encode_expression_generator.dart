@@ -86,12 +86,14 @@ Expression _buildUriEncodeExpression(
           'useQueryComponent': ?useQueryComponent,
         },
       ),
+    // Whole-collection encoding drops allowReserved for now (a later step).
     MapModel() => _buildMapUriEncodeExpression(
       valueExpression,
       model,
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
     ),
+    // Whole-collection encoding drops allowReserved for now (a later step).
     final ListModel m => _buildListUriEncodeExpression(
       valueExpression,
       m.content,
