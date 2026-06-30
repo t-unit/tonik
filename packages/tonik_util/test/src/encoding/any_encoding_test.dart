@@ -1637,6 +1637,27 @@ void main() {
         );
       });
 
+      test('DateTime value keeps : literal under allowReserved', () {
+        final dateTime = DateTime.utc(2024, 1, 2, 12, 30, 45);
+        expect(
+          encodeAnyToForm(
+            dateTime,
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+          ),
+          '2024-01-02T12:30:45.000Z',
+        );
+      });
+
+      test('DateTime value encodes : as %3A by default', () {
+        final dateTime = DateTime.utc(2024, 1, 2, 12, 30, 45);
+        expect(
+          encodeAnyToForm(dateTime, explode: false, allowEmpty: true),
+          '2024-01-02T12%3A30%3A45.000Z',
+        );
+      });
+
       test('honors allowReserved for nested list primitives', () {
         expect(
           encodeAnyToForm(
