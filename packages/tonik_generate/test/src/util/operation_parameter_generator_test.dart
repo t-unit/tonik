@@ -470,7 +470,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'file': MultipartPropertyEncoding(
+              'file': PropertyEncoding(
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 headers: {
@@ -553,7 +553,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'file': MultipartPropertyEncoding(
+              'file': PropertyEncoding(
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 headers: {
@@ -655,7 +655,7 @@ void main() {
               contentType: ContentType.multipart,
               rawContentType: 'multipart/form-data',
               encoding: {
-                'avatar': MultipartPropertyEncoding(
+                'avatar': PropertyEncoding(
                   contentType: ContentType.bytes,
                   rawContentType: 'application/octet-stream',
                   headers: {
@@ -737,7 +737,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'file': MultipartPropertyEncoding(
+              'file': PropertyEncoding(
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 headers: {
@@ -829,7 +829,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'name': const MultipartPropertyEncoding(
+              'name': const PropertyEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
               ),
@@ -898,7 +898,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'file': MultipartPropertyEncoding(
+              'file': PropertyEncoding(
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 headers: {
@@ -999,7 +999,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'file': MultipartPropertyEncoding(
+              'file': PropertyEncoding(
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 headers: {
@@ -1094,7 +1094,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'file': MultipartPropertyEncoding(
+              'file': PropertyEncoding(
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 headers: {
@@ -1186,7 +1186,7 @@ void main() {
               contentType: ContentType.multipart,
               rawContentType: 'multipart/form-data',
               encoding: {
-                'file': MultipartPropertyEncoding(
+                'file': PropertyEncoding(
                   contentType: ContentType.bytes,
                   rawContentType: 'application/octet-stream',
                   headers: {

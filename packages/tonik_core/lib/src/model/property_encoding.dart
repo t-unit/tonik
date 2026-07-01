@@ -1,20 +1,21 @@
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-/// Serialization styles for multipart encoding properties.
+/// Serialization styles for encoding properties.
 ///
 /// These match the query parameter styles allowed in the OAS encoding object.
-enum MultipartEncodingStyle {
+enum EncodingStyle {
   form,
   spaceDelimited,
   pipeDelimited,
   deepObject,
 }
 
-/// Encoding metadata for a single property in a multipart/form-data request.
+/// Encoding metadata for a single property in a multipart/form-data or
+/// application/x-www-form-urlencoded request body.
 @immutable
-class MultipartPropertyEncoding {
-  const MultipartPropertyEncoding({
+class PropertyEncoding {
+  const PropertyEncoding({
     this.contentType,
     this.rawContentType,
     this.headers,
@@ -33,7 +34,7 @@ class MultipartPropertyEncoding {
   final Map<String, ResponseHeader>? headers;
 
   /// Serialization style for this property.
-  final MultipartEncodingStyle? style;
+  final EncodingStyle? style;
 
   /// Whether arrays/objects generate separate values.
   final bool? explode;
@@ -52,7 +53,7 @@ class MultipartPropertyEncoding {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is MultipartPropertyEncoding &&
+      other is PropertyEncoding &&
           runtimeType == other.runtimeType &&
           contentType == other.contentType &&
           rawContentType == other.rawContentType &&
@@ -73,7 +74,7 @@ class MultipartPropertyEncoding {
 
   @override
   String toString() =>
-      'MultipartPropertyEncoding(contentType: $contentType, '
+      'PropertyEncoding(contentType: $contentType, '
       'rawContentType: $rawContentType, '
       'headers: $headers, style: $style, explode: $explode, '
       'allowReserved: $allowReserved)';

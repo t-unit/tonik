@@ -129,9 +129,10 @@ class RequestContent {
   String rawContentType;
   List<Example> examples;
 
-  /// Per-property encoding metadata for multipart/form-data requests.
-  /// Null for all non-multipart content types.
-  Map<String, MultipartPropertyEncoding>? encoding;
+  /// Per-property encoding metadata for multipart/form-data and
+  /// application/x-www-form-urlencoded request bodies.
+  /// Null for all other content types.
+  Map<String, PropertyEncoding>? encoding;
 
   @override
   String toString() =>
