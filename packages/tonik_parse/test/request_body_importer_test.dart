@@ -1984,7 +1984,11 @@ void main() {
       expect(content.contentType, ContentType.form);
       expect(content.encoding, isNotNull);
       expect(content.encoding, hasLength(1));
-      expect(content.encoding!['filter']!.allowReserved, isTrue);
+      final filterEncoding = content.encoding!['filter']!;
+      expect(filterEncoding.allowReserved, isTrue);
+      expect(filterEncoding.style, isNull);
+      expect(filterEncoding.explode, isNull);
+      expect(filterEncoding.headers, isNull);
     });
 
     test('encoding is null when no encoding object is present', () {
@@ -2152,7 +2156,7 @@ void main() {
       );
     });
 
-    test('captures per-property headers from encoding object', () {
+    test('form-urlencoded ignores encoding object headers', () {
       final content = importFormContent(
         formSpec(
           properties: {
@@ -2174,10 +2178,51 @@ void main() {
         ),
       );
 
-      final nameEncoding = content.encoding!['name']!;
-      expect(nameEncoding.headers, isNotNull);
-      expect(nameEncoding.headers, hasLength(1));
-      expect(nameEncoding.headers!['X-Custom'], isA<ResponseHeaderObject>());
+      expect(content.encoding!['name']!.headers, isNull);
+    });
+
+    test('non-object schema captures encoding without unmatched-key warning',
+        () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+
+      addTearDown(sub.cancel);
+
+      final content = importFormContent({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'FormBody': {
+              'description': 'Form body',
+              'required': true,
+              'content': {
+                'application/x-www-form-urlencoded': {
+                  'schema': {
+                    'type': 'array',
+                    'items': {'type': 'string'},
+                  },
+                  'encoding': {
+                    'ids': {'allowReserved': true},
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      expect(content.encoding!['ids'], isNotNull);
+      expect(content.encoding!['ids']!.allowReserved, isTrue);
+      expect(
+        logs.any(
+          (r) =>
+              r.level == Level.WARNING &&
+              r.message.contains('does not match any property'),
+        ),
+        isFalse,
+      );
     });
   });
 }

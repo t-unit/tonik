@@ -133,7 +133,6 @@ class RequestBodyImporter {
               core.ContentType.form when hasEncoding => _importFormEncoding(
                 mediaType.encoding!,
                 model,
-                context,
               ),
               _ => null,
             };
@@ -280,17 +279,11 @@ class RequestBodyImporter {
     };
   }
 
-  /// Imports the Encoding Object for `application/x-www-form-urlencoded`
-  /// bodies.
-  ///
-  /// Unlike the multipart path, per-property content-type defaults are not
-  /// applied, and [core.PropertyEncoding.allowReserved] is captured in both
-  /// OAS 3.0 and 3.1 (the Encoding Object's `allowReserved` is valid for form
-  /// bodies in both versions).
+  /// Unlike the multipart path, no per-property content-type default is
+  /// applied, and allowReserved is captured regardless of OpenAPI version.
   Map<String, core.PropertyEncoding> _importFormEncoding(
     Map<String, Encoding> encodingMap,
     core.Model model,
-    core.Context context,
   ) {
     final resolved = model.resolved;
     final propertyNames = resolved is core.ClassModel
@@ -309,7 +302,6 @@ class RequestBodyImporter {
       }
 
       result[entry.key] = core.PropertyEncoding(
-        headers: _importEncodingHeaders(encoding, entry.key, context),
         style: _mapSerializationStyle(encoding.style),
         explode: encoding.explode,
         allowReserved: encoding.allowReserved ?? false,
