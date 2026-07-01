@@ -2150,7 +2150,7 @@ void main() {
         logs.any(
           (r) =>
               r.level == Level.WARNING &&
-              r.message.contains('does not match any property'),
+              r.message.contains('form-urlencoded schema'),
         ),
         isFalse,
       );
@@ -2219,10 +2219,44 @@ void main() {
         logs.any(
           (r) =>
               r.level == Level.WARNING &&
-              r.message.contains('does not match any property'),
+              r.message.contains('form-urlencoded schema'),
         ),
         isFalse,
       );
+    });
+
+    test('unmapped form style is dropped to null while entry is imported', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'name': {'type': 'string'},
+          },
+          encoding: {
+            'name': {'style': 'matrix'},
+          },
+        ),
+      );
+
+      expect(content.encoding, hasLength(1));
+      final nameEncoding = content.encoding!['name']!;
+      expect(nameEncoding.style, isNull);
+    });
+
+    test('explicit contentType is not captured on the form path', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'name': {'type': 'string'},
+          },
+          encoding: {
+            'name': {'contentType': 'text/plain'},
+          },
+        ),
+      );
+
+      final nameEncoding = content.encoding!['name']!;
+      expect(nameEncoding.contentType, isNull);
+      expect(nameEncoding.rawContentType, isNull);
     });
   });
 }
