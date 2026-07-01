@@ -10,6 +10,7 @@ BuiltStatements buildToDelimitedQueryParameterCode(
   required QueryParameterEncoding encoding,
   bool explode = false,
   bool allowEmpty = true,
+  bool allowReserved = false,
 }) {
   return BuiltStatements.simple(
     _buildToDelimitedQueryParameterCode(
@@ -18,6 +19,7 @@ BuiltStatements buildToDelimitedQueryParameterCode(
       encoding: encoding,
       explode: explode,
       allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
     ),
   );
 }
@@ -28,6 +30,7 @@ List<Code> _buildToDelimitedQueryParameterCode(
   required QueryParameterEncoding encoding,
   bool explode = false,
   bool allowEmpty = true,
+  bool allowReserved = false,
 }) {
   final model = parameter.model;
   final encodingName = encoding == QueryParameterEncoding.spaceDelimited
@@ -51,6 +54,7 @@ List<Code> _buildToDelimitedQueryParameterCode(
     encoding: encoding,
     explode: explode,
     allowEmpty: allowEmpty,
+    allowReserved: allowReserved,
     encodingName: encodingName,
     isContentNullable:
         model.isContentNullable || model.content.isEffectivelyNullable,
@@ -64,6 +68,7 @@ List<Code> _buildDelimitedCode(
   required QueryParameterEncoding encoding,
   required bool explode,
   required bool allowEmpty,
+  required bool allowReserved,
   required String encodingName,
   required bool isContentNullable,
 }) {
@@ -76,6 +81,12 @@ List<Code> _buildDelimitedCode(
   String nullGuard(String encoded) =>
       isContentNullable ? "e == null ? '' : $encoded" : encoded;
 
+  // The generated enum uriEncode has no allowReserved parameter, so the
+  // enum arm omits it while the scalar arm passes it through.
+  final scalarItemArgs = allowReserved
+      ? 'allowEmpty: $allowEmpty, allowReserved: true'
+      : 'allowEmpty: $allowEmpty';
+
   return switch (contentModel) {
     StringModel() when !isContentNullable => _buildForLoop(
       parameterName,
@@ -83,6 +94,7 @@ List<Code> _buildDelimitedCode(
       methodName,
       explode,
       allowEmpty,
+      allowReserved: allowReserved,
       needsMapping: false,
     ),
 
@@ -94,7 +106,16 @@ List<Code> _buildDelimitedCode(
     DateTimeModel() ||
     DecimalModel() ||
     UriModel() ||
-    DateModel() ||
+    DateModel() => _buildForLoop(
+      parameterName,
+      rawName,
+      methodName,
+      explode,
+      allowEmpty,
+      needsMapping: true,
+      mapExpression: nullGuard('e.uriEncode($scalarItemArgs)'),
+    ),
+
     EnumModel() => _buildForLoop(
       parameterName,
       rawName,
@@ -123,6 +144,7 @@ List<Code> _buildDelimitedCode(
       encoding: encoding,
       explode: explode,
       allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
       encodingName: encodingName,
       isContentNullable: isContentNullable,
     ),
@@ -144,14 +166,18 @@ List<Code> _buildForLoop(
   bool explode,
   bool allowEmpty, {
   required bool needsMapping,
+  bool allowReserved = false,
   String? mapExpression,
 }) {
+  final delimitedArgs = allowReserved
+      ? 'explode: $explode, allowEmpty: $allowEmpty, allowReserved: true'
+      : 'explode: $explode, allowEmpty: $allowEmpty';
+
   final baseExpression = needsMapping
       ? '$parameterName.map((e) => $mapExpression).toList().$methodName('
             ' explode: $explode, allowEmpty: $allowEmpty,'
             ' alreadyEncoded: true)'
-      : '$parameterName.$methodName('
-            ' explode: $explode, allowEmpty: $allowEmpty)';
+      : '$parameterName.$methodName($delimitedArgs)';
 
   return [
     Code('for (final value in $baseExpression) {'),

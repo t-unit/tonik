@@ -2508,5 +2508,342 @@ void main() {
         collapseWhitespace(format(expectedMethod)),
       );
     });
+
+    QueryParameterObject stringListParam({
+      required QueryParameterEncoding encoding,
+      required bool allowReserved,
+    }) => QueryParameterObject(
+      name: 'tags',
+      rawName: 'tags',
+      description: null,
+      isRequired: false,
+      isDeprecated: false,
+      allowEmptyValue: true,
+      explode: false,
+      encoding: encoding,
+      allowReserved: allowReserved,
+      model: ListModel(
+        context: context,
+        content: StringModel(context: context),
+        examples: const [],
+      ),
+      context: context,
+      examples: const [],
+      defaultValue: null,
+    );
+
+    test('emits allowReserved for spaceDelimited string list when set', () {
+      final queryParam = stringListParam(
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: true,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({List<String>? tags}) {
+          final _$entries = <ParameterEntry>[];
+          if (tags != null) {
+            for (final value in tags.toSpaceDelimited(
+              explode: false,
+              allowEmpty: true,
+              allowReserved: true,
+            )) {
+              _$entries.add((name: r'tags', value: value));
+            }
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'tags', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('omits allowReserved for spaceDelimited string list by default', () {
+      final queryParam = stringListParam(
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: false,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({List<String>? tags}) {
+          final _$entries = <ParameterEntry>[];
+          if (tags != null) {
+            for (final value in tags.toSpaceDelimited(
+              explode: false,
+              allowEmpty: true,
+            )) {
+              _$entries.add((name: r'tags', value: value));
+            }
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'tags', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('emits allowReserved for pipeDelimited string list when set', () {
+      final queryParam = stringListParam(
+        encoding: QueryParameterEncoding.pipeDelimited,
+        allowReserved: true,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({List<String>? tags}) {
+          final _$entries = <ParameterEntry>[];
+          if (tags != null) {
+            for (final value in tags.toPipeDelimited(
+              explode: false,
+              allowEmpty: true,
+              allowReserved: true,
+            )) {
+              _$entries.add((name: r'tags', value: value));
+            }
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'tags', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('omits allowReserved for pipeDelimited string list by default', () {
+      final queryParam = stringListParam(
+        encoding: QueryParameterEncoding.pipeDelimited,
+        allowReserved: false,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({List<String>? tags}) {
+          final _$entries = <ParameterEntry>[];
+          if (tags != null) {
+            for (final value in tags.toPipeDelimited(
+              explode: false,
+              allowEmpty: true,
+            )) {
+              _$entries.add((name: r'tags', value: value));
+            }
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'tags', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    QueryParameterObject stringMapDeepObjectParam({
+      required bool allowReserved,
+    }) => QueryParameterObject(
+      name: 'filter',
+      rawName: 'filter',
+      description: null,
+      isRequired: false,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: true,
+      encoding: QueryParameterEncoding.deepObject,
+      allowReserved: allowReserved,
+      model: MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+      ),
+      context: context,
+      examples: const [],
+      defaultValue: null,
+    );
+
+    test('emits allowReserved for deepObject Map when set', () {
+      final queryParam = stringMapDeepObjectParam(allowReserved: true);
+
+      const expectedMethod = r'''
+        String? _queryParameters({Map<String, String>? filter}) {
+          final _$entries = <ParameterEntry>[];
+          if (filter != null) {
+            _$entries.addAll(
+              filter.toDeepObject(
+                r'filter',
+                explode: true,
+                allowEmpty: false,
+                allowReserved: true,
+              ),
+            );
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'filter', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('omits allowReserved for deepObject Map by default', () {
+      final queryParam = stringMapDeepObjectParam(allowReserved: false);
+
+      const expectedMethod = r'''
+        String? _queryParameters({Map<String, String>? filter}) {
+          final _$entries = <ParameterEntry>[];
+          if (filter != null) {
+            _$entries.addAll(
+              filter.toDeepObject(r'filter', explode: true, allowEmpty: false),
+            );
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'filter', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    QueryParameterObject anyDeepObjectParam({
+      required bool allowReserved,
+    }) => QueryParameterObject(
+      name: 'data',
+      rawName: 'data',
+      description: null,
+      isRequired: false,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: true,
+      encoding: QueryParameterEncoding.deepObject,
+      allowReserved: allowReserved,
+      model: AnyModel(context: context),
+      context: context,
+      examples: const [],
+      defaultValue: null,
+    );
+
+    test('emits allowReserved for deepObject AnyModel when set', () {
+      final queryParam = anyDeepObjectParam(allowReserved: true);
+
+      const expectedMethod = r'''
+        String? _queryParameters({Object? data}) {
+          final _$entries = <ParameterEntry>[];
+          if (data != null) {
+            _$entries.addAll(
+              encodeAnyToDeepObject(
+                data,
+                r'data',
+                explode: true,
+                allowEmpty: false,
+                allowReserved: true,
+              ),
+            );
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'data', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('omits allowReserved for deepObject AnyModel by default', () {
+      final queryParam = anyDeepObjectParam(allowReserved: false);
+
+      const expectedMethod = r'''
+        String? _queryParameters({Object? data}) {
+          final _$entries = <ParameterEntry>[];
+          if (data != null) {
+            _$entries.addAll(
+              encodeAnyToDeepObject(
+                data,
+                r'data',
+                explode: true,
+                allowEmpty: false,
+              ),
+            );
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'data', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
   });
 }

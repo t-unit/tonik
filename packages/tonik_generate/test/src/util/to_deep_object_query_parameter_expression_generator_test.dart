@@ -25,6 +25,7 @@ void main() {
       required Model model,
       required bool explode,
       required bool allowEmpty,
+      bool allowReserved = false,
     }) {
       return QueryParameterObject(
         name: name,
@@ -36,7 +37,7 @@ void main() {
         encoding: QueryParameterEncoding.deepObject,
         explode: explode,
         allowEmptyValue: allowEmpty,
-        allowReserved: false,
+        allowReserved: allowReserved,
         context: context,
         examples: const [],
         defaultValue: null,
@@ -710,6 +711,180 @@ void main() {
             "false), )).toDeepObject(r'aliased_counts', "
             'explode: true, allowEmpty: false, '
             'alreadyEncoded: true, )',
+          ),
+        );
+      });
+    });
+
+    group('allowReserved', () {
+      test('Map<String, String> carries allowReserved when set', () {
+        final parameter = createParameter(
+          name: 'filter',
+          rawName: 'filter',
+          model: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: false,
+          allowReserved: true,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'filter',
+          parameter,
+          allowReserved: true,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            "filter.toDeepObject(r'filter', "
+            'explode: true, allowEmpty: false, allowReserved: true, )',
+          ),
+        );
+      });
+
+      test('Map<String, String> omits allowReserved by default', () {
+        final parameter = createParameter(
+          name: 'filter',
+          rawName: 'filter',
+          model: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'filter',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            "filter.toDeepObject(r'filter', "
+            'explode: true, allowEmpty: false, )',
+          ),
+        );
+      });
+
+      test('Map<String, int> threads allowReserved into value encode', () {
+        final parameter = createParameter(
+          name: 'counts',
+          rawName: 'counts',
+          model: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: false,
+          allowReserved: true,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'counts',
+          parameter,
+          allowReserved: true,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            'counts.map((k, v, ) => MapEntry(k, '
+            'v.uriEncode(allowEmpty: false, allowReserved: true, ), '
+            ")).toDeepObject(r'counts', "
+            'explode: true, allowEmpty: false, '
+            'alreadyEncoded: true, )',
+          ),
+        );
+      });
+
+      test('AnyModel carries allowReserved when set', () {
+        final parameter = createParameter(
+          name: 'data',
+          rawName: 'data',
+          model: AnyModel(context: context),
+          explode: true,
+          allowEmpty: false,
+          allowReserved: true,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'data',
+          parameter,
+          allowReserved: true,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            "encodeAnyToDeepObject(data, r'data', "
+            'explode: true, allowEmpty: false, allowReserved: true, )',
+          ),
+        );
+      });
+
+      test('AnyModel omits allowReserved by default', () {
+        final parameter = createParameter(
+          name: 'data',
+          rawName: 'data',
+          model: AnyModel(context: context),
+          explode: true,
+          allowEmpty: false,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'data',
+          parameter,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            "encodeAnyToDeepObject(data, r'data', "
+            'explode: true, allowEmpty: false, )',
+          ),
+        );
+      });
+
+      test('class model object path omits allowReserved even when set', () {
+        final parameter = createParameter(
+          name: 'user',
+          rawName: 'user',
+          model: ClassModel(
+            isDeprecated: false,
+            name: 'User',
+            properties: const [],
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: false,
+          allowReserved: true,
+        );
+
+        final result = buildToDeepObjectQueryParameterCode(
+          'user',
+          parameter,
+          allowReserved: true,
+        );
+
+        final code = result.accept(emitter).toString();
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            "user.toDeepObject(r'user', explode: true, allowEmpty: false, )",
           ),
         );
       });

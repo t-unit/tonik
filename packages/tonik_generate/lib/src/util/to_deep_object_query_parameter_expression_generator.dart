@@ -9,8 +9,9 @@ import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 /// enums emit code that throws at runtime.
 BuiltExpression buildToDeepObjectQueryParameterCode(
   String parameterName,
-  QueryParameterObject parameter,
-) {
+  QueryParameterObject parameter, {
+  bool allowReserved = false,
+}) {
   final model = parameter.model;
   final rawName = parameter.rawName;
   final explode = parameter.explode;
@@ -23,6 +24,7 @@ BuiltExpression buildToDeepObjectQueryParameterCode(
         {
           'explode': literalBool(explode),
           'allowEmpty': literalBool(allowEmpty),
+          if (allowReserved) 'allowReserved': literalBool(true),
         },
       ),
     );
@@ -40,6 +42,7 @@ BuiltExpression buildToDeepObjectQueryParameterCode(
         resolvedModel,
         explode: explode,
         allowEmpty: allowEmpty,
+        allowReserved: allowReserved,
       ),
     );
   }
@@ -84,6 +87,7 @@ Expression _buildMapDeepObjectExpression(
   MapModel model, {
   required bool explode,
   required bool allowEmpty,
+  required bool allowReserved,
 }) {
   final valueModel = model.valueModel;
   final resolvedValueModel = valueModel.resolved;
@@ -97,6 +101,7 @@ Expression _buildMapDeepObjectExpression(
           {
             'explode': literalBool(explode),
             'allowEmpty': literalBool(allowEmpty),
+            if (allowReserved) 'allowReserved': literalBool(true),
           },
         );
   }
@@ -108,6 +113,7 @@ Expression _buildMapDeepObjectExpression(
       refer('v'),
       valueModel,
       allowEmpty: literalBool(allowEmpty),
+      allowReserved: allowReserved,
     );
 
     final mapEntryClosure = Method(
