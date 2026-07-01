@@ -99,6 +99,7 @@ class QueryGenerator {
         encoding: encoding,
         explode: resolvedParam.explode,
         allowEmpty: resolvedParam.allowEmptyValue,
+        allowReserved: resolvedParam.allowReserved,
       ).statements;
     }
 
@@ -114,6 +115,7 @@ class QueryGenerator {
     final deepObjectExpression = buildToDeepObjectQueryParameterCode(
       paramName,
       resolvedParam,
+      allowReserved: resolvedParam.allowReserved,
     );
 
     return Block.of([

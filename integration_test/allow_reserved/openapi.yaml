@@ -74,3 +74,93 @@ paths:
       responses:
         '204':
           description: No Content
+  /space-delimited-allow-reserved:
+    get:
+      operationId: testSpaceDelimitedAllowReserved
+      tags:
+        - query
+      summary: Test allowReserved spaceDelimited query array parameters
+      description: >-
+        A spaceDelimited array query parameter with allowReserved next to a
+        sibling array that keeps the default full percent-encoding.
+      parameters:
+        - name: reservedList
+          in: query
+          style: spaceDelimited
+          explode: false
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: notReservedList
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: No Content
+  /pipe-delimited-allow-reserved:
+    get:
+      operationId: testPipeDelimitedAllowReserved
+      tags:
+        - query
+      summary: Test allowReserved pipeDelimited query array parameters
+      description: >-
+        A pipeDelimited array query parameter with allowReserved next to a
+        sibling array that keeps the default full percent-encoding.
+      parameters:
+        - name: reservedList
+          in: query
+          style: pipeDelimited
+          explode: false
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              type: string
+        - name: notReservedList
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+      responses:
+        '204':
+          description: No Content
+  /deep-object-allow-reserved:
+    get:
+      operationId: testDeepObjectAllowReserved
+      tags:
+        - query
+      summary: Test allowReserved deepObject query object parameters
+      description: >-
+        A deepObject free-form-object query parameter with allowReserved next to
+        a sibling object that keeps the default full percent-encoding.
+      parameters:
+        - name: reservedObject
+          in: query
+          style: deepObject
+          explode: true
+          allowReserved: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: notReservedObject
+          in: query
+          style: deepObject
+          explode: true
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+      responses:
+        '204':
+          description: No Content

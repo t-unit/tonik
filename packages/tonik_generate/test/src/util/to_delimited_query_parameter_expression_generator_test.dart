@@ -36,6 +36,7 @@ void main() {
       required Model model,
       required bool explode,
       required bool allowEmpty,
+      bool allowReserved = false,
     }) {
       return QueryParameterObject(
         name: name,
@@ -47,7 +48,7 @@ void main() {
         encoding: QueryParameterEncoding.spaceDelimited,
         explode: explode,
         allowEmptyValue: allowEmpty,
-        allowReserved: false,
+        allowReserved: allowReserved,
         context: context,
         examples: const [],
         defaultValue: null,
@@ -484,6 +485,322 @@ void main() {
           );
         },
       );
+    });
+
+    group('allowReserved', () {
+      test('spaceDelimited string list carries allowReserved when set', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          allowReserved: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in tags.toSpaceDelimited(
+                  explode: false,
+                  allowEmpty: true,
+                  allowReserved: true,
+                )) {
+                  _$entries.add((name: r'tags', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('spaceDelimited string list omits allowReserved by default', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in tags.toSpaceDelimited(
+                  explode: false,
+                  allowEmpty: true,
+                )) {
+                  _$entries.add((name: r'tags', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('pipeDelimited string list carries allowReserved when set', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          allowReserved: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in tags.toPipeDelimited(
+                  explode: false,
+                  allowEmpty: true,
+                  allowReserved: true,
+                )) {
+                  _$entries.add((name: r'tags', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('pipeDelimited string list omits allowReserved by default', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in tags.toPipeDelimited(
+                  explode: false,
+                  allowEmpty: true,
+                )) {
+                  _$entries.add((name: r'tags', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('spaceDelimited scalar list carries allowReserved when set', () {
+        final parameter = createParameter(
+          name: 'ids',
+          rawName: 'ids',
+          model: ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'ids',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          allowReserved: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in ids
+                    .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
+                    .toList()
+                    .toSpaceDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'ids', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('enum list omits allowReserved even when set', () {
+        final parameter = createParameter(
+          name: 'priorities',
+          rawName: 'priorities',
+          model: ListModel(
+            content: EnumModel<String>(
+              isDeprecated: false,
+              context: context,
+              values: {
+                const EnumEntry(value: 'high priority'),
+                const EnumEntry(value: 'low priority'),
+              },
+              isNullable: false,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'priorities',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          allowReserved: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in priorities
+                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toSpaceDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'priorities', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('composition list omits allowReserved even when set', () {
+        final parameter = createParameter(
+          name: 'items',
+          rawName: 'items',
+          model: ListModel(
+            content: OneOfModel(
+              isDeprecated: false,
+              name: 'Item',
+              models: {
+                (
+                  discriminatorValue: null,
+                  model: StringModel(context: context),
+                ),
+                (
+                  discriminatorValue: null,
+                  model: IntegerModel(context: context),
+                ),
+              },
+              context: context,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'items',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+          allowReserved: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final item in items) {
+                  if (item.currentEncodingShape != EncodingShape.simple) {
+                    throw EncodingException(
+                      r'Parameter items: spaceDelimited encoding requires simple encoding shape',
+                    );
+                  }
+                }
+                for (final value in items
+                    .map((item) => item.uriEncode(allowEmpty: true))
+                    .toList()
+                    .toSpaceDelimited(
+                      explode: false,
+                      allowEmpty: true,
+                      alreadyEncoded: true,
+                    )) {
+                  _$entries.add((name: r'items', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
     });
   });
 }
