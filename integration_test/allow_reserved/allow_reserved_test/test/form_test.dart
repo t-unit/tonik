@@ -26,8 +26,6 @@ void main() {
     );
   }
 
-  // Reserved survivors (/ : ? @ ; ,), the form delimiters (& = +), a space and
-  // (# [ ]) so a single value exercises every encoding branch at once.
   const value = 'a/b:c?d@e;f,g&h=i+j k#l[m]n';
 
   group('form allowReserved', () {
@@ -75,8 +73,6 @@ void main() {
     });
   });
 
-  // The reserved survivors and the encodables are split across two items so the
-  // comma joining the non-explode list stays an unambiguous delimiter.
   const listValues = ['a/b:c?d@e;f', 'g&h=i+j k#l[m]n'];
 
   group('form allowReserved list', () {

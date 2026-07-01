@@ -67,15 +67,11 @@ Expression _buildUriEncodeExpression(
         {
           'allowEmpty': allowEmpty,
           'useQueryComponent': ?useQueryComponent,
-          // Generated enums override uriEncode without an allowReserved
-          // parameter, so the flag only applies to the built-in encoders.
           if (allowReserved && model is! EnumModel)
             'allowReserved': literalBool(true),
         },
       ),
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() =>
-      // encodeAnyToUri has no allowReserved parameter, so the flag is not
-      // forwarded here.
       refer(
         'encodeAnyToUri',
         'package:tonik_util/tonik_util.dart',
@@ -86,8 +82,6 @@ Expression _buildUriEncodeExpression(
           'useQueryComponent': ?useQueryComponent,
         },
       ),
-    // Whole-collection Map/List encoding does not thread allowReserved to its
-    // elements.
     MapModel() => _buildMapUriEncodeExpression(
       valueExpression,
       model,
