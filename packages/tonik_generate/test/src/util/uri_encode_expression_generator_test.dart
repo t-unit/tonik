@@ -43,6 +43,82 @@ void main() {
       );
     });
 
+    test('adds allowReserved for StringModel when set', () {
+      final model = StringModel(context: context);
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        allowReserved: true,
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('omits allowReserved for EnumModel even when set', () {
+      final model = EnumModel<String>(
+        name: 'Color',
+        values: {
+          const EnumEntry<String>(value: 'red'),
+          const EnumEntry<String>(value: 'green'),
+        },
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        context: context,
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        allowReserved: true,
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('threads allowReserved through AliasModel to its target', () {
+      final model = AliasModel(
+        name: 'Filter',
+        model: StringModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        allowReserved: true,
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates uriEncode call for IntegerModel', () {
       final model = IntegerModel(context: context);
       final expression = buildUriEncodeExpression(

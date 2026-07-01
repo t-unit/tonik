@@ -1,0 +1,27 @@
+name: allow_reserved_test
+description: A sample command-line application.
+version: 1.0.0
+publish_to: none
+
+environment:
+  sdk: '>=3.10.0 <4.0.0'
+
+dependencies:
+  allow_reserved_api:
+    path: ../allow_reserved_api
+  dio: ^5.8.0
+  path: ^1.9.1
+  tonik_util: ^0.4.1
+
+dev_dependencies:
+  big_decimal: ^0.7.0
+  test: ^1.25.15
+  test_helpers:
+    path: ../../test_helpers
+  very_good_analysis: ^10.2.0
+
+
+
+dependency_overrides:
+  tonik_util:
+    path: ../../../packages/tonik_util

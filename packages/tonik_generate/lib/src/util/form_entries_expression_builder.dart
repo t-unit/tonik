@@ -16,6 +16,7 @@ Expression? buildFormEntriesValueExpression(
   required Expression explode,
   required Expression allowEmpty,
   Expression? useQueryComponent,
+  bool allowReserved = false,
 }) {
   final toFormArgs = <String, Expression>{
     'explode': explode,
@@ -23,14 +24,18 @@ Expression? buildFormEntriesValueExpression(
     'useQueryComponent': ?useQueryComponent,
   };
 
-  Expression toForm(Expression target, {bool alreadyEncoded = false}) =>
-      target.property('toForm').call(
-        [paramName],
-        {
-          ...toFormArgs,
-          if (alreadyEncoded) 'alreadyEncoded': literalBool(true),
-        },
-      );
+  Expression toForm(
+    Expression target, {
+    bool alreadyEncoded = false,
+    bool reserved = false,
+  }) => target.property('toForm').call(
+    [paramName],
+    {
+      ...toFormArgs,
+      if (alreadyEncoded) 'alreadyEncoded': literalBool(true),
+      if (reserved) 'allowReserved': literalBool(true),
+    },
+  );
 
   switch (model) {
     case StringModel():
@@ -42,6 +47,8 @@ Expression? buildFormEntriesValueExpression(
     case IntegerModel():
     case DoubleModel():
     case NumberModel():
+      return toForm(receiver, reserved: allowReserved);
+
     case EnumModel():
     case ClassModel():
     case AllOfModel():
@@ -50,7 +57,10 @@ Expression? buildFormEntriesValueExpression(
       return toForm(receiver);
 
     case Base64Model():
-      return toForm(receiver.property('toBase64String').call([]));
+      return toForm(
+        receiver.property('toBase64String').call([]),
+        reserved: allowReserved,
+      );
 
     case MapModel():
       final converted = buildMapToStringMapExpression(
@@ -60,7 +70,7 @@ Expression? buildFormEntriesValueExpression(
       );
       if (converted == null) return null;
       // Conversion does not URI-encode, so the Map extension must still encode.
-      return toForm(converted);
+      return toForm(converted, reserved: allowReserved);
 
     case final ListModel m:
       return _buildListFormEntriesExpression(
@@ -71,6 +81,7 @@ Expression? buildFormEntriesValueExpression(
         isContentNullable:
             m.isContentNullable || m.content.isEffectivelyNullable,
         toForm: toForm,
+        allowReserved: allowReserved,
       );
 
     case AliasModel():
@@ -81,6 +92,7 @@ Expression? buildFormEntriesValueExpression(
         explode: explode,
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       );
 
     case NeverModel():
@@ -101,12 +113,18 @@ Expression? _buildListFormEntriesExpression(
   required Expression allowEmpty,
   required Expression? useQueryComponent,
   required bool isContentNullable,
-  required Expression Function(Expression, {bool alreadyEncoded}) toForm,
+  required Expression Function(
+    Expression, {
+    bool alreadyEncoded,
+    bool reserved,
+  })
+  toForm,
+  required bool allowReserved,
 }) {
   final resolved = contentModel.resolved;
 
   if (resolved is StringModel && !isContentNullable) {
-    return toForm(receiver);
+    return toForm(receiver, reserved: allowReserved);
   }
 
   // The base64 string still needs URI-encoding, so it is not passed as
@@ -123,7 +141,7 @@ Expression? _buildListFormEntriesExpression(
         ])
         .property('toList')
         .call([]);
-    return toForm(mapped);
+    return toForm(mapped, reserved: allowReserved);
   }
 
   final encodedElements = _buildEncodedElementsList(
@@ -132,6 +150,7 @@ Expression? _buildListFormEntriesExpression(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
     isContentNullable: isContentNullable,
+    allowReserved: allowReserved,
   );
   if (encodedElements == null) return null;
 
@@ -144,6 +163,7 @@ Expression? _buildEncodedElementsList(
   required Expression allowEmpty,
   required Expression? useQueryComponent,
   required bool isContentNullable,
+  required bool allowReserved,
 }) {
   if (!_isUriEncodableElement(contentModel)) return null;
 
@@ -152,6 +172,7 @@ Expression? _buildEncodedElementsList(
     contentModel,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
+    allowReserved: allowReserved,
   ).expression;
 
   final elementEncode = isContentNullable

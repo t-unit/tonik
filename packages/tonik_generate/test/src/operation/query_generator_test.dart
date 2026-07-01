@@ -2103,5 +2103,410 @@ void main() {
         collapseWhitespace(format(expectedMethod)),
       );
     });
+
+    Operation buildOperation(QueryParameterObject queryParam) => Operation(
+      operationId: 'op',
+      context: context,
+      summary: 'op',
+      description: 'op',
+      tags: const {},
+      isDeprecated: false,
+      path: '/items',
+      method: HttpMethod.get,
+      headers: const {},
+      queryParameters: {queryParam},
+      pathParameters: const {},
+      cookieParameters: const {},
+      responses: const {},
+      securitySchemes: const {},
+    );
+
+    test('emits allowReserved: true for form string parameter when set', () {
+      final queryParam = QueryParameterObject(
+        name: 'path',
+        rawName: 'path',
+        description: 'A path filter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: true,
+        model: StringModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({required String path}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            path.toForm(
+              r'path',
+              explode: false,
+              allowEmpty: false,
+              allowReserved: true,
+            ),
+          );
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'path', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('omits allowReserved for form string parameter when not set', () {
+      final queryParam = QueryParameterObject(
+        name: 'path',
+        rawName: 'path',
+        description: 'A path filter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: false,
+        model: StringModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({required String path}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            path.toForm(r'path', explode: false, allowEmpty: false),
+          );
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'path', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('threads allowReserved into list-element uriEncode when set', () {
+      final queryParam = QueryParameterObject(
+        name: 'tags',
+        rawName: 'tags',
+        description: 'Tag filters',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: true,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: true,
+        model: ListModel(
+          context: context,
+          content: StringModel(context: context),
+          isContentNullable: true,
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({required List<String?> tags}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            tags
+                .map(
+                  (e) => e == null
+                      ? ''
+                      : e.uriEncode(allowEmpty: false, allowReserved: true),
+                )
+                .toList()
+                .toForm(
+                  r'tags',
+                  explode: true,
+                  allowEmpty: false,
+                  alreadyEncoded: true,
+                ),
+          );
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'tags', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('threads allowReserved into encodeAnyToForm for AnyModel', () {
+      final queryParam = QueryParameterObject(
+        name: 'meta',
+        rawName: 'meta',
+        description: 'Arbitrary metadata',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: true,
+        model: AnyModel(context: context),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({required Object? meta}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.add((
+            name: r'meta',
+            value: encodeAnyToForm(
+              meta,
+              explode: false,
+              allowEmpty: false,
+              allowReserved: true,
+            ),
+          ));
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'meta', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test(
+      'emits allowReserved: true on the non-nullable list fast path when set',
+      () {
+        final queryParam = QueryParameterObject(
+          name: 'tags',
+          rawName: 'tags',
+          description: 'Tag filters',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.form,
+          allowReserved: true,
+          model: ListModel(
+            context: context,
+            content: StringModel(context: context),
+            examples: const [],
+          ),
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        const expectedMethod = r'''
+          String? _queryParameters({required List<String> tags}) {
+            final _$entries = <ParameterEntry>[];
+            _$entries.addAll(
+              tags.toForm(
+                r'tags',
+                explode: false,
+                allowEmpty: false,
+                allowReserved: true,
+              ),
+            );
+            if (_$entries.isEmpty) {
+              return null;
+            }
+            return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+          }
+        ''';
+
+        final method = generator.generateQueryParametersMethod(
+          buildOperation(queryParam),
+          [(normalizedName: 'tags', parameter: queryParam)],
+        );
+
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'omits allowReserved on the non-nullable list fast path when not set',
+      () {
+        final queryParam = QueryParameterObject(
+          name: 'tags',
+          rawName: 'tags',
+          description: 'Tag filters',
+          isRequired: true,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          explode: false,
+          encoding: QueryParameterEncoding.form,
+          allowReserved: false,
+          model: ListModel(
+            context: context,
+            content: StringModel(context: context),
+            examples: const [],
+          ),
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        );
+
+        const expectedMethod = r'''
+        String? _queryParameters({required List<String> tags}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            tags.toForm(r'tags', explode: false, allowEmpty: false),
+          );
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+        final method = generator.generateQueryParametersMethod(
+          buildOperation(queryParam),
+          [(normalizedName: 'tags', parameter: queryParam)],
+        );
+
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test('emits allowReserved: true for free-form map parameter when set', () {
+      final queryParam = QueryParameterObject(
+        name: 'filter',
+        rawName: 'filter',
+        description: 'A free-form filter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: true,
+        model: MapModel(
+          context: context,
+          valueModel: StringModel(context: context),
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({required Map<String, String> filter}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            filter.toForm(
+              r'filter',
+              explode: false,
+              allowEmpty: false,
+              allowReserved: true,
+            ),
+          );
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'filter', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('omits allowReserved for free-form map parameter when not set', () {
+      final queryParam = QueryParameterObject(
+        name: 'filter',
+        rawName: 'filter',
+        description: 'A free-form filter',
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        explode: false,
+        encoding: QueryParameterEncoding.form,
+        allowReserved: false,
+        model: MapModel(
+          context: context,
+          valueModel: StringModel(context: context),
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({required Map<String, String> filter}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            filter.toForm(r'filter', explode: false, allowEmpty: false),
+          );
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'filter', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
   });
 }

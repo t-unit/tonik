@@ -35,6 +35,7 @@ void main() {
     Model model, {
     bool explode = true,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
     final result = buildFormEntriesValueExpression(
       refer('value'),
@@ -43,6 +44,7 @@ void main() {
       explode: literalBool(explode),
       allowEmpty: literalBool(true),
       useQueryComponent: useQueryComponent ? literalBool(true) : null,
+      allowReserved: allowReserved,
     );
     expect(result, isNotNull);
     return result!;
@@ -128,6 +130,204 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
+    test('scalar adds allowReserved when set', () {
+      final result = build(
+        StringModel(context: context),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('Base64Model adds allowReserved on the base64 string when set', () {
+      final result = build(
+        Base64Model(context: context),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toBase64String().toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            allowReserved: true,
+          );
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('AliasModel threads allowReserved to its target', () {
+      final result = build(
+        AliasModel(
+          name: 'Filter',
+          model: StringModel(context: context),
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('enum form param omits allowReserved even when set', () {
+      final result = build(
+        EnumModel<String>(
+          name: 'Color',
+          values: {
+            const EnumEntry<String>(value: 'red'),
+            const EnumEntry<String>(value: 'green'),
+          },
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          context: context,
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('object form param omits allowReserved even when set', () {
+      final result = build(
+        ClassModel(
+          name: 'Form',
+          isDeprecated: false,
+          properties: const [],
+          context: context,
+          examples: const [],
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('composite form param omits allowReserved even when set', () {
+      final result = build(
+        OneOfModel(
+          models: const {},
+          isDeprecated: false,
+          examples: const [],
+          context: context,
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('list element uriEncode adds allowReserved when set', () {
+      final result = build(
+        ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value
+              .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
+              .toList()
+              .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('enum list element omits allowReserved even when set', () {
+      final result = build(
+        ListModel(
+          content: EnumModel<String>(
+            name: 'Color',
+            values: {
+              const EnumEntry<String>(value: 'red'),
+              const EnumEntry<String>(value: 'green'),
+            },
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            context: context,
+          ),
+          context: context,
+          examples: const [],
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value
+              .map((e) => e.uriEncode(allowEmpty: true))
+              .toList()
+              .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('free-form list element omits allowReserved even when set', () {
+      final result = build(
+        ListModel(
+          content: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        allowReserved: true,
+      );
+
+      final expected = format('''
+        test() {
+          value
+              .map((e) => _i1.encodeAnyToUri(e, allowEmpty: true))
+              .toList()
+              .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
     test('MapModel with string values encodes the receiver directly', () {
       final model = MapModel(
         valueModel: StringModel(context: context),
@@ -140,6 +340,24 @@ void main() {
       final expected = format('''
         test() {
           value.toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('MapModel with string values threads allowReserved when set', () {
+      final model = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
+
+      final result = build(model, allowReserved: true);
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
         }
       ''');
 
@@ -200,6 +418,25 @@ void main() {
       final expected = format('''
         test() {
           value.toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ListModel with non-nullable string content threads allowReserved '
+        'on the fast path when set', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
+
+      final result = build(model, allowReserved: true);
+
+      final expected = format('''
+        test() {
+          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
         }
       ''');
 
@@ -282,6 +519,33 @@ void main() {
               .map((e) => e.toBase64String())
               .toList()
               .toForm('p', explode: true, allowEmpty: true);
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ListModel with Base64 content threads allowReserved on the fast '
+        'path when set', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
+        context: context,
+        examples: const [],
+      );
+
+      final result = build(model, allowReserved: true);
+
+      final expected = format('''
+        test() {
+          value
+              .map((e) => e.toBase64String())
+              .toList()
+              .toForm(
+                'p',
+                explode: true,
+                allowEmpty: true,
+                allowReserved: true,
+              );
         }
       ''');
 
