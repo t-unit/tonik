@@ -982,10 +982,10 @@ void main() {
 
       test('preserves encoding when normalizing multipart request content', () {
         final encoding = {
-          'file': const MultipartPropertyEncoding(
+          'file': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
           ),
         };

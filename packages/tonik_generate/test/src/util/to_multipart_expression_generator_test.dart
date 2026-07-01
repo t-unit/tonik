@@ -76,10 +76,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'name': const MultipartPropertyEncoding(
+          'name': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -133,10 +133,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'name': const MultipartPropertyEncoding(
+          'name': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -192,10 +192,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'nickname': const MultipartPropertyEncoding(
+          'nickname': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -251,10 +251,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'bio': const MultipartPropertyEncoding(
+          'bio': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -421,10 +421,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'title': const MultipartPropertyEncoding(
+          'title': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -488,10 +488,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'name': const MultipartPropertyEncoding(
+          'name': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -546,10 +546,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'password': const MultipartPropertyEncoding(
+          'password': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -603,10 +603,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'data': const MultipartPropertyEncoding(
+          'data': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -660,10 +660,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'impossible': const MultipartPropertyEncoding(
+          'impossible': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -721,10 +721,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            r'$total': const MultipartPropertyEncoding(
+            r'$total': const PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -783,10 +783,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'age': const MultipartPropertyEncoding(
+          'age': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -840,10 +840,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'score': const MultipartPropertyEncoding(
+          'score': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -897,10 +897,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'value': const MultipartPropertyEncoding(
+          'value': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -954,10 +954,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'active': const MultipartPropertyEncoding(
+          'active': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -1011,10 +1011,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'birth_date': const MultipartPropertyEncoding(
+          'birth_date': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -1068,10 +1068,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'amount': const MultipartPropertyEncoding(
+          'amount': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -1125,10 +1125,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'website': const MultipartPropertyEncoding(
+          'website': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -1184,10 +1184,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'created_at': const MultipartPropertyEncoding(
+            'created_at': const PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -1244,10 +1244,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'count': const MultipartPropertyEncoding(
+            'count': const PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -1305,10 +1305,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'age': const MultipartPropertyEncoding(
+          'age': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -1363,10 +1363,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'createdAt': const MultipartPropertyEncoding(
+          'createdAt': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -1421,10 +1421,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'active': const MultipartPropertyEncoding(
+          'active': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -1479,10 +1479,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'score': const MultipartPropertyEncoding(
+          'score': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -1542,8 +1542,8 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'name': const MultipartPropertyEncoding(
-              style: MultipartEncodingStyle.form,
+            'name': const PropertyEncoding(
+              style: EncodingStyle.form,
               explode: true,
             ),
           },
@@ -1599,8 +1599,8 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'count': const MultipartPropertyEncoding(
-              style: MultipartEncodingStyle.form,
+            'count': const PropertyEncoding(
+              style: EncodingStyle.form,
               explode: true,
             ),
           },
@@ -1656,7 +1656,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'active': const MultipartPropertyEncoding(
+            'active': const PropertyEncoding(
               allowReserved: true,
             ),
           },
@@ -1712,8 +1712,8 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'createdAt': const MultipartPropertyEncoding(
-              style: MultipartEncodingStyle.form,
+            'createdAt': const PropertyEncoding(
+              style: EncodingStyle.form,
               explode: false,
             ),
           },
@@ -1769,8 +1769,8 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'value': const MultipartPropertyEncoding(
-              style: MultipartEncodingStyle.form,
+            'value': const PropertyEncoding(
+              style: EncodingStyle.form,
               explode: true,
             ),
           },
@@ -1838,8 +1838,8 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'status': const MultipartPropertyEncoding(
-              style: MultipartEncodingStyle.form,
+            'status': const PropertyEncoding(
+              style: EncodingStyle.form,
               explode: true,
             ),
           },
@@ -1909,10 +1909,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'status': const MultipartPropertyEncoding(
+            'status': const PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -1981,10 +1981,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'count': const MultipartPropertyEncoding(
+            'count': const PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -2053,10 +2053,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'status': const MultipartPropertyEncoding(
+            'status': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -2125,10 +2125,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'count': const MultipartPropertyEncoding(
+            'count': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -2195,10 +2195,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'status': const MultipartPropertyEncoding(
+          'status': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2266,10 +2266,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'status': const MultipartPropertyEncoding(
+          'status': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2327,10 +2327,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'avatar': const MultipartPropertyEncoding(
+          'avatar': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2395,10 +2395,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'document': const MultipartPropertyEncoding(
+          'document': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2465,10 +2465,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'photo': const MultipartPropertyEncoding(
+          'photo': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2535,10 +2535,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'image': const MultipartPropertyEncoding(
+          'image': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'image/png',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2611,10 +2611,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'file': const MultipartPropertyEncoding(
+          'file': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2681,7 +2681,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'avatar': const MultipartPropertyEncoding(
+            'avatar': const PropertyEncoding(
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
             ),
@@ -2759,10 +2759,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'address': const MultipartPropertyEncoding(
+            'address': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -2833,10 +2833,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'address': const MultipartPropertyEncoding(
+          'address': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2906,10 +2906,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'address': const MultipartPropertyEncoding(
+          'address': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -2979,10 +2979,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'address': const MultipartPropertyEncoding(
+          'address': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -3050,10 +3050,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'address': const MultipartPropertyEncoding(
+          'address': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -3123,10 +3123,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'address': const MultipartPropertyEncoding(
+          'address': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -3196,10 +3196,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'address': const MultipartPropertyEncoding(
+          'address': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/xml',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -3269,10 +3269,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'address': const MultipartPropertyEncoding(
+            'address': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.deepObject,
+              style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
             ),
@@ -3340,10 +3340,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'address': const MultipartPropertyEncoding(
+            'address': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.deepObject,
+              style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
             ),
@@ -3415,10 +3415,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'address': const MultipartPropertyEncoding(
+            'address': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.deepObject,
+              style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
             ),
@@ -3491,10 +3491,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'address': const MultipartPropertyEncoding(
+            'address': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.deepObject,
+              style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
             ),
@@ -3567,10 +3567,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'address': const MultipartPropertyEncoding(
+            'address': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.deepObject,
+              style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
             ),
@@ -3644,10 +3644,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'address': const MultipartPropertyEncoding(
+          'address': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -3718,7 +3718,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'address': const MultipartPropertyEncoding(
+              'address': const PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 // No style/explode/allowReserved → content-based mode
@@ -3808,7 +3808,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'address': const MultipartPropertyEncoding(
+              'address': const PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
               ),
@@ -3898,7 +3898,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              "it's-form": const MultipartPropertyEncoding(
+              "it's-form": const PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
               ),
@@ -3988,7 +3988,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              r'path\form': const MultipartPropertyEncoding(
+              r'path\form': const PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
               ),
@@ -4079,7 +4079,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              r'$total': const MultipartPropertyEncoding(
+              r'$total': const PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
               ),
@@ -4166,7 +4166,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'address': const MultipartPropertyEncoding(
+            'address': const PropertyEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
             ),
@@ -4256,11 +4256,11 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'address': const MultipartPropertyEncoding(
+              'address': const PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 // style/explode present → style-based mode, contentType ignored
-                style: MultipartEncodingStyle.form,
+                style: EncodingStyle.form,
                 explode: true,
                 allowReserved: false,
               ),
@@ -4334,7 +4334,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'address': MultipartPropertyEncoding(
+              'address': PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 headers: {
@@ -4442,10 +4442,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'metadata': const MultipartPropertyEncoding(
+            'metadata': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -4514,10 +4514,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'metadata': const MultipartPropertyEncoding(
+            'metadata': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -4651,10 +4651,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'metadata': const MultipartPropertyEncoding(
+            'metadata': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.deepObject,
+              style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
             ),
@@ -4720,10 +4720,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            "it's-meta": const MultipartPropertyEncoding(
+            "it's-meta": const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.deepObject,
+              style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
             ),
@@ -4788,7 +4788,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'metadata': const MultipartPropertyEncoding(
+            'metadata': const PropertyEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
             ),
@@ -4875,7 +4875,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'metadata': const MultipartPropertyEncoding(
+            'metadata': const PropertyEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
             ),
@@ -4965,7 +4965,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            "it's-meta": const MultipartPropertyEncoding(
+            "it's-meta": const PropertyEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
             ),
@@ -5053,7 +5053,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            r'path\to': const MultipartPropertyEncoding(
+            r'path\to': const PropertyEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
             ),
@@ -5141,7 +5141,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            r'$total': const MultipartPropertyEncoding(
+            r'$total': const PropertyEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
             ),
@@ -5236,10 +5236,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'metadata': const MultipartPropertyEncoding(
+            'metadata': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -5308,10 +5308,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': const MultipartPropertyEncoding(
+          'tags': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -5371,10 +5371,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': const MultipartPropertyEncoding(
+          'tags': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.spaceDelimited,
+            style: EncodingStyle.spaceDelimited,
             explode: true,
             allowReserved: false,
           ),
@@ -5434,10 +5434,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': const MultipartPropertyEncoding(
+          'tags': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: false,
             allowReserved: false,
           ),
@@ -5497,10 +5497,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': const MultipartPropertyEncoding(
+          'tags': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.spaceDelimited,
+            style: EncodingStyle.spaceDelimited,
             explode: false,
             allowReserved: false,
           ),
@@ -5560,10 +5560,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': const MultipartPropertyEncoding(
+          'tags': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.pipeDelimited,
+            style: EncodingStyle.pipeDelimited,
             explode: false,
             allowReserved: false,
           ),
@@ -5624,10 +5624,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': const MultipartPropertyEncoding(
+          'tags': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.deepObject,
+            style: EncodingStyle.deepObject,
             explode: false,
             allowReserved: false,
           ),
@@ -5690,10 +5690,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            "it's-tags": const MultipartPropertyEncoding(
+            "it's-tags": const PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
-              style: MultipartEncodingStyle.deepObject,
+              style: EncodingStyle.deepObject,
               explode: false,
               allowReserved: false,
             ),
@@ -5768,10 +5768,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'statuses': const MultipartPropertyEncoding(
+          'statuses': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -5843,10 +5843,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'codes': const MultipartPropertyEncoding(
+          'codes': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: false,
             allowReserved: false,
           ),
@@ -5908,10 +5908,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'scores': const MultipartPropertyEncoding(
+          'scores': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -5971,10 +5971,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'scores': const MultipartPropertyEncoding(
+          'scores': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -6034,10 +6034,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'scores': const MultipartPropertyEncoding(
+          'scores': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: false,
             allowReserved: false,
           ),
@@ -6097,10 +6097,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'dates': const MultipartPropertyEncoding(
+          'dates': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -6160,10 +6160,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'dates': const MultipartPropertyEncoding(
+          'dates': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -6225,10 +6225,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'files': const MultipartPropertyEncoding(
+          'files': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -6293,10 +6293,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'files': const MultipartPropertyEncoding(
+          'files': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: false,
             allowReserved: false,
           ),
@@ -6371,10 +6371,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'addresses': const MultipartPropertyEncoding(
+          'addresses': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -6442,10 +6442,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'addresses': const MultipartPropertyEncoding(
+          'addresses': const PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/xml',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -6507,10 +6507,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': const MultipartPropertyEncoding(
+          'tags': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -6572,10 +6572,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': const MultipartPropertyEncoding(
+          'tags': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -6638,7 +6638,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'tags': const MultipartPropertyEncoding(
+            'tags': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
             ),
@@ -6696,7 +6696,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'scores': const MultipartPropertyEncoding(
+            'scores': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
             ),
@@ -6819,7 +6819,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'addresses': const MultipartPropertyEncoding(
+            'addresses': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
             ),
@@ -6877,7 +6877,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'dates': const MultipartPropertyEncoding(
+            'dates': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
             ),
@@ -6935,7 +6935,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'tags': const MultipartPropertyEncoding(
+            'tags': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
             ),
@@ -7001,7 +7001,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'tags': const MultipartPropertyEncoding(
+              'tags': const PropertyEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
                 // No style/explode/allowReserved → falls through to explode: true
@@ -7065,7 +7065,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'scores': const MultipartPropertyEncoding(
+              'scores': const PropertyEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
                 // No style/explode/allowReserved → repeated parts
@@ -7129,7 +7129,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'dates': const MultipartPropertyEncoding(
+              'dates': const PropertyEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
                 // No style/explode/allowReserved → repeated parts
@@ -7205,7 +7205,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'priorities': const MultipartPropertyEncoding(
+              'priorities': const PropertyEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
                 // No style/explode/allowReserved → repeated parts
@@ -7338,7 +7338,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'priorities': const MultipartPropertyEncoding(
+            'priorities': const PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               // No style fields → content-based mode
@@ -7403,7 +7403,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'files': const MultipartPropertyEncoding(
+              'files': const PropertyEncoding(
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
                 // No style/explode/allowReserved → content-based mode
@@ -7477,7 +7477,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'matrix': const MultipartPropertyEncoding(
+              'matrix': const PropertyEncoding(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
                 // No style fields → content-based mode
@@ -7546,7 +7546,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              r'$matrix': const MultipartPropertyEncoding(
+              r'$matrix': const PropertyEncoding(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
               ),
@@ -7610,7 +7610,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              'items': const MultipartPropertyEncoding(
+              'items': const PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 // No style fields → content-based mode
@@ -7675,7 +7675,7 @@ void main() {
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
             encoding: {
-              "it's-items": const MultipartPropertyEncoding(
+              "it's-items": const PropertyEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
               ),
@@ -7735,10 +7735,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'name': const MultipartPropertyEncoding(
+          'name': const PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
           ),
@@ -7829,10 +7829,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'file': MultipartPropertyEncoding(
+          'file': PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
             headers: {
@@ -7912,7 +7912,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'file': MultipartPropertyEncoding(
+          'file': PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -8002,7 +8002,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'address': MultipartPropertyEncoding(
+          'address': PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             headers: {
@@ -8078,7 +8078,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'description': MultipartPropertyEncoding(
+          'description': PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             headers: {
@@ -8152,7 +8152,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'count': MultipartPropertyEncoding(
+            'count': PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               headers: {
@@ -8237,7 +8237,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'status': MultipartPropertyEncoding(
+          'status': PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             headers: {
@@ -8309,7 +8309,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'file': MultipartPropertyEncoding(
+          'file': PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -8388,7 +8388,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'file': MultipartPropertyEncoding(
+          'file': PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -8482,7 +8482,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'file': const MultipartPropertyEncoding(
+          'file': const PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
           ),
@@ -8552,10 +8552,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': MultipartPropertyEncoding(
+          'tags': PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             headers: {
               'X-Custom': ResponseHeaderObject(
@@ -8630,10 +8630,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'tags': MultipartPropertyEncoding(
+          'tags': PropertyEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: false,
             headers: {
               'X-Custom': ResponseHeaderObject(
@@ -8708,10 +8708,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'files': MultipartPropertyEncoding(
+          'files': PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             headers: {
               'X-Checksum': ResponseHeaderObject(
@@ -8799,10 +8799,10 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'addresses': MultipartPropertyEncoding(
+          'addresses': PropertyEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: MultipartEncodingStyle.form,
+            style: EncodingStyle.form,
             explode: true,
             headers: {
               'X-Custom': ResponseHeaderObject(
@@ -8872,7 +8872,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'file': MultipartPropertyEncoding(
+          'file': PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -8958,7 +8958,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'file': MultipartPropertyEncoding(
+            'file': PropertyEncoding(
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
               headers: {
@@ -9043,7 +9043,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'data': MultipartPropertyEncoding(
+            'data': PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               headers: {
@@ -9119,7 +9119,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'count': MultipartPropertyEncoding(
+            'count': PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               headers: {
@@ -9195,7 +9195,7 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'createdAt': MultipartPropertyEncoding(
+            'createdAt': PropertyEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               headers: {
@@ -9275,10 +9275,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'dates': MultipartPropertyEncoding(
+            'dates': PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: false,
               headers: {
                 'X-Custom': ResponseHeaderObject(
@@ -9362,7 +9362,7 @@ void main() {
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
         encoding: {
-          'document': MultipartPropertyEncoding(
+          'document': PropertyEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -9441,10 +9441,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            'name': const MultipartPropertyEncoding(
+            'name': const PropertyEncoding(
               contentType: ContentType.text,
               rawContentType: "text/it's-plain",
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),
@@ -9501,10 +9501,10 @@ void main() {
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
           encoding: {
-            "it's-field": const MultipartPropertyEncoding(
+            "it's-field": const PropertyEncoding(
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
-              style: MultipartEncodingStyle.form,
+              style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
             ),

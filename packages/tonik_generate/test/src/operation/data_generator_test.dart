@@ -1163,17 +1163,17 @@ void main() {
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 encoding: {
-                  'name': const MultipartPropertyEncoding(
+                  'name': const PropertyEncoding(
                     contentType: ContentType.text,
                     rawContentType: 'text/plain',
-                    style: MultipartEncodingStyle.form,
+                    style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
                   ),
-                  'nickname': const MultipartPropertyEncoding(
+                  'nickname': const PropertyEncoding(
                     contentType: ContentType.text,
                     rawContentType: 'text/plain',
-                    style: MultipartEncodingStyle.form,
+                    style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
                   ),
@@ -1248,7 +1248,7 @@ void main() {
                   contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
                   encoding: {
-                    'file': MultipartPropertyEncoding(
+                    'file': PropertyEncoding(
                       contentType: ContentType.bytes,
                       rawContentType: 'application/octet-stream',
                       headers: {
@@ -1354,10 +1354,10 @@ void main() {
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 encoding: {
-                  'name': const MultipartPropertyEncoding(
+                  'name': const PropertyEncoding(
                     contentType: ContentType.text,
                     rawContentType: 'text/plain',
-                    style: MultipartEncodingStyle.form,
+                    style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
                   ),
@@ -1591,10 +1591,10 @@ void main() {
                   contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
                   encoding: {
-                    'name': const MultipartPropertyEncoding(
+                    'name': const PropertyEncoding(
                       contentType: ContentType.text,
                       rawContentType: 'text/plain',
-                      style: MultipartEncodingStyle.form,
+                      style: EncodingStyle.form,
                       explode: true,
                       allowReserved: false,
                     ),
@@ -1682,7 +1682,7 @@ void main() {
                   contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
                   encoding: {
-                    'file': MultipartPropertyEncoding(
+                    'file': PropertyEncoding(
                       contentType: ContentType.bytes,
                       rawContentType: 'application/octet-stream',
                       headers: {

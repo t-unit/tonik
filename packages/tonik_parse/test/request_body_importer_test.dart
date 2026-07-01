@@ -1006,7 +1006,7 @@ void main() {
       // OAS 3.1: contentType SHALL be ignored when style fields are present
       expect(idEncoding.contentType, isNull);
       expect(idEncoding.rawContentType, isNull);
-      expect(idEncoding.style, MultipartEncodingStyle.form);
+      expect(idEncoding.style, EncodingStyle.form);
       expect(idEncoding.explode, isTrue);
       expect(idEncoding.allowReserved, isFalse);
 
@@ -1014,7 +1014,7 @@ void main() {
       // OAS 3.1: contentType SHALL be ignored when style fields are present
       expect(addressEncoding.contentType, isNull);
       expect(addressEncoding.rawContentType, isNull);
-      expect(addressEncoding.style, MultipartEncodingStyle.deepObject);
+      expect(addressEncoding.style, EncodingStyle.deepObject);
       expect(addressEncoding.explode, isTrue);
       expect(addressEncoding.allowReserved, isFalse);
 
@@ -1427,7 +1427,7 @@ void main() {
           // ignored
           expect(encoding.rawContentType, isNull);
           expect(encoding.contentType, isNull);
-          expect(encoding.style, MultipartEncodingStyle.deepObject);
+          expect(encoding.style, EncodingStyle.deepObject);
           // deepObject: explode defaults to false per OAS spec
           expect(encoding.explode, isFalse);
           expect(encoding.allowReserved, isFalse);
@@ -1513,7 +1513,7 @@ void main() {
 
         final encoding = content.encoding!['data']!;
         // explode explicitly set → style-based mode with defaults filled
-        expect(encoding.style, MultipartEncodingStyle.form);
+        expect(encoding.style, EncodingStyle.form);
         expect(encoding.explode, isFalse);
         expect(encoding.allowReserved, isFalse);
       });
@@ -1538,7 +1538,7 @@ void main() {
         final encoding = content.encoding!['data']!;
         // explode explicitly set to true (even though it's the form default)
         // still triggers style-based mode
-        expect(encoding.style, MultipartEncodingStyle.form);
+        expect(encoding.style, EncodingStyle.form);
         expect(encoding.explode, isTrue);
         expect(encoding.allowReserved, isFalse);
       });
@@ -1562,7 +1562,7 @@ void main() {
 
         final encoding = content.encoding!['data']!;
         // allowReserved explicitly set → style-based mode with defaults filled
-        expect(encoding.style, MultipartEncodingStyle.form);
+        expect(encoding.style, EncodingStyle.form);
         expect(encoding.explode, isTrue);
         expect(encoding.allowReserved, isTrue);
       });
@@ -1587,7 +1587,7 @@ void main() {
 
         final encoding = content.encoding!['data']!;
         // form style → explode defaults to true per OAS spec
-        expect(encoding.style, MultipartEncodingStyle.form);
+        expect(encoding.style, EncodingStyle.form);
         expect(encoding.explode, isTrue);
         expect(encoding.allowReserved, isFalse);
       });
@@ -1612,7 +1612,7 @@ void main() {
 
         final encoding = content.encoding!['data']!;
         // non-form style → explode defaults to false per OAS spec
-        expect(encoding.style, MultipartEncodingStyle.deepObject);
+        expect(encoding.style, EncodingStyle.deepObject);
         expect(encoding.explode, isFalse);
         expect(encoding.allowReserved, isFalse);
       });
@@ -1638,7 +1638,7 @@ void main() {
 
         // 'styled' has explicit style → style-based mode
         final styledEncoding = content.encoding!['styled']!;
-        expect(styledEncoding.style, MultipartEncodingStyle.deepObject);
+        expect(styledEncoding.style, EncodingStyle.deepObject);
         expect(styledEncoding.explode, isFalse);
         expect(styledEncoding.allowReserved, isFalse);
         expect(styledEncoding.isStyleBased, isTrue);
@@ -1918,6 +1918,266 @@ void main() {
       final content = body.content.first;
       expect(content.model, isA<BinaryModel>());
       expect(content.contentType, ContentType.multipart);
+    });
+  });
+
+  group('form-urlencoded encoding support', () {
+    RequestContent importFormContent(Map<String, dynamic> spec) {
+      final api = Importer().import(spec);
+      final body =
+          api.requestBodies.firstWhereOrNull(
+                (r) => r.name == 'FormBody',
+              )!
+              as RequestBodyObject;
+      return body.content.first;
+    }
+
+    Map<String, dynamic> formSpec({
+      required Map<String, dynamic> properties,
+      String version = '3.1.0',
+      Map<String, dynamic>? encoding,
+      Map<String, dynamic>? headers,
+    }) {
+      final mediaType = <String, dynamic>{
+        'schema': {
+          'type': 'object',
+          'properties': properties,
+        },
+      };
+      if (encoding != null) {
+        mediaType['encoding'] = encoding;
+      }
+      final components = <String, dynamic>{
+        'requestBodies': {
+          'FormBody': {
+            'description': 'Form body',
+            'required': true,
+            'content': {
+              'application/x-www-form-urlencoded': mediaType,
+            },
+          },
+        },
+      };
+      if (headers != null) {
+        components['headers'] = headers;
+      }
+      return {
+        'openapi': version,
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': components,
+      };
+    }
+
+    test('captures allowReserved true from encoding object', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'filter': {'type': 'string'},
+          },
+          encoding: {
+            'filter': {'allowReserved': true},
+          },
+        ),
+      );
+
+      expect(content.contentType, ContentType.form);
+      expect(content.encoding, isNotNull);
+      expect(content.encoding, hasLength(1));
+      expect(content.encoding!['filter']!.allowReserved, isTrue);
+    });
+
+    test('encoding is null when no encoding object is present', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'name': {'type': 'string'},
+          },
+        ),
+      );
+
+      expect(content.contentType, ContentType.form);
+      expect(content.encoding, isNull);
+    });
+
+    test(
+      'allowReserved defaults to false when absent from encoding object',
+      () {
+        final content = importFormContent(
+          formSpec(
+            properties: {
+              'name': {'type': 'string'},
+            },
+            encoding: {
+              'name': {'style': 'form'},
+            },
+          ),
+        );
+
+        expect(content.encoding!['name']!.allowReserved, isFalse);
+      },
+    );
+
+    test('captures allowReserved true under OAS 3.0', () {
+      final content = importFormContent(
+        formSpec(
+          version: '3.0.3',
+          properties: {
+            'filter': {'type': 'string'},
+          },
+          encoding: {
+            'filter': {'allowReserved': true},
+          },
+        ),
+      );
+
+      expect(content.encoding!['filter']!.allowReserved, isTrue);
+    });
+
+    test('captures allowReserved true under OAS 3.1', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'filter': {'type': 'string'},
+          },
+          encoding: {
+            'filter': {'allowReserved': true},
+          },
+        ),
+      );
+
+      expect(content.encoding!['filter']!.allowReserved, isTrue);
+    });
+
+    test('does not apply multipart per-property content type defaults', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'name': {'type': 'string'},
+            'meta': {
+              'type': 'object',
+              'properties': {
+                'key': {'type': 'string'},
+              },
+            },
+          },
+          encoding: {
+            'name': {'allowReserved': true},
+          },
+        ),
+      );
+
+      expect(content.encoding, hasLength(1));
+      final nameEncoding = content.encoding!['name']!;
+      expect(nameEncoding.contentType, isNull);
+      expect(nameEncoding.rawContentType, isNull);
+      expect(content.encoding!.containsKey('meta'), isFalse);
+    });
+
+    test('captures style and explode from encoding object', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'ids': {
+              'type': 'array',
+              'items': {'type': 'string'},
+            },
+          },
+          encoding: {
+            'ids': {'style': 'spaceDelimited', 'explode': false},
+          },
+        ),
+      );
+
+      final idsEncoding = content.encoding!['ids']!;
+      expect(idsEncoding.style, EncodingStyle.spaceDelimited);
+      expect(idsEncoding.explode, isFalse);
+      expect(idsEncoding.allowReserved, isFalse);
+    });
+
+    test('encoding key not matching any property logs warning', () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+
+      addTearDown(sub.cancel);
+
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'name': {'type': 'string'},
+          },
+          encoding: {
+            'name': {'allowReserved': true},
+            'nonExistent': {'allowReserved': true},
+          },
+        ),
+      );
+
+      expect(content.contentType, ContentType.form);
+      expect(content.encoding!['name'], isNotNull);
+      expect(
+        logs.any(
+          (r) =>
+              r.level == Level.WARNING && r.message.contains('nonExistent'),
+        ),
+        isTrue,
+      );
+    });
+
+    test('matching encoding key does not log warning', () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+
+      addTearDown(sub.cancel);
+
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'name': {'type': 'string'},
+          },
+          encoding: {
+            'name': {'allowReserved': true},
+          },
+        ),
+      );
+
+      expect(content.encoding!['name']!.allowReserved, isTrue);
+      expect(
+        logs.any(
+          (r) =>
+              r.level == Level.WARNING &&
+              r.message.contains('does not match any property'),
+        ),
+        isFalse,
+      );
+    });
+
+    test('captures per-property headers from encoding object', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'name': {'type': 'string'},
+          },
+          encoding: {
+            'name': {
+              'headers': {
+                'X-Custom': {r'$ref': '#/components/headers/X-Custom'},
+              },
+            },
+          },
+          headers: {
+            'X-Custom': {
+              'description': 'A custom header',
+              'schema': {'type': 'string'},
+            },
+          },
+        ),
+      );
+
+      final nameEncoding = content.encoding!['name']!;
+      expect(nameEncoding.headers, isNotNull);
+      expect(nameEncoding.headers, hasLength(1));
+      expect(nameEncoding.headers!['X-Custom'], isA<ResponseHeaderObject>());
     });
   });
 }

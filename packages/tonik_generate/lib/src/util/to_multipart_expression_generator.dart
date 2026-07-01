@@ -121,7 +121,7 @@ Code? _buildFieldCode(
   String bodyAccessor,
   String normalizedName,
   bool isNullable, {
-  Map<String, MultipartPropertyEncoding>? encoding,
+  Map<String, PropertyEncoding>? encoding,
 }) {
   final accessor = '$bodyAccessor.$normalizedName${isNullable ? '!' : ''}';
   final propertyEncoding = encoding?[rawName];
@@ -277,7 +277,7 @@ class _HeaderMapResult {
 /// Returns `null` if there are no non-Content-Type headers.
 _HeaderMapResult? _buildHeaderMapStatements(
   String normalizedPropertyName,
-  MultipartPropertyEncoding? encoding, {
+  PropertyEncoding? encoding, {
   bool isPropertyOptional = false,
 }) {
   final headers = encoding?.headers;
@@ -506,7 +506,7 @@ Code _buildAnyModelFileAddition(
 Code _buildBinaryFileAddition(
   String rawName,
   String accessor, {
-  Map<String, MultipartPropertyEncoding>? encoding,
+  Map<String, PropertyEncoding>? encoding,
   String? headerVarName,
 }) {
   final rawContentType = encoding?[rawName]?.rawContentType;
@@ -582,7 +582,7 @@ Code _buildListFieldAddition(
   String rawName,
   String accessor,
   ListModel listModel, {
-  Map<String, MultipartPropertyEncoding>? encoding,
+  Map<String, PropertyEncoding>? encoding,
   String? headerVarName,
 }) {
   final propertyEncoding = encoding?[rawName];
@@ -590,7 +590,7 @@ Code _buildListFieldAddition(
   final contentType = propertyEncoding?.contentType;
 
   // deepObject is not supported for arrays.
-  if (style == MultipartEncodingStyle.deepObject) {
+  if (style == EncodingStyle.deepObject) {
     return generateEncodingExceptionExpression(
       'deepObject style is not supported for array '
       'multipart properties (property: $rawName).',
@@ -719,7 +719,7 @@ Code _buildContentBasedListAddition(
   String rawName,
   String accessor,
   Model contentModel, {
-  MultipartPropertyEncoding? propertyEncoding,
+  PropertyEncoding? propertyEncoding,
   String? headerVarName,
 }) {
   // Array-of-arrays is not supported: the spec recurses into items but there
@@ -952,7 +952,7 @@ switch (item) {
 /// Returns an [Expression] for a complex object item in a for-loop.
 Expression _complexItemExpr(
   String rawName, {
-  Map<String, MultipartPropertyEncoding>? encoding,
+  Map<String, PropertyEncoding>? encoding,
   String? headerVarName,
 }) {
   final rawContentType =
@@ -985,7 +985,7 @@ Expression _buildEncoderExpr(
   String accessor,
   Expression itemExpr, {
   required bool needsMapping,
-  MultipartEncodingStyle? style,
+  EncodingStyle? style,
 }) {
   Expression listExpr;
   if (needsMapping) {
@@ -1006,14 +1006,14 @@ Expression _buildEncoderExpr(
   }
 
   final encoderMethod = switch (style) {
-    MultipartEncodingStyle.spaceDelimited => 'toSpaceDelimited',
-    MultipartEncodingStyle.pipeDelimited => 'toPipeDelimited',
+    EncodingStyle.spaceDelimited => 'toSpaceDelimited',
+    EncodingStyle.pipeDelimited => 'toPipeDelimited',
     _ => 'uriEncode',
   };
 
   final isDelimited =
-      style == MultipartEncodingStyle.spaceDelimited ||
-      style == MultipartEncodingStyle.pipeDelimited;
+      style == EncodingStyle.spaceDelimited ||
+      style == EncodingStyle.pipeDelimited;
 
   final namedArgs = <String, Expression>{
     if (isDelimited) 'explode': literalFalse,
@@ -1021,7 +1021,7 @@ Expression _buildEncoderExpr(
     'alreadyEncoded': literalTrue,
   };
 
-  if (style == MultipartEncodingStyle.spaceDelimited) {
+  if (style == EncodingStyle.spaceDelimited) {
     namedArgs['percentEncodeDelimiter'] = literalFalse;
   }
 
@@ -1090,13 +1090,13 @@ Code _buildDeepObjectFileAddition(
 Code _buildMapModelFileAddition(
   String rawName,
   String accessor, {
-  Map<String, MultipartPropertyEncoding>? encoding,
+  Map<String, PropertyEncoding>? encoding,
   String? headerVarName,
 }) {
   final propertyEncoding = encoding?[rawName];
 
   // deepObject is not supported for plain maps.
-  if (propertyEncoding?.style == MultipartEncodingStyle.deepObject) {
+  if (propertyEncoding?.style == EncodingStyle.deepObject) {
     return generateEncodingExceptionExpression(
       'deepObject style is not supported for map '
       'multipart properties (property: $rawName). '
@@ -1240,12 +1240,12 @@ Code _buildUrlEncodedMapFileAddition(
 Code _buildComplexObjectFileAddition(
   String rawName,
   String accessor, {
-  Map<String, MultipartPropertyEncoding>? encoding,
+  Map<String, PropertyEncoding>? encoding,
   String? headerVarName,
 }) {
   final propertyEncoding = encoding?[rawName];
 
-  if (propertyEncoding?.style == MultipartEncodingStyle.deepObject) {
+  if (propertyEncoding?.style == EncodingStyle.deepObject) {
     return _buildDeepObjectFileAddition(
       rawName,
       accessor,

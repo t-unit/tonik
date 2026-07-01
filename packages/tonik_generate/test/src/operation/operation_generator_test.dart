@@ -874,10 +874,10 @@ Future<TonikResult<void>> call({
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 encoding: {
-                  'name': const MultipartPropertyEncoding(
+                  'name': const PropertyEncoding(
                     contentType: ContentType.text,
                     rawContentType: 'text/plain',
-                    style: MultipartEncodingStyle.form,
+                    style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
                   ),
@@ -3153,7 +3153,7 @@ Future<TonikResult<void>> call({
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
                 encoding: {
-                  'file': MultipartPropertyEncoding(
+                  'file': PropertyEncoding(
                     contentType: ContentType.bytes,
                     rawContentType: 'application/octet-stream',
                     headers: {

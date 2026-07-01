@@ -111,11 +111,10 @@ class RequestBodyImporter {
             log: log,
           );
 
-          // Extract multipart encoding if present
+          final hasEncoding =
+              mediaType.encoding != null && mediaType.encoding!.isNotEmpty;
           final explicitEncoding =
-              contentType == core.ContentType.multipart &&
-                  mediaType.encoding != null &&
-                  mediaType.encoding!.isNotEmpty
+              hasEncoding && contentType == core.ContentType.multipart
               ? _importEncoding(mediaType.encoding!, context)
               : null;
 
@@ -125,13 +124,19 @@ class RequestBodyImporter {
               context.push('body'),
             );
 
-            final encoding = contentType == core.ContentType.multipart
-                ? _populateMultipartDefaults(
-                    name: name,
-                    model: model,
-                    explicitEncoding: explicitEncoding,
-                  )
-                : null;
+            final encoding = switch (contentType) {
+              core.ContentType.multipart => _populateMultipartDefaults(
+                name: name,
+                model: model,
+                explicitEncoding: explicitEncoding,
+              ),
+              core.ContentType.form when hasEncoding => _importFormEncoding(
+                mediaType.encoding!,
+                model,
+                context,
+              ),
+              _ => null,
+            };
 
             content.add(
               core.RequestContent(
@@ -185,10 +190,10 @@ class RequestBodyImporter {
     }
   }
 
-  Map<String, core.MultipartPropertyEncoding>? _populateMultipartDefaults({
+  Map<String, core.PropertyEncoding>? _populateMultipartDefaults({
     required String? name,
     required core.Model model,
-    required Map<String, core.MultipartPropertyEncoding>? explicitEncoding,
+    required Map<String, core.PropertyEncoding>? explicitEncoding,
   }) {
     // Resolve through aliases to find the underlying model
     final resolved = model.resolved;
@@ -218,7 +223,7 @@ class RequestBodyImporter {
       }
     }
 
-    final result = <String, core.MultipartPropertyEncoding>{};
+    final result = <String, core.PropertyEncoding>{};
 
     for (final property in resolved.properties) {
       final existing = explicitEncoding?[property.name];
@@ -228,7 +233,7 @@ class RequestBodyImporter {
       );
 
       final isStyleBased = existing?.isStyleBased ?? false;
-      result[property.name] = core.MultipartPropertyEncoding(
+      result[property.name] = core.PropertyEncoding(
         contentType: isStyleBased
             ? null
             : (existing?.contentType ?? defaultContentType),
@@ -275,28 +280,74 @@ class RequestBodyImporter {
     };
   }
 
-  Map<String, core.MultipartPropertyEncoding> _importEncoding(
+  /// Imports the Encoding Object for `application/x-www-form-urlencoded`
+  /// bodies.
+  ///
+  /// Unlike the multipart path, per-property content-type defaults are not
+  /// applied, and [core.PropertyEncoding.allowReserved] is captured in both
+  /// OAS 3.0 and 3.1 (the Encoding Object's `allowReserved` is valid for form
+  /// bodies in both versions).
+  Map<String, core.PropertyEncoding> _importFormEncoding(
+    Map<String, Encoding> encodingMap,
+    core.Model model,
+    core.Context context,
+  ) {
+    final resolved = model.resolved;
+    final propertyNames = resolved is core.ClassModel
+        ? resolved.properties.map((p) => p.name).toSet()
+        : null;
+
+    final result = <String, core.PropertyEncoding>{};
+    for (final entry in encodingMap.entries) {
+      final encoding = entry.value;
+
+      if (propertyNames != null && !propertyNames.contains(entry.key)) {
+        log.warning(
+          'Encoding key "${entry.key}" does not match any property '
+          'on the form-urlencoded schema. Ignoring.',
+        );
+      }
+
+      result[entry.key] = core.PropertyEncoding(
+        headers: _importEncodingHeaders(encoding, entry.key, context),
+        style: _mapSerializationStyle(encoding.style),
+        explode: encoding.explode,
+        allowReserved: encoding.allowReserved ?? false,
+      );
+    }
+    return result;
+  }
+
+  Map<String, core.ResponseHeader>? _importEncodingHeaders(
+    Encoding encoding,
+    String propertyName,
+    core.Context context,
+  ) {
+    if (encoding.headers == null || encoding.headers!.isEmpty) {
+      return null;
+    }
+
+    final headers = <String, core.ResponseHeader>{};
+    for (final headerEntry in encoding.headers!.entries) {
+      headers[headerEntry.key] = responseHeaderImporter.importInlineHeader(
+        wrapper: headerEntry.value,
+        context: context.pushAll(['encoding', propertyName, headerEntry.key]),
+      );
+    }
+    return headers;
+  }
+
+  Map<String, core.PropertyEncoding> _importEncoding(
     Map<String, Encoding> encodingMap,
     core.Context context,
   ) {
-    final result = <String, core.MultipartPropertyEncoding>{};
+    final result = <String, core.PropertyEncoding>{};
     final isOas30 = openApiObject.openapi.startsWith('3.0');
     for (final entry in encodingMap.entries) {
       final propertyName = entry.key;
       final encoding = entry.value;
 
-      Map<String, core.ResponseHeader>? headers;
-      if (encoding.headers != null && encoding.headers!.isNotEmpty) {
-        headers = {};
-        for (final headerEntry in encoding.headers!.entries) {
-          final headerName = headerEntry.key;
-          final headerWrapper = headerEntry.value;
-          headers[headerName] = responseHeaderImporter.importInlineHeader(
-            wrapper: headerWrapper,
-            context: context.pushAll(['encoding', propertyName, headerName]),
-          );
-        }
-      }
+      final headers = _importEncodingHeaders(encoding, propertyName, context);
 
       final resolvedContentType = encoding.contentType != null
           ? resolveContentType(
@@ -315,17 +366,17 @@ class RequestBodyImporter {
 
       final resolvedStyle = useStyleMode
           ? (_mapSerializationStyle(encoding.style) ??
-                core.MultipartEncodingStyle.form)
+                core.EncodingStyle.form)
           : null;
 
-      result[propertyName] = core.MultipartPropertyEncoding(
+      result[propertyName] = core.PropertyEncoding(
         contentType: useStyleMode ? null : resolvedContentType,
         rawContentType: useStyleMode ? null : encoding.contentType,
         headers: headers,
         style: resolvedStyle,
         explode: useStyleMode
             ? (encoding.explode ??
-                  (resolvedStyle == core.MultipartEncodingStyle.form))
+                  (resolvedStyle == core.EncodingStyle.form))
             : null,
         allowReserved: useStyleMode ? (encoding.allowReserved ?? false) : null,
       );
@@ -333,17 +384,17 @@ class RequestBodyImporter {
     return result;
   }
 
-  static core.MultipartEncodingStyle? _mapSerializationStyle(
+  static core.EncodingStyle? _mapSerializationStyle(
     SerializationStyle? style,
   ) {
     if (style == null) return null;
     return switch (style) {
-      SerializationStyle.form => core.MultipartEncodingStyle.form,
+      SerializationStyle.form => core.EncodingStyle.form,
       SerializationStyle.spaceDelimited =>
-        core.MultipartEncodingStyle.spaceDelimited,
+        core.EncodingStyle.spaceDelimited,
       SerializationStyle.pipeDelimited =>
-        core.MultipartEncodingStyle.pipeDelimited,
-      SerializationStyle.deepObject => core.MultipartEncodingStyle.deepObject,
+        core.EncodingStyle.pipeDelimited,
+      SerializationStyle.deepObject => core.EncodingStyle.deepObject,
       _ => null,
     };
   }
