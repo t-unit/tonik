@@ -81,8 +81,8 @@ List<Code> _buildDelimitedCode(
   String nullGuard(String encoded) =>
       isContentNullable ? "e == null ? '' : $encoded" : encoded;
 
-  // The generated enum `uriEncode` has no allowReserved parameter, so only
-  // the scalar arm threads it.
+  // The generated enum uriEncode has no allowReserved parameter, so the
+  // enum arm omits it while the scalar arm passes it through.
   final scalarItemArgs = allowReserved
       ? 'allowEmpty: $allowEmpty, allowReserved: true'
       : 'allowEmpty: $allowEmpty';

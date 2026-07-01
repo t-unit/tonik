@@ -685,6 +685,110 @@ void main() {
         );
       });
 
+      test(
+        'spaceDelimited nullable string list threads allowReserved '
+        'through the null guard',
+        () {
+          final parameter = createParameter(
+            name: 'tags',
+            rawName: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              isContentNullable: true,
+              context: context,
+              examples: const [],
+            ),
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+          );
+
+          final codes = buildToDelimitedQueryParameterCode(
+            'tags',
+            parameter,
+            encoding: QueryParameterEncoding.spaceDelimited,
+            allowReserved: true,
+          );
+
+          final code = emitStatements(codes);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+                void test() {
+                  for (final value in tags
+                      .map(
+                        (e) => e == null
+                            ? ''
+                            : e.uriEncode(allowEmpty: true, allowReserved: true),
+                      )
+                      .toList()
+                      .toSpaceDelimited(
+                        explode: false,
+                        allowEmpty: true,
+                        alreadyEncoded: true,
+                      )) {
+                    _$entries.add((name: r'tags', value: value));
+                  }
+                }
+              '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'pipeDelimited nullable string list threads allowReserved '
+        'through the null guard',
+        () {
+          final parameter = createParameter(
+            name: 'tags',
+            rawName: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              isContentNullable: true,
+              context: context,
+              examples: const [],
+            ),
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+          );
+
+          final codes = buildToDelimitedQueryParameterCode(
+            'tags',
+            parameter,
+            encoding: QueryParameterEncoding.pipeDelimited,
+            allowReserved: true,
+          );
+
+          final code = emitStatements(codes);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+                void test() {
+                  for (final value in tags
+                      .map(
+                        (e) => e == null
+                            ? ''
+                            : e.uriEncode(allowEmpty: true, allowReserved: true),
+                      )
+                      .toList()
+                      .toPipeDelimited(
+                        explode: false,
+                        allowEmpty: true,
+                        alreadyEncoded: true,
+                      )) {
+                    _$entries.add((name: r'tags', value: value));
+                  }
+                }
+              '''),
+            ),
+          );
+        },
+      );
+
       test('enum list omits allowReserved even when set', () {
         final parameter = createParameter(
           name: 'priorities',
