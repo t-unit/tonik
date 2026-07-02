@@ -309,6 +309,17 @@ void main() {
       },
     );
 
+    test('a literal percent sequence is not decoded back into a bracket', () {
+      expect(
+        '%5B'.uriEncode(allowEmpty: true, allowReserved: true),
+        '%255B',
+      );
+      expect(
+        'a%5Bb'.uriEncode(allowEmpty: true, allowReserved: true),
+        'a%255Bb',
+      );
+    });
+
     test('Uri keeps reserved chars literal under allowReserved', () {
       final uri = Uri.parse('https://x.com/p?a=1&b=2');
       expect(

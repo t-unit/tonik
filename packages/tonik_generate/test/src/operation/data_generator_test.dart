@@ -1228,6 +1228,83 @@ void main() {
       );
 
       test(
+        'null-guards an optional form body before the per-property list',
+        () {
+          final formModel = ClassModel(
+            name: 'OptionalReservedForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = Operation(
+            operationId: 'postOptionalReserved',
+            path: '/optional-reserved',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'optionalReserved',
+              context: testContext,
+              description: null,
+              isRequired: false,
+              content: {
+                RequestContent(
+                  model: formModel,
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  examples: const [],
+                  encoding: {
+                    'reserved': const PropertyEncoding(allowReserved: true),
+                  },
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+            Object? _data({OptionalReservedForm? body}) {
+              if (body == null) return null;
+              return [
+                ...body.reserved.toForm(
+                  r'reserved',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  allowReserved: true,
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
         'keeps object-level toForm when no property opts into allowReserved',
         () {
           final formModel = ClassModel(
@@ -1597,6 +1674,167 @@ void main() {
                 ),
                 ...body.status.toForm(
                   r'status',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+                ...body.choice.toForm(
+                  r'choice',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'opens the per-property path for a sole flagged enum yet defers its '
+        'allowReserved',
+        () {
+          final formModel = ClassModel(
+            name: 'EnumOnlyForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'status',
+                model: EnumModel<String>(
+                  name: 'Status',
+                  values: {
+                    const EnumEntry(value: 'active'),
+                    const EnumEntry(value: 'inactive'),
+                  },
+                  isNullable: false,
+                  isDeprecated: false,
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postEnumOnly',
+            model: formModel,
+            encoding: {
+              'status': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required EnumOnlyForm body}) {
+              return [
+                ...body.name.toForm(
+                  r'name',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+                ...body.status.toForm(
+                  r'status',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'opens the per-property path for a sole flagged composition yet defers '
+        'its allowReserved',
+        () {
+          final formModel = ClassModel(
+            name: 'CompositionOnlyForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'choice',
+                model: OneOfModel(
+                  name: 'Choice',
+                  models: {
+                    (
+                      discriminatorValue: null,
+                      model: StringModel(context: testContext),
+                    ),
+                    (
+                      discriminatorValue: null,
+                      model: IntegerModel(context: testContext),
+                    ),
+                  },
+                  isDeprecated: false,
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postCompositionOnly',
+            model: formModel,
+            encoding: {
+              'choice': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required CompositionOnlyForm body}) {
+              return [
+                ...body.name.toForm(
+                  r'name',
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,

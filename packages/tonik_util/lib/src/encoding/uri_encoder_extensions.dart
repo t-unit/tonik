@@ -6,8 +6,8 @@ import 'package:tonik_util/src/encoding/encoding_exception.dart';
 /// With [allowReserved] false the result is byte-identical to
 /// [Uri.encodeQueryComponent] / [Uri.encodeComponent] — call sites rely on
 /// this. With [allowReserved] true reserved chars including `[ ]` pass through
-/// literally; only the form delimiters `& = +`, space, `%`, and non-ASCII stay
-/// encoded.
+/// literally; the form delimiters `& =`, along with `+`, space, `%`, and
+/// non-ASCII, stay encoded.
 String _encodeUriValue(
   String value, {
   required bool allowReserved,
