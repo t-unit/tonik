@@ -228,10 +228,10 @@ void main() {
   group('allowReserved', () {
     const allReserved = r":/?#[]@!$&'()*+,;=";
 
-    test('keeps the reserved set literal except & = + and [ ]', () {
+    test('keeps the reserved set literal except & = +', () {
       expect(
         allReserved.uriEncode(allowEmpty: true, allowReserved: true),
-        r":/?#%5B%5D@!$%26'()*%2B,;%3D",
+        r":/?#[]@!$%26'()*%2B,;%3D",
       );
     });
 

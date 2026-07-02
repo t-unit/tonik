@@ -1,7 +1,10 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
 /// Returns null for the throwing cases (never/binary/complex map) and the
@@ -49,6 +52,9 @@ Expression? buildFormEntriesValueExpression(
     case NumberModel():
       return toForm(receiver, reserved: allowReserved);
 
+    // The generated toForm for enums and compositions has no allowReserved
+    // parameter, so the flag is deferred for these types — threading it would
+    // not compile.
     case EnumModel():
     case ClassModel():
     case AllOfModel():
@@ -105,6 +111,137 @@ Expression? buildFormEntriesValueExpression(
     default:
       return null;
   }
+}
+
+/// Gates the per-property form-body path, which only an `allowReserved` flag
+/// needs. It stays on the byte-identical object-level `body.toForm()` path
+/// unless a writable, emitted property of [model] carries the flag — a flag on
+/// a read-only property or an unmatched key has no emitted effect.
+bool formBodyHasAllowReserved(
+  Map<String, PropertyEncoding>? encoding,
+  ClassModel model,
+) {
+  if (encoding == null) return false;
+  final emittedNames = {
+    for (final property in model.properties)
+      if (!property.isReadOnly) property.name,
+  };
+  return encoding.entries.any(
+    (e) => (e.value.allowReserved ?? false) && emittedNames.contains(e.key),
+  );
+}
+
+/// Emits form entries one property at a time so a mix of per-property
+/// `allowReserved` flags is honored — the object-level `toForm` encodes every
+/// property uniformly and cannot express the mix. On success `entries` holds
+/// the list expression; when a property model is not form-encodable
+/// per-property, `unencodableProperty` names it so the caller can surface an
+/// `EncodingException` rather than falling back to a path that would silently
+/// drop `allowReserved` from a sibling that opted in.
+({Expression? entries, String? unencodableProperty})
+buildClassFormEntriesExpression(
+  Expression receiver,
+  ClassModel model,
+  Map<String, PropertyEncoding>? encoding,
+) {
+  final writeProperties = model.properties
+      .where((p) => !p.isReadOnly)
+      .toList();
+  final normalizedProps = normalizeProperties(writeProperties);
+
+  final propertyCodes = <Code>[];
+  for (final (:normalizedName, :property) in normalizedProps) {
+    final entryCodes = _buildPropertyFormEntry(
+      receiver.property(normalizedName),
+      property,
+      encoding?[property.name]?.allowReserved ?? false,
+    );
+    if (entryCodes == null) {
+      return (entries: null, unencodableProperty: property.name);
+    }
+    propertyCodes.addAll(entryCodes);
+  }
+
+  return (
+    entries: CodeExpression(
+      Block.of([const Code('['), ...propertyCodes, const Code(']')]),
+    ),
+    unencodableProperty: null,
+  );
+}
+
+/// Emits the spread/element code for one class property, or null when the
+/// property model cannot be encoded per-property. Field nullability mirrors the
+/// object path (`class_generator`): a field is nullable when the property is
+/// nullable, optional, write-only, or backed by an effectively-nullable model.
+List<Code>? _buildPropertyFormEntry(
+  Expression field,
+  Property property,
+  bool allowReserved,
+) {
+  final propertyNameLiteral = specLiteralString(property.name);
+  final resolved = property.model.resolved;
+
+  // Free-form objects encode via encodeAnyToForm, which accepts null and owns
+  // its own value encoding, so allowReserved is deferred here as it is for the
+  // enum/composition arm of buildFormEntriesValueExpression.
+  if (resolved is AnyModel) {
+    final value = refer(
+      'encodeAnyToForm',
+      'package:tonik_util/tonik_util.dart',
+    ).call([field], {
+      'explode': literalBool(true),
+      'allowEmpty': literalBool(true),
+      'useQueryComponent': literalBool(true),
+    });
+    final entry = literalRecord([], {
+      'name': propertyNameLiteral,
+      'value': value,
+    });
+    return [entry.code, const Code(',')];
+  }
+
+  final isNullable =
+      property.isNullable || property.model.isEffectivelyNullable;
+  final fieldCanBeNull =
+      isNullable || !property.isRequired || property.isWriteOnly;
+
+  final entries = buildFormEntriesValueExpression(
+    fieldCanBeNull ? field.nullChecked : field,
+    property.model,
+    paramName: propertyNameLiteral,
+    explode: literalBool(true),
+    allowEmpty: literalBool(true),
+    useQueryComponent: literalBool(true),
+    allowReserved: allowReserved,
+  );
+  if (entries == null) return null;
+
+  if (!fieldCanBeNull) {
+    return [const Code('...'), entries.code, const Code(',')];
+  }
+
+  final whenNull = property.isRequired && !isNullable
+      ? generateEncodingExceptionExpression(
+          'Required property ${property.name} is null.',
+          raw: true,
+        )
+      : literalList([
+          literalRecord([], {
+            'name': propertyNameLiteral,
+            'value': literalString(''),
+          }),
+        ]);
+
+  return [
+    const Code('...('),
+    field.notEqualTo(literalNull).code,
+    const Code(' ? '),
+    entries.code,
+    const Code(' : '),
+    whenNull.code,
+    const Code('),'),
+  ];
 }
 
 Expression? _buildListFormEntriesExpression(

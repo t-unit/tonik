@@ -397,6 +397,49 @@ void main() {
     });
   });
 
+  group('Per-property allowReserved', () {
+    test(
+      'keeps reserved characters literal for the flagged property and fully '
+      'percent-encodes the sibling',
+      () async {
+        const value = 'a/b:c?d&e=f+g;h,i@j#k[l]m ';
+        const form = AllowReservedForm(reserved: value, notReserved: value);
+
+        final response = await api.postAllowReservedForm(body: form);
+
+        expect(response, isA<TonikSuccess<AllowReservedForm>>());
+
+        final requestData = (response as TonikSuccess<AllowReservedForm>)
+            .response
+            .requestOptions
+            .data;
+        expect(
+          requestData,
+          'reserved=a/b:c?d%26e%3Df%2Bg;h,i@j#k[l]m+'
+              '&notReserved=a%2Fb%3Ac%3Fd%26e%3Df%2Bg%3Bh%2Ci%40j%23k%5Bl%5Dm+',
+        );
+      },
+    );
+
+    test(
+      'null-guards a write-only sibling and keeps it fully percent-encoded '
+      'beside the flagged property',
+      () async {
+        const form = AllowReservedMixedForm(reserved: 'a/b:c', secret: 'a/b:c');
+
+        final response = await api.postAllowReservedMixedForm(body: form);
+
+        expect(response, isA<TonikSuccess<AllowReservedMixedForm>>());
+
+        final requestData = (response as TonikSuccess<AllowReservedMixedForm>)
+            .response
+            .requestOptions
+            .data;
+        expect(requestData, 'reserved=a/b:c&secret=a%2Fb%3Ac');
+      },
+    );
+  });
+
   group('Content-Type header', () {
     test('sends correct Content-Type header per OpenAPI spec', () async {
       const form = SimpleForm(name: 'Test', age: 20);

@@ -10,6 +10,7 @@ BuiltExpression buildToFormValueExpression(
   required bool useQueryComponent,
   bool explodeLiteral = true,
   bool allowEmptyLiteral = true,
+  Map<String, PropertyEncoding>? encoding,
 }) {
   final receiver = refer(valueExpression);
   final resolved = model.resolved;
@@ -25,6 +26,27 @@ BuiltExpression buildToFormValueExpression(
     return BuiltExpression.simple(
       generateEncodingExceptionExpression(
         'Form encoding not supported for map types.',
+      ),
+    );
+  }
+
+  if (resolved is ClassModel && formBodyHasAllowReserved(encoding, resolved)) {
+    final (:entries, :unencodableProperty) = buildClassFormEntriesExpression(
+      receiver,
+      resolved,
+      encoding,
+    );
+    if (entries != null) {
+      return BuiltExpression.simple(_entriesToBody(entries));
+    }
+    // A sibling opted into allowReserved but a property is not per-property
+    // encodable; surfacing the failure keeps the flag from being silently
+    // dropped by the uniform object path.
+    return BuiltExpression.simple(
+      generateEncodingExceptionExpression(
+        'Cannot form-encode body: property "$unencodableProperty" is not '
+        'per-property encodable.',
+        raw: true,
       ),
     );
   }

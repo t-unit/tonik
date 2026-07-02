@@ -294,6 +294,63 @@ paths:
               schema:
                 type: string
 
+  /form/allow-reserved:
+    post:
+      operationId: postAllowReservedForm
+      tags:
+        - form
+      summary: Post form where one property opts into allowReserved
+      description: >-
+        Tests that a body property flagged allowReserved keeps reserved
+        characters literal in the sent body, while a sibling property without
+        the flag is fully percent-encoded.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedForm'
+            encoding:
+              reserved:
+                allowReserved: true
+              notReserved:
+                allowReserved: false
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedForm'
+
+  /form/allow-reserved-mixed:
+    post:
+      operationId: postAllowReservedMixedForm
+      tags:
+        - form
+      summary: Post form where an allowReserved scalar sits beside a write-only
+        sibling
+      description: >-
+        Tests that a flagged allowReserved scalar keeps reserved characters
+        literal while a write-only sibling (nullable field, null-guarded) is
+        still emitted on the per-property path.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedMixedForm'
+            encoding:
+              reserved:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedMixedForm'
+
   /custom/form:
     post:
       operationId: postCustomForm
@@ -435,3 +492,30 @@ components:
         field2:
           type: integer
           example: 100
+
+    AllowReservedForm:
+      type: object
+      required:
+        - reserved
+        - notReserved
+      properties:
+        reserved:
+          type: string
+          description: Value that keeps reserved characters literal
+        notReserved:
+          type: string
+          description: Value that is fully percent-encoded
+
+    AllowReservedMixedForm:
+      type: object
+      required:
+        - reserved
+        - secret
+      properties:
+        reserved:
+          type: string
+          description: Value that keeps reserved characters literal
+        secret:
+          type: string
+          writeOnly: true
+          description: Write-only field, nullable in the client and null-guarded

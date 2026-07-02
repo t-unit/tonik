@@ -1116,6 +1116,568 @@ void main() {
           collapseWhitespace(format(expectedMethod)),
         );
       });
+
+      test(
+        'applies per-property allowReserved to a flagged property while '
+        'leaving siblings fully percent-encoded',
+        () {
+          final formModel = ClassModel(
+            name: 'ReservedForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'notReserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'optional',
+                model: StringModel(context: testContext),
+                isRequired: false,
+                isNullable: true,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = Operation(
+            operationId: 'postReserved',
+            path: '/reserved',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'reserved',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: formModel,
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  examples: const [],
+                  encoding: {
+                    'reserved': const PropertyEncoding(allowReserved: true),
+                    'notReserved': const PropertyEncoding(allowReserved: false),
+                  },
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required ReservedForm body}) {
+              return [
+                ...body.reserved.toForm(
+                  r'reserved',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  allowReserved: true,
+                ),
+                ...body.notReserved.toForm(
+                  r'notReserved',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+                ...(body.optional != null
+                    ? body.optional!.toForm(
+                        r'optional',
+                        explode: true,
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                      )
+                    : [(name: r'optional', value: '')]),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'keeps object-level toForm when no property opts into allowReserved',
+        () {
+          final formModel = ClassModel(
+            name: 'PlainForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = Operation(
+            operationId: 'postPlain',
+            path: '/plain',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'plain',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: formModel,
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  examples: const [],
+                  encoding: {
+                    'name': const PropertyEncoding(allowReserved: false),
+                  },
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required PlainForm body}) {
+              return body
+                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'null-guards a write-only property that a flagged sibling forces onto '
+        'the per-property path',
+        () {
+          final formModel = ClassModel(
+            name: 'SecretForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'secret',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isWriteOnly: true,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postSecret',
+            model: formModel,
+            encoding: {
+              'reserved': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required SecretForm body}) {
+              return [
+                ...body.reserved.toForm(
+                  r'reserved',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  allowReserved: true,
+                ),
+                ...(body.secret != null
+                    ? body.secret!.toForm(
+                        r'secret',
+                        explode: true,
+                        allowEmpty: true,
+                        useQueryComponent: true,
+                      )
+                    : throw EncodingException(r'Required property secret is null.')),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'encodes a free-form sibling via encodeAnyToForm while keeping '
+        'allowReserved on the flagged scalar',
+        () {
+          final formModel = ClassModel(
+            name: 'MetaForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'metadata',
+                model: AnyModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postMeta',
+            model: formModel,
+            encoding: {
+              'reserved': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required MetaForm body}) {
+              return [
+                ...body.reserved.toForm(
+                  r'reserved',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  allowReserved: true,
+                ),
+                (
+                  name: r'metadata',
+                  value: encodeAnyToForm(
+                    body.metadata,
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                  ),
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'throws rather than dropping allowReserved when a sibling is not '
+        'per-property encodable',
+        () {
+          final formModel = ClassModel(
+            name: 'BadForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'items',
+                model: ListModel(
+                  content: ClassModel(
+                    name: 'Item',
+                    isDeprecated: false,
+                    properties: const [],
+                    context: testContext,
+                    examples: const [],
+                  ),
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postBad',
+            model: formModel,
+            encoding: {
+              'reserved': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = '''
+            Object? _data({required BadForm body}) {
+              return throw EncodingException(
+                r'Cannot form-encode body: property "items" is not per-property encodable.',
+              );
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'defers allowReserved for enum and composition properties while '
+        'applying it to the flagged scalar',
+        () {
+          final formModel = ClassModel(
+            name: 'ComboForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'status',
+                model: EnumModel<String>(
+                  name: 'Status',
+                  values: {
+                    const EnumEntry(value: 'active'),
+                    const EnumEntry(value: 'inactive'),
+                  },
+                  isNullable: false,
+                  isDeprecated: false,
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'choice',
+                model: OneOfModel(
+                  name: 'Choice',
+                  models: {
+                    (
+                      discriminatorValue: null,
+                      model: StringModel(context: testContext),
+                    ),
+                    (
+                      discriminatorValue: null,
+                      model: IntegerModel(context: testContext),
+                    ),
+                  },
+                  isDeprecated: false,
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postCombo',
+            model: formModel,
+            encoding: {
+              'reserved': const PropertyEncoding(allowReserved: true),
+              'status': const PropertyEncoding(allowReserved: true),
+              'choice': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required ComboForm body}) {
+              return [
+                ...body.reserved.toForm(
+                  r'reserved',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  allowReserved: true,
+                ),
+                ...body.status.toForm(
+                  r'status',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+                ...body.choice.toForm(
+                  r'choice',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'stays on the object path when only a read-only property carries '
+        'allowReserved',
+        () {
+          final formModel = ClassModel(
+            name: 'ReadOnlyForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'visible',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'hidden',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isReadOnly: true,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postReadOnly',
+            model: formModel,
+            encoding: {
+              'hidden': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required ReadOnlyForm body}) {
+              return body
+                  .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
     });
 
     group('multipart request bodies', () {
@@ -1542,6 +2104,116 @@ void main() {
                     .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
                     .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                     .join('&'),
+              };
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'applies per-property allowReserved in the form arm of a '
+        'multi-content body',
+        () {
+          final jsonModel = ClassModel(
+            name: 'JsonPayload',
+            isDeprecated: false,
+            properties: const [],
+            context: testContext,
+            examples: const [],
+          );
+
+          final formModel = ClassModel(
+            name: 'FormPayload',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'plain',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = Operation(
+            operationId: 'createUser',
+            path: '/users',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'createUser',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: jsonModel,
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                  examples: const [],
+                ),
+                RequestContent(
+                  model: formModel,
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  examples: const [],
+                  encoding: {
+                    'reserved': const PropertyEncoding(allowReserved: true),
+                    'plain': const PropertyEncoding(allowReserved: false),
+                  },
+                ),
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required CreateUser body}) {
+              return switch (body) {
+                final CreateUserJson value => value.value.toJson(),
+                final CreateUserXWwwFormUrlencoded value => [
+                  ...value.value.reserved.toForm(
+                    r'reserved',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    allowReserved: true,
+                  ),
+                  ...value.value.plain.toForm(
+                    r'plain',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                  ),
+                ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&'),
               };
             }
           ''';
@@ -1995,4 +2667,41 @@ void main() {
       },
     );
   });
+}
+
+Operation _formOperation({
+  required String operationId,
+  required ClassModel model,
+  required Map<String, PropertyEncoding> encoding,
+  required Context context,
+}) {
+  return Operation(
+    operationId: operationId,
+    path: '/$operationId',
+    method: HttpMethod.post,
+    requestBody: RequestBodyObject(
+      name: operationId,
+      context: context,
+      description: null,
+      isRequired: true,
+      content: {
+        RequestContent(
+          model: model,
+          contentType: ContentType.form,
+          rawContentType: 'application/x-www-form-urlencoded',
+          examples: const [],
+          encoding: encoding,
+        ),
+      },
+    ),
+    responses: const {},
+    pathParameters: const {},
+    cookieParameters: const {},
+    queryParameters: const {},
+    headers: const {},
+    context: context,
+    tags: const {},
+    isDeprecated: false,
+    securitySchemes: const {},
+  );
 }

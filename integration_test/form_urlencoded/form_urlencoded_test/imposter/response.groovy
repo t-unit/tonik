@@ -128,6 +128,24 @@ switch (path) {
         }
         break
         
+    case '/form/allow-reserved':
+        def formBody = 'reserved=ok&notReserved=ok'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
+    case '/form/allow-reserved-mixed':
+        def formBody = 'reserved=ok'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
     case '/custom/form':
         def formBody = 'field1=custom+value&field2=100'
         respond {

@@ -534,7 +534,7 @@ void main() {
           allowReserved: true,
         ),
         const <ParameterEntry>[
-          (name: 'p', value: r":/?#%5B%5D@!$%26'()*%2B,;%3D"),
+          (name: 'p', value: r":/?#[]@!$%26'()*%2B,;%3D"),
         ],
       );
     });
