@@ -8,17 +8,12 @@ sealed class RequestBody {
   final String? name;
   final Context context;
 
-  /// The description of the request body.
-  /// For aliases, this may override the referenced request body's description.
   String? get description;
 
-  /// Returns the number of content objects in this request body.
   int get contentCount;
 
-  /// Returns the resolved content of this request body.
   Set<RequestContent> get resolvedContent;
 
-  /// Returns whether this request body is required.
   bool get isRequired;
 }
 
