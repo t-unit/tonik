@@ -144,10 +144,12 @@ buildClassFormEntriesExpression(
   ClassModel model,
   Map<String, PropertyEncoding>? encoding,
 ) {
-  final writeProperties = model.properties
-      .where((p) => !p.isReadOnly)
+  // Normalize the full set first, then drop read-only, so a write property
+  // keeps the same suffix the object path (class_generator) assigns it — a
+  // read-only sibling that normalizes to the same name still consumes a suffix.
+  final normalizedProps = normalizeProperties(model.properties.toList())
+      .where((p) => !p.property.isReadOnly)
       .toList();
-  final normalizedProps = normalizeProperties(writeProperties);
 
   final propertyCodes = <Code>[];
   for (final (:normalizedName, :property) in normalizedProps) {
@@ -171,9 +173,9 @@ buildClassFormEntriesExpression(
 }
 
 /// Emits the spread/element code for one class property, or null when the
-/// property model cannot be encoded per-property. Field nullability mirrors the
-/// object path (`class_generator`): a field is nullable when the property is
-/// nullable, optional, write-only, or backed by an effectively-nullable model.
+/// property model cannot be encoded per-property. The field is null-guarded
+/// whenever it could hold null — a superset of the object path's field rule
+/// that also covers effectively-nullable backing models.
 List<Code>? _buildPropertyFormEntry(
   Expression field,
   Property property,
@@ -182,22 +184,20 @@ List<Code>? _buildPropertyFormEntry(
   final propertyNameLiteral = specLiteralString(property.name);
   final resolved = property.model.resolved;
 
-  // Free-form objects encode via encodeAnyToForm, which accepts null and owns
-  // its own value encoding, so allowReserved is deferred here as it is for the
-  // enum/composition arm of buildFormEntriesValueExpression.
+  // AnyModel is deferred like enum/composition, so mirror the object path
+  // (class_generator `parameterProperties` + `Map<String,String>.toForm`
+  // with alreadyEncoded) byte-for-byte: the name is URI-encoded, the value is
+  // the raw `toString()` passed through unencoded.
   if (resolved is AnyModel) {
-    final value = refer(
-      'encodeAnyToForm',
-      'package:tonik_util/tonik_util.dart',
-    ).call([field], {
-      'explode': literalBool(true),
+    final name = propertyNameLiteral.property('uriEncode').call([], {
       'allowEmpty': literalBool(true),
       'useQueryComponent': literalBool(true),
     });
-    final entry = literalRecord([], {
-      'name': propertyNameLiteral,
-      'value': value,
-    });
+    final value = field
+        .nullSafeProperty('toString')
+        .call([])
+        .ifNullThen(literalString(''));
+    final entry = literalRecord([], {'name': name, 'value': value});
     return [entry.code, const Code(',')];
   }
 

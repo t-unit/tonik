@@ -438,6 +438,25 @@ void main() {
         expect(requestData, 'reserved=a/b:c&secret=a%2Fb%3Ac');
       },
     );
+
+    test(
+      'sends a write property that a read-only sibling forces onto a suffixed '
+      'field, keeping reserved characters literal',
+      () async {
+        const form = AllowReservedCollisionForm(userName2: 'a/b:c');
+
+        final response = await api.postAllowReservedCollisionForm(body: form);
+
+        expect(response, isA<TonikSuccess<AllowReservedCollisionForm>>());
+
+        final requestData =
+            (response as TonikSuccess<AllowReservedCollisionForm>)
+                .response
+                .requestOptions
+                .data;
+        expect(requestData, 'user_name=a/b:c');
+      },
+    );
   });
 
   group('Content-Type header', () {

@@ -351,6 +351,34 @@ paths:
               schema:
                 $ref: '#/components/schemas/AllowReservedMixedForm'
 
+  /form/allow-reserved-collision:
+    post:
+      operationId: postAllowReservedCollisionForm
+      tags:
+        - form
+      summary: Post form where a read-only sibling forces a write property onto a
+        suffixed field name
+      description: >-
+        Tests that a write property whose normalized name collides with a
+        read-only sibling references the suffixed field the object path assigns
+        it when the per-property allowReserved path activates.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedCollisionForm'
+            encoding:
+              user_name:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedCollisionForm'
+
   /custom/form:
     post:
       operationId: postCustomForm
@@ -519,3 +547,16 @@ components:
           type: string
           writeOnly: true
           description: Write-only field, nullable in the client and null-guarded
+
+    AllowReservedCollisionForm:
+      type: object
+      required:
+        - user_name
+      properties:
+        user-name:
+          type: string
+          readOnly: true
+          description: Read-only sibling that normalizes to the same Dart field name
+        user_name:
+          type: string
+          description: Write property that must reference its suffixed field name

@@ -1448,8 +1448,8 @@ void main() {
       );
 
       test(
-        'encodes a free-form sibling via encodeAnyToForm while keeping '
-        'allowReserved on the flagged scalar',
+        'mirrors the object-path encoding for a free-form sibling while '
+        'keeping allowReserved on the flagged scalar',
         () {
           final formModel = ClassModel(
             name: 'MetaForm',
@@ -1498,13 +1498,11 @@ void main() {
                   allowReserved: true,
                 ),
                 (
-                  name: r'metadata',
-                  value: encodeAnyToForm(
-                    body.metadata,
-                    explode: true,
+                  name: r'metadata'.uriEncode(
                     allowEmpty: true,
                     useQueryComponent: true,
                   ),
+                  value: body.metadata?.toString() ?? '',
                 ),
               ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
             }
@@ -1905,6 +1903,70 @@ void main() {
                   .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
                   .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
                   .join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'references the suffixed field name a read-only sibling forces onto a '
+        'colliding write property',
+        () {
+          final formModel = ClassModel(
+            name: 'CollisionForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'user-name',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isReadOnly: true,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'user_name',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postCollision',
+            model: formModel,
+            encoding: {
+              'user_name': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required CollisionForm body}) {
+              return [
+                ...body.userName2.toForm(
+                  r'user_name',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  allowReserved: true,
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
             }
           ''';
 
