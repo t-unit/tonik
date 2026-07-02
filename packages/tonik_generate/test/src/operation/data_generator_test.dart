@@ -1194,26 +1194,26 @@ void main() {
             Object? _data({required ReservedForm body}) {
               return [
                 ...body.reserved.toForm(
-                  r'reserved',
+                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
                   allowReserved: true,
                 ),
                 ...body.notReserved.toForm(
-                  r'notReserved',
+                  r'notReserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
                 ),
                 ...(body.optional != null
                     ? body.optional!.toForm(
-                        r'optional',
+                        r'optional'.uriEncode(allowEmpty: true, useQueryComponent: true),
                         explode: true,
                         allowEmpty: true,
                         useQueryComponent: true,
                       )
-                    : [(name: r'optional', value: '')]),
+                    : [(name: r'optional'.uriEncode(allowEmpty: true, useQueryComponent: true), value: '')]),
               ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
             }
           ''';
@@ -1285,7 +1285,7 @@ void main() {
               if (body == null) return null;
               return [
                 ...body.reserved.toForm(
-                  r'reserved',
+                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
@@ -1420,7 +1420,7 @@ void main() {
             Object? _data({required SecretForm body}) {
               return [
                 ...body.reserved.toForm(
-                  r'reserved',
+                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
@@ -1428,7 +1428,7 @@ void main() {
                 ),
                 ...(body.secret != null
                     ? body.secret!.toForm(
-                        r'secret',
+                        r'secret'.uriEncode(allowEmpty: true, useQueryComponent: true),
                         explode: true,
                         allowEmpty: true,
                         useQueryComponent: true,
@@ -1491,7 +1491,7 @@ void main() {
             Object? _data({required MetaForm body}) {
               return [
                 ...body.reserved.toForm(
-                  r'reserved',
+                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
@@ -1664,20 +1664,20 @@ void main() {
             Object? _data({required ComboForm body}) {
               return [
                 ...body.reserved.toForm(
-                  r'reserved',
+                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
                   allowReserved: true,
                 ),
                 ...body.status.toForm(
-                  r'status',
+                  r'status'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
                 ),
                 ...body.choice.toForm(
-                  r'choice',
+                  r'choice'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
@@ -1749,13 +1749,13 @@ void main() {
             Object? _data({required EnumOnlyForm body}) {
               return [
                 ...body.name.toForm(
-                  r'name',
+                  r'name'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
                 ),
                 ...body.status.toForm(
-                  r'status',
+                  r'status'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
@@ -1832,16 +1832,284 @@ void main() {
             Object? _data({required CompositionOnlyForm body}) {
               return [
                 ...body.name.toForm(
-                  r'name',
+                  r'name'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
                 ),
                 ...body.choice.toForm(
-                  r'choice',
+                  r'choice'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'URI-encodes a property name containing a special character in the '
+        'per-property path',
+        () {
+          final formModel = ClassModel(
+            name: 'SpacedForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'a b',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postSpaced',
+            model: formModel,
+            encoding: {
+              'reserved': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required SpacedForm body}) {
+              return [
+                ...body.reserved.toForm(
+                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  allowReserved: true,
+                ),
+                ...body.aB.toForm(
+                  r'a b'.uriEncode(allowEmpty: true, useQueryComponent: true),
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'comma-joins a list property into a single entry like the object path',
+        () {
+          final formModel = ClassModel(
+            name: 'ListForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'tags',
+                model: ListModel(
+                  content: StringModel(context: testContext),
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postList',
+            model: formModel,
+            encoding: {
+              'reserved': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required ListForm body}) {
+              return [
+                ...body.reserved.toForm(
+                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                  allowReserved: true,
+                ),
+                (
+                  name: r'tags'.uriEncode(allowEmpty: true, useQueryComponent: true),
+                  value: body.tags.uriEncode(allowEmpty: true, useQueryComponent: true),
+                ),
+              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'throws for a map property because the object path rejects it too',
+        () {
+          final formModel = ClassModel(
+            name: 'MapForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'reserved',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'meta',
+                model: MapModel(
+                  valueModel: StringModel(context: testContext),
+                  context: testContext,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postMap',
+            model: formModel,
+            encoding: {
+              'reserved': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = '''
+            Object? _data({required MapForm body}) {
+              return throw EncodingException(
+                r'Cannot form-encode body: property "meta" is not per-property encodable.',
+              );
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'opens the per-property path for a sole flagged free-form property yet '
+        'defers its allowReserved',
+        () {
+          final formModel = ClassModel(
+            name: 'AnyOnlyForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'metadata',
+                model: AnyModel(context: testContext),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = _formOperation(
+            operationId: 'postAnyOnly',
+            model: formModel,
+            encoding: {
+              'metadata': const PropertyEncoding(allowReserved: true),
+            },
+            context: testContext,
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required AnyOnlyForm body}) {
+              return [
+                ...body.name.toForm(
+                  r'name'.uriEncode(allowEmpty: true, useQueryComponent: true),
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                ),
+                (
+                  name: r'metadata'.uriEncode(
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                  ),
+                  value: body.metadata?.toString() ?? '',
                 ),
               ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
             }
@@ -1960,7 +2228,7 @@ void main() {
             Object? _data({required CollisionForm body}) {
               return [
                 ...body.userName2.toForm(
-                  r'user_name',
+                  r'user_name'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
@@ -2501,14 +2769,14 @@ void main() {
                 final CreateUserJson value => value.value.toJson(),
                 final CreateUserXWwwFormUrlencoded value => [
                   ...value.value.reserved.toForm(
-                    r'reserved',
+                    r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
                     allowReserved: true,
                   ),
                   ...value.value.plain.toForm(
-                    r'plain',
+                    r'plain'.uriEncode(allowEmpty: true, useQueryComponent: true),
                     explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,

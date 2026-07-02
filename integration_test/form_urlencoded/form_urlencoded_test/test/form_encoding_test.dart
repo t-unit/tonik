@@ -457,6 +457,27 @@ void main() {
         expect(requestData, 'user_name=a/b:c');
       },
     );
+
+    test(
+      'comma-joins an array sibling into a single entry beside the flagged '
+      'scalar',
+      () async {
+        const form = AllowReservedArrayForm(
+          reserved: 'a/b:c',
+          tags: ['x', 'y', 'z'],
+        );
+
+        final response = await api.postAllowReservedArrayForm(body: form);
+
+        expect(response, isA<TonikSuccess<AllowReservedArrayForm>>());
+
+        final requestData = (response as TonikSuccess<AllowReservedArrayForm>)
+            .response
+            .requestOptions
+            .data;
+        expect(requestData, 'reserved=a/b:c&tags=x,y,z');
+      },
+    );
   });
 
   group('Content-Type header', () {

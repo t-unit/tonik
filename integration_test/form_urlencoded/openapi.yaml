@@ -379,6 +379,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/AllowReservedCollisionForm'
 
+  /form/allow-reserved-array:
+    post:
+      operationId: postAllowReservedArrayForm
+      tags:
+        - form
+      summary: Post form where a flagged scalar sits beside an array property
+      description: >-
+        Tests that an array sibling of a flagged allowReserved scalar is
+        comma-joined into a single entry, matching the object path, rather than
+        exploded into repeated keys.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedArrayForm'
+            encoding:
+              reserved:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedArrayForm'
+
   /custom/form:
     post:
       operationId: postCustomForm
@@ -560,3 +587,18 @@ components:
         user_name:
           type: string
           description: Write property that must reference its suffixed field name
+
+    AllowReservedArrayForm:
+      type: object
+      required:
+        - reserved
+        - tags
+      properties:
+        reserved:
+          type: string
+          description: Value that keeps reserved characters literal
+        tags:
+          type: array
+          items:
+            type: string
+          description: Array sibling comma-joined into a single entry

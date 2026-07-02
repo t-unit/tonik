@@ -139,6 +139,7 @@ class DataGenerator {
                   perProperty ? 'value.value' : 'value',
                   c.model,
                   useQueryComponent: true,
+                  useImmutableCollections: useImmutableCollections,
                   encoding: perProperty ? c.encoding : null,
                 ).code,
               )
@@ -289,6 +290,7 @@ class DataGenerator {
           'body',
           model,
           useQueryComponent: true,
+          useImmutableCollections: useImmutableCollections,
           encoding: content.first.encoding,
         );
         bodyCode

@@ -10,6 +10,7 @@ BuiltExpression buildToFormValueExpression(
   required bool useQueryComponent,
   bool explodeLiteral = true,
   bool allowEmptyLiteral = true,
+  bool useImmutableCollections = false,
   Map<String, PropertyEncoding>? encoding,
 }) {
   final receiver = refer(valueExpression);
@@ -35,6 +36,7 @@ BuiltExpression buildToFormValueExpression(
       receiver,
       resolved,
       encoding,
+      useImmutableCollections: useImmutableCollections,
     );
     if (entries != null) {
       return BuiltExpression.simple(_entriesToBody(entries));

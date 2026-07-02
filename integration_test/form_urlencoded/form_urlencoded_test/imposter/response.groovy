@@ -156,6 +156,15 @@ switch (path) {
         }
         break
 
+    case '/form/allow-reserved-array':
+        def formBody = 'reserved=ok&tags=a,b'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
     case '/custom/form':
         def formBody = 'field1=custom+value&field2=100'
         respond {

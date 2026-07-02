@@ -142,8 +142,9 @@ bool formBodyHasAllowReserved(
 buildClassFormEntriesExpression(
   Expression receiver,
   ClassModel model,
-  Map<String, PropertyEncoding>? encoding,
-) {
+  Map<String, PropertyEncoding>? encoding, {
+  bool useImmutableCollections = false,
+}) {
   // Normalize the full set first, then drop read-only, so a write property
   // keeps the same suffix the object path (class_generator) assigns it — a
   // read-only sibling that normalizes to the same name still consumes a suffix.
@@ -157,6 +158,7 @@ buildClassFormEntriesExpression(
       receiver.property(normalizedName),
       property,
       encoding?[property.name]?.allowReserved ?? false,
+      useImmutableCollections: useImmutableCollections,
     );
     if (entryCodes == null) {
       return (entries: null, unencodableProperty: property.name);
@@ -173,31 +175,40 @@ buildClassFormEntriesExpression(
 }
 
 /// Emits the spread/element code for one class property, or null when the
-/// property model cannot be encoded per-property. The field is null-guarded
-/// whenever it could hold null — a superset of the object path's field rule
-/// that also covers effectively-nullable backing models.
+/// property model cannot be encoded per-property. Null-guards the field when it
+/// can hold null: nullable, optional, write-only, or backed by an effectively-
+/// nullable model.
 List<Code>? _buildPropertyFormEntry(
   Expression field,
   Property property,
-  bool allowReserved,
-) {
+  bool allowReserved, {
+  bool useImmutableCollections = false,
+}) {
   final propertyNameLiteral = specLiteralString(property.name);
+  // The object path routes the property name through `Map.toForm`, which
+  // URI-encodes each key; the per-property path must encode the name the same
+  // way. Names are never allowReserved, so this defaults to false.
+  final encodedName = propertyNameLiteral.property('uriEncode').call([], {
+    'allowEmpty': literalBool(true),
+    'useQueryComponent': literalBool(true),
+  });
   final resolved = property.model.resolved;
+
+  // A map property makes the object path's `parameterProperties` throw
+  // (a complex property that is not a simple-content list), so the per-property
+  // path must be unencodable too rather than emitting a diverging entry.
+  if (resolved is MapModel) return null;
 
   // AnyModel is deferred like enum/composition, so mirror the object path
   // (class_generator `parameterProperties` + `Map<String,String>.toForm`
-  // with alreadyEncoded) byte-for-byte: the name is URI-encoded, the value is
-  // the raw `toString()` passed through unencoded.
+  // with alreadyEncoded) byte-for-byte: the value is the raw `toString()`
+  // passed through unencoded.
   if (resolved is AnyModel) {
-    final name = propertyNameLiteral.property('uriEncode').call([], {
-      'allowEmpty': literalBool(true),
-      'useQueryComponent': literalBool(true),
-    });
     final value = field
         .nullSafeProperty('toString')
         .call([])
         .ifNullThen(literalString(''));
-    final entry = literalRecord([], {'name': name, 'value': value});
+    final entry = literalRecord([], {'name': encodedName, 'value': value});
     return [entry.code, const Code(',')];
   }
 
@@ -206,10 +217,37 @@ List<Code>? _buildPropertyFormEntry(
   final fieldCanBeNull =
       isNullable || !property.isRequired || property.isWriteOnly;
 
+  // A list property nested in a form body is comma-joined into a single entry
+  // by the object path (`list.uriEncode` in `parameterProperties`, then a
+  // single `Map` entry), never exploded into repeated keys; mirror that here
+  // rather than delegating to the exploding shared form builder. allowReserved
+  // is not threaded because the object path never applies it to lists.
+  if (resolved is ListModel) {
+    if (!resolved.hasSimpleContent) return null;
+    final value = buildUriEncodeExpression(
+      fieldCanBeNull ? field.nullChecked : field,
+      resolved,
+      allowEmpty: literalBool(true),
+      useQueryComponent: literalBool(true),
+      useImmutableCollections: useImmutableCollections,
+    ).expression;
+    final record = literalRecord([], {'name': encodedName, 'value': value});
+    if (!fieldCanBeNull) {
+      return [record.code, const Code(',')];
+    }
+    return _nullGuardedEntries(
+      field: field,
+      encodedName: encodedName,
+      property: property,
+      isNullable: isNullable,
+      entries: literalList([record]),
+    );
+  }
+
   final entries = buildFormEntriesValueExpression(
     fieldCanBeNull ? field.nullChecked : field,
     property.model,
-    paramName: propertyNameLiteral,
+    paramName: encodedName,
     explode: literalBool(true),
     allowEmpty: literalBool(true),
     useQueryComponent: literalBool(true),
@@ -221,6 +259,26 @@ List<Code>? _buildPropertyFormEntry(
     return [const Code('...'), entries.code, const Code(',')];
   }
 
+  return _nullGuardedEntries(
+    field: field,
+    encodedName: encodedName,
+    property: property,
+    isNullable: isNullable,
+    entries: entries,
+  );
+}
+
+/// Wraps [entries] (a `List<ParameterEntry>`) in a null guard on [field]. When
+/// the field is required and non-nullable, a null value throws; otherwise it
+/// yields a single empty-valued entry — matching the object path's
+/// `else if (allowEmpty)` branch.
+List<Code> _nullGuardedEntries({
+  required Expression field,
+  required Expression encodedName,
+  required Property property,
+  required bool isNullable,
+  required Expression entries,
+}) {
   final whenNull = property.isRequired && !isNullable
       ? generateEncodingExceptionExpression(
           'Required property ${property.name} is null.',
@@ -228,7 +286,7 @@ List<Code>? _buildPropertyFormEntry(
         )
       : literalList([
           literalRecord([], {
-            'name': propertyNameLiteral,
+            'name': encodedName,
             'value': literalString(''),
           }),
         ]);
