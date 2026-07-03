@@ -219,8 +219,8 @@ String encodeAnyToSimple(
 ///
 /// When [allowReserved] is true, most reserved characters in primitive
 /// values are kept literal; the flag is threaded into recursive list/map
-/// element encoding. The [ParameterEncodable] branch is intentionally not
-/// threaded — those models manage their own value encoding.
+/// element encoding and forwarded to the [ParameterEncodable] branch so those
+/// models honor it in their own value encoding.
 ///
 /// Note: when an unsupported nested element raises [EncodingException], the
 /// message identifies only the inner type — no path / key context is attached
@@ -245,6 +245,7 @@ String encodeAnyToForm(
         explode: explode,
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       ),
       explode: explode,
     );
@@ -367,9 +368,9 @@ String _formEntriesToString(
 /// `Map<String, String>` values use extension methods.
 ///
 /// When [allowReserved] is true, most reserved characters in the map
-/// VALUES are kept literal (keys stay `Uri.encodeComponent`-encoded). The
-/// [ParameterEncodable] branch is intentionally not threaded — those models
-/// manage their own value encoding.
+/// VALUES are kept literal (keys stay `Uri.encodeComponent`-encoded); the flag
+/// is forwarded to the [ParameterEncodable] branch so those models honor it in
+/// their own value encoding.
 ///
 /// Note: DeepObject style only makes sense for objects, not primitives.
 List<ParameterEntry> encodeAnyToDeepObject(
@@ -390,6 +391,7 @@ List<ParameterEntry> encodeAnyToDeepObject(
       paramName,
       explode: explode,
       allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
     );
   }
   if (value is Map<String, String>) {
@@ -411,10 +413,15 @@ List<ParameterEntry> encodeAnyToDeepObject(
 /// Handles runtime type detection for values of unknown type.
 /// Generated models implementing [ParameterEncodable] encode themselves.
 /// Primitives use extension methods.
+///
+/// When [allowReserved] is true, reserved characters are kept literal except
+/// the form delimiters `& = +`; the flag is forwarded to the [UriEncodable]
+/// branch and every primitive branch.
 String encodeAnyToUri(
   Object? value, {
   required bool allowEmpty,
   bool useQueryComponent = false,
+  bool allowReserved = false,
 }) {
   if (value == null) {
     if (!allowEmpty) {
@@ -426,48 +433,56 @@ String encodeAnyToUri(
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is String) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is int) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is double) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is bool) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is DateTime) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is Uri) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   if (value is BigDecimal) {
     return value.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
   }
   throw EncodingException(

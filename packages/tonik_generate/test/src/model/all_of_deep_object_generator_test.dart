@@ -57,10 +57,10 @@ void main() {
             .toString(),
         'String',
       );
-      expect(toDeepObjectMethod.optionalParameters.length, 2);
+      expect(toDeepObjectMethod.optionalParameters.length, 3);
       expect(
         toDeepObjectMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty']),
+        containsAll(['explode', 'allowEmpty', 'allowReserved']),
       );
     });
 
@@ -79,8 +79,8 @@ void main() {
       final generatedClass = generator.generateClass(model);
 
       const expectedToDeepObjectMethod = '''
-        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
+          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
         }
       ''';
 
@@ -138,8 +138,8 @@ void main() {
       final generatedClass = generator.generateClass(model);
 
       const expectedToDeepObjectMethod = '''
-        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
+          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
         }
       ''';
 
@@ -162,8 +162,8 @@ void main() {
       final generatedClass = generator.generateClass(model);
 
       const expectedToDeepObjectMethod = '''
-        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
+          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
         }
       ''';
 
@@ -189,8 +189,8 @@ void main() {
       final generatedClass = generator.generateClass(model);
 
       const expectedToDeepObjectMethod = '''
-        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
+          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
         }
       ''';
 
@@ -215,8 +215,8 @@ void main() {
       final generatedClass = generator.generateClass(model);
 
       const expectedToDeepObjectMethod = '''
-        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+        List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
+          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
         }
       ''';
 

@@ -52,15 +52,12 @@ Expression? buildFormEntriesValueExpression(
     case NumberModel():
       return toForm(receiver, reserved: allowReserved);
 
-    // The generated toForm for enums and compositions has no allowReserved
-    // parameter, so the flag is deferred for these types — threading it would
-    // not compile.
     case EnumModel():
     case ClassModel():
     case AllOfModel():
     case OneOfModel():
     case AnyOfModel():
-      return toForm(receiver);
+      return toForm(receiver, reserved: allowReserved);
 
     case Base64Model():
       return toForm(
@@ -145,9 +142,6 @@ buildClassFormEntriesExpression(
   Map<String, PropertyEncoding>? encoding, {
   bool useImmutableCollections = false,
 }) {
-  // Normalize the full set first, then drop read-only, so a write property
-  // keeps the same suffix the object path (class_generator) assigns it — a
-  // read-only sibling that normalizes to the same name still consumes a suffix.
   final normalizedProps = normalizeProperties(model.properties.toList())
       .where((p) => !p.property.isReadOnly)
       .toList();
@@ -185,24 +179,14 @@ List<Code>? _buildPropertyFormEntry(
   bool useImmutableCollections = false,
 }) {
   final propertyNameLiteral = specLiteralString(property.name);
-  // The object path routes the property name through `Map.toForm`, which
-  // URI-encodes each key; the per-property path must encode the name the same
-  // way. Names are never allowReserved, so this defaults to false.
   final encodedName = propertyNameLiteral.property('uriEncode').call([], {
     'allowEmpty': literalBool(true),
     'useQueryComponent': literalBool(true),
   });
   final resolved = property.model.resolved;
 
-  // A map property makes the object path's `parameterProperties` throw
-  // (a complex property that is not a simple-content list), so the per-property
-  // path must be unencodable too rather than emitting a diverging entry.
   if (resolved is MapModel) return null;
 
-  // AnyModel is deferred like enum/composition, so mirror the object path
-  // (class_generator `parameterProperties` + `Map<String,String>.toForm`
-  // with alreadyEncoded) byte-for-byte: the value is the raw `toString()`
-  // passed through unencoded.
   if (resolved is AnyModel) {
     final value = field
         .nullSafeProperty('toString')
@@ -217,11 +201,6 @@ List<Code>? _buildPropertyFormEntry(
   final fieldCanBeNull =
       isNullable || !property.isRequired || property.isWriteOnly;
 
-  // A list property nested in a form body is comma-joined into a single entry
-  // by the object path (`list.uriEncode` in `parameterProperties`, then a
-  // single `Map` entry), never exploded into repeated keys; mirror that here
-  // rather than delegating to the exploding shared form builder. allowReserved
-  // is not threaded because the object path never applies it to lists.
   if (resolved is ListModel) {
     if (!resolved.hasSimpleContent) return null;
     final value = buildUriEncodeExpression(
@@ -367,7 +346,7 @@ Expression? _buildEncodedElementsList(
     contentModel,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: allowReserved ? literalBool(true) : null,
   ).expression;
 
   final elementEncode = isContentNullable

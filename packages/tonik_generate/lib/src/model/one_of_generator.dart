@@ -1114,6 +1114,13 @@ class OneOfGenerator {
           useQueryComponent: refer('useQueryComponent'),
         );
 
+    Map<String, Expression> memberFormArgs() => {
+      'explode': refer('explode'),
+      'allowEmpty': refer('allowEmpty'),
+      'useQueryComponent': refer('useQueryComponent'),
+      'allowReserved': refer('allowReserved'),
+    };
+
     final caseCodes = <Code>[];
 
     for (final m in stableModelSorter.sortDiscriminatedModels(model.models)) {
@@ -1162,6 +1169,7 @@ class OneOfGenerator {
           const Code('...'),
           refer('value').property('parameterProperties').call([], {
             'allowEmpty': refer('allowEmpty'),
+            'allowReserved': refer('allowReserved'),
           }).code,
           const Code(','),
           Code(
@@ -1184,11 +1192,10 @@ class OneOfGenerator {
             const Code('? '),
             ...discriminatedMap,
             const Code(' : '),
-            refer('value').property('toForm').call([refer('paramName')], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-              'useQueryComponent': refer('useQueryComponent'),
-            }).code,
+            refer('value')
+                .property('toForm')
+                .call([refer('paramName')], memberFormArgs())
+                .code,
           ]);
         } else {
           addValueArm(discriminatedMap);
@@ -1205,11 +1212,7 @@ class OneOfGenerator {
               .property('toBase64String')
               .call([])
               .property('toForm')
-              .call([refer('paramName')], {
-                'explode': refer('explode'),
-                'allowEmpty': refer('allowEmpty'),
-                'useQueryComponent': refer('useQueryComponent'),
-              })
+              .call([refer('paramName')], memberFormArgs())
               .code,
         ]);
       } else if (resolvedType is BinaryModel) {
@@ -1218,11 +1221,10 @@ class OneOfGenerator {
         addThrowArm('Map types cannot be form-encoded');
       } else {
         addValueArm([
-          refer('value').property('toForm').call([refer('paramName')], {
-            'explode': refer('explode'),
-            'allowEmpty': refer('allowEmpty'),
-            'useQueryComponent': refer('useQueryComponent'),
-          }).code,
+          refer('value')
+              .property('toForm')
+              .call([refer('paramName')], memberFormArgs())
+              .code,
         ]);
       }
     }
@@ -1358,10 +1360,7 @@ class OneOfGenerator {
         (b) => b
           ..name = 'parameterProperties'
           ..returns = buildMapStringStringType()
-          ..optionalParameters.addAll([
-            buildBoolParameter('allowEmpty', defaultValue: true),
-            buildBoolParameter('allowLists', defaultValue: true),
-          ])
+          ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
             'only contains primitive types',
@@ -1422,6 +1421,7 @@ class OneOfGenerator {
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
               'allowLists': refer('allowLists'),
+              'allowReserved': refer('allowReserved'),
             }).code,
             const Code(','),
             Code(
@@ -1446,6 +1446,7 @@ class OneOfGenerator {
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
               'allowLists': refer('allowLists'),
+              'allowReserved': refer('allowReserved'),
             }).code,
             const Code(': '),
             generateEncodingExceptionExpression(
@@ -1492,6 +1493,7 @@ class OneOfGenerator {
               refer('value').property('parameterProperties').call([], {
                 'allowEmpty': refer('allowEmpty'),
                 'allowLists': refer('allowLists'),
+                'allowReserved': refer('allowReserved'),
               }).code,
               const Code(','),
               Code(
@@ -1505,6 +1507,7 @@ class OneOfGenerator {
               refer('value').property('parameterProperties').call([], {
                 'allowEmpty': refer('allowEmpty'),
                 'allowLists': refer('allowLists'),
+                'allowReserved': refer('allowReserved'),
               }).code,
             );
           }
@@ -1523,10 +1526,7 @@ class OneOfGenerator {
       (b) => b
         ..name = 'parameterProperties'
         ..returns = buildMapStringStringType()
-        ..optionalParameters.addAll([
-          buildBoolParameter('allowEmpty', defaultValue: true),
-          buildBoolParameter('allowLists', defaultValue: true),
-        ])
+        ..optionalParameters.addAll(buildParameterPropertiesParameters())
         ..lambda = false
         ..body = body,
     );
@@ -1883,6 +1883,7 @@ class OneOfGenerator {
               .call([], {
                 'allowEmpty': refer('allowEmpty'),
                 'useQueryComponent': refer('useQueryComponent'),
+                'allowReserved': refer('allowReserved'),
               })
               .code,
           const Code(','),
@@ -1901,22 +1902,7 @@ class OneOfGenerator {
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll([
-          Parameter(
-            (b) => b
-              ..name = 'allowEmpty'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..required = true,
-          ),
-          Parameter(
-            (b) => b
-              ..name = 'useQueryComponent'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..defaultTo = literalBool(false).code,
-          ),
-        ])
+        ..optionalParameters.addAll(buildUriEncodeParameters())
         ..lambda = false
         ..body = body,
     );

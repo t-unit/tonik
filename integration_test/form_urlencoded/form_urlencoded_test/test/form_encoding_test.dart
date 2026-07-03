@@ -478,6 +478,26 @@ void main() {
         expect(requestData, 'reserved=a/b:c&tags=x,y,z');
       },
     );
+
+    test(
+      'keeps reserved characters literal for a flagged enum property through '
+      'the shared form-entries path',
+      () async {
+        const form = AllowReservedEnumForm(
+          choice: AllowReservedEnumFormChoiceModel.gAmpersandHEqualsIPlusJ,
+        );
+
+        final response = await api.postAllowReservedEnumForm(body: form);
+
+        expect(response, isA<TonikSuccess<AllowReservedEnumForm>>());
+
+        final requestData = (response as TonikSuccess<AllowReservedEnumForm>)
+            .response
+            .requestOptions
+            .data;
+        expect(requestData, 'choice=g%26h%3Di%2Bj');
+      },
+    );
   });
 
   group('Content-Type header', () {

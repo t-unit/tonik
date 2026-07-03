@@ -47,6 +47,7 @@ class TestEncodableModel implements ParameterEncodable {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
     if (explode) {
       return [
@@ -62,6 +63,7 @@ class TestEncodableModel implements ParameterEncodable {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    bool allowReserved = false,
   }) {
     return [
       (name: '$paramName[name]', value: name),
@@ -87,7 +89,11 @@ enum TestUriEncodableEnum implements UriEncodable {
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
+    if (allowReserved) {
+      return '$rawValue!reserved';
+    }
     return useQueryComponent
         ? Uri.encodeQueryComponent(rawValue)
         : Uri.encodeComponent(rawValue);
@@ -108,7 +114,11 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
+    if (allowReserved) {
+      return [(name: paramName, value: '$rawValue!reserved')];
+    }
     return [
       (
         name: paramName,
@@ -139,7 +149,13 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => throw UnimplementedError();
+    bool allowReserved = false,
+  }) {
+    if (allowReserved) {
+      return [(name: '$paramName[k]', value: '$rawValue!reserved')];
+    }
+    throw UnimplementedError();
+  }
 
   @override
   Object? toJson() => throw UnimplementedError();
@@ -1009,6 +1025,20 @@ void main() {
         expect(withoutQuery == withQuery, isFalse);
       });
 
+      test('forwards allowReserved to ParameterEncodable.toForm', () {
+        const model = QueryComponentAwareEncodable('value');
+
+        expect(
+          encodeAnyToForm(
+            model,
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+          ),
+          'value!reserved',
+        );
+      });
+
       test('renders bare value for empty-name entry with explode=true', () {
         const model = QueryComponentAwareEncodable('hello world');
 
@@ -1706,6 +1736,18 @@ void main() {
         expect(result[0], (name: 'obj[name]', value: 'test'));
         expect(result[1], (name: 'obj[value]', value: '42'));
       });
+
+      test('forwards allowReserved to ParameterEncodable.toDeepObject', () {
+        const model = QueryComponentAwareEncodable('value');
+        final result = encodeAnyToDeepObject(
+          model,
+          'obj',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+        expect(result, [(name: 'obj[k]', value: 'value!reserved')]);
+      });
     });
 
     group('Map<String, String>', () {
@@ -2120,6 +2162,17 @@ void main() {
           'has+space',
         );
       });
+
+      test('forwards allowReserved to UriEncodable.uriEncode', () {
+        expect(
+          encodeAnyToUri(
+            TestUriEncodableEnum.value1,
+            allowEmpty: true,
+            allowReserved: true,
+          ),
+          'one!reserved',
+        );
+      });
     });
 
     group('String', () {
@@ -2166,6 +2219,18 @@ void main() {
             useQueryComponent: true,
           ),
           'hello+world',
+        );
+      });
+
+      test('keeps reserved chars literal and encodes delimiters under '
+          'allowReserved', () {
+        expect(
+          encodeAnyToUri(
+            'a/b:c&d=e+f',
+            allowEmpty: true,
+            allowReserved: true,
+          ),
+          'a/b:c%26d%3De%2Bf',
         );
       });
     });

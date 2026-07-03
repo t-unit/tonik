@@ -186,7 +186,7 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    test('enum form param omits allowReserved even when set', () {
+    test('enum form param threads allowReserved into toForm when set', () {
       final result = build(
         EnumModel<String>(
           name: 'Color',
@@ -204,14 +204,14 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true);
+          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
         }
       ''');
 
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    test('object form param omits allowReserved even when set', () {
+    test('object form param threads allowReserved into toForm when set', () {
       final result = build(
         ClassModel(
           name: 'Form',
@@ -225,14 +225,14 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true);
+          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
         }
       ''');
 
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    test('composite form param omits allowReserved even when set', () {
+    test('composite form param threads allowReserved into toForm when set', () {
       final result = build(
         OneOfModel(
           models: const {},
@@ -245,7 +245,7 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true);
+          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
         }
       ''');
 
@@ -274,7 +274,7 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    test('enum list element omits allowReserved even when set', () {
+    test('enum list element threads allowReserved into uriEncode when set', () {
       final result = build(
         ListModel(
           content: EnumModel<String>(
@@ -297,7 +297,7 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => e.uriEncode(allowEmpty: true))
+              .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
               .toList()
               .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
         }
@@ -306,7 +306,8 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    test('free-form list element omits allowReserved even when set', () {
+    test('free-form list element threads allowReserved into encodeAnyToUri '
+        'when set', () {
       final result = build(
         ListModel(
           content: AnyModel(context: context),
@@ -319,7 +320,7 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((e) => _i1.encodeAnyToUri(e, allowEmpty: true))
+              .map((e) => _i1.encodeAnyToUri(e, allowEmpty: true, allowReserved: true))
               .toList()
               .toForm('p', explode: true, allowEmpty: true, alreadyEncoded: true);
         }

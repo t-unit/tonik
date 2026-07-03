@@ -26,10 +26,7 @@ Method buildReadOnlyParameterPropertiesMethod(Code exceptionBody) {
     (b) => b
       ..name = 'parameterProperties'
       ..returns = buildMapStringStringType()
-      ..optionalParameters.addAll([
-        buildBoolParameter('allowEmpty', defaultValue: true),
-        buildBoolParameter('allowLists', defaultValue: true),
-      ])
+      ..optionalParameters.addAll(buildParameterPropertiesParameters())
       ..lambda = true
       ..body = exceptionBody,
   );
@@ -42,22 +39,7 @@ Method buildReadOnlyUriEncodeMethod(Code exceptionBody) {
       ..annotations.add(refer('override', 'dart:core'))
       ..name = 'uriEncode'
       ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll([
-        Parameter(
-          (b) => b
-            ..name = 'allowEmpty'
-            ..type = refer('bool', 'dart:core')
-            ..named = true
-            ..required = true,
-        ),
-        Parameter(
-          (b) => b
-            ..name = 'useQueryComponent'
-            ..type = refer('bool', 'dart:core')
-            ..named = true
-            ..defaultTo = literalBool(false).code,
-        ),
-      ])
+      ..optionalParameters.addAll(buildUriEncodeParameters())
       ..lambda = true
       ..body = exceptionBody,
   );
@@ -165,7 +147,7 @@ Method buildReadOnlyToDeepObjectMethod(Code exceptionBody) {
             ..type = refer('String', 'dart:core'),
         ),
       )
-      ..optionalParameters.addAll(buildEncodingParameters())
+      ..optionalParameters.addAll(buildDeepObjectEncodingParameters())
       ..lambda = true
       ..body = exceptionBody,
   );
@@ -264,12 +246,13 @@ Method buildToDeepObjectMethod() {
             ..type = refer('String', 'dart:core'),
         ),
       )
-      ..optionalParameters.addAll(buildEncodingParameters())
+      ..optionalParameters.addAll(buildDeepObjectEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
             .call([], {
               'allowEmpty': refer('allowEmpty'),
               'allowLists': literalBool(false),
+              'allowReserved': refer('allowReserved'),
             })
             .property('toDeepObject')
             .call(

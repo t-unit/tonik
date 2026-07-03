@@ -177,9 +177,47 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
+          bool allowReserved = false,
         }) => throw EncodingException(
           r'ServerEvent is read-only and cannot be encoded.',
         );
+      ''';
+
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+  });
+
+  group('schema-level readOnly toDeepObject', () {
+    test('toDeepObject threads allowReserved into the read-only '
+        'parameterProperties stub', () {
+      final model = buildSchemaReadOnlyModel(context);
+      final specs = generator.generateClasses(model);
+      final baseClass = specs.whereType<Class>().firstWhere(
+        (c) => c.name == 'ServerEvent',
+      );
+      final classCode = format(baseClass.accept(emitter).toString());
+
+      const expectedMethod = '''
+        List<ParameterEntry> toDeepObject(
+          String paramName, {
+          required bool explode,
+          required bool allowEmpty,
+          bool allowReserved = false,
+        }) {
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+            allowLists: false,
+            allowReserved: allowReserved,
+          ).toDeepObject(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+          );
+        }
       ''';
 
       expect(
@@ -202,6 +240,7 @@ void main() {
         String uriEncode({
           required bool allowEmpty,
           bool useQueryComponent = false,
+          bool allowReserved = false,
         }) => throw EncodingException(
           r'ServerEvent is read-only and cannot be encoded.',
         );

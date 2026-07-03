@@ -392,11 +392,13 @@ void main() {
           bool allowEmpty = true,
           bool allowLists = true,
           bool useQueryComponent = false,
+          bool allowReserved = false,
         }) {
           final _$result = <String, String>{};
           _$result[r'name'] = name.uriEncode(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
           );
           if (password == null) {
             throw EncodingException(r'Required property password is null.');
@@ -404,6 +406,7 @@ void main() {
           _$result[r'password'] = password!.uriEncode(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
           );
           return _$result;
         }
@@ -449,10 +452,12 @@ void main() {
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
+          bool allowReserved = false,
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
+            allowReserved: allowReserved,
           ).toForm(
             paramName,
             explode: explode,
@@ -530,10 +535,12 @@ void main() {
           String paramName, {
           required bool explode,
           required bool allowEmpty,
+          bool allowReserved = false,
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             allowLists: false,
+            allowReserved: allowReserved,
           ).toDeepObject(
             paramName,
             explode: explode,

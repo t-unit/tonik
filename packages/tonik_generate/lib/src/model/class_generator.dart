@@ -1227,10 +1227,12 @@ class ClassGenerator {
       final uriEncodeCall = ap.valueModel.isEffectivelyNullable
           ? '${uriEncodeReceiver(ap.valueModel, r'_$e.value?')}'
                 '.uriEncode(allowEmpty: allowEmpty, '
-                "useQueryComponent: useQueryComponent) ?? ''"
+                'useQueryComponent: useQueryComponent, '
+                "allowReserved: allowReserved) ?? ''"
           : '${uriEncodeReceiver(ap.valueModel, r'_$e.value')}'
                 '.uriEncode(allowEmpty: allowEmpty, '
-                'useQueryComponent: useQueryComponent)';
+                'useQueryComponent: useQueryComponent, '
+                'allowReserved: allowReserved)';
       return [
         Code('''
 for (final _\$e in $apFieldName.entries) {
@@ -1286,6 +1288,7 @@ for (final _\$e in $apFieldName.entries) {
           ..required = false
           ..defaultTo = literalFalse.code,
       ),
+      buildBoolParameter('allowReserved'),
     ];
   }
 
@@ -1333,7 +1336,8 @@ for (final _\$e in $apFieldName.entries) {
             '_\$result[${specLiteralStringCode(propertyName)}] = '
             '${uriEncodeReceiver(model, name)}.uriEncode('
             'allowEmpty: allowEmpty, '
-            'useQueryComponent: useQueryComponent);',
+            'useQueryComponent: useQueryComponent, '
+            'allowReserved: allowReserved);',
           ),
         );
       } else {
@@ -1352,14 +1356,15 @@ for (final _\$e in $apFieldName.entries) {
               Code(
                 '_\$result[${specLiteralStringCode(propertyName)}] = '
                 '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
-                'useQueryComponent: useQueryComponent);',
+                'useQueryComponent: useQueryComponent, '
+                'allowReserved: allowReserved);',
               ),
             );
         } else {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
 } else if (allowEmpty) {
   _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
@@ -1436,7 +1441,8 @@ if ($name != null) {
               '_\$result[${specLiteralStringCode(propertyName)}] = '
               '${uriEncodeReceiver(fieldModel, name)}.uriEncode('
               'allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent);',
+              'useQueryComponent: useQueryComponent, '
+              'allowReserved: allowReserved);',
             ),
           );
         } else {
@@ -1455,14 +1461,15 @@ if ($name != null) {
                 Code(
                   '_\$result[${specLiteralStringCode(propertyName)}] = '
                   '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
-                  'useQueryComponent: useQueryComponent);',
+                  'useQueryComponent: useQueryComponent, '
+                  'allowReserved: allowReserved);',
                 ),
               );
           } else {
             propertyAssignments.add(
               Code('''
 if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
 } else if (allowEmpty) {
   _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
@@ -1479,6 +1486,7 @@ if ($name != null) {
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
           useImmutableCollections: useImmutableCollections,
+          allowReserved: refer('allowReserved'),
         );
 
         final assignmentExpr = refer(
@@ -1604,7 +1612,8 @@ if ($name != null) {
               '_\$result[${specLiteralStringCode(propertyName)}] = '
               '${uriEncodeReceiver(model, name)}.uriEncode('
               'allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent);',
+              'useQueryComponent: useQueryComponent, '
+              'allowReserved: allowReserved);',
             ),
           );
         } else {
@@ -1623,14 +1632,15 @@ if ($name != null) {
                 Code(
                   '_\$result[${specLiteralStringCode(propertyName)}] = '
                   '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
-                  'useQueryComponent: useQueryComponent);',
+                  'useQueryComponent: useQueryComponent, '
+                  'allowReserved: allowReserved);',
                 ),
               );
           } else {
             propertyAssignments.add(
               Code('''
 if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
 } else if (allowEmpty) {
   _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
@@ -1996,6 +2006,7 @@ if ($name != null) {
             .call([], {
               'allowEmpty': refer('allowEmpty'),
               'useQueryComponent': refer('useQueryComponent'),
+              'allowReserved': refer('allowReserved'),
             })
             .property('toForm')
             .call(
@@ -2084,12 +2095,13 @@ if ($name != null) {
             ..type = refer('String', 'dart:core'),
         ),
       )
-      ..optionalParameters.addAll(buildEncodingParameters())
+      ..optionalParameters.addAll(buildDeepObjectEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
             .call([], {
               'allowEmpty': refer('allowEmpty'),
               'allowLists': literalBool(false),
+              'allowReserved': refer('allowReserved'),
             })
             .property('toDeepObject')
             .call(
@@ -2110,22 +2122,7 @@ if ($name != null) {
       ..annotations.add(refer('override', 'dart:core'))
       ..name = 'uriEncode'
       ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll([
-        Parameter(
-          (b) => b
-            ..name = 'allowEmpty'
-            ..type = refer('bool', 'dart:core')
-            ..named = true
-            ..required = true,
-        ),
-        Parameter(
-          (b) => b
-            ..name = 'useQueryComponent'
-            ..type = refer('bool', 'dart:core')
-            ..named = true
-            ..defaultTo = literalBool(false).code,
-        ),
-      ])
+      ..optionalParameters.addAll(buildUriEncodeParameters())
       ..lambda = false
       ..body = generateEncodingExceptionExpression(
         'Cannot uriEncode $className: complex types cannot be URI-encoded',

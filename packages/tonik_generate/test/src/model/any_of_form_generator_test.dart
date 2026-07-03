@@ -90,10 +90,15 @@ void main() {
         'List<ParameterEntry>',
       );
       expect(toFormMethod.requiredParameters.single.name, 'paramName');
-      expect(toFormMethod.optionalParameters, hasLength(3));
+      expect(toFormMethod.optionalParameters, hasLength(4));
       expect(
         toFormMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty', 'useQueryComponent']),
+        containsAll([
+          'explode',
+          'allowEmpty',
+          'useQueryComponent',
+          'allowReserved',
+        ]),
       );
       expect(
         toFormMethod.optionalParameters.take(2).every((p) => p.required),
@@ -580,7 +585,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           if (int != null) {
@@ -589,6 +594,7 @@ void main() {
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
             );
             _$entryLists.add(_$intForm);
             _$values.add(_$intForm.map((e) => e.value).join(','));
@@ -599,6 +605,7 @@ void main() {
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
             );
             _$entryLists.add(_$stringForm);
             _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -654,10 +661,13 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
           final _$mapValues = <Map<String, String>>[];
           if (a != null) {
-            final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
+            final _$aForm = a!.parameterProperties(
+              allowEmpty: allowEmpty,
+              allowReserved: allowReserved,
+            );
             _$mapValues.add(_$aForm);
           }
           final _$map = <String, String>{};
@@ -733,16 +743,22 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
           final _$mapValues = <Map<String, String>>[];
           String? _$discriminatorValue;
           if (a != null) {
-            final _$aForm = a!.parameterProperties(allowEmpty: allowEmpty);
+            final _$aForm = a!.parameterProperties(
+              allowEmpty: allowEmpty,
+              allowReserved: allowReserved,
+            );
             _$mapValues.add(_$aForm);
             _$discriminatorValue ??= r'a';
           }
           if (b != null) {
-            final _$bForm = b!.parameterProperties(allowEmpty: allowEmpty);
+            final _$bForm = b!.parameterProperties(
+              allowEmpty: allowEmpty,
+              allowReserved: allowReserved,
+            );
             _$mapValues.add(_$bForm);
             _$discriminatorValue ??= r'b';
           }
@@ -804,12 +820,15 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           final _$mapValues = <Map<String, String>>[];
           if (data != null) {
-            final _$dataForm = data!.parameterProperties(allowEmpty: allowEmpty);
+            final _$dataForm = data!.parameterProperties(
+              allowEmpty: allowEmpty,
+              allowReserved: allowReserved,
+            );
             _$mapValues.add(_$dataForm);
           }
           if (string != null) {
@@ -818,6 +837,7 @@ void main() {
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
             );
             _$entryLists.add(_$stringForm);
             _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -976,6 +996,7 @@ void main() {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
+            bool allowReserved = false,
           }) {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
@@ -988,6 +1009,7 @@ void main() {
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
+                    allowReserved: allowReserved,
                   );
                   _$entryLists.add(_$innerChoiceForm);
                   _$values.add(_$innerChoiceForm.map((e) => e.value).join(','));
@@ -995,6 +1017,7 @@ void main() {
                 case EncodingShape.complex:
                   final _$innerChoiceForm = innerChoice!.parameterProperties(
                     allowEmpty: allowEmpty,
+                    allowReserved: allowReserved,
                   );
                   _$mapValues.add(_$innerChoiceForm);
                   break;
@@ -1010,6 +1033,7 @@ void main() {
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
               );
               _$entryLists.add(_$stringForm);
               _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -1102,6 +1126,7 @@ void main() {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
+            bool allowReserved = false,
           }) {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
@@ -1114,6 +1139,7 @@ void main() {
                     explode: explode,
                     allowEmpty: allowEmpty,
                     useQueryComponent: useQueryComponent,
+                    allowReserved: allowReserved,
                   );
                   _$entryLists.add(_$innerAnyOfForm);
                   _$values.add(_$innerAnyOfForm.map((e) => e.value).join(','));
@@ -1121,6 +1147,7 @@ void main() {
                 case EncodingShape.complex:
                   final _$innerAnyOfForm = innerAnyOf!.parameterProperties(
                     allowEmpty: allowEmpty,
+                    allowReserved: allowReserved,
                   );
                   _$mapValues.add(_$innerAnyOfForm);
                   break;
@@ -1136,6 +1163,7 @@ void main() {
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
               );
               _$entryLists.add(_$stringForm);
               _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -1218,6 +1246,7 @@ void main() {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
+            bool allowReserved = false,
           }) {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
@@ -1225,6 +1254,7 @@ void main() {
             if (myClass != null) {
               final _$myClassForm = myClass!.parameterProperties(
                 allowEmpty: allowEmpty,
+                allowReserved: allowReserved,
               );
               _$mapValues.add(_$myClassForm);
             }
@@ -1234,6 +1264,7 @@ void main() {
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
               );
               _$entryLists.add(_$intForm);
               _$values.add(_$intForm.map((e) => e.value).join(','));
@@ -1244,6 +1275,7 @@ void main() {
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
               );
               _$entryLists.add(_$stringForm);
               _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -1497,6 +1529,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
+            bool allowReserved = false,
           }) {
             final _$mapValues = <Map<String, String>>[];
             if (myClass != null) {
@@ -1504,6 +1537,7 @@ void main() {
                 myClass!.parameterProperties(
                   allowEmpty: allowEmpty,
                   allowLists: allowLists,
+                  allowReserved: allowReserved,
                 ),
               );
             }
@@ -1544,6 +1578,7 @@ void main() {
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
+          bool allowReserved = false,
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
@@ -1556,6 +1591,7 @@ void main() {
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
             );
             _$entryLists.add(_$stringForm);
             _$values.add(_$stringForm.map((e) => e.value).join(','));
