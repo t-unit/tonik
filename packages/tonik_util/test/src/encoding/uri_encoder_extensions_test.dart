@@ -228,10 +228,10 @@ void main() {
   group('allowReserved', () {
     const allReserved = r":/?#[]@!$&'()*+,;=";
 
-    test('keeps the reserved set literal except & = + and [ ]', () {
+    test('keeps the reserved set literal except & = +', () {
       expect(
         allReserved.uriEncode(allowEmpty: true, allowReserved: true),
-        r":/?#%5B%5D@!$%26'()*%2B,;%3D",
+        r":/?#[]@!$%26'()*%2B,;%3D",
       );
     });
 
@@ -308,6 +308,17 @@ void main() {
         );
       },
     );
+
+    test('a literal percent sequence is not decoded back into a bracket', () {
+      expect(
+        '%5B'.uriEncode(allowEmpty: true, allowReserved: true),
+        '%255B',
+      );
+      expect(
+        'a%5Bb'.uriEncode(allowEmpty: true, allowReserved: true),
+        'a%255Bb',
+      );
+    });
 
     test('Uri keeps reserved chars literal under allowReserved', () {
       final uri = Uri.parse('https://x.com/p?a=1&b=2');

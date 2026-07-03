@@ -128,6 +128,43 @@ switch (path) {
         }
         break
         
+    case '/form/allow-reserved':
+        def formBody = 'reserved=ok&notReserved=ok'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
+    case '/form/allow-reserved-mixed':
+        def formBody = 'reserved=ok'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
+    case '/form/allow-reserved-collision':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'user_name=ok'
+        }
+        break
+
+    case '/form/allow-reserved-array':
+        def formBody = 'reserved=ok&tags=a,b'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
     case '/custom/form':
         def formBody = 'field1=custom+value&field2=100'
         respond {

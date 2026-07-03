@@ -294,6 +294,118 @@ paths:
               schema:
                 type: string
 
+  /form/allow-reserved:
+    post:
+      operationId: postAllowReservedForm
+      tags:
+        - form
+      summary: Post form where one property opts into allowReserved
+      description: >-
+        Tests that a body property flagged allowReserved keeps reserved
+        characters literal in the sent body, while a sibling property without
+        the flag is fully percent-encoded.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedForm'
+            encoding:
+              reserved:
+                allowReserved: true
+              notReserved:
+                allowReserved: false
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedForm'
+
+  /form/allow-reserved-mixed:
+    post:
+      operationId: postAllowReservedMixedForm
+      tags:
+        - form
+      summary: Post form where an allowReserved scalar sits beside a write-only
+        sibling
+      description: >-
+        Tests that a flagged allowReserved scalar keeps reserved characters
+        literal while a write-only sibling (nullable field, null-guarded) is
+        still emitted on the per-property path.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedMixedForm'
+            encoding:
+              reserved:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedMixedForm'
+
+  /form/allow-reserved-collision:
+    post:
+      operationId: postAllowReservedCollisionForm
+      tags:
+        - form
+      summary: Post form where a read-only sibling forces a write property onto a
+        suffixed field name
+      description: >-
+        Tests that a write property whose normalized name collides with a
+        read-only sibling references the suffixed field the object path assigns
+        it when the per-property allowReserved path activates.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedCollisionForm'
+            encoding:
+              user_name:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedCollisionForm'
+
+  /form/allow-reserved-array:
+    post:
+      operationId: postAllowReservedArrayForm
+      tags:
+        - form
+      summary: Post form where a flagged scalar sits beside an array property
+      description: >-
+        Tests that an array sibling of a flagged allowReserved scalar is
+        comma-joined into a single entry, matching the object path, rather than
+        exploded into repeated keys.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedArrayForm'
+            encoding:
+              reserved:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedArrayForm'
+
   /custom/form:
     post:
       operationId: postCustomForm
@@ -435,3 +547,58 @@ components:
         field2:
           type: integer
           example: 100
+
+    AllowReservedForm:
+      type: object
+      required:
+        - reserved
+        - notReserved
+      properties:
+        reserved:
+          type: string
+          description: Value that keeps reserved characters literal
+        notReserved:
+          type: string
+          description: Value that is fully percent-encoded
+
+    AllowReservedMixedForm:
+      type: object
+      required:
+        - reserved
+        - secret
+      properties:
+        reserved:
+          type: string
+          description: Value that keeps reserved characters literal
+        secret:
+          type: string
+          writeOnly: true
+          description: Write-only field, nullable in the client and null-guarded
+
+    AllowReservedCollisionForm:
+      type: object
+      required:
+        - user_name
+      properties:
+        user-name:
+          type: string
+          readOnly: true
+          description: Read-only sibling that normalizes to the same Dart field name
+        user_name:
+          type: string
+          description: Write property that must reference its suffixed field name
+
+    AllowReservedArrayForm:
+      type: object
+      required:
+        - reserved
+        - tags
+      properties:
+        reserved:
+          type: string
+          description: Value that keeps reserved characters literal
+        tags:
+          type: array
+          items:
+            type: string
+          description: Array sibling comma-joined into a single entry
