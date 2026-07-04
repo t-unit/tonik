@@ -3,6 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 BuiltExpression buildToFormValueExpression(
   String valueExpression,
@@ -10,7 +11,6 @@ BuiltExpression buildToFormValueExpression(
   required bool useQueryComponent,
   bool explodeLiteral = true,
   bool allowEmptyLiteral = true,
-  bool useImmutableCollections = false,
   Map<Property, FieldEncoding>? encoding,
 }) {
   final receiver = refer(valueExpression);
@@ -27,28 +27,6 @@ BuiltExpression buildToFormValueExpression(
     return BuiltExpression.simple(
       generateEncodingExceptionExpression(
         'Form encoding not supported for map types.',
-      ),
-    );
-  }
-
-  if (resolved is ClassModel && formBodyHasAllowReserved(encoding, resolved)) {
-    final (:entries, :unencodableProperty) = buildClassFormEntriesExpression(
-      receiver,
-      resolved,
-      encoding,
-      useImmutableCollections: useImmutableCollections,
-    );
-    if (entries != null) {
-      return BuiltExpression.simple(_entriesToBody(entries));
-    }
-    // A sibling opted into allowReserved but a property is not per-property
-    // encodable; surfacing the failure keeps the flag from being silently
-    // dropped by the uniform object path.
-    return BuiltExpression.simple(
-      generateEncodingExceptionExpression(
-        'Cannot form-encode body: property "$unencodableProperty" is not '
-        'per-property encodable.',
-        raw: true,
       ),
     );
   }
@@ -73,6 +51,7 @@ BuiltExpression buildToFormValueExpression(
     explode: literalBool(explodeLiteral),
     allowEmpty: literalBool(allowEmptyLiteral),
     useQueryComponent: useQueryComponent ? literalBool(true) : null,
+    fieldEncodings: _fieldEncodingsLiteral(encoding),
   );
 
   if (entries == null) {
@@ -84,6 +63,32 @@ BuiltExpression buildToFormValueExpression(
   }
 
   return BuiltExpression.simple(_entriesToBody(entries));
+}
+
+/// Builds a `<String, FormFieldEncoding>` map literal for the object `toForm`
+/// call, containing only the writable properties that opt into `allowReserved`.
+/// Keyed by raw spec name to match the class's own per-property lookup. Returns
+/// null when no property opts in so the call omits the argument.
+Expression? _fieldEncodingsLiteral(
+  Map<Property, FieldEncoding>? encoding,
+) {
+  if (encoding == null) return null;
+
+  final descriptor = refer(
+    'FormFieldEncoding',
+    'package:tonik_util/tonik_util.dart',
+  );
+  final reserved = <Expression, Expression>{
+    for (final entry in encoding.entries)
+      if (!entry.key.isReadOnly && entry.value.allowReserved)
+        specLiteralString(entry.key.name): descriptor.constInstance([], {
+          'allowReserved': literalBool(true),
+        }),
+  };
+
+  if (reserved.isEmpty) return null;
+
+  return literalMap(reserved, refer('String', 'dart:core'), descriptor);
 }
 
 Expression _entriesToBody(Expression entries) {

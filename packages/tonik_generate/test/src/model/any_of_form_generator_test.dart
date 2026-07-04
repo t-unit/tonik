@@ -90,7 +90,7 @@ void main() {
         'List<ParameterEntry>',
       );
       expect(toFormMethod.requiredParameters.single.name, 'paramName');
-      expect(toFormMethod.optionalParameters, hasLength(4));
+      expect(toFormMethod.optionalParameters, hasLength(5));
       expect(
         toFormMethod.optionalParameters.map((p) => p.name),
         containsAll([
@@ -98,6 +98,7 @@ void main() {
           'allowEmpty',
           'useQueryComponent',
           'allowReserved',
+          'fieldEncodings',
         ]),
       );
       expect(
@@ -585,7 +586,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           if (int != null) {
@@ -661,7 +662,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
           final _$mapValues = <Map<String, String>>[];
           if (a != null) {
             final _$aForm = a!.parameterProperties(
@@ -743,7 +744,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
           final _$mapValues = <Map<String, String>>[];
           String? _$discriminatorValue;
           if (a != null) {
@@ -820,7 +821,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
           final _$mapValues = <Map<String, String>>[];
@@ -996,7 +997,7 @@ void main() {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
@@ -1126,7 +1127,7 @@ void main() {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
@@ -1246,7 +1247,7 @@ void main() {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             final _$entryLists = <List<ParameterEntry>>[];
             final _$values = <String>{};
@@ -1529,7 +1530,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             final _$mapValues = <Map<String, String>>[];
             if (myClass != null) {
@@ -1537,7 +1538,7 @@ void main() {
                 myClass!.parameterProperties(
                   allowEmpty: allowEmpty,
                   allowLists: allowLists,
-                  allowReserved: allowReserved,
+                  allowReserved: allowReserved, fieldEncodings: fieldEncodings,
                 ),
               );
             }
@@ -1578,7 +1579,7 @@ void main() {
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};

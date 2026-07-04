@@ -776,7 +776,7 @@ void main() {
         method.returns?.accept(emitter).toString().replaceAll(' ', ''),
         'Map<String,String>',
       );
-      expect(method.optionalParameters.length, 3);
+      expect(method.optionalParameters.length, 4);
 
       final allowReservedParam = method.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
@@ -832,7 +832,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) =>
           throw EncodingException(
             r'parameterProperties not supported for Value: only contains primitive types',
@@ -872,7 +872,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) =>
           throw EncodingException(
             r'parameterProperties not supported for Value: only contains primitive types',
@@ -921,13 +921,13 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
             ResponseUser(:final value) => value.parameterProperties(
               allowEmpty: allowEmpty,
               allowLists: allowLists,
-              allowReserved: allowReserved,
+              allowReserved: allowReserved, fieldEncodings: fieldEncodings,
             ),
           };
         }
@@ -995,14 +995,14 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
             EntityCompany(:final value) => {
               ...value.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
               ),
               r'type': r'company',
             },
@@ -1010,7 +1010,7 @@ void main() {
               ...value.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
               ),
               r'type': r'person',
             },
@@ -1063,13 +1063,13 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
             ValueUser(:final value) => value.parameterProperties(
               allowEmpty: allowEmpty,
               allowLists: allowLists,
-              allowReserved: allowReserved,
+              allowReserved: allowReserved, fieldEncodings: fieldEncodings,
             ),
             ValueString() => throw EncodingException(
               r'parameterProperties not supported for Value: cannot determine properties at runtime',
@@ -1128,7 +1128,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
             ResponseMessage() => throw EncodingException(
@@ -1138,7 +1138,7 @@ void main() {
               ...value.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
               ),
               r'type': r'user',
             },
@@ -1204,14 +1204,14 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
             OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
               ? value.parameterProperties(
                   allowEmpty: allowEmpty,
                   allowLists: allowLists,
-                  allowReserved: allowReserved,
+                  allowReserved: allowReserved, fieldEncodings: fieldEncodings,
                 )
               : throw EncodingException(
                   r'parameterProperties not supported for Outer: cannot determine properties at runtime',
@@ -1279,7 +1279,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return switch (this) {
             OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
@@ -1287,7 +1287,7 @@ void main() {
                   ...value.parameterProperties(
                     allowEmpty: allowEmpty,
                     allowLists: allowLists,
-                    allowReserved: allowReserved,
+                    allowReserved: allowReserved, fieldEncodings: fieldEncodings,
                   ),
                   r'type': r'inner',
                 }
@@ -1628,13 +1628,19 @@ void main() {
         (m) => m.name == 'toForm',
       );
 
-      expect(toFormMethod.optionalParameters.length, 4);
+      expect(toFormMethod.optionalParameters.length, 5);
 
       final allowReservedParam = toFormMethod.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
       );
       expect(allowReservedParam.named, isTrue);
       expect(allowReservedParam.required, isFalse);
+
+      final fieldEncodingsParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'fieldEncodings',
+      );
+      expect(fieldEncodingsParam.named, isTrue);
+      expect(fieldEncodingsParam.required, isFalse);
 
       final explodeParam = toFormMethod.optionalParameters.firstWhere(
         (p) => p.name == 'explode',
@@ -1910,7 +1916,7 @@ void main() {
             Map<String, String> parameterProperties({
               bool allowEmpty = true,
               bool allowLists = true,
-              bool allowReserved = false,
+              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
             }) {
               return switch (this) {
                 ValueList() => throw EncodingException(
@@ -2180,7 +2186,7 @@ void main() {
                 required bool explode,
                 required bool allowEmpty,
                 bool useQueryComponent = false,
-                bool allowReserved = false,
+                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
                   ValueList(:final value) => value.toForm(
@@ -2249,7 +2255,7 @@ void main() {
                 required bool explode,
                 required bool allowEmpty,
                 bool useQueryComponent = false,
-                bool allowReserved = false,
+                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
                   ValueList() => throw EncodingException(
@@ -2417,7 +2423,7 @@ void main() {
               Map<String, String> parameterProperties({
                 bool allowEmpty = true,
                 bool allowLists = true,
-                bool allowReserved = false,
+                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
               }) {
                 return switch (this) {
                   ValueList() => throw EncodingException(
@@ -2589,7 +2595,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
               ValueDetails(:final value) => value == null
@@ -2597,7 +2603,7 @@ void main() {
                 : value.parameterProperties(
                     allowEmpty: allowEmpty,
                     allowLists: allowLists,
-                    allowReserved: allowReserved,
+                    allowReserved: allowReserved, fieldEncodings: fieldEncodings,
                   ),
             };
           }
@@ -2873,7 +2879,7 @@ void main() {
               required bool explode,
               required bool allowEmpty,
               bool useQueryComponent = false,
-              bool allowReserved = false,
+              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
             }) {
               return switch (this) {
                 ValueTags() => throw EncodingException(
@@ -3199,7 +3205,7 @@ bool operator ==(Object other) {
               required bool explode,
               required bool allowEmpty,
               bool useQueryComponent = false,
-              bool allowReserved = false,
+              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
             }) {
               return switch (this) {
                 ValueUnknown() => throw EncodingException(
@@ -3889,7 +3895,7 @@ bool operator ==(Object other) {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
               ValueBase64(:final value) => value.toBase64String().toForm(
@@ -3973,7 +3979,7 @@ bool operator ==(Object other) {
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             return switch (this) {
               ValueNullableData(:final value) =>

@@ -177,7 +177,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) => throw EncodingException(
           r'ServerEvent is read-only and cannot be encoded.',
         );

@@ -333,7 +333,7 @@ paths:
       description: >-
         Tests that a flagged allowReserved scalar keeps reserved characters
         literal while a write-only sibling (nullable field, null-guarded) is
-        still emitted on the per-property path.
+        still emitted.
       requestBody:
         required: true
         content:
@@ -406,6 +406,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/AllowReservedArrayForm'
 
+  /form/allow-reserved-array-flagged:
+    post:
+      operationId: postAllowReservedArrayFlaggedForm
+      tags:
+        - form
+      summary: Post form where an array property itself opts into allowReserved
+      description: >-
+        Tests that a flagged allowReserved array keeps reserved characters
+        literal in its comma-joined elements, unlike an unflagged array whose
+        elements are fully percent-encoded.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedArrayFlaggedForm'
+            encoding:
+              tags:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedArrayFlaggedForm'
+
   /form/allow-reserved-enum:
     post:
       operationId: postAllowReservedEnumForm
@@ -432,6 +459,60 @@ paths:
             application/x-www-form-urlencoded:
               schema:
                 $ref: '#/components/schemas/AllowReservedEnumForm'
+
+  /form/allow-reserved-additional:
+    post:
+      operationId: postAllowReservedAdditionalForm
+      tags:
+        - form
+      summary: Post form with additionalProperties beside a flagged property
+      description: >-
+        Tests that a body with a declared allowReserved property and active
+        additionalProperties sends both the reserved-literal declared value and
+        every additional entry.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedAdditionalForm'
+            encoding:
+              reserved:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedAdditionalForm'
+
+  /form/allow-reserved-composite:
+    post:
+      operationId: postAllowReservedCompositeForm
+      tags:
+        - form
+      summary: Post an allOf form body where one property opts into allowReserved
+      description: >-
+        Tests that a composite (allOf) body property flagged allowReserved keeps
+        reserved characters literal in the sent body through the shared object
+        path.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedCompositeForm'
+            encoding:
+              reserved:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedCompositeForm'
 
   /custom/form:
     post:
@@ -630,6 +711,19 @@ components:
             type: string
           description: Array sibling comma-joined into a single entry
 
+    AllowReservedArrayFlaggedForm:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: >-
+            Array whose comma-joined elements keep reserved characters literal
+            when the property opts into allowReserved
+
     AllowReservedEnumForm:
       type: object
       required:
@@ -641,3 +735,27 @@ components:
             - a/b:c
             - g&h=i+j
           description: Enum value that keeps reserved characters literal
+
+    AllowReservedAdditionalForm:
+      type: object
+      required:
+        - reserved
+      properties:
+        reserved:
+          type: string
+          description: Declared value that keeps reserved characters literal
+      additionalProperties:
+        type: string
+
+    ReservedBase:
+      type: object
+      required:
+        - reserved
+      properties:
+        reserved:
+          type: string
+          description: Value that keeps reserved characters literal
+
+    AllowReservedCompositeForm:
+      allOf:
+        - $ref: '#/components/schemas/ReservedBase'

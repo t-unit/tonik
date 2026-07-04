@@ -165,12 +165,41 @@ switch (path) {
         }
         break
 
+    case '/form/allow-reserved-array-flagged':
+        def formBody = 'tags=a,b'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
     case '/form/allow-reserved-enum':
         def formBody = 'choice=a%2Fb%3Ac'
         respond {
             withStatusCode 200
             withHeader 'Content-Type', 'application/x-www-form-urlencoded'
             withContent formBody
+        }
+        break
+
+    case '/form/allow-reserved-additional':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'reserved=ok'
+        }
+        break
+
+    case '/form/allow-reserved-composite':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'reserved=ok'
         }
         break
 

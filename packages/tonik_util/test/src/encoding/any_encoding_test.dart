@@ -4,6 +4,7 @@ import 'package:tonik_util/src/date.dart';
 import 'package:tonik_util/src/encoding/any_encoding.dart';
 import 'package:tonik_util/src/encoding/encodable.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
+import 'package:tonik_util/src/encoding/form_field_encoding.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 /// A test class implementing ParameterEncodable.
@@ -48,6 +49,7 @@ class TestEncodableModel implements ParameterEncodable {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
     if (explode) {
       return [
@@ -115,6 +117,7 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
     if (allowReserved) {
       return [(name: paramName, value: '$rawValue!reserved')];

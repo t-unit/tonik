@@ -1,3 +1,4 @@
+import 'package:tonik_util/src/encoding/form_field_encoding.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 /// Marker interface for types that support matrix-style encoding
@@ -54,12 +55,15 @@ abstract interface class FormEncodable {
   /// (application/x-www-form-urlencoded encoding).
   /// When [allowReserved] is true, reserved characters in values are kept
   /// literal except the form delimiters `& = +`.
+  /// [fieldEncodings], keyed by raw property name, lets individual object
+  /// properties override [allowReserved]; other encoders ignore it.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Map<String, FormFieldEncoding> fieldEncodings = const {},
   });
 }
 

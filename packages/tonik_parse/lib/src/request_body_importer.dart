@@ -290,15 +290,12 @@ class RequestBodyImporter {
     Map<String, Encoding> encodingMap,
     core.Model model,
   ) {
-    final resolved = model.resolved;
-    final propertiesByName = resolved is core.ClassModel
-        ? {for (final p in resolved.properties) p.name: p}
-        : null;
+    final propertiesByName = _collectFormProperties(model);
 
     if (propertiesByName == null && encodingMap.isNotEmpty) {
       log.warning(
         'Form-urlencoded body has a non-object schema '
-        '(${resolved.runtimeType}). Its encoding block '
+        '(${model.resolved.runtimeType}). Its encoding block '
         '(${encodingMap.keys.join(', ')}) has no fields to describe and '
         'is ignored.',
       );
@@ -326,6 +323,26 @@ class RequestBodyImporter {
       );
     }
     return result;
+  }
+
+  /// Maps raw spec property names to their [core.Property] for a form body's
+  /// schema. Resolves through alias chains and unions the properties of an
+  /// `allOf`'s members so composite bodies expose the same names the shared
+  /// object path emits. Returns null when the schema exposes no named fields.
+  Map<String, core.Property>? _collectFormProperties(core.Model model) {
+    switch (model.resolved) {
+      case final core.ClassModel resolved:
+        return {for (final p in resolved.properties) p.name: p};
+      case final core.AllOfModel resolved:
+        final byName = <String, core.Property>{};
+        for (final member in resolved.models) {
+          final memberProperties = _collectFormProperties(member);
+          if (memberProperties != null) byName.addAll(memberProperties);
+        }
+        return byName.isEmpty ? null : byName;
+      default:
+        return null;
+    }
   }
 
   Map<String, core.ResponseHeader>? _importEncodingHeaders(

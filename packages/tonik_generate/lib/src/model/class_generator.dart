@@ -1289,6 +1289,7 @@ for (final _\$e in $apFieldName.entries) {
           ..defaultTo = literalFalse.code,
       ),
       buildBoolParameter('allowReserved'),
+      buildFieldEncodingsParameter(),
     ];
   }
 
@@ -1330,6 +1331,7 @@ for (final _\$e in $apFieldName.entries) {
         continue;
       }
 
+      final reservedArg = perPropertyAllowReservedArgument(propertyName);
       if (isRequired && !isNullable && !isFieldNullable) {
         propertyAssignments.add(
           Code(
@@ -1337,7 +1339,7 @@ for (final _\$e in $apFieldName.entries) {
             '${uriEncodeReceiver(model, name)}.uriEncode('
             'allowEmpty: allowEmpty, '
             'useQueryComponent: useQueryComponent, '
-            'allowReserved: allowReserved);',
+            '$reservedArg);',
           ),
         );
       } else {
@@ -1357,14 +1359,14 @@ for (final _\$e in $apFieldName.entries) {
                 '_\$result[${specLiteralStringCode(propertyName)}] = '
                 '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
                 'useQueryComponent: useQueryComponent, '
-                'allowReserved: allowReserved);',
+                '$reservedArg);',
               ),
             );
         } else {
           propertyAssignments.add(
             Code('''
 if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, $reservedArg);
 } else if (allowEmpty) {
   _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
@@ -1434,6 +1436,7 @@ if ($name != null) {
           prop.property.isNullable || fieldModel.isEffectivelyNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
 
+      final reservedArg = perPropertyAllowReservedArgument(propertyName);
       if (fieldModel.encodingShape == EncodingShape.simple) {
         if (isRequired && !isNullable && !isFieldNullable) {
           propertyAssignments.add(
@@ -1442,7 +1445,7 @@ if ($name != null) {
               '${uriEncodeReceiver(fieldModel, name)}.uriEncode('
               'allowEmpty: allowEmpty, '
               'useQueryComponent: useQueryComponent, '
-              'allowReserved: allowReserved);',
+              '$reservedArg);',
             ),
           );
         } else {
@@ -1462,14 +1465,14 @@ if ($name != null) {
                   '_\$result[${specLiteralStringCode(propertyName)}] = '
                   '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
                   'useQueryComponent: useQueryComponent, '
-                  'allowReserved: allowReserved);',
+                  '$reservedArg);',
                 ),
               );
           } else {
             propertyAssignments.add(
               Code('''
 if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, $reservedArg);
 } else if (allowEmpty) {
   _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
@@ -1486,7 +1489,9 @@ if ($name != null) {
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
           useImmutableCollections: useImmutableCollections,
-          allowReserved: refer('allowReserved'),
+          allowReserved: CodeExpression(Code(perPropertyAllowReservedValue(
+            propertyName,
+          ))),
         );
 
         final assignmentExpr = refer(
@@ -1606,6 +1611,7 @@ if ($name != null) {
       }
 
       if (model.encodingShape == .simple) {
+        final reservedArg = perPropertyAllowReservedArgument(propertyName);
         if (isRequired && !isNullable && !isFieldNullable) {
           propertyAssignments.add(
             Code(
@@ -1613,7 +1619,7 @@ if ($name != null) {
               '${uriEncodeReceiver(model, name)}.uriEncode('
               'allowEmpty: allowEmpty, '
               'useQueryComponent: useQueryComponent, '
-              'allowReserved: allowReserved);',
+              '$reservedArg);',
             ),
           );
         } else {
@@ -1633,14 +1639,14 @@ if ($name != null) {
                   '_\$result[${specLiteralStringCode(propertyName)}] = '
                   '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
                   'useQueryComponent: useQueryComponent, '
-                  'allowReserved: allowReserved);',
+                  '$reservedArg);',
                 ),
               );
           } else {
             propertyAssignments.add(
               Code('''
 if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
+  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, $reservedArg);
 } else if (allowEmpty) {
   _\$result[${specLiteralStringCode(propertyName)}] = '';
 }'''),
@@ -2007,6 +2013,7 @@ if ($name != null) {
               'allowEmpty': refer('allowEmpty'),
               'useQueryComponent': refer('useQueryComponent'),
               'allowReserved': refer('allowReserved'),
+              'fieldEncodings': refer('fieldEncodings'),
             })
             .property('toForm')
             .call(

@@ -480,6 +480,27 @@ void main() {
     );
 
     test(
+      'keeps reserved characters literal in the comma-joined elements of a '
+      'flagged array property',
+      () async {
+        const form = AllowReservedArrayFlaggedForm(tags: ['a/b', 'c:d']);
+
+        final response = await api.postAllowReservedArrayFlaggedForm(
+          body: form,
+        );
+
+        expect(response, isA<TonikSuccess<AllowReservedArrayFlaggedForm>>());
+
+        final requestData =
+            (response as TonikSuccess<AllowReservedArrayFlaggedForm>)
+                .response
+                .requestOptions
+                .data;
+        expect(requestData, 'tags=a/b,c:d');
+      },
+    );
+
+    test(
       'keeps reserved characters literal for a flagged enum property through '
       'the shared form-entries path',
       () async {
@@ -496,6 +517,48 @@ void main() {
             .requestOptions
             .data;
         expect(requestData, 'choice=g%26h%3Di%2Bj');
+      },
+    );
+
+    test(
+      'sends the flagged declared property literal alongside encoded '
+      'additionalProperties entries',
+      () async {
+        const form = AllowReservedAdditionalForm(
+          reserved: 'a/b:c',
+          additionalProperties: {'extra': 'x/y'},
+        );
+
+        final response = await api.postAllowReservedAdditionalForm(body: form);
+
+        expect(response, isA<TonikSuccess<AllowReservedAdditionalForm>>());
+
+        final requestData =
+            (response as TonikSuccess<AllowReservedAdditionalForm>)
+                .response
+                .requestOptions
+                .data;
+        expect(requestData, 'reserved=a/b:c&extra=x%2Fy');
+      },
+    );
+
+    test(
+      'keeps reserved characters literal for a flagged allOf property',
+      () async {
+        const form = AllowReservedCompositeForm(
+          reservedBase: ReservedBase(reserved: 'a/b:c'),
+        );
+
+        final response = await api.postAllowReservedCompositeForm(body: form);
+
+        expect(response, isA<TonikSuccess<AllowReservedCompositeForm>>());
+
+        final requestData =
+            (response as TonikSuccess<AllowReservedCompositeForm>)
+                .response
+                .requestOptions
+                .data;
+        expect(requestData, 'reserved=a/b:c');
       },
     );
   });

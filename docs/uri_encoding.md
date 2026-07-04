@@ -88,9 +88,10 @@ tonik encode them.
 ## Form-body array properties
 
 For an `application/x-www-form-urlencoded` request body, `allowReserved` is honored on scalar,
-enum, object, and composition properties. It is **not yet** honored on a property whose value
-is an **array** — those items are percent-encoded as if `allowReserved` were false. Query
-parameters are unaffected: array items there do honor `allowReserved`.
+enum, object, composition, and **array** (list-of-simple) properties. A flagged array keeps
+reserved characters literal within each of its comma-joined elements. The array is still sent
+as a single comma-joined entry — `allowReserved` does not change that shape, so array
+**explode** (one repeated key per element) remains unaddressed for form bodies.
 
 ## Null array elements in parameters
 

@@ -1913,7 +1913,8 @@ class AnyOfGenerator {
           Code(
             r'_$mapValues.add('
             '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
-            'allowLists: allowLists, allowReserved: allowReserved));',
+            'allowLists: allowLists, allowReserved: allowReserved, '
+            'fieldEncodings: fieldEncodings));',
           ),
         );
 
@@ -1945,7 +1946,8 @@ class AnyOfGenerator {
         Code(
           r'_$mapValues.add('
           '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
-          'allowLists: allowLists, allowReserved: allowReserved));',
+          'allowLists: allowLists, allowReserved: allowReserved, '
+          'fieldEncodings: fieldEncodings));',
         ),
       ];
 

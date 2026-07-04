@@ -1192,29 +1192,18 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required ReservedForm body}) {
-              return [
-                ...body.reserved.toForm(
-                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-                ...body.notReserved.toForm(
-                  r'notReserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                ),
-                ...(body.optional != null
-                    ? body.optional!.toForm(
-                        r'optional'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                        explode: true,
-                        allowEmpty: true,
-                        useQueryComponent: true,
-                      )
-                    : [(name: r'optional'.uriEncode(allowEmpty: true, useQueryComponent: true), value: '')]),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1228,7 +1217,8 @@ void main() {
       );
 
       test(
-        'null-guards an optional form body before the per-property list',
+        'threads fieldEncodings through the object path for an optional form '
+        'body',
         () {
           final formModel = ClassModel(
             name: 'OptionalReservedForm',
@@ -1283,15 +1273,18 @@ void main() {
           const expectedMethod = r'''
             Object? _data({OptionalReservedForm? body}) {
               if (body == null) return null;
-              return [
-                ...body.reserved.toForm(
-                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1376,8 +1369,8 @@ void main() {
       );
 
       test(
-        'null-guards a write-only property that a flagged sibling forces onto '
-        'the per-property path',
+        'routes a write-only sibling through the object path beside a flagged '
+        'property',
         () {
           final formModel = ClassModel(
             name: 'SecretForm',
@@ -1418,23 +1411,18 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required SecretForm body}) {
-              return [
-                ...body.reserved.toForm(
-                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-                ...(body.secret != null
-                    ? body.secret!.toForm(
-                        r'secret'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                        explode: true,
-                        allowEmpty: true,
-                        useQueryComponent: true,
-                      )
-                    : throw EncodingException(r'Required property secret is null.')),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1448,8 +1436,8 @@ void main() {
       );
 
       test(
-        'mirrors the object-path encoding for a free-form sibling while '
-        'keeping allowReserved on the flagged scalar',
+        'routes a free-form sibling through the object path beside a flagged '
+        'scalar',
         () {
           final formModel = ClassModel(
             name: 'MetaForm',
@@ -1489,22 +1477,18 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required MetaForm body}) {
-              return [
-                ...body.reserved.toForm(
-                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-                (
-                  name: r'metadata'.uriEncode(
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                  ),
-                  value: body.metadata?.toString() ?? '',
-                ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1518,8 +1502,8 @@ void main() {
       );
 
       test(
-        'throws rather than dropping allowReserved when a sibling is not '
-        'per-property encodable',
+        'routes a complex-list sibling through the object path, deferring its '
+        'rejection to the class parameterProperties',
         () {
           final formModel = ClassModel(
             name: 'BadForm',
@@ -1567,11 +1551,20 @@ void main() {
             context: testContext,
           );
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
             Object? _data({required BadForm body}) {
-              return throw EncodingException(
-                r'Cannot form-encode body: property "items" is not per-property encodable.',
-              );
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1662,29 +1655,20 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required ComboForm body}) {
-              return [
-                ...body.reserved.toForm(
-                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-                ...body.status.toForm(
-                  r'status'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-                ...body.choice.toForm(
-                  r'choice'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                      r'status': const FormFieldEncoding(allowReserved: true),
+                      r'choice': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1698,8 +1682,7 @@ void main() {
       );
 
       test(
-        'opens the per-property path for a sole flagged enum and threads its '
-        'allowReserved',
+        'threads a sole flagged enum through the object-path fieldEncodings',
         () {
           final formModel = ClassModel(
             name: 'EnumOnlyForm',
@@ -1749,21 +1732,18 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required EnumOnlyForm body}) {
-              return [
-                ...body.name.toForm(
-                  r'name'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                ),
-                ...body.status.toForm(
-                  r'status'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'status': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1777,8 +1757,8 @@ void main() {
       );
 
       test(
-        'opens the per-property path for a sole flagged composition and '
-        'threads its allowReserved',
+        'threads a sole flagged composition through the object-path '
+        'fieldEncodings',
         () {
           final formModel = ClassModel(
             name: 'CompositionOnlyForm',
@@ -1833,21 +1813,18 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required CompositionOnlyForm body}) {
-              return [
-                ...body.name.toForm(
-                  r'name'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                ),
-                ...body.choice.toForm(
-                  r'choice'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'choice': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1861,8 +1838,7 @@ void main() {
       );
 
       test(
-        'URI-encodes a property name containing a special character in the '
-        'per-property path',
+        'routes a special-character property name through the object path',
         () {
           final formModel = ClassModel(
             name: 'SpacedForm',
@@ -1902,21 +1878,18 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required SpacedForm body}) {
-              return [
-                ...body.reserved.toForm(
-                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-                ...body.aB.toForm(
-                  r'a b'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -1930,7 +1903,8 @@ void main() {
       );
 
       test(
-        'comma-joins a list property into a single entry like the object path',
+        'routes a list-property sibling through the object path beside a '
+        'flagged scalar',
         () {
           final formModel = ClassModel(
             name: 'ListForm',
@@ -1974,19 +1948,18 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required ListForm body}) {
-              return [
-                ...body.reserved.toForm(
-                  r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
-                ),
-                (
-                  name: r'tags'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  value: body.tags.uriEncode(allowEmpty: true, useQueryComponent: true),
-                ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -2000,7 +1973,8 @@ void main() {
       );
 
       test(
-        'throws for a map property because the object path rejects it too',
+        'routes a map-property sibling through the object path, deferring its '
+        'rejection to the class parameterProperties',
         () {
           final formModel = ClassModel(
             name: 'MapForm',
@@ -2042,11 +2016,20 @@ void main() {
             context: testContext,
           );
 
-          const expectedMethod = '''
+          const expectedMethod = r'''
             Object? _data({required MapForm body}) {
-              return throw EncodingException(
-                r'Cannot form-encode body: property "meta" is not per-property encodable.',
-              );
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -2060,8 +2043,8 @@ void main() {
       );
 
       test(
-        'opens the per-property path for a sole flagged free-form property yet '
-        'defers its allowReserved',
+        'threads a sole flagged free-form property through fieldEncodings even '
+        'though the object path ignores its allowReserved',
         () {
           final formModel = ClassModel(
             name: 'AnyOnlyForm',
@@ -2101,21 +2084,18 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required AnyOnlyForm body}) {
-              return [
-                ...body.name.toForm(
-                  r'name'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                ),
-                (
-                  name: r'metadata'.uriEncode(
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
                     allowEmpty: true,
                     useQueryComponent: true,
-                  ),
-                  value: body.metadata?.toString() ?? '',
-                ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'metadata': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -2188,8 +2168,8 @@ void main() {
       );
 
       test(
-        'references the suffixed field name a read-only sibling forces onto a '
-        'colliding write property',
+        'keys fieldEncodings by raw spec name for a write property colliding '
+        'with a read-only sibling',
         () {
           final formModel = ClassModel(
             name: 'CollisionForm',
@@ -2230,15 +2210,104 @@ void main() {
 
           const expectedMethod = r'''
             Object? _data({required CollisionForm body}) {
-              return [
-                ...body.userName2.toForm(
-                  r'user_name'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                  explode: true,
-                  allowEmpty: true,
-                  useQueryComponent: true,
-                  allowReserved: true,
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'user_name': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
+            }
+          ''';
+
+          final method = generator.generateDataMethod(operation);
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
+        'threads fieldEncodings through the object path for an allOf form body',
+        () {
+          final memberProperty = Property(
+            name: 'reserved',
+            model: StringModel(context: testContext),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          );
+          final formModel = AllOfModel(
+            name: 'CompositeForm',
+            isDeprecated: false,
+            models: {
+              ClassModel(
+                name: 'Member',
+                isDeprecated: false,
+                properties: [memberProperty],
+                context: testContext,
+                examples: const [],
+              ),
+            },
+            context: testContext,
+            examples: const [],
+          );
+
+          final operation = Operation(
+            operationId: 'postComposite',
+            path: '/composite',
+            method: HttpMethod.post,
+            requestBody: RequestBodyObject(
+              name: 'composite',
+              context: testContext,
+              description: null,
+              isRequired: true,
+              content: {
+                RequestContent(
+                  model: formModel,
+                  contentType: ContentType.form,
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  examples: const [],
+                  formEncoding: {
+                    memberProperty: _reserved(true),
+                  },
                 ),
-              ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+              },
+            ),
+            responses: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            queryParameters: const {},
+            headers: const {},
+            context: testContext,
+            tags: const {},
+            isDeprecated: false,
+            securitySchemes: const {},
+          );
+
+          const expectedMethod = r'''
+            Object? _data({required CompositeForm body}) {
+              return body
+                  .toForm(
+                    '',
+                    explode: true,
+                    allowEmpty: true,
+                    useQueryComponent: true,
+                    fieldEncodings: <String, FormFieldEncoding>{
+                      r'reserved': const FormFieldEncoding(allowReserved: true),
+                    },
+                  )
+                  .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                  .join('&');
             }
           ''';
 
@@ -2777,21 +2846,18 @@ void main() {
             Object? _data({required CreateUser body}) {
               return switch (body) {
                 final CreateUserJson value => value.value.toJson(),
-                final CreateUserXWwwFormUrlencoded value => [
-                  ...value.value.reserved.toForm(
-                    r'reserved'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                    explode: true,
-                    allowEmpty: true,
-                    useQueryComponent: true,
-                    allowReserved: true,
-                  ),
-                  ...value.value.plain.toForm(
-                    r'plain'.uriEncode(allowEmpty: true, useQueryComponent: true),
-                    explode: true,
-                    allowEmpty: true,
-                    useQueryComponent: true,
-                  ),
-                ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&'),
+                final CreateUserXWwwFormUrlencoded value => value.value
+                    .toForm(
+                      '',
+                      explode: true,
+                      allowEmpty: true,
+                      useQueryComponent: true,
+                      fieldEncodings: <String, FormFieldEncoding>{
+                        r'reserved': const FormFieldEncoding(allowReserved: true),
+                      },
+                    )
+                    .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+                    .join('&'),
               };
             }
           ''';

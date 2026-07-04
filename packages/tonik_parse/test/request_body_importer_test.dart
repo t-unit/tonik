@@ -2084,6 +2084,43 @@ void main() {
       expect(fieldEncodingFor(content, 'filter')!.allowReserved, isTrue);
     });
 
+    test('resolves an encoding key against an allOf member property', () {
+      final content = importFormContent({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'requestBodies': {
+            'FormBody': {
+              'description': 'Form body',
+              'required': true,
+              'content': {
+                'application/x-www-form-urlencoded': {
+                  'schema': {
+                    'allOf': [
+                      {
+                        'type': 'object',
+                        'properties': {
+                          'reserved': {'type': 'string'},
+                        },
+                      },
+                    ],
+                  },
+                  'encoding': {
+                    'reserved': {'allowReserved': true},
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      expect(content.formEncoding, isNotNull);
+      expect(content.formEncoding, hasLength(1));
+      expect(fieldEncodingFor(content, 'reserved')!.allowReserved, isTrue);
+    });
+
     test('does not apply multipart per-property content type defaults', () {
       final content = importFormContent(
         formSpec(
@@ -2358,10 +2395,22 @@ void main() {
   });
 }
 
-Property? _propertyNamed(RequestContent content, String name) {
-  final resolved = content.model.resolved;
-  if (resolved is! ClassModel) return null;
-  return resolved.properties.firstWhereOrNull((p) => p.name == name);
+Property? _propertyNamed(RequestContent content, String name) =>
+    _propertyNamedIn(content.model, name);
+
+Property? _propertyNamedIn(Model model, String name) {
+  switch (model.resolved) {
+    case final ClassModel resolved:
+      return resolved.properties.firstWhereOrNull((p) => p.name == name);
+    case final AllOfModel resolved:
+      for (final member in resolved.models) {
+        final property = _propertyNamedIn(member, name);
+        if (property != null) return property;
+      }
+      return null;
+    default:
+      return null;
+  }
 }
 
 PartEncoding? partEncodingFor(RequestContent content, String name) {

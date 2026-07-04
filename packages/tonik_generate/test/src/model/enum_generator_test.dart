@@ -1231,7 +1231,7 @@ void main() {
         );
         expect(toForm.requiredParameters, hasLength(1));
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(4));
+        expect(toForm.optionalParameters, hasLength(5));
 
         final explodeParam = toForm.optionalParameters.firstWhere(
           (p) => p.name == 'explode',
@@ -1295,7 +1295,7 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(4));
+        expect(toForm.optionalParameters, hasLength(5));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
@@ -1330,7 +1330,7 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(4));
+        expect(toForm.optionalParameters, hasLength(5));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
@@ -1366,7 +1366,7 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(4));
+        expect(toForm.optionalParameters, hasLength(5));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
@@ -2003,7 +2003,7 @@ void main() {
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
         expect(toForm.lambda, isFalse);
-        expect(toForm.optionalParameters, hasLength(4));
+        expect(toForm.optionalParameters, hasLength(5));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''

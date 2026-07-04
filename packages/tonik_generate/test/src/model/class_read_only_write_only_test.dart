@@ -392,13 +392,13 @@ void main() {
           bool allowEmpty = true,
           bool allowLists = true,
           bool useQueryComponent = false,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           final _$result = <String, String>{};
           _$result[r'name'] = name.uriEncode(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
           );
           if (password == null) {
             throw EncodingException(r'Required property password is null.');
@@ -406,7 +406,7 @@ void main() {
           _$result[r'password'] = password!.uriEncode(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: fieldEncodings[r'password']?.allowReserved ?? allowReserved,
           );
           return _$result;
         }
@@ -452,12 +452,12 @@ void main() {
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
           ).toForm(
             paramName,
             explode: explode,

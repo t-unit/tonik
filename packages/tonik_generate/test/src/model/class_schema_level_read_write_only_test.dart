@@ -220,7 +220,7 @@ void main() {
           bool allowEmpty = true,
           bool allowLists = true,
           bool useQueryComponent = false,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) => throw EncodingException(
           r'ServerStatus is read-only and cannot be encoded.',
         );
