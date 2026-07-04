@@ -219,7 +219,6 @@ extension StringMapUriEncoder on Map<String, String> {
     required bool allowEmpty,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
-    bool encodeKeys = true,
     bool allowReserved = false,
   }) {
     if (isEmpty && !allowEmpty) {
@@ -239,7 +238,7 @@ extension StringMapUriEncoder on Map<String, String> {
     return entries
         .expand(
           (e) => [
-            if (encodeKeys) encode(e.key) else e.key,
+            encode(e.key),
             if (alreadyEncoded) e.value else encode(e.value),
           ],
         )

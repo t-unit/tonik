@@ -374,19 +374,14 @@ void main() {
         expect(parts, containsAll(['name', 'John', 'age', '25']));
       });
 
-      test('map with special characters', () {
+      test('map with special characters encodes keys and values', () {
         const original = {'key=name': 'value&data', 'other+key': 'more data'};
         final encoded = original
             .toForm('p', explode: false, allowEmpty: true)
             .single
             .value;
 
-        // Verify that values are properly encoded (keys are not encoded in
-        // explode=false)
-        expect(encoded, contains('key=name'));
-        expect(encoded, contains('value%26data'));
-        expect(encoded, contains('other+key'));
-        expect(encoded, contains('more%20data'));
+        expect(encoded, 'key%3Dname,value%26data,other%2Bkey,more%20data');
       });
     });
 

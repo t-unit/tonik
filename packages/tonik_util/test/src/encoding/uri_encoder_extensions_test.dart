@@ -420,17 +420,6 @@ void main() {
       );
     });
 
-    test('map encodeKeys false leaves keys untouched under allowReserved', () {
-      expect(
-        {'a&b': 'c=d'}.uriEncode(
-          allowEmpty: true,
-          allowReserved: true,
-          encodeKeys: false,
-        ),
-        'a&b,c%3Dd',
-      );
-    });
-
     test('map default is byte-identical to encodeComponent per key/value', () {
       const map = {'a&b': 'c:d', 'e=f': 'g+h'};
       expect(

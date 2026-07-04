@@ -61,6 +61,23 @@ void main() {
       final success = result as TonikSuccess;
       expect(success.response.statusCode, 200);
     });
+
+    test('getQueryAnyNoExplode percent-encodes object keys, commas literal',
+        () async {
+      final api = buildApi();
+      final result = await api.getQueryAnyNoExplode(
+        anyValue: <String, dynamic>{
+          'first name': 'Jane',
+          'a,b': 'v1',
+          'c&d': 'v2',
+        },
+      );
+      final success = result as TonikSuccess;
+      expect(
+        success.response.requestOptions.uri.query,
+        'anyValue=first%20name,Jane,a%2Cb,v1,c%26d,v2',
+      );
+    });
   });
 
   group('Query parameters - spaceDelimited style', () {
