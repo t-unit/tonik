@@ -313,11 +313,49 @@ class EnumGenerator {
     String? fallbackNormalizedName,
   ) {
     const valueParam = 'value';
-    final typeReference = refer(T.toString(), 'dart:core');
-    final typeErrorMessage =
-        'Expected $T for $publicEnumName, got \${$valueParam.runtimeType}';
-    final valueErrorMessage =
-        'No matching $publicEnumName for value: \$$valueParam';
+    // Integer enums route through the shared decoder so JSON Schema's `integer`
+    // (which matches whole-number doubles like `2.0`/`1e0`) is honored, keeping
+    // enum decoding consistent with plain integer fields.
+    final matchVariable = T == int ? 'decoded' : valueParam;
+
+    final guard = <Code>[
+      if (T == int)
+        declareFinal(matchVariable)
+            .assign(
+              refer(valueParam)
+                  .asA(refer('Object?', 'dart:core'))
+                  .property('decodeJsonInt')
+                  .call(const [], {
+                    'context': specLiteralString(publicEnumName),
+                  }),
+            )
+            .statement
+      else ...[
+        const Code('if ('),
+        refer(valueParam).isNotA(refer('String', 'dart:core')).code,
+        const Code(') {'),
+        generateInterpolatedJsonDecodingExceptionExpression(
+          'Expected $T for $publicEnumName, got ',
+          '$valueParam.runtimeType',
+        ).statement,
+        const Code('}'),
+      ],
+    ];
+
+    final orElse = fallbackNormalizedName != null
+        ? Method(
+            (mb) => mb
+              ..body = refer(
+                actualEnumName,
+              ).property(fallbackNormalizedName).code,
+          ).closure
+        : Method(
+            (mb) => mb
+              ..body = generateInterpolatedJsonDecodingExceptionExpression(
+                'No matching $publicEnumName for value: ',
+                matchVariable,
+              ).code,
+          ).closure;
 
     return Constructor(
       (b) => b
@@ -331,12 +369,7 @@ class EnumGenerator {
           ),
         )
         ..body = Block.of([
-          Code.scope((a) => 'if (value is! ${a(typeReference)}) {'),
-          generateDecodingExceptionExpression(
-            typeErrorMessage,
-            raw: true,
-          ).statement,
-          const Code('}'),
+          ...guard,
           refer('values')
               .property('firstWhere')
               .call(
@@ -348,26 +381,10 @@ class EnumGenerator {
                       )
                       ..body = refer(
                         'e',
-                      ).property('rawValue').equalTo(refer(valueParam)).code,
+                      ).property('rawValue').equalTo(refer(matchVariable)).code,
                   ).closure,
                 ],
-                {
-                  'orElse': fallbackNormalizedName != null
-                      ? Method(
-                          (mb) => mb
-                            ..body = refer(
-                              actualEnumName,
-                            ).property(fallbackNormalizedName).code,
-                        ).closure
-                      : Method(
-                          (mb) =>
-                              mb
-                                ..body = generateDecodingExceptionExpression(
-                                  valueErrorMessage,
-                                  raw: true,
-                                ).code,
-                        ).closure,
-                },
+                {'orElse': orElse},
               )
               .returned
               .statement,
