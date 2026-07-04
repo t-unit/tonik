@@ -1172,10 +1172,10 @@ void main() {
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
                   examples: const [],
-                  encoding: {
-                    'reserved': const PropertyEncoding(allowReserved: true),
-                    'notReserved': const PropertyEncoding(allowReserved: false),
-                  },
+                  formEncoding: _formEncodingByName(formModel, {
+                    'reserved': _reserved(true),
+                    'notReserved': _reserved(false),
+                  }),
                 ),
               },
             ),
@@ -1263,9 +1263,9 @@ void main() {
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
                   examples: const [],
-                  encoding: {
-                    'reserved': const PropertyEncoding(allowReserved: true),
-                  },
+                  formEncoding: _formEncodingByName(formModel, {
+                    'reserved': _reserved(true),
+                  }),
                 ),
               },
             ),
@@ -1340,9 +1340,9 @@ void main() {
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
                   examples: const [],
-                  encoding: {
-                    'name': const PropertyEncoding(allowReserved: false),
-                  },
+                  formEncoding: _formEncodingByName(formModel, {
+                    'name': _reserved(false),
+                  }),
                 ),
               },
             ),
@@ -1411,7 +1411,7 @@ void main() {
             operationId: 'postSecret',
             model: formModel,
             encoding: {
-              'reserved': const PropertyEncoding(allowReserved: true),
+              'reserved': _reserved(true),
             },
             context: testContext,
           );
@@ -1482,7 +1482,7 @@ void main() {
             operationId: 'postMeta',
             model: formModel,
             encoding: {
-              'reserved': const PropertyEncoding(allowReserved: true),
+              'reserved': _reserved(true),
             },
             context: testContext,
           );
@@ -1562,7 +1562,7 @@ void main() {
             operationId: 'postBad',
             model: formModel,
             encoding: {
-              'reserved': const PropertyEncoding(allowReserved: true),
+              'reserved': _reserved(true),
             },
             context: testContext,
           );
@@ -1653,9 +1653,9 @@ void main() {
             operationId: 'postCombo',
             model: formModel,
             encoding: {
-              'reserved': const PropertyEncoding(allowReserved: true),
-              'status': const PropertyEncoding(allowReserved: true),
-              'choice': const PropertyEncoding(allowReserved: true),
+              'reserved': _reserved(true),
+              'status': _reserved(true),
+              'choice': _reserved(true),
             },
             context: testContext,
           );
@@ -1742,7 +1742,7 @@ void main() {
             operationId: 'postEnumOnly',
             model: formModel,
             encoding: {
-              'status': const PropertyEncoding(allowReserved: true),
+              'status': _reserved(true),
             },
             context: testContext,
           );
@@ -1826,7 +1826,7 @@ void main() {
             operationId: 'postCompositionOnly',
             model: formModel,
             encoding: {
-              'choice': const PropertyEncoding(allowReserved: true),
+              'choice': _reserved(true),
             },
             context: testContext,
           );
@@ -1895,7 +1895,7 @@ void main() {
             operationId: 'postSpaced',
             model: formModel,
             encoding: {
-              'reserved': const PropertyEncoding(allowReserved: true),
+              'reserved': _reserved(true),
             },
             context: testContext,
           );
@@ -1967,7 +1967,7 @@ void main() {
             operationId: 'postList',
             model: formModel,
             encoding: {
-              'reserved': const PropertyEncoding(allowReserved: true),
+              'reserved': _reserved(true),
             },
             context: testContext,
           );
@@ -2037,7 +2037,7 @@ void main() {
             operationId: 'postMap',
             model: formModel,
             encoding: {
-              'reserved': const PropertyEncoding(allowReserved: true),
+              'reserved': _reserved(true),
             },
             context: testContext,
           );
@@ -2094,7 +2094,7 @@ void main() {
             operationId: 'postAnyOnly',
             model: formModel,
             encoding: {
-              'metadata': const PropertyEncoding(allowReserved: true),
+              'metadata': _reserved(true),
             },
             context: testContext,
           );
@@ -2164,7 +2164,7 @@ void main() {
             operationId: 'postReadOnly',
             model: formModel,
             encoding: {
-              'hidden': const PropertyEncoding(allowReserved: true),
+              'hidden': _reserved(true),
             },
             context: testContext,
           );
@@ -2223,7 +2223,7 @@ void main() {
             operationId: 'postCollision',
             model: formModel,
             encoding: {
-              'user_name': const PropertyEncoding(allowReserved: true),
+              'user_name': _reserved(true),
             },
             context: testContext,
           );
@@ -2296,22 +2296,24 @@ void main() {
                 model: userModel,
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
-                encoding: {
-                  'name': const PropertyEncoding(
+                multipartEncoding: _multipartEncodingByName(userModel, {
+                  'name': const PartEncoding(
                     contentType: ContentType.text,
                     rawContentType: 'text/plain',
+                    headers: null,
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
                   ),
-                  'nickname': const PropertyEncoding(
+                  'nickname': const PartEncoding(
                     contentType: ContentType.text,
                     rawContentType: 'text/plain',
+                    headers: null,
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
                   ),
-                },
+                }),
                 examples: const [],
               ),
             },
@@ -2381,10 +2383,13 @@ void main() {
                   model: uploadModel,
                   contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
-                  encoding: {
-                    'file': PropertyEncoding(
+                  multipartEncoding: _multipartEncodingByName(uploadModel, {
+                    'file': PartEncoding(
                       contentType: ContentType.bytes,
                       rawContentType: 'application/octet-stream',
+                      style: null,
+                      explode: null,
+                      allowReserved: null,
                       headers: {
                         'X-Rate-Limit': ResponseHeaderObject(
                           name: 'X-Rate-Limit',
@@ -2399,7 +2404,7 @@ void main() {
                         ),
                       },
                     ),
-                  },
+                  }),
                   examples: const [],
                 ),
               },
@@ -2487,15 +2492,16 @@ void main() {
                 model: formModel,
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
-                encoding: {
-                  'name': const PropertyEncoding(
+                multipartEncoding: _multipartEncodingByName(formModel, {
+                  'name': const PartEncoding(
                     contentType: ContentType.text,
                     rawContentType: 'text/plain',
+                    headers: null,
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
                   ),
-                },
+                }),
                 examples: const [],
               ),
             },
@@ -2749,10 +2755,10 @@ void main() {
                   contentType: ContentType.form,
                   rawContentType: 'application/x-www-form-urlencoded',
                   examples: const [],
-                  encoding: {
-                    'reserved': const PropertyEncoding(allowReserved: true),
-                    'plain': const PropertyEncoding(allowReserved: false),
-                  },
+                  formEncoding: _formEncodingByName(formModel, {
+                    'reserved': _reserved(true),
+                    'plain': _reserved(false),
+                  }),
                 ),
               },
             ),
@@ -2834,15 +2840,16 @@ void main() {
                   model: userModel,
                   contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
-                  encoding: {
-                    'name': const PropertyEncoding(
+                  multipartEncoding: _multipartEncodingByName(userModel, {
+                    'name': const PartEncoding(
                       contentType: ContentType.text,
                       rawContentType: 'text/plain',
+                      headers: null,
                       style: EncodingStyle.form,
                       explode: true,
                       allowReserved: false,
                     ),
-                  },
+                  }),
                   examples: const [],
                 ),
               },
@@ -2925,10 +2932,13 @@ void main() {
                   model: uploadModel,
                   contentType: ContentType.multipart,
                   rawContentType: 'multipart/form-data',
-                  encoding: {
-                    'file': PropertyEncoding(
+                  multipartEncoding: _multipartEncodingByName(uploadModel, {
+                    'file': PartEncoding(
                       contentType: ContentType.bytes,
                       rawContentType: 'application/octet-stream',
+                      style: null,
+                      explode: null,
+                      allowReserved: null,
                       headers: {
                         'X-Checksum': ResponseHeaderObject(
                           name: 'X-Checksum',
@@ -2943,7 +2953,7 @@ void main() {
                         ),
                       },
                     ),
-                  },
+                  }),
                   examples: const [],
                 ),
               },
@@ -3241,10 +3251,33 @@ void main() {
   });
 }
 
+FieldEncoding _reserved(bool allowReserved) =>
+    FieldEncoding(allowReserved: allowReserved, style: null, explode: null);
+
+Map<Property, FieldEncoding> _formEncodingByName(
+  ClassModel model,
+  Map<String, FieldEncoding> byName,
+) {
+  return {
+    for (final entry in byName.entries)
+      model.properties.firstWhere((p) => p.name == entry.key): entry.value,
+  };
+}
+
+Map<Property, PartEncoding> _multipartEncodingByName(
+  ClassModel model,
+  Map<String, PartEncoding> byName,
+) {
+  return {
+    for (final entry in byName.entries)
+      model.properties.firstWhere((p) => p.name == entry.key): entry.value,
+  };
+}
+
 Operation _formOperation({
   required String operationId,
   required ClassModel model,
-  required Map<String, PropertyEncoding> encoding,
+  required Map<String, FieldEncoding> encoding,
   required Context context,
 }) {
   return Operation(
@@ -3262,7 +3295,7 @@ Operation _formOperation({
           contentType: ContentType.form,
           rawContentType: 'application/x-www-form-urlencoded',
           examples: const [],
-          encoding: encoding,
+          formEncoding: _formEncodingByName(model, encoding),
         ),
       },
     ),

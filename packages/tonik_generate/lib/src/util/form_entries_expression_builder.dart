@@ -110,21 +110,16 @@ Expression? buildFormEntriesValueExpression(
   }
 }
 
-/// Gates the per-property form-body path, which only an `allowReserved` flag
-/// needs. It stays on the byte-identical object-level `body.toForm()` path
-/// unless a writable, emitted property of [model] carries the flag — a flag on
-/// a read-only property or an unmatched key has no emitted effect.
+/// True when a writable, emitted property of [model] carries `allowReserved` —
+/// the only case that needs the per-property form-body path.
 bool formBodyHasAllowReserved(
-  Map<String, PropertyEncoding>? encoding,
+  Map<Property, FieldEncoding>? encoding,
   ClassModel model,
 ) {
   if (encoding == null) return false;
-  final emittedNames = {
-    for (final property in model.properties)
-      if (!property.isReadOnly) property.name,
-  };
-  return encoding.entries.any(
-    (e) => (e.value.allowReserved ?? false) && emittedNames.contains(e.key),
+  return model.properties.any(
+    (property) =>
+        !property.isReadOnly && (encoding[property]?.allowReserved ?? false),
   );
 }
 
@@ -139,7 +134,7 @@ bool formBodyHasAllowReserved(
 buildClassFormEntriesExpression(
   Expression receiver,
   ClassModel model,
-  Map<String, PropertyEncoding>? encoding, {
+  Map<Property, FieldEncoding>? encoding, {
   bool useImmutableCollections = false,
 }) {
   final normalizedProps = normalizeProperties(model.properties.toList())
@@ -151,7 +146,7 @@ buildClassFormEntriesExpression(
     final entryCodes = _buildPropertyFormEntry(
       receiver.property(normalizedName),
       property,
-      encoding?[property.name]?.allowReserved ?? false,
+      encoding?[property]?.allowReserved ?? false,
       useImmutableCollections: useImmutableCollections,
     );
     if (entryCodes == null) {

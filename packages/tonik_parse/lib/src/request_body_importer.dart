@@ -124,25 +124,26 @@ class RequestBodyImporter {
               context.push('body'),
             );
 
-            final encoding = switch (contentType) {
-              core.ContentType.multipart => _populateMultipartDefaults(
-                name: name,
-                model: model,
-                explicitEncoding: explicitEncoding,
-              ),
-              core.ContentType.form when hasEncoding => _importFormEncoding(
-                mediaType.encoding!,
-                model,
-              ),
-              _ => null,
-            };
+            final formEncoding =
+                contentType == core.ContentType.form && hasEncoding
+                ? _importFormEncoding(mediaType.encoding!, model)
+                : null;
+            final multipartEncoding =
+                contentType == core.ContentType.multipart
+                ? _populateMultipartDefaults(
+                    name: name,
+                    model: model,
+                    explicitEncoding: explicitEncoding,
+                  )
+                : null;
 
             content.add(
               core.RequestContent(
                 model: model,
                 rawContentType: rawContentType,
                 contentType: contentType,
-                encoding: encoding,
+                formEncoding: formEncoding,
+                multipartEncoding: multipartEncoding,
                 examples: exampleImporter.fromMediaType(mediaType),
               ),
             );
@@ -189,10 +190,10 @@ class RequestBodyImporter {
     }
   }
 
-  Map<String, core.PropertyEncoding>? _populateMultipartDefaults({
+  Map<core.Property, core.PartEncoding>? _populateMultipartDefaults({
     required String? name,
     required core.Model model,
-    required Map<String, core.PropertyEncoding>? explicitEncoding,
+    required Map<String, core.PartEncoding>? explicitEncoding,
   }) {
     // Resolve through aliases to find the underlying model
     final resolved = model.resolved;
@@ -222,9 +223,12 @@ class RequestBodyImporter {
       }
     }
 
-    final result = <String, core.PropertyEncoding>{};
+    final result = <core.Property, core.PartEncoding>{};
 
     for (final property in resolved.properties) {
+      // Encoding on a read-only property is meaningless; it is not sent.
+      if (property.isReadOnly) continue;
+
       final existing = explicitEncoding?[property.name];
       final defaultContentType = _resolveDefaultContentType(property.model);
       final defaultRawContentType = _resolveDefaultRawContentType(
@@ -232,7 +236,7 @@ class RequestBodyImporter {
       );
 
       final isStyleBased = existing?.isStyleBased ?? false;
-      result[property.name] = core.PropertyEncoding(
+      result[property] = core.PartEncoding(
         contentType: isStyleBased
             ? null
             : (existing?.contentType ?? defaultContentType),
@@ -279,29 +283,43 @@ class RequestBodyImporter {
     };
   }
 
-  /// Unlike the multipart path, no per-property content-type default is
-  /// applied, and allowReserved is captured regardless of OpenAPI version.
-  Map<String, core.PropertyEncoding> _importFormEncoding(
+  /// Unmatched keys and read-only properties are dropped: the former have no
+  /// field to describe, the latter are never sent. No per-property content-type
+  /// default is applied, unlike the multipart path.
+  Map<core.Property, core.FieldEncoding>? _importFormEncoding(
     Map<String, Encoding> encodingMap,
     core.Model model,
   ) {
     final resolved = model.resolved;
-    final propertyNames = resolved is core.ClassModel
-        ? resolved.properties.map((p) => p.name).toSet()
+    final propertiesByName = resolved is core.ClassModel
+        ? {for (final p in resolved.properties) p.name: p}
         : null;
 
-    final result = <String, core.PropertyEncoding>{};
+    if (propertiesByName == null && encodingMap.isNotEmpty) {
+      log.warning(
+        'Form-urlencoded body has a non-object schema '
+        '(${resolved.runtimeType}). Its encoding block '
+        '(${encodingMap.keys.join(', ')}) has no fields to describe and '
+        'is ignored.',
+      );
+    }
+
+    final result = <core.Property, core.FieldEncoding>{};
     for (final entry in encodingMap.entries) {
       final encoding = entry.value;
+      final property = propertiesByName?[entry.key];
 
-      if (propertyNames != null && !propertyNames.contains(entry.key)) {
+      if (propertiesByName != null && property == null) {
         log.warning(
           'Encoding key "${entry.key}" does not match any property '
           'on the form-urlencoded schema. Ignoring.',
         );
+        continue;
       }
 
-      result[entry.key] = core.PropertyEncoding(
+      if (property == null || property.isReadOnly) continue;
+
+      result[property] = core.FieldEncoding(
         style: _mapSerializationStyle(encoding.style),
         explode: encoding.explode,
         allowReserved: encoding.allowReserved ?? false,
@@ -329,11 +347,11 @@ class RequestBodyImporter {
     return headers;
   }
 
-  Map<String, core.PropertyEncoding> _importEncoding(
+  Map<String, core.PartEncoding> _importEncoding(
     Map<String, Encoding> encodingMap,
     core.Context context,
   ) {
-    final result = <String, core.PropertyEncoding>{};
+    final result = <String, core.PartEncoding>{};
     final isOas30 = openApiObject.openapi.startsWith('3.0');
     for (final entry in encodingMap.entries) {
       final propertyName = entry.key;
@@ -361,7 +379,7 @@ class RequestBodyImporter {
                 core.EncodingStyle.form)
           : null;
 
-      result[propertyName] = core.PropertyEncoding(
+      result[propertyName] = core.PartEncoding(
         contentType: useStyleMode ? null : resolvedContentType,
         rawContentType: useStyleMode ? null : encoding.contentType,
         headers: headers,

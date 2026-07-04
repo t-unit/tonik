@@ -877,14 +877,14 @@ void main() {
       expect(content.model, isA<ClassModel>());
 
       // Default encoding should be populated for all properties
-      expect(content.encoding, isNotNull);
-      expect(content.encoding, hasLength(2));
+      expect(content.multipartEncoding, isNotNull);
+      expect(content.multipartEncoding, hasLength(2));
 
-      final fileEncoding = content.encoding!['file']!;
+      final fileEncoding = partEncodingFor(content, 'file')!;
       expect(fileEncoding.contentType, ContentType.bytes);
       expect(fileEncoding.rawContentType, 'application/octet-stream');
 
-      final descriptionEncoding = content.encoding!['description']!;
+      final descriptionEncoding = partEncodingFor(content, 'description')!;
       expect(descriptionEncoding.contentType, ContentType.text);
       expect(descriptionEncoding.rawContentType, 'text/plain');
     });
@@ -925,16 +925,16 @@ void main() {
                 as RequestBodyObject;
 
         final content = body.content.first;
-        expect(content.encoding, isNotNull);
-        expect(content.encoding, hasLength(2));
+        expect(content.multipartEncoding, isNotNull);
+        expect(content.multipartEncoding, hasLength(2));
 
         // format: byte → Base64Model → application/octet-stream (spec-correct)
-        final dataEncoding = content.encoding!['data']!;
+        final dataEncoding = partEncodingFor(content, 'data')!;
         expect(dataEncoding.contentType, ContentType.bytes);
         expect(dataEncoding.rawContentType, 'application/octet-stream');
 
         // plain string → text/plain
-        final nameEncoding = content.encoding!['name']!;
+        final nameEncoding = partEncodingFor(content, 'name')!;
         expect(nameEncoding.contentType, ContentType.text);
         expect(nameEncoding.rawContentType, 'text/plain');
       },
@@ -999,10 +999,10 @@ void main() {
               as RequestBodyObject;
 
       final content = body.content.first;
-      expect(content.encoding, isNotNull);
-      expect(content.encoding, hasLength(3));
+      expect(content.multipartEncoding, isNotNull);
+      expect(content.multipartEncoding, hasLength(3));
 
-      final idEncoding = content.encoding!['id']!;
+      final idEncoding = partEncodingFor(content, 'id')!;
       // OAS 3.1: contentType SHALL be ignored when style fields are present
       expect(idEncoding.contentType, isNull);
       expect(idEncoding.rawContentType, isNull);
@@ -1010,7 +1010,7 @@ void main() {
       expect(idEncoding.explode, isTrue);
       expect(idEncoding.allowReserved, isFalse);
 
-      final addressEncoding = content.encoding!['address']!;
+      final addressEncoding = partEncodingFor(content, 'address')!;
       // OAS 3.1: contentType SHALL be ignored when style fields are present
       expect(addressEncoding.contentType, isNull);
       expect(addressEncoding.rawContentType, isNull);
@@ -1018,7 +1018,7 @@ void main() {
       expect(addressEncoding.explode, isTrue);
       expect(addressEncoding.allowReserved, isFalse);
 
-      final imageEncoding = content.encoding!['profileImage']!;
+      final imageEncoding = partEncodingFor(content, 'profileImage')!;
       expect(imageEncoding.rawContentType, 'image/png');
       expect(imageEncoding.style, isNull);
       expect(imageEncoding.explode, isNull);
@@ -1073,9 +1073,9 @@ void main() {
               as RequestBodyObject;
 
       final content = body.content.first;
-      expect(content.encoding, isNotNull);
+      expect(content.multipartEncoding, isNotNull);
 
-      final fileEncoding = content.encoding!['file']!;
+      final fileEncoding = partEncodingFor(content, 'file')!;
       expect(fileEncoding.contentType, ContentType.bytes);
       expect(fileEncoding.rawContentType, 'application/octet-stream');
       expect(fileEncoding.style, isNull);
@@ -1120,10 +1120,10 @@ void main() {
 
       final content = body.content.first;
       expect(content.contentType, ContentType.multipart);
-      expect(content.encoding, isNotNull);
-      expect(content.encoding, hasLength(1));
+      expect(content.multipartEncoding, isNotNull);
+      expect(content.multipartEncoding, hasLength(1));
 
-      final nameEncoding = content.encoding!['name']!;
+      final nameEncoding = partEncodingFor(content, 'name')!;
       expect(nameEncoding.contentType, ContentType.text);
       expect(nameEncoding.rawContentType, 'text/plain');
       expect(nameEncoding.style, isNull);
@@ -1188,10 +1188,10 @@ void main() {
           ),
         );
 
-        expect(content.encoding, isNotNull);
-        expect(content.encoding, hasLength(1));
+        expect(content.multipartEncoding, isNotNull);
+        expect(content.multipartEncoding, hasLength(1));
 
-        final encoding = content.encoding!['name']!;
+        final encoding = partEncodingFor(content, 'name')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
         expect(encoding.style, isNull);
@@ -1208,7 +1208,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['count']!;
+        final encoding = partEncodingFor(content, 'count')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
         expect(encoding.style, isNull);
@@ -1225,7 +1225,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['active']!;
+        final encoding = partEncodingFor(content, 'active')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
       });
@@ -1239,7 +1239,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['file']!;
+        final encoding = partEncodingFor(content, 'file')!;
         expect(encoding.contentType, ContentType.bytes);
         expect(encoding.rawContentType, 'application/octet-stream');
         expect(encoding.style, isNull);
@@ -1261,7 +1261,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['address']!;
+        final encoding = partEncodingFor(content, 'address')!;
         expect(encoding.contentType, ContentType.json);
         expect(encoding.rawContentType, 'application/json');
       });
@@ -1281,7 +1281,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['data']!;
+        final encoding = partEncodingFor(content, 'data')!;
         expect(encoding.contentType, ContentType.json);
         expect(encoding.rawContentType, 'application/json');
       });
@@ -1303,7 +1303,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['items']!;
+        final encoding = partEncodingFor(content, 'items')!;
         expect(encoding.contentType, ContentType.json);
         expect(encoding.rawContentType, 'application/json');
       });
@@ -1320,7 +1320,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['tags']!;
+        final encoding = partEncodingFor(content, 'tags')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
       });
@@ -1340,7 +1340,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['matrix']!;
+        final encoding = partEncodingFor(content, 'matrix')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
       });
@@ -1361,7 +1361,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['values']!;
+        final encoding = partEncodingFor(content, 'values')!;
         expect(encoding.contentType, ContentType.json);
         expect(encoding.rawContentType, 'application/json');
       });
@@ -1378,7 +1378,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['label']!;
+        final encoding = partEncodingFor(content, 'label')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
       });
@@ -1395,7 +1395,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['status']!;
+        final encoding = partEncodingFor(content, 'status')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
       });
@@ -1422,7 +1422,7 @@ void main() {
             ),
           );
 
-          final encoding = content.encoding!['data']!;
+          final encoding = partEncodingFor(content, 'data')!;
           // OAS 3.1: when style fields are present, contentType SHALL be
           // ignored
           expect(encoding.rawContentType, isNull);
@@ -1457,7 +1457,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['data']!;
+        final encoding = partEncodingFor(content, 'data')!;
         // contentType is preserved (not affected by version)
         expect(encoding.rawContentType, 'application/xml');
         // OAS 3.0 always uses content-based mode: style fields are null
@@ -1485,7 +1485,7 @@ void main() {
             ),
           );
 
-          final encoding = content.encoding!['data']!;
+          final encoding = partEncodingFor(content, 'data')!;
           expect(encoding.rawContentType, 'application/xml');
           // No style fields set → content-based mode
           expect(encoding.style, isNull);
@@ -1511,7 +1511,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['data']!;
+        final encoding = partEncodingFor(content, 'data')!;
         // explode explicitly set → style-based mode with defaults filled
         expect(encoding.style, EncodingStyle.form);
         expect(encoding.explode, isFalse);
@@ -1535,7 +1535,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['data']!;
+        final encoding = partEncodingFor(content, 'data')!;
         // explode explicitly set to true (even though it's the form default)
         // still triggers style-based mode
         expect(encoding.style, EncodingStyle.form);
@@ -1560,7 +1560,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['data']!;
+        final encoding = partEncodingFor(content, 'data')!;
         // allowReserved explicitly set → style-based mode with defaults filled
         expect(encoding.style, EncodingStyle.form);
         expect(encoding.explode, isTrue);
@@ -1585,7 +1585,7 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['data']!;
+        final encoding = partEncodingFor(content, 'data')!;
         // form style → explode defaults to true per OAS spec
         expect(encoding.style, EncodingStyle.form);
         expect(encoding.explode, isTrue);
@@ -1610,11 +1610,49 @@ void main() {
           ),
         );
 
-        final encoding = content.encoding!['data']!;
+        final encoding = partEncodingFor(content, 'data')!;
         // non-form style → explode defaults to false per OAS spec
         expect(encoding.style, EncodingStyle.deepObject);
         expect(encoding.explode, isFalse);
         expect(encoding.allowReserved, isFalse);
+      });
+
+      test('multipart encoding map is keyed by the declared Property '
+          'instance', () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'name': {'type': 'string'},
+            },
+          ),
+        );
+
+        final classModel = content.model.resolved as ClassModel;
+        final nameProperty = classModel.properties.single;
+        expect(content.multipartEncoding!.keys.single, same(nameProperty));
+      });
+
+      test('multipart encoding on an alias-chain property keys by declared '
+          'Property', () {
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'label': {r'$ref': '#/components/schemas/MyString'},
+            },
+            schemas: {
+              'MyString': {'type': 'string'},
+            },
+          ),
+        );
+
+        final classModel = content.model.resolved as ClassModel;
+        final labelProperty = classModel.properties.single;
+        expect(labelProperty.model, isA<AliasModel>());
+        expect(content.multipartEncoding!.keys.single, same(labelProperty));
+        expect(
+          content.multipartEncoding![labelProperty]!.contentType,
+          ContentType.text,
+        );
       });
 
       test('mixed map: style-based property and content-based property '
@@ -1637,21 +1675,21 @@ void main() {
         );
 
         // 'styled' has explicit style → style-based mode
-        final styledEncoding = content.encoding!['styled']!;
+        final styledEncoding = partEncodingFor(content, 'styled')!;
         expect(styledEncoding.style, EncodingStyle.deepObject);
         expect(styledEncoding.explode, isFalse);
         expect(styledEncoding.allowReserved, isFalse);
         expect(styledEncoding.isStyleBased, isTrue);
 
         // 'plain' has no explicit encoding → content-based mode
-        final plainEncoding = content.encoding!['plain']!;
+        final plainEncoding = partEncodingFor(content, 'plain')!;
         expect(plainEncoding.style, isNull);
         expect(plainEncoding.explode, isNull);
         expect(plainEncoding.allowReserved, isNull);
         expect(plainEncoding.isStyleBased, isFalse);
       });
 
-      test('readOnly properties are included in encoding map', () {
+      test('readOnly properties are dropped from encoding map', () {
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1664,9 +1702,9 @@ void main() {
           ),
         );
 
-        expect(content.encoding, hasLength(2));
-        expect(content.encoding!['id'], isNotNull);
-        expect(content.encoding!['name'], isNotNull);
+        expect(content.multipartEncoding, hasLength(1));
+        expect(partEncodingFor(content, 'id'), isNull);
+        expect(partEncodingFor(content, 'name'), isNotNull);
       });
 
       test('writeOnly properties are included in encoding map', () {
@@ -1681,16 +1719,10 @@ void main() {
           ),
         );
 
-        expect(content.encoding, hasLength(1));
-        expect(content.encoding!['password'], isNotNull);
-        expect(
-          content.encoding!['password']!.contentType,
-          ContentType.text,
-        );
-        expect(
-          content.encoding!['password']!.rawContentType,
-          'text/plain',
-        );
+        expect(content.multipartEncoding, hasLength(1));
+        final password = partEncodingFor(content, 'password')!;
+        expect(password.contentType, ContentType.text);
+        expect(password.rawContentType, 'text/plain');
       });
 
       test(
@@ -1704,7 +1736,7 @@ void main() {
             ),
           );
 
-          final encoding = content.encoding!['encoded']!;
+          final encoding = partEncodingFor(content, 'encoded')!;
           expect(encoding.contentType, ContentType.bytes);
           expect(encoding.rawContentType, 'application/octet-stream');
         },
@@ -1721,7 +1753,7 @@ void main() {
             },
           ),
         );
-        final encoding = content.encoding!['data']!;
+        final encoding = partEncodingFor(content, 'data')!;
         expect(encoding.contentType, ContentType.text);
         expect(encoding.rawContentType, 'text/plain');
       });
@@ -1739,7 +1771,7 @@ void main() {
               },
             ),
           );
-          final encoding = content.encoding!['data']!;
+          final encoding = partEncodingFor(content, 'data')!;
           expect(encoding.contentType, ContentType.bytes);
           expect(encoding.rawContentType, 'application/octet-stream');
         },
@@ -1779,7 +1811,7 @@ void main() {
 
         final content = body.content.first;
         expect(content.contentType, ContentType.form);
-        expect(content.encoding, isNull);
+        expect(content.formEncoding, isNull);
       });
 
       test('encoding keys not matching any property log warning '
@@ -1801,9 +1833,9 @@ void main() {
           ),
         );
 
-        expect(content.encoding, hasLength(1));
-        expect(content.encoding!['name'], isNotNull);
-        expect(content.encoding!.containsKey('nonExistent'), isFalse);
+        expect(content.multipartEncoding, hasLength(1));
+        expect(partEncodingFor(content, 'name'), isNotNull);
+        expect(_propertyNamed(content, 'nonExistent'), isNull);
         expect(
           logs.any(
             (r) =>
@@ -1830,15 +1862,15 @@ void main() {
           ),
         );
 
-        expect(content.encoding, hasLength(4));
-        expect(content.encoding!['name']!.contentType, ContentType.text);
-        expect(content.encoding!['age']!.contentType, ContentType.text);
+        expect(content.multipartEncoding, hasLength(4));
+        expect(partEncodingFor(content, 'name')!.contentType, ContentType.text);
+        expect(partEncodingFor(content, 'age')!.contentType, ContentType.text);
         expect(
-          content.encoding!['photo']!.contentType,
+          partEncodingFor(content, 'photo')!.contentType,
           ContentType.bytes,
         );
         expect(
-          content.encoding!['metadata']!.contentType,
+          partEncodingFor(content, 'metadata')!.contentType,
           ContentType.json,
         );
       });
@@ -1877,7 +1909,7 @@ void main() {
                 as RequestBodyObject;
 
         final content = body.content.first;
-        expect(content.encoding, isNull);
+        expect(content.multipartEncoding, isNull);
         expect(
           logs.any(
             (r) =>
@@ -1982,13 +2014,12 @@ void main() {
       );
 
       expect(content.contentType, ContentType.form);
-      expect(content.encoding, isNotNull);
-      expect(content.encoding, hasLength(1));
-      final filterEncoding = content.encoding!['filter']!;
+      expect(content.formEncoding, isNotNull);
+      expect(content.formEncoding, hasLength(1));
+      final filterEncoding = fieldEncodingFor(content, 'filter')!;
       expect(filterEncoding.allowReserved, isTrue);
       expect(filterEncoding.style, isNull);
       expect(filterEncoding.explode, isNull);
-      expect(filterEncoding.headers, isNull);
     });
 
     test('encoding is null when no encoding object is present', () {
@@ -2001,7 +2032,7 @@ void main() {
       );
 
       expect(content.contentType, ContentType.form);
-      expect(content.encoding, isNull);
+      expect(content.formEncoding, isNull);
     });
 
     test(
@@ -2018,7 +2049,7 @@ void main() {
           ),
         );
 
-        expect(content.encoding!['name']!.allowReserved, isFalse);
+        expect(fieldEncodingFor(content, 'name')!.allowReserved, isFalse);
       },
     );
 
@@ -2035,7 +2066,7 @@ void main() {
         ),
       );
 
-      expect(content.encoding!['filter']!.allowReserved, isTrue);
+      expect(fieldEncodingFor(content, 'filter')!.allowReserved, isTrue);
     });
 
     test('captures allowReserved true under OAS 3.1', () {
@@ -2050,7 +2081,7 @@ void main() {
         ),
       );
 
-      expect(content.encoding!['filter']!.allowReserved, isTrue);
+      expect(fieldEncodingFor(content, 'filter')!.allowReserved, isTrue);
     });
 
     test('does not apply multipart per-property content type defaults', () {
@@ -2071,11 +2102,11 @@ void main() {
         ),
       );
 
-      expect(content.encoding, hasLength(1));
-      final nameEncoding = content.encoding!['name']!;
-      expect(nameEncoding.contentType, isNull);
-      expect(nameEncoding.rawContentType, isNull);
-      expect(content.encoding!.containsKey('meta'), isFalse);
+      expect(content.formEncoding, hasLength(1));
+      expect(fieldEncodingFor(content, 'name'), isNotNull);
+      final metaProperty = _propertyNamed(content, 'meta');
+      expect(metaProperty, isNotNull);
+      expect(content.formEncoding!.containsKey(metaProperty), isFalse);
     });
 
     test('captures style and explode from encoding object', () {
@@ -2093,7 +2124,7 @@ void main() {
         ),
       );
 
-      final idsEncoding = content.encoding!['ids']!;
+      final idsEncoding = fieldEncodingFor(content, 'ids')!;
       expect(idsEncoding.style, EncodingStyle.spaceDelimited);
       expect(idsEncoding.explode, isFalse);
       expect(idsEncoding.allowReserved, isFalse);
@@ -2118,7 +2149,13 @@ void main() {
       );
 
       expect(content.contentType, ContentType.form);
-      expect(content.encoding!['name'], isNotNull);
+      expect(fieldEncodingFor(content, 'name'), isNotNull);
+      expect(content.formEncoding, hasLength(1));
+      expect(_propertyNamed(content, 'nonExistent'), isNull);
+      expect(
+        content.formEncoding!.keys.any((p) => p.name == 'nonExistent'),
+        isFalse,
+      );
       expect(
         logs.any(
           (r) =>
@@ -2145,7 +2182,7 @@ void main() {
         ),
       );
 
-      expect(content.encoding!['name']!.allowReserved, isTrue);
+      expect(fieldEncodingFor(content, 'name')!.allowReserved, isTrue);
       expect(
         logs.any(
           (r) =>
@@ -2156,33 +2193,7 @@ void main() {
       );
     });
 
-    test('form-urlencoded ignores encoding object headers', () {
-      final content = importFormContent(
-        formSpec(
-          properties: {
-            'name': {'type': 'string'},
-          },
-          encoding: {
-            'name': {
-              'headers': {
-                'X-Custom': {r'$ref': '#/components/headers/X-Custom'},
-              },
-            },
-          },
-          headers: {
-            'X-Custom': {
-              'description': 'A custom header',
-              'schema': {'type': 'string'},
-            },
-          },
-        ),
-      );
-
-      expect(content.encoding!['name']!.headers, isNull);
-    });
-
-    test('non-object schema captures encoding without unmatched-key warning',
-        () {
+    test('non-object schema with an encoding block logs a warning', () {
       final logs = <LogRecord>[];
       final sub = Logger.root.onRecord.listen(logs.add);
 
@@ -2213,15 +2224,14 @@ void main() {
         },
       });
 
-      expect(content.encoding!['ids'], isNotNull);
-      expect(content.encoding!['ids']!.allowReserved, isTrue);
+      expect(content.formEncoding, isEmpty);
       expect(
         logs.any(
           (r) =>
               r.level == Level.WARNING &&
-              r.message.contains('form-urlencoded schema'),
+              r.message.contains('non-object schema'),
         ),
-        isFalse,
+        isTrue,
       );
     });
 
@@ -2237,12 +2247,12 @@ void main() {
         ),
       );
 
-      expect(content.encoding, hasLength(1));
-      final nameEncoding = content.encoding!['name']!;
+      expect(content.formEncoding, hasLength(1));
+      final nameEncoding = fieldEncodingFor(content, 'name')!;
       expect(nameEncoding.style, isNull);
     });
 
-    test('explicit contentType is not captured on the form path', () {
+    test('form encoding captures the property with default field values', () {
       final content = importFormContent(
         formSpec(
           properties: {
@@ -2254,9 +2264,114 @@ void main() {
         ),
       );
 
-      final nameEncoding = content.encoding!['name']!;
-      expect(nameEncoding.contentType, isNull);
-      expect(nameEncoding.rawContentType, isNull);
+      final nameEncoding = fieldEncodingFor(content, 'name')!;
+      expect(nameEncoding.allowReserved, isFalse);
+      expect(nameEncoding.style, isNull);
+      expect(nameEncoding.explode, isNull);
+    });
+
+    test('form encoding map is keyed by the declared Property instance', () {
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'name': {'type': 'string'},
+          },
+          encoding: {
+            'name': {'allowReserved': true},
+          },
+        ),
+      );
+
+      final classModel = content.model.resolved as ClassModel;
+      final nameProperty = classModel.properties.single;
+      expect(content.formEncoding!.keys.single, same(nameProperty));
+      expect(content.formEncoding![nameProperty]!.allowReserved, isTrue);
+    });
+
+    test('read-only form property is dropped from the encoding map '
+        'without a warning', () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+
+      addTearDown(sub.cancel);
+
+      final content = importFormContent(
+        formSpec(
+          properties: {
+            'id': {'type': 'string', 'readOnly': true},
+            'name': {'type': 'string'},
+          },
+          encoding: {
+            'id': {'allowReserved': true},
+            'name': {'allowReserved': true},
+          },
+        ),
+      );
+
+      expect(content.formEncoding, hasLength(1));
+      expect(fieldEncodingFor(content, 'id'), isNull);
+      expect(fieldEncodingFor(content, 'name'), isNotNull);
+      expect(
+        logs.any((r) => r.level == Level.WARNING),
+        isFalse,
+      );
+    });
+
+    test('form encoding on an alias-chain property keys by declared '
+        'Property', () {
+      final content = importFormContent({
+        'openapi': '3.1.0',
+        'info': {'title': 'Test', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'MyString': {'type': 'string'},
+          },
+          'requestBodies': {
+            'FormBody': {
+              'description': 'Form body',
+              'required': true,
+              'content': {
+                'application/x-www-form-urlencoded': {
+                  'schema': {
+                    'type': 'object',
+                    'properties': {
+                      'label': {r'$ref': '#/components/schemas/MyString'},
+                    },
+                  },
+                  'encoding': {
+                    'label': {'allowReserved': true},
+                  },
+                },
+              },
+            },
+          },
+        },
+      });
+
+      final classModel = content.model.resolved as ClassModel;
+      final labelProperty = classModel.properties.single;
+      expect(labelProperty.model, isA<AliasModel>());
+      expect(content.formEncoding!.keys.single, same(labelProperty));
+      expect(content.formEncoding![labelProperty]!.allowReserved, isTrue);
     });
   });
+}
+
+Property? _propertyNamed(RequestContent content, String name) {
+  final resolved = content.model.resolved;
+  if (resolved is! ClassModel) return null;
+  return resolved.properties.firstWhereOrNull((p) => p.name == name);
+}
+
+PartEncoding? partEncodingFor(RequestContent content, String name) {
+  final property = _propertyNamed(content, name);
+  if (property == null) return null;
+  return content.multipartEncoding?[property];
+}
+
+FieldEncoding? fieldEncodingFor(RequestContent content, String name) {
+  final property = _propertyNamed(content, name);
+  if (property == null) return null;
+  return content.formEncoding?[property];
 }

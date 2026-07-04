@@ -981,12 +981,23 @@ void main() {
       });
 
       test('preserves encoding when normalizing multipart request content', () {
+        final fileProperty = Property(
+          name: 'file',
+          model: BinaryModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        );
         final encoding = {
-          'file': const PropertyEncoding(
+          fileProperty: const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
+            headers: null,
             style: EncodingStyle.form,
             explode: true,
+            allowReserved: null,
           ),
         };
 
@@ -999,14 +1010,14 @@ void main() {
             RequestContent(
               model: ClassModel(
                 name: 'UploadData',
-                properties: const [],
+                properties: [fileProperty],
                 context: context,
                 isDeprecated: false,
                 examples: const [],
               ),
               rawContentType: 'multipart/form-data',
               contentType: ContentType.multipart,
-              encoding: encoding,
+              multipartEncoding: encoding,
               examples: const [],
             ),
           },
@@ -1032,8 +1043,74 @@ void main() {
             transformed.requestBodies.first as RequestBodyObject;
         final content = transformedBody.content.first;
 
-        expect(content.encoding, isNotNull);
-        expect(content.encoding, equals(encoding));
+        expect(content.multipartEncoding, isNotNull);
+        expect(content.multipartEncoding, equals(encoding));
+        expect(content.multipartEncoding!.keys.single, same(fileProperty));
+      });
+
+      test('preserves encoding when normalizing form request content', () {
+        final nameProperty = Property(
+          name: 'name',
+          model: StringModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        );
+        final encoding = {
+          nameProperty: const FieldEncoding(
+            allowReserved: true,
+            style: EncodingStyle.form,
+            explode: true,
+          ),
+        };
+
+        final requestBody = RequestBodyObject(
+          name: 'FilterForm',
+          context: context,
+          description: 'Form with encoding',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'FilterData',
+                properties: [nameProperty],
+                context: context,
+                isDeprecated: false,
+                examples: const [],
+              ),
+              rawContentType: 'application/x-www-form-urlencoded',
+              contentType: ContentType.form,
+              formEncoding: encoding,
+              examples: const [],
+            ),
+          },
+        );
+
+        final document = ApiDocument(
+          title: 'Test API',
+          version: '1.0.0',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: {requestBody},
+        );
+
+        final transformed = normalizer.apply(document);
+        final transformedBody =
+            transformed.requestBodies.first as RequestBodyObject;
+        final content = transformedBody.content.first;
+
+        expect(content.formEncoding, isNotNull);
+        expect(content.formEncoding, equals(encoding));
+        expect(content.formEncoding!.keys.single, same(nameProperty));
       });
 
       test('logs warning when replacing model for text content type', () {

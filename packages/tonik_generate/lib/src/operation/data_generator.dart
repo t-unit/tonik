@@ -131,7 +131,7 @@ class DataGenerator {
             final formModel = c.model.resolved;
             final perProperty =
                 formModel is ClassModel &&
-                formBodyHasAllowReserved(c.encoding, formModel);
+                formBodyHasAllowReserved(c.formEncoding, formModel);
             switchCases
               ..add(Code(perProperty ? ' value => ' : ' value => value.'))
               ..add(
@@ -140,7 +140,7 @@ class DataGenerator {
                   c.model,
                   useQueryComponent: true,
                   useImmutableCollections: useImmutableCollections,
-                  encoding: perProperty ? c.encoding : null,
+                  encoding: perProperty ? c.formEncoding : null,
                 ).code,
               )
               ..add(const Code(','));
@@ -291,7 +291,7 @@ class DataGenerator {
           model,
           useQueryComponent: true,
           useImmutableCollections: useImmutableCollections,
-          encoding: content.first.encoding,
+          encoding: content.first.formEncoding,
         );
         bodyCode
           ..clear()

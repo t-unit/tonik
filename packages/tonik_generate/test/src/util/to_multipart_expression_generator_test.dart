@@ -75,15 +75,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'name': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'name': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -132,15 +133,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'name': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'name': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -191,15 +193,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'nickname': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'nickname': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -250,15 +253,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'bio': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'bio': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -299,7 +303,7 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: const {},
+        multipartEncoding: const {},
         examples: const [],
       );
 
@@ -420,15 +424,16 @@ void main() {
         ),
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'title': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(classModel, {
+          'title': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -487,15 +492,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'name': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'name': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -545,15 +551,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'password': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'password': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -602,15 +609,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'data': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'data': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -659,15 +667,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'impossible': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'impossible': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -720,15 +729,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            r'$total': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            r'$total': const PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -782,15 +792,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'age': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'age': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -839,15 +850,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'score': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'score': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -896,15 +908,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'value': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'value': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -953,15 +966,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'active': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'active': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -1010,15 +1024,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'birth_date': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'birth_date': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -1067,15 +1082,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'amount': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'amount': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -1124,15 +1140,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'website': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'website': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -1183,15 +1200,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'created_at': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'created_at': const PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1243,15 +1261,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'count': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'count': const PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1304,15 +1323,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'age': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'age': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -1362,15 +1382,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'createdAt': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'createdAt': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -1420,15 +1441,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'active': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'active': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -1478,15 +1500,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'score': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'score': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -1541,12 +1564,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'name': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'name': const PartEncoding(
               style: EncodingStyle.form,
               explode: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1598,12 +1625,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'count': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'count': const PartEncoding(
               style: EncodingStyle.form,
               explode: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1655,11 +1686,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'active': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'active': const PartEncoding(
               allowReserved: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              style: null,
+              explode: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1711,12 +1747,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'createdAt': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'createdAt': const PartEncoding(
               style: EncodingStyle.form,
               explode: false,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1768,12 +1808,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'value': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'value': const PartEncoding(
               style: EncodingStyle.form,
               explode: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1837,12 +1881,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'status': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'status': const PartEncoding(
               style: EncodingStyle.form,
               explode: true,
+              contentType: null,
+              rawContentType: null,
+              headers: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1908,15 +1956,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'status': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'status': const PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -1980,15 +2029,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'count': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'count': const PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -2052,15 +2102,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'status': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'status': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -2124,15 +2175,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'count': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'count': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -2194,15 +2246,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'status': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'status': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2265,15 +2318,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'status': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'status': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2326,15 +2380,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'avatar': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'avatar': const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2394,15 +2449,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'document': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'document': const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2464,15 +2520,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'photo': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'photo': const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2534,15 +2591,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'image': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'image': const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'image/png',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2610,15 +2668,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'file': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'file': const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2680,12 +2739,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'avatar': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'avatar': const PartEncoding(
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -2758,15 +2821,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'address': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'address': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -2832,15 +2896,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2905,15 +2970,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -2978,15 +3044,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -3049,15 +3116,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -3122,15 +3190,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -3195,15 +3264,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/xml',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -3268,15 +3338,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'address': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'address': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -3339,15 +3410,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'address': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'address': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -3414,15 +3486,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'address': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'address': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -3490,15 +3563,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'address': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'address': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -3566,15 +3640,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'address': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'address': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -3643,15 +3718,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -3717,13 +3793,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'address': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'address': const PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
-                // No style/explode/allowReserved → content-based mode
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -3807,12 +3886,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'address': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'address': const PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -3897,12 +3980,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              "it's-form": const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              "it's-form": const PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -3987,12 +4074,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              r'path\form': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              r'path\form': const PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -4078,12 +4169,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              r'$total': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              r'$total': const PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -4165,12 +4260,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'address': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'address': const PartEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -4255,16 +4354,17 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'address': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'address': const PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 // style/explode present → style-based mode, contentType ignored
                 style: EncodingStyle.form,
                 explode: true,
                 allowReserved: false,
+                headers: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -4333,8 +4433,8 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'address': PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'address': PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
                 headers: {
@@ -4350,8 +4450,11 @@ void main() {
                     examples: const [],
                   ),
                 },
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -4441,15 +4544,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'metadata': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'metadata': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -4513,15 +4617,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'metadata': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'metadata': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -4650,15 +4755,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'metadata': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'metadata': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -4719,15 +4825,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            "it's-meta": const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            "it's-meta": const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.deepObject,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -4787,12 +4894,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'metadata': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'metadata': const PartEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -4874,12 +4985,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'metadata': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'metadata': const PartEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -4964,12 +5079,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            "it's-meta": const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            "it's-meta": const PartEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -5052,12 +5171,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            r'path\to': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            r'path\to': const PartEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -5140,12 +5263,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            r'$total': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            r'$total': const PartEncoding(
               contentType: ContentType.form,
               rawContentType: 'application/x-www-form-urlencoded',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -5235,15 +5362,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'metadata': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'metadata': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -5307,15 +5435,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5370,15 +5499,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.spaceDelimited,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5433,15 +5563,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: false,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5496,15 +5627,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.spaceDelimited,
             explode: false,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5559,15 +5691,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.pipeDelimited,
             explode: false,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5623,15 +5756,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.deepObject,
             explode: false,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5689,15 +5823,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            "it's-tags": const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            "it's-tags": const PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               style: EncodingStyle.deepObject,
               explode: false,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -5767,15 +5902,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'statuses': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'statuses': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5842,15 +5978,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'codes': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'codes': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: false,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5907,15 +6044,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'scores': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'scores': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -5970,15 +6108,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'scores': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'scores': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6033,15 +6172,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'scores': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'scores': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: false,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6096,15 +6236,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'dates': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'dates': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6159,15 +6300,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'dates': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'dates': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6224,15 +6366,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'files': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'files': const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6292,15 +6435,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'files': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'files': const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             style: EncodingStyle.form,
             explode: false,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6370,15 +6514,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'addresses': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'addresses': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6441,15 +6586,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'addresses': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'addresses': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/xml',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6506,15 +6652,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6571,15 +6718,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -6637,12 +6785,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'tags': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'tags': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -6695,12 +6847,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'scores': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'scores': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -6818,12 +6974,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'addresses': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'addresses': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -6876,12 +7036,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'dates': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'dates': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -6934,12 +7098,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'tags': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'tags': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -7000,13 +7168,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'tags': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'tags': const PartEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
-                // No style/explode/allowReserved → falls through to explode: true
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7064,13 +7235,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'scores': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'scores': const PartEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
-                // No style/explode/allowReserved → repeated parts
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7128,13 +7302,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'dates': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'dates': const PartEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
-                // No style/explode/allowReserved → repeated parts
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7204,13 +7381,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'priorities': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'priorities': const PartEncoding(
                 contentType: ContentType.text,
                 rawContentType: 'text/plain',
-                // No style/explode/allowReserved → repeated parts
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7337,13 +7517,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'priorities': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'priorities': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              // No style fields → content-based mode
+              headers: null,
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -7402,13 +7585,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'files': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'files': const PartEncoding(
                 contentType: ContentType.bytes,
                 rawContentType: 'application/octet-stream',
-                // No style/explode/allowReserved → content-based mode
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7476,13 +7662,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'matrix': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'matrix': const PartEncoding(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
-                // No style fields → content-based mode
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7545,12 +7734,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              r'$matrix': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              r'$matrix': const PartEncoding(
                 contentType: ContentType.json,
                 rawContentType: 'application/json',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7609,13 +7802,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              'items': const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              'items': const PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
-                // No style fields → content-based mode
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7674,12 +7870,16 @@ void main() {
             model: model,
             contentType: ContentType.multipart,
             rawContentType: 'multipart/form-data',
-            encoding: {
-              "it's-items": const PropertyEncoding(
+            multipartEncoding: _multipartEncoding(model, {
+              "it's-items": const PartEncoding(
                 contentType: ContentType.form,
                 rawContentType: 'application/x-www-form-urlencoded',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
               ),
-            },
+            }),
             examples: const [],
           );
 
@@ -7734,15 +7934,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'name': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'name': const PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
             explode: true,
             allowReserved: false,
+            headers: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -7828,8 +8029,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'file': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'file': PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             style: EncodingStyle.form,
@@ -7849,7 +8050,7 @@ void main() {
               ),
             },
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -7911,8 +8112,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'file': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'file': PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -7928,8 +8129,11 @@ void main() {
                 examples: const [],
               ),
             },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8001,8 +8205,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'address': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'address': PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             headers: {
@@ -8018,8 +8222,11 @@ void main() {
                 examples: const [],
               ),
             },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8077,8 +8284,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'description': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'description': PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             headers: {
@@ -8094,8 +8301,11 @@ void main() {
                 examples: const [],
               ),
             },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8151,8 +8361,8 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'count': PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'count': PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               headers: {
@@ -8168,8 +8378,11 @@ void main() {
                   examples: const [],
                 ),
               },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -8236,8 +8449,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'status': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'status': PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             headers: {
@@ -8253,8 +8466,11 @@ void main() {
                 examples: const [],
               ),
             },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8308,8 +8524,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'file': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'file': PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -8325,8 +8541,11 @@ void main() {
                 examples: const [],
               ),
             },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8387,8 +8606,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'file': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'file': PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -8415,8 +8634,11 @@ void main() {
                 examples: const [],
               ),
             },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8481,12 +8703,16 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'file': const PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'file': const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
+            headers: null,
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8551,8 +8777,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
@@ -8570,8 +8796,9 @@ void main() {
                 examples: const [],
               ),
             },
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8629,8 +8856,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'tags': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'tags': PartEncoding(
             contentType: ContentType.text,
             rawContentType: 'text/plain',
             style: EncodingStyle.form,
@@ -8648,8 +8875,9 @@ void main() {
                 examples: const [],
               ),
             },
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8707,8 +8935,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'files': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'files': PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             style: EncodingStyle.form,
@@ -8726,8 +8954,9 @@ void main() {
                 examples: const [],
               ),
             },
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8798,8 +9027,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'addresses': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'addresses': PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
             style: EncodingStyle.form,
@@ -8817,8 +9046,9 @@ void main() {
                 examples: const [],
               ),
             },
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8871,8 +9101,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'file': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'file': PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -8888,8 +9118,11 @@ void main() {
                 examples: const [],
               ),
             },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -8957,8 +9190,8 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'file': PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'file': PartEncoding(
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
               headers: {
@@ -8974,8 +9207,11 @@ void main() {
                   examples: const [],
                 ),
               },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -9042,8 +9278,8 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'data': PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'data': PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               headers: {
@@ -9059,8 +9295,11 @@ void main() {
                   examples: const [],
                 ),
               },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -9118,8 +9357,8 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'count': PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'count': PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               headers: {
@@ -9135,8 +9374,11 @@ void main() {
                   examples: const [],
                 ),
               },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -9194,8 +9436,8 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'createdAt': PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'createdAt': PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
               headers: {
@@ -9211,8 +9453,11 @@ void main() {
                   examples: const [],
                 ),
               },
+              style: null,
+              explode: null,
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -9274,8 +9519,8 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'dates': PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'dates': PartEncoding(
               contentType: ContentType.text,
               rawContentType: 'text/plain',
               style: EncodingStyle.form,
@@ -9293,8 +9538,9 @@ void main() {
                   examples: const [],
                 ),
               },
+              allowReserved: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -9361,8 +9607,8 @@ void main() {
         model: model,
         contentType: ContentType.multipart,
         rawContentType: 'multipart/form-data',
-        encoding: {
-          'document': PropertyEncoding(
+        multipartEncoding: _multipartEncoding(model, {
+          'document': PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
             headers: {
@@ -9372,8 +9618,11 @@ void main() {
                 header: underlyingHeader,
               ),
             },
+            style: null,
+            explode: null,
+            allowReserved: null,
           ),
-        },
+        }),
         examples: const [],
       );
 
@@ -9440,15 +9689,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            'name': const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            'name': const PartEncoding(
               contentType: ContentType.text,
               rawContentType: "text/it's-plain",
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -9500,15 +9750,16 @@ void main() {
           model: model,
           contentType: ContentType.multipart,
           rawContentType: 'multipart/form-data',
-          encoding: {
-            "it's-field": const PropertyEncoding(
+          multipartEncoding: _multipartEncoding(model, {
+            "it's-field": const PartEncoding(
               contentType: ContentType.bytes,
               rawContentType: 'application/octet-stream',
               style: EncodingStyle.form,
               explode: true,
               allowReserved: false,
+              headers: null,
             ),
-          },
+          }),
           examples: const [],
         );
 
@@ -9546,4 +9797,14 @@ void main() {
       },
     );
   });
+}
+
+Map<Property, PartEncoding> _multipartEncoding(
+  ClassModel model,
+  Map<String, PartEncoding> byName,
+) {
+  return {
+    for (final entry in byName.entries)
+      model.properties.firstWhere((p) => p.name == entry.key): entry.value,
+  };
 }
