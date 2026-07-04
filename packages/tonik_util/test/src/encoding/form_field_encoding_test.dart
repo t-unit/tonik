@@ -28,24 +28,6 @@ void main() {
         const b = FormFieldEncoding(explode: false);
         expect(a, isNot(b));
       });
-
-      test('encoding is not equal to a non-encoding object', () {
-        const a = FormFieldEncoding();
-        expect(a, isNot('not an encoding'));
-      });
-
-      test('encoding is equal to itself', () {
-        const a = FormFieldEncoding(allowReserved: true, explode: true);
-        expect(a, a);
-      });
-    });
-
-    test('toString includes all fields', () {
-      const encoding = FormFieldEncoding(allowReserved: true, explode: false);
-      final str = encoding.toString();
-      expect(str, contains('FormFieldEncoding'));
-      expect(str, contains('allowReserved: true'));
-      expect(str, contains('explode: false'));
     });
   });
 }

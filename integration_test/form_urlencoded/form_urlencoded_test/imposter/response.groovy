@@ -165,6 +165,15 @@ switch (path) {
         }
         break
 
+    case '/form/allow-reserved-array-flagged':
+        def formBody = 'tags=a,b'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
     case '/form/allow-reserved-enum':
         def formBody = 'choice=a%2Fb%3Ac'
         respond {

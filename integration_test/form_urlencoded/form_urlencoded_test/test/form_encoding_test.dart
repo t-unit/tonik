@@ -480,6 +480,27 @@ void main() {
     );
 
     test(
+      'keeps reserved characters literal in the comma-joined elements of a '
+      'flagged array property',
+      () async {
+        const form = AllowReservedArrayFlaggedForm(tags: ['a/b', 'c:d']);
+
+        final response = await api.postAllowReservedArrayFlaggedForm(
+          body: form,
+        );
+
+        expect(response, isA<TonikSuccess<AllowReservedArrayFlaggedForm>>());
+
+        final requestData =
+            (response as TonikSuccess<AllowReservedArrayFlaggedForm>)
+                .response
+                .requestOptions
+                .data;
+        expect(requestData, 'tags=a/b,c:d');
+      },
+    );
+
+    test(
       'keeps reserved characters literal for a flagged enum property through '
       'the shared form-entries path',
       () async {

@@ -213,6 +213,62 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
+    test('ClassModel body threads a fieldEncodings map for a flagged array '
+        'property', () {
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+        encoding: {
+          tags: const FieldEncoding(
+            allowReserved: true,
+            style: null,
+            explode: null,
+          ),
+        },
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm(
+                '',
+                explode: true,
+                allowEmpty: true,
+                useQueryComponent: true,
+                fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
+                  r'tags': const _i2.FormFieldEncoding(allowReserved: true),
+                },
+              )
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
     test('AnyModel body renders directly via encodeAnyToForm', () {
       final result = buildToFormValueExpression(
         'body',

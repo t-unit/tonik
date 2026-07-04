@@ -333,7 +333,7 @@ paths:
       description: >-
         Tests that a flagged allowReserved scalar keeps reserved characters
         literal while a write-only sibling (nullable field, null-guarded) is
-        still emitted on the per-property path.
+        still emitted.
       requestBody:
         required: true
         content:
@@ -405,6 +405,33 @@ paths:
             application/x-www-form-urlencoded:
               schema:
                 $ref: '#/components/schemas/AllowReservedArrayForm'
+
+  /form/allow-reserved-array-flagged:
+    post:
+      operationId: postAllowReservedArrayFlaggedForm
+      tags:
+        - form
+      summary: Post form where an array property itself opts into allowReserved
+      description: >-
+        Tests that a flagged allowReserved array keeps reserved characters
+        literal in its comma-joined elements, unlike an unflagged array whose
+        elements are fully percent-encoded.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedArrayFlaggedForm'
+            encoding:
+              tags:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedArrayFlaggedForm'
 
   /form/allow-reserved-enum:
     post:
@@ -683,6 +710,19 @@ components:
           items:
             type: string
           description: Array sibling comma-joined into a single entry
+
+    AllowReservedArrayFlaggedForm:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: >-
+            Array whose comma-joined elements keep reserved characters literal
+            when the property opts into allowReserved
 
     AllowReservedEnumForm:
       type: object

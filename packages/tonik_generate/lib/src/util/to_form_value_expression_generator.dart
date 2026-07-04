@@ -66,9 +66,9 @@ BuiltExpression buildToFormValueExpression(
 }
 
 /// Builds a `<String, FormFieldEncoding>` map literal for the object `toForm`
-/// call, containing only the properties that opt into `allowReserved`. Keyed
-/// by raw spec name to match the class's own per-property lookup. Returns null
-/// when no property opts in so the call omits the argument.
+/// call, containing only the writable properties that opt into `allowReserved`.
+/// Keyed by raw spec name to match the class's own per-property lookup. Returns
+/// null when no property opts in so the call omits the argument.
 Expression? _fieldEncodingsLiteral(
   Map<Property, FieldEncoding>? encoding,
 ) {
