@@ -11,17 +11,54 @@ enum EncodingStyle {
   deepObject,
 }
 
-/// Encoding metadata for a single property in a multipart/form-data or
+/// Encoding metadata for a single property in an
 /// application/x-www-form-urlencoded request body.
 @immutable
-class PropertyEncoding {
-  const PropertyEncoding({
-    this.contentType,
-    this.rawContentType,
-    this.headers,
-    this.style,
-    this.explode,
-    this.allowReserved,
+class FieldEncoding {
+  const FieldEncoding({
+    required this.allowReserved,
+    required this.style,
+    required this.explode,
+  });
+
+  /// Whether reserved characters are allowed without encoding.
+  final bool allowReserved;
+
+  /// Serialization style for this property.
+  final EncodingStyle? style;
+
+  /// Whether arrays/objects generate separate values.
+  final bool? explode;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is FieldEncoding &&
+          runtimeType == other.runtimeType &&
+          allowReserved == other.allowReserved &&
+          style == other.style &&
+          explode == other.explode;
+
+  @override
+  int get hashCode => Object.hash(allowReserved, style, explode);
+
+  @override
+  String toString() =>
+      'FieldEncoding(allowReserved: $allowReserved, '
+      'style: $style, explode: $explode)';
+}
+
+/// Encoding metadata for a single property in a multipart/form-data
+/// request body.
+@immutable
+class PartEncoding {
+  const PartEncoding({
+    required this.contentType,
+    required this.rawContentType,
+    required this.headers,
+    required this.style,
+    required this.explode,
+    required this.allowReserved,
   });
 
   /// Typed content type for this property's part.
@@ -53,7 +90,7 @@ class PropertyEncoding {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is PropertyEncoding &&
+      other is PartEncoding &&
           runtimeType == other.runtimeType &&
           contentType == other.contentType &&
           rawContentType == other.rawContentType &&
@@ -74,7 +111,7 @@ class PropertyEncoding {
 
   @override
   String toString() =>
-      'PropertyEncoding(contentType: $contentType, '
+      'PartEncoding(contentType: $contentType, '
       'rawContentType: $rawContentType, '
       'headers: $headers, style: $style, explode: $explode, '
       'allowReserved: $allowReserved)';

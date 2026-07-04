@@ -235,7 +235,7 @@ void _addMultipartHeaderParameters({
   for (final content in requestBody.resolvedContent) {
     if (content.contentType != ContentType.multipart) continue;
 
-    final encoding = content.encoding;
+    final encoding = content.multipartEncoding;
     if (encoding == null) continue;
 
     // Resolve the model to get properties.
@@ -248,7 +248,7 @@ void _addMultipartHeaderParameters({
     final normalizedProps = normalizeProperties(writeProperties);
 
     for (final (:normalizedName, :property) in normalizedProps) {
-      final propertyEncoding = encoding[property.name];
+      final propertyEncoding = encoding[property];
       final headers = propertyEncoding?.headers;
       if (headers == null || headers.isEmpty) continue;
 

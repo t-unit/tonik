@@ -873,15 +873,16 @@ Future<TonikResult<void>> call({
                 model: multipartModel,
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
-                encoding: {
-                  'name': const PropertyEncoding(
+                multipartEncoding: _multipartEncoding(multipartModel, {
+                  'name': const PartEncoding(
                     contentType: ContentType.text,
                     rawContentType: 'text/plain',
+                    headers: null,
                     style: EncodingStyle.form,
                     explode: true,
                     allowReserved: false,
                   ),
-                },
+                }),
                 examples: const [],
               ),
             },
@@ -3126,6 +3127,24 @@ Future<TonikResult<void>> call({
             defaultValue: 'static-trace-id',
           );
 
+          final uploadModel = ClassModel(
+            name: 'UploadForm',
+            properties: [
+              Property(
+                name: 'file',
+                model: BinaryModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            isDeprecated: false,
+            examples: const [],
+          );
+
           final requestBody = RequestBodyObject(
             name: 'uploadBody',
             context: context,
@@ -3133,29 +3152,16 @@ Future<TonikResult<void>> call({
             isRequired: true,
             content: {
               RequestContent(
-                model: ClassModel(
-                  name: 'UploadForm',
-                  properties: [
-                    Property(
-                      name: 'file',
-                      model: BinaryModel(context: context),
-                      isRequired: true,
-                      isNullable: false,
-                      isDeprecated: false,
-                      examples: const [],
-                      defaultValue: null,
-                    ),
-                  ],
-                  context: context,
-                  isDeprecated: false,
-                  examples: const [],
-                ),
+                model: uploadModel,
                 contentType: ContentType.multipart,
                 rawContentType: 'multipart/form-data',
-                encoding: {
-                  'file': PropertyEncoding(
+                multipartEncoding: _multipartEncoding(uploadModel, {
+                  'file': PartEncoding(
                     contentType: ContentType.bytes,
                     rawContentType: 'application/octet-stream',
+                    style: null,
+                    explode: null,
+                    allowReserved: null,
                     headers: {
                       'X-Trace-Id': ResponseHeaderObject(
                         name: 'X-Trace-Id',
@@ -3170,7 +3176,7 @@ Future<TonikResult<void>> call({
                       ),
                     },
                   ),
-                },
+                }),
                 examples: const [],
               ),
             },
@@ -3562,4 +3568,14 @@ Future<TonikResult<void>> call({
       );
     });
   });
+}
+
+Map<Property, PartEncoding> _multipartEncoding(
+  ClassModel model,
+  Map<String, PartEncoding> byName,
+) {
+  return {
+    for (final entry in byName.entries)
+      model.properties.firstWhere((p) => p.name == entry.key): entry.value,
+  };
 }

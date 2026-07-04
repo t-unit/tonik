@@ -116,7 +116,8 @@ class RequestContent {
     required this.contentType,
     required this.rawContentType,
     required this.examples,
-    this.encoding,
+    this.formEncoding,
+    this.multipartEncoding,
   });
 
   Model model;
@@ -124,10 +125,15 @@ class RequestContent {
   String rawContentType;
   List<Example> examples;
 
-  /// Per-property encoding metadata for multipart/form-data and
-  /// application/x-www-form-urlencoded request bodies.
+  /// Per-property encoding metadata for application/x-www-form-urlencoded
+  /// request bodies, keyed by the [Property] it describes.
   /// Null for all other content types.
-  Map<String, PropertyEncoding>? encoding;
+  Map<Property, FieldEncoding>? formEncoding;
+
+  /// Per-property encoding metadata for multipart/form-data request bodies,
+  /// keyed by the [Property] it describes.
+  /// Null for all other content types.
+  Map<Property, PartEncoding>? multipartEncoding;
 
   @override
   String toString() =>

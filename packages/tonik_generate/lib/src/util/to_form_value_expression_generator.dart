@@ -11,7 +11,7 @@ BuiltExpression buildToFormValueExpression(
   bool explodeLiteral = true,
   bool allowEmptyLiteral = true,
   bool useImmutableCollections = false,
-  Map<String, PropertyEncoding>? encoding,
+  Map<Property, FieldEncoding>? encoding,
 }) {
   final receiver = refer(valueExpression);
   final resolved = model.resolved;

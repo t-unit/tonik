@@ -95,7 +95,7 @@ List<Code> _buildMultipartFields(
       bodyAccessor,
       normalizedName,
       isNullable,
-      encoding: content.encoding,
+      encoding: content.multipartEncoding?[property],
     );
 
     if (fieldCode == null) continue;
@@ -121,12 +121,11 @@ Code? _buildFieldCode(
   String bodyAccessor,
   String normalizedName,
   bool isNullable, {
-  Map<String, PropertyEncoding>? encoding,
+  PartEncoding? encoding,
 }) {
   final accessor = '$bodyAccessor.$normalizedName${isNullable ? '!' : ''}';
-  final propertyEncoding = encoding?[rawName];
-  final contentType = propertyEncoding?.contentType;
-  final rawContentType = propertyEncoding?.rawContentType;
+  final contentType = encoding?.contentType;
+  final rawContentType = encoding?.rawContentType;
   final effectiveRawContentType =
       rawContentType ??
       'text/plain'; // style-based primitives serialise as plain strings
@@ -134,7 +133,7 @@ Code? _buildFieldCode(
   // Build per-part header statements and variable name (if any).
   final headerResult = _buildHeaderMapStatements(
     normalizedName,
-    propertyEncoding,
+    encoding,
     isPropertyOptional: isNullable,
   );
 
@@ -221,7 +220,7 @@ Code? _buildFieldCode(
     MapModel() => _buildMapModelFileAddition(
       rawName,
       accessor,
-      encoding: encoding,
+      propertyEncoding: encoding,
       headerVarName: headerVarName,
     ),
 
@@ -231,7 +230,7 @@ Code? _buildFieldCode(
     AnyOfModel() => _buildComplexObjectFileAddition(
       rawName,
       accessor,
-      encoding: encoding,
+      propertyEncoding: encoding,
       headerVarName: headerVarName,
     ),
 
@@ -239,7 +238,7 @@ Code? _buildFieldCode(
       rawName,
       accessor,
       resolved,
-      encoding: encoding,
+      propertyEncoding: encoding,
       headerVarName: headerVarName,
     ),
 
@@ -277,7 +276,7 @@ class _HeaderMapResult {
 /// Returns `null` if there are no non-Content-Type headers.
 _HeaderMapResult? _buildHeaderMapStatements(
   String normalizedPropertyName,
-  PropertyEncoding? encoding, {
+  PartEncoding? encoding, {
   bool isPropertyOptional = false,
 }) {
   final headers = encoding?.headers;
@@ -506,10 +505,10 @@ Code _buildAnyModelFileAddition(
 Code _buildBinaryFileAddition(
   String rawName,
   String accessor, {
-  Map<String, PropertyEncoding>? encoding,
+  PartEncoding? encoding,
   String? headerVarName,
 }) {
-  final rawContentType = encoding?[rawName]?.rawContentType;
+  final rawContentType = encoding?.rawContentType;
   final isDefaultContentType =
       rawContentType == null || rawContentType == 'application/octet-stream';
 
@@ -582,10 +581,9 @@ Code _buildListFieldAddition(
   String rawName,
   String accessor,
   ListModel listModel, {
-  Map<String, PropertyEncoding>? encoding,
+  PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
-  final propertyEncoding = encoding?[rawName];
   final style = propertyEncoding?.style;
   final contentType = propertyEncoding?.contentType;
 
@@ -636,7 +634,7 @@ Code _buildListFieldAddition(
       refer(accessor),
       _complexItemExpr(
         rawName,
-        encoding: encoding,
+        encoding: propertyEncoding,
         headerVarName: headerVarName,
       ),
       isFile: true,
@@ -719,7 +717,7 @@ Code _buildContentBasedListAddition(
   String rawName,
   String accessor,
   Model contentModel, {
-  PropertyEncoding? propertyEncoding,
+  PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
   // Array-of-arrays is not supported: the spec recurses into items but there
@@ -952,11 +950,10 @@ switch (item) {
 /// Returns an [Expression] for a complex object item in a for-loop.
 Expression _complexItemExpr(
   String rawName, {
-  Map<String, PropertyEncoding>? encoding,
+  PartEncoding? encoding,
   String? headerVarName,
 }) {
-  final rawContentType =
-      encoding?[rawName]?.rawContentType ?? 'application/json';
+  final rawContentType = encoding?.rawContentType ?? 'application/json';
   final namedArgs = <String, Expression>{
     'contentType': refer(
       'DioMediaType',
@@ -1090,11 +1087,9 @@ Code _buildDeepObjectFileAddition(
 Code _buildMapModelFileAddition(
   String rawName,
   String accessor, {
-  Map<String, PropertyEncoding>? encoding,
+  PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
-  final propertyEncoding = encoding?[rawName];
-
   // deepObject is not supported for plain maps.
   if (propertyEncoding?.style == EncodingStyle.deepObject) {
     return generateEncodingExceptionExpression(
@@ -1240,11 +1235,9 @@ Code _buildUrlEncodedMapFileAddition(
 Code _buildComplexObjectFileAddition(
   String rawName,
   String accessor, {
-  Map<String, PropertyEncoding>? encoding,
+  PartEncoding? propertyEncoding,
   String? headerVarName,
 }) {
-  final propertyEncoding = encoding?[rawName];
-
   if (propertyEncoding?.style == EncodingStyle.deepObject) {
     return _buildDeepObjectFileAddition(
       rawName,
@@ -1405,7 +1398,7 @@ typedef MultipartHeaderParamInfo = ({
 List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   RequestContent content,
 ) {
-  final encoding = content.encoding;
+  final encoding = content.multipartEncoding;
   if (encoding == null) return const [];
 
   final model = content.model.resolved;
@@ -1417,7 +1410,7 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   final result = <MultipartHeaderParamInfo>[];
 
   for (final (:normalizedName, :property) in normalizedProps) {
-    final propertyEncoding = encoding[property.name];
+    final propertyEncoding = encoding[property];
     final headers = propertyEncoding?.headers;
     if (headers == null || headers.isEmpty) continue;
 

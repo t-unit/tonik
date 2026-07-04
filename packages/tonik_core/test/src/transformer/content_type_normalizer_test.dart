@@ -981,12 +981,23 @@ void main() {
       });
 
       test('preserves encoding when normalizing multipart request content', () {
+        final fileProperty = Property(
+          name: 'file',
+          model: BinaryModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        );
         final encoding = {
-          'file': const PropertyEncoding(
+          fileProperty: const PartEncoding(
             contentType: ContentType.bytes,
             rawContentType: 'application/octet-stream',
+            headers: null,
             style: EncodingStyle.form,
             explode: true,
+            allowReserved: null,
           ),
         };
 
@@ -999,14 +1010,14 @@ void main() {
             RequestContent(
               model: ClassModel(
                 name: 'UploadData',
-                properties: const [],
+                properties: [fileProperty],
                 context: context,
                 isDeprecated: false,
                 examples: const [],
               ),
               rawContentType: 'multipart/form-data',
               contentType: ContentType.multipart,
-              encoding: encoding,
+              multipartEncoding: encoding,
               examples: const [],
             ),
           },
@@ -1032,8 +1043,8 @@ void main() {
             transformed.requestBodies.first as RequestBodyObject;
         final content = transformedBody.content.first;
 
-        expect(content.encoding, isNotNull);
-        expect(content.encoding, equals(encoding));
+        expect(content.multipartEncoding, isNotNull);
+        expect(content.multipartEncoding, equals(encoding));
       });
 
       test('logs warning when replacing model for text content type', () {
