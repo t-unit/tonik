@@ -231,11 +231,42 @@ List<Parameter> buildEncodingParameters() => [
   buildBoolParameter('allowEmpty', required: true),
 ];
 
+/// The per-property `allowReserved` value expression: prefers the descriptor's
+/// flag, keyed by the raw spec name, and falls back to the uniform
+/// `allowReserved` so query-param objects (which carry no descriptor) keep
+/// their behavior.
+String perPropertyAllowReservedValue(String rawPropertyName) =>
+    'fieldEncodings[${specLiteralStringCode(rawPropertyName)}]'
+    '?.allowReserved ?? allowReserved';
+
+/// The `allowReserved:` argument built from [perPropertyAllowReservedValue].
+String perPropertyAllowReservedArgument(String rawPropertyName) =>
+    'allowReserved: ${perPropertyAllowReservedValue(rawPropertyName)}';
+
+/// A `Map<String, FormFieldEncoding> fieldEncodings = const {}` parameter that
+/// carries per-property reserved-character overrides into form encoding.
+Parameter buildFieldEncodingsParameter() => Parameter(
+  (b) => b
+    ..name = 'fieldEncodings'
+    ..type = TypeReference(
+      (t) => t
+        ..symbol = 'Map'
+        ..url = 'dart:core'
+        ..types.addAll([
+          refer('String', 'dart:core'),
+          refer('FormFieldEncoding', 'package:tonik_util/tonik_util.dart'),
+        ]),
+    )
+    ..named = true
+    ..defaultTo = literalConstMap({}).code,
+);
+
 /// Encoding parameters for form-style `toForm`.
 List<Parameter> buildFormEncodingParameters() => [
   ...buildEncodingParameters(),
   buildBoolParameter('useQueryComponent'),
   buildBoolParameter('allowReserved'),
+  buildFieldEncodingsParameter(),
 ];
 
 /// Shared parameters for every composite `parameterProperties` method.
@@ -243,6 +274,7 @@ List<Parameter> buildParameterPropertiesParameters() => [
   buildBoolParameter('allowEmpty', defaultValue: true),
   buildBoolParameter('allowLists', defaultValue: true),
   buildBoolParameter('allowReserved'),
+  buildFieldEncodingsParameter(),
 ];
 
 /// Encoding parameters for `toDeepObject`, kept separate from

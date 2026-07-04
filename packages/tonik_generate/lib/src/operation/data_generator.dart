@@ -3,7 +3,6 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/to_form_value_expression_generator.dart';
@@ -125,22 +124,14 @@ class DataGenerator {
               ..add(jsonBuilt.unsafeRawBody.code)
               ..add(const Code(','));
           case .form:
-            // The per-property path emits a bare list literal, so it takes the
-            // full `value.value` receiver; the object path relies on the
-            // `value.` prefix combining with its own `value` receiver.
-            final formModel = c.model.resolved;
-            final perProperty =
-                formModel is ClassModel &&
-                formBodyHasAllowReserved(c.formEncoding, formModel);
             switchCases
-              ..add(Code(perProperty ? ' value => ' : ' value => value.'))
+              ..add(const Code(' value => '))
               ..add(
                 buildToFormValueExpression(
-                  perProperty ? 'value.value' : 'value',
+                  'value.value',
                   c.model,
                   useQueryComponent: true,
-                  useImmutableCollections: useImmutableCollections,
-                  encoding: perProperty ? c.formEncoding : null,
+                  encoding: c.formEncoding,
                 ).code,
               )
               ..add(const Code(','));
@@ -290,7 +281,6 @@ class DataGenerator {
           'body',
           model,
           useQueryComponent: true,
-          useImmutableCollections: useImmutableCollections,
           encoding: content.first.formEncoding,
         );
         bodyCode

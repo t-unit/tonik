@@ -61,7 +61,7 @@ void main() {
         parameterPropertiesMethod.returns?.accept(emitter).toString(),
         'Map<String,String>',
       );
-      expect(parameterPropertiesMethod.optionalParameters.length, 4);
+      expect(parameterPropertiesMethod.optionalParameters.length, 5);
 
       final allowReservedParam = parameterPropertiesMethod.optionalParameters
           .firstWhere((p) => p.name == 'allowReserved');
@@ -151,19 +151,19 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   _$result[r'id'] = id.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'id']?.allowReserved ?? allowReserved,
   );
   if (name != null) {
     _$result[r'name'] = name!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'name'] = '';
@@ -196,7 +196,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   return <String, String>{};
 }
@@ -244,14 +244,14 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (nullableName != null) {
     _$result[r'nullable_name'] = nullableName!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'nullable_name']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'nullable_name'] = '';
@@ -260,7 +260,7 @@ Map<String, String> parameterProperties({
     _$result[r'nullable_count'] = nullableCount!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'nullable_count']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'nullable_count'] = '';
@@ -313,7 +313,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) =>
   throw EncodingException(
     r'parameterProperties not supported for User: contains complex types',
@@ -388,7 +388,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (value.currentEncodingShape == EncodingShape.simple) {
@@ -471,7 +471,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (data.currentEncodingShape == EncodingShape.simple) {
@@ -548,7 +548,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (combined.currentEncodingShape == EncodingShape.simple) {
@@ -610,19 +610,19 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
   );
   if (count != null) {
     _$result[r'count'] = count!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'count']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'count'] = '';
@@ -681,7 +681,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) =>
   throw EncodingException(
     r'parameterProperties not supported for ComplexContainer: contains complex types',
@@ -753,7 +753,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (value != null) {
@@ -945,19 +945,19 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
   );
   if (count != null) {
     _$result[r'count'] = count!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'count']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'count'] = '';
@@ -965,7 +965,7 @@ Map<String, String> parameterProperties({
   _$result[r'active'] = active.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'active']?.allowReserved ?? allowReserved,
   );
   if (data1.currentEncodingShape == EncodingShape.simple) {
     _$result[r'data1'] = data1.toSimple(
@@ -1049,7 +1049,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1059,7 +1059,7 @@ Map<String, String> parameterProperties({
     _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'tags'] = '';
@@ -1128,7 +1128,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists && ids != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1143,14 +1143,14 @@ Map<String, String> parameterProperties({
           (e) => e.uriEncode(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: fieldEncodings[r'ids']?.allowReserved ?? allowReserved,
           ),
         )
         .toList()
         .uriEncode(
           allowEmpty: allowEmpty,
           useQueryComponent: useQueryComponent,
-          allowReserved: allowReserved,
+          allowReserved: fieldEncodings[r'ids']?.allowReserved ?? allowReserved,
         );
   } else if (allowEmpty) {
     _$result[r'ids'] = '';
@@ -1159,7 +1159,7 @@ Map<String, String> parameterProperties({
     _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'tags'] = '';
@@ -1215,7 +1215,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1224,7 +1224,7 @@ Map<String, String> parameterProperties({
   _$result[r'tags'] = tags.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
   );
   return _$result;
 }
@@ -1286,7 +1286,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1295,13 +1295,13 @@ Map<String, String> parameterProperties({
   _$result[r'id'] = id.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'id']?.allowReserved ?? allowReserved,
   );
   if (tags != null) {
     _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'tags'] = '';
@@ -1374,7 +1374,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) =>
     throw EncodingException(
       r'parameterProperties not supported for ComplexListContainer: contains complex types',
@@ -1439,7 +1439,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists && statuses != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1451,14 +1451,14 @@ Map<String, String> parameterProperties({
           (e) => e.uriEncode(
             allowEmpty: allowEmpty,
             useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved,
+            allowReserved: fieldEncodings[r'statuses']?.allowReserved ?? allowReserved,
           ),
         )
         .toList()
         .uriEncode(
           allowEmpty: allowEmpty,
           useQueryComponent: useQueryComponent,
-          allowReserved: allowReserved,
+          allowReserved: fieldEncodings[r'statuses']?.allowReserved ?? allowReserved,
         );
   } else if (allowEmpty) {
     _$result[r'statuses'] = '';
@@ -1508,7 +1508,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1517,7 +1517,7 @@ Map<String, String> parameterProperties({
   _$result[r'tags'] = tags.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
   );
   return _$result;
 }
@@ -1564,7 +1564,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1574,7 +1574,7 @@ Map<String, String> parameterProperties({
     _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'tags'] = '';
@@ -1632,7 +1632,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1641,13 +1641,13 @@ Map<String, String> parameterProperties({
   _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
   );
   if (tags != null) {
     _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'tags'] = '';
@@ -1701,18 +1701,18 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
   );
   _$result[r'age'] = age.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'age']?.allowReserved ?? allowReserved,
   );
   return _$result;
 }
@@ -1768,14 +1768,14 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (description != null) {
     _$result[r'description'] = description!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'description']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'description'] = '';
@@ -1848,7 +1848,7 @@ if (description != null) {
   _$result[r'description'] = description!.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'description']?.allowReserved ?? allowReserved,
   );
 } else if (allowEmpty) {
   _$result[r'description'] = '';
@@ -1950,12 +1950,12 @@ List<ParameterEntry> toForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   return parameterProperties(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: allowReserved, fieldEncodings: fieldEncodings,
   ).toForm(
     paramName,
     explode: explode,
@@ -2099,14 +2099,14 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (label != null) {
     _$result[r'label'] = label!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'label']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'label'] = '';
@@ -2151,13 +2151,13 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   _$result[r'signature'] = signature.toBase64String().uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
   );
   return _$result;
 }
@@ -2199,14 +2199,14 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (signature != null) {
     _$result[r'signature'] = signature!.toBase64String().uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'signature'] = '';
@@ -2251,17 +2251,77 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   if (signature != null) {
     _$result[r'signature'] = signature!.toBase64String().uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'signature'] = '';
+  }
+  return _$result;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'emits the additionalProperties loop alongside a declared property whose '
+      'reserved flag is keyed per property',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'Bag',
+          properties: [
+            Property(
+              name: 'declared',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          additionalProperties: TypedAdditionalProperties(
+            valueModel: StringModel(context: context),
+          ),
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+  bool allowReserved = false,
+  Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+  final _$result = <String, String>{};
+  _$result[r'declared'] = declared.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+    allowReserved: fieldEncodings[r'declared']?.allowReserved ?? allowReserved,
+  );
+  for (final _$e in additionalProperties.entries) {
+    _$result[_$e.key] = _$e.value.uriEncode(
+      allowEmpty: allowEmpty,
+      useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
+    );
   }
   return _$result;
 }
@@ -2307,13 +2367,13 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
   );
   for (final _$e in additionalProperties.entries) {
     _$result[_$e.key] = _$e.value.toBase64String().uriEncode(
@@ -2378,7 +2438,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   if (!allowLists && tags != null) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -2387,13 +2447,13 @@ Map<String, String> parameterProperties({
   _$result[r'signature'] = signature.toBase64String().uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
   );
   if (tags != null) {
     _$result[r'tags'] = tags!.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
     );
   } else if (allowEmpty) {
     _$result[r'tags'] = '';
@@ -2480,13 +2540,13 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   _$result[r'signature'] = signature.toBase64String().uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
   );
   if (value.currentEncodingShape == EncodingShape.simple) {
     _$result[r'value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
@@ -2551,13 +2611,13 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$result = <String, String>{};
   _$result[r'name'] = name.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved,
+    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
   );
   for (final _$e in additionalProperties.entries) {
     _$result[_$e.key] =

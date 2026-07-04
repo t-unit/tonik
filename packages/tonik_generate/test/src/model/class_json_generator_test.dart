@@ -1289,13 +1289,13 @@ void main() {
     bool allowEmpty = true,
     bool allowLists = true,
     bool useQueryComponent = false,
-    bool allowReserved = false,
+    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
     final _$result = <String, String>{};
     _$result[r'name'] = name.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
+      allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
     );
     for (final _$e in additionalProperties.entries) {
       _$result[_$e.key] = _$e.value?.toString() ?? '';

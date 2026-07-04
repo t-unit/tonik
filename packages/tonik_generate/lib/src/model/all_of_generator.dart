@@ -1371,6 +1371,7 @@ class AllOfGenerator {
                     'allowEmpty': refer('allowEmpty'),
                     'allowLists': refer('allowLists'),
                     'allowReserved': refer('allowReserved'),
+                    'fieldEncodings': refer('fieldEncodings'),
                   },
                 ),
           ]).statement,
@@ -1389,6 +1390,7 @@ class AllOfGenerator {
                     'allowEmpty': refer('allowEmpty'),
                     'allowLists': refer('allowLists'),
                     'allowReserved': refer('allowReserved'),
+                    'fieldEncodings': refer('fieldEncodings'),
                   },
                 ),
           ]).statement,
@@ -1900,6 +1902,7 @@ for (final _\$e in $apFieldName.entries) {
         .call([], {
           'allowEmpty': refer('allowEmpty'),
           'allowReserved': refer('allowReserved'),
+          'fieldEncodings': refer('fieldEncodings'),
         })
         .property('toForm')
         .call([refer('paramName')], {

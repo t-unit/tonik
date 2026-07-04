@@ -820,7 +820,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
           toFormMethod.returns?.accept(emitter).toString(),
           'List<ParameterEntry>',
         );
-        expect(toFormMethod.optionalParameters.length, 4);
+        expect(toFormMethod.optionalParameters.length, 5);
         expect(
           toFormMethod.optionalParameters.any((p) => p.name == 'explode'),
           isTrue,
@@ -854,7 +854,7 @@ List<ParameterEntry> toForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$mapValues = <Map<String, String>>[];
   String? _$discriminatorValue;
@@ -1094,7 +1094,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         method.returns?.accept(emitter).toString().replaceAll(' ', ''),
         'Map<String,String>',
       );
-      expect(method.optionalParameters.length, 3);
+      expect(method.optionalParameters.length, 4);
 
       final allowReservedParam = method.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
@@ -1146,10 +1146,10 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, }) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
   final _$mapValues = <Map<String, String>>[];
   if (user != null) {
-    _$mapValues.add( user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ), );
+    _$mapValues.add( user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
   }
   final _$map = <String, String>{};
   for (final _$m in _$mapValues) {
@@ -1201,13 +1201,13 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, }) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
   final _$mapValues = <Map<String, String>>[];
   if (admin != null) {
-    _$mapValues.add( admin!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ), );
+    _$mapValues.add( admin!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
   }
   if (user != null) {
-    _$mapValues.add( user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ), );
+    _$mapValues.add( user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
   }
   final _$map = <String, String>{};
   for (final _$m in _$mapValues) {
@@ -1264,11 +1264,11 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, }) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
   final _$mapValues = <Map<String, String>>[];
   String? _$discriminatorValue;
   if (data != null) {
-    _$mapValues.add( data!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ), );
+    _$mapValues.add( data!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
     _$discriminatorValue ??= r'data';
   }
   final _$map = <String, String>{};
@@ -1328,7 +1328,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, }) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
   final _$mapValues = <Map<String, String>>[];
   if (innerChoice != null) {
     switch (innerChoice!.currentEncodingShape) {
@@ -1338,7 +1338,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
       case EncodingShape.complex:
         _$mapValues.add(
-          innerChoice!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ),
+          innerChoice!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ),
         );
         break;
       case EncodingShape.mixed:
@@ -1410,7 +1410,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, }) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
   final _$mapValues = <Map<String, String>>[];
   String? _$discriminatorValue;
   if (innerChoice != null) {
@@ -1421,7 +1421,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
       case EncodingShape.complex:
         _$mapValues.add(
-          innerChoice!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ),
+          innerChoice!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ),
         );
         _$discriminatorValue ??= r'inner';
         break;
@@ -1501,10 +1501,10 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, }) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
   final _$mapValues = <Map<String, String>>[];
   if (complexData != null) {
-    _$mapValues.add( complexData!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ), );
+    _$mapValues.add( complexData!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
   }
   if (innerChoice != null) {
     throw EncodingException(
@@ -1563,10 +1563,10 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, }) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
   final _$mapValues = <Map<String, String>>[];
   if (complexData != null) {
-    _$mapValues.add( complexData!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ), );
+    _$mapValues.add( complexData!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
   }
   if (string != null) {
     throw EncodingException(
@@ -1608,7 +1608,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, }) {
+Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
   throw EncodingException(
     r'parameterProperties not supported for SimpleChoice: contains only simple types',
   );
@@ -1659,7 +1659,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$mapValues = <Map<String, String>>[];
   if (admin != null) {
@@ -1667,13 +1667,13 @@ Map<String, String> parameterProperties({
       admin!.parameterProperties(
         allowEmpty: allowEmpty,
         allowLists: allowLists,
-        allowReserved: allowReserved,
+        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
       ),
     );
   }
   if (user != null) {
     _$mapValues.add(
-      user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, ),
+      user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ),
     );
   }
   final _$map = <String, String>{};
@@ -1719,7 +1719,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$mapValues = <Map<String, String>>[];
   if (list != null) {
@@ -1787,7 +1787,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$mapValues = <Map<String, String>>[];
   if (innerChoice != null) {
@@ -1801,7 +1801,7 @@ Map<String, String> parameterProperties({
           innerChoice!.parameterProperties(
             allowEmpty: allowEmpty,
             allowLists: allowLists,
-            allowReserved: allowReserved,
+            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
           ),
         );
         break;
@@ -2401,13 +2401,19 @@ Map<String, String> parameterProperties({
         (m) => m.name == 'toForm',
       );
 
-      expect(toFormMethod.optionalParameters.length, 4);
+      expect(toFormMethod.optionalParameters.length, 5);
 
       final allowReservedParam = toFormMethod.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
       );
       expect(allowReservedParam.named, isTrue);
       expect(allowReservedParam.required, isFalse);
+
+      final fieldEncodingsParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'fieldEncodings',
+      );
+      expect(fieldEncodingsParam.named, isTrue);
+      expect(fieldEncodingsParam.required, isFalse);
 
       final explodeParam = toFormMethod.optionalParameters.firstWhere(
         (p) => p.name == 'explode',
@@ -2515,7 +2521,7 @@ Map<String, String> parameterProperties({
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
@@ -2605,7 +2611,7 @@ Map<String, String> parameterProperties({
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
@@ -3171,7 +3177,7 @@ List<ParameterEntry> toForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$entryLists = <List<ParameterEntry>>[];
   final _$values = <String>{};
@@ -3459,7 +3465,7 @@ EncodingShape get currentEncodingShape {
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$mapValues = <Map<String, String>>[];
   if (object != null) {
@@ -3472,7 +3478,7 @@ Map<String, String> parameterProperties({
       detailedFilter!.parameterProperties(
         allowEmpty: allowEmpty,
         allowLists: allowLists,
-        allowReserved: allowReserved,
+        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
       ),
     );
   }
@@ -3550,7 +3556,7 @@ List<ParameterEntry> toForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   final _$entryLists = <List<ParameterEntry>>[];
   final _$values = <String>{};

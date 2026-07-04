@@ -1469,7 +1469,7 @@ void main() {
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
@@ -1747,7 +1747,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) =>
           throw EncodingException(
             r'parameterProperties not supported for AllOfIntList: contains array types',
@@ -1808,7 +1808,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) =>
           throw EncodingException(
             r'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported',
@@ -1855,7 +1855,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
-          bool allowReserved = false,
+          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
         }) =>
           throw EncodingException(
             r'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported',
@@ -1985,21 +1985,21 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             final _$mergedProperties = <String, String>{};
             _$mergedProperties.addAll(
               testClass1.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
               ),
             );
             _$mergedProperties.addAll(
               testClass2.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
-                allowReserved: allowReserved,
+                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
               ),
             );
             return _$mergedProperties;
@@ -2037,7 +2037,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) =>
             throw EncodingException(
               r'parameterProperties not supported for AllOfWithList: contains array types',
@@ -2075,7 +2075,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) =>
             throw EncodingException(
               r'parameterProperties not supported for AllOfWithMap: contains map types',
@@ -2133,7 +2133,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) =>
             throw EncodingException(
               r'parameterProperties not supported for AllOfMixedMapClass: contains map types',
@@ -2749,7 +2749,7 @@ List<ParameterEntry> toForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   return signature!.toBase64String().toForm(
     paramName,
@@ -2843,7 +2843,7 @@ List<ParameterEntry> toForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
-  bool allowReserved = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
   return throw EncodingException('Binary data cannot be form-encoded');
 }
@@ -2917,7 +2917,7 @@ String toMatrix(
         (m) => m.name == 'toForm',
       );
 
-      expect(toFormMethod.optionalParameters.length, 4);
+      expect(toFormMethod.optionalParameters.length, 5);
 
       final allowReservedParam = toFormMethod.optionalParameters.firstWhere(
         (p) => p.name == 'allowReserved',
@@ -3009,7 +3009,7 @@ String toMatrix(
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
-            bool allowReserved = false,
+            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
           }) {
             if (currentEncodingShape == EncodingShape.mixed) {
               throw EncodingException(
@@ -4232,14 +4232,14 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
-    bool allowReserved = false,
+    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
       $base.parameterProperties(
         allowEmpty: allowEmpty,
         allowLists: allowLists,
-        allowReserved: allowReserved,
+        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
       ),
     );
     for (final _$e in additionalProperties.entries) {
@@ -4293,14 +4293,14 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
-    bool allowReserved = false,
+    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
       $base.parameterProperties(
         allowEmpty: allowEmpty,
         allowLists: allowLists,
-        allowReserved: allowReserved,
+        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
       ),
     );
     for (final _$e in additionalProperties.entries) {
@@ -4359,14 +4359,14 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
-    bool allowReserved = false,
+    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
       $base.parameterProperties(
         allowEmpty: allowEmpty,
         allowLists: allowLists,
-        allowReserved: allowReserved,
+        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
       ),
     );
     for (final _$e in additionalProperties.entries) {
@@ -4442,14 +4442,14 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
-    bool allowReserved = false,
+    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
       $base.parameterProperties(
         allowEmpty: allowEmpty,
         allowLists: allowLists,
-        allowReserved: allowReserved,
+        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
       ),
     );
     for (final _$e in additionalProperties.entries) {
@@ -4515,14 +4515,14 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
-    bool allowReserved = false,
+    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
       $base.parameterProperties(
         allowEmpty: allowEmpty,
         allowLists: allowLists,
-        allowReserved: allowReserved,
+        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
       ),
     );
     if (additionalProperties.isNotEmpty) {

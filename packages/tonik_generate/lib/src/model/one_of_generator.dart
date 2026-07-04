@@ -1422,6 +1422,7 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
               'allowLists': refer('allowLists'),
               'allowReserved': refer('allowReserved'),
+              'fieldEncodings': refer('fieldEncodings'),
             }).code,
             const Code(','),
             Code(
@@ -1447,6 +1448,7 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
               'allowLists': refer('allowLists'),
               'allowReserved': refer('allowReserved'),
+              'fieldEncodings': refer('fieldEncodings'),
             }).code,
             const Code(': '),
             generateEncodingExceptionExpression(
@@ -1494,6 +1496,7 @@ class OneOfGenerator {
                 'allowEmpty': refer('allowEmpty'),
                 'allowLists': refer('allowLists'),
                 'allowReserved': refer('allowReserved'),
+                'fieldEncodings': refer('fieldEncodings'),
               }).code,
               const Code(','),
               Code(
@@ -1508,6 +1511,7 @@ class OneOfGenerator {
                 'allowEmpty': refer('allowEmpty'),
                 'allowLists': refer('allowLists'),
                 'allowReserved': refer('allowReserved'),
+                'fieldEncodings': refer('fieldEncodings'),
               }).code,
             );
           }

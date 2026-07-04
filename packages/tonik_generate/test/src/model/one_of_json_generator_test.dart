@@ -1338,7 +1338,8 @@ void main() {
         expectContainsBody(
           'List<ParameterEntry> toForm( String paramName, { required bool '
           'explode, required bool allowEmpty, bool useQueryComponent = false, '
-          'bool allowReserved = false, }) => $throwExpr',
+          'bool allowReserved = false, Map<String, FormFieldEncoding> '
+          'fieldEncodings = const {}, }) => $throwExpr',
         );
       });
 
@@ -1373,7 +1374,8 @@ void main() {
       test('parameterProperties', () {
         expectContainsBody(
           'Map<String, String> parameterProperties({ bool allowEmpty = true, '
-          'bool allowLists = true, bool allowReserved = false, }) => '
+          'bool allowLists = true, bool allowReserved = false, Map<String, '
+          'FormFieldEncoding> fieldEncodings = const {}, }) => '
           '$throwExpr',
         );
       });

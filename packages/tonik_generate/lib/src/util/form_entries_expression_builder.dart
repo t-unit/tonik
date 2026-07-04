@@ -1,10 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
-import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
-import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
 /// Returns null for the throwing cases (never/binary/complex map) and the
@@ -20,6 +17,7 @@ Expression? buildFormEntriesValueExpression(
   required Expression allowEmpty,
   Expression? useQueryComponent,
   bool allowReserved = false,
+  Expression? fieldEncodings,
 }) {
   final toFormArgs = <String, Expression>{
     'explode': explode,
@@ -31,12 +29,14 @@ Expression? buildFormEntriesValueExpression(
     Expression target, {
     bool alreadyEncoded = false,
     bool reserved = false,
+    Expression? objectFieldEncodings,
   }) => target.property('toForm').call(
     [paramName],
     {
       ...toFormArgs,
       if (alreadyEncoded) 'alreadyEncoded': literalBool(true),
       if (reserved) 'allowReserved': literalBool(true),
+      'fieldEncodings': ?objectFieldEncodings,
     },
   );
 
@@ -57,7 +57,11 @@ Expression? buildFormEntriesValueExpression(
     case AllOfModel():
     case OneOfModel():
     case AnyOfModel():
-      return toForm(receiver, reserved: allowReserved);
+      return toForm(
+        receiver,
+        reserved: allowReserved,
+        objectFieldEncodings: fieldEncodings,
+      );
 
     case Base64Model():
       return toForm(
@@ -108,172 +112,6 @@ Expression? buildFormEntriesValueExpression(
     default:
       return null;
   }
-}
-
-/// True when a writable, emitted property of [model] carries `allowReserved` —
-/// the only case that needs the per-property form-body path.
-bool formBodyHasAllowReserved(
-  Map<Property, FieldEncoding>? encoding,
-  ClassModel model,
-) {
-  if (encoding == null) return false;
-  return model.properties.any(
-    (property) =>
-        !property.isReadOnly && (encoding[property]?.allowReserved ?? false),
-  );
-}
-
-/// Emits form entries one property at a time so a mix of per-property
-/// `allowReserved` flags is honored — the object-level `toForm` encodes every
-/// property uniformly and cannot express the mix. On success `entries` holds
-/// the list expression; when a property model is not form-encodable
-/// per-property, `unencodableProperty` names it so the caller can surface an
-/// `EncodingException` rather than falling back to a path that would silently
-/// drop `allowReserved` from a sibling that opted in.
-({Expression? entries, String? unencodableProperty})
-buildClassFormEntriesExpression(
-  Expression receiver,
-  ClassModel model,
-  Map<Property, FieldEncoding>? encoding, {
-  bool useImmutableCollections = false,
-}) {
-  final normalizedProps = normalizeProperties(model.properties.toList())
-      .where((p) => !p.property.isReadOnly)
-      .toList();
-
-  final propertyCodes = <Code>[];
-  for (final (:normalizedName, :property) in normalizedProps) {
-    final entryCodes = _buildPropertyFormEntry(
-      receiver.property(normalizedName),
-      property,
-      encoding?[property]?.allowReserved ?? false,
-      useImmutableCollections: useImmutableCollections,
-    );
-    if (entryCodes == null) {
-      return (entries: null, unencodableProperty: property.name);
-    }
-    propertyCodes.addAll(entryCodes);
-  }
-
-  return (
-    entries: CodeExpression(
-      Block.of([const Code('['), ...propertyCodes, const Code(']')]),
-    ),
-    unencodableProperty: null,
-  );
-}
-
-/// Emits the spread/element code for one class property, or null when the
-/// property model cannot be encoded per-property. Null-guards the field when it
-/// can hold null: nullable, optional, write-only, or backed by an effectively-
-/// nullable model.
-List<Code>? _buildPropertyFormEntry(
-  Expression field,
-  Property property,
-  bool allowReserved, {
-  bool useImmutableCollections = false,
-}) {
-  final propertyNameLiteral = specLiteralString(property.name);
-  final encodedName = propertyNameLiteral.property('uriEncode').call([], {
-    'allowEmpty': literalBool(true),
-    'useQueryComponent': literalBool(true),
-  });
-  final resolved = property.model.resolved;
-
-  if (resolved is MapModel) return null;
-
-  if (resolved is AnyModel) {
-    final value = field
-        .nullSafeProperty('toString')
-        .call([])
-        .ifNullThen(literalString(''));
-    final entry = literalRecord([], {'name': encodedName, 'value': value});
-    return [entry.code, const Code(',')];
-  }
-
-  final isNullable =
-      property.isNullable || property.model.isEffectivelyNullable;
-  final fieldCanBeNull =
-      isNullable || !property.isRequired || property.isWriteOnly;
-
-  if (resolved is ListModel) {
-    if (!resolved.hasSimpleContent) return null;
-    final value = buildUriEncodeExpression(
-      fieldCanBeNull ? field.nullChecked : field,
-      resolved,
-      allowEmpty: literalBool(true),
-      useQueryComponent: literalBool(true),
-      useImmutableCollections: useImmutableCollections,
-    ).expression;
-    final record = literalRecord([], {'name': encodedName, 'value': value});
-    if (!fieldCanBeNull) {
-      return [record.code, const Code(',')];
-    }
-    return _nullGuardedEntries(
-      field: field,
-      encodedName: encodedName,
-      property: property,
-      isNullable: isNullable,
-      entries: literalList([record]),
-    );
-  }
-
-  final entries = buildFormEntriesValueExpression(
-    fieldCanBeNull ? field.nullChecked : field,
-    property.model,
-    paramName: encodedName,
-    explode: literalBool(true),
-    allowEmpty: literalBool(true),
-    useQueryComponent: literalBool(true),
-    allowReserved: allowReserved,
-  );
-  if (entries == null) return null;
-
-  if (!fieldCanBeNull) {
-    return [const Code('...'), entries.code, const Code(',')];
-  }
-
-  return _nullGuardedEntries(
-    field: field,
-    encodedName: encodedName,
-    property: property,
-    isNullable: isNullable,
-    entries: entries,
-  );
-}
-
-/// Wraps [entries] (a `List<ParameterEntry>`) in a null guard on [field]. When
-/// the field is required and non-nullable, a null value throws; otherwise it
-/// yields a single empty-valued entry — matching the object path's
-/// `else if (allowEmpty)` branch.
-List<Code> _nullGuardedEntries({
-  required Expression field,
-  required Expression encodedName,
-  required Property property,
-  required bool isNullable,
-  required Expression entries,
-}) {
-  final whenNull = property.isRequired && !isNullable
-      ? generateEncodingExceptionExpression(
-          'Required property ${property.name} is null.',
-          raw: true,
-        )
-      : literalList([
-          literalRecord([], {
-            'name': encodedName,
-            'value': literalString(''),
-          }),
-        ]);
-
-  return [
-    const Code('...('),
-    field.notEqualTo(literalNull).code,
-    const Code(' ? '),
-    entries.code,
-    const Code(' : '),
-    whenNull.code,
-    const Code('),'),
-  ];
 }
 
 Expression? _buildListFormEntriesExpression(
