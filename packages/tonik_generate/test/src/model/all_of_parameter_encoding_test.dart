@@ -55,10 +55,10 @@ void main() {
         method.returns?.accept(emitter).toString().replaceAll(' ', ''),
         'Map<String,String>',
       );
-      expect(method.optionalParameters.length, 2);
+      expect(method.optionalParameters.length, 3);
       expect(
         method.optionalParameters.map((p) => p.name),
-        containsAll(['allowEmpty', 'allowLists']),
+        containsAll(['allowEmpty', 'allowLists', 'allowReserved']),
       );
     });
 
@@ -80,6 +80,7 @@ void main() {
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool allowReserved = false,
 }) {
   throw EncodingException(
     r'parameterProperties not supported for Combined: contains primitive types',
@@ -117,10 +118,15 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool allowReserved = false,
 }) {
   final _$mergedProperties = <String, String>{};
   _$mergedProperties.addAll(
-    $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+    $base.parameterProperties(
+      allowEmpty: allowEmpty,
+      allowLists: allowLists,
+      allowReserved: allowReserved,
+    ),
   );
   return _$mergedProperties;
 }
@@ -157,6 +163,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool allowReserved = false,
 }) {
   throw EncodingException(
     r'parameterProperties not supported for Mixed: contains primitive types',
@@ -201,18 +208,21 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool allowReserved = false,
 }) {
   final _$mergedProperties = <String, String>{};
   _$mergedProperties.addAll(
     firstModel.parameterProperties(
       allowEmpty: allowEmpty,
       allowLists: allowLists,
+      allowReserved: allowReserved,
     ),
   );
   _$mergedProperties.addAll(
     secondModel.parameterProperties(
       allowEmpty: allowEmpty,
       allowLists: allowLists,
+      allowReserved: allowReserved,
     ),
   );
   return _$mergedProperties;
@@ -292,18 +302,21 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool allowReserved = false,
 }) {
   final _$mergedProperties = <String, String>{};
   _$mergedProperties.addAll(
     stringOrComplex.parameterProperties(
       allowEmpty: allowEmpty,
       allowLists: allowLists,
+      allowReserved: allowReserved,
     ),
   );
   _$mergedProperties.addAll(
     simpleModel.parameterProperties(
       allowEmpty: allowEmpty,
       allowLists: allowLists,
+      allowReserved: allowReserved,
     ),
   );
   return _$mergedProperties;
@@ -333,6 +346,7 @@ Map<String, String> parameterProperties({
 Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
+  bool allowReserved = false,
 }) {
   return <String, String>{};
 }

@@ -49,7 +49,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
-        allowReserved: true,
+        allowReserved: literalBool(true),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
@@ -63,7 +63,7 @@ void main() {
       );
     });
 
-    test('omits allowReserved for EnumModel even when set', () {
+    test('adds allowReserved for EnumModel when set', () {
       final model = EnumModel<String>(
         name: 'Color',
         values: {
@@ -79,12 +79,12 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
-        allowReserved: true,
+        allowReserved: literalBool(true),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
       ''';
 
       expect(
@@ -105,7 +105,7 @@ void main() {
         refer('value'),
         model,
         allowEmpty: refer('allowEmpty'),
-        allowReserved: true,
+        allowReserved: literalBool(true),
       );
 
       final generated = format('final result = ${expression.accept(emitter)};');
@@ -427,6 +427,31 @@ void main() {
       );
     });
 
+    test('threads allowReserved into the whole-list encode for '
+        'List<String> when set', () {
+      final model = ListModel(
+        content: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        allowReserved: literalBool(true),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates map expression for List<int>', () {
       final model = ListModel(
         content: IntegerModel(context: context),
@@ -445,6 +470,34 @@ void main() {
             .map((e) => e.uriEncode(allowEmpty: allowEmpty))
             .toList()
             .uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('threads allowReserved into both element and whole-list encode for '
+        'List<int> when set', () {
+      final model = ListModel(
+        content: IntegerModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        allowReserved: literalBool(true),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value
+            .map((e) => e.uriEncode(allowEmpty: allowEmpty, allowReserved: true))
+            .toList()
+            .uriEncode(allowEmpty: allowEmpty, allowReserved: true);
       ''';
 
       expect(
@@ -612,6 +665,34 @@ void main() {
             .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty))
             .toList()
             .uriEncode(allowEmpty: allowEmpty);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('threads allowReserved into encodeAnyToUri and the whole-list '
+        'encode for List<AnyModel> when set', () {
+      final model = ListModel(
+        content: AnyModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        allowReserved: literalBool(true),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value
+            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty, allowReserved: true))
+            .toList()
+            .uriEncode(allowEmpty: allowEmpty, allowReserved: true);
       ''';
 
       expect(
@@ -834,6 +915,30 @@ void main() {
       );
     });
 
+    test('threads allowReserved into the map uriEncode when set', () {
+      final model = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        allowReserved: literalBool(true),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test(
       'generates map and uriEncode for MapModel with IntegerModel values',
       () {
@@ -950,6 +1055,52 @@ void main() {
               )
               .toList()
               .uriEncode(allowEmpty: allowEmpty);
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
+    test('threads allowReserved into inner-map and whole-list encode for '
+        'List<Map<String, int>> when set', () {
+      final model = ListModel(
+        content: MapModel(
+          valueModel: IntegerModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+      );
+      final expression = buildUriEncodeExpression(
+        refer('value'),
+        model,
+        allowEmpty: refer('allowEmpty'),
+        allowReserved: literalBool(true),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map(
+                (e) => e
+                    .map((k, v) => MapEntry(k, v.toString()))
+                    .uriEncode(allowEmpty: allowEmpty, allowReserved: true),
+              )
+              .toList()
+              .uriEncode(allowEmpty: allowEmpty, allowReserved: true);
         }
       ''');
 

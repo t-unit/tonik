@@ -54,10 +54,12 @@ void main() {
           String paramName, {
           required bool explode,
           required bool allowEmpty,
+          bool allowReserved = false,
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             allowLists: false,
+            allowReserved: allowReserved,
           ).toDeepObject(
             paramName,
             explode: explode,
@@ -94,10 +96,12 @@ void main() {
           String paramName, {
           required bool explode,
           required bool allowEmpty,
+          bool allowReserved = false,
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             allowLists: false,
+            allowReserved: allowReserved,
           ).toDeepObject(
             paramName,
             explode: explode,
@@ -172,10 +176,12 @@ void main() {
           String paramName, {
           required bool explode,
           required bool allowEmpty,
+          bool allowReserved = false,
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             allowLists: false,
+            allowReserved: allowReserved,
           ).toDeepObject(
             paramName,
             explode: explode,
@@ -212,10 +218,12 @@ void main() {
           String paramName, {
           required bool explode,
           required bool allowEmpty,
+          bool allowReserved = false,
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             allowLists: false,
+            allowReserved: allowReserved,
           ).toDeepObject(
             paramName,
             explode: explode,
@@ -251,10 +259,12 @@ void main() {
           String paramName, {
           required bool explode,
           required bool allowEmpty,
+          bool allowReserved = false,
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             allowLists: false,
+            allowReserved: allowReserved,
           ).toDeepObject(
             paramName,
             explode: explode,
@@ -330,10 +340,12 @@ void main() {
           String paramName, {
           required bool explode,
           required bool allowEmpty,
+          bool allowReserved = false,
         }) {
           return parameterProperties(
             allowEmpty: allowEmpty,
             allowLists: false,
+            allowReserved: allowReserved,
           ).toDeepObject(
             paramName,
             explode: explode,

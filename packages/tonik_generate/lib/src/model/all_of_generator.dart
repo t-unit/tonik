@@ -1282,10 +1282,7 @@ class AllOfGenerator {
         (b) => b
           ..name = 'parameterProperties'
           ..returns = buildMapStringStringType()
-          ..optionalParameters.addAll([
-            buildBoolParameter('allowEmpty', defaultValue: true),
-            buildBoolParameter('allowLists', defaultValue: true),
-          ])
+          ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..body = buildEmptyMapStringString().returned.statement,
       );
     }
@@ -1312,10 +1309,7 @@ class AllOfGenerator {
         (b) => b
           ..name = 'parameterProperties'
           ..returns = buildMapStringStringType()
-          ..optionalParameters.addAll([
-            buildBoolParameter('allowEmpty', defaultValue: true),
-            buildBoolParameter('allowLists', defaultValue: true),
-          ])
+          ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..lambda = true
           ..body = generateEncodingExceptionExpression(message, raw: true).code,
       );
@@ -1331,10 +1325,7 @@ class AllOfGenerator {
         (b) => b
           ..name = 'parameterProperties'
           ..returns = buildMapStringStringType()
-          ..optionalParameters.addAll([
-            buildBoolParameter('allowEmpty', defaultValue: true),
-            buildBoolParameter('allowLists', defaultValue: true),
-          ])
+          ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..lambda = true
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
@@ -1349,10 +1340,7 @@ class AllOfGenerator {
         (b) => b
           ..name = 'parameterProperties'
           ..returns = buildMapStringStringType()
-          ..optionalParameters.addAll([
-            buildBoolParameter('allowEmpty', defaultValue: true),
-            buildBoolParameter('allowLists', defaultValue: true),
-          ])
+          ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
             'contains primitive types',
@@ -1382,6 +1370,7 @@ class AllOfGenerator {
                   {
                     'allowEmpty': refer('allowEmpty'),
                     'allowLists': refer('allowLists'),
+                    'allowReserved': refer('allowReserved'),
                   },
                 ),
           ]).statement,
@@ -1399,6 +1388,7 @@ class AllOfGenerator {
                   {
                     'allowEmpty': refer('allowEmpty'),
                     'allowLists': refer('allowLists'),
+                    'allowReserved': refer('allowReserved'),
                   },
                 ),
           ]).statement,
@@ -1418,10 +1408,7 @@ class AllOfGenerator {
       (b) => b
         ..name = 'parameterProperties'
         ..returns = buildMapStringStringType()
-        ..optionalParameters.addAll([
-          buildBoolParameter('allowEmpty', defaultValue: true),
-          buildBoolParameter('allowLists', defaultValue: true),
-        ])
+        ..optionalParameters.addAll(buildParameterPropertiesParameters())
         ..body = Block.of(propertyMergingLines),
     );
   }
@@ -1442,9 +1429,11 @@ class AllOfGenerator {
         ap.valueModel.encodingShape == EncodingShape.simple) {
       final uriEncodeCall = ap.valueModel.isEffectivelyNullable
           ? '${uriEncodeReceiver(ap.valueModel, r'_$e.value?')}'
-                ".uriEncode(allowEmpty: allowEmpty) ?? ''"
+                '.uriEncode(allowEmpty: allowEmpty, '
+                "allowReserved: allowReserved) ?? ''"
           : '${uriEncodeReceiver(ap.valueModel, r'_$e.value')}'
-                '.uriEncode(allowEmpty: allowEmpty)';
+                '.uriEncode(allowEmpty: allowEmpty, '
+                'allowReserved: allowReserved)';
       return [
         Code('''
 for (final _\$e in $apFieldName.entries) {
@@ -1822,6 +1811,7 @@ for (final _\$e in $apFieldName.entries) {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
               'useQueryComponent': refer('useQueryComponent'),
+              'allowReserved': refer('allowReserved'),
             });
       }
       if (resolved is BinaryModel) {
@@ -1833,6 +1823,7 @@ for (final _\$e in $apFieldName.entries) {
         'explode': refer('explode'),
         'allowEmpty': refer('allowEmpty'),
         'useQueryComponent': refer('useQueryComponent'),
+        'allowReserved': refer('allowReserved'),
       });
     }
 
@@ -1908,6 +1899,7 @@ for (final _\$e in $apFieldName.entries) {
     final delegateToParameterProperties = refer('parameterProperties')
         .call([], {
           'allowEmpty': refer('allowEmpty'),
+          'allowReserved': refer('allowReserved'),
         })
         .property('toForm')
         .call([refer('paramName')], {
@@ -2619,6 +2611,7 @@ for (final _\$e in $apFieldName.entries) {
               .call([], {
                 'allowEmpty': refer('allowEmpty'),
                 'useQueryComponent': refer('useQueryComponent'),
+                'allowReserved': refer('allowReserved'),
               })
               .returned
               .statement,
@@ -2632,22 +2625,7 @@ for (final _\$e in $apFieldName.entries) {
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll([
-            Parameter(
-              (b) => b
-                ..name = 'allowEmpty'
-                ..type = refer('bool', 'dart:core')
-                ..named = true
-                ..required = true,
-            ),
-            Parameter(
-              (b) => b
-                ..name = 'useQueryComponent'
-                ..type = refer('bool', 'dart:core')
-                ..named = true
-                ..defaultTo = literalBool(false).code,
-            ),
-          ])
+          ..optionalParameters.addAll(buildUriEncodeParameters())
           ..lambda = false
           ..body = Block.of(bodyCode),
       );
@@ -2664,22 +2642,7 @@ for (final _\$e in $apFieldName.entries) {
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll([
-            Parameter(
-              (b) => b
-                ..name = 'allowEmpty'
-                ..type = refer('bool', 'dart:core')
-                ..named = true
-                ..required = true,
-            ),
-            Parameter(
-              (b) => b
-                ..name = 'useQueryComponent'
-                ..type = refer('bool', 'dart:core')
-                ..named = true
-                ..defaultTo = literalBool(false).code,
-            ),
-          ])
+          ..optionalParameters.addAll(buildUriEncodeParameters())
           ..lambda = false
           ..body = generateEncodingExceptionExpression(
             'Cannot uriEncode $className: contains complex types',
@@ -2694,22 +2657,7 @@ for (final _\$e in $apFieldName.entries) {
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'uriEncode'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll([
-            Parameter(
-              (b) => b
-                ..name = 'allowEmpty'
-                ..type = refer('bool', 'dart:core')
-                ..named = true
-                ..required = true,
-            ),
-            Parameter(
-              (b) => b
-                ..name = 'useQueryComponent'
-                ..type = refer('bool', 'dart:core')
-                ..named = true
-                ..defaultTo = literalBool(false).code,
-            ),
-          ])
+          ..optionalParameters.addAll(buildUriEncodeParameters())
           ..lambda = true
           ..body = literalString('').code,
       );
@@ -2744,6 +2692,7 @@ for (final _\$e in $apFieldName.entries) {
                   .call([], {
                     'allowEmpty': refer('allowEmpty'),
                     'useQueryComponent': refer('useQueryComponent'),
+                    'allowReserved': refer('allowReserved'),
                   }),
             )
             .statement,
@@ -2778,22 +2727,7 @@ for (final _\$e in $apFieldName.entries) {
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll([
-          Parameter(
-            (b) => b
-              ..name = 'allowEmpty'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..required = true,
-          ),
-          Parameter(
-            (b) => b
-              ..name = 'useQueryComponent'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..defaultTo = literalBool(false).code,
-          ),
-        ])
+        ..optionalParameters.addAll(buildUriEncodeParameters())
         ..lambda = false
         ..body = Block.of(valueCollectionCode),
     );

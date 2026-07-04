@@ -56,6 +56,7 @@ BuiltExpression buildToDeepObjectQueryParameterCode(
             {
               'explode': literalBool(explode),
               'allowEmpty': literalBool(allowEmpty),
+              if (allowReserved) 'allowReserved': literalBool(true),
             },
           ),
     );
@@ -113,7 +114,7 @@ Expression _buildMapDeepObjectExpression(
       refer('v'),
       valueModel,
       allowEmpty: literalBool(allowEmpty),
-      allowReserved: allowReserved,
+      allowReserved: allowReserved ? literalBool(true) : null,
     );
 
     final mapEntryClosure = Method(

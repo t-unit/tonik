@@ -406,6 +406,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/AllowReservedArrayForm'
 
+  /form/allow-reserved-enum:
+    post:
+      operationId: postAllowReservedEnumForm
+      tags:
+        - form
+      summary: Post form where an enum property opts into allowReserved
+      description: >-
+        Tests that an enum body property flagged allowReserved keeps reserved
+        characters literal in the sent body through the shared form-entries
+        path.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllowReservedEnumForm'
+            encoding:
+              choice:
+                allowReserved: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllowReservedEnumForm'
+
   /custom/form:
     post:
       operationId: postCustomForm
@@ -602,3 +629,15 @@ components:
           items:
             type: string
           description: Array sibling comma-joined into a single entry
+
+    AllowReservedEnumForm:
+      type: object
+      required:
+        - choice
+      properties:
+        choice:
+          type: string
+          enum:
+            - a/b:c
+            - g&h=i+j
+          description: Enum value that keeps reserved characters literal

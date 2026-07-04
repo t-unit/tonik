@@ -470,7 +470,8 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
           ..optionalParameters.addAll(buildFormEncodingParameters())
           ..body = const Code(
             'rawValue.toForm(paramName, explode: explode, '
-            'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
+            'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
+            'allowReserved: allowReserved)',
           ),
       );
     }
@@ -498,7 +499,7 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
           const Code('}'),
           const Code(
             '''
-return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
 ''',
           ),
         ]),
@@ -557,26 +558,11 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
           ..annotations.add(refer('override', 'dart:core'))
           ..returns = refer('String', 'dart:core')
           ..lambda = true
-          ..optionalParameters.addAll([
-            Parameter(
-              (b) => b
-                ..name = 'allowEmpty'
-                ..type = refer('bool', 'dart:core')
-                ..named = true
-                ..required = true,
-            ),
-            Parameter(
-              (b) => b
-                ..name = 'useQueryComponent'
-                ..type = refer('bool', 'dart:core')
-                ..named = true
-                ..required = false
-                ..defaultTo = literalFalse.code,
-            ),
-          ])
+          ..optionalParameters.addAll(buildUriEncodeParameters())
           ..body = const Code(
             'rawValue.uriEncode(allowEmpty: allowEmpty, '
-            'useQueryComponent: useQueryComponent)',
+            'useQueryComponent: useQueryComponent, '
+            'allowReserved: allowReserved)',
           ),
       );
     }
@@ -587,23 +573,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
         ..annotations.add(refer('override', 'dart:core'))
         ..returns = refer('String', 'dart:core')
         ..lambda = false
-        ..optionalParameters.addAll([
-          Parameter(
-            (b) => b
-              ..name = 'allowEmpty'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..required = true,
-          ),
-          Parameter(
-            (b) => b
-              ..name = 'useQueryComponent'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..required = false
-              ..defaultTo = literalFalse.code,
-          ),
-        ])
+        ..optionalParameters.addAll(buildUriEncodeParameters())
         ..body = Block.of([
           Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
           generateEncodingExceptionExpression(
@@ -613,7 +583,8 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
           const Code('}'),
           const Code(
             'return rawValue.uriEncode(allowEmpty: allowEmpty, '
-            'useQueryComponent: useQueryComponent);',
+            'useQueryComponent: useQueryComponent, '
+            'allowReserved: allowReserved);',
           ),
         ]),
     );

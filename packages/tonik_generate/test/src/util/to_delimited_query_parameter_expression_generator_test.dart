@@ -789,7 +789,8 @@ void main() {
         },
       );
 
-      test('enum list omits allowReserved even when set', () {
+      test('enum list threads allowReserved into each item uriEncode when set',
+          () {
         final parameter = createParameter(
           name: 'priorities',
           rawName: 'priorities',
@@ -826,7 +827,7 @@ void main() {
             format(r'''
               void test() {
                 for (final value in priorities
-                    .map((e) => e.uriEncode(allowEmpty: true))
+                    .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
                     .toList()
                     .toSpaceDelimited(
                       explode: false,
@@ -841,7 +842,8 @@ void main() {
         );
       });
 
-      test('composition list omits allowReserved even when set', () {
+      test('composition list threads allowReserved into each item uriEncode '
+          'when set', () {
         final parameter = createParameter(
           name: 'items',
           rawName: 'items',
@@ -891,7 +893,7 @@ void main() {
                   }
                 }
                 for (final value in items
-                    .map((item) => item.uriEncode(allowEmpty: true))
+                    .map((item) => item.uriEncode(allowEmpty: true, allowReserved: true))
                     .toList()
                     .toSpaceDelimited(
                       explode: false,

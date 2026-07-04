@@ -173,6 +173,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
+          bool allowReserved = false,
         }) => throw EncodingException(
           r'ServerEvent is read-only and cannot be encoded.',
         );
@@ -196,6 +197,7 @@ void main() {
         String uriEncode({
           required bool allowEmpty,
           bool useQueryComponent = false,
+          bool allowReserved = false,
         }) => throw EncodingException(
           r'ServerEvent is read-only and cannot be encoded.',
         );

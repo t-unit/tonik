@@ -165,6 +165,15 @@ switch (path) {
         }
         break
 
+    case '/form/allow-reserved-enum':
+        def formBody = 'choice=a%2Fb%3Ac'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
     case '/custom/form':
         def formBody = 'field1=custom+value&field2=100'
         respond {

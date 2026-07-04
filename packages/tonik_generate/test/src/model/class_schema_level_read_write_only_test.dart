@@ -220,6 +220,7 @@ void main() {
           bool allowEmpty = true,
           bool allowLists = true,
           bool useQueryComponent = false,
+          bool allowReserved = false,
         }) => throw EncodingException(
           r'ServerStatus is read-only and cannot be encoded.',
         );

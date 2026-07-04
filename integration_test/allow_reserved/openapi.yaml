@@ -44,6 +44,32 @@ paths:
       responses:
         '204':
           description: No Content
+  /form-allow-reserved-enum:
+    get:
+      operationId: testFormAllowReservedEnum
+      tags:
+        - query
+      summary: Test allowReserved form query enum parameters
+      description: >-
+        A form query enum parameter with allowReserved next to a sibling enum
+        that keeps the default full percent-encoding.
+      parameters:
+        - name: reserved
+          in: query
+          style: form
+          explode: false
+          allowReserved: true
+          schema:
+            $ref: '#/components/schemas/ReservedChoice'
+        - name: notReserved
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ReservedChoice'
+      responses:
+        '204':
+          description: No Content
   /form-allow-reserved-list:
     get:
       operationId: testFormAllowReservedList
@@ -71,6 +97,36 @@ paths:
             type: array
             items:
               type: string
+      responses:
+        '204':
+          description: No Content
+  /form-allow-reserved-enum-list:
+    get:
+      operationId: testFormAllowReservedEnumList
+      tags:
+        - query
+      summary: Test allowReserved form query enum array parameters
+      description: >-
+        A non-nullable array-of-enum form query parameter with allowReserved
+        next to a sibling array that keeps the default full percent-encoding.
+      parameters:
+        - name: reservedList
+          in: query
+          style: form
+          explode: false
+          allowReserved: true
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ReservedChoice'
+        - name: notReservedList
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ReservedChoice'
       responses:
         '204':
           description: No Content
@@ -164,3 +220,50 @@ paths:
       responses:
         '204':
           description: No Content
+
+  /form-object-allow-reserved:
+    get:
+      operationId: testFormObjectAllowReserved
+      tags:
+        - query
+      summary: Test allowReserved form query object parameters with a list property
+      description: >-
+        A form-style object query parameter with allowReserved whose typed
+        object holds a string-list property, next to a sibling object that keeps
+        the default full percent-encoding.
+      parameters:
+        - name: reservedObject
+          in: query
+          style: form
+          explode: false
+          allowReserved: true
+          schema:
+            $ref: '#/components/schemas/ReservedListObject'
+        - name: notReservedObject
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ReservedListObject'
+      responses:
+        '204':
+          description: No Content
+
+components:
+  schemas:
+    ReservedChoice:
+      type: string
+      enum:
+        - a/b:c
+        - g&h=i+j
+
+    ReservedListObject:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: String list whose items keep reserved chars literal

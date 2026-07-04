@@ -117,7 +117,7 @@ void main() {
 
         const expectedUriEncode = '''
           @override
-          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+          String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
             throw EncodingException(
               r'Cannot uriEncode User: complex types cannot be URI-encoded',
             );
@@ -144,7 +144,7 @@ void main() {
 
         const expectedUriEncode = '''
           @override
-          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+          String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
             throw EncodingException(
               r'Cannot uriEncode Empty: complex types cannot be URI-encoded',
             );
@@ -1357,10 +1357,12 @@ String paramName, {
 required bool explode,
 required bool allowEmpty,
 bool useQueryComponent = false,
+bool allowReserved = false,
 }) {
 return parameterProperties(
 allowEmpty: allowEmpty,
 useQueryComponent: useQueryComponent,
+allowReserved: allowReserved,
 ).toForm(
 paramName,
 explode: explode,
@@ -1376,6 +1378,7 @@ Map<String, String> parameterProperties({
   bool allowEmpty = true,
   bool allowLists = true,
   bool useQueryComponent = false,
+  bool allowReserved = false,
 }) {
   if (!allowLists) {
     throw EncodingException('Lists are not supported in this encoding style');
@@ -1384,6 +1387,7 @@ Map<String, String> parameterProperties({
   _$result[r'tags'] = tags.uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
+    allowReserved: allowReserved,
   );
   return _$result;
 }
@@ -1469,7 +1473,7 @@ Map<String, String> parameterProperties({
         );
         expect(toFormMethod.requiredParameters.length, 1);
         expect(toFormMethod.requiredParameters[0].name, 'paramName');
-        expect(toFormMethod.optionalParameters.length, 3);
+        expect(toFormMethod.optionalParameters.length, 4);
         expect(toFormMethod.optionalParameters[0].name, 'explode');
         expect(toFormMethod.optionalParameters[0].required, isTrue);
         expect(toFormMethod.optionalParameters[0].named, isTrue);
@@ -1479,6 +1483,9 @@ Map<String, String> parameterProperties({
         expect(toFormMethod.optionalParameters[2].name, 'useQueryComponent');
         expect(toFormMethod.optionalParameters[2].required, isFalse);
         expect(toFormMethod.optionalParameters[2].named, isTrue);
+        expect(toFormMethod.optionalParameters[3].name, 'allowReserved');
+        expect(toFormMethod.optionalParameters[3].required, isFalse);
+        expect(toFormMethod.optionalParameters[3].named, isTrue);
       });
 
       test('generates toForm method for complex properties', () {
@@ -1507,8 +1514,8 @@ Map<String, String> parameterProperties({
         final result = generator.generateClass(model);
 
         const expectedToFormBody = '''
-          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 
@@ -1530,8 +1537,8 @@ Map<String, String> parameterProperties({
         final result = generator.generateClass(model);
 
         const expectedToFormMethod = '''
-          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 
@@ -1778,8 +1785,8 @@ Map<String, String> parameterProperties({
           final result = generator.generateClass(model);
 
           const expectedToFormMethod = '''
-          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+          List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
           }
         ''';
 
@@ -2876,16 +2883,19 @@ Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
     final _$result = <String, String>{};
     _$result[r'name'] = name.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
     for (final _$e in additionalProperties.entries) {
       _$result[_$e.key] = _$e.value.uriEncode(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
       );
     }
     return _$result;
@@ -2935,11 +2945,13 @@ Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   }) {
     final _$result = <String, String>{};
     _$result[r'version'] = version.uriEncode(
       allowEmpty: allowEmpty,
       useQueryComponent: useQueryComponent,
+      allowReserved: allowReserved,
     );
     if (additionalProperties.isNotEmpty) {
       throw EncodingException(

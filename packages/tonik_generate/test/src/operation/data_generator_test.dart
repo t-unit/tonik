@@ -1585,8 +1585,8 @@ void main() {
       );
 
       test(
-        'defers allowReserved for enum and composition properties while '
-        'applying it to the flagged scalar',
+        'threads allowReserved through enum and composition properties '
+        'alongside the flagged scalar',
         () {
           final formModel = ClassModel(
             name: 'ComboForm',
@@ -1675,12 +1675,14 @@ void main() {
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
+                  allowReserved: true,
                 ),
                 ...body.choice.toForm(
                   r'choice'.uriEncode(allowEmpty: true, useQueryComponent: true),
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
+                  allowReserved: true,
                 ),
               ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
             }
@@ -1696,7 +1698,7 @@ void main() {
       );
 
       test(
-        'opens the per-property path for a sole flagged enum yet defers its '
+        'opens the per-property path for a sole flagged enum and threads its '
         'allowReserved',
         () {
           final formModel = ClassModel(
@@ -1759,6 +1761,7 @@ void main() {
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
+                  allowReserved: true,
                 ),
               ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
             }
@@ -1774,8 +1777,8 @@ void main() {
       );
 
       test(
-        'opens the per-property path for a sole flagged composition yet defers '
-        'its allowReserved',
+        'opens the per-property path for a sole flagged composition and '
+        'threads its allowReserved',
         () {
           final formModel = ClassModel(
             name: 'CompositionOnlyForm',
@@ -1842,6 +1845,7 @@ void main() {
                   explode: true,
                   allowEmpty: true,
                   useQueryComponent: true,
+                  allowReserved: true,
                 ),
               ].map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
             }

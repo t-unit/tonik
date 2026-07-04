@@ -1469,6 +1469,7 @@ void main() {
           required bool explode,
           required bool allowEmpty,
           bool useQueryComponent = false,
+          bool allowReserved = false,
         }) {
           final _$entryLists = <List<ParameterEntry>>[];
           final _$values = <String>{};
@@ -1746,6 +1747,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
+          bool allowReserved = false,
         }) =>
           throw EncodingException(
             r'parameterProperties not supported for AllOfIntList: contains array types',
@@ -1806,6 +1808,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
+          bool allowReserved = false,
         }) =>
           throw EncodingException(
             r'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported',
@@ -1852,6 +1855,7 @@ void main() {
         Map<String, String> parameterProperties({
           bool allowEmpty = true,
           bool allowLists = true,
+          bool allowReserved = false,
         }) =>
           throw EncodingException(
             r'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported',
@@ -1981,18 +1985,21 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
+            bool allowReserved = false,
           }) {
             final _$mergedProperties = <String, String>{};
             _$mergedProperties.addAll(
               testClass1.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
+                allowReserved: allowReserved,
               ),
             );
             _$mergedProperties.addAll(
               testClass2.parameterProperties(
                 allowEmpty: allowEmpty,
                 allowLists: allowLists,
+                allowReserved: allowReserved,
               ),
             );
             return _$mergedProperties;
@@ -2030,6 +2037,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
+            bool allowReserved = false,
           }) =>
             throw EncodingException(
               r'parameterProperties not supported for AllOfWithList: contains array types',
@@ -2067,6 +2075,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
+            bool allowReserved = false,
           }) =>
             throw EncodingException(
               r'parameterProperties not supported for AllOfWithMap: contains map types',
@@ -2124,6 +2133,7 @@ void main() {
           Map<String, String> parameterProperties({
             bool allowEmpty = true,
             bool allowLists = true,
+            bool allowReserved = false,
           }) =>
             throw EncodingException(
               r'parameterProperties not supported for AllOfMixedMapClass: contains map types',
@@ -2423,7 +2433,13 @@ void main() {
         (m) => m.name == 'uriEncode',
       );
 
-      expect(uriEncodeMethod.optionalParameters, hasLength(2));
+      expect(uriEncodeMethod.optionalParameters, hasLength(3));
+
+      final allowReservedParam = uriEncodeMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowReserved',
+      );
+      expect(allowReservedParam.named, isTrue);
+      expect(allowReservedParam.required, isFalse);
 
       final allowEmptyParam = uriEncodeMethod.optionalParameters.firstWhere(
         (p) => p.name == 'allowEmpty',
@@ -2480,12 +2496,13 @@ void main() {
 
         const expectedUriEncode = r'''
           @override
-          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+          String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
             final _$values = <String>{};
             if (nullableInt != null) {
               final _$nullableIntEncoded = nullableInt!.uriEncode(
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
               );
               _$values.add(_$nullableIntEncoded);
             }
@@ -2544,12 +2561,13 @@ void main() {
 
         const expectedUriEncode = r'''
           @override
-          String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+          String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
             final _$values = <String>{};
             if (signature != null) {
               final _$signatureEncoded = signature!.toBase64String().uriEncode(
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
               );
               _$values.add(_$signatureEncoded);
             }
@@ -2631,7 +2649,7 @@ void main() {
 
         const expectedUriEncode = '''
 @override
-String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
+String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, }) {
   if (currentEncodingShape != EncodingShape.simple) {
     throw EncodingException(
       r'Cannot uriEncode DynamicByte: contains complex types',
@@ -2640,6 +2658,7 @@ String uriEncode({required bool allowEmpty, bool useQueryComponent = false}) {
   return signature!.toBase64String().uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
+    allowReserved: allowReserved,
   );
 }
 ''';
@@ -2730,12 +2749,14 @@ List<ParameterEntry> toForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
+  bool allowReserved = false,
 }) {
   return signature!.toBase64String().toForm(
     paramName,
     explode: explode,
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
+    allowReserved: allowReserved,
   );
 }
 ''';
@@ -2822,6 +2843,7 @@ List<ParameterEntry> toForm(
   required bool explode,
   required bool allowEmpty,
   bool useQueryComponent = false,
+  bool allowReserved = false,
 }) {
   return throw EncodingException('Binary data cannot be form-encoded');
 }
@@ -2895,7 +2917,13 @@ String toMatrix(
         (m) => m.name == 'toForm',
       );
 
-      expect(toFormMethod.optionalParameters.length, 3);
+      expect(toFormMethod.optionalParameters.length, 4);
+
+      final allowReservedParam = toFormMethod.optionalParameters.firstWhere(
+        (p) => p.name == 'allowReserved',
+      );
+      expect(allowReservedParam.named, isTrue);
+      expect(allowReservedParam.required, isFalse);
 
       final explodeParam = toFormMethod.optionalParameters.firstWhere(
         (p) => p.name == 'explode',
@@ -2981,6 +3009,7 @@ String toMatrix(
             required bool explode,
             required bool allowEmpty,
             bool useQueryComponent = false,
+            bool allowReserved = false,
           }) {
             if (currentEncodingShape == EncodingShape.mixed) {
               throw EncodingException(
@@ -2995,6 +3024,7 @@ String toMatrix(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 useQueryComponent: useQueryComponent,
+                allowReserved: allowReserved,
               );
               _$entryLists.add(_$statusForm);
               _$values.add(_$statusForm.map((e) => e.value).join(','));
@@ -3004,6 +3034,7 @@ String toMatrix(
               explode: explode,
               allowEmpty: allowEmpty,
               useQueryComponent: useQueryComponent,
+              allowReserved: allowReserved,
             );
             _$entryLists.add(_$stringForm);
             _$values.add(_$stringForm.map((e) => e.value).join(','));
@@ -4201,10 +4232,15 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
+    bool allowReserved = false,
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
-      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+      $base.parameterProperties(
+        allowEmpty: allowEmpty,
+        allowLists: allowLists,
+        allowReserved: allowReserved,
+      ),
     );
     for (final _$e in additionalProperties.entries) {
       _$mergedProperties[_$e.key] = _$e.value?.toString() ?? '';
@@ -4257,13 +4293,21 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
+    bool allowReserved = false,
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
-      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+      $base.parameterProperties(
+        allowEmpty: allowEmpty,
+        allowLists: allowLists,
+        allowReserved: allowReserved,
+      ),
     );
     for (final _$e in additionalProperties.entries) {
-      _$mergedProperties[_$e.key] = _$e.value.uriEncode(allowEmpty: allowEmpty);
+      _$mergedProperties[_$e.key] = _$e.value.uriEncode(
+        allowEmpty: allowEmpty,
+        allowReserved: allowReserved,
+      );
     }
     return _$mergedProperties;
   }''';
@@ -4315,14 +4359,20 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
+    bool allowReserved = false,
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
-      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+      $base.parameterProperties(
+        allowEmpty: allowEmpty,
+        allowLists: allowLists,
+        allowReserved: allowReserved,
+      ),
     );
     for (final _$e in additionalProperties.entries) {
       _$mergedProperties[_$e.key] = _$e.value.toBase64String().uriEncode(
         allowEmpty: allowEmpty,
+        allowReserved: allowReserved,
       );
     }
     return _$mergedProperties;
@@ -4392,14 +4442,23 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
+    bool allowReserved = false,
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
-      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+      $base.parameterProperties(
+        allowEmpty: allowEmpty,
+        allowLists: allowLists,
+        allowReserved: allowReserved,
+      ),
     );
     for (final _$e in additionalProperties.entries) {
       _$mergedProperties[_$e.key] =
-          _$e.value?.toBase64String().uriEncode(allowEmpty: allowEmpty) ?? '';
+          _$e.value?.toBase64String().uriEncode(
+            allowEmpty: allowEmpty,
+            allowReserved: allowReserved,
+          ) ??
+          '';
     }
     return _$mergedProperties;
   }''';
@@ -4456,10 +4515,15 @@ class Holder {
   Map<String, String> parameterProperties({
     bool allowEmpty = true,
     bool allowLists = true,
+    bool allowReserved = false,
   }) {
     final _$mergedProperties = <String, String>{};
     _$mergedProperties.addAll(
-      $base.parameterProperties(allowEmpty: allowEmpty, allowLists: allowLists),
+      $base.parameterProperties(
+        allowEmpty: allowEmpty,
+        allowLists: allowLists,
+        allowReserved: allowReserved,
+      ),
     );
     if (additionalProperties.isNotEmpty) {
       throw EncodingException(

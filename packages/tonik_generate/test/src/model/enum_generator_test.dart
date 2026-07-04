@@ -1231,7 +1231,7 @@ void main() {
         );
         expect(toForm.requiredParameters, hasLength(1));
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(3));
+        expect(toForm.optionalParameters, hasLength(4));
 
         final explodeParam = toForm.optionalParameters.firstWhere(
           (p) => p.name == 'explode',
@@ -1265,7 +1265,8 @@ void main() {
         expect(
           body,
           'rawValue.toForm(paramName, explode: explode, '
-          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
+          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
+          'allowReserved: allowReserved)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1294,13 +1295,14 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(3));
+        expect(toForm.optionalParameters, hasLength(4));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
           'rawValue.toForm(paramName, explode: explode, '
-          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
+          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
+          'allowReserved: allowReserved)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1328,13 +1330,14 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(3));
+        expect(toForm.optionalParameters, hasLength(4));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
           'rawValue.toForm(paramName, explode: explode, '
-          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
+          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
+          'allowReserved: allowReserved)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1363,13 +1366,14 @@ void main() {
           'List<ParameterEntry>',
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
-        expect(toForm.optionalParameters, hasLength(3));
+        expect(toForm.optionalParameters, hasLength(4));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
           'rawValue.toForm(paramName, explode: explode, '
-          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent)',
+          'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
+          'allowReserved: allowReserved)',
         );
         expect(toForm.lambda, isTrue);
       });
@@ -1670,7 +1674,7 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(2));
+        expect(uriEncode.optionalParameters, hasLength(3));
 
         final allowEmptyParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'allowEmpty',
@@ -1697,7 +1701,7 @@ void main() {
         expect(
           body,
           'rawValue.uriEncode(allowEmpty: allowEmpty, '
-          'useQueryComponent: useQueryComponent)',
+          'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
       });
@@ -1722,7 +1726,7 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(2));
+        expect(uriEncode.optionalParameters, hasLength(3));
 
         final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'useQueryComponent',
@@ -1742,7 +1746,7 @@ void main() {
         expect(
           body,
           'rawValue.uriEncode(allowEmpty: allowEmpty, '
-          'useQueryComponent: useQueryComponent)',
+          'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
       });
@@ -1766,7 +1770,7 @@ void main() {
         );
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(uriEncode.optionalParameters, hasLength(2));
+        expect(uriEncode.optionalParameters, hasLength(3));
 
         final useQueryComponentParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'useQueryComponent',
@@ -1786,7 +1790,7 @@ void main() {
         expect(
           body,
           'rawValue.uriEncode(allowEmpty: allowEmpty, '
-          'useQueryComponent: useQueryComponent)',
+          'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
       });
@@ -1999,14 +2003,14 @@ void main() {
         );
         expect(toForm.requiredParameters.single.name, 'paramName');
         expect(toForm.lambda, isFalse);
-        expect(toForm.optionalParameters, hasLength(3));
+        expect(toForm.optionalParameters, hasLength(4));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+          return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2111,7 +2115,7 @@ void main() {
 
         expect(uriEncode.returns?.accept(DartEmitter()).toString(), 'String');
         expect(uriEncode.lambda, isFalse);
-        expect(uriEncode.optionalParameters, hasLength(2));
+        expect(uriEncode.optionalParameters, hasLength(3));
 
         final allowEmptyParam = uriEncode.optionalParameters.firstWhere(
           (p) => p.name == 'allowEmpty',
@@ -2139,7 +2143,7 @@ void main() {
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent);
+          return rawValue.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });

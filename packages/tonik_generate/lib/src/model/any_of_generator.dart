@@ -1364,6 +1364,7 @@ class AnyOfGenerator {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
                 'useQueryComponent': refer('useQueryComponent'),
+                'allowReserved': refer('allowReserved'),
               },
             ),
       );
@@ -1381,6 +1382,7 @@ class AnyOfGenerator {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
             'useQueryComponent': refer('useQueryComponent'),
+            'allowReserved': refer('allowReserved'),
           },
         ),
       );
@@ -1419,7 +1421,7 @@ class AnyOfGenerator {
           Code(
             'final _\$${fieldName}Form = '
             '$fieldName!.parameterProperties('
-            'allowEmpty: allowEmpty);',
+            'allowEmpty: allowEmpty, allowReserved: allowReserved);',
           ),
         );
         if (needsMapValues) {
@@ -1452,6 +1454,7 @@ class AnyOfGenerator {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
             'useQueryComponent': refer('useQueryComponent'),
+            'allowReserved': refer('allowReserved'),
           },
         ),
       );
@@ -1464,7 +1467,7 @@ class AnyOfGenerator {
           Code(
             'final _\$${fieldName}Form = '
             '$fieldName!.parameterProperties('
-            'allowEmpty: allowEmpty);',
+            'allowEmpty: allowEmpty, allowReserved: allowReserved);',
           ),
         );
       if (needsMapValues) {
@@ -1702,10 +1705,7 @@ class AnyOfGenerator {
         (b) => b
           ..name = 'parameterProperties'
           ..returns = buildMapStringStringType()
-          ..optionalParameters.addAll([
-            buildBoolParameter('allowEmpty', defaultValue: true),
-            buildBoolParameter('allowLists', defaultValue: true),
-          ])
+          ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
             'contains only simple types',
@@ -1866,10 +1866,7 @@ class AnyOfGenerator {
       (b) => b
         ..name = 'parameterProperties'
         ..returns = buildMapStringStringType()
-        ..optionalParameters.addAll([
-          buildBoolParameter('allowEmpty', defaultValue: true),
-          buildBoolParameter('allowLists', defaultValue: true),
-        ])
+        ..optionalParameters.addAll(buildParameterPropertiesParameters())
         ..lambda = false
         ..body = Block.of(body),
     );
@@ -1916,7 +1913,7 @@ class AnyOfGenerator {
           Code(
             r'_$mapValues.add('
             '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
-            'allowLists: allowLists));',
+            'allowLists: allowLists, allowReserved: allowReserved));',
           ),
         );
 
@@ -1948,7 +1945,7 @@ class AnyOfGenerator {
         Code(
           r'_$mapValues.add('
           '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
-          'allowLists: allowLists));',
+          'allowLists: allowLists, allowReserved: allowReserved));',
         ),
       ];
 
@@ -2369,7 +2366,8 @@ class AnyOfGenerator {
           ..add(
             Code(
               'return $receiver.uriEncode(allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent);',
+              'useQueryComponent: useQueryComponent, '
+              'allowReserved: allowReserved);',
             ),
           )
           ..add(const Code('}'));
@@ -2388,22 +2386,7 @@ class AnyOfGenerator {
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'uriEncode'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll([
-          Parameter(
-            (b) => b
-              ..name = 'allowEmpty'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..required = true,
-          ),
-          Parameter(
-            (b) => b
-              ..name = 'useQueryComponent'
-              ..type = refer('bool', 'dart:core')
-              ..named = true
-              ..defaultTo = literalBool(false).code,
-          ),
-        ])
+        ..optionalParameters.addAll(buildUriEncodeParameters())
         ..lambda = false
         ..body = Block.of(body),
     );

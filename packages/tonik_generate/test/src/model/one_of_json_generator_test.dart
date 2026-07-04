@@ -1338,7 +1338,7 @@ void main() {
         expectContainsBody(
           'List<ParameterEntry> toForm( String paramName, { required bool '
           'explode, required bool allowEmpty, bool useQueryComponent = false, '
-          '}) => $throwExpr',
+          'bool allowReserved = false, }) => $throwExpr',
         );
       });
 
@@ -1359,7 +1359,8 @@ void main() {
       test('uriEncode', () {
         expectContainsBody(
           'String uriEncode({ required bool allowEmpty, bool '
-          'useQueryComponent = false, }) => $throwExpr',
+          'useQueryComponent = false, bool allowReserved = false, }) => '
+          '$throwExpr',
         );
       });
 
@@ -1372,14 +1373,16 @@ void main() {
       test('parameterProperties', () {
         expectContainsBody(
           'Map<String, String> parameterProperties({ bool allowEmpty = true, '
-          'bool allowLists = true, }) => $throwExpr',
+          'bool allowLists = true, bool allowReserved = false, }) => '
+          '$throwExpr',
         );
       });
 
       test('toDeepObject', () {
         expectContainsBody(
           'List<ParameterEntry> toDeepObject( String paramName, { required '
-          'bool explode, required bool allowEmpty, }) => $throwExpr',
+          'bool explode, required bool allowEmpty, bool allowReserved = false, '
+          '}) => $throwExpr',
         );
       });
     });

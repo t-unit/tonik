@@ -52,11 +52,14 @@ abstract interface class FormEncodable {
   /// When [allowEmpty] is false, empty values throw an exception.
   /// When [useQueryComponent] is true, uses '+' for spaces
   /// (application/x-www-form-urlencoded encoding).
+  /// When [allowReserved] is true, reserved characters in values are kept
+  /// literal except the form delimiters `& = +`.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
     required bool allowEmpty,
     bool useQueryComponent = false,
+    bool allowReserved = false,
   });
 }
 
@@ -67,6 +70,8 @@ abstract interface class DeepObjectEncodable {
   /// The [paramName] is the base parameter name used for nested keys.
   /// The [explode] parameter must be true; deepObject style always explodes.
   /// When [allowEmpty] is false, empty values throw an exception.
+  /// When [allowReserved] is true, reserved characters in values are kept
+  /// literal except the form delimiters `& = +`; keys stay encoded.
   ///
   /// Returns a list of parameter entries where each entry has:
   /// - name: `paramName[key]`
@@ -75,6 +80,7 @@ abstract interface class DeepObjectEncodable {
     String paramName, {
     required bool explode,
     required bool allowEmpty,
+    bool allowReserved = false,
   });
 }
 
@@ -96,7 +102,13 @@ abstract interface class UriEncodable {
   /// When [allowEmpty] is false, empty values throw an exception.
   /// When [useQueryComponent] is true, uses '+' for spaces
   /// (application/x-www-form-urlencoded encoding).
-  String uriEncode({required bool allowEmpty, bool useQueryComponent});
+  /// When [allowReserved] is true, reserved characters are kept literal except
+  /// the form delimiters `& = +`.
+  String uriEncode({
+    required bool allowEmpty,
+    bool useQueryComponent,
+    bool allowReserved,
+  });
 }
 
 /// Combined interface for types that support all standard parameter

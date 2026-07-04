@@ -81,8 +81,6 @@ List<Code> _buildDelimitedCode(
   String nullGuard(String encoded) =>
       isContentNullable ? "e == null ? '' : $encoded" : encoded;
 
-  // The generated enum uriEncode has no allowReserved parameter, so the
-  // enum arm omits it while the scalar arm passes it through.
   final scalarItemArgs = allowReserved
       ? 'allowEmpty: $allowEmpty, allowReserved: true'
       : 'allowEmpty: $allowEmpty';
@@ -123,7 +121,7 @@ List<Code> _buildDelimitedCode(
       explode,
       allowEmpty,
       needsMapping: true,
-      mapExpression: nullGuard('e.uriEncode(allowEmpty: $allowEmpty)'),
+      mapExpression: nullGuard('e.uriEncode($scalarItemArgs)'),
     ),
 
     AllOfModel() ||
@@ -135,6 +133,7 @@ List<Code> _buildDelimitedCode(
       explode,
       allowEmpty,
       encodingName,
+      allowReserved: allowReserved,
     ),
 
     AliasModel() => _buildDelimitedCode(
@@ -195,8 +194,13 @@ List<Code> _buildForLoopWithRuntimeCheck(
   String methodName,
   bool explode,
   bool allowEmpty,
-  String encodingName,
-) {
+  String encodingName, {
+  required bool allowReserved,
+}) {
+  final itemArgs = allowReserved
+      ? 'allowEmpty: $allowEmpty, allowReserved: true'
+      : 'allowEmpty: $allowEmpty';
+
   if (explode) {
     return [
       Code('for (final item in $parameterName) { '),
@@ -215,7 +219,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
       Code(
         r'_$entries'
         '.add((name: ${specLiteralStringCode(rawName)}, value: '
-        'item.uriEncode(allowEmpty: $allowEmpty)));',
+        'item.uriEncode($itemArgs)));',
       ),
       const Code('}'),
     ];
@@ -237,7 +241,7 @@ List<Code> _buildForLoopWithRuntimeCheck(
       const Code('}'),
       Code(
         'for (final value in $parameterName.map((item) => item'
-        ' .uriEncode(allowEmpty: $allowEmpty)).toList()'
+        ' .uriEncode($itemArgs)).toList()'
         ' .$methodName(explode: $explode, allowEmpty: $allowEmpty, '
         ' alreadyEncoded: true)) {',
       ),

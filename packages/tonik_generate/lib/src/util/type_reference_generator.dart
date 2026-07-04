@@ -231,17 +231,32 @@ List<Parameter> buildEncodingParameters() => [
   buildBoolParameter('allowEmpty', required: true),
 ];
 
-/// Returns a list of encoding parameters for form encoding, which includes
-/// explode, allowEmpty, and useQueryComponent (optional with default false).
+/// Encoding parameters for form-style `toForm`.
 List<Parameter> buildFormEncodingParameters() => [
   ...buildEncodingParameters(),
-  Parameter(
-    (b) => b
-      ..name = 'useQueryComponent'
-      ..type = refer('bool', 'dart:core')
-      ..named = true
-      ..defaultTo = literalFalse.code,
-  ),
+  buildBoolParameter('useQueryComponent'),
+  buildBoolParameter('allowReserved'),
+];
+
+/// Shared parameters for every composite `parameterProperties` method.
+List<Parameter> buildParameterPropertiesParameters() => [
+  buildBoolParameter('allowEmpty', defaultValue: true),
+  buildBoolParameter('allowLists', defaultValue: true),
+  buildBoolParameter('allowReserved'),
+];
+
+/// Encoding parameters for `toDeepObject`, kept separate from
+/// [buildEncodingParameters] so matrix/label/simple never carry allowReserved.
+List<Parameter> buildDeepObjectEncodingParameters() => [
+  ...buildEncodingParameters(),
+  buildBoolParameter('allowReserved'),
+];
+
+/// Parameters for an inline `uriEncode` signature.
+List<Parameter> buildUriEncodeParameters() => [
+  buildBoolParameter('allowEmpty', required: true),
+  buildBoolParameter('useQueryComponent'),
+  buildBoolParameter('allowReserved'),
 ];
 
 /// Returns a LiteralMapExpression for an empty [Map<String, String>] literal.

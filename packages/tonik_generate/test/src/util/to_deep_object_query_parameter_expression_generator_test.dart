@@ -858,7 +858,8 @@ void main() {
         );
       });
 
-      test('class model object path omits allowReserved even when set', () {
+      test('class model object path threads allowReserved into toDeepObject '
+          'when set', () {
         final parameter = createParameter(
           name: 'user',
           rawName: 'user',
@@ -884,7 +885,8 @@ void main() {
         expect(
           collapseWhitespace(code),
           collapseWhitespace(
-            "user.toDeepObject(r'user', explode: true, allowEmpty: false, )",
+            "user.toDeepObject(r'user', explode: true, allowEmpty: false, "
+            'allowReserved: true, )',
           ),
         );
       });
