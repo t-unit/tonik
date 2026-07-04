@@ -32,6 +32,13 @@ void main() {
       );
     });
 
+    test('rejects null', () {
+      expect(
+        () => PriorityEnum.fromJson(null),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
     test('rejects unmatched whole value', () {
       expect(
         () => PriorityEnum.fromJson(7.0),

@@ -313,11 +313,10 @@ class EnumGenerator {
     String? fallbackNormalizedName,
   ) {
     const valueParam = 'value';
-    // Integer enums route through the shared decoder to keep enum decoding
-    // consistent with plain integer fields.
     final matchVariable = T == int ? 'decoded' : valueParam;
 
     final guard = <Code>[
+      // Keep integer-enum decoding consistent with plain integer fields.
       if (T == int)
         declareFinal(matchVariable)
             .assign(
@@ -349,11 +348,12 @@ class EnumGenerator {
               ).property(fallbackNormalizedName).code,
           ).closure
         : Method(
-            (mb) => mb
-              ..body = generateInterpolatedJsonDecodingExceptionExpression(
-                'No matching $publicEnumName for value: ',
-                matchVariable,
-              ).code,
+            (mb) =>
+                mb
+                  ..body = generateInterpolatedJsonDecodingExceptionExpression(
+                    'No matching $publicEnumName for value: ',
+                    matchVariable,
+                  ).code,
           ).closure;
 
     return Constructor(

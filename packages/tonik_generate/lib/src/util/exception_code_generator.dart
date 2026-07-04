@@ -79,11 +79,11 @@ Expression generateEncodingExceptionExpression(
 /// Generates a `throw JsonDecodingException(...)` whose message interpolates a
 /// runtime Dart expression.
 ///
-/// [literalPrefix] is spec-derived static text and is escaped so it cannot
+/// [literalPrefix] may contain spec-derived text and is escaped so it cannot
 /// break out of the string literal or be reinterpreted as interpolation.
 /// [interpolationExpression] is generator-controlled Dart source (e.g.
-/// `value.runtimeType`) that is interpolated into the message at runtime. It is
-/// emitted verbatim without escaping and must never receive spec-derived text.
+/// `value.runtimeType`) that is interpolated into the message at runtime via
+/// `$`/`${...}` and never escaped; it must never receive spec-derived text.
 Expression generateInterpolatedJsonDecodingExceptionExpression(
   String literalPrefix,
   String interpolationExpression,
@@ -93,9 +93,10 @@ Expression generateInterpolatedJsonDecodingExceptionExpression(
       : '\${$interpolationExpression}';
   final source =
       "'${escapeSingleQuotedDartString(literalPrefix)}$interpolation'";
-  return refer('JsonDecodingException', 'package:tonik_util/tonik_util.dart')
-      .call([CodeExpression(Code(source))])
-      .thrown;
+  return refer(
+    'JsonDecodingException',
+    'package:tonik_util/tonik_util.dart',
+  ).call([CodeExpression(Code(source))]).thrown;
 }
 
 Expression _generateExceptionExpression(
