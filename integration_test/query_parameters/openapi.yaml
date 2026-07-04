@@ -122,6 +122,12 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/Class'
+        - name: reservedKeys
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/ReservedKeys'
         - name: classNested
           in: query
           style: form
@@ -1753,6 +1759,25 @@ components:
           type: string
         age:
           type: integer
+    ReservedKeys:
+      type: object
+      required:
+        - first name
+        - last name
+        - a,b
+        - c&d
+        - p%20q
+      properties:
+        first name:
+          type: string
+        last name:
+          type: string
+        a,b:
+          type: string
+        c&d:
+          type: string
+        p%20q:
+          type: string
     ClassNested:
       type: object
       required:

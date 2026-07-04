@@ -141,6 +141,28 @@ void main() {
       );
     });
 
+    test('reservedKeys percent-encodes property keys, commas stay literal',
+        () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplex(
+        reservedKeys: const ReservedKeys(
+          firstName: 'Jane',
+          lastName: 'Doe',
+          ab: 'v1',
+          cAmpersandD: 'v2',
+          pPercentQ20: 'v3',
+        ),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'reservedKeys=first%20name,Jane,last%20name,Doe,a%2Cb,v1,c%26d,v2,'
+        'p%2520q,v3',
+      );
+    });
+
     test('classNested', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(

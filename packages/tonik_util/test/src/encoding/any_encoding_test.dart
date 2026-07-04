@@ -1296,6 +1296,22 @@ void main() {
         );
       });
 
+      test('explode=false percent-encodes reserved-char keys, commas stay '
+          'literal', () {
+        expect(
+          encodeAnyToForm(
+            <String, dynamic>{
+              'first name': 'Jane',
+              'a,b': 'v1',
+              'c&d': 'v2',
+            },
+            explode: false,
+            allowEmpty: true,
+          ),
+          'first%20name,Jane,a%2Cb,v1,c%26d,v2',
+        );
+      });
+
       test('uses + for spaces with useQueryComponent=true', () {
         expect(
           encodeAnyToForm(

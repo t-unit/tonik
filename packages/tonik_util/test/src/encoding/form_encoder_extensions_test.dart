@@ -386,6 +386,64 @@ void main() {
       );
     });
 
+    test('explode=false percent-encodes reserved-char keys, commas stay '
+        'literal', () {
+      expect(
+        {
+          'first name': 'Jane',
+          'last name': 'Doe',
+          'a,b': 'v1',
+          'c&d': 'v2',
+          'p%20q': 'v3',
+        }.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[
+          (
+            name: 'p',
+            value: 'first%20name,Jane,last%20name,Doe,a%2Cb,v1,c%26d,v2,'
+                'p%2520q,v3',
+          ),
+        ],
+      );
+    });
+
+    test('explode=false encodes reserved-char keys with + when '
+        'useQueryComponent=true', () {
+      expect(
+        {
+          'first name': 'Jane',
+          'a,b': 'v1',
+        }.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          useQueryComponent: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'p', value: 'first+name,Jane,a%2Cb,v1'),
+        ],
+      );
+    });
+
+    test('explode=false keeps reserved chars in keys literal except & = + '
+        'when allowReserved=true', () {
+      expect(
+        {
+          'a&b': 'v1',
+          'c=d': 'v2',
+          'e:f': 'v3',
+          'g+h': 'v4',
+        }.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[
+          (name: 'p', value: 'a%26b,v1,c%3Dd,v2,e:f,v3,g%2Bh,v4'),
+        ],
+      );
+    });
+
     test('does not re-encode values when alreadyEncoded=true', () {
       expect(
         {
@@ -721,16 +779,16 @@ void main() {
       );
     });
 
-    test('map explode=false keeps reserved literal in values, keys '
-        'untouched', () {
+    test('map explode=false keeps reserved literal in keys and values, encodes '
+        '& = +', () {
       expect(
-        {'a:b': 'c=d'}.toForm(
+        {'a:b': 'c=d', 'e&f': 'g:h'}.toForm(
           'p',
           explode: false,
           allowEmpty: true,
           allowReserved: true,
         ),
-        const <ParameterEntry>[(name: 'p', value: 'a:b,c%3Dd')],
+        const <ParameterEntry>[(name: 'p', value: 'a:b,c%3Dd,e%26f,g:h')],
       );
     });
 
@@ -752,7 +810,12 @@ void main() {
           (
             name: 'p',
             value: map.entries
-                .expand((e) => [e.key, Uri.encodeComponent(e.value)])
+                .expand(
+                  (e) => [
+                    Uri.encodeComponent(e.key),
+                    Uri.encodeComponent(e.value),
+                  ],
+                )
                 .join(','),
           ),
         ],

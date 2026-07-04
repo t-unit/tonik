@@ -262,7 +262,6 @@ extension FormStringMapEncoder on Map<String, String> {
           value: uriEncode(
             allowEmpty: allowEmpty,
             alreadyEncoded: alreadyEncoded,
-            encodeKeys: false,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
           ),
