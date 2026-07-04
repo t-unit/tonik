@@ -989,15 +989,59 @@ void main() {
         );
       });
 
-      test('should not replace a non-separator lowercase t in malformed '
-          'input', () {
+      test('should throw InvalidFormatException for malformed datetime '
+          'with valid timezone offset', () {
+        expect(
+          () => OffsetDateTime.parse('garbage+05:30'),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('should throw InvalidFormatException for malformed time part '
+          'with compact timezone offset', () {
+        expect(
+          () => OffsetDateTime.parse('2024-01-15txx:30:00+0530'),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('should report the original input for malformed input '
+          'containing a space', () {
         expect(
           () => OffsetDateTime.parse('not a date'),
           throwsA(
             isA<InvalidFormatException>().having(
               (e) => e.value,
               'value',
-              'notTa date',
+              'not a date',
+            ),
+          ),
+        );
+      });
+
+      test('should report the original input for malformed input '
+          'containing a digit-flanked lowercase t', () {
+        expect(
+          () => OffsetDateTime.parse('12t34'),
+          throwsA(
+            isA<InvalidFormatException>().having(
+              (e) => e.value,
+              'value',
+              '12t34',
+            ),
+          ),
+        );
+      });
+
+      test('should report the original input for malformed input '
+          'with a valid timezone offset', () {
+        expect(
+          () => OffsetDateTime.parse('not a date+05:30'),
+          throwsA(
+            isA<InvalidFormatException>().having(
+              (e) => e.value,
+              'value',
+              'not a date+05:30',
             ),
           ),
         );
