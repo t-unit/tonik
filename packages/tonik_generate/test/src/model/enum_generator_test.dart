@@ -706,6 +706,62 @@ void main() {
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
 
+      test('escapes dollar-prefixed name in string enum fromJson message', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: r'$2fa',
+          values: {
+            const EnumEntry(value: 'sms'),
+            const EnumEntry(value: 'app'),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          examples: const [],
+        );
+
+        final generated = generator.generateEnum(model, r'$2fa');
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+
+        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = r'''
+          if ( value is! String ) {
+            throw JsonDecodingException('Expected String for \$2fa, got ${value.runtimeType}');
+          }
+          return values.firstWhere((e) => e.rawValue == value,
+            orElse: () => throw JsonDecodingException('No matching \$2fa for value: $value'), );
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
+      test('escapes dollar-prefixed name in integer enum fromJson message', () {
+        final model = EnumModel<int>(
+          isDeprecated: false,
+          name: r'$2fa',
+          values: {
+            const EnumEntry(value: 1),
+            const EnumEntry(value: 2),
+          },
+          isNullable: false,
+          context: Context.initial().push('test'),
+          examples: const [],
+        );
+
+        final generated = generator.generateEnum(model, r'$2fa');
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+
+        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
+        const expectedBody = r'''
+          final decoded = (value as Object?).decodeJsonInt(context: r'$2fa');
+          return values.firstWhere((e) => e.rawValue == decoded,
+            orElse: () => throw JsonDecodingException('No matching \$2fa for value: $decoded'), );
+        ''';
+        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+      });
+
       test('generates fromJson factory for nullable enums', () {
         final model = EnumModel<String>(
           isDeprecated: false,

@@ -313,9 +313,8 @@ class EnumGenerator {
     String? fallbackNormalizedName,
   ) {
     const valueParam = 'value';
-    // Integer enums route through the shared decoder so JSON Schema's `integer`
-    // (which matches whole-number doubles like `2.0`/`1e0`) is honored, keeping
-    // enum decoding consistent with plain integer fields.
+    // Integer enums route through the shared decoder to keep enum decoding
+    // consistent with plain integer fields.
     final matchVariable = T == int ? 'decoded' : valueParam;
 
     final guard = <Code>[
@@ -332,7 +331,7 @@ class EnumGenerator {
             .statement
       else ...[
         const Code('if ('),
-        refer(valueParam).isNotA(refer('String', 'dart:core')).code,
+        refer(valueParam).isNotA(refer(T.toString(), 'dart:core')).code,
         const Code(') {'),
         generateInterpolatedJsonDecodingExceptionExpression(
           'Expected $T for $publicEnumName, got ',

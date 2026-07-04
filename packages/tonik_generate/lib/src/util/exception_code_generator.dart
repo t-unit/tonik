@@ -82,7 +82,8 @@ Expression generateEncodingExceptionExpression(
 /// [literalPrefix] is spec-derived static text and is escaped so it cannot
 /// break out of the string literal or be reinterpreted as interpolation.
 /// [interpolationExpression] is generator-controlled Dart source (e.g.
-/// `value.runtimeType`) that is interpolated into the message at runtime.
+/// `value.runtimeType`) that is interpolated into the message at runtime. It is
+/// emitted verbatim without escaping and must never receive spec-derived text.
 Expression generateInterpolatedJsonDecodingExceptionExpression(
   String literalPrefix,
   String interpolationExpression,

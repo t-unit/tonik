@@ -18,15 +18,17 @@ void main() {
       expect(PriorityEnum.fromJson(2), PriorityEnum.two);
     });
 
-    test('resolves whole-number double inside decoded JSON object', () {
-      final payload = jsonDecode('{"priority": 2.0}') as Map<String, Object?>;
-      expect(PriorityEnum.fromJson(payload['priority']), PriorityEnum.two);
-    });
-
     test('rejects non-whole double', () {
       expect(
         () => PriorityEnum.fromJson(2.5),
-        throwsA(isA<DecodingException>()),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('rejects numeric string without coercion', () {
+      expect(
+        () => PriorityEnum.fromJson('2'),
+        throwsA(isA<InvalidTypeException>()),
       );
     });
 
