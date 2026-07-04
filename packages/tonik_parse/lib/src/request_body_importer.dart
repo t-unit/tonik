@@ -297,6 +297,15 @@ class RequestBodyImporter {
         ? {for (final p in resolved.properties) p.name: p}
         : null;
 
+    if (propertiesByName == null && encodingMap.isNotEmpty) {
+      log.warning(
+        'Form-urlencoded body has a non-object schema '
+        '(${resolved.runtimeType}). Its encoding block '
+        '(${encodingMap.keys.join(', ')}) has no fields to describe and '
+        'is ignored.',
+      );
+    }
+
     final result = <core.Property, core.FieldEncoding>{};
     for (final entry in encodingMap.entries) {
       final encoding = entry.value;

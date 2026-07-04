@@ -2150,7 +2150,12 @@ void main() {
 
       expect(content.contentType, ContentType.form);
       expect(fieldEncodingFor(content, 'name'), isNotNull);
+      expect(content.formEncoding, hasLength(1));
       expect(_propertyNamed(content, 'nonExistent'), isNull);
+      expect(
+        content.formEncoding!.keys.any((p) => p.name == 'nonExistent'),
+        isFalse,
+      );
       expect(
         logs.any(
           (r) =>
@@ -2188,7 +2193,7 @@ void main() {
       );
     });
 
-    test('non-object schema drops encoding without unmatched-key warning', () {
+    test('non-object schema with an encoding block logs a warning', () {
       final logs = <LogRecord>[];
       final sub = Logger.root.onRecord.listen(logs.add);
 
@@ -2219,16 +2224,14 @@ void main() {
         },
       });
 
-      // A non-object schema has no properties to key the descriptor by, so
-      // the encoding map is empty — and no unmatched-key warning fires.
       expect(content.formEncoding, isEmpty);
       expect(
         logs.any(
           (r) =>
               r.level == Level.WARNING &&
-              r.message.contains('form-urlencoded schema'),
+              r.message.contains('non-object schema'),
         ),
-        isFalse,
+        isTrue,
       );
     });
 
@@ -2285,7 +2288,13 @@ void main() {
       expect(content.formEncoding![nameProperty]!.allowReserved, isTrue);
     });
 
-    test('read-only form property is dropped from the encoding map', () {
+    test('read-only form property is dropped from the encoding map '
+        'without a warning', () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+
+      addTearDown(sub.cancel);
+
       final content = importFormContent(
         formSpec(
           properties: {
@@ -2302,6 +2311,10 @@ void main() {
       expect(content.formEncoding, hasLength(1));
       expect(fieldEncodingFor(content, 'id'), isNull);
       expect(fieldEncodingFor(content, 'name'), isNotNull);
+      expect(
+        logs.any((r) => r.level == Level.WARNING),
+        isFalse,
+      );
     });
 
     test('form encoding on an alias-chain property keys by declared '
