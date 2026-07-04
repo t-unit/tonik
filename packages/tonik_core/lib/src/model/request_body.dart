@@ -125,22 +125,14 @@ class RequestContent {
   String rawContentType;
   List<Example> examples;
 
-  /// Per-property encoding metadata for application/x-www-form-urlencoded
-  /// request bodies, keyed by the [Property] it describes.
-  /// Null for all other content types.
-  ///
-  /// Keys are the exact [Property] instances in [model]'s resolved properties,
-  /// matched by identity. Transformers must mutate those properties in place;
-  /// rebuilding them makes these lookups silently miss.
+  /// Per-property encoding for application/x-www-form-urlencoded bodies, keyed
+  /// by identity on [model]'s resolved [Property] instances — transformers must
+  /// mutate those in place, never rebuild, or lookups silently miss.
   Map<Property, FieldEncoding>? formEncoding;
 
-  /// Per-property encoding metadata for multipart/form-data request bodies,
-  /// keyed by the [Property] it describes.
-  /// Null for all other content types.
-  ///
-  /// Keys are the exact [Property] instances in [model]'s resolved properties,
-  /// matched by identity. Transformers must mutate those properties in place;
-  /// rebuilding them makes these lookups silently miss.
+  /// Per-property encoding for multipart/form-data bodies, keyed by identity on
+  /// [model]'s resolved [Property] instances — transformers must mutate those
+  /// in place, never rebuild, or lookups silently miss.
   Map<Property, PartEncoding>? multipartEncoding;
 
   @override

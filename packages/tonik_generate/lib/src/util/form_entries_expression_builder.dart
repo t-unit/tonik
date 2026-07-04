@@ -110,10 +110,8 @@ Expression? buildFormEntriesValueExpression(
   }
 }
 
-/// Gates the per-property form-body path, which only an `allowReserved` flag
-/// needs. It stays on the byte-identical object-level `body.toForm()` path
-/// unless a writable, emitted property of [model] carries the flag — a flag on
-/// a read-only property has no emitted effect.
+/// True when a writable, emitted property of [model] carries `allowReserved` —
+/// the only case that needs the per-property form-body path.
 bool formBodyHasAllowReserved(
   Map<Property, FieldEncoding>? encoding,
   ClassModel model,

@@ -283,11 +283,9 @@ class RequestBodyImporter {
     };
   }
 
-  /// Unlike the multipart path, no per-property content-type default is
-  /// applied, and allowReserved is captured regardless of OpenAPI version.
-  ///
-  /// Keys that match no property, and read-only properties, are dropped: the
-  /// former have no field to describe, the latter are never sent.
+  /// Unmatched keys and read-only properties are dropped: the former have no
+  /// field to describe, the latter are never sent. No per-property content-type
+  /// default is applied, unlike the multipart path.
   Map<core.Property, core.FieldEncoding>? _importFormEncoding(
     Map<String, Encoding> encodingMap,
     core.Model model,

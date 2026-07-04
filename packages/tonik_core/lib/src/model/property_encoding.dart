@@ -21,13 +21,8 @@ class FieldEncoding {
     required this.explode,
   });
 
-  /// Whether reserved characters are allowed without encoding.
   final bool allowReserved;
-
-  /// Serialization style for this property.
   final EncodingStyle? style;
-
-  /// Whether arrays/objects generate separate values.
   final bool? explode;
 
   @override
@@ -61,29 +56,14 @@ class PartEncoding {
     required this.allowReserved,
   });
 
-  /// Typed content type for this property's part.
   final ContentType? contentType;
-
-  /// Raw content type string for this property's part (e.g. 'application/json').
   final String? rawContentType;
-
-  /// Per-part headers, resolved from encoding header refs.
   final Map<String, ResponseHeader>? headers;
-
-  /// Serialization style for this property.
   final EncodingStyle? style;
-
-  /// Whether arrays/objects generate separate values.
   final bool? explode;
-
-  /// Whether reserved characters are allowed without encoding.
   final bool? allowReserved;
 
-  /// Whether this encoding uses style-based serialization mode.
-  ///
-  /// True when any of [style], [explode], or [allowReserved] is non-null,
-  /// meaning the OAS spec explicitly specified at least one of these fields.
-  /// When false, serialization is content-based (determined by [contentType]).
+  /// When false, serialization is content-based, driven by [contentType].
   bool get isStyleBased =>
       style != null || explode != null || allowReserved != null;
 
