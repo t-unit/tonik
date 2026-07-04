@@ -260,7 +260,7 @@ Examples render on every class, enum, typedef, composite, and property, and on a
 | `pipeDelimited` | `?color=blue%7Cblack` |
 | `deepObject` | `?filter%5Bcolor%5D=red` |
 
-**Note:** Due to Dart's URI class, special characters are always percent-encoded. See [URI Encoding Limitations](uri_encoding_limitations.md).
+**Note:** By default reserved characters are percent-encoded. Set `allowReserved: true` on a parameter to send them literally. See [URI Encoding](uri_encoding.md).
 
 ---
 
