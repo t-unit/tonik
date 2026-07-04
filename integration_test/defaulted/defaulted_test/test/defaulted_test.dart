@@ -569,10 +569,7 @@ void main() {
   });
 
   group('BadlyDefaulted — runtime fallback validates on access', () {
-    // OffsetDateTime.parse rewrites the first space to T before reporting,
-    // so the spec literal `"not a date"` reaches InvalidFormatException.value
-    // as `"notTa date"`.
-    const offendingValue = 'notTa date';
+    const offendingValue = 'not a date';
 
     test(
       'the static getter throws an InvalidFormatException whose structured '

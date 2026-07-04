@@ -35,8 +35,9 @@ class OffsetDateTime implements DateTime {
   /// Parses a datetime string with timezone offset.
   factory OffsetDateTime._parseWithTimezoneOffset(
     String input,
-    RegExpMatch timezoneMatch,
-  ) {
+    RegExpMatch timezoneMatch, {
+    required String originalInput,
+  }) {
     final offsetString = timezoneMatch.group(0)!;
     final datetimeString = input.substring(
       0,
@@ -46,7 +47,15 @@ class OffsetDateTime implements DateTime {
     final offset = _parseTimezoneOffset(offsetString);
 
     // Parse the datetime part (without timezone) as local time
-    final localDateTime = DateTime.parse(datetimeString);
+    final DateTime localDateTime;
+    try {
+      localDateTime = DateTime.parse(datetimeString);
+    } on FormatException {
+      throw InvalidFormatException(
+        value: originalInput,
+        format: 'ISO8601 datetime format',
+      );
+    }
 
     // Create OffsetDateTime from the local time and offset
     return OffsetDateTime.from(
@@ -94,6 +103,7 @@ class OffsetDateTime implements DateTime {
       return OffsetDateTime._parseWithTimezoneOffset(
         normalizedInput,
         timezoneMatch,
+        originalInput: input,
       );
     }
 
@@ -111,7 +121,7 @@ class OffsetDateTime implements DateTime {
       }
     } on FormatException {
       throw InvalidFormatException(
-        value: normalizedInput,
+        value: input,
         format: 'ISO8601 datetime format',
       );
     }
