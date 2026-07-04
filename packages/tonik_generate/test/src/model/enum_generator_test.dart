@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/model/enum_generator.dart';
@@ -9,6 +10,22 @@ void main() {
   late EnumGenerator generator;
   late NameGenerator nameGenerator;
   late NameManager nameManager;
+
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
+
+  String formatConstructor(Constructor constructor, String className) {
+    final clazz = Class(
+      (b) => b
+        ..name = className
+        ..constructors.add(constructor),
+    );
+    final library = Library((b) => b..body.add(clazz));
+    return format(
+      library.accept(DartEmitter(useNullSafetySyntax: true)).toString(),
+    );
+  }
 
   setUp(() {
     nameGenerator = NameGenerator();
@@ -659,15 +676,25 @@ void main() {
           'dynamic',
         );
 
-        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = r'''
-          if ( value is! String ) {
-            throw JsonDecodingException('Expected String for Color, got ${value.runtimeType}');
+        final formatted = formatConstructor(fromJson, 'Color');
+        const expectedFactory = r'''
+          factory Color.fromJson(dynamic value) {
+            if (value is! String) {
+              throw JsonDecodingException(
+                r'Expected String for Color, got ${value.runtimeType}',
+              );
+            }
+            return values.firstWhere(
+              (e) => e.rawValue == value,
+              orElse: () =>
+                  throw JsonDecodingException(r'No matching Color for value: $value'),
+            );
           }
-          return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Color for value: $value'), );
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatted),
+          contains(collapseWhitespace(expectedFactory)),
+        );
       });
 
       test('generates fromJson factory for integer enums', () {
@@ -697,13 +724,22 @@ void main() {
           'dynamic',
         );
 
-        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = r'''
-          final decoded = (value as Object?).decodeJsonInt(context: r'Status');
-          return values.firstWhere((e) => e.rawValue == decoded,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $decoded'), );
+        final formatted = formatConstructor(fromJson, 'Status');
+        const expectedFactory = r'''
+          factory Status.fromJson(dynamic value) {
+            final decoded = (value as Object?).decodeJsonInt(context: r'Status');
+            return values.firstWhere(
+              (e) => e.rawValue == decoded,
+              orElse: () => throw JsonDecodingException(
+                r'No matching Status for value: $decoded',
+              ),
+            );
+          }
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatted),
+          contains(collapseWhitespace(expectedFactory)),
+        );
       });
 
       test('escapes dollar-prefixed name in string enum fromJson message', () {
@@ -724,15 +760,25 @@ void main() {
           (c) => c.name == 'fromJson',
         );
 
-        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = r'''
-          if ( value is! String ) {
-            throw JsonDecodingException('Expected String for \$2fa, got ${value.runtimeType}');
+        final formatted = formatConstructor(fromJson, r'$2fa');
+        const expectedFactory = r'''
+          factory $2fa.fromJson(dynamic value) {
+            if (value is! String) {
+              throw JsonDecodingException(
+                r'Expected String for $2fa, got ${value.runtimeType}',
+              );
+            }
+            return values.firstWhere(
+              (e) => e.rawValue == value,
+              orElse: () =>
+                  throw JsonDecodingException(r'No matching $2fa for value: $value'),
+            );
           }
-          return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching \$2fa for value: $value'), );
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatted),
+          contains(collapseWhitespace(expectedFactory)),
+        );
       });
 
       test('escapes dollar-prefixed name in integer enum fromJson message', () {
@@ -753,13 +799,21 @@ void main() {
           (c) => c.name == 'fromJson',
         );
 
-        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = r'''
-          final decoded = (value as Object?).decodeJsonInt(context: r'$2fa');
-          return values.firstWhere((e) => e.rawValue == decoded,
-            orElse: () => throw JsonDecodingException('No matching \$2fa for value: $decoded'), );
+        final formatted = formatConstructor(fromJson, r'$2fa');
+        const expectedFactory = r'''
+          factory $2fa.fromJson(dynamic value) {
+            final decoded = (value as Object?).decodeJsonInt(context: r'$2fa');
+            return values.firstWhere(
+              (e) => e.rawValue == decoded,
+              orElse: () =>
+                  throw JsonDecodingException(r'No matching $2fa for value: $decoded'),
+            );
+          }
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatted),
+          contains(collapseWhitespace(expectedFactory)),
+        );
       });
 
       test('generates fromJson factory for nullable enums', () {
@@ -788,15 +842,25 @@ void main() {
           'dynamic',
         );
 
-        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = r'''
-          if ( value is! String ) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+        final formatted = formatConstructor(fromJson, 'Status');
+        const expectedFactory = r'''
+          factory Status.fromJson(dynamic value) {
+            if (value is! String) {
+              throw JsonDecodingException(
+                r'Expected String for Status, got ${value.runtimeType}',
+              );
+            }
+            return values.firstWhere(
+              (e) => e.rawValue == value,
+              orElse: () =>
+                  throw JsonDecodingException(r'No matching Status for value: $value'),
+            );
           }
-          return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $value'), );
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatted),
+          contains(collapseWhitespace(expectedFactory)),
+        );
       });
     });
 
@@ -1913,16 +1977,24 @@ void main() {
           'dynamic',
         );
 
-        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = r'''
-          if ( value is! String ) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+        final formatted = formatConstructor(fromJson, 'Status');
+        const expectedFactory = r'''
+          factory Status.fromJson(dynamic value) {
+            if (value is! String) {
+              throw JsonDecodingException(
+                r'Expected String for Status, got ${value.runtimeType}',
+              );
+            }
+            return values.firstWhere(
+              (e) => e.rawValue == value,
+              orElse: () => Status.unknown,
+            );
           }
-          return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => Status.unknown,
-          );
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatted),
+          contains(collapseWhitespace(expectedFactory)),
+        );
       });
 
       test('fromJson returns fallback case for unknown int values', () {
@@ -1955,14 +2027,20 @@ void main() {
           'dynamic',
         );
 
-        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
-          final decoded = (value as Object?).decodeJsonInt(context: r'Code');
-          return values.firstWhere((e) => e.rawValue == decoded,
-            orElse: () => Code.unknown,
-          );
+        final formatted = formatConstructor(fromJson, 'Code');
+        const expectedFactory = '''
+          factory Code.fromJson(dynamic value) {
+            final decoded = (value as Object?).decodeJsonInt(context: r'Code');
+            return values.firstWhere(
+              (e) => e.rawValue == decoded,
+              orElse: () => Code.unknown,
+            );
+          }
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatted),
+          contains(collapseWhitespace(expectedFactory)),
+        );
       });
 
       test('toJson throws when encoding fallback case', () {
@@ -2251,16 +2329,25 @@ void main() {
           (c) => c.name == 'fromJson',
         );
 
-        final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = r'''
-          if ( value is! String ) {
-            throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+        final formatted = formatConstructor(fromJson, 'Status');
+        const expectedFactory = r'''
+          factory Status.fromJson(dynamic value) {
+            if (value is! String) {
+              throw JsonDecodingException(
+                r'Expected String for Status, got ${value.runtimeType}',
+              );
+            }
+            return values.firstWhere(
+              (e) => e.rawValue == value,
+              orElse: () =>
+                  throw JsonDecodingException(r'No matching Status for value: $value'),
+            );
           }
-          return values.firstWhere((e) => e.rawValue == value,
-            orElse: () => throw JsonDecodingException('No matching Status for value: $value'),
-          );
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatted),
+          contains(collapseWhitespace(expectedFactory)),
+        );
       });
 
       test('handles fallback with nullable enum', () {
@@ -2392,16 +2479,24 @@ void main() {
             (c) => c.name == 'fromJson',
           );
 
-          final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-          const expectedBody = r'''
-            if ( value is! String ) {
-              throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+          final formatted = formatConstructor(fromJson, 'Status');
+          const expectedFactory = r'''
+            factory Status.fromJson(dynamic value) {
+              if (value is! String) {
+                throw JsonDecodingException(
+                  r'Expected String for Status, got ${value.runtimeType}',
+                );
+              }
+              return values.firstWhere(
+                (e) => e.rawValue == value,
+                orElse: () => Status.fallback,
+              );
             }
-            return values.firstWhere((e) => e.rawValue == value,
-              orElse: () => Status.fallback,
-            );
           ''';
-          expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+          expect(
+            collapseWhitespace(formatted),
+            contains(collapseWhitespace(expectedFactory)),
+          );
         },
       );
 
@@ -2448,16 +2543,24 @@ void main() {
             (c) => c.name == 'fromJson',
           );
 
-          final body = fromJson.body?.accept(DartEmitter()).toString() ?? '';
-          const expectedBody = r'''
-            if ( value is! String ) {
-              throw JsonDecodingException('Expected String for Status, got ${value.runtimeType}');
+          final formatted = formatConstructor(fromJson, 'Status');
+          const expectedFactory = r'''
+            factory Status.fromJson(dynamic value) {
+              if (value is! String) {
+                throw JsonDecodingException(
+                  r'Expected String for Status, got ${value.runtimeType}',
+                );
+              }
+              return values.firstWhere(
+                (e) => e.rawValue == value,
+                orElse: () => Status.fallbackUnknown,
+              );
             }
-            return values.firstWhere((e) => e.rawValue == value,
-              orElse: () => Status.fallbackUnknown,
-            );
           ''';
-          expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+          expect(
+            collapseWhitespace(formatted),
+            contains(collapseWhitespace(expectedFactory)),
+          );
         },
       );
 

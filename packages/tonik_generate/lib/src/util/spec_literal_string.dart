@@ -51,16 +51,11 @@ String specLiteralStringCode(String value) {
     return 'r"""$value"""';
   }
 
-  final escaped = escapeSingleQuotedDartString(value);
+  final escaped = _escapeForSingleQuotedDartString(value);
   return "'$escaped'";
 }
 
-/// Escapes [value] for embedding inside a single-quoted, non-raw Dart string.
-///
-/// Escapes backslashes, single quotes, `$`, and newline characters so
-/// spec-derived text cannot break out of the literal or be reinterpreted as
-/// string interpolation.
-String escapeSingleQuotedDartString(String value) {
+String _escapeForSingleQuotedDartString(String value) {
   return value
       .replaceAll(r'\', r'\\')
       .replaceAll("'", r"\'")

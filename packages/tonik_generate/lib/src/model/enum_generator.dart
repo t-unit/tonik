@@ -314,6 +314,10 @@ class EnumGenerator {
   ) {
     const valueParam = 'value';
     final matchVariable = T == int ? 'decoded' : valueParam;
+    final typeErrorMessage =
+        'Expected $T for $publicEnumName, got \${$valueParam.runtimeType}';
+    final valueErrorMessage =
+        'No matching $publicEnumName for value: \$$matchVariable';
 
     final guard = <Code>[
       // Keep integer-enum decoding consistent with plain integer fields.
@@ -332,9 +336,9 @@ class EnumGenerator {
         const Code('if ('),
         refer(valueParam).isNotA(refer(T.toString(), 'dart:core')).code,
         const Code(') {'),
-        generateInterpolatedJsonDecodingExceptionExpression(
-          'Expected $T for $publicEnumName, got ',
-          '$valueParam.runtimeType',
+        generateDecodingExceptionExpression(
+          typeErrorMessage,
+          raw: true,
         ).statement,
         const Code('}'),
       ],
@@ -350,9 +354,9 @@ class EnumGenerator {
         : Method(
             (mb) =>
                 mb
-                  ..body = generateInterpolatedJsonDecodingExceptionExpression(
-                    'No matching $publicEnumName for value: ',
-                    matchVariable,
+                  ..body = generateDecodingExceptionExpression(
+                    valueErrorMessage,
+                    raw: true,
                   ).code,
           ).closure;
 
