@@ -99,7 +99,7 @@ Generated packages are pure Dart with no platform dependencies. Use them in Flut
 - [Additional Properties](https://github.com/t-unit/tonik/blob/main/docs/additional_properties.md) – `additionalProperties` support and pure maps
 - [Multipart](https://github.com/t-unit/tonik/blob/main/docs/multipart.md) – `multipart/form-data` request bodies
 - [Authentication](https://github.com/t-unit/tonik/blob/main/docs/authentication.md) – Interceptor patterns for auth
-- [URI Encoding Limitations](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding_limitations.md) – Dart URI class constraints
+- [URI Encoding](https://github.com/t-unit/tonik/blob/main/docs/uri_encoding.md) – query/body encoding and `allowReserved`
 
 ## Quick Start
 
