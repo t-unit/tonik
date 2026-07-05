@@ -1369,6 +1369,18 @@ explode: explode,
 allowEmpty: allowEmpty,
 alreadyEncoded: true,
 useQueryComponent: useQueryComponent,
+fieldEncodings: fieldEncodings,
+explodedValues: <String, List<String>>{
+r'tags': tags
+    .map(
+      (e) => e.uriEncode(
+        allowEmpty: true,
+        useQueryComponent: useQueryComponent,
+        allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+      ),
+    )
+    .toList(),
+},
 );
 }
           ''';
@@ -1406,6 +1418,226 @@ Map<String, String> parameterProperties({
           expect(
             collapseWhitespace(generatedCode),
             contains(collapseWhitespace(expectedParameterPropertiesMethod)),
+          );
+        },
+      );
+
+      test(
+        'toForm null-guards explodedValues for an optional array property',
+        () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'OptionalListModel',
+            properties: [
+              Property(
+                name: 'tags',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
+                  examples: const [],
+                ),
+                isRequired: false,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            examples: const [],
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
+
+          const expectedToFormMethod = '''
+List<ParameterEntry> toForm(
+String paramName, {
+required bool explode,
+required bool allowEmpty,
+bool useQueryComponent = false,
+bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+return parameterProperties(
+allowEmpty: allowEmpty,
+useQueryComponent: useQueryComponent,
+allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+).toForm(
+paramName,
+explode: explode,
+allowEmpty: allowEmpty,
+alreadyEncoded: true,
+useQueryComponent: useQueryComponent,
+fieldEncodings: fieldEncodings,
+explodedValues: <String, List<String>>{
+r'tags': tags == null
+    ? const <String>[]
+    : tags!
+        .map(
+          (e) => e.uriEncode(
+            allowEmpty: true,
+            useQueryComponent: useQueryComponent,
+            allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+          ),
+        )
+        .toList(),
+},
+);
+}
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToFormMethod)),
+          );
+        },
+      );
+
+      test(
+        'toForm explodedValues maps null elements of a nullable-content array '
+        'property to empty strings',
+        () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'NullableElementListModel',
+            properties: [
+              Property(
+                name: 'tags',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  isContentNullable: true,
+                  context: context,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            examples: const [],
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
+
+          const expectedToFormMethod = '''
+List<ParameterEntry> toForm(
+String paramName, {
+required bool explode,
+required bool allowEmpty,
+bool useQueryComponent = false,
+bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+return parameterProperties(
+allowEmpty: allowEmpty,
+useQueryComponent: useQueryComponent,
+allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+).toForm(
+paramName,
+explode: explode,
+allowEmpty: allowEmpty,
+alreadyEncoded: true,
+useQueryComponent: useQueryComponent,
+fieldEncodings: fieldEncodings,
+explodedValues: <String, List<String>>{
+r'tags': tags
+    .map(
+      (e) => e == null
+          ? ''
+          : e.uriEncode(
+              allowEmpty: true,
+              useQueryComponent: useQueryComponent,
+              allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+            ),
+    )
+    .toList(),
+},
+);
+}
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToFormMethod)),
+          );
+        },
+      );
+
+      test(
+        'toForm explodedValues unlocks an immutable-collection array property '
+        'before mapping elements',
+        () {
+          final immutableGenerator = ClassGenerator(
+            nameManager: nameManager,
+            package: 'example',
+            useImmutableCollections: true,
+          );
+
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'ImmutableListModel',
+            properties: [
+              Property(
+                name: 'tags',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            examples: const [],
+          );
+
+          final result = immutableGenerator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
+
+          const expectedToFormMethod = '''
+List<ParameterEntry> toForm(
+String paramName, {
+required bool explode,
+required bool allowEmpty,
+bool useQueryComponent = false,
+bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+return parameterProperties(
+allowEmpty: allowEmpty,
+useQueryComponent: useQueryComponent,
+allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+).toForm(
+paramName,
+explode: explode,
+allowEmpty: allowEmpty,
+alreadyEncoded: true,
+useQueryComponent: useQueryComponent,
+fieldEncodings: fieldEncodings,
+explodedValues: <String, List<String>>{
+r'tags': tags.unlock
+    .map(
+      (e) => e.uriEncode(
+        allowEmpty: true,
+        useQueryComponent: useQueryComponent,
+        allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+      ),
+    )
+    .toList(),
+},
+);
+}
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToFormMethod)),
           );
         },
       );
@@ -1515,7 +1747,7 @@ Map<String, String> parameterProperties({
 
         const expectedToFormBody = '''
           List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String,FormFieldEncoding> fieldEncodings = const {}, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, fieldEncodings: fieldEncodings, explodedValues: <String, List<String>>{r'items': items.map((e) => e.uriEncode(allowEmpty: true, useQueryComponent: useQueryComponent, allowReserved: fieldEncodings[r'items']?.allowReserved ?? allowReserved, )).toList()}, );
           }
         ''';
 
@@ -1538,7 +1770,7 @@ Map<String, String> parameterProperties({
 
         const expectedToFormMethod = '''
           List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String,FormFieldEncoding> fieldEncodings = const {}, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, fieldEncodings: fieldEncodings, );
           }
         ''';
 
@@ -1786,7 +2018,7 @@ Map<String, String> parameterProperties({
 
           const expectedToFormMethod = '''
           List<ParameterEntry> toForm(String paramName, {required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String,FormFieldEncoding> fieldEncodings = const {}, }) {
-            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, );
+            return parameterProperties(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ).toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent, fieldEncodings: fieldEncodings, );
           }
         ''';
 

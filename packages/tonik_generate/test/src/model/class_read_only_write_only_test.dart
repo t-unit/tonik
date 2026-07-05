@@ -464,6 +464,7 @@ void main() {
             allowEmpty: allowEmpty,
             alreadyEncoded: true,
             useQueryComponent: useQueryComponent,
+            fieldEncodings: fieldEncodings,
           );
         }
       ''';

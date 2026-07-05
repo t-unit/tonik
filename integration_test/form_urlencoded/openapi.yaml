@@ -386,9 +386,9 @@ paths:
         - form
       summary: Post form where a flagged scalar sits beside an array property
       description: >-
-        Tests that an array sibling of a flagged allowReserved scalar is
-        comma-joined into a single entry, matching the object path, rather than
-        exploded into repeated keys.
+        Tests that an explode=false array sibling of a flagged allowReserved
+        scalar is comma-joined into a single entry rather than exploded into
+        repeated keys.
       requestBody:
         required: true
         content:
@@ -398,6 +398,8 @@ paths:
             encoding:
               reserved:
                 allowReserved: true
+              tags:
+                explode: false
       responses:
         '200':
           description: Echo response with exact request body
@@ -414,8 +416,8 @@ paths:
       summary: Post form where an array property itself opts into allowReserved
       description: >-
         Tests that a flagged allowReserved array keeps reserved characters
-        literal in its comma-joined elements, unlike an unflagged array whose
-        elements are fully percent-encoded.
+        literal in its exploded repeated-key entries, unlike an unflagged array
+        whose elements are fully percent-encoded.
       requestBody:
         required: true
         content:

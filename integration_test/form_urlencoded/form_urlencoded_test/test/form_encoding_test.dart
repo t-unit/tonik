@@ -231,7 +231,7 @@ void main() {
           (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
       expect(
         requestData,
-        'colors=red,green,blue&numbers=1,2,3',
+        'colors=red&colors=green&colors=blue&numbers=1&numbers=2&numbers=3',
       );
 
       final data = response.value;
@@ -248,13 +248,13 @@ void main() {
 
       final requestData =
           (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
-      expect(requestData, 'colors=&numbers=');
+      expect(requestData, '');
 
       final data = response.value;
       expect(data.colors, ['red', 'green', 'blue']);
     });
 
-    test('encodes single-element arrays with single key', () async {
+    test('encodes single-element arrays as a single repeated key', () async {
       const form = ArrayForm(colors: ['purple']);
 
       final response = await api.postArrayForm(body: form);
@@ -263,7 +263,7 @@ void main() {
 
       final requestData =
           (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
-      expect(requestData, 'colors=purple&numbers=');
+      expect(requestData, 'colors=purple');
 
       final data = response.value;
       expect(data.colors, ['red', 'green', 'blue']);
@@ -459,8 +459,8 @@ void main() {
     );
 
     test(
-      'comma-joins an array sibling into a single entry beside the flagged '
-      'scalar',
+      'comma-joins an explode=false array sibling into a single entry beside '
+      'the flagged scalar',
       () async {
         const form = AllowReservedArrayForm(
           reserved: 'a/b:c',
@@ -480,7 +480,7 @@ void main() {
     );
 
     test(
-      'keeps reserved characters literal in the comma-joined elements of a '
+      'keeps reserved characters literal in the exploded repeated entries of a '
       'flagged array property',
       () async {
         const form = AllowReservedArrayFlaggedForm(tags: ['a/b', 'c:d']);
@@ -496,7 +496,28 @@ void main() {
                 .response
                 .requestOptions
                 .data;
-        expect(requestData, 'tags=a/b,c:d');
+        expect(requestData, 'tags=a/b&tags=c:d');
+      },
+    );
+
+    test(
+      'keeps a comma inside a flagged array element literal in its own '
+      'exploded entry',
+      () async {
+        const form = AllowReservedArrayFlaggedForm(tags: ['a,b', 'c']);
+
+        final response = await api.postAllowReservedArrayFlaggedForm(
+          body: form,
+        );
+
+        expect(response, isA<TonikSuccess<AllowReservedArrayFlaggedForm>>());
+
+        final requestData =
+            (response as TonikSuccess<AllowReservedArrayFlaggedForm>)
+                .response
+                .requestOptions
+                .data;
+        expect(requestData, 'tags=a,b&tags=c');
       },
     );
 

@@ -1,5 +1,6 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
+import 'package:tonik_util/src/encoding/form_field_encoding.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
@@ -243,6 +244,14 @@ extension FormStringMapEncoder on Map<String, String> {
   /// The [alreadyEncoded] parameter indicates whether the values are already
   /// URL-encoded, in which case they are not re-encoded to prevent double
   /// encoding.
+  ///
+  /// [fieldEncodings], keyed by raw property name, carries per-property array
+  /// explode. When a key's descriptor has `explode == true`, its element
+  /// strings are taken from [explodedValues] (keeping element boundaries that a
+  /// comma-joined value would lose) and emitted as one entry per element, so
+  /// the wire form matches `style: form, explode: true` (repeated keys). An
+  /// exploded empty list yields no entries; a single empty-string element
+  /// yields one empty-value entry.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
@@ -250,6 +259,8 @@ extension FormStringMapEncoder on Map<String, String> {
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    Map<String, FormFieldEncoding> fieldEncodings = const {},
+    Map<String, List<String>> explodedValues = const {},
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -269,23 +280,37 @@ extension FormStringMapEncoder on Map<String, String> {
       ];
     }
 
-    return [
-      for (final e in entries)
-        (
-          name: _encodeValue(
-            e.key,
+    String encodeValue(String value) => alreadyEncoded
+        ? value
+        : _encodeValue(
+            value,
             useQueryComponent: useQueryComponent,
             allowReserved: allowReserved,
-          ),
-          value: alreadyEncoded
-              ? e.value
-              : _encodeValue(
-                  e.value,
-                  useQueryComponent: useQueryComponent,
-                  allowReserved: allowReserved,
-                ),
-        ),
-    ];
+          );
+
+    final result = <ParameterEntry>[];
+    for (final e in entries) {
+      final name = _encodeValue(
+        e.key,
+        useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
+      );
+
+      if (fieldEncodings[e.key]?.explode ?? false) {
+        final exploded = explodedValues[e.key];
+        if (exploded == null) {
+          throw EncodingException(
+            'Missing exploded values for form property "${e.key}".',
+          );
+        }
+        for (final item in exploded) {
+          result.add((name: name, value: encodeValue(item)));
+        }
+      } else {
+        result.add((name: name, value: encodeValue(e.value)));
+      }
+    }
+    return result;
   }
 }
 

@@ -2,6 +2,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/form_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/form_field_encoding.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 void main() {
@@ -462,6 +463,224 @@ void main() {
         const <ParameterEntry>[
           (name: 'email', value: 'albert%40example.com'),
           (name: 'name', value: 'John%20Doe'),
+        ],
+      );
+    });
+
+    test(
+      'explode=true emits one entry per element from explodedValues',
+      () {
+        expect(
+          {
+            'colors': 'red,green,blue',
+            'name': 'John',
+          }.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            alreadyEncoded: true,
+            fieldEncodings: const {
+              'colors': FormFieldEncoding(explode: true),
+            },
+            explodedValues: const {
+              'colors': ['red', 'green', 'blue'],
+            },
+          ),
+          const <ParameterEntry>[
+            (name: 'colors', value: 'red'),
+            (name: 'colors', value: 'green'),
+            (name: 'colors', value: 'blue'),
+            (name: 'name', value: 'John'),
+          ],
+        );
+      },
+    );
+
+    test(
+      'explode=false keeps a list value as a single comma-joined entry',
+      () {
+        expect(
+          {'colors': 'red,green,blue'}.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            alreadyEncoded: true,
+            fieldEncodings: const {
+              'colors': FormFieldEncoding(),
+            },
+            explodedValues: const {
+              'colors': ['red', 'green', 'blue'],
+            },
+          ),
+          const <ParameterEntry>[(name: 'colors', value: 'red,green,blue')],
+        );
+      },
+    );
+
+    test('explode=true with an empty list emits no entry', () {
+      expect(
+        {
+          'colors': '',
+          'name': 'John',
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          fieldEncodings: const {
+            'colors': FormFieldEncoding(explode: true),
+          },
+          explodedValues: const {'colors': <String>[]},
+        ),
+        const <ParameterEntry>[(name: 'name', value: 'John')],
+      );
+    });
+
+    test('explode=true throws when explodedValues lacks the exploded key', () {
+      expect(
+        () => {'colors': 'red,green,blue'}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          fieldEncodings: const {
+            'colors': FormFieldEncoding(explode: true),
+          },
+        ),
+        throwsA(isA<EncodingException>()),
+      );
+    });
+
+    test('explode=true with a single empty-string element emits one empty '
+        'entry', () {
+      expect(
+        {'tags': ''}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          fieldEncodings: const {
+            'tags': FormFieldEncoding(explode: true),
+          },
+          explodedValues: const {
+            'tags': [''],
+          },
+        ),
+        const <ParameterEntry>[(name: 'tags', value: '')],
+      );
+    });
+
+    test(
+      'explode=true encodes each element with allowReserved false, percent '
+      'encoding a comma-containing element',
+      () {
+        expect(
+          {'tags': ''}.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            fieldEncodings: const {
+              'tags': FormFieldEncoding(explode: true),
+            },
+            explodedValues: const {
+              'tags': ['a,b', 'c'],
+            },
+          ),
+          const <ParameterEntry>[
+            (name: 'tags', value: 'a%2Cb'),
+            (name: 'tags', value: 'c'),
+          ],
+        );
+      },
+    );
+
+    test(
+      'explode=true with allowReserved keeps a comma-containing element '
+      'literal as a single entry',
+      () {
+        expect(
+          {'tags': ''}.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            allowReserved: true,
+            fieldEncodings: const {
+              'tags': FormFieldEncoding(explode: true),
+            },
+            explodedValues: const {
+              'tags': ['a,b', 'c'],
+            },
+          ),
+          const <ParameterEntry>[
+            (name: 'tags', value: 'a,b'),
+            (name: 'tags', value: 'c'),
+          ],
+        );
+      },
+    );
+
+    test('explode=true percent-encodes reserved characters in elements', () {
+      expect(
+        {'tags': ''}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          fieldEncodings: const {
+            'tags': FormFieldEncoding(explode: true),
+          },
+          explodedValues: const {
+            'tags': ['a/b', 'c d'],
+          },
+        ),
+        const <ParameterEntry>[
+          (name: 'tags', value: 'a%2Fb'),
+          (name: 'tags', value: 'c%20d'),
+        ],
+      );
+    });
+
+    test('explode=true keeps already-encoded elements verbatim', () {
+      expect(
+        {'tags': ''}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          fieldEncodings: const {
+            'tags': FormFieldEncoding(explode: true),
+          },
+          explodedValues: const {
+            'tags': ['a%2Fb', 'c%3Ad'],
+          },
+        ),
+        const <ParameterEntry>[
+          (name: 'tags', value: 'a%2Fb'),
+          (name: 'tags', value: 'c%3Ad'),
+        ],
+      );
+    });
+
+    test('scalar entries without a descriptor stay a single entry', () {
+      expect(
+        {
+          'note': 'a,b,c',
+          'colors': '',
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          fieldEncodings: const {
+            'colors': FormFieldEncoding(explode: true),
+          },
+          explodedValues: const {
+            'colors': ['red', 'green'],
+          },
+        ),
+        const <ParameterEntry>[
+          (name: 'note', value: 'a,b,c'),
+          (name: 'colors', value: 'red'),
+          (name: 'colors', value: 'green'),
         ],
       );
     });

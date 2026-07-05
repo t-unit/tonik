@@ -87,11 +87,18 @@ tonik encode them.
 
 ## Form-body array properties
 
-For an `application/x-www-form-urlencoded` request body, `allowReserved` is honored on scalar,
-enum, object, composition, and **array** (list-of-simple) properties. A flagged array keeps
-reserved characters literal within each of its comma-joined elements. The array is still sent
-as a single comma-joined entry — `allowReserved` does not change that shape, so array
-**explode** (one repeated key per element) remains unaddressed for form bodies.
+For an `application/x-www-form-urlencoded` request body, an array (list-of-simple) property is
+encoded according to its `style: form` encoding:
+
+- **`explode: true` (the default)** sends one repeated key per element:
+  `tags=a&tags=b&tags=c`.
+- **`explode: false`** sends a single comma-joined entry: `tags=a,b,c`.
+- An **empty array** with the default `explode: true` is omitted entirely — no key appears on
+  the wire. With `explode: false` an empty array still emits `tags=` — the key with an empty value.
+
+`allowReserved` is honored on scalar, enum, object, composition, and array properties. On an
+array it keeps reserved characters literal within each element, regardless of whether the
+array is exploded into repeated keys or comma-joined.
 
 ## Null array elements in parameters
 

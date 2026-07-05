@@ -14,6 +14,7 @@ import 'package:tonik_generate/src/util/default_resolution.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/form_exploded_values_generator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
@@ -266,7 +267,16 @@ class ClassGenerator {
             normalizedProperties.where((p) => !p.property.isReadOnly).toList(),
           ),
           _buildToSimpleMethod(),
-          _buildToFormMethod(),
+          _buildToFormMethod(
+            buildFormExplodedValuesLiteral(
+              [
+                for (final p in normalizedProperties)
+                  if (!p.property.isReadOnly)
+                    _explodedArrayBinding(p.normalizedName, p.property, model),
+              ],
+              useImmutableCollections: useImmutableCollections,
+            ),
+          ),
           _buildToLabelMethod(),
           _buildToMatrixMethod(),
           _buildToDeepObjectMethod(),
@@ -1120,13 +1130,31 @@ class ClassGenerator {
       property.model,
       nameManager,
       package,
-      isNullableOverride:
-          property.isNullable ||
-          !property.isRequired ||
-          property.isReadOnly ||
-          property.isWriteOnly ||
-          model.isReadOnly,
+      isNullableOverride: isSchemaAwareFieldNullable(
+        property,
+        memberIsReadOnly: model.isReadOnly,
+      ),
       useImmutableCollections: useImmutableCollections,
+    );
+  }
+
+  FormPropertyBinding _explodedArrayBinding(
+    String name,
+    Property property,
+    ClassModel model,
+  ) {
+    final listModel = property.model.resolved;
+    final nullable =
+        isSchemaAwareFieldNullable(
+          property,
+          memberIsReadOnly: model.isReadOnly,
+        ) ||
+        (listModel is ListModel && listModel.isNullable);
+    final field = refer(name);
+    return (
+      field: nullable ? field.nullChecked : field,
+      nullGuard: nullable ? field : null,
+      property: property,
     );
   }
 
@@ -1994,7 +2022,7 @@ if ($name != null) {
     return Block.of(codes);
   }
 
-  Method _buildToFormMethod() => Method(
+  Method _buildToFormMethod(Expression? explodedValues) => Method(
     (b) => b
       ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toForm'
@@ -2023,6 +2051,8 @@ if ($name != null) {
                 'allowEmpty': refer('allowEmpty'),
                 'alreadyEncoded': literalBool(true),
                 'useQueryComponent': refer('useQueryComponent'),
+                'fieldEncodings': refer('fieldEncodings'),
+                'explodedValues': ?explodedValues,
               },
             )
             .returned

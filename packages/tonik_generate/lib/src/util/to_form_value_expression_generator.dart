@@ -51,7 +51,7 @@ BuiltExpression buildToFormValueExpression(
     explode: literalBool(explodeLiteral),
     allowEmpty: literalBool(allowEmptyLiteral),
     useQueryComponent: useQueryComponent ? literalBool(true) : null,
-    fieldEncodings: _fieldEncodingsLiteral(encoding),
+    fieldEncodings: _fieldEncodingsLiteral(model, encoding),
   );
 
   if (entries == null) {
@@ -66,30 +66,73 @@ BuiltExpression buildToFormValueExpression(
 }
 
 /// Builds a `<String, FormFieldEncoding>` map literal for the object `toForm`
-/// call, containing only the writable properties that opt into `allowReserved`.
-/// Keyed by raw spec name to match the class's own per-property lookup. Returns
-/// null when no property opts in so the call omits the argument.
+/// call, keyed by raw spec name to match the class's own per-property lookup.
+///
+/// Carries per-property `explode` for every writable simple-content array
+/// property — defaulting to true (`style: form`) when the spec omits an
+/// Encoding Object — so the runtime emits repeated keys, plus `allowReserved`
+/// for any property that opts in. Returns null when no property needs either.
 Expression? _fieldEncodingsLiteral(
+  Model model,
   Map<Property, FieldEncoding>? encoding,
 ) {
-  if (encoding == null) return null;
+  final byName = <String, FieldEncoding>{
+    if (encoding != null)
+      for (final entry in encoding.entries) entry.key.name: entry.value,
+  };
+
+  final properties = <String, Property>{};
+  for (final property in _collectFormProperties(model)) {
+    properties[property.name] = property;
+  }
+  if (encoding != null) {
+    for (final property in encoding.keys) {
+      properties.putIfAbsent(property.name, () => property);
+    }
+  }
 
   final descriptor = refer(
     'FormFieldEncoding',
     'package:tonik_util/tonik_util.dart',
   );
-  final reserved = <Expression, Expression>{
-    for (final entry in encoding.entries)
-      if (!entry.key.isReadOnly && entry.value.allowReserved)
-        specLiteralString(entry.key.name): descriptor.constInstance([], {
-          'allowReserved': literalBool(true),
-        }),
-  };
+  final map = <Expression, Expression>{};
+  for (final property in properties.values) {
+    if (property.isReadOnly) continue;
 
-  if (reserved.isEmpty) return null;
+    final fieldEncoding = byName[property.name];
+    final allowReserved = fieldEncoding?.allowReserved ?? false;
+    final explode = _isSimpleContentList(property.model)
+        ? (fieldEncoding?.explode ?? true)
+        : null;
 
-  return literalMap(reserved, refer('String', 'dart:core'), descriptor);
+    if (!allowReserved && explode == null) continue;
+
+    map[specLiteralString(property.name)] = descriptor.constInstance([], {
+      if (allowReserved) 'allowReserved': literalBool(true),
+      if (explode != null) 'explode': literalBool(explode),
+    });
+  }
+
+  if (map.isEmpty) return null;
+
+  return literalMap(map, refer('String', 'dart:core'), descriptor);
 }
+
+List<Property> _collectFormProperties(Model model) {
+  switch (model.resolved) {
+    case final ClassModel m:
+      return m.properties.toList();
+    case final AllOfModel m:
+      return [
+        for (final member in m.models) ..._collectFormProperties(member),
+      ];
+    default:
+      return const [];
+  }
+}
+
+bool _isSimpleContentList(Model model) =>
+    model is ListModel && model.hasSimpleContent;
 
 Expression _entriesToBody(Expression entries) {
   return entries

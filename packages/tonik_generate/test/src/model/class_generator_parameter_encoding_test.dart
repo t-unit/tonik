@@ -1962,6 +1962,7 @@ List<ParameterEntry> toForm(
     allowEmpty: allowEmpty,
     alreadyEncoded: true,
     useQueryComponent: useQueryComponent,
+    fieldEncodings: fieldEncodings,
   );
 }
 ''';

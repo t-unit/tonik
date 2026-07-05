@@ -1956,6 +1956,7 @@ void main() {
                     useQueryComponent: true,
                     fieldEncodings: <String, FormFieldEncoding>{
                       r'reserved': const FormFieldEncoding(allowReserved: true),
+                      r'tags': const FormFieldEncoding(explode: true),
                     },
                   )
                   .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')

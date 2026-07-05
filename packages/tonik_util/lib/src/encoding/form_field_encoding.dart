@@ -1,7 +1,9 @@
 import 'package:meta/meta.dart';
 
-/// Per-property encoding options threaded into a form-style `toForm` call so
-/// individual object properties can opt into reserved-character preservation.
+/// Per-property encoding options threaded into a form-style `toForm` call:
+/// whether an object property opts into reserved-character preservation and,
+/// for array properties, whether it explodes into repeated `name=value`
+/// entries.
 @immutable
 class FormFieldEncoding {
   /// Creates a descriptor; [allowReserved] defaults to false.
@@ -11,7 +13,9 @@ class FormFieldEncoding {
   /// except the form delimiters `& = +`.
   final bool allowReserved;
 
-  /// Reserved for per-property array explode; not yet consumed by `toForm`.
+  /// Per-property array explode. When true, a list property emits one repeated
+  /// `name=value` entry per element; when false it stays a single comma-joined
+  /// entry. Null for non-list properties.
   final bool? explode;
 
   @override

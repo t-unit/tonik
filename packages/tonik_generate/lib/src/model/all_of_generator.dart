@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
+import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/composite_guard_builders.dart';
@@ -12,6 +13,7 @@ import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
+import 'package:tonik_generate/src/util/form_exploded_values_generator.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
@@ -56,28 +58,7 @@ class AllOfGenerator {
   @visibleForTesting
   List<Spec> generateClasses(AllOfModel model, [String? className]) {
     final actualClassName = className ?? nameManager.modelName(model);
-    final models = stableModelSorter.sortModels(model.models);
-
-    final pseudoProperties = models.map((m) {
-      final typeRef = typeReference(
-        m,
-        nameManager,
-        package,
-        useImmutableCollections: useImmutableCollections,
-      );
-      final isNullable = m.isEffectivelyNullable;
-      return Property(
-        name: typeRef.symbol,
-        model: m,
-        isRequired: !isNullable,
-        isNullable: isNullable,
-        isDeprecated: false,
-        examples: const [],
-        defaultValue: null,
-      );
-    }).toList();
-
-    final normalizedProperties = _normalizeModelProperties(pseudoProperties);
+    final normalizedProperties = _memberFields(model);
 
     final copyWithResult = _buildCopyWith(
       actualClassName,
@@ -117,28 +98,7 @@ class AllOfGenerator {
               )
             : publicClassName);
 
-    final models = stableModelSorter.sortModels(model.models);
-
-    final pseudoProperties = models.map((m) {
-      final typeRef = typeReference(
-        m,
-        nameManager,
-        package,
-        useImmutableCollections: useImmutableCollections,
-      );
-      final isNullable = m.isEffectivelyNullable;
-      return Property(
-        name: typeRef.symbol,
-        model: m,
-        isRequired: !isNullable,
-        isNullable: isNullable,
-        isDeprecated: false,
-        examples: const [],
-        defaultValue: null,
-      );
-    }).toList();
-
-    final normalizedProperties = _normalizeModelProperties(pseudoProperties);
+    final normalizedProperties = _memberFields(model);
     final properties = _buildPropertiesFromNormalized(
       normalizedProperties,
       model,
@@ -305,6 +265,115 @@ class AllOfGenerator {
           ),
         )
         .toList();
+  }
+
+  /// The normalized fields, one per allOf member, that back the generated
+  /// class. Shared by class generation and exploded-values access so the two
+  /// cannot drift on member field names.
+  List<({String normalizedName, Property property})> _memberFields(
+    AllOfModel model,
+  ) {
+    final pseudo = stableModelSorter.sortModels(model.models).map((m) {
+      final isNullable = m.isEffectivelyNullable;
+      return Property(
+        name: typeReference(
+          m,
+          nameManager,
+          package,
+          useImmutableCollections: useImmutableCollections,
+        ).symbol,
+        model: m,
+        isRequired: !isNullable,
+        isNullable: isNullable,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+    }).toList();
+    return _normalizeModelProperties(pseudo);
+  }
+
+  /// Collects the simple-content array properties reachable through the allOf's
+  /// object members — the exact set the request-body call site marks `explode`
+  /// via its field encodings — keeping the exploded-values channel and that
+  /// field encoding activating the same properties. Direct array members are
+  /// excluded: [_buildParameterPropertiesMethod] rejects them, so the call site
+  /// never activates them and any exploded-values entry would be dead.
+  List<FormPropertyBinding> _collectExplodedArrayBindings(
+    List<({String normalizedName, Property property})> members,
+  ) {
+    final bindings = <FormPropertyBinding>[];
+    for (final member in members) {
+      if (member.property.isReadOnly) continue;
+      final root = refer(member.normalizedName);
+      _collectArrayBindings(
+        member.property.model,
+        field: root,
+        guard: root,
+        receiverNullable: member.property.model.isEffectivelyNullable,
+        into: bindings,
+      );
+    }
+    return bindings;
+  }
+
+  /// Descends the object graph reached from an allOf member, accumulating a
+  /// force-unwrapped value access ([field]) and a parallel null-safe access
+  /// ([guard]) so a nullable link short-circuits the null test while the mapped
+  /// value stays non-nullable.
+  void _collectArrayBindings(
+    Model memberModel, {
+    required Expression field,
+    required Expression guard,
+    required bool receiverNullable,
+    required List<FormPropertyBinding> into,
+  }) {
+    ({Expression field, Expression guard}) descend(String name) {
+      if (receiverNullable) {
+        return (
+          field: field.nullChecked.property(name),
+          guard: guard.nullSafeProperty(name),
+        );
+      }
+      return (field: field.property(name), guard: guard.property(name));
+    }
+
+    switch (memberModel.resolved) {
+      case final ClassModel m:
+        for (final p in normalizeProperties(m.properties.toList())) {
+          if (p.property.isReadOnly) continue;
+          final listModel = p.property.model.resolved;
+          if (listModel is! ListModel || !listModel.hasSimpleContent) continue;
+          final access = descend(p.normalizedName);
+          final leafNullable =
+              isSchemaAwareFieldNullable(
+                p.property,
+                memberIsReadOnly: m.isReadOnly,
+              ) ||
+              listModel.isNullable;
+          final nullable = receiverNullable || leafNullable;
+          into.add((
+            field: leafNullable ? access.field.nullChecked : access.field,
+            nullGuard: nullable ? access.guard : null,
+            property: p.property,
+          ));
+        }
+      case final AllOfModel m:
+        for (final member in _memberFields(m)) {
+          final access = descend(member.normalizedName);
+          _collectArrayBindings(
+            member.property.model,
+            field: access.field,
+            guard: access.guard,
+            receiverNullable:
+                receiverNullable ||
+                member.property.model.isEffectivelyNullable,
+            into: into,
+          );
+        }
+      default:
+        break;
+    }
   }
 
   List<Field> _buildFields(
@@ -1898,6 +1967,11 @@ for (final _\$e in $apFieldName.entries) {
       return code;
     }
 
+    final explodedValues = buildFormExplodedValuesLiteral(
+      _collectExplodedArrayBindings(normalizedProperties),
+      useImmutableCollections: useImmutableCollections,
+    );
+
     final delegateToParameterProperties = refer('parameterProperties')
         .call([], {
           'allowEmpty': refer('allowEmpty'),
@@ -1910,6 +1984,8 @@ for (final _\$e in $apFieldName.entries) {
           'allowEmpty': refer('allowEmpty'),
           'alreadyEncoded': literalBool(true),
           'useQueryComponent': refer('useQueryComponent'),
+          'fieldEncodings': refer('fieldEncodings'),
+          'explodedValues': ?explodedValues,
         })
         .returned
         .statement;
