@@ -304,13 +304,11 @@ class AllOfGenerator {
   ) {
     final bindings = <FormPropertyBinding>[];
     for (final member in members) {
-      if (member.property.isReadOnly) continue;
       final root = refer(member.normalizedName);
       _collectArrayBindings(
         member.property.model,
         field: root,
-        guard: root,
-        receiverNullable: member.property.model.isEffectivelyNullable,
+        memberGuard: member.property.model.isEffectivelyNullable ? root : null,
         into: bindings,
       );
     }
@@ -319,54 +317,56 @@ class AllOfGenerator {
 
   /// Descends nested allOf members and one level of a member's ClassModel
   /// properties, accumulating a force-unwrapped value access ([field]) and a
-  /// parallel null-safe access ([guard]) so a nullable link short-circuits the
-  /// null test while the mapped value stays non-nullable.
+  /// parallel null-safe access to the member ([memberGuard]) so a nullable
+  /// composition link short-circuits the null test while the mapped value stays
+  /// non-nullable.
+  ///
+  /// [memberGuard] is null-safe access to the member that owns the reached
+  /// property, or null when no composition link on the path is nullable. The
+  /// leaf array property's own nullability is captured separately (as the
+  /// binding's `leafGuard`) so the merge fold can tell an absent member from a
+  /// present member with a null array — the two resolve to different winners.
   void _collectArrayBindings(
     Model memberModel, {
     required Expression field,
-    required Expression guard,
-    required bool receiverNullable,
+    required Expression? memberGuard,
     required List<FormPropertyBinding> into,
   }) {
-    ({Expression field, Expression guard}) descend(String name) {
-      if (receiverNullable) {
-        return (
-          field: field.nullChecked.property(name),
-          guard: guard.nullSafeProperty(name),
-        );
-      }
-      return (field: field.property(name), guard: guard.property(name));
-    }
+    final receiverNullable = memberGuard != null;
+
+    Expression descendField(String name) => receiverNullable
+        ? field.nullChecked.property(name)
+        : field.property(name);
 
     switch (memberModel.resolved) {
       case final ClassModel m:
         for (final p in normalizeProperties(m.properties.toList())) {
           if (!isExplodedFormArrayProperty(p.property)) continue;
           final listModel = p.property.model as ListModel;
-          final access = descend(p.normalizedName);
+          final leafAccess = descendField(p.normalizedName);
           final leafNullable =
               isSchemaAwareFieldNullable(
                 p.property,
                 memberIsReadOnly: m.isReadOnly,
               ) ||
               listModel.isNullable;
-          final nullable = receiverNullable || leafNullable;
           into.add((
-            field: leafNullable ? access.field.nullChecked : access.field,
-            nullGuard: nullable ? access.guard : null,
+            field: leafNullable ? leafAccess.nullChecked : leafAccess,
+            memberGuard: memberGuard,
+            leafGuard: leafNullable ? leafAccess : null,
             property: p.property,
           ));
         }
       case final AllOfModel m:
         for (final member in _memberFields(m)) {
-          final access = descend(member.normalizedName);
+          final nestedNullable =
+              receiverNullable || member.property.model.isEffectivelyNullable;
           _collectArrayBindings(
             member.property.model,
-            field: access.field,
-            guard: access.guard,
-            receiverNullable:
-                receiverNullable ||
-                member.property.model.isEffectivelyNullable,
+            field: descendField(member.normalizedName),
+            memberGuard: nestedNullable
+                ? (memberGuard ?? field).nullSafeProperty(member.normalizedName)
+                : null,
             into: into,
           );
         }

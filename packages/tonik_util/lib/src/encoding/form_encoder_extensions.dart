@@ -248,14 +248,14 @@ extension FormStringMapEncoder on Map<String, String> {
   /// [fieldEncodings], keyed by raw property name, carries per-property array
   /// explode. When a key's descriptor has `explode == true`, its element
   /// strings are taken from [explodedValues] (keeping element boundaries that a
-  /// comma-joined value would lose) and emitted as one entry per element, so
-  /// the wire form matches `style: form, explode: true` (repeated keys). An
+  /// comma-joined value would lose) and emitted as one entry per element. An
   /// exploded empty list yields no entries; a single empty-string element
   /// yields one empty-value entry.
   ///
   /// [fieldEncodings] and [explodedValues] are ignored when [explode] is false.
-  /// The descriptors' `allowReserved` is not consulted here: values arrive
-  /// already URI-encoded upstream.
+  /// The descriptors' per-field `allowReserved` is not consulted here:
+  /// generated callers pass elements pre-encoded ([alreadyEncoded] true). With
+  /// [alreadyEncoded] false only the uniform [allowReserved] parameter applies.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
@@ -303,8 +303,9 @@ extension FormStringMapEncoder on Map<String, String> {
       if (fieldEncodings[e.key]?.explode ?? false) {
         final exploded = explodedValues[e.key];
         if (exploded == null) {
+          final owner = paramName.isEmpty ? '' : ' of "$paramName"';
           throw EncodingException(
-            'Form property "${e.key}" of "$paramName" is marked exploded but '
+            'Form property "${e.key}"$owner is marked exploded but '
             'has no exploded values. This indicates the generated code and '
             'runtime disagree (drift or version skew), not invalid input.',
           );

@@ -661,6 +661,167 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
+    test('AllOf body with a duplicate raw name whose scalar member sorts last '
+        'omits the descriptor key', () {
+      final listMember = ClassModel(
+        name: 'AListMember',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'tags',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+      final scalarMember = ClassModel(
+        name: 'ZScalarMember',
+        isDeprecated: false,
+        properties: [
+          Property(
+            name: 'tags',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+      final model = AllOfModel(
+        name: 'Form',
+        models: {listMember, scalarMember},
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('oneOf body yields no explode descriptors for its array properties',
+        () {
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final variant = ClassModel(
+        name: 'Variant',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+      final model = OneOfModel(
+        name: 'Form',
+        models: {(discriminatorValue: null, model: variant)},
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ClassModel body omits the explode descriptor for an alias-wrapped '
+        'array property', () {
+      final tags = Property(
+        name: 'tags',
+        model: AliasModel(
+          name: 'Tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          context: context,
+          defaultValue: null,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
     test('AnyModel body renders directly via encodeAnyToForm', () {
       final result = buildToFormValueExpression(
         'body',

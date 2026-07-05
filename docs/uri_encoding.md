@@ -95,6 +95,19 @@ encoded according to its `style: form` encoding:
 - **`explode: false`** sends a single comma-joined entry: `tags=a,b,c`.
 - An **empty array** with the default `explode: true` is omitted entirely — no key appears on
   the wire. With `explode: false` an empty array still emits `tags=` — the key with an empty value.
+- A **`null` (absent) nullable array property** behaves like an empty array under the exploded
+  default: it is omitted from the wire.
+- A body whose properties are **all empty exploded arrays** serializes to an empty body.
+
+The exploded default applies to **object and `allOf` form bodies**. A `oneOf`/`anyOf` form body
+does not currently receive it — its array properties stay comma-joined.
+
+Only the `form` style is honored for form bodies. `spaceDelimited` and `pipeDelimited` are not:
+with `explode` omitted they resolve to `explode: false` and the array is comma-joined, not
+space- or pipe-joined.
+
+`additionalProperties` values are always comma-joined; dynamic keys carry no per-property
+encoding.
 
 `allowReserved` is honored on scalar, enum, object, composition, and array properties. On an
 array it keeps reserved characters literal within each element, regardless of whether the

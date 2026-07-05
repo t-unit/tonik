@@ -536,8 +536,8 @@ void main() {
       );
     });
 
-    test('explode=true throws naming the property when explodedValues lacks '
-        'the exploded key', () {
+    test('explode=true throws naming the property and paramName when '
+        'explodedValues lacks the exploded key', () {
       expect(
         () => {'colors': 'red,green,blue'}.toForm(
           'p',
@@ -552,7 +552,32 @@ void main() {
           isA<EncodingException>().having(
             (e) => e.message,
             'message',
-            allOf(contains('colors'), contains('"p"')),
+            allOf(contains('"colors"'), contains('of "p"')),
+          ),
+        ),
+      );
+    });
+
+    test('explode=true omits the paramName segment from the drift message when '
+        'paramName is empty', () {
+      expect(
+        () => {'colors': 'red,green,blue'}.toForm(
+          '',
+          explode: true,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          fieldEncodings: const {
+            'colors': FormFieldEncoding(explode: true),
+          },
+        ),
+        throwsA(
+          isA<EncodingException>().having(
+            (e) => e.message,
+            'message',
+            allOf(
+              contains('"colors" is marked exploded'),
+              isNot(contains(' of ')),
+            ),
           ),
         ),
       );

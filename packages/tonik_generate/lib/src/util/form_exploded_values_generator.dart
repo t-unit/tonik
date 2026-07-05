@@ -5,18 +5,32 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
 /// A writable form array property paired with the expression that reads its
-/// list value (`field`) and, when that read can yield null, a null-safe
-/// expression the builder tests against null before mapping (`nullGuard`).
-/// A null `nullGuard` marks a value that is always present.
+/// list value (`field`) and two independent null tests the merge fold consults.
+///
+/// `memberGuard` is null-safe access to the composition member that owns the
+/// property; when it evaluates null the member is absent from the runtime
+/// `parameterProperties` merge, so its data never reaches the wire and the fold
+/// falls through to an earlier duplicate-key candidate. A null `memberGuard`
+/// marks a member that is always present (the class path has no member, so it
+/// is always null there).
+///
+/// `leafGuard` is access to the array property read through a present member;
+/// when it evaluates null the member is present but its array value is absent.
+/// `parameterProperties` writes `''` for such a property (form bodies pass
+/// `allowEmpty: true`), so that member WINS the merge with zero elements. A
+/// null `leafGuard` marks an array value that is always present once its member
+/// is.
 typedef FormPropertyBinding = ({
   Expression field,
-  Expression? nullGuard,
+  Expression? memberGuard,
+  Expression? leafGuard,
   Property property,
 });
 
-/// Whether [property] is a writable array with simple content that form
-/// encoding emits as an exploded (`style: form, explode: true`) repeated-key
-/// property.
+/// Whether [property] is a writable array with simple content and therefore
+/// eligible for the explode machinery — the field encoding descriptor and the
+/// `explodedValues` channel. Whether it is actually exploded is decided by its
+/// encoding (explicit `explode`, or the form/absent-style default).
 ///
 /// Uses the unresolved model so it matches the class-dispatch predicate: an
 /// alias-wrapped array is not treated as an exploded form array (that routes
@@ -29,7 +43,7 @@ bool isExplodedFormArrayProperty(Property property) {
   return model is ListModel && model.hasSimpleContent;
 }
 
-/// Whether the schema-aware field generated for [property] on a member class
+/// Whether the schema-aware field generated for [property] on the owning class
 /// is typed nullable. Form null-guard emission must consult the same predicate
 /// the field type is built from, or a guard is dropped and the emission fails
 /// to compile.
@@ -44,18 +58,26 @@ bool isSchemaAwareFieldNullable(
     memberIsReadOnly;
 
 /// Builds the `Map<String, List<String>>` literal passed as `explodedValues`
-/// to an object's `toForm`, holding the individually-encoded elements of each
-/// simple-content array property keyed by raw spec name.
+/// to the `Map<String, String>.toForm` call inside the generated object's
+/// `toForm`, holding the individually-encoded elements of each simple-content
+/// array property keyed by raw spec name.
 ///
 /// Delivering elements as a list keeps their boundaries intact, so an element
 /// containing a literal comma survives `style: form, explode: true` instead of
 /// being re-split. Returns null when the object has no such array property.
 ///
 /// When several composition members expose the same raw name, the emitted
-/// elements come from whichever member's value wins the `parameterProperties`
-/// merge at runtime — last non-null wins. A later nullable member that is null
-/// falls back through a runtime-conditional chain to the earlier member's
-/// elements, so the wire never drops the merge winner's data.
+/// elements track exactly which member wins the runtime `parameterProperties`
+/// merge, so flipping `explode` cannot change which member's data is
+/// transmitted. The merge is per-member `addAll` — a later member overrides an
+/// earlier one — with two null cases distinguished:
+///
+/// - the later member is absent (its access chain is null): it never merges, so
+///   the fold falls through to the earlier candidate;
+/// - the later member is present but its array property is null:
+///   `parameterProperties` coerces that to an empty string entry (form bodies
+///   pass `allowEmpty: true`), clobbering the earlier member, so the later
+///   member wins with an empty element list (zero exploded entries).
 Expression? buildFormExplodedValuesLiteral(
   List<FormPropertyBinding> bindings, {
   required bool useImmutableCollections,
@@ -86,10 +108,11 @@ Expression? buildFormExplodedValuesLiteral(
   );
 }
 
-/// The elements of the raw-name group that wins the `parameterProperties`
-/// merge — last non-null member. Built as a left fold so each later present
-/// binding overrides the running winner, and a later null binding falls
-/// through to the earlier one, mirroring last-non-null-wins.
+/// The elements of the raw-name group emitted for the member that wins the
+/// `parameterProperties` merge. Built as a left fold so each later binding
+/// overrides the running winner; an absent member (`memberGuard` null) falls
+/// through to the earlier one, while a present member with a null array leaf
+/// (`leafGuard` null) wins with an empty list.
 Expression _mergeWinnerElements(
   List<FormPropertyBinding> group, {
   required bool useImmutableCollections,
@@ -102,25 +125,38 @@ Expression _mergeWinnerElements(
         useImmutableCollections: useImmutableCollections,
       );
 
-  final emptyList = literalConstList([], refer('String', 'dart:core'));
-
-  var winner = _guarded(group.first, elements(group.first), emptyList);
+  var winner = _guarded(group.first, elements(group.first), _emptyStringList());
   for (final binding in group.skip(1)) {
     winner = _guarded(binding, elements(binding), winner);
   }
   return winner;
 }
 
-/// [present] when [binding] is non-null at runtime, otherwise [fallback]. A
-/// non-nullable binding is always present and returns [present] directly.
+Expression _emptyStringList() =>
+    literalConstList([], refer('String', 'dart:core'));
+
+/// The value [binding] contributes to the merge fold, given [fallback] for an
+/// earlier candidate:
+///
+/// - member absent → [fallback];
+/// - member present, array leaf null → an empty element list (member wins with
+///   zero entries, matching the `''` `parameterProperties` writes);
+/// - otherwise → [present].
 Expression _guarded(
   FormPropertyBinding binding,
   Expression present,
   Expression fallback,
 ) {
-  final guard = binding.nullGuard;
-  if (guard == null) return present;
-  return guard.equalTo(literalNull).conditional(fallback, present);
+  final leafGuard = binding.leafGuard;
+  final whenMemberPresent = leafGuard == null
+      ? present
+      : leafGuard.equalTo(literalNull).conditional(_emptyStringList(), present);
+
+  final memberGuard = binding.memberGuard;
+  if (memberGuard == null) return whenMemberPresent;
+  return memberGuard
+      .equalTo(literalNull)
+      .conditional(fallback, whenMemberPresent);
 }
 
 Expression _encodedElementsExpression(

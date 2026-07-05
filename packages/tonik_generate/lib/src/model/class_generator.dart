@@ -1153,7 +1153,8 @@ class ClassGenerator {
     final field = refer(name);
     return (
       field: nullable ? field.nullChecked : field,
-      nullGuard: nullable ? field : null,
+      memberGuard: null,
+      leafGuard: nullable ? field : null,
       property: property,
     );
   }

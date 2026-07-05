@@ -268,6 +268,32 @@ void main() {
       final data = response.value;
       expect(data.colors, ['red', 'green', 'blue']);
     });
+
+    test('percent-encodes a comma inside an exploded element without '
+        'allowReserved', () async {
+      const form = ArrayForm(colors: ['a,b', 'c']);
+
+      final response = await api.postArrayForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayForm>>());
+
+      final requestData =
+          (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
+      expect(requestData, 'colors=a%2Cb&colors=c');
+    });
+
+    test('encodes a single empty-string element as one empty-value entry',
+        () async {
+      const form = ArrayForm(colors: ['']);
+
+      final response = await api.postArrayForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayForm>>());
+
+      final requestData =
+          (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
+      expect(requestData, 'colors=');
+    });
   });
 
   group('AllOf array encoding with explode', () {
@@ -500,6 +526,24 @@ void main() {
             .requestOptions
             .data;
         expect(requestData, 'reserved=a/b:c&tags=x,y,z');
+      },
+    );
+
+    test(
+      'emits an empty-value entry for an explode=false array property that is '
+      'empty',
+      () async {
+        const form = AllowReservedArrayForm(reserved: 'plain', tags: []);
+
+        final response = await api.postAllowReservedArrayForm(body: form);
+
+        expect(response, isA<TonikSuccess<AllowReservedArrayForm>>());
+
+        final requestData = (response as TonikSuccess<AllowReservedArrayForm>)
+            .response
+            .requestOptions
+            .data;
+        expect(requestData, 'reserved=plain&tags=');
       },
     );
 

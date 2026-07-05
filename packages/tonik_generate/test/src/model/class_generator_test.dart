@@ -1669,6 +1669,79 @@ r'tags': tags == null
       );
 
       test(
+        'toForm null-guards explodedValues for a required array property whose '
+        'ListModel is itself nullable',
+        () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'NullableListModel',
+            properties: [
+              Property(
+                name: 'tags',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  isNullable: true,
+                  context: context,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            examples: const [],
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
+
+          const expectedToFormMethod = '''
+List<ParameterEntry> toForm(
+String paramName, {
+required bool explode,
+required bool allowEmpty,
+bool useQueryComponent = false,
+bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+return parameterProperties(
+allowEmpty: allowEmpty,
+useQueryComponent: useQueryComponent,
+allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+).toForm(
+paramName,
+explode: explode,
+allowEmpty: allowEmpty,
+alreadyEncoded: true,
+useQueryComponent: useQueryComponent,
+fieldEncodings: fieldEncodings,
+explodedValues: <String, List<String>>{
+r'tags': tags == null
+    ? const <String>[]
+    : tags!
+        .map(
+          (e) => e.uriEncode(
+            allowEmpty: true,
+            useQueryComponent: useQueryComponent,
+            allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+          ),
+        )
+        .toList(),
+},
+);
+}
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToFormMethod)),
+          );
+        },
+      );
+
+      test(
         'toForm explodedValues maps null elements of a nullable-content array '
         'property to empty strings',
         () {
