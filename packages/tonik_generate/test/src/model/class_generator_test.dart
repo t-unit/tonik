@@ -1149,6 +1149,86 @@ void main() {
     });
 
     group('form encoding', () {
+      test(
+        'an alias-wrapped array property routes form encoding to the contains '
+        'complex types path with no explode descriptor',
+        () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'ModelWithAliasedList',
+            properties: [
+              Property(
+                name: 'tags',
+                model: AliasModel(
+                  name: 'TagList',
+                  model: ListModel(
+                    content: StringModel(context: context),
+                    context: context,
+                    examples: const [],
+                  ),
+                  context: context,
+                  defaultValue: null,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            examples: const [],
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
+
+          const expectedParameterPropertiesMethod = '''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) => throw EncodingException(
+  r'parameterProperties not supported for ModelWithAliasedList: contains complex types',
+);
+          ''';
+
+          const expectedToFormMethod = '''
+List<ParameterEntry> toForm(
+String paramName, {
+required bool explode,
+required bool allowEmpty,
+bool useQueryComponent = false,
+bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+return parameterProperties(
+allowEmpty: allowEmpty,
+useQueryComponent: useQueryComponent,
+allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+).toForm(
+paramName,
+explode: explode,
+allowEmpty: allowEmpty,
+alreadyEncoded: true,
+useQueryComponent: useQueryComponent,
+fieldEncodings: fieldEncodings,
+);
+}
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedParameterPropertiesMethod)),
+          );
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToFormMethod)),
+          );
+        },
+      );
+
       test('generates fromForm constructor for simple properties', () {
         final model = ClassModel(
           isDeprecated: false,
@@ -1415,6 +1495,101 @@ Map<String, String> parameterProperties({
             contains(collapseWhitespace(expectedToFormMethod)),
           );
 
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedParameterPropertiesMethod)),
+          );
+        },
+      );
+
+      test(
+        'array property whose raw name differs from the Dart field keys all '
+        'three maps by the raw name',
+        () {
+          final model = ClassModel(
+            isDeprecated: false,
+            name: 'RawNameListModel',
+            properties: [
+              Property(
+                name: 'user-tags',
+                model: ListModel(
+                  content: StringModel(context: context),
+                  context: context,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            examples: const [],
+          );
+
+          final result = generator.generateClass(model);
+          final generatedCode = format(result.accept(emitter).toString());
+
+          const expectedToFormMethod = '''
+List<ParameterEntry> toForm(
+String paramName, {
+required bool explode,
+required bool allowEmpty,
+bool useQueryComponent = false,
+bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+return parameterProperties(
+allowEmpty: allowEmpty,
+useQueryComponent: useQueryComponent,
+allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+).toForm(
+paramName,
+explode: explode,
+allowEmpty: allowEmpty,
+alreadyEncoded: true,
+useQueryComponent: useQueryComponent,
+fieldEncodings: fieldEncodings,
+explodedValues: <String, List<String>>{
+r'user-tags': userTags
+    .map(
+      (e) => e.uriEncode(
+        allowEmpty: true,
+        useQueryComponent: useQueryComponent,
+        allowReserved:
+            fieldEncodings[r'user-tags']?.allowReserved ?? allowReserved,
+      ),
+    )
+    .toList(),
+},
+);
+}
+          ''';
+
+          const expectedParameterPropertiesMethod = r'''
+Map<String, String> parameterProperties({
+  bool allowEmpty = true,
+  bool allowLists = true,
+  bool useQueryComponent = false,
+  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+  if (!allowLists) {
+    throw EncodingException('Lists are not supported in this encoding style');
+  }
+  final _$result = <String, String>{};
+  _$result[r'user-tags'] = userTags.uriEncode(
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+    allowReserved: fieldEncodings[r'user-tags']?.allowReserved ?? allowReserved,
+  );
+  return _$result;
+}
+          ''';
+
+          expect(
+            collapseWhitespace(generatedCode),
+            contains(collapseWhitespace(expectedToFormMethod)),
+          );
           expect(
             collapseWhitespace(generatedCode),
             contains(collapseWhitespace(expectedParameterPropertiesMethod)),

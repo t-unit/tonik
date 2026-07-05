@@ -317,10 +317,10 @@ class AllOfGenerator {
     return bindings;
   }
 
-  /// Descends the object graph reached from an allOf member, accumulating a
-  /// force-unwrapped value access ([field]) and a parallel null-safe access
-  /// ([guard]) so a nullable link short-circuits the null test while the mapped
-  /// value stays non-nullable.
+  /// Descends nested allOf members and one level of a member's ClassModel
+  /// properties, accumulating a force-unwrapped value access ([field]) and a
+  /// parallel null-safe access ([guard]) so a nullable link short-circuits the
+  /// null test while the mapped value stays non-nullable.
   void _collectArrayBindings(
     Model memberModel, {
     required Expression field,
@@ -341,9 +341,8 @@ class AllOfGenerator {
     switch (memberModel.resolved) {
       case final ClassModel m:
         for (final p in normalizeProperties(m.properties.toList())) {
-          if (p.property.isReadOnly) continue;
-          final listModel = p.property.model.resolved;
-          if (listModel is! ListModel || !listModel.hasSimpleContent) continue;
+          if (!isExplodedFormArrayProperty(p.property)) continue;
+          final listModel = p.property.model as ListModel;
           final access = descend(p.normalizedName);
           final leafNullable =
               isSchemaAwareFieldNullable(

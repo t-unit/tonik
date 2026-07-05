@@ -244,7 +244,8 @@ String perPropertyAllowReservedArgument(String rawPropertyName) =>
     'allowReserved: ${perPropertyAllowReservedValue(rawPropertyName)}';
 
 /// A `Map<String, FormFieldEncoding> fieldEncodings = const {}` parameter that
-/// carries per-property reserved-character overrides into form encoding.
+/// carries per-property reserved-character overrides and array explode into
+/// form encoding.
 Parameter buildFieldEncodingsParameter() => Parameter(
   (b) => b
     ..name = 'fieldEncodings'

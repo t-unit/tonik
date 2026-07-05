@@ -252,6 +252,10 @@ extension FormStringMapEncoder on Map<String, String> {
   /// the wire form matches `style: form, explode: true` (repeated keys). An
   /// exploded empty list yields no entries; a single empty-string element
   /// yields one empty-value entry.
+  ///
+  /// [fieldEncodings] and [explodedValues] are ignored when [explode] is false.
+  /// The descriptors' `allowReserved` is not consulted here: values arrive
+  /// already URI-encoded upstream.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
@@ -300,7 +304,9 @@ extension FormStringMapEncoder on Map<String, String> {
         final exploded = explodedValues[e.key];
         if (exploded == null) {
           throw EncodingException(
-            'Missing exploded values for form property "${e.key}".',
+            'Form property "${e.key}" of "$paramName" is marked exploded but '
+            'has no exploded values. This indicates the generated code and '
+            'runtime disagree (drift or version skew), not invalid input.',
           );
         }
         for (final item in exploded) {

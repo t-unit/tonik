@@ -14,8 +14,10 @@ class FormFieldEncoding {
   final bool allowReserved;
 
   /// Per-property array explode. When true, a list property emits one repeated
-  /// `name=value` entry per element; when false it stays a single comma-joined
-  /// entry. Null for non-list properties.
+  /// `name=value` entry per element, which requires a matching entry in the
+  /// `explodedValues` map passed to `Map<String, String>.toForm`; when false it
+  /// stays a single comma-joined entry. Null when the property is not an
+  /// exploded array.
   final bool? explode;
 
   @override

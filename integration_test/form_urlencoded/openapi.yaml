@@ -123,6 +123,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/ArrayForm'
 
+  /form/allof-array:
+    post:
+      operationId: postAllOfArrayForm
+      tags:
+        - form
+      summary: Post allOf form with an array member property
+      description: Tests exploded array encoding for an allOf composed body
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AllOfArrayForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/AllOfArrayForm'
+
   /form/types:
     post:
       operationId: postTypesForm
@@ -585,6 +606,23 @@ components:
             type: integer
           description: Array of numbers
           example: [1, 2, 3]
+
+    AllOfArrayForm:
+      allOf:
+        - type: object
+          required:
+            - tags
+          properties:
+            tags:
+              type: array
+              items:
+                type: string
+              description: Array of tags exploded via style form
+        - type: object
+          properties:
+            label:
+              type: string
+              description: Optional label
 
     TypesForm:
       type: object

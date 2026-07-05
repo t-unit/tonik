@@ -1439,6 +1439,194 @@ void main() {
     );
   });
 
+  test('agrees on the list member as merge winner for a duplicate raw name '
+      'shared by a list member and a scalar member', () {
+    final listMember = ClassModel(
+      isDeprecated: false,
+      name: 'ZListMember',
+      properties: [
+        Property(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+    final scalarMember = ClassModel(
+      isDeprecated: false,
+      name: 'AScalarMember',
+      properties: [
+        Property(
+          name: 'tags',
+          model: StringModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'AllOfListScalarDuplicate',
+      models: {listMember, scalarMember},
+      context: context,
+      examples: const [],
+    );
+
+    final combinedClass = generator.generateClass(model);
+    final generated = format(combinedClass.accept(emitter).toString());
+
+    const expectedToFormMethod = '''
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+          ).toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
+            fieldEncodings: fieldEncodings,
+            explodedValues: <String, List<String>>{
+              r'tags': zListMember.tags
+                  .map(
+                    (e) => e.uriEncode(
+                      allowEmpty: true,
+                      useQueryComponent: useQueryComponent,
+                      allowReserved:
+                          fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+                    ),
+                  )
+                  .toList(),
+            },
+          );
+        }
+      ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedToFormMethod)),
+    );
+  });
+
+  test('falls back to an earlier member when the later duplicate array member '
+      'is null at runtime', () {
+    final alpha = ClassModel(
+      isDeprecated: false,
+      name: 'Alpha',
+      properties: [
+        Property(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+    final beta = ClassModel(
+      isDeprecated: false,
+      name: 'Beta',
+      isNullable: true,
+      properties: [
+        Property(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'AllOfNullableDuplicateArray',
+      models: {alpha, beta},
+      context: context,
+      examples: const [],
+    );
+
+    final combinedClass = generator.generateClass(model);
+    final generated = format(combinedClass.accept(emitter).toString());
+
+    const expectedToFormMethod = '''
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+          ).toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
+            fieldEncodings: fieldEncodings,
+            explodedValues: <String, List<String>>{
+              r'tags': beta?.tags == null
+                  ? alpha.tags
+                        .map(
+                          (e) => e.uriEncode(
+                            allowEmpty: true,
+                            useQueryComponent: useQueryComponent,
+                            allowReserved:
+                                fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+                          ),
+                        )
+                        .toList()
+                  : beta!.tags
+                        .map(
+                          (e) => e.uriEncode(
+                            allowEmpty: true,
+                            useQueryComponent: useQueryComponent,
+                            allowReserved:
+                                fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+                          ),
+                        )
+                        .toList(),
+            },
+          );
+        }
+      ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedToFormMethod)),
+    );
+  });
+
   test('threads an optional array property of a nested allOf member through '
       'the composed field path', () {
     final inner = AllOfModel(

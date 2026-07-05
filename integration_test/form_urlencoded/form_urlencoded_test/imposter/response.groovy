@@ -51,6 +51,16 @@ switch (path) {
         }
         break
         
+    case '/form/allof-array':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'tags=x&tags=y&label=hello'
+        }
+        break
+
     case '/form/types':
         def parts = [
             "stringValue=hello",

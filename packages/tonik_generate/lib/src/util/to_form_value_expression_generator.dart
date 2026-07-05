@@ -3,6 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
+import 'package:tonik_generate/src/util/form_exploded_values_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 BuiltExpression buildToFormValueExpression(
@@ -69,9 +70,10 @@ BuiltExpression buildToFormValueExpression(
 /// call, keyed by raw spec name to match the class's own per-property lookup.
 ///
 /// Carries per-property `explode` for every writable simple-content array
-/// property — defaulting to true (`style: form`) when the spec omits an
-/// Encoding Object — so the runtime emits repeated keys, plus `allowReserved`
-/// for any property that opts in. Returns null when no property needs either.
+/// property — defaulting to true only when the property's encoding omits
+/// explode and its style is form or absent — so the runtime emits repeated
+/// keys, plus `allowReserved` for any property that opts in. Returns null when
+/// no property needs either.
 Expression? _fieldEncodingsLiteral(
   Model model,
   Map<Property, FieldEncoding>? encoding,
@@ -101,8 +103,8 @@ Expression? _fieldEncodingsLiteral(
 
     final fieldEncoding = byName[property.name];
     final allowReserved = fieldEncoding?.allowReserved ?? false;
-    final explode = _isSimpleContentList(property.model)
-        ? (fieldEncoding?.explode ?? true)
+    final explode = isExplodedFormArrayProperty(property)
+        ? _explodeDefault(fieldEncoding)
         : null;
 
     if (!allowReserved && explode == null) continue;
@@ -118,21 +120,31 @@ Expression? _fieldEncodingsLiteral(
   return literalMap(map, refer('String', 'dart:core'), descriptor);
 }
 
-List<Property> _collectFormProperties(Model model) {
-  switch (model.resolved) {
-    case final ClassModel m:
-      return m.properties.toList();
-    case final AllOfModel m:
-      return [
-        for (final member in m.models) ..._collectFormProperties(member),
-      ];
-    default:
-      return const [];
-  }
+/// The effective explode for a form array property: the explicit value, or
+/// per OAS the default of true only for form or absent style.
+bool _explodeDefault(FieldEncoding? fieldEncoding) {
+  final style = fieldEncoding?.style;
+  return fieldEncoding?.explode ??
+      (style == null || style == EncodingStyle.form);
 }
 
-bool _isSimpleContentList(Model model) =>
-    model is ListModel && model.hasSimpleContent;
+List<Property> _collectFormProperties(Model model) {
+  final sorter = StableModelSorter();
+  List<Property> collect(Model model) {
+    switch (model.resolved) {
+      case final ClassModel m:
+        return m.properties.toList();
+      case final AllOfModel m:
+        return [
+          for (final member in sorter.sortModels(m.models)) ...collect(member),
+        ];
+      default:
+        return const [];
+    }
+  }
+
+  return collect(model);
+}
 
 Expression _entriesToBody(Expression entries) {
   return entries

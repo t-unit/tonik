@@ -536,7 +536,8 @@ void main() {
       );
     });
 
-    test('explode=true throws when explodedValues lacks the exploded key', () {
+    test('explode=true throws naming the property when explodedValues lacks '
+        'the exploded key', () {
       expect(
         () => {'colors': 'red,green,blue'}.toForm(
           'p',
@@ -547,7 +548,30 @@ void main() {
             'colors': FormFieldEncoding(explode: true),
           },
         ),
-        throwsA(isA<EncodingException>()),
+        throwsA(
+          isA<EncodingException>().having(
+            (e) => e.message,
+            'message',
+            allOf(contains('colors'), contains('"p"')),
+          ),
+        ),
+      );
+    });
+
+    test('explode=false ignores fieldEncodings and explodedValues, collapsing '
+        'the map into a single entry', () {
+      expect(
+        {'colors': ''}.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          alreadyEncoded: true,
+          fieldEncodings: const {
+            'colors': FormFieldEncoding(explode: true),
+          },
+          explodedValues: const {'colors': <String>[]},
+        ),
+        const <ParameterEntry>[(name: 'p', value: 'colors,')],
       );
     });
 

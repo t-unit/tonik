@@ -270,6 +270,30 @@ void main() {
     });
   });
 
+  group('AllOf array encoding with explode', () {
+    test('explodes an array member of an allOf body into repeated keys',
+        () async {
+      const form = AllOfArrayForm(
+        allOfArrayFormModel: AllOfArrayFormModel(label: 'hello'),
+        allOfArrayFormModel2: AllOfArrayFormModel2(tags: ['x', 'y']),
+      );
+
+      final response = await api.postAllOfArrayForm(body: form);
+
+      expect(response, isA<TonikSuccess<AllOfArrayForm>>());
+
+      final requestData = (response as TonikSuccess<AllOfArrayForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'label=hello&tags=x&tags=y');
+
+      final data = response.value;
+      expect(data.allOfArrayFormModel2.tags, ['x', 'y']);
+      expect(data.allOfArrayFormModel.label, 'hello');
+    });
+  });
+
   group('Type conversions', () {
     test('encodes various types as strings', () async {
       final dateTime = DateTime.utc(2024, 6, 20, 15, 45, 30);
