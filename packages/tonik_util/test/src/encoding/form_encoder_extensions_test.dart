@@ -552,7 +552,10 @@ void main() {
           isA<EncodingException>().having(
             (e) => e.message,
             'message',
-            allOf(contains('"colors"'), contains('of "p"')),
+            'Form property "colors" of "p" is marked exploded but has no '
+                'exploded values. Either a caller-supplied FormFieldEncoding '
+                'marks a non-array property as exploded, or the generated code '
+                'and this runtime disagree (version skew).',
           ),
         ),
       );
@@ -574,10 +577,10 @@ void main() {
           isA<EncodingException>().having(
             (e) => e.message,
             'message',
-            allOf(
-              contains('"colors" is marked exploded'),
-              isNot(contains(' of ')),
-            ),
+            'Form property "colors" is marked exploded but has no exploded '
+                'values. Either a caller-supplied FormFieldEncoding marks a '
+                'non-array property as exploded, or the generated code and '
+                'this runtime disagree (version skew).',
           ),
         ),
       );

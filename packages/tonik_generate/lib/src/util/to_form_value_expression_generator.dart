@@ -70,10 +70,11 @@ BuiltExpression buildToFormValueExpression(
 /// call, keyed by raw spec name to match the class's own per-property lookup.
 ///
 /// Carries per-property `explode` for every writable simple-content array
-/// property — its explicit value, or defaulting to true only when the encoding
-/// omits explode and its style is form or absent; a carried `false` keeps the
-/// array comma-joined — plus `allowReserved` for any property that opts in.
-/// Returns null when no property is an array and none opts into allowReserved.
+/// property. The value is the encoding's explicit `explode`, or defaults to
+/// true only when the encoding omits explode and its style is form or absent. A
+/// carried `false` keeps the array comma-joined. Also carries `allowReserved`
+/// for any property that opts in. Returns null when no property is a writable
+/// simple-content array and none opts into allowReserved.
 Expression? _fieldEncodingsLiteral(
   Model model,
   Map<Property, FieldEncoding>? encoding,

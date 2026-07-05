@@ -2167,6 +2167,100 @@ void main() {
       expect(idsEncoding.allowReserved, isFalse);
     });
 
+    test('spaceDelimited array with explode omitted logs a comma-join '
+        'warning', () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+
+      addTearDown(sub.cancel);
+
+      importFormContent(
+        formSpec(
+          properties: {
+            'ids': {
+              'type': 'array',
+              'items': {'type': 'string'},
+            },
+          },
+          encoding: {
+            'ids': {'style': 'spaceDelimited'},
+          },
+        ),
+      );
+
+      expect(
+        logs.any(
+          (r) =>
+              r.level == Level.WARNING &&
+              r.message.contains('"ids"') &&
+              r.message.contains('comma-joined'),
+        ),
+        isTrue,
+      );
+    });
+
+    test('pipeDelimited array with explicit explode false logs a comma-join '
+        'warning', () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+
+      addTearDown(sub.cancel);
+
+      importFormContent(
+        formSpec(
+          properties: {
+            'ids': {
+              'type': 'array',
+              'items': {'type': 'string'},
+            },
+          },
+          encoding: {
+            'ids': {'style': 'pipeDelimited', 'explode': false},
+          },
+        ),
+      );
+
+      expect(
+        logs.any(
+          (r) =>
+              r.level == Level.WARNING &&
+              r.message.contains('"ids"') &&
+              r.message.contains('comma-joined'),
+        ),
+        isTrue,
+      );
+    });
+
+    test('spaceDelimited array with explicit explode true does not log a '
+        'comma-join warning', () {
+      final logs = <LogRecord>[];
+      final sub = Logger.root.onRecord.listen(logs.add);
+
+      addTearDown(sub.cancel);
+
+      importFormContent(
+        formSpec(
+          properties: {
+            'ids': {
+              'type': 'array',
+              'items': {'type': 'string'},
+            },
+          },
+          encoding: {
+            'ids': {'style': 'spaceDelimited', 'explode': true},
+          },
+        ),
+      );
+
+      expect(
+        logs.any(
+          (r) =>
+              r.level == Level.WARNING && r.message.contains('comma-joined'),
+        ),
+        isFalse,
+      );
+    });
+
     test('encoding key not matching any property logs warning', () {
       final logs = <LogRecord>[];
       final sub = Logger.root.onRecord.listen(logs.add);

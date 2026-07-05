@@ -299,16 +299,23 @@ class AllOfGenerator {
   /// field encoding activating the same properties. Direct array members are
   /// excluded: [_buildParameterPropertiesMethod] rejects them, so the call site
   /// never activates them and any exploded-values entry would be dead.
+  ///
+  /// The counterpart traversal is `_collectFormProperties` in
+  /// `to_form_value_expression_generator.dart`, which builds the request-body
+  /// field-encoding descriptors: both must walk the same property set in
+  /// lock-step or the exploded-values entries and the descriptors diverge.
   List<FormPropertyBinding> _collectExplodedArrayBindings(
     List<({String normalizedName, Property property})> members,
   ) {
     final bindings = <FormPropertyBinding>[];
     for (final member in members) {
       final root = refer(member.normalizedName);
+      final nullable = member.property.model.isEffectivelyNullable;
       _collectArrayBindings(
         member.property.model,
         field: root,
-        memberGuard: member.property.model.isEffectivelyNullable ? root : null,
+        receiverNullable: nullable,
+        memberGuard: nullable ? root : null,
         into: bindings,
       );
     }
@@ -326,14 +333,19 @@ class AllOfGenerator {
   /// leaf array property's own nullability is captured separately (as the
   /// binding's `leafGuard`) so the merge fold can tell an absent member from a
   /// present member with a null array — the two resolve to different winners.
+  ///
+  /// [receiverNullable] is the nullability of the immediate [field] receiver —
+  /// whether the link that produced it was nullable, not whether any earlier
+  /// link was. Force-unwrapping and null-aware access are decided per link from
+  /// this, so a non-nullable link nested under a nullable one emits neither an
+  /// unnecessary `!` nor a `?.` on a non-nullable receiver.
   void _collectArrayBindings(
     Model memberModel, {
     required Expression field,
+    required bool receiverNullable,
     required Expression? memberGuard,
     required List<FormPropertyBinding> into,
   }) {
-    final receiverNullable = memberGuard != null;
-
     Expression descendField(String name) => receiverNullable
         ? field.nullChecked.property(name)
         : field.property(name);
@@ -359,14 +371,15 @@ class AllOfGenerator {
         }
       case final AllOfModel m:
         for (final member in _memberFields(m)) {
-          final nestedNullable =
-              receiverNullable || member.property.model.isEffectivelyNullable;
+          final linkNullable = member.property.model.isEffectivelyNullable;
+          final nestedGuard = memberGuard != null
+              ? memberGuard.nullSafeProperty(member.normalizedName)
+              : (linkNullable ? field.property(member.normalizedName) : null);
           _collectArrayBindings(
             member.property.model,
             field: descendField(member.normalizedName),
-            memberGuard: nestedNullable
-                ? (memberGuard ?? field).nullSafeProperty(member.normalizedName)
-                : null,
+            receiverNullable: linkNullable,
+            memberGuard: nestedGuard,
             into: into,
           );
         }

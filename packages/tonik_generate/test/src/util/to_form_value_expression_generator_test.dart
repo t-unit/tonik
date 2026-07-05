@@ -377,6 +377,62 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
+    test('ClassModel body defaults an explicit form-style array property to '
+        'explode=true when the encoding omits explode', () {
+      final colors = Property(
+        name: 'colors',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [colors],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+        encoding: {
+          colors: const FieldEncoding(
+            style: EncodingStyle.form,
+            explode: null,
+            allowReserved: false,
+          ),
+        },
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm(
+                '',
+                explode: true,
+                allowEmpty: true,
+                useQueryComponent: true,
+                fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
+                  r'colors': const _i2.FormFieldEncoding(explode: true),
+                },
+              )
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
     test('ClassModel body defaults a pipeDelimited array property to '
         'explode=false when the encoding omits explode', () {
       final tags = Property(
@@ -750,6 +806,54 @@ void main() {
         examples: const [],
       );
       final model = OneOfModel(
+        name: 'Form',
+        models: {(discriminatorValue: null, model: variant)},
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('anyOf body yields no explode descriptors for its array properties',
+        () {
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final variant = ClassModel(
+        name: 'Variant',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+      final model = AnyOfModel(
         name: 'Form',
         models: {(discriminatorValue: null, model: variant)},
         context: context,

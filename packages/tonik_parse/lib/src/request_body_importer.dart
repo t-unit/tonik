@@ -316,8 +316,22 @@ class RequestBodyImporter {
 
       if (property == null || property.isReadOnly) continue;
 
+      final style = _mapSerializationStyle(encoding.style);
+      final isDelimitedStyle =
+          style == core.EncodingStyle.spaceDelimited ||
+          style == core.EncodingStyle.pipeDelimited;
+      if (isDelimitedStyle &&
+          encoding.explode != true &&
+          property.model.resolved is core.ListModel) {
+        log.warning(
+          'Encoding for property "${entry.key}" on the form-urlencoded schema '
+          'requests ${encoding.style} style, but only the form style is '
+          'supported for form bodies. The array will be comma-joined.',
+        );
+      }
+
       result[property] = core.FieldEncoding(
-        style: _mapSerializationStyle(encoding.style),
+        style: style,
         explode: encoding.explode,
         allowReserved: encoding.allowReserved ?? false,
       );

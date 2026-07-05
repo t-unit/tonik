@@ -256,6 +256,14 @@ extension FormStringMapEncoder on Map<String, String> {
   /// The descriptors' per-field `allowReserved` is not consulted here:
   /// generated callers pass elements pre-encoded ([alreadyEncoded] true). With
   /// [alreadyEncoded] false only the uniform [allowReserved] parameter applies.
+  ///
+  /// The two channels are deliberately asymmetric: an [explodedValues] entry
+  /// whose key carries no explode descriptor is silently comma-joined by
+  /// design. Generated models bake a superset of exploded values, and callers
+  /// that thread no descriptors (oneOf/anyOf composition, explicit
+  /// `explode: false`)
+  /// rely on that tolerance. The reverse — a descriptor marked exploded with no
+  /// matching [explodedValues] entry — throws, since it signals version skew.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
@@ -305,9 +313,10 @@ extension FormStringMapEncoder on Map<String, String> {
         if (exploded == null) {
           final owner = paramName.isEmpty ? '' : ' of "$paramName"';
           throw EncodingException(
-            'Form property "${e.key}"$owner is marked exploded but '
-            'has no exploded values. This indicates the generated code and '
-            'runtime disagree (drift or version skew), not invalid input.',
+            'Form property "${e.key}"$owner is marked exploded but has no '
+            'exploded values. Either a caller-supplied FormFieldEncoding marks '
+            'a non-array property as exploded, or the generated code and this '
+            'runtime disagree (version skew).',
           );
         }
         for (final item in exploded) {

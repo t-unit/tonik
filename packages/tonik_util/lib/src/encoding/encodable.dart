@@ -56,8 +56,10 @@ abstract interface class FormEncodable {
   /// When [allowReserved] is true, reserved characters in values are kept
   /// literal except the form delimiters `& = +`.
   /// [fieldEncodings], keyed by raw property name, lets individual object
-  /// properties override [allowReserved] and selects exploded vs comma-joined
-  /// emission for array properties; other encoders ignore it.
+  /// properties override [allowReserved]. Only generated object and allOf
+  /// encoders thread it to select exploded vs comma-joined emission for array
+  /// properties; oneOf/anyOf encoders do not thread the descriptors, and other
+  /// encoders ignore it.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,

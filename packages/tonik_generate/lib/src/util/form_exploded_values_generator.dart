@@ -11,13 +11,13 @@ import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 /// property; when it evaluates null the member is absent from the runtime
 /// `parameterProperties` merge, so its data never reaches the wire and the fold
 /// falls through to an earlier duplicate-key candidate. A null `memberGuard`
-/// marks a member that is always present (the class path has no member, so it
-/// is always null there).
+/// marks a member that is always present (the class path has no member, so
+/// memberGuard is always null on the class path).
 ///
 /// `leafGuard` is access to the array property read through a present member;
 /// when it evaluates null the member is present but its array value is absent.
 /// `parameterProperties` writes `''` for such a property (form bodies pass
-/// `allowEmpty: true`), so that member WINS the merge with zero elements. A
+/// `allowEmpty: true`), so that member wins the merge with zero elements. A
 /// null `leafGuard` marks an array value that is always present once its member
 /// is.
 typedef FormPropertyBinding = ({
@@ -110,9 +110,9 @@ Expression? buildFormExplodedValuesLiteral(
 
 /// The elements of the raw-name group emitted for the member that wins the
 /// `parameterProperties` merge. Built as a left fold so each later binding
-/// overrides the running winner; an absent member (`memberGuard` null) falls
-/// through to the earlier one, while a present member with a null array leaf
-/// (`leafGuard` null) wins with an empty list.
+/// overrides the running winner; an absent member (its `memberGuard` evaluates
+/// to null) falls through to the earlier one, while a present member whose
+/// `leafGuard` evaluates to null wins with an empty list.
 Expression _mergeWinnerElements(
   List<FormPropertyBinding> group, {
   required bool useImmutableCollections,

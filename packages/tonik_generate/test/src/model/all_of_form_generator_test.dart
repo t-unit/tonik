@@ -1942,8 +1942,8 @@ void main() {
     );
   });
 
-  test('emits the empty list for a duplicate array key whose scalar member '
-      'sorts last', () {
+  test("emits the sole list member's elements for a duplicate key whose "
+      'scalar member wins the merge', () {
     final listMember = ClassModel(
       isDeprecated: false,
       name: 'AListMember',
@@ -2017,6 +2017,270 @@ void main() {
                     ),
                   )
                   .toList(),
+            },
+          );
+        }
+      ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedToFormMethod)),
+    );
+  });
+
+  test('guards a nullable class member reached through a non-nullable nested '
+      'allOf member with a plain null test, not a null-aware receiver', () {
+    final inner = AllOfModel(
+      isDeprecated: false,
+      name: 'Inner',
+      models: {
+        ClassModel(
+          isDeprecated: false,
+          name: 'Meta',
+          isNullable: true,
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        ),
+      },
+      context: context,
+      examples: const [],
+    );
+
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'OuterNonNullableInner',
+      models: {inner},
+      context: context,
+      examples: const [],
+    );
+
+    final combinedClass = generator.generateClass(model);
+    final generated = format(combinedClass.accept(emitter).toString());
+
+    const expectedToFormMethod = '''
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+          ).toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
+            fieldEncodings: fieldEncodings,
+            explodedValues: <String, List<String>>{
+              r'tags': inner.meta == null
+                  ? const <String>[]
+                  : inner.meta!.tags
+                      .map(
+                        (e) => e.uriEncode(
+                          allowEmpty: true,
+                          useQueryComponent: useQueryComponent,
+                          allowReserved:
+                              fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+                        ),
+                      )
+                      .toList(),
+            },
+          );
+        }
+      ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedToFormMethod)),
+    );
+  });
+
+  test('unwraps only the nullable link when a non-nullable member follows a '
+      'nullable nested allOf member', () {
+    final inner = AllOfModel(
+      isDeprecated: false,
+      name: 'Inner',
+      isNullable: true,
+      models: {
+        ClassModel(
+          isDeprecated: false,
+          name: 'Mid',
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: context),
+                context: context,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        ),
+      },
+      context: context,
+      examples: const [],
+    );
+
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'OuterNullableInner',
+      models: {inner},
+      context: context,
+      examples: const [],
+    );
+
+    final combinedClass = generator.generateClass(model);
+    final generated = format(combinedClass.accept(emitter).toString());
+
+    const expectedToFormMethod = '''
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+          ).toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
+            fieldEncodings: fieldEncodings,
+            explodedValues: <String, List<String>>{
+              r'tags': inner?.mid == null
+                  ? const <String>[]
+                  : inner!.mid.tags
+                      .map(
+                        (e) => e.uriEncode(
+                          allowEmpty: true,
+                          useQueryComponent: useQueryComponent,
+                          allowReserved:
+                              fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+                        ),
+                      )
+                      .toList(),
+            },
+          );
+        }
+      ''';
+
+    expect(
+      collapseWhitespace(generated),
+      contains(collapseWhitespace(expectedToFormMethod)),
+    );
+  });
+
+  test('emits the three-way merge for a duplicate array key whose later '
+      'nullable member has an optional leaf array', () {
+    final alpha = ClassModel(
+      isDeprecated: false,
+      name: 'Alpha',
+      properties: [
+        Property(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+    final beta = ClassModel(
+      isDeprecated: false,
+      name: 'Beta',
+      isNullable: true,
+      properties: [
+        Property(
+          name: 'tags',
+          model: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          isRequired: false,
+          isNullable: true,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        ),
+      ],
+      context: context,
+      examples: const [],
+    );
+
+    final model = AllOfModel(
+      isDeprecated: false,
+      name: 'AllOfNullableMemberNullableLeaf',
+      models: {alpha, beta},
+      context: context,
+      examples: const [],
+    );
+
+    final combinedClass = generator.generateClass(model);
+    final generated = format(combinedClass.accept(emitter).toString());
+
+    const expectedToFormMethod = '''
+        List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+          return parameterProperties(
+            allowEmpty: allowEmpty,
+            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
+          ).toForm(
+            paramName,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            alreadyEncoded: true,
+            useQueryComponent: useQueryComponent,
+            fieldEncodings: fieldEncodings,
+            explodedValues: <String, List<String>>{
+              r'tags': beta == null
+                  ? alpha.tags
+                        .map(
+                          (e) => e.uriEncode(
+                            allowEmpty: true,
+                            useQueryComponent: useQueryComponent,
+                            allowReserved:
+                                fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+                          ),
+                        )
+                        .toList()
+                  : beta!.tags == null
+                  ? const <String>[]
+                  : beta!.tags!
+                        .map(
+                          (e) => e.uriEncode(
+                            allowEmpty: true,
+                            useQueryComponent: useQueryComponent,
+                            allowReserved:
+                                fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
+                          ),
+                        )
+                        .toList(),
             },
           );
         }

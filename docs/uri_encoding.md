@@ -106,8 +106,10 @@ Only the `form` style is honored for form bodies. `spaceDelimited` and `pipeDeli
 with `explode` omitted they resolve to `explode: false` and the array is comma-joined, not
 space- or pipe-joined.
 
-`additionalProperties` values are always comma-joined; dynamic keys carry no per-property
-encoding.
+Dynamic `additionalProperties` keys carry no per-property encoding, so
+`additionalProperties` never explode. Only scalar `additionalProperties` values are supported
+in form bodies; an array-valued `additionalProperties` is rejected at encode time
+("Additional properties with complex types cannot be parameter encoded").
 
 `allowReserved` is honored on scalar, enum, object, composition, and array properties. On an
 array it keeps reserved characters literal within each element, regardless of whether the
