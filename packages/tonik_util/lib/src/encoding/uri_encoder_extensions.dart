@@ -2,39 +2,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:tonik_util/src/encoding/binary_extensions.dart';
 import 'package:tonik_util/src/encoding/datetime_extension.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
-
-/// With [allowReserved] false the result is byte-identical to
-/// [Uri.encodeQueryComponent] / [Uri.encodeComponent] — call sites rely on
-/// this. With [allowReserved] true reserved chars including `[ ]` pass through
-/// literally; the form delimiters `& =`, along with `+`, `%`, and non-ASCII,
-/// stay encoded, and a space becomes `%20` (or `+` under [useQueryComponent]).
-String _encodeUriValue(
-  String value, {
-  required bool allowReserved,
-  required bool useQueryComponent,
-}) {
-  if (!allowReserved) {
-    return useQueryComponent
-        ? Uri.encodeQueryComponent(value)
-        : Uri.encodeComponent(value);
-  }
-
-  // Uri.encodeFull keeps reserved chars literal, but & and = are data here,
-  // not delimiters, so they must stay encoded. A literal + must become %2B
-  // before a space is rendered as +, otherwise a data + and a space would be
-  // indistinguishable. encodeFull predates RFC 3986 treating [ ] as reserved
-  // and still percent-encodes them, so restore those to literal.
-  var encoded = Uri.encodeFull(value)
-      .replaceAll('+', '%2B')
-      .replaceAll('&', '%26')
-      .replaceAll('=', '%3D')
-      .replaceAll('%5B', '[')
-      .replaceAll('%5D', ']');
-  if (useQueryComponent) {
-    encoded = encoded.replaceAll('%20', '+');
-  }
-  return encoded;
-}
+import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
 /// Extension for URI encoding Uri values.
 extension UriEncoder on Uri {
@@ -43,7 +11,7 @@ extension UriEncoder on Uri {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
-  }) => _encodeUriValue(
+  }) => encodeUriValue(
     toString(),
     allowReserved: allowReserved,
     useQueryComponent: useQueryComponent,
@@ -61,7 +29,7 @@ extension StringUriEncoder on String {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    return _encodeUriValue(
+    return encodeUriValue(
       this,
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
@@ -90,7 +58,7 @@ extension DoubleUriEncoder on double {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
-  }) => _encodeUriValue(
+  }) => encodeUriValue(
     toString(),
     allowReserved: allowReserved,
     useQueryComponent: useQueryComponent,
@@ -132,7 +100,7 @@ extension DateTimeUriEncoder on DateTime {
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
-  }) => _encodeUriValue(
+  }) => encodeUriValue(
     toTimeZonedIso8601String(),
     allowReserved: allowReserved,
     useQueryComponent: useQueryComponent,
@@ -169,7 +137,7 @@ extension BinaryUriEncoder on List<int> {
     if (isEmpty) {
       return '';
     }
-    return _encodeUriValue(
+    return encodeUriValue(
       decodeToString(),
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
@@ -203,7 +171,7 @@ extension StringListUriEncoder on List<String> {
     }
 
     return map(
-      (item) => _encodeUriValue(
+      (item) => encodeUriValue(
         item,
         allowReserved: allowReserved,
         useQueryComponent: useQueryComponent,
@@ -229,7 +197,7 @@ extension StringMapUriEncoder on Map<String, String> {
       return '';
     }
 
-    String encode(String value) => _encodeUriValue(
+    String encode(String value) => encodeUriValue(
       value,
       allowReserved: allowReserved,
       useQueryComponent: useQueryComponent,
