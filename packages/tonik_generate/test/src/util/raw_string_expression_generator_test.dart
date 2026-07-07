@@ -110,23 +110,23 @@ void main() {
       );
     });
 
-    test('BinaryModel emits myValue.decodeToString()', () {
+    test('BinaryModel emits myValue.toBytes().decodeToString()', () {
       expectEmission(
         BinaryModel(context: context),
-        'myValue.decodeToString()',
+        'myValue.toBytes().decodeToString()',
       );
     });
 
-    test('AliasModel recurses into the resolved IntegerModel', () {
+    test('AliasModel recurses into the resolved DateTimeModel', () {
       expectEmission(
         AliasModel(
-          name: 'MyInt',
-          model: IntegerModel(context: context),
+          name: 'MyTimestamp',
+          model: DateTimeModel(context: context),
           context: context,
           examples: const [],
           defaultValue: null,
         ),
-        'myValue.toString()',
+        'myValue.toTimeZonedIso8601String()',
       );
     });
 
