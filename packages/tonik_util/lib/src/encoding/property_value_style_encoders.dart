@@ -50,11 +50,14 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
 /// Simple/label/matrix/deepObject encoders over `Map<String, PropertyValue>`
 /// whose values are raw (unescaped).
 ///
-/// For non-empty values each is byte-identical to encoding every value with
-/// [encodeUriValue] (`useQueryComponent: false`) and then assembling the
-/// resulting `Map<String, String>` through the matching string-map encoder with
+/// For the simple, label and matrix encoders, for non-empty values each is
+/// byte-identical to encoding every value with [encodeUriValue]
+/// (`useQueryComponent: false`) and then assembling the resulting
+/// `Map<String, String>` through the matching string-map encoder with
 /// `alreadyEncoded: true`. Array values contribute their percent-encoded
 /// elements comma-joined; the comma separators between elements stay literal.
+/// deepObject differs: it returns parameter entries and rejects array values
+/// (see its own method doc).
 ///
 /// The equivalence does not extend to empty values: for the simple, label and
 /// matrix encoders, an empty scalar (`scalar('')`) or empty array (`array([])`)
