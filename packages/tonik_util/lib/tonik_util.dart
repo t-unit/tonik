@@ -22,6 +22,8 @@ export 'src/encoding/label_encoder_extensions.dart';
 export 'src/encoding/matrix_encoder_extensions.dart';
 export 'src/encoding/parameter_entry.dart';
 export 'src/encoding/pipe_delimited_encoder_extensions.dart';
+export 'src/encoding/property_value.dart';
+export 'src/encoding/property_value_form_encoder.dart';
 export 'src/encoding/simple_encoder_extensions.dart';
 export 'src/encoding/space_delimited_encoder_extensions.dart';
 export 'src/encoding/uri_encoder_extensions.dart';
