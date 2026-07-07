@@ -35,6 +35,14 @@ void main() {
       );
     });
 
+    test('reserved characters in keys are percent-encoded', () {
+      const value = {'a/b': PropertyValue.scalar('v')};
+      expect(
+        value.toSimple(explode: false, allowEmpty: false),
+        'a%2Fb,v',
+      );
+    });
+
     test('array beside a scalar comma-joins with explode=false', () {
       const value = {
         'a': PropertyValue.scalar('x'),
@@ -151,6 +159,14 @@ void main() {
       expect(
         value.toLabel(explode: true, allowEmpty: true),
         '.street=123%20Main%20St.city=New%20York',
+      );
+    });
+
+    test('reserved characters in keys are percent-encoded', () {
+      const value = {'a/b': PropertyValue.scalar('v')};
+      expect(
+        value.toLabel(explode: false, allowEmpty: false),
+        '.a%2Fb,v',
       );
     });
 

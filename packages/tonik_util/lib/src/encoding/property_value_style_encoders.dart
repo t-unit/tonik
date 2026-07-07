@@ -56,10 +56,11 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
 /// `alreadyEncoded: true`. Array values contribute their percent-encoded
 /// elements comma-joined; the comma separators between elements stay literal.
 ///
-/// The equivalence does not extend to empty values: an empty scalar
-/// (`scalar('')`) or empty array (`array([])`) throws [EmptyValueException]
-/// under `allowEmpty: false`, whereas the string-map siblings render `k,` and
-/// never throw. Do not delete these empty-value guards to "restore parity".
+/// The equivalence does not extend to empty values: for the simple, label and
+/// matrix encoders, an empty scalar (`scalar('')`) or empty array (`array([])`)
+/// throws [EmptyValueException] under `allowEmpty: false`, whereas the
+/// string-map siblings render `k,` and never throw. Do not delete these
+/// empty-value guards to "restore parity".
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   /// Encodes this property map using simple style encoding.
   ///
@@ -134,10 +135,13 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   ///
   /// Returns entries of the form `(name: 'paramName[key]', value: value)`.
   /// [allowReserved] threads into value encoding only; keys are always
-  /// component-encoded. An empty map renders as an empty list.
+  /// component-encoded. An empty map renders as an empty list when [allowEmpty]
+  /// is true.
   ///
   /// Throws [EncodingException] when [explode] is false, and when any value is
-  /// an array (deepObject does not support lists).
+  /// an array (deepObject does not support lists). Throws [EmptyValueException]
+  /// under `allowEmpty: false` when the map is empty or a scalar value is
+  /// empty.
   List<ParameterEntry> toDeepObject(
     String paramName, {
     required bool explode,
