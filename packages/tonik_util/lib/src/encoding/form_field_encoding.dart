@@ -11,7 +11,10 @@ class FormFieldEncoding {
   /// except the form delimiters `& = +`.
   final bool allowReserved;
 
-  /// Reserved for per-property array explode; not yet consumed by `toForm`.
+  /// When true, an array property is exploded into repeated keys by the
+  /// `Map<String, PropertyValue>` form encoder; when false or null the array
+  /// is comma-joined into a single entry. Only consulted when the containing
+  /// object is exploded; in collapse mode arrays are always comma-joined.
   final bool? explode;
 
   @override
