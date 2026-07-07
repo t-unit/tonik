@@ -47,28 +47,14 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
   }
 }
 
-/// Simple/label/matrix/deepObject encoders over `Map<String, PropertyValue>`
-/// whose values are raw (unescaped).
+/// Style encoders over `Map<String, PropertyValue>` with raw (unescaped)
+/// values, matching the string-map encoders' wire output.
 ///
-/// For the simple, label and matrix encoders, for non-empty values each is
-/// byte-identical to encoding every value with [encodeUriValue]
-/// (`useQueryComponent: false`) and then assembling the resulting
-/// `Map<String, String>` through the matching string-map encoder with
-/// `alreadyEncoded: true`. Array values contribute their percent-encoded
-/// elements comma-joined; the comma separators between elements stay literal.
-/// deepObject differs: it returns parameter entries and rejects array values
-/// (see its own method doc).
-///
-/// The equivalence does not extend to empty values: for the simple, label and
-/// matrix encoders, an empty scalar (`scalar('')`) or empty array (`array([])`)
-/// throws [EmptyValueException] under `allowEmpty: false`, whereas the
-/// string-map siblings render `k,` and never throw. Do not delete these
-/// empty-value guards to "restore parity".
+/// Unlike those siblings, an empty scalar or array throws [EmptyValueException]
+/// under `allowEmpty: false` instead of rendering `k,` — a deliberate guard,
+/// not a parity gap to "fix".
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   /// Encodes this property map using simple style encoding.
-  ///
-  /// With [explode] false the result is `key,value,key2,value2`; with [explode]
-  /// true it is `key=value,key2=value2`.
   String toSimple({required bool explode, required bool allowEmpty}) {
     _guardEmpty(this, allowEmpty: allowEmpty);
     if (isEmpty) {
@@ -87,10 +73,6 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   }
 
   /// Encodes this property map using label style encoding.
-  ///
-  /// With [explode] false the result is `.key,value,key2,value2`; with
-  /// [explode] true it is `.key=value.key2=value2`. An empty map renders
-  /// as `.`.
   String toLabel({required bool explode, required bool allowEmpty}) {
     _guardEmpty(this, allowEmpty: allowEmpty);
     if (isEmpty) {
@@ -109,10 +91,6 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   }
 
   /// Encodes this property map using matrix style encoding.
-  ///
-  /// With [explode] false the result is `;paramName=key,value,key2,value2`;
-  /// with [explode] true it is `;key=value;key2=value2`. An empty map renders
-  /// as `;paramName`.
   String toMatrix(
     String paramName, {
     required bool explode,
@@ -136,15 +114,9 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
 
   /// Encodes this property map using deepObject style encoding.
   ///
-  /// Returns entries of the form `(name: 'paramName[key]', value: value)`.
-  /// [allowReserved] threads into value encoding only; keys are always
-  /// component-encoded. An empty map renders as an empty list when [allowEmpty]
-  /// is true.
-  ///
-  /// Throws [EncodingException] when [explode] is false, and when any value is
-  /// an array (deepObject does not support lists). Throws [EmptyValueException]
-  /// under `allowEmpty: false` when the map is empty or a scalar value is
-  /// empty.
+  /// [allowReserved] applies to values only; keys are always component-encoded.
+  /// Throws [EncodingException] for a non-explode call or an array value, and
+  /// [EmptyValueException] on an empty map or value under `allowEmpty: false`.
   List<ParameterEntry> toDeepObject(
     String paramName, {
     required bool explode,
