@@ -171,6 +171,20 @@ void main() {
       );
     });
 
+    test('ignores a per-property allowReserved when collapsing', () {
+      expect(
+        <String, PropertyValue>{
+          'k/1': const PropertyValue.scalar('a/b'),
+        }.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+          fieldEncodings: const {'k/1': FormFieldEncoding(allowReserved: true)},
+        ),
+        const <ParameterEntry>[(name: 'p', value: 'k%2F1,a%2Fb')],
+      );
+    });
+
     test('collapses an empty array into an empty value segment', () {
       expect(
         <String, PropertyValue>{

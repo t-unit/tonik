@@ -13,7 +13,8 @@ class FormFieldEncoding {
 
   /// When true, an array property is exploded into repeated keys by the
   /// `Map<String, PropertyValue>` form encoder; when false or null the array
-  /// is comma-joined into a single entry.
+  /// is comma-joined into a single entry. Only consulted when the containing
+  /// object is exploded; in collapse mode arrays are always comma-joined.
   final bool? explode;
 
   @override
