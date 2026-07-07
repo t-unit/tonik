@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/raw_string_expression_generator.dart';
 
 /// Builds an expression that converts a `Map<String, V>` to
 /// `Map<String, String>` based on the [MapModel]'s value type.
@@ -77,52 +78,6 @@ Expression? _buildConversion(
 
   return switch (valueModel) {
     StringModel() => receiver,
-    IntegerModel() ||
-    DoubleModel() ||
-    NumberModel() ||
-    BooleanModel() ||
-    DecimalModel() ||
-    UriModel() ||
-    DateModel() => _buildMapCall(
-      receiver,
-      _wrapNullable(
-        refer('v').property('toString').call([]),
-        valueIsNullable,
-      ),
-      isNullable: isNullable,
-    ),
-    DateTimeModel() => _buildMapCall(
-      receiver,
-      _wrapNullable(
-        refer('v').property('toTimeZonedIso8601String').call([]),
-        valueIsNullable,
-      ),
-      isNullable: isNullable,
-    ),
-    EnumModel<String>() => _buildMapCall(
-      receiver,
-      _wrapNullable(
-        refer('v').property('toJson').call([]),
-        valueIsNullable,
-      ),
-      isNullable: isNullable,
-    ),
-    EnumModel() => _buildMapCall(
-      receiver,
-      _wrapNullable(
-        refer('v').property('toJson').call([]).property('toString').call([]),
-        valueIsNullable,
-      ),
-      isNullable: isNullable,
-    ),
-    Base64Model() => _buildMapCall(
-      receiver,
-      _wrapNullable(
-        refer('v').property('toBase64String').call([]),
-        valueIsNullable,
-      ),
-      isNullable: isNullable,
-    ),
     AnyModel() => _buildMapCall(
       receiver,
       refer(
@@ -140,11 +95,14 @@ Expression? _buildConversion(
       isNullable: isNullable,
       valueIsNullable: valueIsNullable,
     ),
-    // Catch-all throws so a model type the predicate forgot to filter
-    // surfaces at runtime instead of returning a wrong/null expression.
-    // The early-return guard above already rejects every model type not
-    // explicitly handled here; this arm is the drift-protection backstop.
-    _ => _unreachableModelType('_buildConversion'),
+    _ => _buildMapCall(
+      receiver,
+      _wrapNullable(
+        buildRawStringExpression(refer('v'), valueModel),
+        valueIsNullable,
+      ),
+      isNullable: isNullable,
+    ),
   };
 }
 
