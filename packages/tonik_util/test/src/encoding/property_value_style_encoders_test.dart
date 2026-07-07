@@ -414,6 +414,21 @@ void main() {
       );
     });
 
+    test('empty array throws the list-unsupported message, not empty-value',
+        () {
+      const value = {'k': PropertyValue.array(<String>[])};
+      expect(
+        () => value.toDeepObject('p', explode: true, allowEmpty: false),
+        throwsA(
+          isA<EncodingException>().having(
+            (e) => e.message,
+            'message',
+            'Lists are not supported in this encoding style',
+          ),
+        ),
+      );
+    });
+
     test('explode=false throws', () {
       const value = {'x': PropertyValue.scalar('1')};
       expect(

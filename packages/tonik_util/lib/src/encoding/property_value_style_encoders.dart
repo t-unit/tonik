@@ -3,29 +3,28 @@ import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/property_value.dart';
 import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
-String _encodeValue(PropertyValue value, {required bool allowReserved}) =>
-    switch (value) {
-      ScalarPropertyValue(:final value) => encodeUriValue(
-        value,
-        allowReserved: allowReserved,
-        useQueryComponent: false,
-      ),
-      ArrayPropertyValue(:final values) => values
-          .map(
-            (element) => encodeUriValue(
-              element,
-              allowReserved: allowReserved,
-              useQueryComponent: false,
-            ),
-          )
-          .join(','),
-    };
+String _encodeValue(PropertyValue value) => switch (value) {
+  ScalarPropertyValue(:final value) => encodeUriValue(
+    value,
+    allowReserved: false,
+    useQueryComponent: false,
+  ),
+  ArrayPropertyValue(:final values) => values
+      .map(
+        (element) => encodeUriValue(
+          element,
+          allowReserved: false,
+          useQueryComponent: false,
+        ),
+      )
+      .join(','),
+};
 
 String _collapsedPairs(Map<String, PropertyValue> map) => map.entries
     .expand(
       (e) => [
         Uri.encodeComponent(e.key),
-        _encodeValue(e.value, allowReserved: false),
+        _encodeValue(e.value),
       ],
     )
     .join(',');
@@ -51,11 +50,16 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
 /// Simple/label/matrix/deepObject encoders over `Map<String, PropertyValue>`
 /// whose values are raw (unescaped).
 ///
-/// Each is byte-identical to encoding every value with
+/// For non-empty values each is byte-identical to encoding every value with
 /// [encodeUriValue] (`useQueryComponent: false`) and then assembling the
 /// resulting `Map<String, String>` through the matching string-map encoder with
 /// `alreadyEncoded: true`. Array values contribute their percent-encoded
 /// elements comma-joined; the comma separators between elements stay literal.
+///
+/// The equivalence does not extend to empty values: an empty scalar
+/// (`scalar('')`) or empty array (`array([])`) throws [EmptyValueException]
+/// under `allowEmpty: false`, whereas the string-map siblings render `k,` and
+/// never throw. Do not delete these empty-value guards to "restore parity".
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   /// Encodes this property map using simple style encoding.
   ///
@@ -71,7 +75,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
           .map(
             (e) =>
                 '${Uri.encodeComponent(e.key)}='
-                '${_encodeValue(e.value, allowReserved: false)}',
+                '${_encodeValue(e.value)}',
           )
           .join(',');
     }
@@ -93,7 +97,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
           .map(
             (e) =>
                 '.${Uri.encodeComponent(e.key)}='
-                '${_encodeValue(e.value, allowReserved: false)}',
+                '${_encodeValue(e.value)}',
           )
           .join();
     }
@@ -119,7 +123,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
           .map(
             (e) =>
                 ';${Uri.encodeComponent(e.key)}='
-                '${_encodeValue(e.value, allowReserved: false)}',
+                '${_encodeValue(e.value)}',
           )
           .join();
     }
