@@ -30,8 +30,8 @@ String _joinEncoded(
 
 /// Extension for encoding a tagged property map using form style encoding.
 ///
-/// Keys are raw property names and values are raw (unescaped); this is the
-/// single form percent-encoding site for objects.
+/// This is the percent-encoding boundary for `Map<String, PropertyValue>` form
+/// encoding: keys are raw property names and values are raw (unescaped).
 extension PropertyValueFormEncoder on Map<String, PropertyValue> {
   /// Encodes this property map using form style encoding.
   ///
@@ -79,6 +79,8 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
         allowReserved: false,
       );
       final encoding = fieldEncodings[name];
+      // A present descriptor always carries a concrete allowReserved, so the
+      // object-level value is only a fallback for properties without one.
       final valueAllowReserved = encoding?.allowReserved ?? allowReserved;
 
       switch (entry.value) {

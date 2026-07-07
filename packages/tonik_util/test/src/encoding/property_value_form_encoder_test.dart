@@ -7,26 +7,6 @@ import 'package:tonik_util/src/encoding/property_value_form_encoder.dart';
 
 void main() {
   group('object-level explode=true', () {
-    test('explodes a flagged array beside a scalar sibling into repeated '
-        'keys', () {
-      expect(
-        <String, PropertyValue>{
-          'q': const PropertyValue.scalar('hello'),
-          'tags': const PropertyValue.array(['urgent', 'open']),
-        }.toForm(
-          'p',
-          explode: true,
-          allowEmpty: true,
-          fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
-        ),
-        const <ParameterEntry>[
-          (name: 'q', value: 'hello'),
-          (name: 'tags', value: 'urgent'),
-          (name: 'tags', value: 'open'),
-        ],
-      );
-    });
-
     test('explodes a flagged array into repeated keys beside a scalar', () {
       expect(
         <String, PropertyValue>{
@@ -112,15 +92,6 @@ void main() {
           'tags': const PropertyValue.array([]),
         }.toForm('p', explode: true, allowEmpty: true),
         const <ParameterEntry>[(name: 'tags', value: '')],
-      );
-    });
-
-    test('emits an empty-value entry for a scalar empty string', () {
-      expect(
-        <String, PropertyValue>{
-          'key': const PropertyValue.scalar(''),
-        }.toForm('p', explode: true, allowEmpty: true),
-        const <ParameterEntry>[(name: 'key', value: '')],
       );
     });
   });
@@ -229,6 +200,30 @@ void main() {
         ],
       );
     });
+
+    test('applies an object-level override to values while component-encoding '
+        'keys when exploded', () {
+      expect(
+        <String, PropertyValue>{
+          'a/1': const PropertyValue.scalar('a/b'),
+          'tags': const PropertyValue.array(['a/b']),
+        }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[
+          (name: 'a%2F1', value: 'a/b'),
+          (name: 'tags', value: 'a/b'),
+        ],
+      );
+    });
+
+    test('applies an object-level override to values while component-encoding '
+        'keys when collapsed', () {
+      expect(
+        <String, PropertyValue>{
+          'k/1': const PropertyValue.scalar('a/b'),
+        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: 'k%2F1,a/b')],
+      );
+    });
   });
 
   group('useQueryComponent space rendering', () {
@@ -308,6 +303,21 @@ void main() {
           fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
         ),
         const <ParameterEntry>[],
+      );
+    });
+
+    test('throws on an empty exploded array descriptor when allowEmpty is '
+        'false', () {
+      expect(
+        () => <String, PropertyValue>{
+          'tags': const PropertyValue.array([]),
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: false,
+          fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+        ),
+        throwsA(isA<EmptyValueException>()),
       );
     });
   });
