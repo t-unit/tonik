@@ -413,6 +413,20 @@ void main() {
       );
     });
 
+    test('reserved characters in keys stay component-encoded with '
+        'allowReserved', () {
+      const value = {'a/b': PropertyValue.scalar('x/y')};
+      expect(
+        value.toDeepObject(
+          'p',
+          explode: true,
+          allowEmpty: false,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'p[a%2Fb]', value: 'x/y')],
+      );
+    });
+
     test('array value throws with the list-unsupported message', () {
       const value = {
         'a': PropertyValue.scalar('x'),
