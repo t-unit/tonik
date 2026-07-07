@@ -224,6 +224,32 @@ void main() {
         const <ParameterEntry>[(name: 'p', value: 'k%2F1,a/b')],
       );
     });
+
+    test("a descriptor's default allowReserved wins over the object-level "
+        'flag', () {
+      expect(
+        <String, PropertyValue>{
+          'tags': const PropertyValue.array(['a/b']),
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+          fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+        ),
+        const <ParameterEntry>[(name: 'tags', value: 'a%2Fb')],
+      );
+    });
+
+    test('keeps element reserved chars literal joined by literal commas for a '
+        'non-exploded array', () {
+      expect(
+        <String, PropertyValue>{
+          'tags': const PropertyValue.array(['a/b', 'c/d']),
+        }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'tags', value: 'a/b,c/d')],
+      );
+    });
   });
 
   group('useQueryComponent space rendering', () {

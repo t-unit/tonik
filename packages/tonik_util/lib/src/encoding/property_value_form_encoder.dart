@@ -35,9 +35,11 @@ String _joinEncoded(
 extension PropertyValueFormEncoder on Map<String, PropertyValue> {
   /// Encodes this property map using form style encoding.
   ///
-  /// Per-property [FormFieldEncoding.explode] controls array assembly and
-  /// [FormFieldEncoding.allowReserved] applies to values only; keys are always
-  /// component-encoded.
+  /// When the map is exploded, per-property [FormFieldEncoding.explode]
+  /// controls array assembly and [FormFieldEncoding.allowReserved] applies to
+  /// values only; keys are always component-encoded. In collapse mode
+  /// (object-level `explode` false) [fieldEncodings] is ignored and arrays are
+  /// always comma-joined.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
