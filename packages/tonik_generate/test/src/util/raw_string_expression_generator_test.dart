@@ -104,10 +104,7 @@ void main() {
     });
 
     test('Base64Model emits myValue.toBase64String()', () {
-      expectEmission(
-        Base64Model(context: context),
-        'myValue.toBase64String()',
-      );
+      expectEmission(Base64Model(context: context), 'myValue.toBase64String()');
     });
 
     test('BinaryModel emits myValue.toBytes().decodeToString()', () {

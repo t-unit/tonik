@@ -2,19 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/raw_string_expression_generator.dart';
 
-/// Builds an expression that converts a `Map<String, V>` to
-/// `Map<String, String>` based on the [MapModel]'s value type.
-///
-/// For StringModel values, returns the [receiver] unchanged (already
-/// `Map<String, String>`). For primitive values, emits a `.map()` call
-/// with the correct type-specific conversion. For unsupported values
-/// (see [isMapValueTypeSimplyEncodable] for the authoritative list),
-/// returns `null` -- the caller is responsible for throwing an
-/// `EncodingException`.
-///
-/// The [isNullable] parameter tracks whether the map itself is nullable
-/// (i.e. `Map<String, V>?`). Value-level nullability comes from
-/// `model.valueModel` and is checked separately inside this function.
+/// Lets callers add encoder-specific context for unsupported map values.
 Expression? buildMapToStringMapExpression(
   Expression receiver,
   MapModel model, {
@@ -31,9 +19,7 @@ Expression? buildMapToStringMapExpression(
   );
 }
 
-/// Single source of truth for which map value types simple encoding
-/// supports. Path-generator guards must use this — a parallel switch
-/// would drift and re-introduce the `throw + r'.json'` invalid-Dart bug.
+/// Keeps path-generator guards and map conversion from drifting apart.
 bool isMapValueTypeSimplyEncodable(Model valueModel) {
   return switch (valueModel) {
     StringModel() ||
@@ -57,10 +43,7 @@ bool isMapValueTypeSimplyEncodable(Model valueModel) {
     AllOfModel() ||
     OneOfModel() ||
     AnyOfModel() => false,
-    // Catch-all throws so a newly-added Model subtype surfaces at runtime
-    // instead of silently returning false (drift protection). NamedModel and
-    // CompositeModel are mixins on the sealed Model, so the analyzer does
-    // not let us enumerate "every concrete subtype" exhaustively here.
+    // Mixins keep this switch from being analyzer-exhaustive.
     _ => _unreachableModelType('isMapValueTypeSimplyEncodable'),
   };
 }
@@ -83,10 +66,7 @@ Expression? _buildConversion(
       refer(
         'encodeAnyValueToString',
         'package:tonik_util/tonik_util.dart',
-      ).call(
-        [refer('v')],
-        {'allowEmpty': literalBool(false)},
-      ),
+      ).call([refer('v')], {'allowEmpty': literalBool(false)}),
       isNullable: isNullable,
     ),
     AliasModel(:final model) => _buildConversion(

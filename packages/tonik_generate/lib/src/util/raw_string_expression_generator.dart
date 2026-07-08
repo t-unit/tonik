@@ -1,11 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 
-/// Builds the generation-time expression that converts a single [receiver]
-/// value to its raw (unescaped) string form, dispatching on [model].
-///
-/// The conversion is chosen per model type: each type maps to the specific
-/// method that yields its canonical wire string.
+/// Avoids divergent wire strings between parameter encoders.
 Expression buildRawStringExpression(Expression receiver, Model model) {
   return switch (model) {
     StringModel() => receiver,
