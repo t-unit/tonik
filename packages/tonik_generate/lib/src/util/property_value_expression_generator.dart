@@ -14,7 +14,7 @@ Expression propertyValueArray(Expression rawList) =>
     refer('PropertyValue', _tonikUtilUrl).property('array').call([rawList]);
 
 /// The raw scalar for an additional-property [value] of [valueModel], applying
-/// the null-collection policy (null → empty string) when the value is nullable.
+/// the null → empty-string policy when the value is nullable.
 Expression additionalPropertyRawScalar(Expression value, Model valueModel) {
   if (valueModel.isEffectivelyNullable) {
     return value
@@ -27,12 +27,15 @@ Expression additionalPropertyRawScalar(Expression value, Model valueModel) {
   return buildRawStringExpression(value, valueModel);
 }
 
-/// Builds a `List<String>` of raw (unescaped) elements for a simple-content
-/// list whose element type is [contentModel].
+/// Builds a `List<String>` of per-element strings for a simple-content list
+/// whose element type is [contentModel].
 ///
-/// Mirrors the URI-encode list traversal minus the per-element percent-encoding
-/// so the element boundaries reach the form encoder intact: `.unlock` for
-/// immutable collections and a null-element to `''` guard for nullable content.
+/// For scalar content these are raw (unescaped): the traversal mirrors the
+/// URI-encode list handling minus the per-element percent-encoding, so element
+/// boundaries reach the form encoder intact (`.unlock` for immutable
+/// collections, a null-element to `''` guard for nullable content). Composite
+/// content is instead pre-encoded here, so it is double-encoded once the form
+/// encoder runs.
 Expression buildRawStringListExpression(
   Expression valueExpression,
   Model contentModel, {
