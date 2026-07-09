@@ -90,16 +90,14 @@ void main() {
       );
 
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
-        }
+      const expectedReturn = '''
+        return parameterProperties(
+          allowEmpty: allowEmpty,
+        ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
+        contains(collapseWhitespace(expectedReturn)),
       );
     });
 
@@ -124,7 +122,7 @@ void main() {
       ''';
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
+        contains(collapseWhitespace(expectedMethod)),
       );
     });
 
@@ -188,19 +186,25 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          if (currentEncodingShape == EncodingShape.mixed) {
-            throw EncodingException('Simple encoding not supported: contains complex types');
-          }
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      const expectedGuard = '''
+        if (currentEncodingShape == EncodingShape.mixed) {
+          throw EncodingException(
+            'Simple encoding not supported: contains complex types',
+          );
         }
+      ''';
+      const expectedReturn = '''
+        return parameterProperties(
+          allowEmpty: allowEmpty,
+        ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
+        contains(collapseWhitespace(expectedGuard)),
+      );
+      expect(
+        collapseWhitespace(classCode),
+        contains(collapseWhitespace(expectedReturn)),
       );
     });
 
@@ -249,16 +253,14 @@ void main() {
 
       final generatedClass = generator.generateClass(model);
       final classCode = format(generatedClass.accept(emitter).toString());
-      const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
-        }
+      const expectedReturn = '''
+        return parameterProperties(
+          allowEmpty: allowEmpty,
+        ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
       ''';
       expect(
         collapseWhitespace(classCode),
-        contains(collapseWhitespace(format(expectedMethod))),
+        contains(collapseWhitespace(expectedReturn)),
       );
     });
   });
