@@ -1586,10 +1586,9 @@ for (final _\$e in $apFieldName.entries) {
             (p) =>
                 p.property.model.resolved is ListModel &&
                 (p.property.model.resolved as ListModel).hasSimpleContent,
-          );
+      );
 
       if (allComplexAreSimpleLists) {
-        // Lists with simple content can be encoded directly with toSimple
         final valueCollectionCode = <Code>[
           declareFinal(
             r'_$values',
@@ -2124,10 +2123,9 @@ for (final _\$e in $apFieldName.entries) {
             (p) =>
                 p.property.model.resolved is ListModel &&
                 (p.property.model.resolved as ListModel).hasSimpleContent,
-          );
+      );
 
       if (allComplexAreSimpleLists) {
-        // Lists with simple content can be encoded directly with toLabel
         final valueCollectionCode = <Code>[
           declareFinal(
             r'_$values',
@@ -2361,10 +2359,9 @@ for (final _\$e in $apFieldName.entries) {
             (p) =>
                 p.property.model.resolved is ListModel &&
                 (p.property.model.resolved as ListModel).hasSimpleContent,
-          );
+      );
 
       if (allComplexAreSimpleLists) {
-        // Lists with simple content can be encoded directly with toMatrix
         final valueCollectionCode = <Code>[
           declareFinal(
             r'_$values',

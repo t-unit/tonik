@@ -821,7 +821,6 @@ class ClassGenerator {
         ..add(const Code(','));
     }
 
-    // Collect additional properties from the JSON map.
     if (hasAP) {
       final knownKeys = model.properties
           .map((p) => specLiteralStringCode(p.name))

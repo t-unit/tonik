@@ -21,7 +21,6 @@ void generateLibraryFile({
           .listSync(recursive: true)
           .where((entity) => entity is File && entity.path.endsWith('.dart'))
           .map((file) {
-            // Extract the relative path from src directory
             final relativePath = path.relative(file.path, from: srcDir.path);
             return 'src/$relativePath';
           }),
