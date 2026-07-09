@@ -1851,6 +1851,191 @@ TonikFile _parseResponse(Response<List<int>> response) {
         );
       });
 
+      test('generates guarded case for type wildcard response media range', () {
+        final operation = Operation(
+          operationId: 'applicationWildcardOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/application-wildcard',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: BinaryModel(context: context),
+                  rawContentType: 'application/*',
+                  contentType: ContentType.bytes,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+TonikFile _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+  switch ((response.statusCode, _$mediaType)) {
+    case (200, _) when matchesMediaTypeRange(_$mediaType, r'application/*'):
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
+      return _$body;
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test(
+        'generates guarded case for catch-all media range and status range',
+        () {
+          final operation = Operation(
+            operationId: 'catchAllRangeOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/catch-all-range',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const RangeResponseStatus(min: 200, max: 299): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: BinaryModel(context: context),
+                    rawContentType: '*/*',
+                    contentType: ContentType.bytes,
+                    examples: const [],
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+TonikFile _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+  switch ((response.statusCode, _$mediaType)) {
+    case (var status, _) when status != null && status >= 200 && status <= 299 && matchesMediaTypeRange(_$mediaType, r'*/*'):
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
+      return _$body;
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test('orders exact media type before type wildcard before catch-all', () {
+        final operation = Operation(
+          operationId: 'wildcardPrecedenceOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/wildcard-precedence',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: BinaryModel(context: context),
+                  rawContentType: '*/*',
+                  contentType: ContentType.bytes,
+                  examples: const [],
+                ),
+                ResponseBody(
+                  model: BinaryModel(context: context),
+                  rawContentType: 'application/*',
+                  contentType: ContentType.bytes,
+                  examples: const [],
+                ),
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+AnonymousResponse _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+  switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json.decodeJsonString();
+      return AnonymousResponseJson(body: _$body);
+    case (200, _) when matchesMediaTypeRange(_$mediaType, r'application/*'):
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
+      return AnonymousResponseModel2(body: _$body);
+    case (200, _) when matchesMediaTypeRange(_$mediaType, r'*/*'):
+      final _$body = TonikFileBytes(decodeResponseBytes(response.data));
+      return AnonymousResponseModel(body: _$body);
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
       test('generates bytes decoder for image/png response', () {
         final operation = Operation(
           operationId: 'imageOp',

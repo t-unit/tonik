@@ -145,7 +145,7 @@ See the [petstore integration tests](https://github.com/t-unit/tonik/blob/main/i
 
 | Category | What's Supported |
 |----------|------------------|
-| **Responses** | Multiple status codes, multiple content types, response headers, `default` and range codes (`2XX`) |
+| **Responses** | Multiple status codes, multiple content types and media-type ranges (`type/*`, `*/*`), response headers, `default` and range codes (`2XX`) |
 | **Composition** | `oneOf` (sealed classes), `anyOf`, `allOf`, discriminators, nested composition |
 | **Types** | Integer/string enums, `date`, `date-time` with timezone, `decimal`/`BigDecimal`, `uri`, `binary` |
 | **Parameters** | Path, query, header; all encoding styles (`form`, `simple`, `label`, `matrix`, `deepObject`, etc.) |

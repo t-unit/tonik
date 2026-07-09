@@ -88,4 +88,47 @@ void main() {
       expect(extractMediaType('garbage; foo=bar'), 'garbage');
     });
   });
+
+  group('matchesMediaTypeRange', () {
+    test('matches exact media types after normalizing parameters and case', () {
+      expect(
+        matchesMediaTypeRange(
+          'Application/JSON; charset=utf-8',
+          'application/json',
+        ),
+        isTrue,
+      );
+    });
+
+    test('matches type wildcard media ranges', () {
+      expect(
+        matchesMediaTypeRange('application/json', 'application/*'),
+        isTrue,
+      );
+      expect(
+        matchesMediaTypeRange('application/problem+json', 'application/*'),
+        isTrue,
+      );
+      expect(matchesMediaTypeRange('text/plain', 'application/*'), isFalse);
+    });
+
+    test('matches catch-all media range for concrete media types', () {
+      expect(matchesMediaTypeRange('application/json', '*/*'), isTrue);
+      expect(matchesMediaTypeRange('text/plain', '*/*'), isTrue);
+    });
+
+    test('does not match missing or malformed actual media types', () {
+      expect(matchesMediaTypeRange(null, 'application/*'), isFalse);
+      expect(matchesMediaTypeRange('garbage', 'application/*'), isFalse);
+      expect(matchesMediaTypeRange('garbage', '*/*'), isFalse);
+    });
+
+    test('does not treat unsupported wildcard shapes as ranges', () {
+      expect(matchesMediaTypeRange('application/json', '*/json'), isFalse);
+      expect(
+        matchesMediaTypeRange('application/json', 'application/j*'),
+        isFalse,
+      );
+    });
+  });
 }
