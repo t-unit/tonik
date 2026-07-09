@@ -213,8 +213,8 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
-    test('ClassModel body threads a fieldEncodings map for a flagged array '
-        'property', () {
+    test('ClassModel body threads a merged allowReserved and explode '
+        'descriptor for a flagged array property', () {
       final tags = Property(
         name: 'tags',
         model: ListModel(
@@ -258,7 +258,304 @@ void main() {
                 allowEmpty: true,
                 useQueryComponent: true,
                 fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
-                  r'tags': const _i2.FormFieldEncoding(allowReserved: true),
+                  r'tags': const _i2.FormFieldEncoding(
+                    allowReserved: true,
+                    explode: true,
+                  ),
+                },
+              )
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ClassModel body emits explode true for an array property with no '
+        'spec encoding', () {
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm(
+                '',
+                explode: true,
+                allowEmpty: true,
+                useQueryComponent: true,
+                fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
+                  r'tags': const _i2.FormFieldEncoding(explode: true),
+                },
+              )
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ClassModel body omits explode for an array property with explicit '
+        'explode false', () {
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+        encoding: {
+          tags: const FieldEncoding(
+            allowReserved: false,
+            style: EncodingStyle.form,
+            explode: false,
+          ),
+        },
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ClassModel body omits explode for a spaceDelimited array property '
+        'with explode unset', () {
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+        encoding: {
+          tags: const FieldEncoding(
+            allowReserved: false,
+            style: EncodingStyle.spaceDelimited,
+            explode: null,
+          ),
+        },
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ClassModel body omits explode for a scalar property', () {
+      final name = Property(
+        name: 'name',
+        model: StringModel(context: context),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [name],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ClassModel body excludes a read-only array property from explode '
+        'descriptors', () {
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isReadOnly: true,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('allOf body emits explode true for a member array property', () {
+      final label = Property(
+        name: 'label',
+        model: StringModel(context: context),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final base = ClassModel(
+        name: 'Base',
+        isDeprecated: false,
+        properties: [label],
+        context: context,
+        examples: const [],
+      );
+      final tagged = ClassModel(
+        name: 'Tagged',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+      final model = AllOfModel(
+        name: 'Form',
+        models: {base, tagged},
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm(
+                '',
+                explode: true,
+                allowEmpty: true,
+                useQueryComponent: true,
+                fieldEncodings: <_i1.String, _i2.FormFieldEncoding>{
+                  r'tags': const _i2.FormFieldEncoding(explode: true),
                 },
               )
               .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
