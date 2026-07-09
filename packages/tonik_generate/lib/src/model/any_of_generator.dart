@@ -366,7 +366,6 @@ class AnyOfGenerator {
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      // Lists with simple content can be encoded directly
       if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         codes.add(
           Block.of([
@@ -383,7 +382,6 @@ class AnyOfGenerator {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
       } else if (fieldModel is ListModel) {
-        // Lists with complex content cannot be encoded
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -401,7 +399,6 @@ class AnyOfGenerator {
           ).statement,
         );
       } else {
-        // For complex types (classes, composites), use parameterProperties
         codes.add(
           Code(
             'final $tmpVarName = '
@@ -528,7 +525,6 @@ class AnyOfGenerator {
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      // Lists with simple content can be encoded directly
       if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         codes.add(
           Block.of([
@@ -545,7 +541,6 @@ class AnyOfGenerator {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
       } else if (fieldModel is ListModel) {
-        // Lists with complex content cannot be encoded
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -557,14 +552,12 @@ class AnyOfGenerator {
               .statement,
         );
       } else if (fieldModel is MapModel) {
-        // Map types cannot be label-encoded
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be label-encoded',
           ).statement,
         );
       } else {
-        // For complex types (classes, composites), use parameterProperties
         codes.add(
           Code(
             'final $tmpVarName = '
@@ -830,8 +823,6 @@ class AnyOfGenerator {
 
       final blocks = <Code>[openIf, decl];
 
-      // Runtime type checking - add to appropriate collection based on actual
-      // type
       final ifMapOpen = [
         const Code('if ('),
         Code('_\$${name}Json'),
@@ -921,7 +912,6 @@ class AnyOfGenerator {
         ...mergeBlocks,
         const Code('}'),
       ])
-      // Fallback
       ..add(const Code('return null;'));
 
     return Method(
@@ -1061,7 +1051,6 @@ class AnyOfGenerator {
       ]);
 
     if (needsValues && needsMapValues) {
-      // Mixed types - check for ambiguity
       body.addAll([
         const Code(
           r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';",
@@ -1887,7 +1876,6 @@ class AnyOfGenerator {
     final codes = <Code>[];
 
     if (fieldModel.encodingShape == EncodingShape.complex) {
-      // Lists cannot use parameterProperties
       if (fieldModel is ListModel) {
         codes
           ..add(const Code('if (!allowLists) {'))
@@ -1908,7 +1896,6 @@ class AnyOfGenerator {
                 .statement,
           );
       } else if (fieldModel is MapModel) {
-        // Map types cannot use parameterProperties
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be parameter encoded',
@@ -2168,7 +2155,6 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          // Lists with simple content can be encoded directly to strings
           if (model is ListModel) {
             return model.hasSimpleContent;
           }
@@ -2178,7 +2164,6 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          // Lists with complex content need parameterProperties
           if (model is ListModel) {
             return !model.hasSimpleContent;
           }
@@ -2356,7 +2341,6 @@ class AnyOfGenerator {
           )
           ..add(const Code('}'));
       } else if (propertyModel.encodingShape == EncodingShape.complex) {
-        // Complex types cannot be URI encoded
         body
           ..add(Code('if ($name != null) {'))
           ..add(
@@ -2367,7 +2351,6 @@ class AnyOfGenerator {
           )
           ..add(const Code('}'));
       } else {
-        // Simple or mixed types can call uriEncode
         final receiver = uriEncodeReceiver(propertyModel, '$name!');
         body
           ..add(Code('if ($name != null) {'))
@@ -2438,7 +2421,6 @@ class AnyOfGenerator {
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      // Lists with simple content can be encoded directly with toMatrix
       if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         codes.add(
           Block.of([
@@ -2456,7 +2438,6 @@ class AnyOfGenerator {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
       } else if (fieldModel is ListModel) {
-        // Lists with complex content cannot be encoded
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -2468,14 +2449,12 @@ class AnyOfGenerator {
               .statement,
         );
       } else if (fieldModel is MapModel) {
-        // Map types cannot be matrix-encoded
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be matrix-encoded',
           ).statement,
         );
       } else {
-        // For complex types (classes, composites), use parameterProperties
         codes.add(
           Code(
             'final $tmpVarName = '
@@ -2501,9 +2480,8 @@ class AnyOfGenerator {
         'package:tonik_util/tonik_util.dart',
       );
 
-      // For mixed encoding shape, check at runtime if it's a list
       if (fieldModel is ListModel) {
-        // Lists can be encoded directly even though they have complex shape
+        // Lists keep their matrix helper despite reporting complex shape.
         codes.add(
           Block.of([
             Code('final $tmpVarName = '),
@@ -2520,7 +2498,6 @@ class AnyOfGenerator {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
       } else {
-        // For non-list mixed types, use runtime switch
         codes
           ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
           ..add(const Code('case '))

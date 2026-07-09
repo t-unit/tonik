@@ -193,7 +193,6 @@ class ModelImporter {
       return;
     }
 
-    // Pure map detection.
     if ((schema.properties == null || schema.properties!.isEmpty) &&
         schema.additionalProperties != null &&
         schema.additionalProperties != false) {
@@ -361,7 +360,6 @@ class ModelImporter {
       return;
     }
 
-    // Apply x-dart-name vendor extension.
     if (schema.xDartName != null) {
       if (existingModel is NamedModel) {
         existingModel.nameOverride = schema.xDartName;
@@ -370,7 +368,6 @@ class ModelImporter {
 
     final examples = exampleImporter.fromSchema(schema);
 
-    // Populate based on model type.
     if (schema.ref != null) {
       _populateAliasShell(name, schema, context, existingModel as AliasModel);
       applyExamples(existingModel, examples);
@@ -431,7 +428,6 @@ class ModelImporter {
       return;
     }
 
-    // Pure map detection.
     if ((schema.properties == null || schema.properties!.isEmpty) &&
         schema.additionalProperties != null &&
         schema.additionalProperties != false) {
@@ -448,14 +444,12 @@ class ModelImporter {
       return;
     }
 
-    // Array type.
     if (firstType == 'array') {
       _populateArrayShell(name, schema, context, existingModel as ListModel);
       applyExamples(existingModel, examples);
       return;
     }
 
-    // Default: ClassModel.
     if (existingModel is ClassModel) {
       _populateClassShell(name, schema, context, existingModel);
       applyExamples(existingModel, examples);
@@ -1404,8 +1398,6 @@ class ModelImporter {
       return _parseMultiType(types, schema, hasNullType, context, name);
     }
 
-    // Pure map detection: schema with no named properties and
-    // additionalProperties set to true or a schema.
     if ((schema.properties == null || schema.properties!.isEmpty) &&
         schema.additionalProperties != null &&
         schema.additionalProperties != false) {
@@ -1947,7 +1939,6 @@ class ModelImporter {
         examples: exampleImporter.fromSchema(propertySchema),
       );
 
-      // Apply x-dart-name vendor extension to property.
       if (nameOverride != null) {
         property.nameOverride = nameOverride;
       }
@@ -1975,8 +1966,7 @@ class ModelImporter {
     final typedValues = values.whereType<T>().toSet();
     final hasNull = values.any((value) => value == null);
 
-    // Warn if there are non-matching values in the enum.
-    // Ignore [null] values, as we indicate nullability with [isNullable].
+    // Null enum entries are represented through isNullable.
     if (!hasNull && typedValues.length != values.length ||
         hasNull && (typedValues.length + 1) != values.length) {
       log.warning(
@@ -1992,7 +1982,6 @@ class ModelImporter {
       final value = typedValuesList[i];
       String? nameOverride;
 
-      // Apply x-dart-enum vendor extension if available
       if (xDartEnum != null && i < xDartEnum.length) {
         nameOverride = xDartEnum[i];
       }

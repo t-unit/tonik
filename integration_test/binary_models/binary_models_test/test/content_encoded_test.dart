@@ -82,21 +82,18 @@ void main() {
         final binaryData = Uint8List.fromList([1, 2, 3, 4, 5]);
         final base64String = base64.encode(binaryData);
 
-        // format:byte (Base64Model): accepts binary (TonikFile), auto-encodes
-        // to base64 string in JSON.
+        // `contentEncoding: base64` stays a string here because text/plain
+        // config opts out of TonikFile's format:byte handling.
         final formatByteData = Base64Data(
           name: 'format-byte',
           encodedData: TonikFileBytes(binaryData),
         );
 
-        // contentEncoding:base64 with text/plain config: String field, the
-        // user is responsible for providing the base64 string directly.
         final contentEncodedData = ContentEncodedData(
           name: 'content-encoding',
           encodedData: base64String,
         );
 
-        // Both should serialize with identical JSON values (base64 string)
         final formatByteJson = formatByteData.toJson()! as Map<String, dynamic>;
         final contentEncodedJson =
             contentEncodedData.toJson()! as Map<String, dynamic>;

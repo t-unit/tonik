@@ -256,7 +256,6 @@ class RequestParameterImporter {
               examples: exampleImporter.fromParameter(parameter),
               defaultValue: rawDefault,
             );
-            // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
               header.nameOverride = parameter.xDartName;
             }
@@ -280,7 +279,6 @@ class RequestParameterImporter {
               examples: exampleImporter.fromParameter(parameter),
               defaultValue: rawDefault,
             );
-            // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
               queryParam.nameOverride = parameter.xDartName;
             }
@@ -301,7 +299,6 @@ class RequestParameterImporter {
               examples: exampleImporter.fromParameter(parameter),
               defaultValue: rawDefault,
             );
-            // Apply x-dart-name vendor extension
             if (parameter.xDartName != null) {
               pathParam.nameOverride = parameter.xDartName;
             }
@@ -321,7 +318,6 @@ class RequestParameterImporter {
               examples: exampleImporter.fromParameter(parameter),
               defaultValue: rawDefault,
             );
-            // Apply x-dart-name vendor extension.
             if (parameter.xDartName != null) {
               cookieParam.nameOverride = parameter.xDartName;
             }

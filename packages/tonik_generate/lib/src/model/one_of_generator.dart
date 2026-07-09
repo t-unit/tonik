@@ -978,7 +978,6 @@ class OneOfGenerator {
           ]);
         }
       } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
-        // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
         caseCodes.addAll([
@@ -995,7 +994,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (m.model.resolved is ListModel) {
-        // Lists with complex content cannot be encoded
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}() => ',
@@ -1041,7 +1039,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (m.model.resolved is MapModel) {
-        // Map types cannot be simple-encoded
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}() => ',
@@ -1273,7 +1270,6 @@ class OneOfGenerator {
       final isMap = resolvedType is MapModel;
 
       if (resolvedType is AnyModel || resolvedType is NeverModel) {
-        // AnyModel and NeverModel cannot determine encoding shape
         caseCodes.addAll([
           Code('$variantName() => '),
           generateEncodingExceptionExpression(
@@ -1294,7 +1290,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (isList || isMap) {
-        // Lists and maps always have complex encoding shape
         caseCodes.addAll([
           Code('$variantName() => '),
           refer(
@@ -1636,7 +1631,6 @@ class OneOfGenerator {
           ]);
         }
       } else if (resolvedType is ListModel && resolvedType.hasSimpleContent) {
-        // Lists with simple content can be encoded using helper
         final isNullableList = m.model.isEffectivelyNullable;
 
         caseCodes.addAll([
@@ -1653,7 +1647,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (m.model.resolved is ListModel) {
-        // Lists with complex content cannot be encoded
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}() => ',
@@ -1699,7 +1692,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (m.model.resolved is MapModel) {
-        // Map types cannot be label-encoded
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}() => ',
@@ -1852,7 +1844,7 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else if (modelType.encodingShape == EncodingShape.complex) {
-        // Complex types cannot be URI encoded - don't destructure value
+        // Avoid destructuring values that cannot be URI encoded.
         caseCodes.addAll([
           Code.scope(
             (allocate) => '${allocate(refer(variantName))}() => ',
@@ -1864,7 +1856,6 @@ class OneOfGenerator {
           const Code(','),
         ]);
       } else {
-        // Simple or mixed types can call uriEncode
         final isNullable = modelType.isEffectivelyNullable;
 
         caseCodes.add(
