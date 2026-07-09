@@ -114,7 +114,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties(allowEmpty: allowEmpty) .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
 ''';
 
       expect(
@@ -573,7 +573,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           final classCode = format(generatedClass.accept(emitter).toString());
 
           const expectedMethod = '''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties(allowEmpty: allowEmpty) .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
 ''';
           expect(
             collapseWhitespace(classCode),
@@ -603,7 +603,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
           final classCode = format(generatedClass.accept(emitter).toString());
 
           const expectedMethod = '''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties(allowEmpty: allowEmpty) .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
 ''';
           expect(
             collapseWhitespace(classCode),

@@ -406,9 +406,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -444,9 +443,8 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
 
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -464,7 +462,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties(allowEmpty: allowEmpty) .toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
 ''';
 
       expect(

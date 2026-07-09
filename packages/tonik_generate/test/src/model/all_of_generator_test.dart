@@ -1659,7 +1659,7 @@ Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => t
       ''';
 
       const expectedParameterProperties = '''
-Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported', );
 ''';
 
       expect(
@@ -1699,7 +1699,7 @@ Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => t
       ''';
 
       const expectedParameterProperties = '''
-Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported', );
 ''';
 
       expect(
@@ -1861,7 +1861,7 @@ Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => t
         final generated = format(combinedClass.accept(emitter).toString());
 
         const expectedParameterProperties = '''
-Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for AllOfWithList: contains array types', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfWithList: contains array types', );
 ''';
 
         expect(
@@ -1943,7 +1943,7 @@ Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => t
         final generated = format(combinedClass.accept(emitter).toString());
 
         const expectedParameterProperties = '''
-Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for AllOfMixedMapClass: contains map types', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfMixedMapClass: contains map types', );
 ''';
 
         expect(

@@ -508,7 +508,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for ComplexContainer: contains complex types', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for ComplexContainer: contains complex types', );
 ''';
 
       expect(
@@ -1012,7 +1012,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = '''
-Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for ComplexListContainer: contains complex types', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for ComplexListContainer: contains complex types', );
 ''';
 
         expect(

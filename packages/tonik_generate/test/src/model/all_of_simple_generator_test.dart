@@ -152,9 +152,8 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
 
     const expectedToSimpleMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -368,9 +367,8 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
               'Simple encoding not supported: contains complex types',
             );
           }
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 

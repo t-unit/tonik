@@ -74,9 +74,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
       expect(
@@ -126,9 +125,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
         expect(
@@ -172,9 +170,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
       expect(
@@ -234,9 +231,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
         expect(
@@ -297,9 +293,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
         expect(
@@ -322,9 +317,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toLabel({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
       expect(

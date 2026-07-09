@@ -781,7 +781,7 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Value');
 
       const expectedMethod = '''
-Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for Value: only contains primitive types', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for Value: only contains primitive types', );
 ''';
 
       expect(
@@ -814,7 +814,7 @@ Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => t
       final baseClass = classes.firstWhere((c) => c.name == 'Value');
 
       const expectedMethod = '''
-Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for Value: only contains primitive types', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for Value: only contains primitive types', );
 ''';
 
       expect(
