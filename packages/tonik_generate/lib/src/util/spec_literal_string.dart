@@ -44,9 +44,8 @@ String specLiteralStringCode(String value) {
     }
   }
 
-  // Use raw triple-double-quoted string when possible. Avoid this for values
-  // containing \r — literal CR bytes in source files cause issues with
-  // formatters, diffs, and editors.
+  // Literal CR bytes in source files cause issues with formatters, diffs,
+  // and editors, so those values avoid triple-quoted raw strings.
   if (!hasCarriageReturn && !value.contains('"""') && !value.endsWith('"')) {
     return 'r"""$value"""';
   }

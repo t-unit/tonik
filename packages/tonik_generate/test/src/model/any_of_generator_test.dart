@@ -2176,7 +2176,6 @@ Map<String, String> parameterProperties({
 
       final klass = generator.generateClass(model);
 
-      // Verify the class uses Raw prefix.
       expect(klass.name, r'$RawPet');
     });
 
@@ -2221,7 +2220,6 @@ Map<String, String> parameterProperties({
 
       final klass = generator.generateClass(model);
 
-      // Verify the class uses the normal name (no Raw prefix).
       expect(klass.name, 'Pet');
     });
 
@@ -2250,7 +2248,6 @@ Map<String, String> parameterProperties({
       final result = generator.generate(model);
       final formatted = format(result.code);
 
-      // Verify typedef exists pointing to nullable Raw class.
       expect(
         collapseWhitespace(formatted),
         contains(collapseWhitespace(r'typedef Response = $RawResponse?;')),
@@ -2280,7 +2277,6 @@ Map<String, String> parameterProperties({
 
       final result = generator.generate(model);
 
-      // Verify no typedef is generated.
       expect(result.code, isNot(contains('typedef')));
     });
 
@@ -3011,8 +3007,6 @@ Object? toJson() {
       );
 
       final klass = immutableGenerator.generateClass(model);
-
-      // Verify the list field type is IList via object introspection
       final listField = klass.fields.firstWhere(
         (f) => f.name == 'iList',
       );

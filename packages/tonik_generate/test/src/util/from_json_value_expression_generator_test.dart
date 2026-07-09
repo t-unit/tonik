@@ -364,8 +364,6 @@ void main() {
         ).accept(emitter).toString(),
         'value.decodeJsonList<String>()',
       );
-
-      // Test list of booleans
       final boolListModel = ListModel(
         content: BooleanModel(context: context),
         context: context,
@@ -380,8 +378,6 @@ void main() {
         ).accept(emitter).toString(),
         'value.decodeJsonList<bool>()',
       );
-
-      // Test list of dates
       final dateListModel = ListModel(
         content: DateModel(context: context),
         context: context,
@@ -399,8 +395,6 @@ void main() {
           '.map((e) => e.decodeJsonDate()).toList()',
         ),
       );
-
-      // Test list of date times
       final dateTimeListModel = ListModel(
         content: DateTimeModel(context: context),
         context: context,
@@ -418,8 +412,6 @@ void main() {
           '.map((e) => e.decodeJsonDateTime()).toList()',
         ),
       );
-
-      // Test list of decimals
       final decimalListModel = ListModel(
         content: DecimalModel(context: context),
         context: context,
@@ -437,8 +429,6 @@ void main() {
           '.map((e) => e.decodeJsonBigDecimal()).toList()',
         ),
       );
-
-      // Test list of binary
       final binaryListModel = ListModel(
         content: BinaryModel(context: context),
         context: context,
@@ -456,8 +446,6 @@ void main() {
           '.map((e) => TonikFileBytes(e.decodeJsonBinary())).toList()',
         ),
       );
-
-      // Test list of base64
       final base64ListModel = ListModel(
         content: Base64Model(context: context),
         context: context,

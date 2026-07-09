@@ -33,7 +33,7 @@ void main() {
     test('201 - uploads data with base64 encoded field', () async {
       final base64Api = buildBase64Api(responseStatus: '201');
 
-      // Create test binary data — format:byte auto-encodes to base64 in JSON.
+      // format:byte auto-encodes to base64 in JSON.
       final binaryData = Uint8List.fromList(
         List.generate(256, (i) => i),
       );
@@ -66,14 +66,11 @@ void main() {
         encodedData: TonikFileBytes(binaryData),
       );
 
-      // Serialize to JSON
       final json = base64Data.toJson()! as Map<String, dynamic>;
 
-      // Verify encodedData is a base64 string in JSON (auto-encoded)
       expect(json['encodedData'], isA<String>());
       expect(json['encodedData'], equals(expectedBase64));
 
-      // Verify we can decode the JSON value back to binary
       final decoded = base64.decode(json['encodedData'] as String);
       expect(decoded, equals(binaryData));
     });
@@ -126,10 +123,8 @@ void main() {
         'description': 'Test description',
       };
 
-      // Parse from JSON
       final data = Base64Data.fromJson(json);
 
-      // Verify encodedData is decoded back to binary
       expect(data.encodedData.toBytes(), equals(binaryData));
     });
 

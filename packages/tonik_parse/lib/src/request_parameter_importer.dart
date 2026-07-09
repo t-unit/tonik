@@ -141,7 +141,6 @@ class RequestParameterImporter {
         if (refParameter is InlinedObject<Parameter>) {
           switch (refParameter.object.location) {
             case ParameterLocation.header:
-              // Check if we already imported this header.
               final existing = headers.firstWhere(
                 (h) =>
                     (h is core.RequestHeaderAlias && h.name == refName) ||
@@ -163,7 +162,6 @@ class RequestParameterImporter {
               );
 
             case ParameterLocation.query:
-              // Check if we already imported this query parameter.
               final existing = queryParameters.firstWhere(
                 (q) =>
                     (q is core.QueryParameterAlias && q.name == refName) ||
@@ -185,7 +183,6 @@ class RequestParameterImporter {
               );
 
             case ParameterLocation.path:
-              // Check if we already imported this path parameter.
               final existing = pathParameters.firstWhere(
                 (p) =>
                     (p is core.PathParameterAlias && p.name == refName) ||
@@ -207,7 +204,6 @@ class RequestParameterImporter {
               );
 
             case ParameterLocation.cookie:
-              // Check if we already imported this cookie parameter.
               final existing = cookieParameters.firstWhere(
                 (c) =>
                     (c is core.CookieParameterAlias && c.name == refName) ||

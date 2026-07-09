@@ -114,10 +114,8 @@ void main() {
             response as TonikSuccess<HeadersRoundtripEnumsGet200Response>;
         expect(success.response.statusCode, 200);
 
-        // Verify request header was encoded correctly
         expect(success.response.requestOptions.headers['x-priority'], '1');
 
-        // Verify response header was decoded correctly
         expect(success.value.xPriority, PriorityEnum.one);
       });
 
@@ -205,13 +203,9 @@ void main() {
         final success =
             response as TonikSuccess<HeadersRoundtripEnumsGet200Response>;
         expect(success.response.statusCode, 200);
-
-        // Verify all request headers
         final requestHeaders = success.response.requestOptions.headers;
         expect(requestHeaders['x-status'], 'active');
         expect(requestHeaders['x-priority'], '3');
-
-        // Verify all response values
         expect(success.value.xStatus, StatusEnum.active);
         expect(success.value.xPriority, PriorityEnum.three);
       });

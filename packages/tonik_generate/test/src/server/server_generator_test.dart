@@ -91,7 +91,6 @@ void main() {
       expect(dioGetter.type, MethodType.getter);
       expect(dioGetter.returns?.accept(emitter).toString(), 'Dio');
 
-      // Test getter body content
       final bodyCode = dioGetter.body!.accept(emitter).toString();
       expect(bodyCode, contains('if (_dio == null)'));
       expect(bodyCode, contains('serverConfig.configureDio'));
@@ -221,19 +220,15 @@ void main() {
 
   group('ServerGenerator name management', () {
     test('uses names from NameManager', () {
-      // Get the expected names
       final names = nameManager.serverNames(testServers);
 
-      // Test base class name matches naming from NameManager
       expect(generatedClasses[0].name, names.baseName);
 
-      // Test server class names match naming from NameManager
       var index = 1;
       for (final entry in names.serverMap.entries) {
         expect(generatedClasses[index++].name, entry.value);
       }
 
-      // Test custom server name matches naming from NameManager
       expect(generatedClasses.last.name, names.customName);
     });
   });
@@ -294,7 +289,6 @@ void main() {
         ),
       ];
 
-      // Should not throw
       final result = generator.generate(servers);
       expect(result.code, contains('class'));
     });
@@ -304,18 +298,15 @@ void main() {
     test('generates file with correct structure', () {
       final result = generator.generate(testServers);
 
-      // Test filename is generated correctly
       final names = nameManager.serverNames(testServers);
       expect(result.filename, '${names.baseName.toSnakeCase()}.dart');
 
-      // Test for header
       expect(
         result.code,
         contains('// Generated code - do not modify by hand'),
       );
       expect(result.code, contains('// ignore_for_file:'));
 
-      // Test imports are included
       expect(result.code, contains("import 'package:dio/dio.dart'"));
       expect(
         result.code,

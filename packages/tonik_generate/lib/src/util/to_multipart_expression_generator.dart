@@ -126,18 +126,15 @@ Code? _buildFieldCode(
   final accessor = '$bodyAccessor.$normalizedName${isNullable ? '!' : ''}';
   final contentType = encoding?.contentType;
   final rawContentType = encoding?.rawContentType;
-  final effectiveRawContentType =
-      rawContentType ??
-      'text/plain'; // style-based primitives serialise as plain strings
+  // Style-based primitives serialize as plain strings.
+  final effectiveRawContentType = rawContentType ?? 'text/plain';
 
-  // Build per-part header statements and variable name (if any).
   final headerResult = _buildHeaderMapStatements(
     normalizedName,
     encoding,
     isPropertyOptional: isNullable,
   );
 
-  // Resolve alias for property model matching.
   var resolved = model;
   if (resolved is AliasModel) {
     resolved = resolved.resolved;
@@ -308,7 +305,6 @@ _HeaderMapResult? _buildHeaderMapStatements(
         .statement,
   ];
 
-  // Add an entry for each header.
   for (final entry in filteredEntries) {
     final rawHeaderName = entry.key;
     final header = entry.value.resolve();
@@ -752,7 +748,6 @@ Code _buildContentBasedListAddition(
   // not define how to serialize an array as a single text/plain part.
   const rawContentType = 'application/json';
 
-  // Build the expression to pass to jsonEncode.
   final Expression jsonArg;
   if (contentModel is ClassModel ||
       contentModel is AllOfModel ||

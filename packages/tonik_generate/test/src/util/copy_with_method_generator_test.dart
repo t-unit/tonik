@@ -485,14 +485,10 @@ void main() {
             ),
           ],
         );
-
-        // Verify getter type via introspection
         final getter = result!.implClass.methods.firstWhere(
           (m) => m.name == 'items' && m.type == MethodType.getter,
         );
         expect(getter.returns?.accept(emitter).toString(), 'List<String>');
-
-        // Verify call method has correct type cast
         final callMethod = result.implClass.methods.firstWhere(
           (m) => m.name == 'call',
         );
@@ -523,8 +519,6 @@ void main() {
             ),
           ],
         );
-
-        // Verify getter type via introspection
         final getter = result!.implClass.methods.firstWhere(
           (m) => m.name == 'value' && m.type == MethodType.getter,
         );

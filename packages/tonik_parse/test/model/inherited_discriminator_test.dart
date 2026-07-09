@@ -96,8 +96,6 @@ void main() {
                 as OneOfModel;
 
         expect(petResponse.models, hasLength(2));
-
-        // Get discriminator values as a set
         final discriminatorValues = petResponse.models
             .map((m) => m.discriminatorValue)
             .toSet();
@@ -129,8 +127,6 @@ void main() {
                 as AnyOfModel;
 
         expect(petRequest.models, hasLength(2));
-
-        // Get discriminator values as a set
         final discriminatorValues = petRequest.models
             .map((m) => m.discriminatorValue)
             .toSet();
@@ -204,8 +200,6 @@ void main() {
 
         expect(animalChoice.discriminator, 'animalType');
         expect(animalChoice.models, hasLength(2));
-
-        // Get discriminator values as a set
         final discriminatorValues = animalChoice.models
             .map((m) => m.discriminatorValue)
             .toSet();

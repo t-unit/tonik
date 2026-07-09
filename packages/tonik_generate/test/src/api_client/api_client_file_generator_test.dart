@@ -227,8 +227,6 @@ void main() {
       );
       expect(clientDir.listSync(), hasLength(1));
       expect(clientDir.listSync().first.path, endsWith('default_api.dart'));
-
-      // Read the generated file to verify it contains the operation
       final fileContent = File(
         clientDir.listSync().first.path,
       ).readAsStringSync();
@@ -303,15 +301,11 @@ void main() {
           clientDir.listSync().map((e) => path.basename(e.path)).toList()
             ..sort();
       expect(fileNames, ['default_api.dart', 'users_api.dart']);
-
-      // Check content of default API
       final defaultApiContent = File(
         path.join(clientDir.path, 'default_api.dart'),
       ).readAsStringSync();
       expect(defaultApiContent, contains('untaggedOperation'));
       expect(defaultApiContent, contains('class DefaultApi'));
-
-      // Check content of users API
       final usersApiContent = File(
         path.join(clientDir.path, 'users_api.dart'),
       ).readAsStringSync();

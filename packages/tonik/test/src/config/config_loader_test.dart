@@ -404,7 +404,8 @@ contentTypes:
       });
 
       test('parses all ContentType enum values correctly', () {
-        // Test all enum values to ensure none are missed when updating
+        // New enum values should fail here until the config parser handles
+        // them.
         for (final contentType in ContentType.values) {
           final typeString = contentType.name;
           File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
@@ -792,7 +793,6 @@ nameOverrides:
         expect(a == b, isTrue);
         expect(a.hashCode, b.hashCode);
       });
-
     });
 
     group('type validation for string fields', () {

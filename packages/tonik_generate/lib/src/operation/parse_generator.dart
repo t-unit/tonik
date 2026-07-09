@@ -38,7 +38,6 @@ class ParseGenerator {
     ).types.first;
     final cases = <Code>[];
 
-    // Check if we have a default response with null content type
     var hasDefaultWithNullContentType = false;
 
     final entries = responses.entries.toList()

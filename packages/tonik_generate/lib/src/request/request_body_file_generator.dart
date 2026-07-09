@@ -28,7 +28,6 @@ class RequestBodyFileGenerator {
     ]);
 
     for (final requestBody in apiDocument.requestBodies) {
-      // Skip request bodies with no content or just one content type
       if (requestBody.contentCount <= 1) {
         log.fine(
           'Skipping request body ${requestBody.name ?? requestBody.context} '

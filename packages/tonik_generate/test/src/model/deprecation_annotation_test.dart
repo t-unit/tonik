@@ -360,8 +360,6 @@ void main() {
         );
 
         final result = generator.generateClass(model);
-
-        // Find the deprecated field
         final deprecatedField = result.fields.firstWhere(
           (f) => f.name == 'oldField',
         );

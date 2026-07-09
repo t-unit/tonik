@@ -556,17 +556,14 @@ void main() {
 
     group('Binary', () {
       test('decodes UTF-8 string to List<int>', () {
-        // Test standard UTF-8.
         const textString = 'Hello World';
         final result = textString.decodeFormBinary();
         expect(result, [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]);
 
-        // Test UTF-8 with special characters.
         const utf8String = 'Hëllö';
         final utf8Result = utf8String.decodeFormBinary();
         expect(utf8Result, [72, 195, 171, 108, 108, 195, 182]);
 
-        // Test empty string.
         const emptyString = '';
         final emptyResult = emptyString.decodeFormBinary();
         expect(emptyResult, <int>[]);

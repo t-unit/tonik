@@ -514,16 +514,15 @@ class ModelImporter {
       throw ArgumentError('Schema $ref not found for $name');
     }
 
-    // Find the target model (shell from pass 1 or fully resolved).
+    // Prefer the pass-1 shell before falling back to recursive resolution.
     final refModel =
         models.firstWhereOrNull(
           (model) => model is NamedModel && model.name == refName,
         ) ??
         _resolveWithCycleCheck(refName, refSchema);
 
-    // Handle structural siblings ($ref + properties/allOf/oneOf/anyOf).
+    // Structural `$ref` siblings are represented as an allOf wrapper.
     if (_hasStructuralSiblings(schema)) {
-      // Need to replace shell with an AllOfModel.
       models.remove(shell);
       final allOfModel = _mergeRefWithStructuralSiblings(
         name,
@@ -542,9 +541,8 @@ class ModelImporter {
       return;
     }
 
-    // Check for bare $ref cycles before updating the shell.
-    // If following the alias chain from refModel would lead back to this
-    // shell, we'd create an infinite loop. Keep the AnyModel terminal.
+    // Bare `$ref` cycles keep the AnyModel terminal to avoid an infinite
+    // alias chain.
     if (_wouldCreateAliasCycle(shell, refModel)) {
       shell
         ..description = schema.description
@@ -709,7 +707,7 @@ class ModelImporter {
 
     _populatedComposites.add(name);
 
-    // Add nested models to the model set.
+    // Nested composite members enter the global model set after resolution.
     for (final nestedModel in shell.models) {
       _addModelToSet(nestedModel.model);
     }
@@ -906,8 +904,8 @@ class ModelImporter {
       final description = propertySchema.description;
       final nameOverride = propertySchema.xDartName;
 
-      // Use a placeholder for empty or whitespace-only property names
-      // so the context path remains valid.
+      // Empty property names need a placeholder so the context path remains
+      // valid.
       final contextPropertyName = propertyName.trim().isEmpty
           ? 'property'
           : propertyName;
@@ -1100,8 +1098,8 @@ class ModelImporter {
         return existing;
       }
 
-      // Create placeholder but do NOT add to models -- this prevents
-      // shadowing the real model that will be built when resolution unwinds.
+      // Placeholders stay out of models so they do not shadow the real model
+      // built when resolution unwinds.
       log.fine(
         'Circular reference to $ref detected. '
         'Using placeholder until resolution completes.',
@@ -1196,8 +1194,8 @@ class ModelImporter {
         return existing;
       }
 
-      // Create placeholder but do NOT add to models -- this prevents
-      // shadowing the real model that will be built when resolution unwinds.
+      // Placeholders stay out of models so they do not shadow the real model
+      // built when resolution unwinds.
       log.fine(
         'Circular reference to $refName detected. '
         'Using placeholder until resolution completes.',
@@ -1398,7 +1396,7 @@ class ModelImporter {
       return _parseAnyOf(name, schema, context);
     }
 
-    // Check if the type array includes 'null'
+    // OpenAPI 3.1 null types become Tonik nullability.
     final hasNullType = schema.type.contains('null');
     final types = schema.type.where((t) => t != 'null').toList();
 
@@ -1703,7 +1701,7 @@ class ModelImporter {
 
     oneOfModel.models = resolvedModels.toSet();
 
-    // Add nested models to the model set now that members are resolved.
+    // Nested composite members enter the global model set after resolution.
     for (final nestedModel in oneOfModel.models) {
       _addModelToSet(nestedModel.model);
     }
@@ -1909,8 +1907,8 @@ class ModelImporter {
     }
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
-      // Add model to the list of models before parsing properties,
-      // only so we can support recursive models.
+      // Recursive properties need the model registered before property
+      // parsing.
       _logModelAdded(model);
       models.add(model);
     }
@@ -1925,8 +1923,8 @@ class ModelImporter {
       final description = propertySchema.description;
       final nameOverride = propertySchema.xDartName;
 
-      // Use a placeholder for empty or whitespace-only property names
-      // so the context path remains valid.
+      // Empty property names need a placeholder so the context path remains
+      // valid.
       final contextPropertyName = propertyName.trim().isEmpty
           ? 'property'
           : propertyName;

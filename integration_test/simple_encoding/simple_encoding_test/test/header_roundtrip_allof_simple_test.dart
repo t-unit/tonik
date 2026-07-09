@@ -53,7 +53,6 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
 
-      // Verify encoded request header contains all fields
       final headerValue =
           success.response.requestOptions.headers['X-Composite-Entity']
               as String;
@@ -61,7 +60,6 @@ void main() {
       expect(headerValue, contains('specific_field,specific-value'));
       expect(headerValue, contains('created_at,'));
 
-      // Verify decoded response
       expect(success.value.xCompositeEntity, isNotNull);
       expect(success.value.xCompositeEntity!.baseEntity.name, 'TestEntity');
       expect(
@@ -94,7 +92,6 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
 
-      // Verify decoded response
       expect(success.value.xCompositeEntity, isNotNull);
       expect(success.value.xCompositeEntity!.baseEntity.name, 'FullEntity');
       expect(
@@ -126,7 +123,6 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
 
-      // Verify the datetime was correctly decoded
       expect(success.value.xCompositeEntity, isNotNull);
       expect(
         success.value.xCompositeEntity!.timestampMixin.createdAt,
@@ -147,13 +143,11 @@ void main() {
           final success =
               result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
 
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Composite-Entity'],
             isNull,
           );
 
-          // Verify response property is null
           expect(success.value.xCompositeEntity, isNull);
         },
       );

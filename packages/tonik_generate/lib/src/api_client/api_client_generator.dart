@@ -56,18 +56,16 @@ class ApiClientGenerator {
     return (code: code, filename: fileName);
   }
 
-  /// Generates the API client class
+  /// Generates the API client class.
   @visibleForTesting
   Class generateClass(
     Set<Operation> operations,
     Tag tag,
     List<Server> servers,
   ) {
-    // Get the server base class name
     final serverNames = nameManager.serverNames(servers);
     final serverBaseClassName = serverNames.baseName;
 
-    // Create private fields for each operation
     final operationFields = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
@@ -81,7 +79,6 @@ class ApiClientGenerator {
       );
     }).toList();
 
-    // Create constructor initializers for each operation
     final constructorInitializers = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
@@ -119,7 +116,7 @@ class ApiClientGenerator {
     );
   }
 
-  /// Generates a method for an operation
+  /// Generates a method for an operation.
   Method _generateMethod(Operation operation) {
     final hasRequestBody =
         operation.requestBody?.resolvedContent.isNotEmpty ?? false;
@@ -187,7 +184,6 @@ class ApiClientGenerator {
 
     final docs = formatDocComments([operation.summary, operation.description]);
 
-    // Add security information to documentation
     if (operation.securitySchemes.isNotEmpty) {
       docs
         ..add('///')
@@ -198,7 +194,6 @@ class ApiClientGenerator {
       }
     }
 
-    // Add parameter descriptions to documentation
     final paramDocs = _generateParameterDocs(operation, nameManager);
     if (paramDocs.isNotEmpty) {
       docs.addAll(paramDocs);
@@ -322,7 +317,7 @@ class ApiClientGenerator {
         }
         final flows = scheme.flows;
 
-        // Find the first available flow and show its scopes
+        // Method docs show one OAuth2 flow to keep scope details compact.
         OAuth2Flow? activeFlow;
         if (flows.authorizationCode != null) {
           activeFlow = flows.authorizationCode;

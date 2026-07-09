@@ -78,7 +78,6 @@ void main() {
       test('201 - uploads binary with empty schema (OAS 3.1)', () async {
         final filesApi = buildFilesApi(responseStatus: '201');
 
-        // Create test binary data
         final testData = Uint8List.fromList([
           0xDE,
           0xAD,
@@ -115,7 +114,7 @@ void main() {
         expect(success.response.statusCode, 200);
         expect(success.value.toBytes().length, greaterThan(0));
 
-        // Verify it's PNG data (starts with PNG magic bytes)
+        // PNG responses should preserve their magic bytes.
         expect(success.value.toBytes()[0], 0x89);
         expect(success.value.toBytes()[1], 0x50); // 'P'
         expect(success.value.toBytes()[2], 0x4E); // 'N'

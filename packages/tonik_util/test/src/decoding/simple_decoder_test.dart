@@ -49,7 +49,6 @@ void main() {
       });
 
       test('decodes DateTime values with timezone awareness', () {
-        // Test UTC parsing
         const utcString = '2024-03-14T10:30:45Z';
         final utcResult = utcString.decodeSimpleDateTime();
         expect(utcResult.year, 2024);
@@ -60,7 +59,6 @@ void main() {
         expect(utcResult.second, 45);
         expect(utcResult.timeZoneOffset, Duration.zero);
 
-        // Test local time parsing (no timezone offset)
         const localString = '2024-03-14T10:30:45';
         final localResult = localString.decodeSimpleDateTime();
         expect(localResult.year, 2024);
@@ -69,12 +67,9 @@ void main() {
         expect(localResult.hour, 10);
         expect(localResult.minute, 30);
         expect(localResult.second, 45);
-        // Local datetime uses system timezone
-        // should match same date in local timezone
         final expectedLocalTime = DateTime(2024, 3, 14, 10, 30, 45);
         expect(localResult.timeZoneOffset, expectedLocalTime.timeZoneOffset);
 
-        // Test timezone offset parsing
         const offsetString = '2024-03-14T10:30:45+05:00';
         final offsetResult = offsetString.decodeSimpleDateTime();
         expect(offsetResult.year, 2024);
@@ -86,7 +81,6 @@ void main() {
         expect(offsetResult.timeZoneOffset.inHours, 5);
         expect(offsetResult.timeZoneOffset.inMinutes, 5 * 60);
 
-        // Test negative timezone offset
         const negativeOffsetString = '2024-03-14T10:30:45-08:00';
         final negativeOffsetResult = negativeOffsetString
             .decodeSimpleDateTime();
@@ -99,7 +93,6 @@ void main() {
         expect(negativeOffsetResult.timeZoneOffset.inHours, -8);
         expect(negativeOffsetResult.timeZoneOffset.inMinutes, -8 * 60);
 
-        // Test error cases
         expect(
           () => 'not-a-date'.decodeSimpleDateTime(),
           throwsA(isA<InvalidTypeException>()),
@@ -419,17 +412,14 @@ void main() {
 
     group('Binary', () {
       test('decodes UTF-8 string to List<int>', () {
-        // Test standard UTF-8.
         const textString = 'Hello World';
         final result = textString.decodeSimpleBinary();
         expect(result, [72, 101, 108, 108, 111, 32, 87, 111, 114, 108, 100]);
 
-        // Test UTF-8 with special characters.
         const utf8String = 'Hëllö';
         final utf8Result = utf8String.decodeSimpleBinary();
         expect(utf8Result, [72, 195, 171, 108, 108, 195, 182]);
 
-        // Test empty string.
         const emptyString = '';
         final emptyResult = emptyString.decodeSimpleBinary();
         expect(emptyResult, <int>[]);

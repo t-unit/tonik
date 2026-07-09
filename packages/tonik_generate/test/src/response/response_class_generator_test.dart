@@ -70,15 +70,11 @@ void main() {
       );
 
       final generatedClass = generator.generateResponseClass(response);
-
-      // Verify class name and annotation
       expect(generatedClass.name, 'HeaderResponse');
       expect(
         generatedClass.annotations.first.accept(emitter).toString(),
         'immutable',
       );
-
-      // Verify fields
       final fields = generatedClass.fields.toList();
       expect(fields.length, 3);
 
@@ -102,8 +98,6 @@ void main() {
       expect(bodyField.modifier, FieldModifier.final$);
       expect(bodyField.type?.accept(emitter).toString(), 'String');
       expect(bodyField.annotations.isEmpty, isTrue);
-
-      // Verify constructor
       final constructor = generatedClass.constructors.first;
       expect(constructor.constant, isTrue);
 
@@ -174,8 +168,6 @@ void main() {
       expect(bodyField.type?.accept(emitter).toString(), 'int');
       expect(bodyField.modifier, FieldModifier.final$);
       expect(bodyField.annotations.isEmpty, isTrue);
-
-      // Verify constructor parameters maintain the same names
       final constructor = generatedClass.constructors.first;
       final params = constructor.optionalParameters.toList();
       expect(params.length, 2);

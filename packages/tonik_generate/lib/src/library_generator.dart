@@ -138,7 +138,6 @@ List<String> _formatApiDocumentation(ApiDocument apiDocument) {
     }
   }
 
-  // Add security schemes information
   final securitySchemes = apiDocument.securitySchemes;
   if (securitySchemes.isNotEmpty) {
     lines

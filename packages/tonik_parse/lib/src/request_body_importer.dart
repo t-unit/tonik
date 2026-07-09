@@ -53,7 +53,6 @@ class RequestBodyImporter {
     required ReferenceWrapper<RequestBody> wrapper,
     required core.Context context,
   }) {
-    // Check if we already have a request body with this name
     if (name != null) {
       final existing = requestBodies
           .where((body) => body.name == name)
@@ -128,8 +127,7 @@ class RequestBodyImporter {
                 contentType == core.ContentType.form && hasEncoding
                 ? _importFormEncoding(mediaType.encoding!, model)
                 : null;
-            final multipartEncoding =
-                contentType == core.ContentType.multipart
+            final multipartEncoding = contentType == core.ContentType.multipart
                 ? _populateMultipartDefaults(
                     name: name,
                     model: model,
@@ -392,8 +390,7 @@ class RequestBodyImporter {
       final useStyleMode = !isOas30 && hasExplicitStyleFields;
 
       final resolvedStyle = useStyleMode
-          ? (_mapSerializationStyle(encoding.style) ??
-                core.EncodingStyle.form)
+          ? (_mapSerializationStyle(encoding.style) ?? core.EncodingStyle.form)
           : null;
 
       result[propertyName] = core.PartEncoding(
@@ -402,8 +399,7 @@ class RequestBodyImporter {
         headers: headers,
         style: resolvedStyle,
         explode: useStyleMode
-            ? (encoding.explode ??
-                  (resolvedStyle == core.EncodingStyle.form))
+            ? (encoding.explode ?? (resolvedStyle == core.EncodingStyle.form))
             : null,
         allowReserved: useStyleMode ? (encoding.allowReserved ?? false) : null,
       );
@@ -417,10 +413,8 @@ class RequestBodyImporter {
     if (style == null) return null;
     return switch (style) {
       SerializationStyle.form => core.EncodingStyle.form,
-      SerializationStyle.spaceDelimited =>
-        core.EncodingStyle.spaceDelimited,
-      SerializationStyle.pipeDelimited =>
-        core.EncodingStyle.pipeDelimited,
+      SerializationStyle.spaceDelimited => core.EncodingStyle.spaceDelimited,
+      SerializationStyle.pipeDelimited => core.EncodingStyle.pipeDelimited,
       SerializationStyle.deepObject => core.EncodingStyle.deepObject,
       _ => null,
     };

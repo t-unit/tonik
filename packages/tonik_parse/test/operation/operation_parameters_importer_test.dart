@@ -151,17 +151,14 @@ void main() {
       (o) => o.operationId == 'getUserItem',
     );
 
-    // Path parameters
     final pathParams = operation?.pathParameters
         .whereType<PathParameterObject>()
         .toList();
     expect(pathParams, hasLength(2));
 
-    // Verify path parameter names
     final pathParamNames = pathParams?.map((p) => p.rawName).toSet();
     expect(pathParamNames, containsAll(['userId', 'itemId']));
 
-    // Verify path parameter properties
     final userIdParam = pathParams?.firstWhereOrNull(
       (p) => p.rawName == 'userId',
     );
@@ -174,17 +171,14 @@ void main() {
     expect(itemIdParam?.isRequired, true);
     expect(itemIdParam?.description, 'ID of the item');
 
-    // Query parameters
     final queryParams = operation?.queryParameters
         .whereType<QueryParameterObject>()
         .toList();
     expect(queryParams, hasLength(2));
 
-    // Verify query parameter names
     final queryParamNames = queryParams?.map((p) => p.rawName).toSet();
     expect(queryParamNames, containsAll(['include-deleted', 'fields']));
 
-    // Verify query parameter properties
     final includeDeletedParam = queryParams?.firstWhereOrNull(
       (p) => p.rawName == 'include-deleted',
     );
@@ -197,17 +191,14 @@ void main() {
     expect(fieldsParam?.isRequired, false);
     expect(fieldsParam?.description, 'Fields to include in response');
 
-    // Headers
     final headerParams = operation?.headers
         .whereType<RequestHeaderObject>()
         .toList();
     expect(headerParams, hasLength(2));
 
-    // Verify header parameter names
     final headerParamNames = headerParams?.map((h) => h.rawName).toSet();
     expect(headerParamNames, containsAll(['api-version', 'authorization']));
 
-    // Verify header parameter properties
     final apiVersionHeader = headerParams?.firstWhereOrNull(
       (h) => h.rawName == 'api-version',
     );
@@ -224,26 +215,22 @@ void main() {
   test('handles parameter references correctly', () {
     final api = Importer().import(fileContent);
 
-    // Check that referenced parameters are properly resolved
     final operation = api.operations.firstWhereOrNull(
       (o) => o.operationId == 'getUserItem',
     );
 
-    // Check referenced path parameter
     final itemIdParam = operation?.pathParameters
         .whereType<PathParameterObject>()
         .firstWhereOrNull((p) => p.rawName == 'itemId');
     expect(itemIdParam?.description, 'ID of the item');
     expect(itemIdParam?.isRequired, true);
 
-    // Check referenced query parameter
     final includeDeletedParam = operation?.queryParameters
         .whereType<QueryParameterObject>()
         .firstWhereOrNull((p) => p.rawName == 'include-deleted');
     expect(includeDeletedParam?.description, 'Include deleted items');
     expect(includeDeletedParam?.isRequired, false);
 
-    // Check referenced header parameters
     final authHeader = operation?.headers
         .whereType<RequestHeaderObject>()
         .firstWhereOrNull((h) => h.rawName == 'authorization');

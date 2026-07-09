@@ -64,7 +64,6 @@ void main() {
     test('201 - uploads binary file', () async {
       final filesApi = buildFilesApi(responseStatus: '201');
 
-      // Create test binary data
       final testData = Uint8List.fromList([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
 
       final result = await filesApi.uploadFile(

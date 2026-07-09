@@ -102,7 +102,7 @@ class AllOfGenerator {
   ]) {
     final publicClassName = nameManager.modelName(model);
 
-    // Use provided className, or generate Raw prefix for nullable models.
+    // Nullable public aliases need a Raw-prefixed concrete class.
     final actualClassName =
         className ??
         (model.isNullable
@@ -594,7 +594,7 @@ class AllOfGenerator {
       'package:tonik_util/tonik_util.dart',
     );
 
-    // Check if any of the models have dynamic encoding shapes
+    // Mixed nested models require runtime shape selection.
     final hasDynamicModels = normalizedProperties.any((prop) {
       return prop.property.model.encodingShape == EncodingShape.mixed;
     });
@@ -657,7 +657,7 @@ class AllOfGenerator {
       );
     }
 
-    // For models without dynamic shapes, use the hardcoded approach
+    // Static shapes can be emitted as a constant getter.
     final shapeRef = switch (model.encodingShape) {
       EncodingShape.simple => encodingShapeType.property('simple'),
       EncodingShape.complex => encodingShapeType.property('complex'),
@@ -682,7 +682,7 @@ class AllOfGenerator {
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
 
-    // Check for list properties first (before any other logic)
+    // Arrays need to be rejected before object-style allOf merging.
     final hasListProperties = normalizedProperties.any(
       (prop) => prop.property.model.resolved is ListModel,
     );
@@ -692,7 +692,7 @@ class AllOfGenerator {
           (prop) => prop.property.model.resolved is ListModel,
         );
 
-    // If we have lists mixed with other types, throw exception
+    // JSON cannot merge array and object allOf branches safely.
     if (hasListProperties && !allListProperties) {
       return Method(
         (b) => b
@@ -786,13 +786,13 @@ class AllOfGenerator {
       );
     }
 
-    // Check if any of the models have dynamic encoding shapes
+    // Mixed nested models require runtime shape selection.
     final hasDynamicModels = normalizedProperties.any((prop) {
       return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
-      // Generate dynamic logic that checks encoding shape at runtime
+      // Runtime shape checks keep mixed allOf from using simple encoders.
       final encodingShapeType = refer(
         'EncodingShape',
         'package:tonik_util/tonik_util.dart',
@@ -1287,7 +1287,7 @@ class AllOfGenerator {
       );
     }
 
-    // Check if we have any list properties FIRST (before simple types check)
+    // Arrays need to be rejected before simple scalar handling.
     final hasListProperties = normalizedProperties.any(
       (prop) => prop.property.model.resolved is ListModel,
     );
@@ -1297,7 +1297,6 @@ class AllOfGenerator {
           (prop) => prop.property.model.resolved is ListModel,
         );
 
-    // If we have lists (either all or mixed), throw exception
     if (hasListProperties) {
       final message = allListProperties
           ? 'parameterProperties not supported for $className: contains '
@@ -1315,7 +1314,7 @@ class AllOfGenerator {
       );
     }
 
-    // Check if we have any map properties
+    // Maps cannot be represented as flat parameterProperties.
     final hasMapProperties = normalizedProperties.any(
       (prop) => prop.property.model.resolved is MapModel,
     );
@@ -1469,13 +1468,13 @@ for (final _\$e in $apFieldName.entries) {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    // Check if any of the models have dynamic encoding shapes
+    // Mixed nested models require runtime shape selection.
     final hasDynamicModels = normalizedProperties.any((prop) {
       return prop.property.model.encodingShape == EncodingShape.mixed;
     });
 
     if (hasDynamicModels) {
-      // Generate dynamic logic that checks encoding shape at runtime
+      // Runtime shape checks keep mixed allOf from using simple encoders.
       final encodingShapeType = refer(
         'EncodingShape',
         'package:tonik_util/tonik_util.dart',
@@ -1580,7 +1579,7 @@ for (final _\$e in $apFieldName.entries) {
     }
 
     if (model.hasComplexTypes) {
-      // Check if all complex types are lists with simple content
+      // Simple-list branches are the only complex branches supported here.
       final allComplexAreSimpleLists = normalizedProperties
           .where((p) => p.property.model.encodingShape == EncodingShape.complex)
           .every(
@@ -1809,24 +1808,32 @@ for (final _\$e in $apFieldName.entries) {
             .property('toBase64String')
             .call([])
             .property('toForm')
-            .call([refer('paramName')], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-              'useQueryComponent': refer('useQueryComponent'),
-              'allowReserved': refer('allowReserved'),
-            });
+            .call(
+              [refer('paramName')],
+              {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+                'allowReserved': refer('allowReserved'),
+              },
+            );
       }
       if (resolved is BinaryModel) {
         return generateEncodingExceptionExpression(
           'Binary data cannot be form-encoded',
         );
       }
-      return receiver.property('toForm').call([refer('paramName')], {
-        'explode': refer('explode'),
-        'allowEmpty': refer('allowEmpty'),
-        'useQueryComponent': refer('useQueryComponent'),
-        'allowReserved': refer('allowReserved'),
-      });
+      return receiver
+          .property('toForm')
+          .call(
+            [refer('paramName')],
+            {
+              'explode': refer('explode'),
+              'allowEmpty': refer('allowEmpty'),
+              'useQueryComponent': refer('useQueryComponent'),
+              'allowReserved': refer('allowReserved'),
+            },
+          );
     }
 
     List<Code> collectAndReturn(
@@ -1834,12 +1841,12 @@ for (final _\$e in $apFieldName.entries) {
       required String inconsistentMessage,
     }) {
       final code = <Code>[
-        declareFinal(r'_$entryLists')
-            .assign(literalList([], buildParameterEntryListType()))
-            .statement,
-        declareFinal(r'_$values')
-            .assign(literalSet([], refer('String', 'dart:core')))
-            .statement,
+        declareFinal(
+          r'_$entryLists',
+        ).assign(literalList([], buildParameterEntryListType())).statement,
+        declareFinal(
+          r'_$values',
+        ).assign(literalSet([], refer('String', 'dart:core'))).statement,
       ];
 
       final allNullable = props.every(isNullableProp);
@@ -1852,9 +1859,9 @@ for (final _\$e in $apFieldName.entries) {
         final entries = propFormEntries(receiver, prop.property.model);
         code.addAll([
           if (nullable) Code('if (${prop.normalizedName} != null) {'),
-          declareFinal('_\$${prop.normalizedName}Form')
-              .assign(entries)
-              .statement,
+          declareFinal(
+            '_\$${prop.normalizedName}Form',
+          ).assign(entries).statement,
           refer(r'_$entryLists').property('add').call([
             refer('_\$${prop.normalizedName}Form'),
           ]).statement,
@@ -1905,12 +1912,15 @@ for (final _\$e in $apFieldName.entries) {
           'fieldEncodings': refer('fieldEncodings'),
         })
         .property('toForm')
-        .call([refer('paramName')], {
-          'explode': refer('explode'),
-          'allowEmpty': refer('allowEmpty'),
-          'alreadyEncoded': literalBool(true),
-          'useQueryComponent': refer('useQueryComponent'),
-        })
+        .call(
+          [refer('paramName')],
+          {
+            'explode': refer('explode'),
+            'allowEmpty': refer('allowEmpty'),
+            'alreadyEncoded': literalBool(true),
+            'useQueryComponent': refer('useQueryComponent'),
+          },
+        )
         .returned
         .statement;
 
@@ -1991,7 +2001,7 @@ for (final _\$e in $apFieldName.entries) {
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    // Check if the parent model has mixed encoding shape
+    // Mixed nested models require runtime shape validation.
     final hasDynamicModels = normalizedProperties.any((prop) {
       return prop.property.model.encodingShape == EncodingShape.mixed;
     });
@@ -2107,7 +2117,7 @@ for (final _\$e in $apFieldName.entries) {
     }
 
     if (model.hasComplexTypes) {
-      // Check if all complex types are lists with simple content
+      // Simple-list branches are the only complex branches supported here.
       final allComplexAreSimpleLists = normalizedProperties
           .where((p) => p.property.model.encodingShape == EncodingShape.complex)
           .every(
@@ -2344,7 +2354,7 @@ for (final _\$e in $apFieldName.entries) {
     }
 
     if (model.hasComplexTypes) {
-      // Check if all complex types are lists with simple content
+      // Simple-list branches are the only complex branches supported here.
       final allComplexAreSimpleLists = normalizedProperties
           .where((p) => p.property.model.encodingShape == EncodingShape.complex)
           .every(
@@ -2634,7 +2644,7 @@ for (final _\$e in $apFieldName.entries) {
       );
     }
 
-    // Check if any property is complex (cannot be URI encoded)
+    // URI encoding only supports simple property shapes.
     final hasComplexProperties = normalizedProperties.any((prop) {
       return prop.property.model.encodingShape == EncodingShape.complex;
     });
@@ -2690,13 +2700,14 @@ for (final _\$e in $apFieldName.entries) {
         if (isNullable) Code('if (${prop.normalizedName} != null) {'),
         declareFinal('_\$${prop.normalizedName}Encoded')
             .assign(
-              uriEncodeReceiverExpression(prop.property.model, receiver)
-                  .property('uriEncode')
-                  .call([], {
-                    'allowEmpty': refer('allowEmpty'),
-                    'useQueryComponent': refer('useQueryComponent'),
-                    'allowReserved': refer('allowReserved'),
-                  }),
+              uriEncodeReceiverExpression(
+                prop.property.model,
+                receiver,
+              ).property('uriEncode').call([], {
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+                'allowReserved': refer('allowReserved'),
+              }),
             )
             .statement,
         refer(r'_$values').property('add').call([
