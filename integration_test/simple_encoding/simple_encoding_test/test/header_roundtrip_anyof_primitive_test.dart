@@ -46,14 +46,10 @@ void main() {
         final success =
             result
                 as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           'hello',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.string, 'hello');
       });
@@ -71,13 +67,11 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
 
-        // Verify encoded request header (spaces URL encoded)
+        // Spaces are URL encoded in simple-style headers.
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           'hello%20world',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.string, 'hello world');
       });
@@ -112,14 +106,12 @@ void main() {
         final success =
             result
                 as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           '42',
         );
 
-        // Verify decoded response - note: anyOf may decode multiple variants
+        // anyOf may decode multiple variants.
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.int, 42);
       });
@@ -136,14 +128,10 @@ void main() {
         final success =
             result
                 as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           '0',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.int, 0);
       });
@@ -160,14 +148,10 @@ void main() {
         final success =
             result
                 as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           '-123',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.int, -123);
       });
@@ -186,14 +170,10 @@ void main() {
         final success =
             result
                 as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           'true',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.bool, true);
       });
@@ -210,14 +190,10 @@ void main() {
         final success =
             result
                 as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           'false',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.bool, false);
       });
@@ -236,14 +212,10 @@ void main() {
           final success =
               result
                   as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
-
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Flexible-Value'],
             isNull,
           );
-
-          // Verify response property is null
           expect(success.value.xFlexibleValue, isNull);
         },
       );

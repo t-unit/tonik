@@ -47,13 +47,11 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
           '42',
         );
 
-        // Verify decoded response
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveInt>());
         expect(
           (success.value.xPrimitiveUnion! as OneOfPrimitiveInt).value,
@@ -74,13 +72,11 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
           '0',
         );
 
-        // Verify decoded response
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveInt>());
         expect(
           (success.value.xPrimitiveUnion! as OneOfPrimitiveInt).value,
@@ -101,13 +97,11 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
           '-123',
         );
 
-        // Verify decoded response
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveInt>());
         expect(
           (success.value.xPrimitiveUnion! as OneOfPrimitiveInt).value,
@@ -128,13 +122,11 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
           '9999999',
         );
 
-        // Verify decoded response
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveInt>());
         expect(
           (success.value.xPrimitiveUnion! as OneOfPrimitiveInt).value,
@@ -157,13 +149,11 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
           'hello',
         );
 
-        // Verify decoded response
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
         expect(
           (success.value.xPrimitiveUnion! as OneOfPrimitiveString).value,
@@ -184,13 +174,11 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify encoded request header (spaces are URL encoded)
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
           'hello%20world',
         );
 
-        // Verify decoded response
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
         expect(
           (success.value.xPrimitiveUnion! as OneOfPrimitiveString).value,
@@ -212,7 +200,6 @@ void main() {
         final error =
             result as TonikError<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify this is an encoding error (not a network or decoding error)
         expect(error.type, TonikErrorType.encoding);
 
         // No response because request was never sent
@@ -233,7 +220,6 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
           '12345',
@@ -260,13 +246,11 @@ void main() {
             result
                 as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        // Verify header is not present when null
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
           isNull,
         );
 
-        // Verify decoded response
         expect(success.value.xPrimitiveUnion, isNull);
       });
     });

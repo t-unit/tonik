@@ -11,12 +11,9 @@ extension DateTimeEncodingExtension on DateTime {
   /// For local dates, this ensures the timezone offset is properly included.
   String toTimeZonedIso8601String() {
     if (isUtc) {
-      // For UTC dates, use toIso8601String which works correctly
       return toIso8601String();
     }
 
-    // For local dates, we need to include timezone offset
-    // Format the base date and time manually to match toIso8601String format
     final year = this.year;
     final month = _twoDigits(this.month);
     final day = _twoDigits(this.day);
@@ -24,7 +21,6 @@ extension DateTimeEncodingExtension on DateTime {
     final minute = _twoDigits(this.minute);
     final second = _twoDigits(this.second);
 
-    // Combine milliseconds and microseconds into a single fractional part
     final String fractionalString;
     if (millisecond == 0 && microsecond == 0) {
       fractionalString = '';
@@ -35,12 +31,10 @@ extension DateTimeEncodingExtension on DateTime {
           '.${_threeDigits(millisecond)}${_threeDigits(microsecond)}';
     }
 
-    // Get the timezone offset in hours and minutes
     final offset = timeZoneOffset;
     final offsetHours = offset.inHours.abs();
     final offsetMinutes = offset.inMinutes.abs() % 60;
 
-    // Format timezone offset
     final offsetSign = offset.isNegative ? '-' : '+';
     final offsetString =
         '$offsetSign'

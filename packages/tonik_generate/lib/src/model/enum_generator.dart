@@ -67,8 +67,8 @@ class EnumGenerator {
     );
     final fallbackNormalizedName = variantNames.fallbackName;
 
-    // Generate unique name for nullable enum with prefix to allow
-    // using a typedef to express the nullable type.
+    // Nullable enums need a Raw-prefixed concrete enum so a typedef can
+    // express the nullable public type.
     final actualEnumName = model.isNullable
         ? nameManager.modelName(
             AliasModel(
@@ -352,12 +352,11 @@ class EnumGenerator {
               ).property(fallbackNormalizedName).code,
           ).closure
         : Method(
-            (mb) =>
-                mb
-                  ..body = generateDecodingExceptionExpression(
-                    valueErrorMessage,
-                    raw: true,
-                  ).code,
+            (mb) => mb
+              ..body = generateDecodingExceptionExpression(
+                valueErrorMessage,
+                raw: true,
+              ).code,
           ).closure;
 
     return Constructor(

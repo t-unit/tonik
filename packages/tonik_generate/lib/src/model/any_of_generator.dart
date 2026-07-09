@@ -125,7 +125,7 @@ class AnyOfGenerator {
   ]) {
     final publicClassName = nameManager.modelName(model);
 
-    // Use provided className, or generate Raw prefix for nullable models.
+    // Nullable public aliases need a Raw-prefixed concrete class.
     final actualClassName =
         className ??
         (model.isNullable
@@ -861,14 +861,13 @@ class AnyOfGenerator {
       body.addAll(blocks);
     }
 
-    // Handle empty case
     body
       ..add(
         const Code(
           r'if (_$values.isEmpty && _$mapValues.isEmpty) return null;',
         ),
       )
-      // Handle mixed encoding at runtime - throw exception
+      // Simple and complex values cannot share one anyOf wire shape.
       ..addAll([
         const Code(r'if (_$values.isNotEmpty && _$mapValues.isNotEmpty) {'),
         generateEncodingExceptionExpression(
@@ -878,7 +877,6 @@ class AnyOfGenerator {
         ).statement,
         const Code('}'),
       ])
-      // Handle simple values only
       ..addAll([
         const Code(r'if (_$values.isNotEmpty) {'),
         const Code(r'if (_$values.length > 1) {'),
@@ -892,7 +890,7 @@ class AnyOfGenerator {
         const Code('}'),
       ]);
 
-    // Handle complex values only - merge maps
+    // Complex anyOf branches serialize as maps, so merge selected branches.
     final mergeBlocks = [
       const Code(r'final _$map = '),
       literalMap(
@@ -1340,7 +1338,12 @@ class AnyOfGenerator {
       codes
         ..add(Code('final _\$${fieldName}Form = '))
         ..add(entries.statement)
-        ..add(Code(r'_$entryLists.add(_$' '${fieldName}Form);'))
+        ..add(
+          Code(
+            r'_$entryLists.add(_$'
+            '${fieldName}Form);',
+          ),
+        )
         ..add(
           Code(
             r'_$values.add(_$'
@@ -1353,8 +1356,7 @@ class AnyOfGenerator {
 
     if (fieldModel.resolved is Base64Model) {
       addSimpleEntries(
-        refer(fieldName)
-            .nullChecked
+        refer(fieldName).nullChecked
             .property('toBase64String')
             .call([])
             .property('toForm')
@@ -1376,15 +1378,17 @@ class AnyOfGenerator {
       );
     } else if (fieldModel.encodingShape == EncodingShape.simple) {
       addSimpleEntries(
-        refer(fieldName).nullChecked.property('toForm').call(
-          [refer('paramName')],
-          {
-            'explode': refer('explode'),
-            'allowEmpty': refer('allowEmpty'),
-            'useQueryComponent': refer('useQueryComponent'),
-            'allowReserved': refer('allowReserved'),
-          },
-        ),
+        refer(fieldName).nullChecked
+            .property('toForm')
+            .call(
+              [refer('paramName')],
+              {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+                'allowReserved': refer('allowReserved'),
+              },
+            ),
       );
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
       final listEntries = fieldModel is ListModel && fieldModel.hasSimpleContent
@@ -1448,15 +1452,17 @@ class AnyOfGenerator {
         ..add(encodingShapeRef.property('simple').code)
         ..add(const Code(':'));
       addSimpleEntries(
-        refer(fieldName).nullChecked.property('toForm').call(
-          [refer('paramName')],
-          {
-            'explode': refer('explode'),
-            'allowEmpty': refer('allowEmpty'),
-            'useQueryComponent': refer('useQueryComponent'),
-            'allowReserved': refer('allowReserved'),
-          },
-        ),
+        refer(fieldName).nullChecked
+            .property('toForm')
+            .call(
+              [refer('paramName')],
+              {
+                'explode': refer('explode'),
+                'allowEmpty': refer('allowEmpty'),
+                'useQueryComponent': refer('useQueryComponent'),
+                'allowReserved': refer('allowReserved'),
+              },
+            ),
       );
       codes
         ..add(const Code('break;'))

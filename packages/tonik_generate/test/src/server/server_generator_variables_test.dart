@@ -405,8 +405,6 @@ void main() {
       ];
 
       final result = generator.generate(servers);
-
-      // Verify file structure.
       expect(
         result.code,
         contains('// Generated code - do not modify by hand'),
@@ -416,15 +414,11 @@ void main() {
         result.code,
         contains("import 'package:tonik_util/tonik_util.dart'"),
       );
-
-      // Verify enum declaration is present.
       expect(result.code, contains('enum RegionalServerRegion'));
       expect(result.code, contains("usEast(r'us-east')"));
       expect(result.code, contains("usWest(r'us-west')"));
       expect(result.code, contains("euCentral(r'eu-central')"));
       expect(result.code, contains('const RegionalServerRegion(this.value)'));
-
-      // Verify server class declaration is present.
       expect(result.code, contains('class RegionalServer extends Server'));
       expect(
         result.code,
@@ -432,8 +426,6 @@ void main() {
       );
       expect(result.code, contains("this.port = r'443'"));
       expect(result.code, contains('final RegionalServerRegion region'));
-
-      // Verify URL interpolation.
       expect(
         collapseWhitespace(result.code),
         contains(

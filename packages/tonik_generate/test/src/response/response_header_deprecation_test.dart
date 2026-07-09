@@ -56,8 +56,6 @@ void main() {
         );
 
         final result = generator.generateResponseClass(response);
-
-        // Find the deprecated header field
         final deprecatedField = result.fields.firstWhere(
           (f) => f.name == 'xLegacyHeader',
           orElse: () => throw StateError('No xLegacyHeader field found'),
@@ -158,8 +156,6 @@ void main() {
         );
 
         final result = generator.generateResponseClass(response);
-
-        // Check deprecated field has annotation
         final legacyField = result.fields.firstWhere(
           (f) => f.name == 'xLegacy',
           orElse: () => throw StateError('No xLegacy field found'),
@@ -168,8 +164,6 @@ void main() {
           (a) => a.accept(emitter).toString().contains('Deprecated'),
         );
         expect(legacyHasDeprecated, isTrue);
-
-        // Check current field does not have annotation
         final currentField = result.fields.firstWhere(
           (f) => f.name == 'xCurrent',
           orElse: () => throw StateError('No xCurrent field found'),
@@ -221,8 +215,6 @@ void main() {
         );
 
         final results = generator.generateMultiBodyResponseClasses(response);
-
-        // Check the base sealed class has deprecated header field
         final baseClass = results.whereType<Class>().firstWhere(
           (c) => c.name == 'MultiBodyResponse',
           orElse: () => throw StateError('No base class found'),

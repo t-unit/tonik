@@ -613,8 +613,6 @@ void main() {
         final success =
             response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
         expect(success.response.statusCode, 200);
-
-        // Verify all request headers
         final requestHeaders = success.response.requestOptions.headers;
         expect(requestHeaders['x-integer'], '42');
         expect(requestHeaders['x-double'], '3.14');
@@ -622,8 +620,6 @@ void main() {
         expect(requestHeaders['x-string'], 'test-value');
         expect(requestHeaders['x-boolean'], 'true');
         expect(requestHeaders['x-date'], '2023-06-15');
-
-        // Verify all response values
         expect(success.value.xInteger, 42);
         expect(success.value.xDouble, 3.14);
         expect(success.value.xNumber, 100.5);

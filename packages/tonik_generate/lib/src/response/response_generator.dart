@@ -217,7 +217,6 @@ class ResponseGenerator {
     final className = nameManager.responseNames(response).baseName;
     final normalizedBaseProperties = normalizeResponseProperties(response);
 
-    // Create base sealed class
     final baseClass = Class(
       (b) => b
         ..name = className
@@ -268,13 +267,11 @@ class ResponseGenerator {
         ),
     );
 
-    // Create implementation classes for each body type
     final implementationClasses = response.bodies.map((body) {
       final implementationName = nameManager
           .responseNames(response)
           .implementationNames[body.rawContentType]!;
 
-      // Create properties for equals and hashCode methods
       final allProperties = normalizeResponseProperties(
         ResponseObject(
           name: null,
@@ -320,7 +317,6 @@ class ResponseGenerator {
 
       final methods = [equalsMethod, hashCodeMethod];
 
-      // Add copyWith getter and infrastructure classes if we have headers
       var copyWithInfrastructure = <Spec>[];
       if (response.headers.isNotEmpty) {
         final copyWithResult = _buildCopyWith(

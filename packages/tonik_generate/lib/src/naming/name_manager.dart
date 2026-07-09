@@ -73,31 +73,25 @@ class NameManager {
       _logServerName(entry.value, entry.key);
     }
 
-    // Process models in order: root-level models first, then nested models
-    // This prevents naming conflicts where nested models get processed
-    // before root models
+    // Root-level models claim names before nested models to avoid conflicts.
     final sortedModels = models.toList()
       ..sort((a, b) {
-        // First, sort by context path length (shorter paths first)
         final aPathLength = a.context.path.length;
         final bPathLength = b.context.path.length;
         if (aPathLength != bPathLength) {
           return aPathLength.compareTo(bPathLength);
         }
 
-        // For models with the same path length, sort by name
         final aName = a is NamedModel ? (a.name ?? '') : '';
         final bName = b is NamedModel ? (b.name ?? '') : '';
         final nameComp = aName.compareTo(bName);
         if (nameComp != 0) return nameComp;
 
-        // For models with same path length and name, sort by context string
         final contextComp = a.context.toString().compareTo(
           b.context.toString(),
         );
         if (contextComp != 0) return contextComp;
 
-        // Finally, sort by stable model structure
         return stableModelSorter
             .stableKeyOf(a)
             .compareTo(stableModelSorter.stableKeyOf(b));
@@ -118,7 +112,6 @@ class NameManager {
     }
 
     for (final response in responses) {
-      // Generate names for responses with headers or multiple bodies
       if (response.hasHeaders || response.bodyCount > 1) {
         final (:baseName, :implementationNames) = responseNames(response);
         _logResponseName(baseName, response);
@@ -219,7 +212,6 @@ class NameManager {
     required Model model,
     required String? discriminatorValue,
   }) {
-    // Create a cache key for this variant
     final cacheKey =
         '$parentClassName:${model.hashCode}:${discriminatorValue ?? 'null'}';
 
@@ -260,8 +252,9 @@ class NameManager {
     );
   }
 
-  /// Helper method to create a cache key from a list of servers
-  /// This ensures that lists with equal content generate the same key
+  /// Creates a cache key from a list of servers.
+  ///
+  /// Lists with equal content generate the same key.
   @visibleForTesting
   String createServerCacheKey(List<Server> servers) {
     return servers.map((s) => '${s.url}|${s.description ?? "null"}').join(',');
@@ -276,18 +269,14 @@ class NameManager {
   /// Returns a record with a map of servers to names and a custom server name.
   ({String baseName, Map<Server, String> serverMap, String customName})
   serverNames(List<Server> servers) {
-    // Create a cache key based on server content rather than list identity
     final cacheKey = createServerCacheKey(servers);
 
-    // Check if we already have cached names for this content
     if (serverNamesCache.containsKey(cacheKey)) {
       return serverNamesCache[cacheKey]!;
     }
 
-    // Generate names for all servers in the list
     final result = generator.generateServerNames(servers);
 
-    // Cache the result using the content-based key
     serverNamesCache[cacheKey] = result;
 
     return result;

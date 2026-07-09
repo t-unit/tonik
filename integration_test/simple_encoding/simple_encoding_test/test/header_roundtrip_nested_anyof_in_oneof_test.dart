@@ -50,14 +50,10 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripNestedAnyofInOneofGet200Response
                 >;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           '42',
         );
-
-        // Verify decoded response
         expect(success.value.xNestedValue, isA<NestedAnyOfInOneOfAnyOfMixed>());
         final decoded =
             success.value.xNestedValue! as NestedAnyOfInOneOfAnyOfMixed;
@@ -80,14 +76,10 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripNestedAnyofInOneofGet200Response
                 >;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'number,99',
         );
-
-        // Verify decoded response
         expect(success.value.xNestedValue, isA<NestedAnyOfInOneOfAnyOfMixed>());
         final decoded =
             success.value.xNestedValue! as NestedAnyOfInOneOfAnyOfMixed;
@@ -112,13 +104,13 @@ void main() {
                   HeadersRoundtripNestedAnyofInOneofGet200Response
                 >;
 
-        // Verify encoded request header (PriorityEnum.three has value 3)
+        // PriorityEnum.three has raw value 3.
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           '3',
         );
 
-        // Verify decoded response - note: integer decoding may succeed first
+        // Integer decoding may succeed first.
         expect(success.value.xNestedValue, isNotNull);
       });
     });
@@ -138,14 +130,12 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripNestedAnyofInOneofGet200Response
                 >;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'true',
         );
 
-        // Verify decoded response - AnyOfMixed will be tried first
+        // AnyOfMixed is tried first.
         expect(success.value.xNestedValue, isNotNull);
       });
 
@@ -163,14 +153,10 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripNestedAnyofInOneofGet200Response
                 >;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'false',
         );
-
-        // Verify decoded response
         expect(success.value.xNestedValue, isNotNull);
       });
     });
@@ -192,14 +178,10 @@ void main() {
                   as TonikSuccess<
                     HeadersRoundtripNestedAnyofInOneofGet200Response
                   >;
-
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Nested-Value'],
             isNull,
           );
-
-          // Verify response property is null
           expect(success.value.xNestedValue, isNull);
         },
       );

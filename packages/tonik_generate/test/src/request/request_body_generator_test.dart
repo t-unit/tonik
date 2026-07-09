@@ -160,13 +160,11 @@ void main() {
         expect(subClass.name, 'MultiBodyJson');
         expect(subClass.extend?.accept(emitter).toString(), 'MultiBody');
 
-        // Test field
         final field = subClass.fields.first;
         expect(field.name, 'value');
         expect(field.modifier, FieldModifier.final$);
         expect(field.type?.accept(emitter).toString(), 'String');
 
-        // Test constructor
         final constructor = subClass.constructors.first;
         expect(constructor.constant, isTrue);
         expect(constructor.requiredParameters.length, 1);

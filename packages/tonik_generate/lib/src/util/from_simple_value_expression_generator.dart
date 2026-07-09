@@ -405,7 +405,7 @@ Expression _buildPrimitiveList(
         .property('toList')
         .call([]);
   } else {
-    // Use code_builder's nullSafeProperty for ?.map
+    // code_builder needs nullSafeProperty to emit ?.map.
     return listDecode
         .nullSafeProperty('map')
         .call([mapFunction])

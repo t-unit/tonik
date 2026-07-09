@@ -60,13 +60,11 @@ void main() {
       final success = result as TonikSuccess<SimpleTypeArrays>;
       expect(success.response.statusCode, 200);
 
-      // Verify request body encoding
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
       expect(requestData['requiredStringOrNumber'], 'hello');
       expect(requestData['requiredIntOrBool'], 42);
 
-      // Verify response decoding
       final output = success.value;
       expect(
         output.requiredStringOrNumber,
@@ -148,8 +146,9 @@ void main() {
       const input = SimpleTypeArrays(
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
-        requiredIntOrBool:
-            SimpleTypeArraysRequiredIntOrBoolOneOfModelBool(false),
+        requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelBool(
+          false,
+        ),
       );
 
       final result = await api.testSimpleTypes(body: input);
@@ -214,8 +213,9 @@ void main() {
         requiredStringOrNumber:
             SimpleTypeArraysRequiredStringOrNumberOneOfModelString('test'),
         requiredIntOrBool: SimpleTypeArraysRequiredIntOrBoolOneOfModelInt(1),
-        optionalStringOrInt:
-            SimpleTypeArraysOptionalStringOrIntOneOfModelInt(123),
+        optionalStringOrInt: SimpleTypeArraysOptionalStringOrIntOneOfModelInt(
+          123,
+        ),
       );
 
       final result = await api.testSimpleTypes(body: input);
@@ -364,10 +364,11 @@ void main() {
         nullableBoolean: true,
         nullableStringOrNumber:
             NullableTypeArraysNullableStringOrNumberOneOfModelString(
-          'mixed-string',
+              'mixed-string',
+            ),
+        nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelInt(
+          777,
         ),
-        nullableMultiType:
-            NullableTypeArraysNullableMultiTypeOneOfModelInt(777),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -375,7 +376,6 @@ void main() {
       expect(result, isA<TonikSuccess<NullableTypeArrays>>());
       final success = result as TonikSuccess<NullableTypeArrays>;
 
-      // Verify request encoding
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
       expect(requestData['requiredNullable'], 'required-value');
@@ -385,7 +385,6 @@ void main() {
       expect(requestData['nullableStringOrNumber'], 'mixed-string');
       expect(requestData['nullableMultiType'], 777);
 
-      // Verify response decoding
       final output = success.value;
       expect(output.requiredNullable, 'required-value');
       expect(output.nullableString, 'string-value');
@@ -425,7 +424,6 @@ void main() {
       expect(result, isA<TonikSuccess<NullableTypeArrays>>());
       final success = result as TonikSuccess<NullableTypeArrays>;
 
-      // Verify request encoding includes null values
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
       expect(requestData['requiredNullable'], isNull);
@@ -435,7 +433,6 @@ void main() {
       expect(requestData['nullableStringOrNumber'], isNull);
       expect(requestData['nullableMultiType'], isNull);
 
-      // Verify response decoding
       final output = success.value;
       expect(output.requiredNullable, isNull);
       expect(output.nullableString, isNull);
@@ -452,8 +449,8 @@ void main() {
         requiredNullable: null,
         nullableStringOrNumber:
             NullableTypeArraysNullableStringOrNumberOneOfModelString(
-          'test-string',
-        ),
+              'test-string',
+            ),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -514,8 +511,9 @@ void main() {
 
       const input = NullableTypeArrays(
         requiredNullable: null,
-        nullableMultiType:
-            NullableTypeArraysNullableMultiTypeOneOfModelString('multi-string'),
+        nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelString(
+          'multi-string',
+        ),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -545,8 +543,9 @@ void main() {
 
       const input = NullableTypeArrays(
         requiredNullable: null,
-        nullableMultiType:
-            NullableTypeArraysNullableMultiTypeOneOfModelInt(999),
+        nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelInt(
+          999,
+        ),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -576,8 +575,9 @@ void main() {
 
       const input = NullableTypeArrays(
         requiredNullable: null,
-        nullableMultiType:
-            NullableTypeArraysNullableMultiTypeOneOfModelBool(false),
+        nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelBool(
+          false,
+        ),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -613,10 +613,8 @@ void main() {
       final success = result as TonikSuccess<StringOrNumber>;
       expect(success.response.statusCode, 200);
 
-      // Verify path parameter encoding
       expect(success.response.requestOptions.uri.path, '/top-level/test-param');
 
-      // Verify response is string variant
       expect(success.value, isA<StringOrNumberString>());
       expect((success.value as StringOrNumberString).value, 'test-value');
     });
@@ -629,8 +627,8 @@ void main() {
       const input = CompositionWithTypeArrays(
         simpleTypeArray:
             CompositionWithTypeArraysSimpleTypeArrayOneOfModelString(
-          'simple-string',
-        ),
+              'simple-string',
+            ),
         nullableTypeArray:
             CompositionWithTypeArraysNullableTypeArrayOneOfModelInt(123),
       );
@@ -641,13 +639,11 @@ void main() {
       final success = result as TonikSuccess<CompositionWithTypeArrays>;
       expect(success.response.statusCode, 200);
 
-      // Verify request encoding
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
       expect(requestData['simpleTypeArray'], 'simple-string');
       expect(requestData['nullableTypeArray'], 123);
 
-      // Verify response decoding
       final output = success.value;
       expect(
         output.simpleTypeArray,
@@ -751,12 +747,10 @@ void main() {
       expect(result, isA<TonikSuccess<EdgeCases>>());
       final success = result as TonikSuccess<EdgeCases>;
 
-      // Verify request encoding
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
       expect(requestData['allPrimitives'], 'all-string');
 
-      // Verify response decoding
       final output = success.value;
       expect(
         output.allPrimitives,
@@ -851,8 +845,9 @@ void main() {
 
       const input = EdgeCases(
         allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-        allPrimitivesNullable:
-            EdgeCasesAllPrimitivesNullableOneOfModelString('nullable-string'),
+        allPrimitivesNullable: EdgeCasesAllPrimitivesNullableOneOfModelString(
+          'nullable-string',
+        ),
         integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
       );
 
@@ -914,8 +909,9 @@ void main() {
 
       const input = EdgeCases(
         allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-        allPrimitivesNullable:
-            EdgeCasesAllPrimitivesNullableOneOfModelNumber(99.99),
+        allPrimitivesNullable: EdgeCasesAllPrimitivesNullableOneOfModelNumber(
+          99.99,
+        ),
         integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
       );
 
@@ -946,8 +942,9 @@ void main() {
 
       const input = EdgeCases(
         allPrimitives: EdgeCasesAllPrimitivesOneOfModelString('test'),
-        allPrimitivesNullable:
-            EdgeCasesAllPrimitivesNullableOneOfModelBool(false),
+        allPrimitivesNullable: EdgeCasesAllPrimitivesNullableOneOfModelBool(
+          false,
+        ),
         integerAndNumber: EdgeCasesIntegerAndNumberOneOfModelInt(1),
       );
 

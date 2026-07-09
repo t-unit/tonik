@@ -283,15 +283,11 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method has required parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'sessionId',
       );
       expect(param.required, isTrue);
       expect(param.type?.accept(emitter).toString(), 'String');
-
-      // Check method body generates cookie header.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -371,8 +367,6 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method has both required parameters.
       expect(method.optionalParameters, hasLength(2));
 
       final sessionParam = method.optionalParameters.firstWhere(
@@ -384,8 +378,6 @@ void main() {
         (p) => p.name == 'userId',
       );
       expect(userParam.required, isTrue);
-
-      // Check method body generates multiple cookie parts.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -450,15 +442,11 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method has optional parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'optionalSession',
       );
       expect(param.required, isFalse);
       expect(param.type?.accept(emitter).toString(), 'String?');
-
-      // Check method body has null check for optional cookie.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -520,15 +508,11 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method has required int parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'pageNum',
       );
       expect(param.required, isTrue);
       expect(param.type?.accept(emitter).toString(), 'int');
-
-      // Check method body generates cookie with int encoding.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -592,15 +576,11 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method has required List<String> parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'tags',
       );
       expect(param.required, isTrue);
       expect(param.type?.accept(emitter).toString(), 'List<String>');
-
-      // Check method body generates cookie with list encoding.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -684,14 +664,10 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method has required UserObject parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'user',
       );
       expect(param.required, isTrue);
-
-      // Check method body generates cookie with object encoding.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -756,8 +732,6 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method body generates cookie with oneOf encoding.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -824,8 +798,6 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method body generates cookie with anyOf encoding.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -924,8 +896,6 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method body generates cookie with allOf encoding.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -1071,15 +1041,11 @@ void main() {
         [],
         cookies,
       );
-
-      // Check method has required List<int> parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'ids',
       );
       expect(param.required, isTrue);
       expect(param.type?.accept(emitter).toString(), 'List<int>');
-
-      // Check method body generates cookie with list encoding using mapping.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),

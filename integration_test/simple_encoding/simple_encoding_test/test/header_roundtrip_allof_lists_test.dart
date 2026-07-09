@@ -118,8 +118,6 @@ void main() {
             success.response.requestOptions.headers['X-List-Composite'],
             isNull,
           );
-
-          // Verify response property is null
           expect(success.value.xListComposite, isNull);
         },
       );

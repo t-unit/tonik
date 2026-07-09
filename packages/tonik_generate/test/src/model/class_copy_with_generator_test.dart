@@ -37,11 +37,7 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-
-      // Should only generate 1 spec: the main class (no copyWith classes)
       expect(generatedSpecs.length, 1);
-
-      // Main class should not have a copyWith getter
       final mainClass = generatedSpecs[0] as Class;
       final hasCopyWith = mainClass.methods.any((m) => m.name == 'copyWith');
       expect(hasCopyWith, isFalse);
@@ -76,11 +72,7 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-
-      // Should generate 3 specs: main class, interface, and impl
       expect(generatedSpecs.length, 3);
-
-      // Verify main class copyWith getter using introspection
       final mainClass = generatedSpecs[0] as Class;
       final copyWithGetter = mainClass.methods.firstWhere(
         (m) => m.name == 'copyWith',
@@ -95,15 +87,11 @@ void main() {
         copyWithGetter.body?.accept(emitter).toString(),
         '_UserCopyWith(this)',
       );
-
-      // Verify interface class using introspection
       final interfaceClass = generatedSpecs[1] as Class;
       expect(interfaceClass.name, r'$$UserCopyWith');
       expect(interfaceClass.abstract, isTrue);
       expect(interfaceClass.types.length, 1);
       expect(interfaceClass.types.first.symbol, r'$Res');
-
-      // Verify interface has factory constructor
       final interfaceFactory = interfaceClass.constructors.firstWhere(
         (c) => c.factory,
       );
@@ -115,8 +103,6 @@ void main() {
             .toString(),
         'User',
       );
-
-      // Verify interface call method
       final callMethod = interfaceClass.methods.firstWhere(
         (m) => m.name == 'call',
       );
@@ -131,8 +117,6 @@ void main() {
         callMethod.optionalParameters[1].type?.accept(emitter).toString(),
         'int?',
       );
-
-      // Verify interface getters
       final nameGetter = interfaceClass.methods.firstWhere(
         (m) => m.name == 'name',
       );
@@ -144,8 +128,6 @@ void main() {
       );
       expect(ageGetter.type, MethodType.getter);
       expect(ageGetter.returns?.accept(emitter).toString(), 'int');
-
-      // Verify impl class using introspection
       final implClass = generatedSpecs[2] as Class;
       expect(implClass.name, '_UserCopyWith');
       expect(implClass.implements.length, 1);
@@ -153,22 +135,16 @@ void main() {
         implClass.implements.first.accept(emitter).toString(),
         r'$$UserCopyWith<$Res>',
       );
-
-      // Verify sentinel field
       final sentinelField = implClass.fields.firstWhere(
         (f) => f.name == '_sentinel',
       );
       expect(sentinelField.static, isTrue);
       expect(sentinelField.modifier, FieldModifier.constant);
-
-      // Verify _value field
       final valueField = implClass.fields.firstWhere(
         (f) => f.name == '_value',
       );
       expect(valueField.modifier, FieldModifier.final$);
       expect(valueField.type?.accept(emitter).toString(), 'User');
-
-      // Verify impl call method body
       final implCallMethod = implClass.methods.firstWhere(
         (m) => m.name == 'call',
       );
@@ -215,16 +191,12 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-
-      // Verify interface has nullable getter for bio
       final interfaceClass = generatedSpecs[1] as Class;
       final bioGetter = interfaceClass.methods.firstWhere(
         (m) => m.name == 'bio',
       );
       expect(bioGetter.type, MethodType.getter);
       expect(bioGetter.returns?.accept(emitter).toString(), 'String?');
-
-      // Verify impl call method has correct nullable type cast
       final implClass = generatedSpecs[2] as Class;
       final implCallMethod = implClass.methods.firstWhere(
         (m) => m.name == 'call',
@@ -299,8 +271,6 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-
-      // Verify interface getters have correct types
       final interfaceClass = generatedSpecs[1] as Class;
       final homeAddressGetter = interfaceClass.methods.firstWhere(
         (m) => m.name == 'homeAddress',
@@ -311,8 +281,6 @@ void main() {
         (m) => m.name == 'workAddress',
       );
       expect(workAddressGetter.returns?.accept(emitter).toString(), 'Address');
-
-      // Verify impl call method has correct type casts
       final implClass = generatedSpecs[2] as Class;
       final implCallMethod = implClass.methods.firstWhere(
         (m) => m.name == 'call',
@@ -372,8 +340,6 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-
-      // Verify interface getters have correct list types
       final interfaceClass = generatedSpecs[1] as Class;
       final tagsGetter = interfaceClass.methods.firstWhere(
         (m) => m.name == 'tags',
@@ -387,8 +353,6 @@ void main() {
         optionalTagsGetter.returns?.accept(emitter).toString(),
         'List<String>?',
       );
-
-      // Verify impl call method has correct list type casts
       final implClass = generatedSpecs[2] as Class;
       final implCallMethod = implClass.methods.firstWhere(
         (m) => m.name == 'call',
@@ -447,16 +411,12 @@ void main() {
       );
 
       final generatedSpecs = generator.generateClasses(model);
-
-      // Verify interface uses normalized names via introspection
       final interfaceClass = generatedSpecs[1] as Class;
       final getterNames = interfaceClass.methods
           .where((m) => m.type == MethodType.getter)
           .map((m) => m.name)
           .toList();
       expect(getterNames, containsAll(['firstName', 'lastName', 'id']));
-
-      // Verify impl class call method uses normalized names
       final implClass = generatedSpecs[2] as Class;
       final implCallMethod = implClass.methods.firstWhere(
         (m) => m.name == 'call',

@@ -129,7 +129,6 @@ class OperationImporter {
       return const core.DefaultResponseStatus();
     }
 
-    // Check for range pattern (e.g., '4XX', '5XX')
     final rangeMatch = RegExp(
       r'^([1-5])XX$',
       caseSensitive: false,

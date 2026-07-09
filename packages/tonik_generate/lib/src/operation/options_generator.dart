@@ -133,7 +133,7 @@ class OptionsGenerator {
       cases.addAll(caseCode);
     }
 
-    // Add null case if body is optional - return null (no Content-Type header)
+    // Optional bodies omit the Content-Type header.
     if (!requestBody.isRequired) {
       cases.add(const Code('null => null,\n'));
     }
@@ -341,7 +341,6 @@ class OptionsGenerator {
       return;
     }
 
-    // Generate method parameters for each cookie.
     for (final cookie in cookieParameters) {
       final paramType = typeReference(
         cookie.parameter.model,
@@ -489,12 +488,9 @@ class OptionsGenerator {
     }
 
     bodyStatements.add(
-      refer(r'_$cookieParts')
-          .property('addAll')
-          .call([
-            entries.property('map').call([formEntryToWireString()]),
-          ])
-          .statement,
+      refer(r'_$cookieParts').property('addAll').call([
+        entries.property('map').call([formEntryToWireString()]),
+      ]).statement,
     );
   }
 

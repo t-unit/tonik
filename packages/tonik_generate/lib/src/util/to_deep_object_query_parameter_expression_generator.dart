@@ -30,8 +30,7 @@ BuiltExpression buildToDeepObjectQueryParameterCode(
     );
   }
 
-  // Handle MapModel (including aliases to MapModel) before the general
-  // object path, since maps are typedefs and don't implement
+  // Maps go before the general object path because typedefs do not implement
   // ParameterEncodable.
   final resolvedModel = model.resolved;
   if (resolvedModel is MapModel) {

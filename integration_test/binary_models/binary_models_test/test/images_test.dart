@@ -40,10 +40,9 @@ void main() {
       expect(responseBody, isA<TonikFile>());
       expect(responseBody.toBytes().length, greaterThan(0));
 
-      // Verify it's actual binary data.
       expect(responseBody, isA<TonikFileBytes>());
 
-      // Check PNG magic number (89 50 4E 47)
+      // PNG responses should preserve their magic bytes.
       expect(responseBody.toBytes()[0], 0x89);
       expect(responseBody.toBytes()[1], 0x50);
       expect(responseBody.toBytes()[2], 0x4E);

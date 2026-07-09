@@ -334,7 +334,6 @@ class ServerGenerator {
       }
     }
 
-    // Add serverConfig parameter last.
     variableParams.add(
       Parameter(
         (p) => p
@@ -347,7 +346,6 @@ class ServerGenerator {
       ),
     );
 
-    // Build URL expression with variable substitution.
     final urlExpression = _buildUrlExpression(
       server.url,
       server.variables,
@@ -388,7 +386,7 @@ class ServerGenerator {
     var remaining = urlTemplate;
 
     while (remaining.isNotEmpty) {
-      // Find the earliest placeholder in the remaining string.
+      // Placeholder selection follows URL order.
       var earliestIndex = remaining.length;
       ServerVariable? earliestVariable;
       for (var i = 0; i < variables.length; i++) {

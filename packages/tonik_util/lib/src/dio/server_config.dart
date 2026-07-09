@@ -48,13 +48,10 @@ class ServerConfig {
         ..extra = Map<String, dynamic>.from(baseOptions!.extra);
     }
 
-    // Set the server URL
     dio.options.baseUrl = serverUrl;
 
-    // Add all interceptors
     interceptors.forEach(dio.interceptors.add);
 
-    // Set httpClientAdapter if provided
     if (httpClientAdapter != null) {
       dio.httpClientAdapter = httpClientAdapter!;
     }

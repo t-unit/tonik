@@ -96,7 +96,6 @@ void main() {
       expect(generated.enumValue.values[1].name, 'green');
       expect(generated.enumValue.values[2].name, 'blue');
 
-      // Check enum values have correct arguments with actual values
       expect(generated.enumValue.values[0].arguments, hasLength(1));
       expect(
         generated.enumValue.values[0].arguments[0]
@@ -119,7 +118,6 @@ void main() {
         "r'blue'",
       );
 
-      // Check rawValue field
       final rawValueField = generated.enumValue.fields.firstWhere(
         (f) => f.name == 'rawValue',
       );
@@ -129,7 +127,6 @@ void main() {
         'String',
       );
 
-      // Check constructor exists
       final mainConstructor = generated.enumValue.constructors.firstWhere(
         (c) => c.name == null,
       );
@@ -258,7 +255,6 @@ void main() {
       expect(generated.enumValue.values[1].name, 'two');
       expect(generated.enumValue.values[2].name, 'three');
 
-      // Check enum values have correct arguments with actual values
       expect(generated.enumValue.values[0].arguments, hasLength(1));
       expect(
         generated.enumValue.values[0].arguments[0]
@@ -281,7 +277,6 @@ void main() {
         '3',
       );
 
-      // Check rawValue field
       final rawValueField = generated.enumValue.fields.firstWhere(
         (f) => f.name == 'rawValue',
       );
@@ -291,7 +286,6 @@ void main() {
         'int',
       );
 
-      // Check constructor exists and structure
       final mainConstructor = generated.enumValue.constructors.firstWhere(
         (c) => c.name == null,
       );
@@ -326,7 +320,6 @@ void main() {
         expect(generated.enumValue.values[1].name, 'value2');
         expect(generated.enumValue.values[2].name, 'value3');
 
-        // Check enum values have correct arguments with actual values
         expect(generated.enumValue.values[0].arguments, hasLength(1));
         expect(
           generated.enumValue.values[0].arguments[0]
@@ -349,7 +342,6 @@ void main() {
           "r'___'",
         );
 
-        // Check rawValue field
         final rawValueField = generated.enumValue.fields.firstWhere(
           (f) => f.name == 'rawValue',
         );
@@ -359,7 +351,6 @@ void main() {
           'String',
         );
 
-        // Check constructor exists
         final mainConstructor = generated.enumValue.constructors.firstWhere(
           (c) => c.name == null,
         );

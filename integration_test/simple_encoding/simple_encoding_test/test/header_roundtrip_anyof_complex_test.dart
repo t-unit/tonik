@@ -46,13 +46,10 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
 
-        // Verify encoded request header (simple style: key,value)
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'name,test',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class1, isNotNull);
         expect(success.value.xFlexibleObject!.class1!.name, 'test');
@@ -72,13 +69,11 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
 
-        // Verify encoded request header (spaces URL encoded)
+        // Spaces are URL encoded in simple-style headers.
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'name,hello%20world',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class1, isNotNull);
         expect(success.value.xFlexibleObject!.class1!.name, 'hello world');
@@ -114,13 +109,10 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
 
-        // Verify encoded request header (simple style: key,value)
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'number,42',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class2, isNotNull);
         expect(success.value.xFlexibleObject!.class2!.number, 42);
@@ -137,14 +129,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'number,0',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class2, isNotNull);
         expect(success.value.xFlexibleObject!.class2!.number, 0);
@@ -161,14 +149,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'number,-99',
         );
-
-        // Verify decoded response
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class2, isNotNull);
         expect(success.value.xFlexibleObject!.class2!.number, -99);
@@ -188,14 +172,10 @@ void main() {
           final success =
               result
                   as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
-
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Flexible-Object'],
             isNull,
           );
-
-          // Verify response property is null
           expect(success.value.xFlexibleObject, isNull);
         },
       );

@@ -251,11 +251,7 @@ void main() {
       final subclass = classes.firstWhere(
         (c) => c.name == 'TestOperationResponse200',
       );
-
-      // Verify equals method exists
       expect(subclass.methods.any((m) => m.name == 'operator =='), isTrue);
-
-      // Verify hashCode getter exists
       expect(
         subclass.methods.any(
           (m) => m.name == 'hashCode' && m.type == MethodType.getter,
@@ -301,7 +297,6 @@ void main() {
         (c) => c.name == 'TestOperationResponse200',
       );
 
-      // Verify @immutable annotation exists
       expect(subclass.annotations.length, 1);
       final annotation = subclass.annotations.first;
       expect(annotation.accept(emitter).toString(), 'immutable');
@@ -562,8 +557,6 @@ void main() {
         expect(subclass400.fields.any((f) => f.name == 'body'), isTrue);
         expect(subclass409.fields.any((f) => f.name == 'body'), isTrue);
         expect(subclass500.fields.any((f) => f.name == 'body'), isTrue);
-
-        // Check the type of the 'body' property
         final bodyField201 = subclass201.fields.firstWhere(
           (f) => f.name == 'body',
         );
@@ -630,8 +623,6 @@ void main() {
       expect(subclass201.fields.any((f) => f.name == 'body'), isTrue);
       final bodyField = subclass201.fields.firstWhere((f) => f.name == 'body');
       expect(bodyField.type?.symbol, 'int');
-
-      // Check that the constructor takes 'body' as a named, required argument
       final ctor = subclass201.constructors.first;
       expect(
         ctor.optionalParameters.any(

@@ -91,8 +91,7 @@ NormalizedRequestParameters normalizeRequestParameters({
     nameInTypes.putIfAbsent(lowerName, () => <String>{}).add('cookie');
   }
 
-  // Add suffixes to all parameters with duplicate names across types
-  // (i.e., the same name appears in multiple parameter types)
+  // Parameters that collide across locations get a location suffix.
   final resolvedPathParams = normalizedPathParams.map((item) {
     final lowerName = item.normalizedName.toLowerCase();
     if (nameInTypes[lowerName]!.length > 1) {

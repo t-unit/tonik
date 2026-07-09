@@ -22,7 +22,6 @@ List<Parameter> generateParameters({
       operation.requestBody?.resolvedContent.isNotEmpty ?? false;
   final parameters = <Parameter>[];
 
-  // Add request body parameter if present
   if (hasRequestBody) {
     final requestBody = operation.requestBody!;
     final parameterType = requestBody.contentCount == 1
@@ -66,7 +65,6 @@ List<Parameter> generateParameters({
     ),
   );
 
-  // Add path parameters
   for (final pathParam in normalizedParams.pathParameters) {
     final defaulted = defaultsByName[pathParam.normalizedName];
     final wiresDefaultTo = defaulted != null && !defaulted.isRuntime;
@@ -74,8 +72,7 @@ List<Parameter> generateParameters({
       pathParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride:
-          !pathParam.parameter.isRequired && !wiresDefaultTo,
+      isNullableOverride: !pathParam.parameter.isRequired && !wiresDefaultTo,
     );
 
     parameters.add(
@@ -100,7 +97,6 @@ List<Parameter> generateParameters({
     );
   }
 
-  // Add query parameters
   for (final queryParam in normalizedParams.queryParameters) {
     final defaulted = defaultsByName[queryParam.normalizedName];
     final wiresDefaultTo = defaulted != null && !defaulted.isRuntime;
@@ -108,8 +104,7 @@ List<Parameter> generateParameters({
       queryParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride:
-          !queryParam.parameter.isRequired && !wiresDefaultTo,
+      isNullableOverride: !queryParam.parameter.isRequired && !wiresDefaultTo,
     );
 
     parameters.add(
@@ -134,7 +129,6 @@ List<Parameter> generateParameters({
     );
   }
 
-  // Add header parameters
   for (final headerParam in normalizedParams.headers) {
     final defaulted = defaultsByName[headerParam.normalizedName];
     final wiresDefaultTo = defaulted != null && !defaulted.isRuntime;
@@ -142,8 +136,7 @@ List<Parameter> generateParameters({
       headerParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride:
-          !headerParam.parameter.isRequired && !wiresDefaultTo,
+      isNullableOverride: !headerParam.parameter.isRequired && !wiresDefaultTo,
     );
 
     parameters.add(
@@ -168,7 +161,6 @@ List<Parameter> generateParameters({
     );
   }
 
-  // Add cookie parameters
   for (final cookieParam in normalizedParams.cookieParameters) {
     final defaulted = defaultsByName[cookieParam.normalizedName];
     final wiresDefaultTo = defaulted != null && !defaulted.isRuntime;
@@ -176,8 +168,7 @@ List<Parameter> generateParameters({
       cookieParam.parameter.model,
       nameManager,
       package,
-      isNullableOverride:
-          !cookieParam.parameter.isRequired && !wiresDefaultTo,
+      isNullableOverride: !cookieParam.parameter.isRequired && !wiresDefaultTo,
     );
 
     parameters.add(
@@ -201,8 +192,7 @@ List<Parameter> generateParameters({
       ),
     );
   }
-  // Add multipart header parameters last so names can be
-  // deduplicated against all already-added parameters.
+  // Multipart header parameters come last so names can be deduplicated.
   if (hasRequestBody) {
     _addMultipartHeaderParameters(
       parameters: parameters,
@@ -227,7 +217,6 @@ void _addMultipartHeaderParameters({
   required NameManager nameManager,
   required String package,
 }) {
-  // Collect existing parameter names for deduplication.
   final usedNames = <String>{
     for (final p in parameters) p.name.toLowerCase(),
   };

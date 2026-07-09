@@ -48,7 +48,6 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>;
 
-      // Verify encoded request header (simple style: key,value,key,value)
       expect(
         success.response.requestOptions.headers['X-Merged-Object'],
         anyOf(
@@ -56,8 +55,6 @@ void main() {
           'id,abc,count,42',
         ),
       );
-
-      // Verify decoded response
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, 42);
       expect(success.value.xMergedObject!.allOfPrimitiveModel2.id, 'abc');
@@ -77,8 +74,6 @@ void main() {
       );
       final success =
           result as TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>;
-
-      // Verify decoded response
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel2.id, 'onlyId');
     });
@@ -97,8 +92,6 @@ void main() {
       );
       final success =
           result as TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>;
-
-      // Verify decoded response
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, 99);
     });
@@ -117,8 +110,6 @@ void main() {
       );
       final success =
           result as TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>;
-
-      // Verify decoded response
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, -5);
       expect(success.value.xMergedObject!.allOfPrimitiveModel2.id, 'neg');
@@ -139,14 +130,10 @@ void main() {
                   as TonikSuccess<
                     HeadersRoundtripAllofPrimitivesGet200Response
                   >;
-
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Merged-Object'],
             isNull,
           );
-
-          // Verify response property is null
           expect(success.value.xMergedObject, isNull);
         },
       );

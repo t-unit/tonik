@@ -337,11 +337,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-
-    // Should have one sealed base class and one subclass
     expect(classes, hasLength(2));
-
-    // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
 
@@ -367,8 +363,6 @@ void main() {
       fromSimple.optionalParameters.first.type?.accept(emitter).toString(),
       'bool',
     );
-
-    // Check success subclass
     final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
     expect(successClass.extend?.symbol, 'Result');
 
@@ -399,11 +393,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-
-    // Should have one sealed base class and two subclasses
     expect(classes, hasLength(3));
-
-    // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
     expect(baseClass.constructors.length, 4);
@@ -415,8 +405,6 @@ void main() {
       baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
       isTrue,
     );
-
-    // Check success subclass
     final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
     expect(successClass.extend?.symbol, 'Result');
     expect(successClass.constructors, hasLength(1));
@@ -427,8 +415,6 @@ void main() {
       successClass.fields.first.type?.accept(emitter).toString(),
       'String',
     );
-
-    // Check error subclass
     final errorClass = classes.firstWhere((c) => c.name == 'ResultError');
     expect(errorClass.extend?.symbol, 'Result');
     expect(errorClass.constructors, hasLength(1));
@@ -469,11 +455,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-
-    // Should have one sealed base class and two subclasses
     expect(classes, hasLength(3));
-
-    // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
     expect(baseClass.constructors.length, 4);
@@ -485,13 +467,9 @@ void main() {
       baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
       isTrue,
     );
-
-    // Check success subclass (should be named after the model)
     final successClass = classes.firstWhere((c) => c.name == 'ResultSuccess');
     expect(successClass.extend?.symbol, 'Result');
     expect(successClass.constructors, hasLength(1));
-
-    // Check error subclass (should be named after the model)
     final errorClass = classes.firstWhere((c) => c.name == 'ResultError');
     expect(errorClass.extend?.symbol, 'Result');
     expect(errorClass.constructors, hasLength(1));
@@ -516,11 +494,7 @@ void main() {
     );
 
     final classes = generator.generateClasses(model);
-
-    // Should have one sealed base class and one subclass
     expect(classes, hasLength(2));
-
-    // Check base class
     final baseClass = classes.firstWhere((c) => c.name == 'Result');
     expect(baseClass.sealed, isTrue);
     expect(baseClass.constructors.length, 4);
@@ -532,8 +506,6 @@ void main() {
       baseClass.constructors.firstWhere((c) => c.name == 'fromSimple').factory,
       isTrue,
     );
-
-    // Check data subclass with proper list type
     final dataClass = classes.firstWhere((c) => c.name == 'ResultData');
     expect(dataClass.extend?.symbol, 'Result');
     expect(dataClass.constructors, hasLength(1));
@@ -1398,7 +1370,6 @@ void main() {
       final classes = generator.generateClasses(model, r'$RawPet');
       final baseClass = classes.first;
 
-      // Verify the sealed class uses Raw prefix.
       expect(baseClass.name, r'$RawPet');
       expect(baseClass.sealed, isTrue);
     });
@@ -1445,7 +1416,6 @@ void main() {
       final classes = generator.generateClasses(model);
       final baseClass = classes.first;
 
-      // Verify the sealed class uses the normal name (no Raw prefix).
       expect(baseClass.name, 'Pet');
       expect(baseClass.sealed, isTrue);
     });
@@ -1475,7 +1445,6 @@ void main() {
       final result = generator.generate(model);
       final formatted = format(result.code);
 
-      // Verify typedef exists pointing to nullable Raw class.
       expect(
         collapseWhitespace(formatted),
         contains(collapseWhitespace(r'typedef Response = $RawResponse?;')),
@@ -1505,7 +1474,6 @@ void main() {
 
       final result = generator.generate(model);
 
-      // Verify no typedef is generated.
       expect(result.code, isNot(contains('typedef')));
     });
   });
@@ -3058,13 +3026,9 @@ void main() {
       );
 
       final classes = immutableGenerator.generateClasses(model);
-
-      // Find the list variant subclass by name
       final listSubclass = classes.firstWhere(
         (c) => c.name == 'ValueList',
       );
-
-      // Verify the value field is IList<String>
       final valueField = listSubclass.fields.firstWhere(
         (f) => f.name == 'value',
       );

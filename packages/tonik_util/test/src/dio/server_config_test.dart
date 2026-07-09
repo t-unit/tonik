@@ -57,10 +57,7 @@ void main() {
       final dio = Dio(BaseOptions(baseUrl: serverUrl));
       config.configureDio(dio, serverUrl);
 
-      // Check that server URL is preserved
       expect(dio.options.baseUrl, serverUrl);
-
-      // Check that other options are applied
       expect(dio.options.connectTimeout, const Duration(seconds: 5));
       expect(dio.options.receiveTimeout, const Duration(seconds: 10));
       expect(dio.interceptors, contains(interceptor));

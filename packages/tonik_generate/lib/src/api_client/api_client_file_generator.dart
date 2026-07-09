@@ -10,7 +10,7 @@ class ApiClientFileGenerator {
   final ApiClientGenerator apiClientGenerator;
   final log = Logger('ApiClientFileGenerator');
 
-  // Default tag for operations without any tags
+  /// Tag used for operations without any tags.
   static final defaultTag = Tag(name: 'default');
 
   void writeFiles({
@@ -30,10 +30,8 @@ class ApiClientFileGenerator {
 
     Directory(clientDirectory).createSync(recursive: true);
 
-    // Get the servers list
     final servers = apiDocument.servers.toList();
 
-    // Process operations with tags
     for (final entry in apiDocument.operationsByTag.entries) {
       final result = apiClientGenerator.generate(
         entry.value,
@@ -47,7 +45,6 @@ class ApiClientFileGenerator {
       file.writeAsStringSync(result.code);
     }
 
-    // Process operations without tags
     final untaggedOperations = getUntaggedOperations(apiDocument);
     if (untaggedOperations.isNotEmpty) {
       final result = apiClientGenerator.generate(
