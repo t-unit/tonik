@@ -14,6 +14,7 @@ import 'package:tonik_generate/src/util/from_json_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
+import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -931,14 +932,12 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code(
-              '${specLiteralStringCode(model.discriminator!)}: '
-              '${specLiteralStringCode(discriminatorValue)},',
-            ),
+            Code('${specLiteralStringCode(model.discriminator!)}: '),
+            propertyValueScalar(specLiteralString(discriminatorValue)).code,
+            const Code(','),
             const Code('}'),
             const Code(
-              '.toSimple(explode: explode, allowEmpty: allowEmpty, '
-              'alreadyEncoded: true) : ',
+              '.toSimple(explode: explode, allowEmpty: allowEmpty) : ',
             ),
             refer('value').property('toSimple').call([], {
               'explode': refer('explode'),
@@ -966,14 +965,12 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code(
-              '${specLiteralStringCode(model.discriminator!)}: '
-              '${specLiteralStringCode(discriminatorValue)},',
-            ),
+            Code('${specLiteralStringCode(model.discriminator!)}: '),
+            propertyValueScalar(specLiteralString(discriminatorValue)).code,
+            const Code(','),
             const Code('}'),
             const Code(
-              '.toSimple(explode: '
-              'explode, allowEmpty: allowEmpty, alreadyEncoded: true),',
+              '.toSimple(explode: explode, allowEmpty: allowEmpty),',
             ),
           ]);
         }
@@ -1166,17 +1163,16 @@ class OneOfGenerator {
           const Code('...'),
           refer('value').property('parameterProperties').call([], {
             'allowEmpty': refer('allowEmpty'),
-            'allowReserved': refer('allowReserved'),
           }).code,
           const Code(','),
-          Code(
-            '${specLiteralStringCode(model.discriminator!)}: '
-            '${specLiteralStringCode(discriminatorValue)},',
-          ),
+          Code('${specLiteralStringCode(model.discriminator!)}: '),
+          propertyValueScalar(specLiteralString(discriminatorValue)).code,
+          const Code(','),
           const Code('}'),
           const Code(
             '.toForm(paramName, explode: explode, allowEmpty: allowEmpty, '
-            'alreadyEncoded: true, useQueryComponent: useQueryComponent)',
+            'useQueryComponent: useQueryComponent, '
+            'allowReserved: allowReserved, fieldEncodings: fieldEncodings)',
           ),
         ];
 
@@ -1352,7 +1348,7 @@ class OneOfGenerator {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
@@ -1397,7 +1393,7 @@ class OneOfGenerator {
         if (isNullable) {
           caseCodes.addAll([
             const Code('value == null ? '),
-            buildEmptyMapStringString().code,
+            buildEmptyMapStringPropertyValue().code,
             const Code(' : '),
           ]);
         }
@@ -1413,15 +1409,11 @@ class OneOfGenerator {
             const Code('...'),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
-              'allowLists': refer('allowLists'),
-              'allowReserved': refer('allowReserved'),
-              'fieldEncodings': refer('fieldEncodings'),
             }).code,
             const Code(','),
-            Code(
-              '${specLiteralStringCode(model.discriminator!)}: '
-              '${specLiteralStringCode(discriminatorValue)},',
-            ),
+            Code('${specLiteralStringCode(model.discriminator!)}: '),
+            propertyValueScalar(specLiteralString(discriminatorValue)).code,
+            const Code(','),
             const Code('} : '),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
@@ -1439,9 +1431,6 @@ class OneOfGenerator {
             const Code('? '),
             refer('value').property('parameterProperties').call([], {
               'allowEmpty': refer('allowEmpty'),
-              'allowLists': refer('allowLists'),
-              'allowReserved': refer('allowReserved'),
-              'fieldEncodings': refer('fieldEncodings'),
             }).code,
             const Code(': '),
             generateEncodingExceptionExpression(
@@ -1476,7 +1465,7 @@ class OneOfGenerator {
           if (isNullable) {
             caseCodes.addAll([
               const Code('value == null ? '),
-              buildEmptyMapStringString().code,
+              buildEmptyMapStringPropertyValue().code,
               const Code(' : '),
             ]);
           }
@@ -1487,24 +1476,17 @@ class OneOfGenerator {
               const Code('...'),
               refer('value').property('parameterProperties').call([], {
                 'allowEmpty': refer('allowEmpty'),
-                'allowLists': refer('allowLists'),
-                'allowReserved': refer('allowReserved'),
-                'fieldEncodings': refer('fieldEncodings'),
               }).code,
               const Code(','),
-              Code(
-                '${specLiteralStringCode(model.discriminator!)}: '
-                '${specLiteralStringCode(discriminatorValue)},',
-              ),
+              Code('${specLiteralStringCode(model.discriminator!)}: '),
+              propertyValueScalar(specLiteralString(discriminatorValue)).code,
+              const Code(','),
               const Code('}'),
             ]);
           } else {
             caseCodes.add(
               refer('value').property('parameterProperties').call([], {
                 'allowEmpty': refer('allowEmpty'),
-                'allowLists': refer('allowLists'),
-                'allowReserved': refer('allowReserved'),
-                'fieldEncodings': refer('fieldEncodings'),
               }).code,
             );
           }
@@ -1522,7 +1504,7 @@ class OneOfGenerator {
     return Method(
       (b) => b
         ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
+        ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(buildParameterPropertiesParameters())
         ..lambda = false
         ..body = body,
@@ -1585,14 +1567,12 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code(
-              '${specLiteralStringCode(model.discriminator!)}: '
-              '${specLiteralStringCode(discriminatorValue)},',
-            ),
+            Code('${specLiteralStringCode(model.discriminator!)}: '),
+            propertyValueScalar(specLiteralString(discriminatorValue)).code,
+            const Code(','),
             const Code('}'),
             const Code(
-              '.toLabel(explode: explode, allowEmpty: allowEmpty, '
-              'alreadyEncoded: true) : ',
+              '.toLabel(explode: explode, allowEmpty: allowEmpty) : ',
             ),
             refer('value').property('toLabel').call([], {
               'explode': refer('explode'),
@@ -1619,14 +1599,12 @@ class OneOfGenerator {
               'allowEmpty': refer('allowEmpty'),
             }).code,
             const Code(','),
-            Code(
-              '${specLiteralStringCode(model.discriminator!)}: '
-              '${specLiteralStringCode(discriminatorValue)},',
-            ),
+            Code('${specLiteralStringCode(model.discriminator!)}: '),
+            propertyValueScalar(specLiteralString(discriminatorValue)).code,
+            const Code(','),
             const Code('}'),
             const Code(
-              '.toLabel(explode: explode, allowEmpty: allowEmpty, '
-              'alreadyEncoded: true),',
+              '.toLabel(explode: explode, allowEmpty: allowEmpty),',
             ),
           ]);
         }

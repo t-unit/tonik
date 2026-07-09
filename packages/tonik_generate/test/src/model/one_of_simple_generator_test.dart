@@ -113,20 +113,8 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
         const expectedMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
-          return switch (this) {
-            ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
-            ResponseUser(:final value) => {
-              ...value.parameterProperties(allowEmpty: allowEmpty),
-              r'type': r'user',
-            }.toSimple( 
-              explode: explode, 
-              allowEmpty: allowEmpty, 
-              alreadyEncoded: true, 
-            ),
-          };
-        }
-      ''';
+String toSimple({required bool explode, required bool allowEmpty}) { return switch (this) { ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toSimple(explode: explode, allowEmpty: allowEmpty), }; }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -191,23 +179,8 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
         const expectedMethod = '''
-      String toSimple({required bool explode, required bool allowEmpty}) {
-        return switch (this) {
-          EntityCompany(:final value) => {
-            ...value.parameterProperties(allowEmpty: allowEmpty),
-            r'entity_type': r'company',
-          }.toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ),
-          EntityPerson(:final value) => {
-            ...value.parameterProperties(allowEmpty: allowEmpty),
-            r'entity_type': r'person',
-          }.toSimple( 
-            explode: explode, 
-            allowEmpty: allowEmpty, 
-            alreadyEncoded: true, 
-          ),
-        };
-      }
-    ''';
+String toSimple({required bool explode, required bool allowEmpty}) { return switch (this) { EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'company'), }.toSimple(explode: explode, allowEmpty: allowEmpty), EntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty), }; }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -254,16 +227,8 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
         const expectedMethod = '''
-      String toSimple({required bool explode, required bool allowEmpty}) {
-        return switch (this) {
-          MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
-          MixedEntityPerson(:final value) => {
-            ...value.parameterProperties(allowEmpty: allowEmpty),
-            r'type': r'person',
-          }.toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ),
-        };
-      }
-    ''';
+String toSimple({required bool explode, required bool allowEmpty}) { return switch (this) { MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ), MixedEntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty), }; }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),

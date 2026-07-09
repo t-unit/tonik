@@ -16,6 +16,7 @@ import 'package:tonik_generate/src/util/from_json_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
+import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -969,7 +970,7 @@ class AnyOfGenerator {
       body.add(
         declareFinal(
           r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
+        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
       );
     }
 
@@ -1018,7 +1019,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -1036,7 +1037,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1045,8 +1046,7 @@ class AnyOfGenerator {
       ..add(const Code(r'return _$map.toSimple('))
       ..addAll([
         const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true'),
+        const Code('allowEmpty: allowEmpty'),
         const Code(');'),
       ]);
 
@@ -1154,7 +1154,7 @@ class AnyOfGenerator {
       body.add(
         declareFinal(
           r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
+        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
       );
     }
 
@@ -1200,7 +1200,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -1218,7 +1218,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1229,8 +1229,9 @@ class AnyOfGenerator {
         const Code('paramName, '),
         const Code('explode: explode, '),
         const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true, '),
-        const Code('useQueryComponent: useQueryComponent'),
+        const Code('useQueryComponent: useQueryComponent, '),
+        const Code('allowReserved: allowReserved, '),
+        const Code('fieldEncodings: fieldEncodings'),
         const Code(');'),
       ]);
 
@@ -1413,8 +1414,7 @@ class AnyOfGenerator {
         codes.add(
           Code(
             'final _\$${fieldName}Form = '
-            '$fieldName!.parameterProperties('
-            'allowEmpty: allowEmpty, allowReserved: allowReserved);',
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
         if (needsMapValues) {
@@ -1461,8 +1461,7 @@ class AnyOfGenerator {
         ..add(
           Code(
             'final _\$${fieldName}Form = '
-            '$fieldName!.parameterProperties('
-            'allowEmpty: allowEmpty, allowReserved: allowReserved);',
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
       if (needsMapValues) {
@@ -1699,7 +1698,7 @@ class AnyOfGenerator {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
@@ -1728,7 +1727,7 @@ class AnyOfGenerator {
     if (needsMapValues) {
       body.addAll([
         const Code(r'final _$mapValues = <'),
-        buildMapStringStringType().code,
+        buildMapStringPropertyValueType().code,
         const Code('>[];'),
       ]);
     }
@@ -1788,13 +1787,6 @@ class AnyOfGenerator {
       } else if (fieldModel is ListModel) {
         body
           ..add(Code('if ($name != null) {'))
-          ..add(const Code('if (!allowLists) {'))
-          ..add(
-            generateEncodingExceptionExpression(
-              'Lists are not supported in this encoding style',
-            ).statement,
-          )
-          ..add(const Code('}'))
           ..add(
             generateEncodingExceptionExpression(
               'Lists are not supported in parameterProperties',
@@ -1826,7 +1818,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -1843,7 +1835,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1854,13 +1846,13 @@ class AnyOfGenerator {
     if (needsMapValues || hasSimpleTypes) {
       body.addAll(mergeBlocks);
     } else {
-      body.add(buildEmptyMapStringString().returned.statement);
+      body.add(buildEmptyMapStringPropertyValue().returned.statement);
     }
 
     return Method(
       (b) => b
         ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
+        ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(buildParameterPropertiesParameters())
         ..lambda = false
         ..body = Block.of(body),
@@ -1877,24 +1869,16 @@ class AnyOfGenerator {
 
     if (fieldModel.encodingShape == EncodingShape.complex) {
       if (fieldModel is ListModel) {
-        codes
-          ..add(const Code('if (!allowLists) {'))
-          ..add(
-            generateEncodingExceptionExpression(
-              'Lists are not supported in this encoding style',
-            ).statement,
-          )
-          ..add(const Code('}'))
-          ..add(
-            refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-                .call([
-                  literalString(
-                    'Lists are not supported in parameterProperties',
-                  ),
-                ])
-                .thrown
-                .statement,
-          );
+        codes.add(
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists are not supported in parameterProperties',
+                ),
+              ])
+              .thrown
+              .statement,
+        );
       } else if (fieldModel is MapModel) {
         codes.add(
           generateEncodingExceptionExpression(
@@ -1905,9 +1889,7 @@ class AnyOfGenerator {
         codes.add(
           Code(
             r'_$mapValues.add('
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
-            'allowLists: allowLists, allowReserved: allowReserved, '
-            'fieldEncodings: fieldEncodings));',
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
           ),
         );
 
@@ -1938,9 +1920,7 @@ class AnyOfGenerator {
         const Code(':'),
         Code(
           r'_$mapValues.add('
-          '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
-          'allowLists: allowLists, allowReserved: allowReserved, '
-          'fieldEncodings: fieldEncodings));',
+          '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
         ),
       ];
 
@@ -2014,7 +1994,7 @@ class AnyOfGenerator {
       body.add(
         declareFinal(
           r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
+        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
       );
     }
 
@@ -2055,7 +2035,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -2074,7 +2054,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -2083,8 +2063,7 @@ class AnyOfGenerator {
       ..add(const Code(r'return _$map.toLabel('))
       ..addAll([
         const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true'),
+        const Code('allowEmpty: allowEmpty'),
         const Code(');'),
       ]);
 
@@ -2184,7 +2163,7 @@ class AnyOfGenerator {
       body.add(
         declareFinal(
           r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
+        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
       );
     }
 
@@ -2225,7 +2204,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -2244,7 +2223,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -2254,8 +2233,7 @@ class AnyOfGenerator {
       ..addAll([
         const Code('paramName, '),
         const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true'),
+        const Code('allowEmpty: allowEmpty'),
         const Code(');'),
       ]);
 

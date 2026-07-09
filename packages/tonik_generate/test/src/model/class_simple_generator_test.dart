@@ -1192,9 +1192,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -1250,9 +1249,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -1282,9 +1280,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
         String toSimple({required bool explode, required bool allowEmpty}) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          return parameterProperties(allowEmpty: allowEmpty)
+            .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 

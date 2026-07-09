@@ -25,7 +25,7 @@ Method buildReadOnlyParameterPropertiesMethod(Code exceptionBody) {
   return Method(
     (b) => b
       ..name = 'parameterProperties'
-      ..returns = buildMapStringStringType()
+      ..returns = buildMapStringPropertyValueType()
       ..optionalParameters.addAll(buildParameterPropertiesParameters())
       ..lambda = true
       ..body = exceptionBody,
@@ -249,18 +249,14 @@ Method buildToDeepObjectMethod() {
       ..optionalParameters.addAll(buildDeepObjectEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
-            .call([], {
-              'allowEmpty': refer('allowEmpty'),
-              'allowLists': literalBool(false),
-              'allowReserved': refer('allowReserved'),
-            })
+            .call([], {'allowEmpty': refer('allowEmpty')})
             .property('toDeepObject')
             .call(
               [refer('paramName')],
               {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
-                'alreadyEncoded': literalBool(true),
+                'allowReserved': refer('allowReserved'),
               },
             )
             .returned

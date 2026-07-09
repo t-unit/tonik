@@ -111,15 +111,8 @@ void main() {
       final generated = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return switch (this) {
-            ChoiceA(:final value) => {
-              ...value.parameterProperties(allowEmpty: allowEmpty),
-              r'type': r'a',
-            }.toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true),
-          };
-        }
-      ''';
+String toLabel({required bool explode, required bool allowEmpty}) { return switch (this) { ChoiceA(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'a'), }.toLabel(explode: explode, allowEmpty: allowEmpty), }; }
+''';
       expect(
         collapseWhitespace(generated),
         contains(collapseWhitespace(format(expectedMethod))),
@@ -166,8 +159,8 @@ void main() {
           return switch (this) {
             MixedChoiceM(:final value) => {
               ...value.parameterProperties(allowEmpty: allowEmpty),
-              r'kind': r'm',
-            }.toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true),
+              r'kind': PropertyValue.scalar(r'm'),
+            }.toLabel(explode: explode, allowEmpty: allowEmpty),
             MixedChoiceS(:final value) => value.toLabel(explode: explode, allowEmpty: allowEmpty),
           };
         }
@@ -282,21 +275,8 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
       const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return switch (this) {
-            OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
-              ? {
-                  ...value.parameterProperties(allowEmpty: allowEmpty),
-                  r'type': r'inner',
-                }.toLabel(
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                )
-              : value.toLabel(explode: explode, allowEmpty: allowEmpty),
-          };
-        }
-      ''';
+String toLabel({required bool explode, required bool allowEmpty}) { return switch (this) { OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'inner'), }.toLabel(explode: explode, allowEmpty: allowEmpty) : value.toLabel(explode: explode, allowEmpty: allowEmpty), }; }
+''';
 
       expect(
         collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -383,31 +363,8 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
         const expectedMethod = '''
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          return switch (this) {
-            OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex
-              ? {
-                  ...value.parameterProperties(allowEmpty: allowEmpty),
-                  r'type': r'a',
-                }.toLabel(
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                )
-              : value.toLabel(explode: explode, allowEmpty: allowEmpty),
-            OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex
-              ? {
-                  ...value.parameterProperties(allowEmpty: allowEmpty),
-                  r'type': r'b',
-                }.toLabel(
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                )
-              : value.toLabel(explode: explode, allowEmpty: allowEmpty),
-          };
-        }
-      ''';
+String toLabel({required bool explode, required bool allowEmpty}) { return switch (this) { OuterInnerA(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'a'), }.toLabel(explode: explode, allowEmpty: allowEmpty) : value.toLabel(explode: explode, allowEmpty: allowEmpty), OuterInnerB(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'b'), }.toLabel(explode: explode, allowEmpty: allowEmpty) : value.toLabel(explode: explode, allowEmpty: allowEmpty), }; }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),

@@ -1328,8 +1328,7 @@ void main() {
           .toList()
           .toLabel(
             explode: explode,
-            allowEmpty: allowEmpty,
-            alreadyEncoded: true,
+            allowEmpty: allowEmpty, alreadyEncoded: true,
           );
       ''';
 
@@ -1358,30 +1357,8 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToMatrix = r'''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          final _$values = <String>{};
-          final _$listMatrix = list
-            .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-            .toList()
-            .toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              alreadyEncoded: true,
-            );
-          _$values.add(_$listMatrix);
-          if (_$values.length > 1) {
-            throw EncodingException(
-              r'Inconsistent allOf matrix encoding for AllOfDateTimeList: all values must encode to the same result',
-            );
-          }
-          return _$values.first;
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$listMatrix = list .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf matrix encoding for AllOfDateTimeList: all values must encode to the same result', ); } return _$values.first; }
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -1409,33 +1386,9 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToSimple = r'''
-        @override
-        String toSimple({required bool explode, required bool allowEmpty}) {
-          final _$values = <String>{};
-          if (list != null) {
-            final _$listSimple = list!
-                .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
-                .toList()
-                .toSimple(
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                );
-            _$values.add(_$listSimple);
-          }
-          if (_$values.length > 1) {
-            throw EncodingException(
-              'Inconsistent allOf simple encoding: all values must encode to the same result',
-            );
-          }
-          if (_$values.isEmpty) {
-            throw EncodingException(
-              'Cannot encode to simple: all properties are null',
-            );
-          }
-          return _$values.first;
-        }
-      ''';
+@override
+String toSimple({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; if (list != null) { final _$listSimple = list! .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty)) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listSimple); } if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( 'Cannot encode to simple: all properties are null', ); } return _$values.first; }
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -1463,48 +1416,9 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToForm = r'''
-        @override
-        List<ParameterEntry> toForm(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-          bool useQueryComponent = false,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          final _$entryLists = <List<ParameterEntry>>[];
-          final _$values = <String>{};
-          if (list != null) {
-            final _$listForm = list!
-                .map(
-                  (e) => e.uriEncode(
-                    allowEmpty: allowEmpty,
-                    useQueryComponent: useQueryComponent,
-                  ),
-                )
-                .toList()
-                .toForm(
-                  paramName,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  useQueryComponent: useQueryComponent,
-                  alreadyEncoded: true,
-                );
-            _$entryLists.add(_$listForm);
-            _$values.add(_$listForm.map((e) => e.value).join(','));
-          }
-          if (_$values.length > 1) {
-            throw EncodingException(
-              r'Inconsistent allOf form encoding: all values must encode to the same result',
-            );
-          }
-          if (_$entryLists.isEmpty) {
-            throw EncodingException(
-              r'Cannot encode AllOfNullableList to encoding: all properties are null',
-            );
-          }
-          return _$entryLists.first;
-        }
-      ''';
+@override
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; if (list != null) { final _$listForm = list! .map( (e) => e.uriEncode( allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, ), ) .toList() .toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, alreadyEncoded: true, ); _$entryLists.add(_$listForm); _$values.add(_$listForm.map((e) => e.value).join(',')); } if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf form encoding: all values must encode to the same result', ); } if (_$entryLists.isEmpty) { throw EncodingException( r'Cannot encode AllOfNullableList to encoding: all properties are null', ); } return _$entryLists.first; }
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -1532,33 +1446,9 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToLabel = r'''
-        @override
-        String toLabel({required bool explode, required bool allowEmpty}) {
-          final _$values = <String>{};
-          if (list != null) {
-            final _$listLabel = list!
-                .map((e) => e.uriEncode(allowEmpty: allowEmpty))
-                .toList()
-                .toLabel(
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                );
-            _$values.add(_$listLabel);
-          }
-          if (_$values.length > 1) {
-            throw EncodingException(
-              'Inconsistent allOf label encoding: all values must encode to the same result',
-            );
-          }
-          if (_$values.isEmpty) {
-            throw EncodingException(
-              r'Cannot encode AllOfNullableList to encoding: all properties are null',
-            );
-          }
-          return _$values.first;
-        }
-      ''';
+@override
+String toLabel({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; if (list != null) { final _$listLabel = list! .map((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toLabel( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listLabel); } if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf label encoding: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( r'Cannot encode AllOfNullableList to encoding: all properties are null', ); } return _$values.first; }
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -1586,38 +1476,9 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedToMatrix = r'''
-        @override
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          final _$values = <String>{};
-          if (list != null) {
-            final _$listMatrix = list!
-                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-                .toList()
-                .toMatrix(
-                  paramName,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                );
-            _$values.add(_$listMatrix);
-          }
-          if (_$values.length > 1) {
-            throw EncodingException(
-              r'Inconsistent allOf matrix encoding for AllOfNullableList: all values must encode to the same result',
-            );
-          }
-          if (_$values.isEmpty) {
-            throw EncodingException(
-              r'Cannot encode AllOfNullableList to encoding: all properties are null',
-            );
-          }
-          return _$values.first;
-        }
-      ''';
+@override
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; if (list != null) { final _$listMatrix = list! .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); } if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf matrix encoding for AllOfNullableList: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( r'Cannot encode AllOfNullableList to encoding: all properties are null', ); } return _$values.first; }
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -1744,15 +1605,8 @@ void main() {
       final generated = format(combinedClass.accept(emitter).toString());
 
       const expectedParameterProperties = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) =>
-          throw EncodingException(
-            r'parameterProperties not supported for AllOfIntList: contains array types',
-          );
-      ''';
+Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for AllOfIntList: contains array types', );
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -1805,15 +1659,8 @@ void main() {
       ''';
 
       const expectedParameterProperties = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) =>
-          throw EncodingException(
-            r'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported',
-          );
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfMixedListClass: allOf mixing arrays with other types is not supported', );
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -1852,15 +1699,8 @@ void main() {
       ''';
 
       const expectedParameterProperties = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) =>
-          throw EncodingException(
-            r'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported',
-          );
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfMixedListPrimitive: allOf mixing arrays with other types is not supported', );
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -1928,8 +1768,7 @@ void main() {
     });
 
     test(
-      'generates parameterProperties with allowLists parameter for '
-      'complex allOf',
+      'generates parameterProperties merging members for complex allOf',
       () {
         final classModel1 = ClassModel(
           isDeprecated: false,
@@ -1982,25 +1821,13 @@ void main() {
         final generated = format(combinedClass.accept(emitter).toString());
 
         const expectedParameterProperties = r'''
-          Map<String, String> parameterProperties({
-            bool allowEmpty = true,
-            bool allowLists = true,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-          }) {
-            final _$mergedProperties = <String, String>{};
+          Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+            final _$mergedProperties = <String, PropertyValue>{};
             _$mergedProperties.addAll(
-              testClass1.parameterProperties(
-                allowEmpty: allowEmpty,
-                allowLists: allowLists,
-                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-              ),
+              testClass1.parameterProperties(allowEmpty: allowEmpty),
             );
             _$mergedProperties.addAll(
-              testClass2.parameterProperties(
-                allowEmpty: allowEmpty,
-                allowLists: allowLists,
-                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-              ),
+              testClass2.parameterProperties(allowEmpty: allowEmpty),
             );
             return _$mergedProperties;
           }
@@ -2034,15 +1861,8 @@ void main() {
         final generated = format(combinedClass.accept(emitter).toString());
 
         const expectedParameterProperties = '''
-          Map<String, String> parameterProperties({
-            bool allowEmpty = true,
-            bool allowLists = true,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-          }) =>
-            throw EncodingException(
-              r'parameterProperties not supported for AllOfWithList: contains array types',
-            );
-        ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfWithList: contains array types', );
+''';
 
         expect(
           collapseWhitespace(generated),
@@ -2072,15 +1892,8 @@ void main() {
         final generated = format(combinedClass.accept(emitter).toString());
 
         const expectedParameterProperties = '''
-          Map<String, String> parameterProperties({
-            bool allowEmpty = true,
-            bool allowLists = true,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-          }) =>
-            throw EncodingException(
-              r'parameterProperties not supported for AllOfWithMap: contains map types',
-            );
-        ''';
+Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for AllOfWithMap: contains map types', );
+''';
 
         expect(
           collapseWhitespace(generated),
@@ -2130,15 +1943,8 @@ void main() {
         final generated = format(combinedClass.accept(emitter).toString());
 
         const expectedParameterProperties = '''
-          Map<String, String> parameterProperties({
-            bool allowEmpty = true,
-            bool allowLists = true,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-          }) =>
-            throw EncodingException(
-              r'parameterProperties not supported for AllOfMixedMapClass: contains map types',
-            );
-        ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for AllOfMixedMapClass: contains map types', );
+''';
 
         expect(
           collapseWhitespace(generated),
@@ -4229,24 +4035,8 @@ class Holder {
         );
 
         const expectedMethod = r'''
-  Map<String, String> parameterProperties({
-    bool allowEmpty = true,
-    bool allowLists = true,
-    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-  }) {
-    final _$mergedProperties = <String, String>{};
-    _$mergedProperties.addAll(
-      $base.parameterProperties(
-        allowEmpty: allowEmpty,
-        allowLists: allowLists,
-        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-      ),
-    );
-    for (final _$e in additionalProperties.entries) {
-      _$mergedProperties[_$e.key] = _$e.value?.toString() ?? '';
-    }
-    return _$mergedProperties;
-  }''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); for (final _$e in additionalProperties.entries) { _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value?.toString() ?? '', ); } return _$mergedProperties; }
+''';
 
         final combinedClass = generator.generateClass(model);
         expect(
@@ -4290,27 +4080,8 @@ class Holder {
           );
 
           const expectedMethod = r'''
-  Map<String, String> parameterProperties({
-    bool allowEmpty = true,
-    bool allowLists = true,
-    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-  }) {
-    final _$mergedProperties = <String, String>{};
-    _$mergedProperties.addAll(
-      $base.parameterProperties(
-        allowEmpty: allowEmpty,
-        allowLists: allowLists,
-        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-      ),
-    );
-    for (final _$e in additionalProperties.entries) {
-      _$mergedProperties[_$e.key] = _$e.value.uriEncode(
-        allowEmpty: allowEmpty,
-        allowReserved: allowReserved,
-      );
-    }
-    return _$mergedProperties;
-  }''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); for (final _$e in additionalProperties.entries) { _$mergedProperties[_$e.key] = PropertyValue.scalar(_$e.value); } return _$mergedProperties; }
+''';
 
           final combinedClass = generator.generateClass(model);
           expect(
@@ -4356,27 +4127,8 @@ class Holder {
           );
 
           const expectedMethod = r'''
-  Map<String, String> parameterProperties({
-    bool allowEmpty = true,
-    bool allowLists = true,
-    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-  }) {
-    final _$mergedProperties = <String, String>{};
-    _$mergedProperties.addAll(
-      $base.parameterProperties(
-        allowEmpty: allowEmpty,
-        allowLists: allowLists,
-        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-      ),
-    );
-    for (final _$e in additionalProperties.entries) {
-      _$mergedProperties[_$e.key] = _$e.value.toBase64String().uriEncode(
-        allowEmpty: allowEmpty,
-        allowReserved: allowReserved,
-      );
-    }
-    return _$mergedProperties;
-  }''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); for (final _$e in additionalProperties.entries) { _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value.toBase64String(), ); } return _$mergedProperties; }
+''';
 
           final combinedClass = generator.generateClass(model);
           expect(
@@ -4439,29 +4191,8 @@ class Holder {
           );
 
           const expectedMethod = r'''
-  Map<String, String> parameterProperties({
-    bool allowEmpty = true,
-    bool allowLists = true,
-    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-  }) {
-    final _$mergedProperties = <String, String>{};
-    _$mergedProperties.addAll(
-      $base.parameterProperties(
-        allowEmpty: allowEmpty,
-        allowLists: allowLists,
-        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-      ),
-    );
-    for (final _$e in additionalProperties.entries) {
-      _$mergedProperties[_$e.key] =
-          _$e.value?.toBase64String().uriEncode(
-            allowEmpty: allowEmpty,
-            allowReserved: allowReserved,
-          ) ??
-          '';
-    }
-    return _$mergedProperties;
-  }''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); for (final _$e in additionalProperties.entries) { _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value == null ? '' : _$e.value!.toBase64String(), ); } return _$mergedProperties; }
+''';
 
           final combinedClass = generator.generateClass(model);
           expect(
@@ -4512,18 +4243,10 @@ class Holder {
           );
 
           const expectedMethod = r'''
-  Map<String, String> parameterProperties({
-    bool allowEmpty = true,
-    bool allowLists = true,
-    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-  }) {
-    final _$mergedProperties = <String, String>{};
+  Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+    final _$mergedProperties = <String, PropertyValue>{};
     _$mergedProperties.addAll(
-      $base.parameterProperties(
-        allowEmpty: allowEmpty,
-        allowLists: allowLists,
-        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-      ),
+      $base.parameterProperties(allowEmpty: allowEmpty),
     );
     if (additionalProperties.isNotEmpty) {
       throw EncodingException(
