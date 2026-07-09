@@ -55,7 +55,6 @@ class DataGenerator {
           ..isNullable = !isRequired,
       );
 
-      // Build switch cases for multiple content types
       final switchCases = <Code>[];
       for (final c in content) {
         final variantName = nameManager
@@ -151,7 +150,6 @@ class DataGenerator {
         }
       }
 
-      // Collect multipart header params across all multipart contents.
       final multipartHeaderParams = <Parameter>[];
       for (final c in content) {
         if (c.contentType == ContentType.multipart) {
@@ -228,7 +226,6 @@ class DataGenerator {
       examples: const [],
     );
 
-    // Build return expression based on content type
     final bodyCode = [const Code('return ')];
     switch (contentType) {
       case ContentType.text:

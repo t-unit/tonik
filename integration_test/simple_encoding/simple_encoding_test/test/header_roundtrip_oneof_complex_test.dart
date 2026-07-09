@@ -46,13 +46,10 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
 
-        // Verify encoded request header (simple style: key,value)
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'name,test',
         );
-
-        // Verify decoded response
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, 'test');
@@ -72,13 +69,11 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
 
-        // Verify encoded request header (spaces are URL encoded)
+        // Spaces are URL encoded in simple-style headers.
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'name,hello%20world',
         );
-
-        // Verify decoded response
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, 'hello world');
@@ -98,13 +93,10 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
 
-        // Verify encoded request header (apostrophe is URL encoded)
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           "name,O'Brien",
         );
-
-        // Verify decoded response
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, "O'Brien");
@@ -142,13 +134,10 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
 
-        // Verify encoded request header (simple style: key,value)
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'number,42',
         );
-
-        // Verify decoded response
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
         final class2 = success.value.xComplexUnion! as OneOfComplexClass2;
         expect(class2.value.number, 42);
@@ -165,14 +154,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'number,0',
         );
-
-        // Verify decoded response
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
         final class2 = success.value.xComplexUnion! as OneOfComplexClass2;
         expect(class2.value.number, 0);
@@ -189,14 +174,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'number,-123',
         );
-
-        // Verify decoded response
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
         final class2 = success.value.xComplexUnion! as OneOfComplexClass2;
         expect(class2.value.number, -123);
@@ -213,14 +194,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'number,9999999',
         );
-
-        // Verify decoded response
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
         final class2 = success.value.xComplexUnion! as OneOfComplexClass2;
         expect(class2.value.number, 9999999);
@@ -238,13 +215,10 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
 
-        // Verify header is not present when null
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           isNull,
         );
-
-        // Verify decoded response
         expect(success.value.xComplexUnion, isNull);
       });
     });

@@ -48,13 +48,11 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
 
-      // Verify encoded request header contains both enum values
       final headerValue =
           success.response.requestOptions.headers['X-Enum-Composite'] as String;
       expect(headerValue, contains('priority,3'));
       expect(headerValue, contains('status,active'));
 
-      // Verify decoded response
       expect(success.value.xEnumComposite, isNotNull);
       expect(
         success.value.xEnumComposite!.allOfEnumModel.priority,
@@ -81,7 +79,6 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
 
-      // Verify decoded response
       expect(success.value.xEnumComposite, isNotNull);
       expect(
         success.value.xEnumComposite!.allOfEnumModel2.status,
@@ -104,7 +101,6 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
 
-      // Verify decoded response
       expect(success.value.xEnumComposite, isNotNull);
       expect(
         success.value.xEnumComposite!.allOfEnumModel.priority,
@@ -129,7 +125,6 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
 
-        // Verify decoded response
         expect(success.value.xEnumComposite, isNotNull);
         expect(
           success.value.xEnumComposite!.allOfEnumModel.priority,
@@ -155,13 +150,11 @@ void main() {
           final success =
               result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
 
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Enum-Composite'],
             isNull,
           );
 
-          // Verify response property is null
           expect(success.value.xEnumComposite, isNull);
         },
       );

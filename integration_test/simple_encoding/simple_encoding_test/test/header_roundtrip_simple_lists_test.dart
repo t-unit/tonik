@@ -286,15 +286,11 @@ void main() {
         final success =
             response as TonikSuccess<HeadersRoundtripListsSimpleGet200Response>;
         expect(success.response.statusCode, 200);
-
-        // Verify all request headers
         final requestHeaders = success.response.requestOptions.headers;
         expect(requestHeaders['x-string-list'], 'a,b,c');
         expect(requestHeaders['x-integer-list'], '1,2,3');
         expect(requestHeaders['x-number-list'], '1.5,2.5,3.5');
         expect(requestHeaders['x-boolean-list'], 'true,false');
-
-        // Verify all response values
         expect(success.value.xStringList, ['a', 'b', 'c']);
         expect(success.value.xIntegerList, [1, 2, 3]);
         expect(success.value.xNumberList, [1.5, 2.5, 3.5]);

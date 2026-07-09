@@ -316,26 +316,22 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
         numberPart = numberMatch.group(4);
       }
     } else if (RegExp(r'^\d+$').hasMatch(token)) {
-      // Pure number
       numberPart = token;
       textPart = '';
     } else {
-      // No numbers
       textPart = token;
       numberPart = null;
     }
 
-    // Process text part
     if (textPart.isNotEmpty) {
       final normalized = _normalizeCasing(textPart, isFirst: isFirst);
       result.add(normalized);
     }
 
-    // Handle numbers
     if (numberPart != null) {
       if (isFirst && textPart.isNotEmpty && numberMatch?.group(1) != null) {
-        // Move leading numbers from first token to end
-        // (e.g., "1status" -> "status1")
+        // Move leading numbers from first token to end, e.g. 1status to
+        // status1.
         numbersToAppend.add(numberPart);
       } else {
         // Keep numbers in place for trailing numbers or non-first tokens
@@ -428,7 +424,7 @@ String normalizeEnumValueName(String value) {
     return normalized.isEmpty ? defaultEnumPrefix : normalized.toCamelCase();
   }
 
-  // Handle version-like strings (e.g., 1.0.2, 2.1.0, 1.0.2-beta)
+  // Version-like values keep their numeric part readable.
   final versionMatch = RegExp(r'^(\d+(?:\.\d+)+)(.*)$').firstMatch(value);
   if (versionMatch != null) {
     final versionPart = versionMatch.group(1)!;

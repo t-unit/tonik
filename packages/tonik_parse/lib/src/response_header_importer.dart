@@ -78,7 +78,6 @@ class ResponseHeaderImporter {
           throw ArgumentError('Header $refName not found');
         }
 
-        // Check if we already imported this header
         final existing = headers.firstWhere(
           (h) => h.name == refName,
           orElse: () => _importHeader(

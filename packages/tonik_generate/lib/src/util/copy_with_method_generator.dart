@@ -88,7 +88,6 @@ Class _generateCopyWithInterface(
   String implClassName,
   List<CopyWithProperty> properties,
 ) {
-  // Generate call method parameters
   final callParams = properties.map(
     (prop) => Parameter(
       (b) => b
@@ -98,7 +97,6 @@ Class _generateCopyWithInterface(
     ),
   );
 
-  // Generate property getters
   final getters = properties.map(
     (prop) => Method(
       (b) => b
@@ -149,7 +147,6 @@ Class _generateCopyWithImpl(
   String implClassName,
   List<CopyWithProperty> properties,
 ) {
-  // Generate call method parameters using Object? with sentinel default
   final callParams = properties.map(
     (prop) => Parameter(
       (b) => b
@@ -160,7 +157,6 @@ Class _generateCopyWithImpl(
     ),
   );
 
-  // Generate property getters that delegate to _value
   final getters = properties.map(
     (prop) => Method(
       (b) => b
@@ -173,7 +169,7 @@ Class _generateCopyWithImpl(
     ),
   );
 
-  // Build call method body using Code.scope to properly emit type references
+  // Code.scope keeps type references routed through the import allocator.
   final callBody = _buildCallMethodBody(className, properties);
 
   return Class(
@@ -237,9 +233,8 @@ Code _buildCallMethodBody(
   final namedArgs = <String, Expression>{};
   for (final prop in properties) {
     final name = prop.normalizedName;
-    // Use the original type for casting, not nullable.
-    // The parameter is Object? with sentinel, but when we use it,
-    // we cast back to the original type to pass to the constructor.
+    // Sentinel parameters are Object?, so constructor arguments cast back to
+    // the original type.
     final originalType = prop.typeRef;
 
     final isDartCoreObjectNullable =

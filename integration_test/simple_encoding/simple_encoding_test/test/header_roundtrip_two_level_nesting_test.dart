@@ -302,14 +302,12 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
 
-      // Verify TwoLevelOneOf
       expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
       expect(
         (success.value.xTwoLevelOneOf! as TwoLevelOneOfBool).value,
         true,
       );
 
-      // Verify TwoLevelAllOf
       expect(success.value.xTwoLevelAllOf, isNotNull);
       expect(
         success.value.xTwoLevelAllOf!.twoLevelAllOfModel.active,

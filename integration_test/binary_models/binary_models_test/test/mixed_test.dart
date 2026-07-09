@@ -33,7 +33,6 @@ void main() {
     test('201 - uploads file info with binary thumbnail in JSON', () async {
       final mixedApi = buildMixedApi(responseStatus: '201');
 
-      // Create test thumbnail data
       final thumbnailData = Uint8List.fromList(
         List.generate(1024, (i) => i % 256),
       );
@@ -105,14 +104,12 @@ void main() {
       expect(responseBody.fileName, 'example.pdf');
       expect(responseBody.size, 2048);
 
-      // Verify thumbnail is binary data (automatically decoded from base64)
       expect(responseBody.thumbnail, isNotNull);
       expect(responseBody.thumbnail, isA<TonikFile>());
       expect(responseBody.thumbnail!.toBytes().length, greaterThan(0));
     });
 
     test('thumbnail is automatically UTF-8 decoded from JSON', () {
-      // Create mock JSON response with UTF-8 thumbnail
       final thumbnailData = Uint8List.fromList([10, 20, 30, 40, 50]);
       final utf8Thumbnail = utf8.decode(thumbnailData, allowMalformed: true);
 
@@ -124,10 +121,8 @@ void main() {
         'createdAt': '2023-12-20T10:30:00Z',
       };
 
-      // Parse from JSON
       final metadata = FileMetadata.fromJson(json);
 
-      // Verify thumbnail is decoded to binary
       expect(metadata.thumbnail, isNotNull);
       expect(metadata.thumbnail!.toBytes(), equals(thumbnailData));
     });

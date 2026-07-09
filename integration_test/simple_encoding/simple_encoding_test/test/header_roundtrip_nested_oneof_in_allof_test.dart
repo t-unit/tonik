@@ -118,14 +118,10 @@ void main() {
                   as TonikSuccess<
                     HeadersRoundtripNestedOneofInAllofGet200Response
                   >;
-
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Nested-Value'],
             isNull,
           );
-
-          // Verify response property is null
           expect(success.value.xNestedValue, isNull);
         },
       );

@@ -409,8 +409,6 @@ Future<TonikResult<void>> call({
         );
         expect(method.name, 'call');
         expect(method.modifier, MethodModifier.async);
-
-        // Check parameters
         expect(method.optionalParameters, hasLength(2));
         final param = method.optionalParameters.first;
         expect(param.name, 'petId');
@@ -665,8 +663,6 @@ Future<TonikResult<void>> call({
         );
         expect(method.name, 'call');
         expect(method.modifier, MethodModifier.async);
-
-        // Check parameters
         expect(method.optionalParameters, hasLength(3));
         final param1 = method.optionalParameters.first;
         final param2 = method.optionalParameters.toList()[1];
@@ -1080,15 +1076,11 @@ Future<TonikResult<void>> call({
             operation,
             normalizedParams,
           );
-
-          // Verify request body parameter is named 'body'
           final bodyParam = method.optionalParameters.firstWhere(
             (p) => p.type?.accept(emitter).toString() == 'String',
           );
           expect(bodyParam.name, 'body');
           expect(bodyParam.required, isTrue);
-
-          // Verify other parameters have appropriate suffixes
           final headerBodyParam = method.optionalParameters.firstWhere(
             (p) => p.name == 'bodyHeader',
           );
@@ -1667,7 +1659,6 @@ Future<TonikResult<void>> call({CancelToken? cancelToken}) async {
             normalizedParams,
           );
 
-          // Should have id + cancelToken
           expect(method.optionalParameters, hasLength(2));
           expect(method.optionalParameters.first.name, 'id');
           expect(method.optionalParameters.last.name, 'cancelToken');
@@ -2596,8 +2587,6 @@ Future<TonikResult<void>> call({
 
         final result = generator.generateCallableOperation(operation);
         final code = result.code;
-
-        // Verify the generated code contains the expected method signature
         expect(
           code,
           contains(
@@ -2689,8 +2678,6 @@ Future<TonikResult<void>> call({
 
         final result = generator.generateCallableOperation(operation);
         final code = result.code;
-
-        // Verify the generated code uses the raw names
         expect(
           code,
           contains(
@@ -2758,8 +2745,6 @@ Future<TonikResult<void>> call({
           operation,
           'NoResponsesOperation',
         );
-
-        // Verify that _parseResponse method is not generated
         expect(
           generatedClass.methods.where((m) => m.name == '_parseResponse'),
           isEmpty,
@@ -2803,8 +2788,6 @@ Future<TonikResult<void>> call({
           operation,
           'WithResponsesOperation',
         );
-
-        // Verify that _parseResponse method is generated
         expect(
           generatedClass.methods
               .where((m) => m.name == '_parseResponse')

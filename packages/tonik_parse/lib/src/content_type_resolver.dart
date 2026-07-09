@@ -12,8 +12,8 @@ core.ContentType resolveContentType(
 }) {
   final lowerMediaType = mediaType.toLowerCase().split(';').first.trim();
 
-  // Check config overrides with both the raw media type and the
-  // normalized (parameter-stripped) form.
+  // Overrides may target either the raw media type or its parameter-stripped
+  // form.
   if (contentTypes.containsKey(mediaType)) {
     return contentTypes[mediaType]!;
   }

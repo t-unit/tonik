@@ -368,13 +368,11 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
 
-      // Verify ThreeLevelOneOf
       expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
       final oneOfDecoded =
           success.value.xThreeLevelOneOf! as ThreeLevelOneOfNumber;
       expect(oneOfDecoded.value, closeTo(99.9, 0.001));
 
-      // Verify ThreeLevelMixed
       expect(
         success.value.xThreeLevelMixed,
         isA<ThreeLevelMixedOneOfAllOfAnyOfClass1>(),
@@ -405,7 +403,6 @@ void main() {
       final success =
           result as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
 
-      // Verify ThreeLevelOneOf - deeply nested string
       expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
       final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
       expect(decoded.value, isA<ThreeLevelOneOfModelOneOf>());
@@ -414,7 +411,6 @@ void main() {
       final level3 = level2.value as ThreeLevelOneOfOneOfModelString;
       expect(level3.value, 'deep-value');
 
-      // Verify ThreeLevelMixed
       expect(
         success.value.xThreeLevelMixed,
         isA<ThreeLevelMixedOneOfAllOfAnyOfClass1>(),

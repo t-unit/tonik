@@ -33,7 +33,6 @@ void main() {
     test('201 - uploads data with contentEncoding:base64 field', () async {
       final contentEncodedApi = buildContentEncodedApi(responseStatus: '201');
 
-      // Create test binary data and encode to base64
       final binaryData = Uint8List.fromList(
         List.generate(256, (i) => i),
       );
@@ -60,7 +59,6 @@ void main() {
     });
 
     test('encodedData (contentEncoding:base64) is a base64 string in JSON', () {
-      // Create test binary data and encode to base64
       final binaryData = Uint8List.fromList([10, 20, 30, 40, 50]);
       final base64String = base64.encode(binaryData);
 
@@ -69,14 +67,11 @@ void main() {
         encodedData: base64String,
       );
 
-      // Serialize to JSON
       final json = contentEncodedData.toJson()! as Map<String, dynamic>;
 
-      // Verify encodedData is a base64 string in JSON
       expect(json['encodedData'], isA<String>());
       expect(json['encodedData'], equals(base64String));
 
-      // Verify we can decode it back to binary
       final decoded = base64.decode(json['encodedData'] as String);
       expect(decoded, equals(binaryData));
     });
@@ -153,7 +148,6 @@ void main() {
       expect(responseBody.name, 'test-data');
       expect(responseBody.encodedData, isA<String>());
 
-      // Verify we can decode the base64 data
       final decoded = base64.decode(responseBody.encodedData);
       expect(decoded, isNotEmpty);
     });

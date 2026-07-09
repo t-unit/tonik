@@ -320,7 +320,6 @@ class OperationGenerator {
       );
     }
 
-    // Add cancelToken as the last optional parameter
     final cancelTokenParam = Parameter(
       (b) => b
         ..name = 'cancelToken'

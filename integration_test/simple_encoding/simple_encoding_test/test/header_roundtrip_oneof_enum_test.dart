@@ -45,14 +45,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           'active',
         );
-
-        // Verify decoded response
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumStatusEnum;
         expect(decoded.value, StatusEnum.active);
@@ -69,14 +65,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           'inactive',
         );
-
-        // Verify decoded response
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumStatusEnum;
         expect(decoded.value, StatusEnum.inactive);
@@ -93,14 +85,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           'pending',
         );
-
-        // Verify decoded response
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumStatusEnum;
         expect(decoded.value, StatusEnum.pending);
@@ -117,14 +105,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           'archived',
         );
-
-        // Verify decoded response
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumStatusEnum;
         expect(decoded.value, StatusEnum.archived);
@@ -143,8 +127,6 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           '1',
@@ -168,14 +150,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           '2',
         );
-
-        // Verify decoded response
         expect(success.value.xEnumUnion, isA<OneOfEnumPriorityEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumPriorityEnum;
         expect(decoded.value, PriorityEnum.two);
@@ -192,14 +170,10 @@ void main() {
         );
         final success =
             result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response>;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           '5',
         );
-
-        // Verify decoded response
         expect(success.value.xEnumUnion, isA<OneOfEnumPriorityEnum>());
         final decoded = success.value.xEnumUnion! as OneOfEnumPriorityEnum;
         expect(decoded.value, PriorityEnum.five);
@@ -218,14 +192,10 @@ void main() {
           );
           final success =
               result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response>;
-
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Enum-Union'],
             isNull,
           );
-
-          // Verify response property is null
           expect(success.value.xEnumUnion, isNull);
         },
       );

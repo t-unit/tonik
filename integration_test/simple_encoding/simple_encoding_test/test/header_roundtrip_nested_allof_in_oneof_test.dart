@@ -54,13 +54,10 @@ void main() {
                   HeadersRoundtripNestedAllofInOneofGet200Response
                 >;
 
-        // Verify encoded request header contains both class properties
         final headerValue =
             success.response.requestOptions.headers['X-Nested-Value'] as String;
         expect(headerValue, contains('name,test'));
         expect(headerValue, contains('number,42'));
-
-        // Verify decoded response
         expect(
           success.value.xNestedValue,
           isA<NestedAllOfInOneOfAllOfComplex>(),
@@ -90,8 +87,6 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripNestedAllofInOneofGet200Response
                 >;
-
-        // Verify decoded response
         expect(
           success.value.xNestedValue,
           isA<NestedAllOfInOneOfAllOfComplex>(),
@@ -118,8 +113,6 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripNestedAllofInOneofGet200Response
                 >;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'simple-string',
@@ -145,8 +138,6 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripNestedAllofInOneofGet200Response
                 >;
-
-        // Verify encoded request header
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'test-value',
@@ -171,14 +162,10 @@ void main() {
                   as TonikSuccess<
                     HeadersRoundtripNestedAllofInOneofGet200Response
                   >;
-
-          // Verify no header was sent
           expect(
             success.response.requestOptions.headers['X-Nested-Value'],
             isNull,
           );
-
-          // Verify response property is null
           expect(success.value.xNestedValue, isNull);
         },
       );

@@ -160,9 +160,8 @@ class ClassGenerator {
             normalizedProperties.indexOf(b);
       });
 
-    // Build equality/hashCode property tuples including additional properties.
-    // When useImmutableCollections is true, IList/IMap support native deep
-    // equality so we do not need DeepCollectionEquality for those fields.
+    // IList/IMap support native deep equality, so immutable collections do
+    // not need DeepCollectionEquality.
     final equalityProps = normalizedProperties
         .map(
           (prop) => (
@@ -581,7 +580,6 @@ class ClassGenerator {
       constructorArgs.putIfAbsent(name, () => literalNull);
     }
 
-    // Build expectedKeys and listKeys sets
     final expectedKeys = properties.map((p) => p.property.name).toSet();
     final listKeys = properties
         .where((p) => p.property.model is ListModel)
@@ -944,7 +942,6 @@ class ClassGenerator {
         )
         .toList();
 
-    // Build the map entries, handling optional properties with if-blocks
     final mapEntries = <Code>[];
     for (final prop in normalizedProperties) {
       final name = prop.normalizedName;
@@ -1489,9 +1486,13 @@ if ($name != null) {
           allowEmpty: refer('allowEmpty'),
           useQueryComponent: refer('useQueryComponent'),
           useImmutableCollections: useImmutableCollections,
-          allowReserved: CodeExpression(Code(perPropertyAllowReservedValue(
-            propertyName,
-          ))),
+          allowReserved: CodeExpression(
+            Code(
+              perPropertyAllowReservedValue(
+                propertyName,
+              ),
+            ),
+          ),
         );
 
         final assignmentExpr = refer(
@@ -1888,7 +1889,6 @@ if ($name != null) {
       constructorArgs.putIfAbsent(name, () => literalNull);
     }
 
-    // Build expectedKeys and listKeys sets
     final expectedKeys = properties.map((p) => p.property.name).toSet();
     final listKeys = properties
         .where((p) => p.property.model is ListModel)

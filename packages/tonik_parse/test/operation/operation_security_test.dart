@@ -294,10 +294,7 @@ void main() {
 
       final api = Importer().import(contentWithUnusedScheme);
 
-      // Should still only have 3 schemes (unused one filtered out)
       expect(api.securitySchemes, hasLength(3));
-
-      // Verify the unused scheme is not present
       final hasBasicAuth = api.securitySchemes.any(
         (s) => s is core.HttpSecurityScheme && s.scheme == 'basic',
       );

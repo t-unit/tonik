@@ -67,8 +67,6 @@ void main() {
           Tag(name: 'users'),
           testServers,
         );
-
-        // Test class definition
         expect(generatedClass.name, 'UsersApi');
         expect(generatedClass.fields.length, 1);
         expect(generatedClass.fields.first.name, '_getUser');
@@ -76,12 +74,8 @@ void main() {
           generatedClass.fields.first.type?.accept(emitter).toString(),
           'GetUser',
         );
-
-        // Get server base class name
         final serverNames = nameManager.serverNames(testServers);
         final serverBaseClassName = serverNames.baseName;
-
-        // Test constructor
         final constructor = generatedClass.constructors.first;
         expect(constructor.requiredParameters.length, 1);
         expect(constructor.requiredParameters.first.name, 'server');
@@ -90,8 +84,6 @@ void main() {
           constructor.requiredParameters.first.type?.accept(emitter).toString(),
           serverBaseClassName,
         );
-
-        // Test constructor initializers
         expect(constructor.initializers.length, 1);
         final initializerCode = constructor.initializers.first
             .accept(emitter)
@@ -125,8 +117,6 @@ void main() {
           Tag(name: 'users'),
           testServers,
         );
-
-        // Test class definition
         expect(generatedClass.name, 'UsersApi');
         expect(generatedClass.fields.length, 1);
         expect(generatedClass.fields.first.name, '_getUser');
@@ -134,12 +124,8 @@ void main() {
           generatedClass.fields.first.type?.accept(emitter).toString(),
           'GetUser',
         );
-
-        // Get server base class name
         final serverNames = nameManager.serverNames(testServers);
         final serverBaseClassName = serverNames.baseName;
-
-        // Test constructor
         final constructor = generatedClass.constructors.first;
         expect(constructor.requiredParameters.length, 1);
         expect(constructor.requiredParameters.first.name, 'server');
@@ -148,8 +134,6 @@ void main() {
           constructor.requiredParameters.first.type?.accept(emitter).toString(),
           serverBaseClassName,
         );
-
-        // Test constructor initializers
         expect(constructor.initializers.length, 1);
         final initializerCode = constructor.initializers.first
             .accept(emitter)
@@ -193,8 +177,6 @@ void main() {
             ),
             testServers,
           );
-
-          // Test class has documentation
           expect(generatedClass.docs, isNotEmpty);
           expect(generatedClass.docs.first, '/// User management API');
         },
@@ -231,8 +213,6 @@ void main() {
           ),
           testServers,
         );
-
-        // Test class has multiline documentation
         expect(generatedClass.docs, isNotEmpty);
         expect(generatedClass.docs.length, 2);
         expect(generatedClass.docs[0], '/// User management API');
@@ -298,8 +278,6 @@ void main() {
         test('generates method with doc string from operation '
             'summary and description', () {
           final method = generatedClass.methods.first;
-
-          // Check that method has documentation
           expect(method.docs, isNotEmpty);
           expect(method.docs, contains('/// Get user'));
           expect(method.docs, contains('/// Get user by ID'));
@@ -661,8 +639,6 @@ void main() {
           );
 
           final method = generatedClass.methods.first;
-
-          // Check that method has documentation with only summary
           expect(method.docs, isNotEmpty);
           expect(method.docs, contains('/// Get user'));
           expect(method.docs.length, 1);
@@ -692,8 +668,6 @@ void main() {
           );
 
           final method = generatedClass.methods.first;
-
-          // Check that method has documentation with only description
           expect(method.docs, isNotEmpty);
           expect(method.docs, contains('/// Get user by ID'));
           expect(method.docs.length, 1);
@@ -724,8 +698,6 @@ void main() {
           );
 
           final method = generatedClass.methods.first;
-
-          // Check that method has multiline documentation
           expect(method.docs, isNotEmpty);
           expect(method.docs.length, 4);
 
@@ -762,8 +734,6 @@ void main() {
           );
 
           final method = generatedClass.methods.first;
-
-          // Check documentation order
           expect(method.docs, isNotEmpty);
           expect(method.docs.length, 2);
 
@@ -796,8 +766,6 @@ void main() {
           );
 
           final method = generatedClass.methods.first;
-
-          // Check documentation order with multiline comments
           expect(method.docs, isNotEmpty);
           expect(method.docs.length, 4);
 
@@ -880,8 +848,6 @@ void main() {
         );
 
         final method = generatedClass.methods.first;
-
-        // Check that parameter descriptions are in the docs.
         expect(method.docs, contains('/// [id] The unique user identifier'));
         expect(
           method.docs,
@@ -1085,8 +1051,6 @@ void main() {
         );
 
         final method = generatedClass.methods.first;
-
-        // Check that the overridden description is used.
         expect(
           method.docs,
           contains('/// [limit] Overridden description from reference'),

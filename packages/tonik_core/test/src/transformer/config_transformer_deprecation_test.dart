@@ -69,10 +69,8 @@ void main() {
       expect(result.operations.contains(deprecatedOp), isTrue);
       expect(result.operations.contains(nonDeprecatedOp), isTrue);
 
-      // Verify identity is preserved
       expect(identical(result.operations, document.operations), isTrue);
 
-      // Verify deprecated status is preserved
       final deprecatedResult = result.operations.firstWhere(
         (op) => op.operationId == 'deprecatedOp',
       );
@@ -110,7 +108,6 @@ void main() {
       expect(result.operations.contains(deprecatedOp), isTrue);
       expect(result.operations.contains(nonDeprecatedOp), isTrue);
 
-      // Verify identity is preserved but isDeprecated is mutated
       expect(
         identical(
           deprecatedOp,
@@ -265,10 +262,8 @@ void main() {
       expect(result.models.contains(deprecatedEnum), isTrue);
       expect(result.models.contains(nonDeprecatedEnum), isTrue);
 
-      // Verify identity is preserved
       expect(identical(result.models, document.models), isTrue);
 
-      // Verify deprecated status is preserved
       expect(deprecatedClass.isDeprecated, isTrue);
       expect(deprecatedEnum.isDeprecated, isTrue);
       expect(nonDeprecatedClass.isDeprecated, isFalse);
@@ -302,7 +297,6 @@ void main() {
       expect(result.models.contains(deprecatedEnum), isTrue);
       expect(result.models.contains(nonDeprecatedEnum), isTrue);
 
-      // Verify identity is preserved but isDeprecated is mutated
       expect(deprecatedClass.isDeprecated, isFalse);
       expect(deprecatedEnum.isDeprecated, isFalse);
       expect(nonDeprecatedClass.isDeprecated, isFalse);

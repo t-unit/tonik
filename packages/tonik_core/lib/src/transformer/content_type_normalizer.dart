@@ -23,14 +23,12 @@ class ContentTypeNormalizer {
     final responseCache = <Response, Response>{};
     final requestBodyCache = <RequestBody, RequestBody>{};
 
-    // Build a map from original to normalized request bodies
     final requestBodyMap = <RequestBody, RequestBody>{};
     for (final original in document.requestBodies) {
       final normalized = _normalizeRequestBody(original, requestBodyCache);
       requestBodyMap[original] = normalized;
     }
 
-    // Build a map from original to normalized responses
     final responseMap = <Response, Response>{};
     for (final original in document.responses) {
       final normalized = _normalizeResponse(original, responseCache);
@@ -40,7 +38,6 @@ class ContentTypeNormalizer {
     final normalizedResponses = responseMap.values.toSet();
     final normalizedRequestBodies = requestBodyMap.values.toSet();
 
-    // Update operations to point to normalized request bodies and responses
     final normalizedOperations = document.operations.map((operation) {
       final normalizedRequestBody = operation.requestBody != null
           ? requestBodyMap[operation.requestBody]
@@ -58,7 +55,6 @@ class ContentTypeNormalizer {
         }
       }
 
-      // Only create new operation if something changed
       if ((normalizedRequestBody != null &&
               !identical(normalizedRequestBody, operation.requestBody)) ||
           responsesChanged) {
@@ -131,7 +127,6 @@ class ContentTypeNormalizer {
             hasChanges = true;
           }
         }
-        // Return original if nothing changed
         if (!hasChanges) {
           result = response;
         } else {
@@ -202,7 +197,6 @@ class ContentTypeNormalizer {
             hasChanges = true;
           }
         }
-        // Return original if nothing changed
         if (!hasChanges) {
           result = requestBody;
         } else {

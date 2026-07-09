@@ -51,7 +51,6 @@ class ResponseImporter {
     required ReferenceWrapper<Response> wrapper,
     required core.Context context,
   }) {
-    // Check if we already have a response with this name
     if (name != null) {
       final existing = responses
           .where((response) => response.name == name)
@@ -108,7 +107,6 @@ class ResponseImporter {
           final mediaTypes = responseObj.content!;
           final bodies = <core.ResponseBody>[];
 
-          // Process content types based on configuration
           for (final entry in mediaTypes.entries) {
             final rawContentType = entry.key;
             final contentType = resolveContentType(

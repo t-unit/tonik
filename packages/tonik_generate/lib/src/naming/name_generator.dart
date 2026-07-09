@@ -292,7 +292,7 @@ class NameGenerator {
       return _makeUnique(baseName, '');
     }
 
-    // Handle version numbers in content type (e.g. application/json+v2)
+    // Preserve version suffixes from content types like application/json+v2.
     final parts = contentType.split('+');
     final baseContentType = parts.first;
     final version = parts.length > 1 ? parts.last : null;
@@ -370,7 +370,6 @@ class NameGenerator {
   /// - '2_Model12String33' → 'Model12String33' (for full names)
   /// - 'X-Rate-Limit' → 'RateLimit' (for headers with X prefix)
   String _sanitizeName(String name, {bool isPathComponent = false}) {
-    // Handle common header prefix pattern (X-Something)
     var inputName = name;
     if (inputName.startsWith('X-') || inputName.startsWith('x-')) {
       inputName = inputName.substring(2);

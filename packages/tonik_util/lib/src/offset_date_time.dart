@@ -46,7 +46,6 @@ class OffsetDateTime implements DateTime {
 
     final offset = _parseTimezoneOffset(offsetString);
 
-    // Parse the datetime part (without timezone) as local time
     final DateTime localDateTime;
     try {
       localDateTime = DateTime.parse(datetimeString);
@@ -57,11 +56,7 @@ class OffsetDateTime implements DateTime {
       );
     }
 
-    // Create OffsetDateTime from the local time and offset
-    return OffsetDateTime.from(
-      localDateTime,
-      offset: offset,
-    );
+    return OffsetDateTime.from(localDateTime, offset: offset);
   }
 
   /// Parses an ISO8601 datetime string with timezone support.
@@ -95,7 +90,6 @@ class OffsetDateTime implements DateTime {
         .replaceFirst(' ', 'T')
         .replaceFirst(RegExp(r'(?<=\d)t(?=\d)'), 'T');
 
-    // Check if it has timezone offset (±HH:MM or ±HHMM)
     final timezoneRegex = RegExp(r'[+-]\d{2}:?\d{2}$');
     final timezoneMatch = timezoneRegex.firstMatch(normalizedInput);
 
@@ -107,16 +101,12 @@ class OffsetDateTime implements DateTime {
       );
     }
 
-    // Parse as UTC (ends with Z) or local time (no timezone info)
     try {
       final dateTime = DateTime.parse(normalizedInput);
 
-      // Create OffsetDateTime from the parsed DateTime
       if (dateTime.isUtc) {
-        // UTC datetime - create with zero offset
         return OffsetDateTime.from(dateTime, offset: Duration.zero);
       } else {
-        // Local datetime - preserve the system timezone offset
         return OffsetDateTime.from(dateTime, offset: dateTime.timeZoneOffset);
       }
     } on FormatException {
@@ -129,7 +119,6 @@ class OffsetDateTime implements DateTime {
 
   /// Parses timezone offset string (±HH:MM or ±HHMM) into Duration.
   static Duration _parseTimezoneOffset(String offsetString) {
-    // Remove optional colon for compact format
     final normalized = offsetString.replaceAll(':', '');
 
     if (normalized.length != 5) {
@@ -180,9 +169,7 @@ class OffsetDateTime implements DateTime {
 
   /// Converts a local DateTime with an offset to UTC DateTime.
   static DateTime _toUtcDateTime(DateTime localDateTime, Duration offset) {
-    // Calculate the UTC moment by subtracting the offset
     final utcMoment = localDateTime.subtract(offset);
-    // Return a proper UTC DateTime with isUtc = true
     return DateTime.utc(
       utcMoment.year,
       utcMoment.month,
@@ -228,9 +215,7 @@ class OffsetDateTime implements DateTime {
 
   @override
   DateTime toLocal() {
-    return DateTime.fromMicrosecondsSinceEpoch(
-      microsecondsSinceEpoch,
-    );
+    return DateTime.fromMicrosecondsSinceEpoch(microsecondsSinceEpoch);
   }
 
   @override

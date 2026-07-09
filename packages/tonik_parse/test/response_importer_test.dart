@@ -261,7 +261,6 @@ void main() {
 
     expect(jsonLikeResponse, isNotNull);
     expect(jsonLikeResponse, isA<ResponseObject>());
-    // Should have 2 bodies: one configured as json, one defaulting to bytes
     final bodies = (jsonLikeResponse as ResponseObject?)?.bodies;
     expect(bodies, hasLength(2));
 
@@ -285,7 +284,6 @@ void main() {
 
     expect(invalidResponse, isNotNull);
     expect(invalidResponse, isA<ResponseObject>());
-    // Unknown content type defaults to bytes
     final bodies = (invalidResponse as ResponseObject?)?.bodies;
     expect(bodies, hasLength(1));
     expect(bodies?.first.contentType, ContentType.bytes);
@@ -378,7 +376,6 @@ void main() {
     final response = multiJsonResponse as ResponseObject?;
     expect(response?.bodies, hasLength(4));
 
-    // Verify all content types are preserved
     final contentTypes = response?.bodies.map((b) => b.rawContentType).toList();
     expect(
       contentTypes,
@@ -390,7 +387,6 @@ void main() {
       ]),
     );
 
-    // Verify all bodies are parsed as ClassModel
     for (final body in response?.bodies ?? <ResponseBody>[]) {
       expect(body.model, isA<ClassModel>());
     }
@@ -408,17 +404,13 @@ void main() {
       modelImporter: modelImporter,
       exampleImporter: exampleImporter,
     );
-    final responseImporter =
-        ResponseImporter(
-            openApiObject: openApiObject,
-            modelImporter: modelImporter,
-            headerImporter: headerImporter,
-            exampleImporter: exampleImporter,
-          )
-          // Initialize the responses set
-          ..responses = {};
+    final responseImporter = ResponseImporter(
+      openApiObject: openApiObject,
+      modelImporter: modelImporter,
+      headerImporter: headerImporter,
+      exampleImporter: exampleImporter,
+    )..responses = {};
 
-    // Import a single response
     final simpleResponse =
         openApiObject.components?.responses?['SimpleResponse'];
     expect(simpleResponse, isNotNull);
@@ -429,7 +421,6 @@ void main() {
       context: ResponseImporter.rootContext.push('SimpleResponse'),
     );
 
-    // Verify the response was added to the responses set
     expect(responseImporter.responses, contains(importedResponse));
   });
 

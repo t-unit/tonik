@@ -799,8 +799,8 @@ class OneOfGenerator {
           refer(variantName).call([decodeExpr.expression]).returned.statement,
         );
       } else if (resolvedType is ListModel) {
-        // Add throw directly to bodyBlocks (not tryBody) so it is NOT
-        // wrapped in the try/catch that swallows DecodingException.
+        // The throw must bypass tryBody so the decoding catch does not swallow
+        // it.
         final message = resolvedType.hasSimpleContent
             ? 'List decoding from $encodingStyleName encoding '
                   'is not supported in $className'
@@ -1192,10 +1192,9 @@ class OneOfGenerator {
             const Code('? '),
             ...discriminatedMap,
             const Code(' : '),
-            refer('value')
-                .property('toForm')
-                .call([refer('paramName')], memberFormArgs())
-                .code,
+            refer('value').property('toForm').call([
+              refer('paramName'),
+            ], memberFormArgs()).code,
           ]);
         } else {
           addValueArm(discriminatedMap);
@@ -1221,10 +1220,9 @@ class OneOfGenerator {
         addThrowArm('Map types cannot be form-encoded');
       } else {
         addValueArm([
-          refer('value')
-              .property('toForm')
-              .call([refer('paramName')], memberFormArgs())
-              .code,
+          refer('value').property('toForm').call([
+            refer('paramName'),
+          ], memberFormArgs()).code,
         ]);
       }
     }
@@ -1882,14 +1880,14 @@ class OneOfGenerator {
         }
 
         caseCodes.addAll([
-          uriEncodeReceiverExpression(modelType, refer('value'))
-              .property('uriEncode')
-              .call([], {
-                'allowEmpty': refer('allowEmpty'),
-                'useQueryComponent': refer('useQueryComponent'),
-                'allowReserved': refer('allowReserved'),
-              })
-              .code,
+          uriEncodeReceiverExpression(
+            modelType,
+            refer('value'),
+          ).property('uriEncode').call([], {
+            'allowEmpty': refer('allowEmpty'),
+            'useQueryComponent': refer('useQueryComponent'),
+            'allowReserved': refer('allowReserved'),
+          }).code,
           const Code(','),
         ]);
       }

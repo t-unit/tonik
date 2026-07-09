@@ -1198,15 +1198,11 @@ void main() {
       final method = generator.generateOptionsMethod(operation, [], [
         (normalizedName: 'sessionId', parameter: cookieParam),
       ]);
-
-      // Check method has required String parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'sessionId',
       );
       expect(param.required, isTrue);
       expect(param.type?.accept(emitter).toString(), 'String');
-
-      // Check method body generates cookie header correctly.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -1261,15 +1257,11 @@ void main() {
       final method = generator.generateOptionsMethod(operation, [], [
         (normalizedName: 'trackingId', parameter: cookieParam),
       ]);
-
-      // Check method has optional nullable String parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'trackingId',
       );
       expect(param.required, isFalse);
       expect(param.type?.accept(emitter).toString(), 'String?');
-
-      // Check method body checks null before adding cookie.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -1341,8 +1333,6 @@ void main() {
         (normalizedName: 'sessionId', parameter: cookie1),
         (normalizedName: 'userId', parameter: cookie2),
       ]);
-
-      // Check method has both required parameters.
       expect(method.optionalParameters, hasLength(2));
 
       final sessionParam = method.optionalParameters.firstWhere(
@@ -1356,8 +1346,6 @@ void main() {
       );
       expect(userParam.required, isTrue);
       expect(userParam.type?.accept(emitter).toString(), 'String');
-
-      // Check method body generates multiple cookie parts.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -1417,15 +1405,11 @@ void main() {
       final method = generator.generateOptionsMethod(operation, [], [
         (normalizedName: 'pageNum', parameter: cookieParam),
       ]);
-
-      // Check method has required int parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'pageNum',
       );
       expect(param.required, isTrue);
       expect(param.type?.accept(emitter).toString(), 'int');
-
-      // Check method body generates cookie with int encoding.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
@@ -1484,8 +1468,6 @@ void main() {
       final method = generator.generateOptionsMethod(operation, [], [
         (normalizedName: 'labels', parameter: cookieParam),
       ]);
-
-      // Check method has required Map<String, String> parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'labels',
       );
@@ -1554,8 +1536,6 @@ void main() {
       final method = generator.generateOptionsMethod(operation, [], [
         (normalizedName: 'prefs', parameter: cookieParam),
       ]);
-
-      // Check method has required Map<String, int> parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'prefs',
       );
@@ -1625,8 +1605,6 @@ void main() {
       final method = generator.generateOptionsMethod(operation, [], [
         (normalizedName: 'settings', parameter: cookieParam),
       ]);
-
-      // Check method has optional nullable Map<String, int>? parameter.
       final param = method.optionalParameters.firstWhere(
         (p) => p.name == 'settings',
       );
@@ -1863,8 +1841,6 @@ void main() {
         final method = generator.generateOptionsMethod(operation, [], [
           (normalizedName: 'data', parameter: cookieParam),
         ]);
-
-        // Check method has required Object? parameter.
         final param = method.optionalParameters.firstWhere(
           (p) => p.name == 'data',
         );
@@ -1940,8 +1916,6 @@ void main() {
         final method = generator.generateOptionsMethod(operation, [], [
           (normalizedName: 'items', parameter: cookieParam),
         ]);
-
-        // Check method has required List<Object?> parameter.
         final param = method.optionalParameters.firstWhere(
           (p) => p.name == 'items',
         );
@@ -2024,8 +1998,6 @@ void main() {
         final method = generator.generateOptionsMethod(operation, [], [
           (normalizedName: 'metadata', parameter: cookieParam),
         ]);
-
-        // Check method has optional Object? parameter.
         final param = method.optionalParameters.firstWhere(
           (p) => p.name == 'metadata',
         );

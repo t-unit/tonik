@@ -16,7 +16,6 @@ void main() {
           .map((f) => path.basename(f.path))
           .toList();
 
-      // Verify deprecated operations are NOT generated
       expect(
         files,
         isNot(contains('get_legacy_pets.dart')),
@@ -52,7 +51,6 @@ void main() {
           .map((f) => path.basename(f.path))
           .toList();
 
-      // Verify deprecated schema is NOT generated
       expect(
         files,
         isNot(contains('legacy_pet.dart')),
@@ -68,14 +66,12 @@ void main() {
         );
         final content = searchPetsFile.readAsStringSync();
 
-        // Verify deprecated parameter is NOT in the generated code
         expect(
           content,
           isNot(contains('legacyFilter')),
           reason: 'legacyFilter parameter should be excluded',
         );
 
-        // Verify non-deprecated parameter IS present
         expect(
           content,
           contains('String? name'),
@@ -90,14 +86,12 @@ void main() {
       );
       final content = orderFile.readAsStringSync();
 
-      // Verify deprecated property is NOT in the generated code
       expect(
         content,
         isNot(contains('shipDate')),
         reason: 'shipDate property should be excluded',
       );
 
-      // Verify non-deprecated deliveryDate property IS present
       expect(
         content,
         contains('deliveryDate'),
@@ -115,13 +109,11 @@ void main() {
           .map((f) => path.basename(f.path))
           .toList();
 
-      // Verify expected non-deprecated operations ARE generated
       expect(files, contains('get_active_pets.dart'));
       expect(files, contains('search_pets.dart'));
       expect(files, contains('place_order.dart'));
       expect(files, contains('create_user.dart'));
 
-      // Verify ONLY 4 operation files exist (no deprecated ones)
       expect(files.length, 4, reason: 'Should have exactly 4 operations');
     });
 
@@ -133,13 +125,11 @@ void main() {
           .map((f) => path.basename(f.path))
           .toList();
 
-      // Verify non-deprecated models ARE generated
       expect(files, contains('active_pet.dart'));
       expect(files, contains('category.dart'));
       expect(files, contains('order.dart'));
       expect(files, contains('user.dart'));
 
-      // Verify deprecated models are NOT generated
       expect(files, isNot(contains('legacy_pet.dart')));
     });
   });
@@ -153,7 +143,6 @@ void main() {
 
         final api = AnimalsApi(CustomServer(baseUrl: 'http://localhost:8080'));
 
-        // Verify the API class exists but deprecated operation does not
         expect(api, isA<AnimalsApi>());
 
         // If this test compiles, the operation was successfully excluded
@@ -169,7 +158,6 @@ void main() {
 
         final api = OrdersApi(CustomServer(baseUrl: 'http://localhost:8080'));
 
-        // Verify the API class exists but deprecated operation does not
         expect(api, isA<OrdersApi>());
 
         // If this test compiles, the operation was successfully excluded
@@ -223,7 +211,6 @@ void main() {
         // The shipDate property in Order is marked as deprecated
         // With deprecated.properties = exclude, it should not be generated
 
-        // Create an Order without shipDate
         const order = Order(
           id: 1,
           animalId: 100,
@@ -235,7 +222,6 @@ void main() {
         expect(order.animalId, 100);
         expect(order.quantity, 5);
 
-        // Verify non-deprecated deliveryDate property exists instead
         final orderWithDate = Order(
           id: 2,
           animalId: 200,
