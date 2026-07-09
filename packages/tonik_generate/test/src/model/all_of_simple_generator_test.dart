@@ -51,21 +51,8 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToSimple = r'''
-        String toSimple({required bool explode, required bool allowEmpty}) {
-          final _$values = <String>{};
-          final _$listSimple = list
-            .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
-            .toList()
-            .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
-          _$values.add(_$listSimple);
-          if (_$values.length > 1) {
-            throw EncodingException(
-              'Inconsistent allOf simple encoding: all values must encode to the same result',
-            );
-          }
-          return _$values.first;
-        }
-      ''';
+String toSimple({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$listSimple = list .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty)) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listSimple); if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } return _$values.first; }
+''';
 
     expect(
       collapseWhitespace(generated),
@@ -108,26 +95,8 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToSimple = r'''
-        String toSimple({required bool explode, required bool allowEmpty}) {
-          final _$values = <String>{};
-          final _$listSimple = list
-            .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty))
-            .toList()
-            .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
-          _$values.add(_$listSimple);
-          final _$list2Simple = list2
-            .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty))
-            .toList()
-            .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
-          _$values.add(_$list2Simple);
-          if (_$values.length > 1) {
-            throw EncodingException(
-              'Inconsistent allOf simple encoding: all values must encode to the same result',
-            );
-          }
-          return _$values.first;
-        }
-      ''';
+String toSimple({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$listSimple = list .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty)) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listSimple); final _$list2Simple = list2 .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$list2Simple); if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } return _$values.first; }
+''';
 
     expect(
       collapseWhitespace(generated),
@@ -185,7 +154,7 @@ void main() {
         String toSimple({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -401,7 +370,7 @@ void main() {
           }
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 

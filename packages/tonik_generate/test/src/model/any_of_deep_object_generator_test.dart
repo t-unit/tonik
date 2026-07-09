@@ -81,7 +81,7 @@ void main() {
 
       const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
@@ -146,7 +146,7 @@ void main() {
 
       const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
@@ -156,7 +156,7 @@ void main() {
       );
     });
 
-    test('toDeepObject passes allowLists=false to parameterProperties', () {
+    test('toDeepObject delegates to the parameterProperties encoder', () {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfWithAllowLists',
@@ -173,7 +173,7 @@ void main() {
 
       const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
@@ -183,7 +183,7 @@ void main() {
       );
     });
 
-    test('toDeepObject passes alreadyEncoded=true', () {
+    test('toDeepObject forwards allowReserved to the encoder', () {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'AnyOfEncoded',
@@ -199,7 +199,7 @@ void main() {
 
       const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 
@@ -265,7 +265,7 @@ void main() {
 
       const expectedToDeepObjectMethod = '''
         List<ParameterEntry> toDeepObject(String paramName, {required bool explode, required bool allowEmpty, bool allowReserved = false, }) {
-          return parameterProperties(allowEmpty: allowEmpty, allowLists: false, allowReserved: allowReserved, ).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, );
+          return parameterProperties(allowEmpty: allowEmpty).toDeepObject(paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, );
         }
       ''';
 

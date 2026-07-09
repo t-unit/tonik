@@ -181,43 +181,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          final _$mapValues = <Map<String, String>>[];
-          String? _$discriminatorValue;
-          if (class1 != null) {
-            final _$class1Matrix = class1!.parameterProperties(
-              allowEmpty: allowEmpty,
-            );
-            _$mapValues.add(_$class1Matrix);
-            _$discriminatorValue ??= r'class1';
-          }
-          if (class2 != null) {
-            final _$class2Matrix = class2!.parameterProperties(
-              allowEmpty: allowEmpty,
-            );
-            _$mapValues.add(_$class2Matrix);
-            _$discriminatorValue ??= r'class2';
-          }
-          final _$map = <String, String>{};
-          for (final _$m in _$mapValues) {
-            _$map.addAll(_$m);
-          }
-          final _$discValue = _$discriminatorValue;
-          if (_$discValue != null) {
-            _$map.putIfAbsent(r'type', () => _$discValue);
-          }
-          return _$map.toMatrix(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-            alreadyEncoded: true,
-          );
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (class1 != null) { final _$class1Matrix = class1!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$class1Matrix); _$discriminatorValue ??= r'class1'; } if (class2 != null) { final _$class2Matrix = class2!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$class2Matrix); _$discriminatorValue ??= r'class2'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+''';
 
       expect(
         collapseWhitespace(classCode),
@@ -266,58 +231,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          final _$values = <String>{};
-          final _$mapValues = <Map<String, String>>[];
-          String? _$discriminatorValue;
-          if (data != null) {
-            final _$dataMatrix = data!.parameterProperties(allowEmpty: allowEmpty);
-            _$mapValues.add(_$dataMatrix);
-            _$discriminatorValue ??= r'data';
-          }
-          if (string != null) {
-            final _$stringMatrix = string!.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            );
-            _$values.add(_$stringMatrix);
-          }
-          if (_$values.isEmpty && _$mapValues.isEmpty) return '';
-          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
-            throw EncodingException(
-              r'Ambiguous anyOf matrix encoding for AnyOfMixed: mixing simple and complex values',
-            );
-          }
-          if (_$values.isNotEmpty) {
-            if (_$values.length > 1) {
-              throw EncodingException(
-                r'Ambiguous anyOf matrix encoding for AnyOfMixed: multiple values provided, anyOf requires exactly one value',
-              );
-            }
-            return _$values.first;
-          } else {
-            final _$map = <String, String>{};
-            for (final _$m in _$mapValues) {
-              _$map.addAll(_$m);
-            }
-            final _$discValue = _$discriminatorValue;
-            if (_$discValue != null) {
-              _$map.putIfAbsent(r'type', () => _$discValue);
-            }
-            return _$map.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              alreadyEncoded: true,
-            );
-          }
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (data != null) { final _$dataMatrix = data!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$dataMatrix); _$discriminatorValue ??= r'data'; } if (string != null) { final _$stringMatrix = string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf matrix encoding for AnyOfMixed: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf matrix encoding for AnyOfMixed: multiple values provided, anyOf requires exactly one value', ); } return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); } }
+''';
 
         expect(
           collapseWhitespace(classCode),
@@ -538,7 +453,7 @@ void main() {
           required bool allowEmpty,
         }) {
           final _$values = <String>{};
-          final _$mapValues = <Map<String, String>>[];
+          final _$mapValues = <Map<String, PropertyValue>>[];
           if (innerChoice != null) {
             switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
@@ -584,7 +499,7 @@ void main() {
             }
             return _$values.first;
           } else {
-            final _$map = <String, String>{};
+            final _$map = <String, PropertyValue>{};
             for (final _$m in _$mapValues) {
               _$map.addAll(_$m);
             }
@@ -592,7 +507,6 @@ void main() {
               paramName,
               explode: explode,
               allowEmpty: allowEmpty,
-              alreadyEncoded: true,
             );
           }
         }
@@ -686,41 +600,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-          String toMatrix(
-            String paramName, {
-            required bool explode,
-            required bool allowEmpty,
-          }) {
-            final _$values = <String>{};
-            if (list != null) {
-              final _$listMatrix = list!
-                  .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-                  .toList()
-                  .toMatrix(
-                    paramName,
-                    explode: explode,
-                    allowEmpty: allowEmpty,
-                    alreadyEncoded: true,
-                  );
-              _$values.add(_$listMatrix);
-            }
-            if (string != null) {
-              final _$stringMatrix = string!.toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              _$values.add(_$stringMatrix);
-            }
-            if (_$values.isEmpty) return '';
-            if (_$values.length > 1) {
-              throw EncodingException(
-                r'Ambiguous anyOf matrix encoding for StringOrIntList: multiple values provided, anyOf requires exactly one value',
-              );
-            }
-            return _$values.first;
-          }
-        ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; if (list != null) { final _$listMatrix = list! .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); } if (string != null) { final _$stringMatrix = string!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringMatrix); } if (_$values.isEmpty) return ''; if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf matrix encoding for StringOrIntList: multiple values provided, anyOf requires exactly one value', ); } return _$values.first; }
+''';
         expect(
           collapseWhitespace(classCode),
           contains(collapseWhitespace(expectedMethod)),
@@ -754,41 +635,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-          String toMatrix(
-            String paramName, {
-            required bool explode,
-            required bool allowEmpty,
-          }) {
-            final _$values = <String>{};
-            if (list != null) {
-              final _$listMatrix = list!
-                  .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-                  .toList()
-                  .toMatrix(
-                    paramName,
-                    explode: explode,
-                    allowEmpty: allowEmpty,
-                    alreadyEncoded: true,
-                  );
-              _$values.add(_$listMatrix);
-            }
-            if (list2 != null) {
-              final _$list2Matrix = list2!.toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-              );
-              _$values.add(_$list2Matrix);
-            }
-            if (_$values.isEmpty) return '';
-            if (_$values.length > 1) {
-              throw EncodingException(
-                r'Ambiguous anyOf matrix encoding for StringListOrIntList: multiple values provided, anyOf requires exactly one value',
-              );
-            }
-            return _$values.first;
-          }
-        ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; if (list != null) { final _$listMatrix = list! .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); } if (list2 != null) { final _$list2Matrix = list2!.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$list2Matrix); } if (_$values.isEmpty) return ''; if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf matrix encoding for StringListOrIntList: multiple values provided, anyOf requires exactly one value', ); } return _$values.first; }
+''';
         expect(
           collapseWhitespace(classCode),
           contains(collapseWhitespace(expectedMethod)),

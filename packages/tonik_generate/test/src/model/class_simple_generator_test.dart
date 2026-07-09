@@ -1194,7 +1194,7 @@ void main() {
         String toSimple({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -1252,7 +1252,7 @@ void main() {
         String toSimple({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -1284,7 +1284,7 @@ void main() {
         String toSimple({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 

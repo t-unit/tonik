@@ -388,29 +388,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool useQueryComponent = false,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          final _$result = <String, String>{};
-          _$result[r'name'] = name.uriEncode(
-            allowEmpty: allowEmpty,
-            useQueryComponent: useQueryComponent,
-            allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-          );
-          if (password == null) {
-            throw EncodingException(r'Required property password is null.');
-          }
-          _$result[r'password'] = password!.uriEncode(
-            allowEmpty: allowEmpty,
-            useQueryComponent: useQueryComponent,
-            allowReserved: fieldEncodings[r'password']?.allowReserved ?? allowReserved,
-          );
-          return _$result;
-        }
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (password == null) { throw EncodingException(r'Required property password is null.'); } _$result[r'password'] = PropertyValue.scalar(password!); return _$result; }
+''';
 
       expect(
         collapseWhitespace(classCode),
@@ -429,7 +408,7 @@ void main() {
         String toSimple({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toSimple(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -447,26 +426,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        List<ParameterEntry> toForm(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-          bool useQueryComponent = false,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-            useQueryComponent: useQueryComponent,
-            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-          ).toForm(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-            alreadyEncoded: true,
-            useQueryComponent: useQueryComponent,
-          );
-        }
-      ''';
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); }
+''';
 
       expect(
         collapseWhitespace(classCode),
@@ -485,7 +446,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
 
@@ -503,19 +464,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          return parameterProperties(allowEmpty: allowEmpty).toMatrix(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-            alreadyEncoded: true,
-          );
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+''';
 
       expect(
         collapseWhitespace(classCode),
@@ -531,24 +481,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        List<ParameterEntry> toDeepObject(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-          bool allowReserved = false,
-        }) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-            allowLists: false,
-            allowReserved: allowReserved,
-          ).toDeepObject(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-            alreadyEncoded: true,
-          );
-        }
-      ''';
+List<ParameterEntry> toDeepObject( String paramName, { required bool explode, required bool allowEmpty, bool allowReserved = false, }) { return parameterProperties(allowEmpty: allowEmpty).toDeepObject( paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, ); }
+''';
 
       expect(
         collapseWhitespace(classCode),

@@ -50,10 +50,9 @@ void main() {
         label: 'release',
       );
 
-      final encoded = filter.parameterProperties();
+      final encoded = filter.toForm('filter', explode: true, allowEmpty: true);
       final wire = [
-        for (final entry in encoded.entries)
-          '${entry.key}=${entry.value}',
+        for (final entry in encoded) '${entry.name}=${entry.value}',
       ].join('&');
 
       final decoded = Filter.fromForm(wire, explode: true);

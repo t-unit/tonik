@@ -76,7 +76,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
       expect(
@@ -128,7 +128,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
         expect(
@@ -174,7 +174,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
       expect(
@@ -236,7 +236,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
         expect(
@@ -299,7 +299,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
         expect(
@@ -324,7 +324,7 @@ void main() {
         String toLabel({required bool explode, required bool allowEmpty}) {
           return parameterProperties(
             allowEmpty: allowEmpty,
-          ).toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+          ).toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''';
       expect(

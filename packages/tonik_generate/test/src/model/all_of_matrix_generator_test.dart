@@ -114,19 +114,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          return parameterProperties(allowEmpty: allowEmpty).toMatrix(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-            alreadyEncoded: true,
-          );
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+''';
 
       expect(
         collapseWhitespace(classCode),
@@ -259,7 +248,6 @@ void main() {
             paramName,
             explode: explode,
             allowEmpty: allowEmpty,
-            alreadyEncoded: true,
           );
         }
       ''';
@@ -465,19 +453,8 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          return parameterProperties(allowEmpty: allowEmpty).toMatrix(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-            alreadyEncoded: true,
-          );
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+''';
 
       expect(
         collapseWhitespace(classCode),
@@ -550,30 +527,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-          String toMatrix(
-            String paramName, {
-            required bool explode,
-            required bool allowEmpty,
-          }) {
-            final _$values = <String>{};
-            final _$listMatrix = list
-                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-                .toList()
-                .toMatrix(
-                  paramName,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                );
-            _$values.add(_$listMatrix);
-            if (_$values.length > 1) {
-              throw EncodingException(
-                r'Inconsistent allOf matrix encoding for AllOfIntList: all values must encode to the same result',
-              );
-            }
-            return _$values.first;
-          }
-        ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$listMatrix = list .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf matrix encoding for AllOfIntList: all values must encode to the same result', ); } return _$values.first; }
+''';
         expect(
           collapseWhitespace(classCode),
           contains(collapseWhitespace(expectedMethod)),
@@ -618,19 +573,8 @@ void main() {
           final classCode = format(generatedClass.accept(emitter).toString());
 
           const expectedMethod = '''
-            String toMatrix(
-              String paramName, {
-              required bool explode,
-              required bool allowEmpty,
-            }) {
-              return parameterProperties(allowEmpty: allowEmpty).toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                alreadyEncoded: true,
-              );
-            }
-          ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+''';
           expect(
             collapseWhitespace(classCode),
             contains(collapseWhitespace(expectedMethod)),
@@ -659,19 +603,8 @@ void main() {
           final classCode = format(generatedClass.accept(emitter).toString());
 
           const expectedMethod = '''
-            String toMatrix(
-              String paramName, {
-              required bool explode,
-              required bool allowEmpty,
-            }) {
-              return parameterProperties(allowEmpty: allowEmpty).toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                alreadyEncoded: true,
-              );
-            }
-          ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return parameterProperties( allowEmpty: allowEmpty, ).toMatrix(paramName, explode: explode, allowEmpty: allowEmpty); }
+''';
           expect(
             collapseWhitespace(classCode),
             contains(collapseWhitespace(expectedMethod)),
@@ -703,36 +636,8 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-          String toMatrix(
-            String paramName, {
-            required bool explode,
-            required bool allowEmpty,
-          }) {
-            final _$values = <String>{};
-            final _$listMatrix = list
-                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-                .toList()
-                .toMatrix(
-                  paramName,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                );
-            _$values.add(_$listMatrix);
-            final _$list2Matrix = list2.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            );
-            _$values.add(_$list2Matrix);
-            if (_$values.length > 1) {
-              throw EncodingException(
-                r'Inconsistent allOf matrix encoding for AllOfMultipleLists: all values must encode to the same result',
-              );
-            }
-            return _$values.first;
-          }
-        ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { final _$values = <String>{}; final _$listMatrix = list .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listMatrix); final _$list2Matrix = list2.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$list2Matrix); if (_$values.length > 1) { throw EncodingException( r'Inconsistent allOf matrix encoding for AllOfMultipleLists: all values must encode to the same result', ); } return _$values.first; }
+''';
         expect(
           collapseWhitespace(classCode),
           contains(collapseWhitespace(expectedMethod)),

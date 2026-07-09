@@ -663,29 +663,8 @@ void main() {
 
       // For List<int>, should map each element to string then call toMatrix
       const expectedMethod = '''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          return switch (this) {
-            StringOrIntListList(:final value) => value
-              .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-              .toList()
-              .toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                alreadyEncoded: true,
-              ),
-            StringOrIntListString(:final value) => value.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            ),
-          };
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return switch (this) { StringOrIntListList(:final value) => value .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ), StringOrIntListString(:final value) => value.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ), }; }
+''';
       expect(
         collapseWhitespace(generated),
         contains(collapseWhitespace(expectedMethod)),
@@ -719,29 +698,8 @@ void main() {
       // For List<DateTime>, should map each element to string then
       // call toMatrix
       const expectedMethod = '''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          return switch (this) {
-            StringOrDateTimeListList(:final value) => value
-                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-                .toList()
-                .toMatrix(
-                  paramName,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                ),
-            StringOrDateTimeListString(:final value) => value.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            ),
-          };
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return switch (this) { StringOrDateTimeListList(:final value) => value .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ), StringOrDateTimeListString(:final value) => value.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ), }; }
+''';
       expect(
         collapseWhitespace(generated),
         contains(collapseWhitespace(expectedMethod)),
@@ -783,29 +741,8 @@ void main() {
 
       // For List<Enum>, should map each element to string then call toMatrix
       const expectedMethod = '''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          return switch (this) {
-            StringOrEnumListList(:final value) => value
-                .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-                .toList()
-                .toMatrix(
-                  paramName,
-                  explode: explode,
-                  allowEmpty: allowEmpty,
-                  alreadyEncoded: true,
-                ),
-            StringOrEnumListString(:final value) => value.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            ),
-          };
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return switch (this) { StringOrEnumListList(:final value) => value .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ), StringOrEnumListString(:final value) => value.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ), }; }
+''';
       expect(
         collapseWhitespace(generated),
         contains(collapseWhitespace(expectedMethod)),
@@ -898,29 +835,8 @@ void main() {
       final generated = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toMatrix(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-        }) {
-          return switch (this) {
-            StringListOrIntListList(:final value) => value
-              .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty))
-              .toList()
-              .toMatrix(
-                paramName,
-                explode: explode,
-                allowEmpty: allowEmpty,
-                alreadyEncoded: true,
-            ),
-            StringListOrIntListListModel(:final value) => value.toMatrix(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-            ),
-          };
-        }
-      ''';
+String toMatrix( String paramName, { required bool explode, required bool allowEmpty, }) { return switch (this) { StringListOrIntListList(:final value) => value .map<String>((e) => e.uriEncode(allowEmpty: allowEmpty)) .toList() .toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ), StringListOrIntListListModel(:final value) => value.toMatrix( paramName, explode: explode, allowEmpty: allowEmpty, ), }; }
+''';
       expect(
         collapseWhitespace(generated),
         contains(collapseWhitespace(expectedMethod)),

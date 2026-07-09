@@ -18,6 +18,7 @@ import 'package:tonik_generate/src/util/from_simple_value_expression_generator.d
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/known_keys_collector.dart';
+import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/to_label_parameter_expression_generator.dart';
@@ -1281,9 +1282,9 @@ class AllOfGenerator {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(buildParameterPropertiesParameters())
-          ..body = buildEmptyMapStringString().returned.statement,
+          ..body = buildEmptyMapStringPropertyValue().returned.statement,
       );
     }
 
@@ -1307,7 +1308,7 @@ class AllOfGenerator {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..lambda = true
           ..body = generateEncodingExceptionExpression(message, raw: true).code,
@@ -1323,7 +1324,7 @@ class AllOfGenerator {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..lambda = true
           ..body = generateEncodingExceptionExpression(
@@ -1338,7 +1339,7 @@ class AllOfGenerator {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
@@ -1351,7 +1352,7 @@ class AllOfGenerator {
     final propertyMergingLines = [
       declareFinal(
         r'_$mergedProperties',
-      ).assign(buildEmptyMapStringString()).statement,
+      ).assign(buildEmptyMapStringPropertyValue()).statement,
     ];
 
     for (final normalized in normalizedProperties) {
@@ -1364,15 +1365,7 @@ class AllOfGenerator {
                 .property(
                   'parameterProperties',
                 )
-                .call(
-                  [],
-                  {
-                    'allowEmpty': refer('allowEmpty'),
-                    'allowLists': refer('allowLists'),
-                    'allowReserved': refer('allowReserved'),
-                    'fieldEncodings': refer('fieldEncodings'),
-                  },
-                ),
+                .call([], {'allowEmpty': refer('allowEmpty')}),
           ]).statement,
           const Code('}'),
         ]);
@@ -1383,15 +1376,7 @@ class AllOfGenerator {
                 .property(
                   'parameterProperties',
                 )
-                .call(
-                  [],
-                  {
-                    'allowEmpty': refer('allowEmpty'),
-                    'allowLists': refer('allowLists'),
-                    'allowReserved': refer('allowReserved'),
-                    'fieldEncodings': refer('fieldEncodings'),
-                  },
-                ),
+                .call([], {'allowEmpty': refer('allowEmpty')}),
           ]).statement,
         );
       }
@@ -1408,7 +1393,7 @@ class AllOfGenerator {
     return Method(
       (b) => b
         ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
+        ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(buildParameterPropertiesParameters())
         ..body = Block.of(propertyMergingLines),
     );
@@ -1428,25 +1413,37 @@ class AllOfGenerator {
 
     if (ap is TypedAdditionalProperties &&
         ap.valueModel.encodingShape == EncodingShape.simple) {
-      final uriEncodeCall = ap.valueModel.isEffectivelyNullable
-          ? '${uriEncodeReceiver(ap.valueModel, r'_$e.value?')}'
-                '.uriEncode(allowEmpty: allowEmpty, '
-                "allowReserved: allowReserved) ?? ''"
-          : '${uriEncodeReceiver(ap.valueModel, r'_$e.value')}'
-                '.uriEncode(allowEmpty: allowEmpty, '
-                'allowReserved: allowReserved)';
       return [
-        Code('''
-for (final _\$e in $apFieldName.entries) {
-  _\$mergedProperties[_\$e.key] = $uriEncodeCall;
-}'''),
+        Code('for (final _\$e in $apFieldName.entries) {'),
+        refer(r'_$mergedProperties')
+            .index(refer(r'_$e').property('key'))
+            .assign(
+              propertyValueScalar(
+                additionalPropertyRawScalar(
+                  refer(r'_$e').property('value'),
+                  ap.valueModel,
+                ),
+              ),
+            )
+            .statement,
+        const Code('}'),
       ];
     } else if (ap is UnrestrictedAdditionalProperties) {
       return [
-        Code(
-          'for (final _\$e in $apFieldName.entries) { '
-          r"_$mergedProperties[_$e.key] = _$e.value?.toString() ?? ''; }",
-        ),
+        Code('for (final _\$e in $apFieldName.entries) {'),
+        refer(r'_$mergedProperties')
+            .index(refer(r'_$e').property('key'))
+            .assign(
+              propertyValueScalar(
+                refer(r'_$e')
+                    .property('value')
+                    .nullSafeProperty('toString')
+                    .call([])
+                    .ifNullThen(literalString('')),
+              ),
+            )
+            .statement,
+        const Code('}'),
       ];
     } else {
       // Typed with complex value model — throw
@@ -1492,7 +1489,7 @@ for (final _\$e in $apFieldName.entries) {
         const Code('allowEmpty: allowEmpty,'),
         const Code(
           ').toSimple('
-          'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
+          'explode: explode, allowEmpty: allowEmpty);',
         ),
       ];
 
@@ -1547,7 +1544,6 @@ for (final _\$e in $apFieldName.entries) {
             .call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
-              'alreadyEncoded': literalBool(true),
             })
             .returned
             .statement,
@@ -1671,7 +1667,6 @@ for (final _\$e in $apFieldName.entries) {
                 .call([], {
                   'explode': refer('explode'),
                   'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
                 })
                 .returned
                 .statement,
@@ -1906,19 +1901,16 @@ for (final _\$e in $apFieldName.entries) {
     }
 
     final delegateToParameterProperties = refer('parameterProperties')
-        .call([], {
-          'allowEmpty': refer('allowEmpty'),
-          'allowReserved': refer('allowReserved'),
-          'fieldEncodings': refer('fieldEncodings'),
-        })
+        .call([], {'allowEmpty': refer('allowEmpty')})
         .property('toForm')
         .call(
           [refer('paramName')],
           {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
-            'alreadyEncoded': literalBool(true),
             'useQueryComponent': refer('useQueryComponent'),
+            'allowReserved': refer('allowReserved'),
+            'fieldEncodings': refer('fieldEncodings'),
           },
         )
         .returned
@@ -2024,7 +2016,7 @@ for (final _\$e in $apFieldName.entries) {
         const Code('allowEmpty: allowEmpty,'),
         const Code(
           ').toLabel('
-          'explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);',
+          'explode: explode, allowEmpty: allowEmpty);',
         ),
       ];
 
@@ -2209,7 +2201,6 @@ for (final _\$e in $apFieldName.entries) {
               .call([], {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
-                'alreadyEncoded': literalBool(true),
               })
               .returned
               .statement,
@@ -2307,7 +2298,6 @@ for (final _\$e in $apFieldName.entries) {
               {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
-                'alreadyEncoded': literalBool(true),
               },
             )
             .returned
@@ -2464,7 +2454,6 @@ for (final _\$e in $apFieldName.entries) {
                 {
                   'explode': refer('explode'),
                   'allowEmpty': refer('allowEmpty'),
-                  'alreadyEncoded': literalBool(true),
                 },
               )
               .returned

@@ -59,18 +59,9 @@ void main() {
       expect(parameterPropertiesMethod.type, isNot(MethodType.getter));
       expect(
         parameterPropertiesMethod.returns?.accept(emitter).toString(),
-        'Map<String,String>',
+        'Map<String,PropertyValue>',
       );
-      expect(parameterPropertiesMethod.optionalParameters.length, 5);
-
-      final allowReservedParam = parameterPropertiesMethod.optionalParameters
-          .firstWhere((p) => p.name == 'allowReserved');
-      expect(allowReservedParam.named, isTrue);
-      expect(allowReservedParam.required, isFalse);
-      expect(
-        allowReservedParam.defaultTo?.accept(emitter).toString(),
-        'false',
-      );
+      expect(parameterPropertiesMethod.optionalParameters.length, 1);
 
       final allowEmptyParam = parameterPropertiesMethod.optionalParameters
           .firstWhere((p) => p.name == 'allowEmpty');
@@ -82,33 +73,6 @@ void main() {
       );
       expect(
         allowEmptyParam.type?.accept(emitter).toString(),
-        'bool',
-      );
-
-      final allowListsParam = parameterPropertiesMethod.optionalParameters
-          .firstWhere((p) => p.name == 'allowLists');
-      expect(allowListsParam.named, isTrue);
-      expect(allowListsParam.required, isFalse);
-      expect(
-        allowListsParam.defaultTo?.accept(emitter).toString(),
-        'true',
-      );
-      expect(
-        allowListsParam.type?.accept(emitter).toString(),
-        'bool',
-      );
-
-      final useQueryComponentParam = parameterPropertiesMethod
-          .optionalParameters
-          .firstWhere((p) => p.name == 'useQueryComponent');
-      expect(useQueryComponentParam.named, isTrue);
-      expect(useQueryComponentParam.required, isFalse);
-      expect(
-        useQueryComponentParam.defaultTo?.accept(emitter).toString(),
-        'false',
-      );
-      expect(
-        useQueryComponentParam.type?.accept(emitter).toString(),
         'bool',
       );
     });
@@ -147,29 +111,7 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'id'] = id.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'id']?.allowReserved ?? allowReserved,
-  );
-  if (name != null) {
-    _$result[r'name'] = name!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'name'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'id'] = PropertyValue.scalar(id.toString()); if (name != null) { _$result[r'name'] = PropertyValue.scalar(name!); } else if (allowEmpty) { _$result[r'name'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -192,14 +134,7 @@ Map<String, String> parameterProperties({
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  return <String, String>{};
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return <String, PropertyValue>{}; }
 ''';
 
       expect(
@@ -240,33 +175,7 @@ Map<String, String> parameterProperties({
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (nullableName != null) {
-    _$result[r'nullable_name'] = nullableName!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'nullable_name']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'nullable_name'] = '';
-  }
-  if (nullableCount != null) {
-    _$result[r'nullable_count'] = nullableCount!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'nullable_count']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'nullable_count'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (nullableName != null) { _$result[r'nullable_name'] = PropertyValue.scalar(nullableName!); } else if (allowEmpty) { _$result[r'nullable_name'] = PropertyValue.scalar(''); } if (nullableCount != null) { _$result[r'nullable_count'] = PropertyValue.scalar( nullableCount!.toString(), ); } else if (allowEmpty) { _$result[r'nullable_count'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
       expect(
@@ -309,12 +218,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) =>
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
   throw EncodingException(
     r'parameterProperties not supported for User: contains complex types',
   );
@@ -384,25 +288,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (value.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'value'] = value.toSimple(
-      explode: false,
-      allowEmpty: allowEmpty,
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for Container: contains complex types',
-    );
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (value.currentEncodingShape == EncodingShape.simple) { _$result[r'value'] = PropertyValue.scalar( encodeAnyValueToString(value.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for Container: contains complex types', ); } return _$result; }
 ''';
 
         expect(
@@ -467,22 +353,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (data.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'data'] = data.toSimple(explode: false, allowEmpty: allowEmpty);
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for FlexibleContainer: contains complex types',
-    );
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (data.currentEncodingShape == EncodingShape.simple) { _$result[r'data'] = PropertyValue.scalar( encodeAnyValueToString(data.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for FlexibleContainer: contains complex types', ); } return _$result; }
 ''';
 
         expect(
@@ -544,25 +415,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (combined.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'combined'] = combined.toSimple(
-      explode: false,
-      allowEmpty: allowEmpty,
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for CombinedContainer: contains complex types',
-    );
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (combined.currentEncodingShape == EncodingShape.simple) { _$result[r'combined'] = PropertyValue.scalar( encodeAnyValueToString(combined.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for CombinedContainer: contains complex types', ); } return _$result; }
 ''';
 
         expect(
@@ -606,29 +459,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'name'] = name.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-  );
-  if (count != null) {
-    _$result[r'count'] = count!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'count']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'count'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (count != null) { _$result[r'count'] = PropertyValue.scalar(count!.toString()); } else if (allowEmpty) { _$result[r'count'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -677,15 +508,7 @@ Map<String, String> parameterProperties({
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) =>
-  throw EncodingException(
-    r'parameterProperties not supported for ComplexContainer: contains complex types',
-  );
+Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for ComplexContainer: contains complex types', );
 ''';
 
       expect(
@@ -749,27 +572,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (value != null) {
-    if (value!.currentEncodingShape == EncodingShape.simple) {
-      _$result[r'value'] = value!.toSimple(
-        explode: false,
-        allowEmpty: allowEmpty,
-      );
-    } else {
-      throw EncodingException(
-        r'parameterProperties not supported for Container: contains complex types',
-      );
-    }
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (value != null) { if (value!.currentEncodingShape == EncodingShape.simple) { _$result[r'value'] = PropertyValue.scalar( encodeAnyValueToString(value!.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for Container: contains complex types', ); } } return _$result; }
 ''';
 
         expect(
@@ -941,66 +744,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'name'] = name.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-  );
-  if (count != null) {
-    _$result[r'count'] = count!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'count']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'count'] = '';
-  }
-  _$result[r'active'] = active.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'active']?.allowReserved ?? allowReserved,
-  );
-  if (data1.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'data1'] = data1.toSimple(
-      explode: false,
-      allowEmpty: allowEmpty,
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for MixedContainer: contains complex types',
-    );
-  }
-  if (data2 != null) {
-    if (data2!.currentEncodingShape == EncodingShape.simple) {
-      _$result[r'data2'] = data2!.toSimple(
-        explode: false,
-        allowEmpty: allowEmpty,
-      );
-    } else {
-      throw EncodingException(
-        r'parameterProperties not supported for MixedContainer: contains complex types',
-      );
-    }
-  }
-  if (flexible.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'flexible'] = flexible.toSimple(
-      explode: false,
-      allowEmpty: allowEmpty,
-    );
-  } else {
-    throw EncodingException(
-      r'parameterProperties not supported for MixedContainer: contains complex types',
-    );
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (count != null) { _$result[r'count'] = PropertyValue.scalar(count!.toString()); } else if (allowEmpty) { _$result[r'count'] = PropertyValue.scalar(''); } _$result[r'active'] = PropertyValue.scalar(active.toString()); if (data1.currentEncodingShape == EncodingShape.simple) { _$result[r'data1'] = PropertyValue.scalar( encodeAnyValueToString(data1.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for MixedContainer: contains complex types', ); } if (data2 != null) { if (data2!.currentEncodingShape == EncodingShape.simple) { _$result[r'data2'] = PropertyValue.scalar( encodeAnyValueToString(data2!.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for MixedContainer: contains complex types', ); } } if (flexible.currentEncodingShape == EncodingShape.simple) { _$result[r'flexible'] = PropertyValue.scalar( encodeAnyValueToString(flexible.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for MixedContainer: contains complex types', ); } return _$result; }
 ''';
 
         expect(
@@ -1045,27 +789,7 @@ Map<String, String> parameterProperties({
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists && tags != null) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  if (tags != null) {
-    _$result[r'tags'] = tags!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'tags'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -1124,48 +848,7 @@ Map<String, String> parameterProperties({
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists && ids != null) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  if (!allowLists && tags != null) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  if (ids != null) {
-    _$result[r'ids'] = ids!
-        .map(
-          (e) => e.uriEncode(
-            allowEmpty: allowEmpty,
-            useQueryComponent: useQueryComponent,
-            allowReserved: fieldEncodings[r'ids']?.allowReserved ?? allowReserved,
-          ),
-        )
-        .toList()
-        .uriEncode(
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          allowReserved: fieldEncodings[r'ids']?.allowReserved ?? allowReserved,
-        );
-  } else if (allowEmpty) {
-    _$result[r'ids'] = '';
-  }
-  if (tags != null) {
-    _$result[r'tags'] = tags!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'tags'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (ids != null) { _$result[r'ids'] = PropertyValue.array( ids!.map((e) => e.toString()).toList(), ); } else if (allowEmpty) { _$result[r'ids'] = PropertyValue.scalar(''); } if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -1211,23 +894,7 @@ Map<String, String> parameterProperties({
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  _$result[r'tags'] = tags.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
-  );
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'tags'] = PropertyValue.array(tags); return _$result; }
 ''';
 
         expect(
@@ -1282,32 +949,7 @@ Map<String, String> parameterProperties({
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists && tags != null) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  _$result[r'id'] = id.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'id']?.allowReserved ?? allowReserved,
-  );
-  if (tags != null) {
-    _$result[r'tags'] = tags!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'tags'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'id'] = PropertyValue.scalar(id.toString()); if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -1370,15 +1012,7 @@ Map<String, String> parameterProperties({
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = '''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) =>
-    throw EncodingException(
-      r'parameterProperties not supported for ComplexListContainer: contains complex types',
-    );
+Map<String, PropertyValue> parameterProperties({ bool allowEmpty = true, }) => throw EncodingException( r'parameterProperties not supported for ComplexListContainer: contains complex types', );
 ''';
 
         expect(
@@ -1435,36 +1069,7 @@ Map<String, String> parameterProperties({
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists && statuses != null) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  if (statuses != null) {
-    _$result[r'statuses'] = statuses!
-        .map(
-          (e) => e.uriEncode(
-            allowEmpty: allowEmpty,
-            useQueryComponent: useQueryComponent,
-            allowReserved: fieldEncodings[r'statuses']?.allowReserved ?? allowReserved,
-          ),
-        )
-        .toList()
-        .uriEncode(
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          allowReserved: fieldEncodings[r'statuses']?.allowReserved ?? allowReserved,
-        );
-  } else if (allowEmpty) {
-    _$result[r'statuses'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (statuses != null) { _$result[r'statuses'] = PropertyValue.array( statuses!.map((e) => e.toJson()).toList(), ); } else if (allowEmpty) { _$result[r'statuses'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -1475,8 +1080,59 @@ Map<String, String> parameterProperties({
     );
 
     test(
-      'generates parameterProperties that throws when allowLists=true '
-      'and list present',
+      'generates parameterProperties for list of composite content that is '
+      'double-encoded (legacy behavior preserved)',
+      () {
+        final oneOfModel = OneOfModel(
+          isDeprecated: false,
+          name: 'StringOrInt',
+          models: {
+            (discriminatorValue: null, model: StringModel(context: context)),
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+          },
+          context: context,
+          examples: const [],
+        );
+
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'CompositeListContainer',
+          properties: [
+            Property(
+              name: 'items',
+              model: ListModel(
+                content: oneOfModel,
+                context: context,
+                examples: const [],
+              ),
+              isRequired: false,
+              isNullable: true,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final result = generator.generateClass(model);
+        final classCode = format(result.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (items != null) { _$result[r'items'] = PropertyValue.array( items!.map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)).toList(), ); } else if (allowEmpty) { _$result[r'items'] = PropertyValue.scalar(''); } return _$result; }
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'generates parameterProperties with an array value for a required list '
+      'property',
       () {
         final model = ClassModel(
           isDeprecated: false,
@@ -1504,23 +1160,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  _$result[r'tags'] = tags.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
-  );
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'tags'] = PropertyValue.array(tags); return _$result; }
 ''';
 
         expect(
@@ -1531,8 +1171,8 @@ Map<String, String> parameterProperties({
     );
 
     test(
-      'generates parameterProperties that throws when allowLists=true '
-      'and nullable list present',
+      'generates parameterProperties with an array value for a nullable list '
+      'property',
       () {
         final model = ClassModel(
           isDeprecated: false,
@@ -1560,27 +1200,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists && tags != null) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  if (tags != null) {
-    _$result[r'tags'] = tags!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'tags'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -1591,7 +1211,8 @@ Map<String, String> parameterProperties({
     );
 
     test(
-      'generates parameterProperties with allowLists for mixed properties',
+      'generates parameterProperties with scalar and array values for mixed '
+      'properties',
       () {
         final model = ClassModel(
           isDeprecated: false,
@@ -1628,32 +1249,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists && tags != null) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  _$result[r'name'] = name.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-  );
-  if (tags != null) {
-    _$result[r'tags'] = tags!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'tags'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -1664,7 +1260,8 @@ Map<String, String> parameterProperties({
     );
 
     test(
-      'generates parameterProperties without list check when no lists present',
+      'generates parameterProperties with scalar values for scalar-only '
+      'properties',
       () {
         final model = ClassModel(
           isDeprecated: false,
@@ -1697,25 +1294,251 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'name'] = name.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-  );
-  _$result[r'age'] = age.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'age']?.allowReserved ?? allowReserved,
-  );
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); _$result[r'age'] = PropertyValue.scalar(age.toString()); return _$result; }
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'emits the raw scalar form for every simple property type',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'AllScalarTypes',
+          properties: [
+            Property(
+              name: 'ratio',
+              model: DoubleModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'quantity',
+              model: NumberModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'createdAt',
+              model: DateTimeModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'birthday',
+              model: DateModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'price',
+              model: DecimalModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'link',
+              model: UriModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'status',
+              model: EnumModel<String>(
+                isDeprecated: false,
+                name: 'Status',
+                values: {const EnumEntry(value: 'active')},
+                isNullable: false,
+                context: context,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'level',
+              model: EnumModel<int>(
+                isDeprecated: false,
+                name: 'Level',
+                values: {const EnumEntry(value: 1)},
+                isNullable: false,
+                context: context,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'blob',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'ratio'] = PropertyValue.scalar(ratio.toString()); _$result[r'quantity'] = PropertyValue.scalar(quantity.toString()); _$result[r'createdAt'] = PropertyValue.scalar( createdAt.toTimeZonedIso8601String(), ); _$result[r'birthday'] = PropertyValue.scalar(birthday.toString()); _$result[r'price'] = PropertyValue.scalar(price.toString()); _$result[r'link'] = PropertyValue.scalar(link.toString()); _$result[r'status'] = PropertyValue.scalar(status.toJson()); _$result[r'level'] = PropertyValue.scalar(level.toJson().toString()); _$result[r'blob'] = PropertyValue.scalar(blob.toBytes().decodeToString()); return _$result; }
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'mixed model AnyModel property emits a raw scalar carrying toString',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'DynamicContainer',
+          properties: [
+            Property(
+              name: 'data',
+              model: AnyModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'data'] = PropertyValue.scalar(data?.toString() ?? ''); return _$result; }
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'mixed model NeverModel property throws that no value is permitted',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'ForbiddenContainer',
+          properties: [
+            Property(
+              name: 'data',
+              model: AnyModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'forbidden',
+              model: NeverModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'data'] = PropertyValue.scalar(data?.toString() ?? ''); throw EncodingException( r'Cannot encode NeverModel property forbidden: this type does not permit any value', ); return _$result; }
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
+
+    test(
+      'simple model NeverModel property throws that no value is permitted',
+      () {
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'ForbiddenSimpleContainer',
+          properties: [
+            Property(
+              name: 'label',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'forbidden',
+              model: NeverModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final generatedClass = generator.generateClass(model);
+        final classCode = format(generatedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'label'] = PropertyValue.scalar(label); throw EncodingException( r'Cannot encode NeverModel property forbidden: this type does not permit any value', ); return _$result; }
 ''';
 
         expect(
@@ -1764,24 +1587,7 @@ Map<String, String> parameterProperties({
 
         // Should generate null-aware encoding because the model is nullable
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (description != null) {
-    _$result[r'description'] = description!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'description']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'description'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (description != null) { _$result[r'description'] = PropertyValue.scalar(description!); } else if (allowEmpty) { _$result[r'description'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -1845,13 +1651,9 @@ Map<String, String> parameterProperties({
           contains(
             collapseWhitespace(r'''
 if (description != null) {
-  _$result[r'description'] = description!.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'description']?.allowReserved ?? allowReserved,
-  );
+  _$result[r'description'] = PropertyValue.scalar(description!);
 } else if (allowEmpty) {
-  _$result[r'description'] = '';
+  _$result[r'description'] = PropertyValue.scalar('');
 }'''),
           ),
         );
@@ -1859,10 +1661,8 @@ if (description != null) {
     );
 
     test(
-      'generates parameterProperties with null check for required property '
-      'referencing nullable ListModel',
+      'generates null-aware array value for a nullable ListModel property',
       () {
-        // ListModel with isNullable=true
         final model = ClassModel(
           isDeprecated: false,
           name: 'Container',
@@ -1889,24 +1689,13 @@ if (description != null) {
         final generatedClass = generator.generateClass(model);
         final classCode = format(generatedClass.accept(emitter).toString());
 
-        // Should NOT have the unconditional "if (!allowLists)" guard
-        // because the list is nullable (even though required)
-        expect(
-          collapseWhitespace(classCode),
-          isNot(
-            contains(
-              collapseWhitespace(
-                'if (!allowLists) {'
-                "  throw EncodingException('Lists are not supported",
-              ),
-            ),
-          ),
-        );
+        const expectedMethod = r'''
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (items != null) { _$result[r'items'] = PropertyValue.array(items!); } else if (allowEmpty) { _$result[r'items'] = PropertyValue.scalar(''); } return _$result; }
+''';
 
-        // Should have null-aware access
         expect(
           collapseWhitespace(classCode),
-          contains(collapseWhitespace('if (items != null)')),
+          contains(collapseWhitespace(expectedMethod)),
         );
       },
     );
@@ -1945,25 +1734,7 @@ if (description != null) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-List<ParameterEntry> toForm(
-  String paramName, {
-  required bool explode,
-  required bool allowEmpty,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  return parameterProperties(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-  ).toForm(
-    paramName,
-    explode: explode,
-    allowEmpty: allowEmpty,
-    alreadyEncoded: true,
-    useQueryComponent: useQueryComponent,
-  );
-}
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); }
 ''';
 
         expect(
@@ -2095,24 +1866,7 @@ List<ParameterEntry> toForm(
         // Should generate null-aware encoding because the nested alias
         // is nullable
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (label != null) {
-    _$result[r'label'] = label!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'label']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'label'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (label != null) { _$result[r'label'] = PropertyValue.scalar(label!); } else if (allowEmpty) { _$result[r'label'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -2147,20 +1901,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'signature'] = signature.toBase64String().uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
-  );
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String()); return _$result; }
 ''';
 
         expect(
@@ -2195,24 +1936,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (signature != null) {
-    _$result[r'signature'] = signature!.toBase64String().uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'signature'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (signature != null) { _$result[r'signature'] = PropertyValue.scalar( signature!.toBase64String(), ); } else if (allowEmpty) { _$result[r'signature'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -2247,24 +1971,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  if (signature != null) {
-    _$result[r'signature'] = signature!.toBase64String().uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'signature'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (signature != null) { _$result[r'signature'] = PropertyValue.scalar( signature!.toBase64String(), ); } else if (allowEmpty) { _$result[r'signature'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -2303,28 +2010,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false,
-  Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'declared'] = declared.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'declared']?.allowReserved ?? allowReserved,
-  );
-  for (final _$e in additionalProperties.entries) {
-    _$result[_$e.key] = _$e.value.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
-    );
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'declared'] = PropertyValue.scalar(declared); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar(_$e.value); } return _$result; }
 ''';
 
         expect(
@@ -2363,27 +2049,7 @@ Map<String, String> parameterProperties({
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'name'] = name.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-  );
-  for (final _$e in additionalProperties.entries) {
-    _$result[_$e.key] = _$e.value.toBase64String().uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
-    );
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar(_$e.value.toBase64String()); } return _$result; }
 ''';
 
         expect(
@@ -2434,32 +2100,7 @@ Map<String, String> parameterProperties({
         final methodCode = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  if (!allowLists && tags != null) {
-    throw EncodingException('Lists are not supported in this encoding style');
-  }
-  final _$result = <String, String>{};
-  _$result[r'signature'] = signature.toBase64String().uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
-  );
-  if (tags != null) {
-    _$result[r'tags'] = tags!.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'tags']?.allowReserved ?? allowReserved,
-    );
-  } else if (allowEmpty) {
-    _$result[r'tags'] = '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String()); if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -2536,20 +2177,11 @@ Map<String, String> parameterProperties({
         final methodCode = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'signature'] = signature.toBase64String().uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'signature']?.allowReserved ?? allowReserved,
-  );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
   if (value.currentEncodingShape == EncodingShape.simple) {
-    _$result[r'value'] = value.toSimple(explode: false, allowEmpty: allowEmpty);
+    _$result[r'value'] = PropertyValue.scalar(encodeAnyValueToString(value.toJson(), allowEmpty: allowEmpty));
   } else {
     throw EncodingException(
       r'parameterProperties not supported for ByteMixedContainer: contains complex types',
@@ -2607,29 +2239,7 @@ Map<String, String> parameterProperties({
         final methodCode = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$result = <String, String>{};
-  _$result[r'name'] = name.uriEncode(
-    allowEmpty: allowEmpty,
-    useQueryComponent: useQueryComponent,
-    allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-  );
-  for (final _$e in additionalProperties.entries) {
-    _$result[_$e.key] =
-        _$e.value?.toBase64String().uriEncode(
-          allowEmpty: allowEmpty,
-          useQueryComponent: useQueryComponent,
-          allowReserved: allowReserved,
-        ) ??
-        '';
-  }
-  return _$result;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar( _$e.value == null ? '' : _$e.value!.toBase64String(), ); } return _$result; }
 ''';
 
         expect(

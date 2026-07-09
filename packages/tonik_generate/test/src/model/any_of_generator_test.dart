@@ -718,7 +718,7 @@ void main() {
         const expectedMethod = r'''
 @override
 String toSimple({required bool explode, required bool allowEmpty}) {
-  final _$mapValues = <Map<String, String>>[];
+  final _$mapValues = <Map<String, PropertyValue>>[];
   String? _$discriminatorValue;
   if (company != null) {
     final _$companySimple = company!.parameterProperties(
@@ -732,21 +732,17 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     _$mapValues.add(_$personSimple);
     _$discriminatorValue ??= r'person';
   }
-  final _$map = <String, String>{};
+  final _$map = <String, PropertyValue>{};
   for (final _$m in _$mapValues) {
     _$map.addAll(_$m);
   }
   final _$discValue = _$discriminatorValue;
   if (_$discValue != null) {
-    _$map.putIfAbsent(r'type', () => _$discValue);
+    _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue));
   }
-  return _$map.toSimple(
-    explode: explode,
-    allowEmpty: allowEmpty,
-    alreadyEncoded: true,
-  );
+  return _$map.toSimple(explode: explode, allowEmpty: allowEmpty);
 }
-      ''';
+''';
 
         expect(generated.trim(), expectedMethod.trim());
       },
@@ -856,33 +852,27 @@ List<ParameterEntry> toForm(
   bool useQueryComponent = false,
   bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
 }) {
-  final _$mapValues = <Map<String, String>>[];
+  final _$mapValues = <Map<String, PropertyValue>>[];
   String? _$discriminatorValue;
   if (company != null) {
-    final _$companyForm = company!.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowReserved: allowReserved,
-    );
+    final _$companyForm = company!.parameterProperties(allowEmpty: allowEmpty);
     _$mapValues.add(_$companyForm);
     _$discriminatorValue ??= r'company';
   }
   if (person != null) {
-    final _$personForm = person!.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowReserved: allowReserved,
-    );
+    final _$personForm = person!.parameterProperties(allowEmpty: allowEmpty);
     _$mapValues.add(_$personForm);
     _$discriminatorValue ??= r'person';
   }
-  final _$map = <String, String>{};
+  final _$map = <String, PropertyValue>{};
   for (final _$m in _$mapValues) {
     _$map.addAll(_$m);
   }
   final _$discValue = _$discriminatorValue;
   if (_$discValue != null) {
-    _$map.putIfAbsent(r'type', () => _$discValue);
+    _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue));
   }
-  return _$map.toForm(paramName, explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, useQueryComponent: useQueryComponent);
+  return _$map.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings);
 }
       ''';
 
@@ -1002,7 +992,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 @override
 String toSimple({required bool explode, required bool allowEmpty}) {
   final _$values = <String>{};
-  final _$mapValues = <Map<String, String>>[];
+  final _$mapValues = <Map<String, PropertyValue>>[];
   String? _$discriminatorValue;
   if (data != null) {
     final _$dataSimple = data!.parameterProperties(allowEmpty: allowEmpty);
@@ -1030,22 +1020,18 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     }
     return _$values.first;
   } else {
-    final _$map = <String, String>{};
+    final _$map = <String, PropertyValue>{};
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
     final _$discValue = _$discriminatorValue;
     if (_$discValue != null) {
-      _$map.putIfAbsent(r'type', () => _$discValue);
+      _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue));
     }
-    return _$map.toSimple(
-      explode: explode,
-      allowEmpty: allowEmpty,
-      alreadyEncoded: true,
-    );
+    return _$map.toSimple(explode: explode, allowEmpty: allowEmpty);
   }
 }
-      ''';
+''';
 
         expect(generated.trim(), expectedMethod.trim());
       },
@@ -1092,15 +1078,9 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       expect(method.name, 'parameterProperties');
       expect(
         method.returns?.accept(emitter).toString().replaceAll(' ', ''),
-        'Map<String,String>',
+        'Map<String,PropertyValue>',
       );
-      expect(method.optionalParameters.length, 4);
-
-      final allowReservedParam = method.optionalParameters.firstWhere(
-        (p) => p.name == 'allowReserved',
-      );
-      expect(allowReservedParam.named, isTrue);
-      expect(allowReservedParam.required, isFalse);
+      expect(method.optionalParameters.length, 1);
 
       final allowEmptyParam = method.optionalParameters.firstWhere(
         (p) => p.name == 'allowEmpty',
@@ -1111,12 +1091,6 @@ String toSimple({required bool explode, required bool allowEmpty}) {
         allowEmptyParam.defaultTo?.accept(emitter).toString(),
         'true',
       );
-
-      final allowListsParam = method.optionalParameters.firstWhere(
-        (p) => p.name == 'allowLists',
-      );
-      expect(allowListsParam.named, isTrue);
-      expect(allowListsParam.required, isFalse);
     });
 
     test('generates complete method for single complex variant', () {
@@ -1146,17 +1120,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
-  final _$mapValues = <Map<String, String>>[];
-  if (user != null) {
-    _$mapValues.add( user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
-  }
-  final _$map = <String, String>{};
-  for (final _$m in _$mapValues) {
-    _$map.addAll(_$m);
-  }
-  return _$map;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
       expect(
@@ -1201,20 +1165,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
-  final _$mapValues = <Map<String, String>>[];
-  if (admin != null) {
-    _$mapValues.add( admin!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
-  }
-  if (user != null) {
-    _$mapValues.add( user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
-  }
-  final _$map = <String, String>{};
-  for (final _$m in _$mapValues) {
-    _$map.addAll(_$m);
-  }
-  return _$map;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (admin != null) { _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty)); } if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
       expect(
@@ -1264,23 +1215,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
-  final _$mapValues = <Map<String, String>>[];
-  String? _$discriminatorValue;
-  if (data != null) {
-    _$mapValues.add( data!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
-    _$discriminatorValue ??= r'data';
-  }
-  final _$map = <String, String>{};
-  for (final _$m in _$mapValues) {
-    _$map.addAll(_$m);
-  }
-  final _$discValue = _$discriminatorValue;
-  if (_$discValue != null) {
-    _$map.putIfAbsent(r'type', () => _$discValue);
-  }
-  return _$map;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (data != null) { _$mapValues.add(data!.parameterProperties(allowEmpty: allowEmpty)); _$discriminatorValue ??= r'data'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map; }
 ''';
 
       expect(
@@ -1328,8 +1263,8 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
-  final _$mapValues = <Map<String, String>>[];
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, PropertyValue>>[];
   if (innerChoice != null) {
     switch (innerChoice!.currentEncodingShape) {
       case EncodingShape.simple:
@@ -1338,7 +1273,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
       case EncodingShape.complex:
         _$mapValues.add(
-          innerChoice!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ),
+          innerChoice!.parameterProperties(allowEmpty: allowEmpty),
         );
         break;
       case EncodingShape.mixed:
@@ -1347,7 +1282,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         );
     }
   }
-  final _$map = <String, String>{};
+  final _$map = <String, PropertyValue>{};
   for (final _$m in _$mapValues) {
     _$map.addAll(_$m);
   }
@@ -1410,37 +1345,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
-  final _$mapValues = <Map<String, String>>[];
-  String? _$discriminatorValue;
-  if (innerChoice != null) {
-    switch (innerChoice!.currentEncodingShape) {
-      case EncodingShape.simple:
-        throw EncodingException(
-          'Cannot encode simple type to map in parameterProperties',
-        );
-      case EncodingShape.complex:
-        _$mapValues.add(
-          innerChoice!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ),
-        );
-        _$discriminatorValue ??= r'inner';
-        break;
-      case EncodingShape.mixed:
-        throw EncodingException(
-          'Cannot encode field with mixed encoding shape',
-        );
-    }
-  }
-  final _$map = <String, String>{};
-  for (final _$m in _$mapValues) {
-    _$map.addAll(_$m);
-  }
-  final _$discValue = _$discriminatorValue;
-  if (_$discValue != null) {
-    _$map.putIfAbsent(r'type', () => _$discValue);
-  }
-  return _$map;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (innerChoice != null) { switch (innerChoice!.currentEncodingShape) { case EncodingShape.simple: throw EncodingException( 'Cannot encode simple type to map in parameterProperties', ); case EncodingShape.complex: _$mapValues.add( innerChoice!.parameterProperties(allowEmpty: allowEmpty), ); _$discriminatorValue ??= r'inner'; break; case EncodingShape.mixed: throw EncodingException( 'Cannot encode field with mixed encoding shape', ); } } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue)); } return _$map; }
 ''';
 
         expect(
@@ -1501,22 +1406,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
-  final _$mapValues = <Map<String, String>>[];
-  if (complexData != null) {
-    _$mapValues.add( complexData!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
-  }
-  if (innerChoice != null) {
-    throw EncodingException(
-      'Cannot encode anyOf with simple type to map in parameterProperties',
-    );
-  }
-  final _$map = <String, String>{};
-  for (final _$m in _$mapValues) {
-    _$map.addAll(_$m);
-  }
-  return _$map;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (complexData != null) { _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty)); } if (innerChoice != null) { throw EncodingException( 'Cannot encode anyOf with simple type to map in parameterProperties', ); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
         expect(
@@ -1563,22 +1453,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
         final generated = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
-  final _$mapValues = <Map<String, String>>[];
-  if (complexData != null) {
-    _$mapValues.add( complexData!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ), );
-  }
-  if (string != null) {
-    throw EncodingException(
-      'Cannot encode anyOf with simple type to map in parameterProperties',
-    );
-  }
-  final _$map = <String, String>{};
-  for (final _$m in _$mapValues) {
-    _$map.addAll(_$m);
-  }
-  return _$map;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (complexData != null) { _$mapValues.add(complexData!.parameterProperties(allowEmpty: allowEmpty)); } if (string != null) { throw EncodingException( 'Cannot encode anyOf with simple type to map in parameterProperties', ); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
         expect(
@@ -1608,7 +1483,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowLists = true, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) {
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   throw EncodingException(
     r'parameterProperties not supported for SimpleChoice: contains only simple types',
   );
@@ -1621,7 +1496,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       );
     });
 
-    test('passes allowLists to nested complex types', () {
+    test('merges parameterProperties from nested complex types', () {
       final user = ClassModel(
         isDeprecated: false,
         name: 'User',
@@ -1656,32 +1531,7 @@ Map<String, String> parameterProperties({ bool allowEmpty = true, bool allowList
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$mapValues = <Map<String, String>>[];
-  if (admin != null) {
-    _$mapValues.add(
-      admin!.parameterProperties(
-        allowEmpty: allowEmpty,
-        allowLists: allowLists,
-        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-      ),
-    );
-  }
-  if (user != null) {
-    _$mapValues.add(
-      user!.parameterProperties( allowEmpty: allowEmpty, allowLists: allowLists, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ),
-    );
-  }
-  final _$map = <String, String>{};
-  for (final _$m in _$mapValues) {
-    _$map.addAll(_$m);
-  }
-  return _$map;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (admin != null) { _$mapValues.add(admin!.parameterProperties(allowEmpty: allowEmpty)); } if (user != null) { _$mapValues.add(user!.parameterProperties(allowEmpty: allowEmpty)); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
       expect(
@@ -1716,24 +1566,7 @@ Map<String, String> parameterProperties({
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$mapValues = <Map<String, String>>[];
-  if (list != null) {
-    if (!allowLists) {
-      throw EncodingException('Lists are not supported in this encoding style');
-    }
-    throw EncodingException('Lists are not supported in parameterProperties');
-  }
-  final _$map = <String, String>{};
-  for (final _$m in _$mapValues) {
-    _$map.addAll(_$m);
-  }
-  return _$map;
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (list != null) { throw EncodingException('Lists are not supported in parameterProperties'); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map; }
 ''';
 
       expect(
@@ -1742,7 +1575,7 @@ Map<String, String> parameterProperties({
       );
     });
 
-    test('passes allowLists to nested anyOf with mixed encoding', () {
+    test('merges parameterProperties from a nested mixed-encoding anyOf', () {
       final innerAnyOf = AnyOfModel(
         isDeprecated: false,
         name: 'InnerChoice',
@@ -1784,12 +1617,8 @@ Map<String, String> parameterProperties({
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$mapValues = <Map<String, String>>[];
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, PropertyValue>>[];
   if (innerChoice != null) {
     switch (innerChoice!.currentEncodingShape) {
       case EncodingShape.simple:
@@ -1798,11 +1627,7 @@ Map<String, String> parameterProperties({
         );
       case EncodingShape.complex:
         _$mapValues.add(
-          innerChoice!.parameterProperties(
-            allowEmpty: allowEmpty,
-            allowLists: allowLists,
-            allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-          ),
+          innerChoice!.parameterProperties(allowEmpty: allowEmpty),
         );
         break;
       case EncodingShape.mixed:
@@ -1811,7 +1636,7 @@ Map<String, String> parameterProperties({
         );
     }
   }
-  final _$map = <String, String>{};
+  final _$map = <String, PropertyValue>{};
   for (final _$m in _$mapValues) {
     _$map.addAll(_$m);
   }
@@ -2511,61 +2336,9 @@ Map<String, String> parameterProperties({
       final generated = format(method.accept(emitter).toString());
 
       const expectedMethod = r'''
-        @override
-        List<ParameterEntry> toForm(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-          bool useQueryComponent = false,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          final _$entryLists = <List<ParameterEntry>>[];
-          final _$values = <String>{};
-          final _$mapValues = <Map<String, String>>[];
-          if (map != null) {
-            throw EncodingException('Map types cannot be form-encoded');
-          }
-          if (string != null) {
-            final _$stringForm = string!.toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              useQueryComponent: useQueryComponent,
-              allowReserved: allowReserved,
-            );
-            _$entryLists.add(_$stringForm);
-            _$values.add(_$stringForm.map((e) => e.value).join(','));
-          }
-          if (_$values.isEmpty && _$mapValues.isEmpty) {
-            return const <ParameterEntry>[];
-          }
-          if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
-            throw EncodingException(
-              r'Ambiguous anyOf form encoding for FlexValue: mixing simple and complex values',
-            );
-          }
-          if (_$values.isNotEmpty) {
-            if (_$values.length > 1) {
-              throw EncodingException(
-                r'Ambiguous anyOf form encoding for FlexValue: multiple values provided, anyOf requires exactly one value',
-              );
-            }
-            return _$entryLists.first;
-          } else {
-            final _$map = <String, String>{};
-            for (final _$m in _$mapValues) {
-              _$map.addAll(_$m);
-            }
-            return _$map.toForm(
-              paramName,
-              explode: explode,
-              allowEmpty: allowEmpty,
-              alreadyEncoded: true,
-              useQueryComponent: useQueryComponent,
-            );
-          }
-        }
-      ''';
+@override
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (map != null) { throw EncodingException('Map types cannot be form-encoded'); } if (string != null) { final _$stringForm = string!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ); _$entryLists.add(_$stringForm); _$values.add(_$stringForm.map((e) => e.value).join(',')); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for FlexValue: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf form encoding for FlexValue: multiple values provided, anyOf requires exactly one value', ); } return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
+''';
 
       expect(
         collapseWhitespace(generated),
@@ -3083,7 +2856,7 @@ bool operator ==(Object other) {
 @override
 String toSimple({required bool explode, required bool allowEmpty}) {
   final _$values = <String>{};
-  final _$mapValues = <Map<String, String>>[];
+  final _$mapValues = <Map<String, PropertyValue>>[];
   if (tonikFile != null) {
     final _$tonikFileSimple = tonikFile!.toBase64String().toSimple(
       explode: explode,
@@ -3109,14 +2882,13 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     }
     return _$values.first;
   } else {
-    final _$map = <String, String>{};
+    final _$map = <String, PropertyValue>{};
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
     return _$map.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
-      alreadyEncoded: true,
     );
   }
 }
@@ -3166,63 +2938,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 
         const expectedMethod = r'''
 @override
-List<ParameterEntry> toForm(
-  String paramName, {
-  required bool explode,
-  required bool allowEmpty,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$entryLists = <List<ParameterEntry>>[];
-  final _$values = <String>{};
-  final _$mapValues = <Map<String, String>>[];
-  if (tonikFile != null) {
-    final _$tonikFileForm = tonikFile!.toBase64String().toForm(
-      paramName,
-      explode: explode,
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: allowReserved,
-    );
-    _$entryLists.add(_$tonikFileForm);
-    _$values.add(_$tonikFileForm.map((e) => e.value).join(','));
-  }
-  if (text != null) {
-    final _$textForm = text!.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowReserved: allowReserved,
-    );
-    _$mapValues.add(_$textForm);
-  }
-  if (_$values.isEmpty && _$mapValues.isEmpty) {
-    return const <ParameterEntry>[];
-  }
-  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
-    throw EncodingException(
-      r'Ambiguous anyOf form encoding for AnyOfBase64: mixing simple and complex values',
-    );
-  }
-  if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf form encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value',
-      );
-    }
-    return _$entryLists.first;
-  } else {
-    final _$map = <String, String>{};
-    for (final _$m in _$mapValues) {
-      _$map.addAll(_$m);
-    }
-    return _$map.toForm(
-      paramName,
-      explode: explode,
-      allowEmpty: allowEmpty,
-      alreadyEncoded: true,
-      useQueryComponent: useQueryComponent,
-    );
-  }
-}
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (tonikFile != null) { final _$tonikFileForm = tonikFile!.toBase64String().toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ); _$entryLists.add(_$tonikFileForm); _$values.add(_$tonikFileForm.map((e) => e.value).join(',')); } if (text != null) { final _$textForm = text!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$textForm); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for AnyOfBase64: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf form encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value', ); } return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
 ''';
 
         expect(generated.trim(), format(expectedMethod).trim());
@@ -3271,7 +2987,7 @@ List<ParameterEntry> toForm(
 @override
 String toLabel({required bool explode, required bool allowEmpty}) {
   final _$values = <String>{};
-  final _$mapValues = <Map<String, String>>[];
+  final _$mapValues = <Map<String, PropertyValue>>[];
   if (tonikFile != null) {
     final _$tonikFileLabel = tonikFile!.toBase64String().toLabel(
       explode: explode,
@@ -3297,14 +3013,13 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     }
     return _$values.first;
   } else {
-    final _$map = <String, String>{};
+    final _$map = <String, PropertyValue>{};
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
     return _$map.toLabel(
       explode: explode,
       allowEmpty: allowEmpty,
-      alreadyEncoded: true,
     );
   }
 }
@@ -3456,12 +3171,8 @@ EncodingShape get currentEncodingShape {
       final generated = format(method.accept(emitter).toString());
 
       const expected = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$mapValues = <Map<String, String>>[];
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$mapValues = <Map<String, PropertyValue>>[];
   if (object != null) {
     throw EncodingException(
       r'AnyModel variant of MixedFilter cannot be parameter encoded',
@@ -3469,14 +3180,10 @@ Map<String, String> parameterProperties({
   }
   if (detailedFilter != null) {
     _$mapValues.add(
-      detailedFilter!.parameterProperties(
-        allowEmpty: allowEmpty,
-        allowLists: allowLists,
-        allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-      ),
+      detailedFilter!.parameterProperties(allowEmpty: allowEmpty),
     );
   }
-  final _$map = <String, String>{};
+  final _$map = <String, PropertyValue>{};
   for (final _$m in _$mapValues) {
     _$map.addAll(_$m);
   }
@@ -3496,7 +3203,7 @@ Map<String, String> parameterProperties({
 @override
 String toSimple({required bool explode, required bool allowEmpty}) {
   final _$values = <String>{};
-  final _$mapValues = <Map<String, String>>[];
+  final _$mapValues = <Map<String, PropertyValue>>[];
   if (object != null) {
     throw EncodingException(
       r'AnyModel variant of MixedFilter cannot be simple-encoded',
@@ -3522,14 +3229,13 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     }
     return _$values.first;
   } else {
-    final _$map = <String, String>{};
+    final _$map = <String, PropertyValue>{};
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
     return _$map.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
-      alreadyEncoded: true,
     );
   }
 }
@@ -3545,57 +3251,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 
       const expected = r'''
 @override
-List<ParameterEntry> toForm(
-  String paramName, {
-  required bool explode,
-  required bool allowEmpty,
-  bool useQueryComponent = false,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$entryLists = <List<ParameterEntry>>[];
-  final _$values = <String>{};
-  final _$mapValues = <Map<String, String>>[];
-  if (object != null) {
-    throw EncodingException(
-      r'AnyModel variant of MixedFilter cannot be form-encoded',
-    );
-  }
-  if (detailedFilter != null) {
-    final _$detailedFilterForm = detailedFilter!.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowReserved: allowReserved,
-    );
-    _$mapValues.add(_$detailedFilterForm);
-  }
-  if (_$values.isEmpty && _$mapValues.isEmpty) {
-    return const <ParameterEntry>[];
-  }
-  if (_$mapValues.isNotEmpty && _$values.isNotEmpty) {
-    throw EncodingException(
-      r'Ambiguous anyOf form encoding for MixedFilter: mixing simple and complex values',
-    );
-  }
-  if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf form encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
-      );
-    }
-    return _$entryLists.first;
-  } else {
-    final _$map = <String, String>{};
-    for (final _$m in _$mapValues) {
-      _$map.addAll(_$m);
-    }
-    return _$map.toForm(
-      paramName,
-      explode: explode,
-      allowEmpty: allowEmpty,
-      alreadyEncoded: true,
-      useQueryComponent: useQueryComponent,
-    );
-  }
-}
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (object != null) { throw EncodingException( r'AnyModel variant of MixedFilter cannot be form-encoded', ); } if (detailedFilter != null) { final _$detailedFilterForm = detailedFilter!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$detailedFilterForm); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for MixedFilter: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf form encoding for MixedFilter: multiple values provided, anyOf requires exactly one value', ); } return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
 ''';
 
       expect(generated.trim(), format(expected).trim());
@@ -3610,7 +3266,7 @@ List<ParameterEntry> toForm(
 @override
 String toLabel({required bool explode, required bool allowEmpty}) {
   final _$values = <String>{};
-  final _$mapValues = <Map<String, String>>[];
+  final _$mapValues = <Map<String, PropertyValue>>[];
   if (object != null) {
     throw EncodingException(
       r'AnyModel variant of MixedFilter cannot be label-encoded',
@@ -3636,14 +3292,13 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     }
     return _$values.first;
   } else {
-    final _$map = <String, String>{};
+    final _$map = <String, PropertyValue>{};
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
     return _$map.toLabel(
       explode: explode,
       allowEmpty: allowEmpty,
-      alreadyEncoded: true,
     );
   }
 }
@@ -3665,7 +3320,7 @@ String toMatrix(
   required bool allowEmpty,
 }) {
   final _$values = <String>{};
-  final _$mapValues = <Map<String, String>>[];
+  final _$mapValues = <Map<String, PropertyValue>>[];
   if (object != null) {
     throw EncodingException(
       r'AnyModel variant of MixedFilter cannot be matrix-encoded',
@@ -3691,7 +3346,7 @@ String toMatrix(
     }
     return _$values.first;
   } else {
-    final _$map = <String, String>{};
+    final _$map = <String, PropertyValue>{};
     for (final _$m in _$mapValues) {
       _$map.addAll(_$m);
     }
@@ -3699,7 +3354,6 @@ String toMatrix(
       paramName,
       explode: explode,
       allowEmpty: allowEmpty,
-      alreadyEncoded: true,
     );
   }
 }
