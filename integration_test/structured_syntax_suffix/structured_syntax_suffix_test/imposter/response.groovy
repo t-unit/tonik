@@ -24,9 +24,9 @@ if (context.request.path == '/api/v1/widget' && context.request.method == 'GET')
 
 } else if (context.request.path == '/api/v1/wildcard/range-status' && context.request.method == 'GET') {
     respond()
-        .withStatusCode(206)
+        .withStatusCode(203)
         .withHeader('Content-Type', 'application/json')
-        .withContent('{"id":206,"name":"range-wildcard"}')
+        .withContent('{"id":203,"name":"range-wildcard"}')
 
 } else {
     respond().usingDefaultBehaviour()

@@ -78,10 +78,10 @@ void main() {
     expect(result, isA<TonikSuccess<TonikFile>>());
     final success = result as TonikSuccess<TonikFile>;
 
-    expect(success.response.statusCode, 206);
+    expect(success.response.statusCode, 203);
     expect(
       utf8.decode(success.value.toBytes()),
-      '{"id":206,"name":"range-wildcard"}',
+      '{"id":203,"name":"range-wildcard"}',
     );
   });
 }

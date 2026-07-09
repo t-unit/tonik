@@ -79,7 +79,7 @@ paths:
         - widgets
       summary: Get bytes through a status and media-type range
       description: |-
-        Returns 206 application/json while the response is declared as 2XX and
+        Returns 203 application/json while the response is declared as 2XX and
         application/*.
       operationId: getRangeWildcard
       responses:
