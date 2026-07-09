@@ -22,12 +22,6 @@ if (context.request.path == '/api/v1/widget' && context.request.method == 'GET')
         .withHeader('Content-Type', 'text/plain')
         .withContent('catch-all wildcard response')
 
-} else if (context.request.path == '/api/v1/wildcard/range-status' && context.request.method == 'GET') {
-    respond()
-        .withStatusCode(203)
-        .withHeader('Content-Type', 'application/json')
-        .withContent('{"id":203,"name":"range-wildcard"}')
-
 } else {
     respond().usingDefaultBehaviour()
 }

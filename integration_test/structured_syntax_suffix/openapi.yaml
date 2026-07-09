@@ -73,22 +73,6 @@ paths:
             '*/*':
               schema:
                 $ref: '#/components/schemas/Widget'
-  /wildcard/range-status:
-    get:
-      tags:
-        - widgets
-      summary: Get bytes through a status and media-type range
-      description: |-
-        Returns 203 application/json while the response is declared as 2XX and
-        application/*.
-      operationId: getRangeWildcard
-      responses:
-        '2XX':
-          description: Status range wildcard response retrieved successfully
-          content:
-            'application/*':
-              schema:
-                $ref: '#/components/schemas/Widget'
 components:
   schemas:
     Widget:

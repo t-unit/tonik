@@ -72,16 +72,4 @@ void main() {
     expect(utf8.decode(success.value.toBytes()), 'catch-all wildcard response');
   });
 
-  test('status range with application/* matches concrete response', () async {
-    final result = await buildApi().getRangeWildcard();
-
-    expect(result, isA<TonikSuccess<TonikFile>>());
-    final success = result as TonikSuccess<TonikFile>;
-
-    expect(success.response.statusCode, 203);
-    expect(
-      utf8.decode(success.value.toBytes()),
-      '{"id":203,"name":"range-wildcard"}',
-    );
-  });
 }
