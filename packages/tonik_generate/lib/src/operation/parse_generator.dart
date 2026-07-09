@@ -143,21 +143,62 @@ class ParseGenerator {
     // Normalize spec keys with the same helper the generated code uses at
     // runtime so case patterns match the runtime-computed `_$mediaType`.
     final normalized = tonik_util.extractMediaType(contentType);
-    final contentTypePattern = normalized != null
+    final isMediaRange = normalized != null && _isMediaTypeRange(normalized);
+    final contentTypePattern = normalized != null && !isMediaRange
         ? specLiteralStringCode(normalized)
         : '_';
+    final mediaTypeGuard = isMediaRange
+        ? _mediaTypeRangeGuard(normalized)
+        : null;
+
     switch (status) {
       case ExplicitResponseStatus():
-        return Code('case (${status.statusCode}, $contentTypePattern):');
+        return _caseWithGuards(
+          'case (${status.statusCode}, $contentTypePattern)',
+          [?mediaTypeGuard],
+        );
       case RangeResponseStatus():
-        return Code(
-          'case (var status, $contentTypePattern) '
-          'when status != null '
-          '&& status >= ${status.min} && status <= ${status.max}:',
+        return _caseWithGuards(
+          'case (var status, $contentTypePattern)',
+          [
+            Code(
+              'status != null '
+              '&& status >= ${status.min} && status <= ${status.max}',
+            ),
+            ?mediaTypeGuard,
+          ],
         );
       case DefaultResponseStatus():
-        return Code('case (_, $contentTypePattern):');
+        return _caseWithGuards(
+          'case (_, $contentTypePattern)',
+          [?mediaTypeGuard],
+        );
     }
+  }
+
+  Code _caseWithGuards(String pattern, List<Code> guards) {
+    if (guards.isEmpty) return Code('$pattern:');
+
+    return Block.of([
+      Code('$pattern when '),
+      for (final (index, guard) in guards.indexed) ...[
+        if (index > 0) const Code(' && '),
+        guard,
+      ],
+      const Code(':'),
+    ]);
+  }
+
+  Code _mediaTypeRangeGuard(String mediaTypeRange) {
+    return Block.of([
+      refer(
+        'matchesMediaTypeRange',
+        'package:tonik_util/tonik_util.dart',
+      ).code,
+      const Code(r'(_$mediaType, '),
+      Code(specLiteralStringCode(mediaTypeRange)),
+      const Code(')'),
+    ]);
   }
 
   Code _caseBody(
@@ -721,6 +762,54 @@ class ParseGenerator {
       );
     }
 
-    return contentTypes;
+    return _sortContentTypesBySpecificity(contentTypes);
+  }
+
+  Set<String?> _sortContentTypesBySpecificity(Set<String?> contentTypes) {
+    final exact = <String?>[];
+    final typeRanges = <String?>[];
+    final catchAllRanges = <String?>[];
+    final catchAllPatterns = <String?>[];
+
+    for (final contentType in contentTypes) {
+      switch (_contentTypeSpecificity(contentType)) {
+        case 0:
+          exact.add(contentType);
+        case 1:
+          typeRanges.add(contentType);
+        case 2:
+          catchAllRanges.add(contentType);
+        case 3:
+          catchAllPatterns.add(contentType);
+      }
+    }
+
+    return {
+      ...exact,
+      ...typeRanges,
+      ...catchAllRanges,
+      ...catchAllPatterns,
+    };
+  }
+
+  int _contentTypeSpecificity(String? contentType) {
+    final normalized = tonik_util.extractMediaType(contentType);
+    if (normalized == null) return 3;
+    if (normalized == '*/*') return 2;
+    if (_isTypeMediaRange(normalized)) return 1;
+    return 0;
+  }
+
+  bool _isMediaTypeRange(String mediaType) {
+    return mediaType == '*/*' || _isTypeMediaRange(mediaType);
+  }
+
+  bool _isTypeMediaRange(String mediaType) {
+    final slashIndex = mediaType.indexOf('/');
+    if (slashIndex <= 0 || slashIndex == mediaType.length - 1) return false;
+
+    final type = mediaType.substring(0, slashIndex);
+    final subtype = mediaType.substring(slashIndex + 1);
+    return subtype == '*' && type != '*' && !type.contains('*');
   }
 }

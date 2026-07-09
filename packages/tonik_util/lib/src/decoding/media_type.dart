@@ -29,3 +29,48 @@ String? extractMediaType(String? header) {
 
   return stripped.toLowerCase();
 }
+
+/// Returns whether [actual] belongs to the declared media type or range.
+///
+/// Supports exact matches, `type/*`, and `*/*` after applying the same
+/// parameter stripping and lowercasing as [extractMediaType].
+bool matchesMediaTypeRange(String? actual, String declared) {
+  final actualMediaType = extractMediaType(actual);
+  final declaredMediaType = extractMediaType(declared);
+
+  if (!_isConcreteMediaType(actualMediaType)) return false;
+  if (declaredMediaType == null || !_hasTypeSubtype(declaredMediaType)) {
+    return false;
+  }
+
+  if (!_isMediaTypeRange(declaredMediaType)) {
+    return actualMediaType == declaredMediaType;
+  }
+
+  if (declaredMediaType == '*/*') return true;
+
+  final slashIndex = declaredMediaType.indexOf('/');
+  final declaredType = declaredMediaType.substring(0, slashIndex);
+  return actualMediaType!.startsWith('$declaredType/');
+}
+
+bool _hasTypeSubtype(String mediaType) {
+  final slashIndex = mediaType.indexOf('/');
+  return slashIndex > 0 && slashIndex < mediaType.length - 1;
+}
+
+bool _isConcreteMediaType(String? mediaType) {
+  if (mediaType == null || !_hasTypeSubtype(mediaType)) return false;
+  return !mediaType.contains('*');
+}
+
+bool _isMediaTypeRange(String mediaType) {
+  if (mediaType == '*/*') return true;
+
+  final slashIndex = mediaType.indexOf('/');
+  if (slashIndex <= 0 || slashIndex == mediaType.length - 1) return false;
+
+  final type = mediaType.substring(0, slashIndex);
+  final subtype = mediaType.substring(slashIndex + 1);
+  return subtype == '*' && type != '*' && !type.contains('*');
+}

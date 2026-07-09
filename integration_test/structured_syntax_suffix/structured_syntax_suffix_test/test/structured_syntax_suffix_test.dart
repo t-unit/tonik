@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:structured_syntax_suffix_api/structured_syntax_suffix_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -16,27 +18,70 @@ void main() {
     return WidgetsApi(CustomServer(baseUrl: baseUrl));
   }
 
-  test('application/vnd.api+json response decodes into the declared model',
-      () async {
-    final result = await buildApi().getWidget();
+  test(
+    'application/vnd.api+json response decodes into the declared model',
+    () async {
+      final result = await buildApi().getWidget();
 
-    expect(result, isA<TonikSuccess<Widget>>());
-    final success = result as TonikSuccess<Widget>;
+      expect(result, isA<TonikSuccess<Widget>>());
+      final success = result as TonikSuccess<Widget>;
+
+      expect(success.response.statusCode, 200);
+      expect(success.value.id, 42);
+      expect(success.value.name, 'sprocket');
+    },
+  );
+
+  test(
+    'application/problem+json response decodes into the declared model',
+    () async {
+      final result = await buildApi().getProblem();
+
+      expect(result, isA<TonikSuccess<Widget>>());
+      final success = result as TonikSuccess<Widget>;
+
+      expect(success.response.statusCode, 200);
+      expect(success.value.id, 7);
+      expect(success.value.name, 'teapot');
+    },
+  );
+
+  test(
+    'application/* response matches application/json and returns bytes',
+    () async {
+      final result = await buildApi().getApplicationWildcard();
+
+      expect(result, isA<TonikSuccess<TonikFile>>());
+      final success = result as TonikSuccess<TonikFile>;
+
+      expect(success.response.statusCode, 200);
+      expect(
+        utf8.decode(success.value.toBytes()),
+        '{"id":99,"name":"application-wildcard"}',
+      );
+    },
+  );
+
+  test('*/* response matches text/plain and returns bytes', () async {
+    final result = await buildApi().getCatchAllWildcard();
+
+    expect(result, isA<TonikSuccess<TonikFile>>());
+    final success = result as TonikSuccess<TonikFile>;
 
     expect(success.response.statusCode, 200);
-    expect(success.value.id, 42);
-    expect(success.value.name, 'sprocket');
+    expect(utf8.decode(success.value.toBytes()), 'catch-all wildcard response');
   });
 
-  test('application/problem+json response decodes into the declared model',
-      () async {
-    final result = await buildApi().getProblem();
+  test('status range with application/* matches concrete response', () async {
+    final result = await buildApi().getRangeWildcard();
 
-    expect(result, isA<TonikSuccess<Widget>>());
-    final success = result as TonikSuccess<Widget>;
+    expect(result, isA<TonikSuccess<TonikFile>>());
+    final success = result as TonikSuccess<TonikFile>;
 
-    expect(success.response.statusCode, 200);
-    expect(success.value.id, 7);
-    expect(success.value.name, 'teapot');
+    expect(success.response.statusCode, 206);
+    expect(
+      utf8.decode(success.value.toBytes()),
+      '{"id":206,"name":"range-wildcard"}',
+    );
   });
 }
