@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:adversarial_strings_api/adversarial_strings_api.dart';
+import 'package:big_decimal/big_decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 
@@ -302,6 +303,30 @@ void main() {
       expect(jsonDecode(adapter.capturedBodyAsString), 'one-of-body');
     });
 
+    test('oneOf integer variant is sent as a JSON number', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootOneOf(dio).call(
+        body: const RootStringOneOfInt(7),
+      );
+
+      expect(adapter.capturedBodyAsString, '7');
+      expect(jsonDecode(adapter.capturedBodyAsString), 7);
+    });
+
+    test('oneOf bool variant is sent as a JSON boolean', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootOneOf(dio).call(
+        body: const RootStringOneOfBool(true),
+      );
+
+      expect(adapter.capturedBodyAsString, 'true');
+      expect(jsonDecode(adapter.capturedBodyAsString), isTrue);
+    });
+
     test('anyOf string variant is sent as a quoted JSON string', () async {
       final adapter = _CapturingAdapter();
       final dio = _capturingDio(adapter);
@@ -312,6 +337,30 @@ void main() {
 
       expect(adapter.capturedBodyAsString, '"any-of-body"');
       expect(jsonDecode(adapter.capturedBodyAsString), 'any-of-body');
+    });
+
+    test('anyOf bool variant is sent as a JSON boolean', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootAnyOf(dio).call(
+        body: const RootStringAnyOf(bool: true),
+      );
+
+      expect(adapter.capturedBodyAsString, 'true');
+      expect(jsonDecode(adapter.capturedBodyAsString), isTrue);
+    });
+
+    test('oneOf decimal variant is sent as a quoted JSON string', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootDecimalOneOf(dio).call(
+        body: RootDecimalOneOfDecimal(BigDecimal.parse('12.34')),
+      );
+
+      expect(adapter.capturedBodyAsString, '"12.34"');
+      expect(jsonDecode(adapter.capturedBodyAsString), '12.34');
     });
   });
 

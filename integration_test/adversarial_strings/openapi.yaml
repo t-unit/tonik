@@ -233,6 +233,22 @@ paths:
         '204':
           description: Stored
 
+  /json-root-decimal-one-of:
+    post:
+      operationId: sendRootDecimalOneOf
+      tags:
+        - adversarial
+      summary: JSON decimal oneOf request body
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RootDecimalOneOf'
+      responses:
+        '204':
+          description: Stored
+
 components:
   schemas:
     RootStringAlias:
@@ -242,11 +258,18 @@ components:
       oneOf:
         - type: string
         - type: integer
+        - type: boolean
 
     RootStringAnyOf:
       anyOf:
         - type: string
         - type: boolean
+
+    RootDecimalOneOf:
+      oneOf:
+        - type: string
+          format: decimal
+        - type: integer
 
     BasicObject:
       type: object
