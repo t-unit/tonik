@@ -195,6 +195,28 @@ void main() {
         '/v1/label/object/explode/.name=test.count=5',
       );
     });
+
+    test(
+      'composite-list property comma-joins elements and escapes reserved '
+      'characters once',
+      () async {
+        final api = buildLabelApi();
+        final response = await api.testLabelObjectCompositeList(
+          value: const CompositeListObject(
+            tags: [OneOfPrimitiveString('a,b'), OneOfPrimitiveInt(7)],
+          ),
+        );
+
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
+
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/label/object/composite-list/.tags,a%2Cb,7',
+        );
+      },
+    );
   });
 
   group('Label style - Combined', () {

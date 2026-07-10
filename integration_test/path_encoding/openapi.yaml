@@ -368,6 +368,27 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  /label/object/composite-list/{value}:
+    get:
+      operationId: testLabelObjectCompositeList
+      tags: [label]
+      summary: Label-style object with a composite-list property (explode=false)
+      parameters:
+        - name: value
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            $ref: '#/components/schemas/CompositeListObject'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
   /label/special-keys/{value}:
     get:
       operationId: testLabelSpecialKeys
@@ -1610,6 +1631,16 @@ components:
           type: string
         count:
           type: integer
+
+    CompositeListObject:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/OneOfPrimitive'
 
     ComplexObject:
       type: object
