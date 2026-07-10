@@ -94,6 +94,31 @@ void main() {
         const <ParameterEntry>[(name: 'tags', value: '')],
       );
     });
+
+    test('omits an empty scalar flagged as an exploded array beside a '
+        'scalar', () {
+      expect(
+        <String, PropertyValue>{
+          'name': const PropertyValue.scalar('John'),
+          'numbers': const PropertyValue.scalar(''),
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          fieldEncodings: const {'numbers': FormFieldEncoding(explode: true)},
+        ),
+        const <ParameterEntry>[(name: 'name', value: 'John')],
+      );
+    });
+
+    test('keeps an empty scalar with no explode descriptor', () {
+      expect(
+        <String, PropertyValue>{
+          'name': const PropertyValue.scalar(''),
+        }.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: 'name', value: '')],
+      );
+    });
   });
 
   group('object-level explode=true comma inside element', () {

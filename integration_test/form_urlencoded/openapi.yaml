@@ -514,6 +514,178 @@ paths:
               schema:
                 $ref: '#/components/schemas/AllowReservedCompositeForm'
 
+  /form/array-body:
+    post:
+      operationId: postArrayBodyForm
+      tags:
+        - form
+      summary: Post a form body with a scalar and an array property, no encoding
+      description: >-
+        Tests that an array property with no Encoding Object explodes into
+        repeated keys under the OAS form default, beside a scalar property.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ArrayBodyForm'
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/ArrayBodyForm'
+
+  /form/array-explode-false:
+    post:
+      operationId: postArrayExplodeFalseForm
+      tags:
+        - form
+      summary: Post a form body whose array property sets explode false
+      description: >-
+        Tests that an array property with an explicit explode false Encoding
+        Object comma-joins its elements into a single entry.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ArrayExplodeForm'
+            encoding:
+              tags:
+                explode: false
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/ArrayExplodeForm'
+
+  /form/array-space-delimited:
+    post:
+      operationId: postArraySpaceDelimitedForm
+      tags:
+        - form
+      summary: Post a form body whose array property is spaceDelimited without explode
+      description: >-
+        Tests that an array property with a spaceDelimited Encoding Object and
+        explode omitted comma-joins its elements into a single entry, because
+        the style-aware default suppresses explosion.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ArrayExplodeForm'
+            encoding:
+              tags:
+                style: spaceDelimited
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/ArrayExplodeForm'
+
+  /form/array-explode-true:
+    post:
+      operationId: postArrayExplodeTrueForm
+      tags:
+        - form
+      summary: Post a form body whose array property sets explode true
+      description: >-
+        Tests that an array property with an explicit explode true Encoding
+        Object explodes its elements into repeated keys.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ArrayExplodeForm'
+            encoding:
+              tags:
+                explode: true
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/ArrayExplodeForm'
+
+  /form/array-comma-element:
+    post:
+      operationId: postArrayCommaElementForm
+      tags:
+        - form
+      summary: Post a form body whose array element contains a comma
+      description: >-
+        Tests that an exploded array element containing a comma percent-encodes
+        the comma per exploded key.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ArrayExplodeForm'
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/ArrayExplodeForm'
+
+  /form/array-composite:
+    post:
+      operationId: postArrayCompositeForm
+      tags:
+        - form
+      summary: Post an allOf form body whose member has an array property
+      description: >-
+        Tests that an allOf form body explodes an array property contributed by
+        a member schema, beside a scalar member property.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ArrayCompositeForm'
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/ArrayCompositeForm'
+
+  /form/optional-array:
+    post:
+      operationId: postOptionalArrayForm
+      tags:
+        - form
+      summary: Post a form body whose array property is optional and absent
+      description: >-
+        Tests that an optional simple-content array property left null is
+        omitted entirely from the body while a present scalar property still
+        serializes.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OptionalArrayForm'
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/OptionalArrayForm'
+
   /custom/form:
     post:
       operationId: postCustomForm
@@ -759,3 +931,68 @@ components:
     AllowReservedCompositeForm:
       allOf:
         - $ref: '#/components/schemas/ReservedBase'
+
+    ArrayBodyForm:
+      type: object
+      required:
+        - q
+        - tags
+      properties:
+        q:
+          type: string
+          description: Scalar property sent as a single entry
+        tags:
+          type: array
+          items:
+            type: string
+          description: Array property exploded into repeated keys
+
+    ArrayExplodeForm:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: Array property whose explode behavior is under test
+
+    ArrayCompositeBase:
+      type: object
+      required:
+        - label
+      properties:
+        label:
+          type: string
+          description: Scalar member property
+
+    ArrayCompositeTags:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: Array member property exploded into repeated keys
+
+    ArrayCompositeForm:
+      allOf:
+        - $ref: '#/components/schemas/ArrayCompositeBase'
+        - $ref: '#/components/schemas/ArrayCompositeTags'
+
+    OptionalArrayForm:
+      type: object
+      required:
+        - q
+      properties:
+        q:
+          type: string
+          description: Scalar property that is always present
+        tags:
+          type: array
+          items:
+            type: string
+          description: Optional array property omitted entirely when absent
