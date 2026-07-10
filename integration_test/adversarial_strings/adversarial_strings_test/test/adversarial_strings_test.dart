@@ -286,7 +286,7 @@ void main() {
 
       await SendRootAlias(dio).call(body: 'alias-body');
 
-      expect(adapter.capturedBodyAsString, jsonEncode('alias-body'));
+      expect(adapter.capturedBodyAsString, '"alias-body"');
       expect(jsonDecode(adapter.capturedBodyAsString), 'alias-body');
     });
 
@@ -298,7 +298,7 @@ void main() {
         body: const RootStringOneOfString('one-of-body'),
       );
 
-      expect(adapter.capturedBodyAsString, jsonEncode('one-of-body'));
+      expect(adapter.capturedBodyAsString, '"one-of-body"');
       expect(jsonDecode(adapter.capturedBodyAsString), 'one-of-body');
     });
 
@@ -310,7 +310,7 @@ void main() {
         body: const RootStringAnyOf(string: 'any-of-body'),
       );
 
-      expect(adapter.capturedBodyAsString, jsonEncode('any-of-body'));
+      expect(adapter.capturedBodyAsString, '"any-of-body"');
       expect(jsonDecode(adapter.capturedBodyAsString), 'any-of-body');
     });
   });
