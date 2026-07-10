@@ -2587,6 +2587,8 @@ Future<TonikResult<void>> call({
 
         final result = generator.generateCallableOperation(operation);
         final code = result.code;
+        expect(code, contains("import 'dart:convert' as"));
+        expect(code, contains('.jsonEncode(body);'));
         expect(
           code,
           contains(

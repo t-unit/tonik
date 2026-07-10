@@ -120,7 +120,7 @@ class DataGenerator {
             inlineHelpers.addAll(jsonBuilt.inlineFunctions);
             switchCases
               ..add(const Code(' value => '))
-              ..add(jsonBuilt.unsafeRawBody.code)
+              ..add(_jsonRequestBodyExpression(jsonBuilt, c.model).code)
               ..add(const Code(','));
           case .form:
             switchCases
@@ -260,9 +260,20 @@ class DataGenerator {
               ..add(const Code(';'));
         }
       case ContentType.json:
+        final encodesJsonRoot = _encodesJsonRoot(model);
         final jsonBuilt = buildToJsonPropertyExpression(
           'body',
-          property,
+          encodesJsonRoot && !isRequired
+              ? Property(
+                  name: 'body',
+                  model: model,
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  defaultValue: null,
+                  examples: const [],
+                )
+              : property,
           nameManager: nameManager,
           package: package,
           helperContext: helperContext,
@@ -270,8 +281,11 @@ class DataGenerator {
           contextProperty: 'body',
         );
         inlineHelpers.addAll(jsonBuilt.inlineFunctions);
+        if (encodesJsonRoot && !isRequired) {
+          bodyCode.insert(0, const Code('if (body == null) return null;\n'));
+        }
         bodyCode
-          ..add(jsonBuilt.unsafeRawBody.code)
+          ..add(_jsonRequestBodyExpression(jsonBuilt, model).code)
           ..add(const Code(';'));
       case ContentType.form:
         final formExpr = buildToFormValueExpression(
@@ -354,4 +368,27 @@ class DataGenerator {
         ]),
     );
   }
+}
+
+Expression _jsonRequestBodyExpression(BuiltExpression built, Model model) {
+  final expression = built.unsafeRawBody;
+  if (!_encodesJsonRoot(model)) return expression;
+  return refer('jsonEncode', 'dart:convert').call([expression]);
+}
+
+bool _encodesJsonRoot(Model model) {
+  final resolved = model.resolved;
+  return switch (resolved) {
+    StringModel() ||
+    DateTimeModel() ||
+    DateModel() ||
+    DecimalModel() ||
+    UriModel() ||
+    BinaryModel() ||
+    Base64Model() ||
+    EnumModel<String>() ||
+    AnyModel() => true,
+    final CompositeModel m => m.containedModels.any(_encodesJsonRoot),
+    _ => false,
+  };
 }

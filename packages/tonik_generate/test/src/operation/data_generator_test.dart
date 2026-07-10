@@ -176,6 +176,59 @@ void main() {
       );
     });
 
+    test('JSON encodes string scalar in multi-content request body', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: testContext),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+            RequestContent(
+              model: StringModel(context: testContext),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              examples: const [],
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required Test body}) {
+          return switch (body) {
+            final TestJson value => jsonEncode(value.value),
+            final TestPlain value => value.value,
+          };
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
     test(
       'handles single-content JSON with a recursive named MapModel body',
       () {
@@ -323,7 +376,7 @@ void main() {
       },
     );
 
-    test('handles primitive model in request body', () {
+    test('JSON encodes primitive string model in request body', () {
       final operation = Operation(
         operationId: 'testOp',
         path: '/test',
@@ -355,7 +408,156 @@ void main() {
 
       const expectedMethod = '''
         Object? _data({required String body}) {
-          return body;
+          return jsonEncode(body);
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('JSON encodes optional primitive string request body', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: false,
+          content: {
+            RequestContent(
+              model: StringModel(context: testContext),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({String? body}) {
+          if (body == null) return null;
+          return jsonEncode(body);
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('JSON encodes string alias model in request body', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: AliasModel(
+                name: 'UserId',
+                model: StringModel(context: testContext),
+                context: testContext,
+                examples: const [],
+                defaultValue: null,
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required UserId body}) {
+          return jsonEncode(body);
+        }
+      ''';
+
+      final method = generator.generateDataMethod(operation);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('JSON encodes string enum model in request body', () {
+      final operation = Operation(
+        operationId: 'testOp',
+        path: '/test',
+        method: HttpMethod.post,
+        requestBody: RequestBodyObject(
+          name: 'test',
+          context: testContext,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: EnumModel<String>(
+                name: 'Status',
+                values: {
+                  const EnumEntry(value: 'active'),
+                  const EnumEntry(value: 'inactive'),
+                },
+                isNullable: false,
+                isDeprecated: false,
+                context: testContext,
+                examples: const [],
+              ),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+          },
+        ),
+        responses: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        queryParameters: const {},
+        headers: const {},
+        context: testContext,
+        tags: const {},
+        isDeprecated: false,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = '''
+        Object? _data({required Status body}) {
+          return jsonEncode(body.toJson());
         }
       ''';
 
@@ -399,7 +601,8 @@ void main() {
 
       const expectedMethod = '''
         Object? _data({Date? body}) {
-          return body?.toJson();
+          if (body == null) return null;
+          return jsonEncode(body.toJson());
         }
       ''';
 
@@ -443,7 +646,8 @@ void main() {
 
       const expectedMethod = '''
         Object? _data({BigDecimal? body}) {
-          return body?.toString();
+          if (body == null) return null;
+          return jsonEncode(body.toString());
         }
       ''';
 
@@ -505,7 +709,7 @@ void main() {
         Object? _data({required Test body}) {
           return switch (body) {
             final TestJson value => value.value,
-            final TestJsonProblem value => value.value.toJson(),
+            final TestJsonProblem value => jsonEncode(value.value.toJson()),
           };
         }
       ''';
