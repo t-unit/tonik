@@ -417,6 +417,102 @@ void main() {
       expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
     });
 
+    test('ClassModel body omits explode for a pipeDelimited array property '
+        'with explode unset', () {
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+        encoding: {
+          tags: const FieldEncoding(
+            allowReserved: false,
+            style: EncodingStyle.pipeDelimited,
+            explode: null,
+          ),
+        },
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
+    test('ClassModel body omits explode for an array property with '
+        'composite content', () {
+      final item = ClassModel(
+        name: 'Item',
+        isDeprecated: false,
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final tags = Property(
+        name: 'tags',
+        model: ListModel(
+          content: item,
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      final model = ClassModel(
+        name: 'Form',
+        isDeprecated: false,
+        properties: [tags],
+        context: context,
+        examples: const [],
+      );
+
+      final result = buildToFormValueExpression(
+        'body',
+        model,
+        useQueryComponent: true,
+      );
+
+      final expected = format(r'''
+        test() {
+          body
+              .toForm('', explode: true, allowEmpty: true, useQueryComponent: true)
+              .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+              .join('&');
+        }
+      ''');
+
+      expect(collapseWhitespace(bodyOf(result)), collapseWhitespace(expected));
+    });
+
     test('ClassModel body omits explode for a scalar property', () {
       final name = Property(
         name: 'name',

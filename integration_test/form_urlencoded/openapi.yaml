@@ -662,6 +662,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/ArrayCompositeForm'
 
+  /form/optional-array:
+    post:
+      operationId: postOptionalArrayForm
+      tags:
+        - form
+      summary: Post a form body whose array property is optional and absent
+      description: >-
+        Tests that an optional simple-content array property left null is
+        omitted entirely from the body while a present scalar property still
+        serializes.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OptionalArrayForm'
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/OptionalArrayForm'
+
   /custom/form:
     post:
       operationId: postCustomForm
@@ -958,3 +982,17 @@ components:
       allOf:
         - $ref: '#/components/schemas/ArrayCompositeBase'
         - $ref: '#/components/schemas/ArrayCompositeTags'
+
+    OptionalArrayForm:
+      type: object
+      required:
+        - q
+      properties:
+        q:
+          type: string
+          description: Scalar property that is always present
+        tags:
+          type: array
+          items:
+            type: string
+          description: Optional array property omitted entirely when absent

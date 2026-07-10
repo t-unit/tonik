@@ -263,6 +263,16 @@ switch (path) {
         }
         break
 
+    case '/form/optional-array':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'q=hello'
+        }
+        break
+
     case '/custom/form':
         def formBody = 'field1=custom+value&field2=100'
         respond {

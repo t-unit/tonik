@@ -68,10 +68,8 @@ BuiltExpression buildToFormValueExpression(
 /// Builds a `<String, FormFieldEncoding>` map literal for the object `toForm`
 /// call, keyed by raw spec name to match the class's own per-property lookup.
 ///
-/// Emits per-property `explode: true` for every writable simple-content array
-/// property whose effective explode is true, so the runtime serializes it as
-/// repeated keys, merged with `allowReserved` for any property that opts in.
-/// Returns null when no property needs either descriptor.
+/// Returns null when no property needs a descriptor, so the call omits the
+/// argument entirely.
 Expression? _fieldEncodingsLiteral(
   Model model,
   Map<Property, FieldEncoding>? encoding,
@@ -115,8 +113,8 @@ Expression? _fieldEncodingsLiteral(
   return literalMap(entries, refer('String', 'dart:core'), descriptor);
 }
 
-/// The OAS default explodes only `form`/absent style; `spaceDelimited` and
-/// `pipeDelimited` with explode omitted comma-join.
+/// With `explode` omitted, only `form`/absent style defaults to exploding;
+/// every other style comma-joins.
 bool _explodeDefault(FieldEncoding? encoding) =>
     encoding?.explode ??
     (encoding?.style == null || encoding?.style == EncodingStyle.form);

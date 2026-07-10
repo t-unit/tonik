@@ -373,6 +373,21 @@ void main() {
       expect(requestData, 'label=hello&tags=x&tags=y');
     });
 
+    test('omits an absent optional array property while a present scalar '
+        'still serializes', () async {
+      const form = OptionalArrayForm(q: 'hello');
+
+      final response = await api.postOptionalArrayForm(body: form);
+
+      expect(response, isA<TonikSuccess<OptionalArrayForm>>());
+
+      final requestData = (response as TonikSuccess<OptionalArrayForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'q=hello');
+    });
+
     test('sends an empty entry for a single empty-string exploded element',
         () async {
       const form = ArrayExplodeForm(tags: ['']);
