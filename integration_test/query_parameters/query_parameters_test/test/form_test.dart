@@ -284,6 +284,26 @@ void main() {
         'allOfComplex=name,test,age,1,value,test,amount,1',
       );
     });
+
+    test('simpleCompositeList single-encodes a reserved char in a composite '
+        'array element', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplex(
+        simpleCompositeList: const SimpleCompositeListClass(
+          tags: [
+            SimpleCompositeListClassTagsArrayOneOfModelString('a,b'),
+            SimpleCompositeListClassTagsArrayOneOfModelInt(7),
+          ],
+        ),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'simpleCompositeList=tags,a%2Cb,7',
+      );
+    });
   });
 
   group('complex - explode true', () {

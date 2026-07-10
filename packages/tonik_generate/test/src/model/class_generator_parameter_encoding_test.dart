@@ -1080,8 +1080,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
     );
 
     test(
-      'generates parameterProperties for list of composite content that is '
-      'double-encoded (legacy behavior preserved)',
+      'generates parameterProperties for a list of composite content as raw '
+      'elements',
       () {
         final oneOfModel = OneOfModel(
           isDeprecated: false,
@@ -1120,7 +1120,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(result.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (items != null) { _$result[r'items'] = PropertyValue.array( items!.map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)).toList(), ); } else if (allowEmpty) { _$result[r'items'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (items != null) { _$result[r'items'] = PropertyValue.array( items! .map( (e) => encodeAnyValueToString(e.toJson(), allowEmpty: allowEmpty), ) .toList(), ); } else if (allowEmpty) { _$result[r'items'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
