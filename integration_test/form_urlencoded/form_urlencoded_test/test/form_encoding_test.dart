@@ -231,7 +231,7 @@ void main() {
           (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
       expect(
         requestData,
-        'colors=red,green,blue&numbers=1,2,3',
+        'colors=red&colors=green&colors=blue&numbers=1&numbers=2&numbers=3',
       );
 
       final data = response.value;
@@ -248,7 +248,7 @@ void main() {
 
       final requestData =
           (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
-      expect(requestData, 'colors=&numbers=');
+      expect(requestData, '');
 
       final data = response.value;
       expect(data.colors, ['red', 'green', 'blue']);
@@ -263,10 +263,144 @@ void main() {
 
       final requestData =
           (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
-      expect(requestData, 'colors=purple&numbers=');
+      expect(requestData, 'colors=purple');
 
       final data = response.value;
       expect(data.colors, ['red', 'green', 'blue']);
+    });
+  });
+
+  group('Array body property explode', () {
+    test('explodes an array property with no encoding into repeated keys '
+        'beside a scalar', () async {
+      const form = ArrayBodyForm(q: 'hello', tags: ['urgent', 'open']);
+
+      final response = await api.postArrayBodyForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayBodyForm>>());
+
+      final success = response as TonikSuccess<ArrayBodyForm>;
+      final requestData = success.response.requestOptions.data;
+      expect(requestData, 'q=hello&tags=urgent&tags=open');
+    });
+
+    test('omits an entire body of only empty exploded arrays', () async {
+      const form = ArrayExplodeForm(tags: []);
+
+      final response = await api.postArrayCommaElementForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+
+      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, '');
+    });
+
+    test('comma-joins an array property with explicit explode false', () async {
+      const form = ArrayExplodeForm(tags: ['a', 'b']);
+
+      final response = await api.postArrayExplodeFalseForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+
+      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'tags=a,b');
+    });
+
+    test('comma-joins a spaceDelimited array property with explode omitted',
+        () async {
+      const form = ArrayExplodeForm(tags: ['a', 'b']);
+
+      final response = await api.postArraySpaceDelimitedForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+
+      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'tags=a,b');
+    });
+
+    test('explodes an array property with explicit explode true into '
+        'repeated keys', () async {
+      const form = ArrayExplodeForm(tags: ['a', 'b']);
+
+      final response = await api.postArrayExplodeTrueForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+
+      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'tags=a&tags=b');
+    });
+
+    test('percent-encodes a comma inside an exploded array element', () async {
+      const form = ArrayExplodeForm(tags: ['a,b', 'c']);
+
+      final response = await api.postArrayCommaElementForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+
+      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'tags=a%2Cb&tags=c');
+    });
+
+    test('explodes a member array property of an allOf body', () async {
+      const form = ArrayCompositeForm(
+        arrayCompositeBase: ArrayCompositeBase(label: 'hello'),
+        arrayCompositeTags: ArrayCompositeTags(tags: ['x', 'y']),
+      );
+
+      final response = await api.postArrayCompositeForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayCompositeForm>>());
+
+      final requestData = (response as TonikSuccess<ArrayCompositeForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'label=hello&tags=x&tags=y');
+    });
+
+    test('omits an absent optional array property while a present scalar '
+        'still serializes', () async {
+      const form = OptionalArrayForm(q: 'hello');
+
+      final response = await api.postOptionalArrayForm(body: form);
+
+      expect(response, isA<TonikSuccess<OptionalArrayForm>>());
+
+      final requestData = (response as TonikSuccess<OptionalArrayForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'q=hello');
+    });
+
+    test('sends an empty entry for a single empty-string exploded element',
+        () async {
+      const form = ArrayExplodeForm(tags: ['']);
+
+      final response = await api.postArrayCommaElementForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+
+      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'tags=');
     });
   });
 
@@ -459,8 +593,7 @@ void main() {
     );
 
     test(
-      'comma-joins an array sibling into a single entry beside the flagged '
-      'scalar',
+      'explodes an array sibling into repeated keys beside the flagged scalar',
       () async {
         const form = AllowReservedArrayForm(
           reserved: 'a/b:c',
@@ -475,13 +608,13 @@ void main() {
             .response
             .requestOptions
             .data;
-        expect(requestData, 'reserved=a/b:c&tags=x,y,z');
+        expect(requestData, 'reserved=a/b:c&tags=x&tags=y&tags=z');
       },
     );
 
     test(
-      'keeps reserved characters literal in the comma-joined elements of a '
-      'flagged array property',
+      'keeps reserved characters literal per exploded element of a flagged '
+      'array property',
       () async {
         const form = AllowReservedArrayFlaggedForm(tags: ['a/b', 'c:d']);
 
@@ -496,7 +629,7 @@ void main() {
                 .response
                 .requestOptions
                 .data;
-        expect(requestData, 'tags=a/b,c:d');
+        expect(requestData, 'tags=a/b&tags=c:d');
       },
     );
 

@@ -203,6 +203,76 @@ switch (path) {
         }
         break
 
+    case '/form/array-body':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'q=hello&tags=urgent&tags=open'
+        }
+        break
+
+    case '/form/array-explode-false':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'tags=a,b'
+        }
+        break
+
+    case '/form/array-space-delimited':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'tags=a,b'
+        }
+        break
+
+    case '/form/array-explode-true':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'tags=a&tags=b'
+        }
+        break
+
+    case '/form/array-comma-element':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'tags=a,b'
+        }
+        break
+
+    case '/form/array-composite':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'label=hello&tags=x&tags=y'
+        }
+        break
+
+    case '/form/optional-array':
+        def requestBody = context.request.body
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withHeader 'x-raw-request-body', requestBody
+            withContent 'q=hello'
+        }
+        break
+
     case '/custom/form':
         def formBody = 'field1=custom+value&field2=100'
         respond {
