@@ -41,7 +41,7 @@ packages:
     source: hosted
     version: "2.13.1"
   big_decimal:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: big_decimal
       sha256: "6413818091e80c907bb73bae383418db5c148fd7fd283e56197bfeeeb212d5bd"
@@ -97,7 +97,7 @@ packages:
     source: hosted
     version: "3.0.7"
   dio:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: dio
       sha256: aff32c08f92787a557dd5c0145ac91536481831a01b4648136373cddb0e64f8c

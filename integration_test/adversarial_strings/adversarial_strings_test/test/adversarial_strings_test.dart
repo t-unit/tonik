@@ -1,4 +1,10 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:adversarial_strings_api/adversarial_strings_api.dart';
+import 'package:big_decimal/big_decimal.dart';
+import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -274,6 +280,90 @@ void main() {
     });
   });
 
+  group('root JSON string request bodies', () {
+    test('alias body is sent as a quoted JSON string', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootAlias(dio).call(body: 'alias-body');
+
+      expect(adapter.capturedBodyAsString, '"alias-body"');
+      expect(jsonDecode(adapter.capturedBodyAsString), 'alias-body');
+    });
+
+    test('oneOf string variant is sent as a quoted JSON string', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootOneOf(dio).call(
+        body: const RootStringOneOfString('one-of-body'),
+      );
+
+      expect(adapter.capturedBodyAsString, '"one-of-body"');
+      expect(jsonDecode(adapter.capturedBodyAsString), 'one-of-body');
+    });
+
+    test('oneOf integer variant is sent as a JSON number', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootOneOf(dio).call(
+        body: const RootStringOneOfInt(7),
+      );
+
+      expect(adapter.capturedBodyAsString, '7');
+      expect(jsonDecode(adapter.capturedBodyAsString), 7);
+    });
+
+    test('oneOf bool variant is sent as a JSON boolean', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootOneOf(dio).call(
+        body: const RootStringOneOfBool(true),
+      );
+
+      expect(adapter.capturedBodyAsString, 'true');
+      expect(jsonDecode(adapter.capturedBodyAsString), isTrue);
+    });
+
+    test('anyOf string variant is sent as a quoted JSON string', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootAnyOf(dio).call(
+        body: const RootStringAnyOf(string: 'any-of-body'),
+      );
+
+      expect(adapter.capturedBodyAsString, '"any-of-body"');
+      expect(jsonDecode(adapter.capturedBodyAsString), 'any-of-body');
+    });
+
+    test('anyOf bool variant is sent as a JSON boolean', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootAnyOf(dio).call(
+        body: const RootStringAnyOf(bool: true),
+      );
+
+      expect(adapter.capturedBodyAsString, 'true');
+      expect(jsonDecode(adapter.capturedBodyAsString), isTrue);
+    });
+
+    test('oneOf decimal variant is sent as a quoted JSON string', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootDecimalOneOf(dio).call(
+        body: RootDecimalOneOfDecimal(BigDecimal.parse('12.34')),
+      );
+
+      expect(adapter.capturedBodyAsString, '"12.34"');
+      expect(jsonDecode(adapter.capturedBodyAsString), '12.34');
+    });
+  });
+
   group('object with quoted property name', () {
     test('toJson uses quoted property key', () {
       const obj = ObjectWithQuotedProp(id: 'x');
@@ -294,4 +384,32 @@ void main() {
       expect(reconstructed.id, 'round-trip');
     });
   });
+}
+
+Dio _capturingDio(_CapturingAdapter adapter) {
+  return Dio(BaseOptions(baseUrl: 'https://example.com'))
+    ..httpClientAdapter = adapter;
+}
+
+class _CapturingAdapter implements HttpClientAdapter {
+  List<int>? capturedBody;
+
+  String get capturedBodyAsString => utf8.decode(capturedBody!);
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    final chunks = requestStream == null
+        ? const <Uint8List>[]
+        : await requestStream.toList();
+    capturedBody = chunks.expand((chunk) => chunk).toList();
+
+    return ResponseBody.fromString('', 204);
+  }
+
+  @override
+  void close({bool force = false}) {}
 }
