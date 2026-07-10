@@ -87,11 +87,50 @@ tonik encode them.
 
 ## Form-body array properties
 
-For an `application/x-www-form-urlencoded` request body, `allowReserved` is honored on scalar,
-enum, object, composition, and **array** (list-of-simple) properties. A flagged array keeps
-reserved characters literal within each of its comma-joined elements. The array is still sent
-as a single comma-joined entry — `allowReserved` does not change that shape, so array
-**explode** (one repeated key per element) remains unaddressed for form bodies.
+For an `application/x-www-form-urlencoded` request body, an array (list-of-simple) property is
+serialized according to its `style: form` Encoding Object, in particular `explode`:
+
+- **`explode: true` (the default)** sends one repeated key per element:
+  ```
+  tags=a&tags=b&tags=c
+  ```
+- **`explode: false`** sends a single comma-joined entry:
+  ```
+  tags=a,b,c
+  ```
+
+Empty and absent arrays follow the shape of `explode`:
+
+- An **empty array** under the default `explode: true` is omitted entirely — no key appears on
+  the wire.
+- An **empty array** with `explode: false` still emits the key with an empty value: `tags=`.
+- A **`null` or absent nullable array** property behaves like an empty array: under the
+  exploded default it is dropped from the wire.
+- A body whose properties are **all empty exploded arrays** serializes to an empty body.
+
+A single-element array follows the same rules — `['purple']` exploded is `colors=purple`, and
+a single empty-string element `['']` is `tags=` (one empty-value entry).
+
+The exploded default applies to **object and `allOf` form bodies**. In a `oneOf`/`anyOf` form
+body, array properties are always comma-joined — `explode` and `allowReserved` set on such a
+member array have no effect on the wire output.
+
+Only the `form` style is honored for form bodies. With `explode` omitted, `spaceDelimited` and
+`pipeDelimited` resolve to a comma-joined entry (not a space- or pipe-joined one); only `form`
+retains the exploded default.
+
+Dynamic `additionalProperties` keys carry no per-property encoding, so they never explode. Only
+scalar `additionalProperties` values are supported in a form body; an array-valued
+`additionalProperties` is rejected at encode time
+(`Additional properties with complex types cannot be parameter encoded.`).
+
+`allowReserved` is honored on scalar, enum, object, composition, and array properties. On an
+array it keeps reserved characters literal within each element, whether the array is exploded
+into repeated keys or comma-joined. A comma inside an element of an unflagged exploded array is
+percent-encoded per element (`['a,b', 'c']` → `tags=a%2Cb&tags=c`); with `allowReserved: true`
+that comma stays literal. Under `explode: false` the comma between items is the form-style value
+separator (sent literally as `tags=a,b,c`, like the commas that join a `form`-style query array),
+whereas a comma **inside** an element is data and is percent-encoded unless `allowReserved` is set.
 
 ## Null array elements in parameters
 
