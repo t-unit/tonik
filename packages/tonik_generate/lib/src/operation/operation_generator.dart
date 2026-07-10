@@ -280,7 +280,6 @@ class OperationGenerator {
       _generateResponseStatements(responseVar),
     ];
 
-    // Always parse the response if responses are defined
     final hasResponses = operation.responses.isNotEmpty;
 
     if (hasResponses) {

@@ -299,7 +299,6 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
     final token = tokens[i];
     final isFirst = i == 0;
 
-    // Extract numbers from token
     final numberMatch = RegExp(r'^(\d+)(.*)$|^(.+?)(\d+)$').firstMatch(token);
 
     String textPart;
@@ -307,11 +306,9 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
 
     if (numberMatch != null) {
       if (numberMatch.group(1) != null) {
-        // Leading number: 123abc
         numberPart = numberMatch.group(1);
         textPart = numberMatch.group(2) ?? '';
       } else {
-        // Trailing number: abc123
         textPart = numberMatch.group(3) ?? '';
         numberPart = numberMatch.group(4);
       }
@@ -334,13 +331,11 @@ String _normalizeText(String text, {bool preserveNumbers = false}) {
         // status1.
         numbersToAppend.add(numberPart);
       } else {
-        // Keep numbers in place for trailing numbers or non-first tokens
         result.add(numberPart);
       }
     }
   }
 
-  // Append any numbers that were moved from the first token
   result.addAll(numbersToAppend);
 
   return result.join();
@@ -355,7 +350,7 @@ String _normalizeCasing(String text, {required bool isFirst}) {
   final textWithoutDollars = text.replaceAll(r'$', '');
 
   if (textWithoutDollars.isEmpty) {
-    return dollars; // Just return the $ characters
+    return dollars;
   }
 
   final isAllCaps =
@@ -388,7 +383,6 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
     return '';
   }
 
-  // Remove leading underscores
   var processedName = name.replaceAll(RegExp('^_+'), '');
   if (processedName.isEmpty) return '';
 
@@ -491,7 +485,6 @@ List<({String normalizedName, T originalValue})> ensureUniqueness<T>(
 
     final lowerBaseName = baseName.toLowerCase();
 
-    // Store the first occurrence as the template for correct casing
     if (!baseNameTemplates.containsKey(lowerBaseName)) {
       baseNameTemplates[lowerBaseName] = baseName;
     }

@@ -1285,23 +1285,8 @@ void main() {
 
       test('generates parameterProperties with AP loop', () {
         const expectedMethod = r'''
-  Map<String, String> parameterProperties({
-    bool allowEmpty = true,
-    bool allowLists = true,
-    bool useQueryComponent = false,
-    bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-  }) {
-    final _$result = <String, String>{};
-    _$result[r'name'] = name.uriEncode(
-      allowEmpty: allowEmpty,
-      useQueryComponent: useQueryComponent,
-      allowReserved: fieldEncodings[r'name']?.allowReserved ?? allowReserved,
-    );
-    for (final _$e in additionalProperties.entries) {
-      _$result[_$e.key] = _$e.value?.toString() ?? '';
-    }
-    return _$result;
-  }''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar(_$e.value?.toString() ?? ''); } return _$result; }
+''';
 
         final generatedClass = generator.generateClass(model);
         expect(

@@ -260,7 +260,10 @@ void main() {
       final params = user.parameterProperties();
 
       expect(params.containsKey('email'), isTrue);
-      expect(params['email'], 'test%40example.com');
+      expect(
+        (params['email']! as ScalarPropertyValue).value,
+        'test@example.com',
+      );
     });
 
     test('parameterProperties includes writeOnly fields', () {
@@ -269,7 +272,7 @@ void main() {
 
       expect(params.containsKey('name'), isTrue);
       expect(params.containsKey('password'), isTrue);
-      expect(params['password'], 'pass');
+      expect((params['password']! as ScalarPropertyValue).value, 'pass');
     });
   });
 
@@ -458,8 +461,8 @@ void main() {
         confirmPassword: 'def',
       );
       final params = change.parameterProperties();
-      expect(params['newPassword'], 'abc');
-      expect(params['confirmPassword'], 'def');
+      expect((params['newPassword']! as ScalarPropertyValue).value, 'abc');
+      expect((params['confirmPassword']! as ScalarPropertyValue).value, 'def');
     });
   });
 
@@ -782,8 +785,8 @@ void main() {
         commandBody: CommandBody(action: 'create'),
       );
       final params = command.parameterProperties();
-      expect(params['token'], 'abc123');
-      expect(params['action'], 'create');
+      expect((params['token']! as ScalarPropertyValue).value, 'abc123');
+      expect((params['action']! as ScalarPropertyValue).value, 'create');
     });
 
     test('POST /bulk-command sends writeOnly allOf command', () async {
@@ -975,8 +978,8 @@ void main() {
         ),
       );
       final params = command.parameterProperties();
-      expect(params['deviceId'], 'dev-001');
-      expect(params['force'], 'true');
+      expect((params['deviceId']! as ScalarPropertyValue).value, 'dev-001');
+      expect((params['force']! as ScalarPropertyValue).value, 'true');
     });
 
     test('POST /device-command sends writeOnly anyOf command', () async {

@@ -1373,10 +1373,8 @@ void main() {
 
       test('parameterProperties', () {
         expectContainsBody(
-          'Map<String, String> parameterProperties({ bool allowEmpty = true, '
-          'bool allowLists = true, bool allowReserved = false, Map<String, '
-          'FormFieldEncoding> fieldEncodings = const {}, }) => '
-          '$throwExpr',
+          'Map<String, PropertyValue> parameterProperties({bool allowEmpty = '
+          'true}) => $throwExpr',
         );
       });
 

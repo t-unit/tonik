@@ -16,6 +16,7 @@ import 'package:tonik_generate/src/util/from_json_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
+import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
@@ -366,7 +367,6 @@ class AnyOfGenerator {
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      // Lists with simple content can be encoded directly
       if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         codes.add(
           Block.of([
@@ -383,7 +383,6 @@ class AnyOfGenerator {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
       } else if (fieldModel is ListModel) {
-        // Lists with complex content cannot be encoded
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -401,7 +400,6 @@ class AnyOfGenerator {
           ).statement,
         );
       } else {
-        // For complex types (classes, composites), use parameterProperties
         codes.add(
           Code(
             'final $tmpVarName = '
@@ -528,7 +526,6 @@ class AnyOfGenerator {
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      // Lists with simple content can be encoded directly
       if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         codes.add(
           Block.of([
@@ -545,7 +542,6 @@ class AnyOfGenerator {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
       } else if (fieldModel is ListModel) {
-        // Lists with complex content cannot be encoded
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -557,14 +553,12 @@ class AnyOfGenerator {
               .statement,
         );
       } else if (fieldModel is MapModel) {
-        // Map types cannot be label-encoded
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be label-encoded',
           ).statement,
         );
       } else {
-        // For complex types (classes, composites), use parameterProperties
         codes.add(
           Code(
             'final $tmpVarName = '
@@ -830,8 +824,6 @@ class AnyOfGenerator {
 
       final blocks = <Code>[openIf, decl];
 
-      // Runtime type checking - add to appropriate collection based on actual
-      // type
       final ifMapOpen = [
         const Code('if ('),
         Code('_\$${name}Json'),
@@ -921,7 +913,6 @@ class AnyOfGenerator {
         ...mergeBlocks,
         const Code('}'),
       ])
-      // Fallback
       ..add(const Code('return null;'));
 
     return Method(
@@ -979,7 +970,7 @@ class AnyOfGenerator {
       body.add(
         declareFinal(
           r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
+        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
       );
     }
 
@@ -1028,7 +1019,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -1046,7 +1037,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1055,13 +1046,11 @@ class AnyOfGenerator {
       ..add(const Code(r'return _$map.toSimple('))
       ..addAll([
         const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true'),
+        const Code('allowEmpty: allowEmpty'),
         const Code(');'),
       ]);
 
     if (needsValues && needsMapValues) {
-      // Mixed types - check for ambiguity
       body.addAll([
         const Code(
           r"if (_$values.isEmpty && _$mapValues.isEmpty) return '';",
@@ -1165,7 +1154,7 @@ class AnyOfGenerator {
       body.add(
         declareFinal(
           r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
+        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
       );
     }
 
@@ -1211,7 +1200,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -1229,7 +1218,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1240,8 +1229,9 @@ class AnyOfGenerator {
         const Code('paramName, '),
         const Code('explode: explode, '),
         const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true, '),
-        const Code('useQueryComponent: useQueryComponent'),
+        const Code('useQueryComponent: useQueryComponent, '),
+        const Code('allowReserved: allowReserved, '),
+        const Code('fieldEncodings: fieldEncodings'),
         const Code(');'),
       ]);
 
@@ -1424,8 +1414,7 @@ class AnyOfGenerator {
         codes.add(
           Code(
             'final _\$${fieldName}Form = '
-            '$fieldName!.parameterProperties('
-            'allowEmpty: allowEmpty, allowReserved: allowReserved);',
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
         if (needsMapValues) {
@@ -1472,8 +1461,7 @@ class AnyOfGenerator {
         ..add(
           Code(
             'final _\$${fieldName}Form = '
-            '$fieldName!.parameterProperties('
-            'allowEmpty: allowEmpty, allowReserved: allowReserved);',
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty);',
           ),
         );
       if (needsMapValues) {
@@ -1710,7 +1698,7 @@ class AnyOfGenerator {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(buildParameterPropertiesParameters())
           ..body = generateEncodingExceptionExpression(
             'parameterProperties not supported for $className: '
@@ -1739,7 +1727,7 @@ class AnyOfGenerator {
     if (needsMapValues) {
       body.addAll([
         const Code(r'final _$mapValues = <'),
-        buildMapStringStringType().code,
+        buildMapStringPropertyValueType().code,
         const Code('>[];'),
       ]);
     }
@@ -1799,13 +1787,6 @@ class AnyOfGenerator {
       } else if (fieldModel is ListModel) {
         body
           ..add(Code('if ($name != null) {'))
-          ..add(const Code('if (!allowLists) {'))
-          ..add(
-            generateEncodingExceptionExpression(
-              'Lists are not supported in this encoding style',
-            ).statement,
-          )
-          ..add(const Code('}'))
           ..add(
             generateEncodingExceptionExpression(
               'Lists are not supported in parameterProperties',
@@ -1837,7 +1818,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -1854,7 +1835,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -1865,13 +1846,13 @@ class AnyOfGenerator {
     if (needsMapValues || hasSimpleTypes) {
       body.addAll(mergeBlocks);
     } else {
-      body.add(buildEmptyMapStringString().returned.statement);
+      body.add(buildEmptyMapStringPropertyValue().returned.statement);
     }
 
     return Method(
       (b) => b
         ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
+        ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(buildParameterPropertiesParameters())
         ..lambda = false
         ..body = Block.of(body),
@@ -1887,28 +1868,18 @@ class AnyOfGenerator {
     final codes = <Code>[];
 
     if (fieldModel.encodingShape == EncodingShape.complex) {
-      // Lists cannot use parameterProperties
       if (fieldModel is ListModel) {
-        codes
-          ..add(const Code('if (!allowLists) {'))
-          ..add(
-            generateEncodingExceptionExpression(
-              'Lists are not supported in this encoding style',
-            ).statement,
-          )
-          ..add(const Code('}'))
-          ..add(
-            refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-                .call([
-                  literalString(
-                    'Lists are not supported in parameterProperties',
-                  ),
-                ])
-                .thrown
-                .statement,
-          );
+        codes.add(
+          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
+              .call([
+                literalString(
+                  'Lists are not supported in parameterProperties',
+                ),
+              ])
+              .thrown
+              .statement,
+        );
       } else if (fieldModel is MapModel) {
-        // Map types cannot use parameterProperties
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be parameter encoded',
@@ -1918,9 +1889,7 @@ class AnyOfGenerator {
         codes.add(
           Code(
             r'_$mapValues.add('
-            '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
-            'allowLists: allowLists, allowReserved: allowReserved, '
-            'fieldEncodings: fieldEncodings));',
+            '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
           ),
         );
 
@@ -1951,9 +1920,7 @@ class AnyOfGenerator {
         const Code(':'),
         Code(
           r'_$mapValues.add('
-          '$fieldName!.parameterProperties(allowEmpty: allowEmpty, '
-          'allowLists: allowLists, allowReserved: allowReserved, '
-          'fieldEncodings: fieldEncodings));',
+          '$fieldName!.parameterProperties(allowEmpty: allowEmpty));',
         ),
       ];
 
@@ -2027,7 +1994,7 @@ class AnyOfGenerator {
       body.add(
         declareFinal(
           r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
+        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
       );
     }
 
@@ -2068,7 +2035,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -2087,7 +2054,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -2096,8 +2063,7 @@ class AnyOfGenerator {
       ..add(const Code(r'return _$map.toLabel('))
       ..addAll([
         const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true'),
+        const Code('allowEmpty: allowEmpty'),
         const Code(');'),
       ]);
 
@@ -2168,7 +2134,6 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          // Lists with simple content can be encoded directly to strings
           if (model is ListModel) {
             return model.hasSimpleContent;
           }
@@ -2178,7 +2143,6 @@ class AnyOfGenerator {
         hasRuntimeChecks ||
         normalizedProperties.any((prop) {
           final model = prop.property.model;
-          // Lists with complex content need parameterProperties
           if (model is ListModel) {
             return !model.hasSimpleContent;
           }
@@ -2199,7 +2163,7 @@ class AnyOfGenerator {
       body.add(
         declareFinal(
           r'_$mapValues',
-        ).assign(literalList([], buildMapStringStringType())).statement,
+        ).assign(literalList([], buildMapStringPropertyValueType())).statement,
       );
     }
 
@@ -2240,7 +2204,7 @@ class AnyOfGenerator {
 
     final mergeBlocks = <Code>[
       const Code(r'final _$map = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
     ];
 
     if (needsMapValues) {
@@ -2259,7 +2223,7 @@ class AnyOfGenerator {
           r'_$map.putIfAbsent('
           '${specLiteralStringCode(model.discriminator!)}, () => ',
         ),
-        const Code(r'_$discValue'),
+        propertyValueScalar(refer(r'_$discValue')).code,
         const Code(');'),
         const Code(' }'),
       ]);
@@ -2269,8 +2233,7 @@ class AnyOfGenerator {
       ..addAll([
         const Code('paramName, '),
         const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty, '),
-        const Code('alreadyEncoded: true'),
+        const Code('allowEmpty: allowEmpty'),
         const Code(');'),
       ]);
 
@@ -2356,7 +2319,6 @@ class AnyOfGenerator {
           )
           ..add(const Code('}'));
       } else if (propertyModel.encodingShape == EncodingShape.complex) {
-        // Complex types cannot be URI encoded
         body
           ..add(Code('if ($name != null) {'))
           ..add(
@@ -2367,7 +2329,6 @@ class AnyOfGenerator {
           )
           ..add(const Code('}'));
       } else {
-        // Simple or mixed types can call uriEncode
         final receiver = uriEncodeReceiver(propertyModel, '$name!');
         body
           ..add(Code('if ($name != null) {'))
@@ -2438,7 +2399,6 @@ class AnyOfGenerator {
         codes.add(Code('_\$values.add($tmpVarName);'));
       }
     } else if (fieldModel.encodingShape == EncodingShape.complex) {
-      // Lists with simple content can be encoded directly with toMatrix
       if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         codes.add(
           Block.of([
@@ -2456,7 +2416,6 @@ class AnyOfGenerator {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
       } else if (fieldModel is ListModel) {
-        // Lists with complex content cannot be encoded
         codes.add(
           refer('EncodingException', 'package:tonik_util/tonik_util.dart')
               .call([
@@ -2468,14 +2427,12 @@ class AnyOfGenerator {
               .statement,
         );
       } else if (fieldModel is MapModel) {
-        // Map types cannot be matrix-encoded
         codes.add(
           generateEncodingExceptionExpression(
             'Map types cannot be matrix-encoded',
           ).statement,
         );
       } else {
-        // For complex types (classes, composites), use parameterProperties
         codes.add(
           Code(
             'final $tmpVarName = '
@@ -2501,9 +2458,8 @@ class AnyOfGenerator {
         'package:tonik_util/tonik_util.dart',
       );
 
-      // For mixed encoding shape, check at runtime if it's a list
       if (fieldModel is ListModel) {
-        // Lists can be encoded directly even though they have complex shape
+        // Lists keep their matrix helper despite reporting complex shape.
         codes.add(
           Block.of([
             Code('final $tmpVarName = '),
@@ -2520,7 +2476,6 @@ class AnyOfGenerator {
           codes.add(Code('_\$values.add($tmpVarName);'));
         }
       } else {
-        // For non-list mixed types, use runtime switch
         codes
           ..add(Code('switch ($fieldName!.currentEncodingShape) {'))
           ..add(const Code('case '))

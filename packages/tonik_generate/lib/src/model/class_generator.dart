@@ -20,10 +20,11 @@ import 'package:tonik_generate/src/util/from_json_value_expression_generator.dar
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/hash_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
+import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/raw_string_expression_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
-import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 final Logger _classGeneratorLog = Logger('ClassGenerator');
@@ -821,7 +822,6 @@ class ClassGenerator {
         ..add(const Code(','));
     }
 
-    // Collect additional properties from the JSON map.
     if (hasAP) {
       final knownKeys = model.properties
           .map((p) => specLiteralStringCode(p.name))
@@ -1157,7 +1157,7 @@ class ClassGenerator {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(_buildParameterPropertiesParameters())
           ..lambda = true
           ..body = generateEncodingExceptionExpression(
@@ -1221,27 +1221,37 @@ class ClassGenerator {
 
     if (ap is TypedAdditionalProperties &&
         ap.valueModel.encodingShape == EncodingShape.simple) {
-      final uriEncodeCall = ap.valueModel.isEffectivelyNullable
-          ? '${uriEncodeReceiver(ap.valueModel, r'_$e.value?')}'
-                '.uriEncode(allowEmpty: allowEmpty, '
-                'useQueryComponent: useQueryComponent, '
-                "allowReserved: allowReserved) ?? ''"
-          : '${uriEncodeReceiver(ap.valueModel, r'_$e.value')}'
-                '.uriEncode(allowEmpty: allowEmpty, '
-                'useQueryComponent: useQueryComponent, '
-                'allowReserved: allowReserved)';
       return [
-        Code('''
-for (final _\$e in $apFieldName.entries) {
-  _\$result[_\$e.key] = $uriEncodeCall;
-}'''),
+        Code('for (final _\$e in $apFieldName.entries) {'),
+        refer(r'_$result')
+            .index(refer(r'_$e').property('key'))
+            .assign(
+              propertyValueScalar(
+                additionalPropertyRawScalar(
+                  refer(r'_$e').property('value'),
+                  ap.valueModel,
+                ),
+              ),
+            )
+            .statement,
+        const Code('}'),
       ];
     } else if (ap is UnrestrictedAdditionalProperties) {
       return [
-        Code(
-          'for (final _\$e in $apFieldName.entries) { '
-          r"_$result[_$e.key] = _$e.value?.toString() ?? ''; }",
-        ),
+        Code('for (final _\$e in $apFieldName.entries) {'),
+        refer(r'_$result')
+            .index(refer(r'_$e').property('key'))
+            .assign(
+              propertyValueScalar(
+                refer(r'_$e')
+                    .property('value')
+                    .nullSafeProperty('toString')
+                    .call([])
+                    .ifNullThen(literalString('')),
+              ),
+            )
+            .statement,
+        const Code('}'),
       ];
     } else {
       // Typed with complex value model — throw
@@ -1259,34 +1269,67 @@ for (final _\$e in $apFieldName.entries) {
     }
   }
 
-  List<Parameter> _buildParameterPropertiesParameters() {
+  List<Parameter> _buildParameterPropertiesParameters() =>
+      buildParameterPropertiesParameters();
+
+  Code _scalarPropertyAssignment(String propertyName, Expression raw) =>
+      refer(r'_$result')
+          .index(specLiteralString(propertyName))
+          .assign(propertyValueScalar(raw))
+          .statement;
+
+  Expression _rawScalarExpression(Expression receiver, Model model) {
+    return switch (model.resolved) {
+      OneOfModel() || AnyOfModel() || AllOfModel() =>
+        refer(
+          'encodeAnyValueToString',
+          'package:tonik_util/tonik_util.dart',
+        ).call(
+          [receiver.property('toJson').call([])],
+          {
+            'allowEmpty': refer('allowEmpty'),
+          },
+        ),
+      _ => buildRawStringExpression(receiver, model),
+    };
+  }
+
+  List<Code> _buildScalarPropertyAssignment({
+    required String name,
+    required String propertyName,
+    required bool isRequired,
+    required bool isNullable,
+    required bool isFieldNullable,
+    required Model model,
+  }) {
+    Code assign(Expression receiver) => _scalarPropertyAssignment(
+      propertyName,
+      _rawScalarExpression(receiver, model),
+    );
+
+    if (isRequired && !isNullable && !isFieldNullable) {
+      return [assign(refer(name))];
+    }
+
+    final checked = refer(name).nullChecked;
+    if (isRequired && !isNullable) {
+      return [
+        Code('if ($name == null) {'),
+        generateEncodingExceptionExpression(
+          'Required property $propertyName is null.',
+          raw: true,
+        ).statement,
+        const Code('}'),
+        assign(checked),
+      ];
+    }
+
     return [
-      Parameter(
-        (b) => b
-          ..name = 'allowEmpty'
-          ..type = refer('bool', 'dart:core')
-          ..named = true
-          ..required = false
-          ..defaultTo = literalTrue.code,
-      ),
-      Parameter(
-        (b) => b
-          ..name = 'allowLists'
-          ..type = refer('bool', 'dart:core')
-          ..named = true
-          ..required = false
-          ..defaultTo = literalTrue.code,
-      ),
-      Parameter(
-        (b) => b
-          ..name = 'useQueryComponent'
-          ..type = refer('bool', 'dart:core')
-          ..named = true
-          ..required = false
-          ..defaultTo = literalFalse.code,
-      ),
-      buildBoolParameter('allowReserved'),
-      buildFieldEncodingsParameter(),
+      Code('if ($name != null) {'),
+      assign(checked),
+      const Code('} else if (allowEmpty) {'),
+      _scalarPropertyAssignment(propertyName, literalString('')),
+      const Code('}'),
     ];
   }
 
@@ -1299,9 +1342,9 @@ for (final _\$e in $apFieldName.entries) {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
-          ..returns = buildMapStringStringType()
+          ..returns = buildMapStringPropertyValueType()
           ..optionalParameters.addAll(_buildParameterPropertiesParameters())
-          ..body = buildEmptyMapStringString().returned.statement,
+          ..body = buildEmptyMapStringPropertyValue().returned.statement,
       );
     }
 
@@ -1318,63 +1361,31 @@ for (final _\$e in $apFieldName.entries) {
       final resolvedModel = model.resolved;
 
       if (resolvedModel is NeverModel) {
-        propertyAssignments.addAll([
+        propertyAssignments.add(
           generateEncodingExceptionExpression(
             'Cannot encode NeverModel property $propertyName: '
             'this type does not permit any value',
             raw: true,
           ).statement,
-        ]);
+        );
         continue;
       }
 
-      final reservedArg = perPropertyAllowReservedArgument(propertyName);
-      if (isRequired && !isNullable && !isFieldNullable) {
-        propertyAssignments.add(
-          Code(
-            '_\$result[${specLiteralStringCode(propertyName)}] = '
-            '${uriEncodeReceiver(model, name)}.uriEncode('
-            'allowEmpty: allowEmpty, '
-            'useQueryComponent: useQueryComponent, '
-            '$reservedArg);',
-          ),
-        );
-      } else {
-        final checkedReceiver = uriEncodeReceiver(model, '$name!');
-        if (isRequired && !isNullable) {
-          propertyAssignments
-            ..add(Code('if ($name == null) {'))
-            ..add(
-              generateEncodingExceptionExpression(
-                'Required property $propertyName is null.',
-                raw: true,
-              ).statement,
-            )
-            ..add(const Code('}'))
-            ..add(
-              Code(
-                '_\$result[${specLiteralStringCode(propertyName)}] = '
-                '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
-                'useQueryComponent: useQueryComponent, '
-                '$reservedArg);',
-              ),
-            );
-        } else {
-          propertyAssignments.add(
-            Code('''
-if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, $reservedArg);
-} else if (allowEmpty) {
-  _\$result[${specLiteralStringCode(propertyName)}] = '';
-}'''),
-          );
-        }
-      }
+      propertyAssignments.addAll(
+        _buildScalarPropertyAssignment(
+          name: name,
+          propertyName: propertyName,
+          isRequired: isRequired,
+          isNullable: isNullable,
+          isFieldNullable: isFieldNullable,
+          model: model,
+        ),
+      );
     }
 
     final methodBody = [
       const Code(r'final _$result = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
       ...propertyAssignments,
       ..._buildAdditionalPropertiesParameterLoop(model),
       const Code(r'return _$result;'),
@@ -1383,7 +1394,7 @@ if ($name != null) {
     return Method(
       (b) => b
         ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
+        ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(_buildParameterPropertiesParameters())
         ..body = Block.of(methodBody),
     );
@@ -1394,34 +1405,6 @@ if ($name != null) {
     List<({String normalizedName, Property property})> properties,
     ClassModel model,
   ) {
-    final listProperties = properties
-        .where(
-          (p) =>
-              p.property.model is ListModel &&
-              (p.property.model as ListModel).hasSimpleContent,
-        )
-        .toList();
-
-    final hasRequiredNonNullableLists = listProperties.any(
-      (p) =>
-          p.property.isRequired &&
-          !p.property.isReadOnly &&
-          !p.property.isNullable &&
-          !p.property.model.isEffectivelyNullable,
-    );
-
-    final methodBody = <Code>[];
-
-    if (hasRequiredNonNullableLists) {
-      methodBody.addAll([
-        const Code('if (!allowLists) {'),
-        generateEncodingExceptionExpression(
-          'Lists are not supported in this encoding style',
-        ).statement,
-        const Code('}'),
-      ]);
-    }
-
     final propertyAssignments = <Code>[];
 
     for (final prop in properties) {
@@ -1433,71 +1416,33 @@ if ($name != null) {
           prop.property.isNullable || fieldModel.isEffectivelyNullable;
       final isFieldNullable = isNullable || prop.property.isWriteOnly;
 
-      final reservedArg = perPropertyAllowReservedArgument(propertyName);
       if (fieldModel.encodingShape == EncodingShape.simple) {
-        if (isRequired && !isNullable && !isFieldNullable) {
-          propertyAssignments.add(
-            Code(
-              '_\$result[${specLiteralStringCode(propertyName)}] = '
-              '${uriEncodeReceiver(fieldModel, name)}.uriEncode('
-              'allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent, '
-              '$reservedArg);',
-            ),
-          );
-        } else {
-          final checkedReceiver = uriEncodeReceiver(fieldModel, '$name!');
-          if (isRequired && !isNullable) {
-            propertyAssignments
-              ..add(Code('if ($name == null) {'))
-              ..add(
-                generateEncodingExceptionExpression(
-                  'Required property $propertyName is null.',
-                  raw: true,
-                ).statement,
-              )
-              ..add(const Code('}'))
-              ..add(
-                Code(
-                  '_\$result[${specLiteralStringCode(propertyName)}] = '
-                  '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
-                  'useQueryComponent: useQueryComponent, '
-                  '$reservedArg);',
-                ),
-              );
-          } else {
-            propertyAssignments.add(
-              Code('''
-if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, $reservedArg);
-} else if (allowEmpty) {
-  _\$result[${specLiteralStringCode(propertyName)}] = '';
-}'''),
-            );
-          }
-        }
+        propertyAssignments.addAll(
+          _buildScalarPropertyAssignment(
+            name: name,
+            propertyName: propertyName,
+            isRequired: isRequired,
+            isNullable: isNullable,
+            isFieldNullable: isFieldNullable,
+            model: fieldModel,
+          ),
+        );
       } else if (fieldModel is ListModel && fieldModel.hasSimpleContent) {
         final valueRef = (isRequired && !isNullable)
             ? (isFieldNullable ? refer(name).nullChecked : refer(name))
             : refer(name).nullChecked;
-        final encodeExpr = buildUriEncodeExpression(
+        final rawList = buildRawStringListExpression(
           valueRef,
-          fieldModel,
-          allowEmpty: refer('allowEmpty'),
-          useQueryComponent: refer('useQueryComponent'),
+          fieldModel.content,
+          isContentNullable:
+              fieldModel.isContentNullable ||
+              fieldModel.content.isEffectivelyNullable,
           useImmutableCollections: useImmutableCollections,
-          allowReserved: CodeExpression(
-            Code(
-              perPropertyAllowReservedValue(
-                propertyName,
-              ),
-            ),
-          ),
         );
 
-        final assignmentExpr = refer(
-          r'_$result',
-        ).index(specLiteralString(propertyName)).assign(encodeExpr.expression);
+        final assignmentExpr = refer(r'_$result')
+            .index(specLiteralString(propertyName))
+            .assign(propertyValueArray(rawList));
 
         if (isRequired && !isNullable) {
           if (isFieldNullable) {
@@ -1513,44 +1458,28 @@ if ($name != null) {
           }
           propertyAssignments.add(assignmentExpr.statement);
         } else {
-          methodBody
-            ..add(
-              Code('if (!allowLists && $name != null) {'),
-            )
-            ..add(
-              generateEncodingExceptionExpression(
-                'Lists are not supported in this encoding style',
-              ).statement,
-            )
-            ..add(const Code('}'));
-
           propertyAssignments
-            ..add(
-              Code('if ($name != null) {'),
-            )
+            ..add(Code('if ($name != null) {'))
             ..add(assignmentExpr.statement)
-            ..add(
-              Code('''
-} else if (allowEmpty) {
-  _\$result[${specLiteralStringCode(propertyName)}] = '';
-}'''),
-            );
+            ..add(const Code('} else if (allowEmpty) {'))
+            ..add(_scalarPropertyAssignment(propertyName, literalString('')))
+            ..add(const Code('}'));
         }
       }
     }
 
-    methodBody.addAll([
+    final methodBody = <Code>[
       const Code(r'final _$result = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
       ...propertyAssignments,
       ..._buildAdditionalPropertiesParameterLoop(model),
       const Code(r'return _$result;'),
-    ]);
+    ];
 
     return Method(
       (b) => b
         ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
+        ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(_buildParameterPropertiesParameters())
         ..body = Block.of(methodBody),
     );
@@ -1563,7 +1492,7 @@ if ($name != null) {
     return Method(
       (b) => b
         ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
+        ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(_buildParameterPropertiesParameters())
         ..body = generateEncodingExceptionExpression(
           'parameterProperties not supported for $className: '
@@ -1592,68 +1521,39 @@ if ($name != null) {
 
       if (resolvedModel is AnyModel) {
         propertyAssignments.add(
-          Code(
-            '_\$result[${specLiteralStringCode(propertyName)}] = '
-            "$name?.toString() ?? '';",
+          _scalarPropertyAssignment(
+            propertyName,
+            refer(name)
+                .nullSafeProperty('toString')
+                .call([])
+                .ifNullThen(literalString('')),
           ),
         );
         continue;
       }
 
       if (resolvedModel is NeverModel) {
-        propertyAssignments.addAll([
+        propertyAssignments.add(
           generateEncodingExceptionExpression(
             'Cannot encode NeverModel property $propertyName: '
             'this type does not permit any value',
             raw: true,
           ).statement,
-        ]);
+        );
         continue;
       }
 
       if (model.encodingShape == .simple) {
-        final reservedArg = perPropertyAllowReservedArgument(propertyName);
-        if (isRequired && !isNullable && !isFieldNullable) {
-          propertyAssignments.add(
-            Code(
-              '_\$result[${specLiteralStringCode(propertyName)}] = '
-              '${uriEncodeReceiver(model, name)}.uriEncode('
-              'allowEmpty: allowEmpty, '
-              'useQueryComponent: useQueryComponent, '
-              '$reservedArg);',
-            ),
-          );
-        } else {
-          final checkedReceiver = uriEncodeReceiver(model, '$name!');
-          if (isRequired && !isNullable) {
-            propertyAssignments
-              ..add(Code('if ($name == null) {'))
-              ..add(
-                generateEncodingExceptionExpression(
-                  'Required property $propertyName is null.',
-                  raw: true,
-                ).statement,
-              )
-              ..add(const Code('}'))
-              ..add(
-                Code(
-                  '_\$result[${specLiteralStringCode(propertyName)}] = '
-                  '$checkedReceiver.uriEncode(allowEmpty: allowEmpty, '
-                  'useQueryComponent: useQueryComponent, '
-                  '$reservedArg);',
-                ),
-              );
-          } else {
-            propertyAssignments.add(
-              Code('''
-if ($name != null) {
-  _\$result[${specLiteralStringCode(propertyName)}] = $checkedReceiver.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, $reservedArg);
-} else if (allowEmpty) {
-  _\$result[${specLiteralStringCode(propertyName)}] = '';
-}'''),
-            );
-          }
-        }
+        propertyAssignments.addAll(
+          _buildScalarPropertyAssignment(
+            name: name,
+            propertyName: propertyName,
+            isRequired: isRequired,
+            isNullable: isNullable,
+            isFieldNullable: isFieldNullable,
+            model: model,
+          ),
+        );
       } else {
         final isFieldNullable = isNullable || !isRequired;
         final encodingShapeRef = refer(
@@ -1661,16 +1561,27 @@ if ($name != null) {
           'package:tonik_util/tonik_util.dart',
         );
 
+        Code mixedScalarAssign(Expression receiver) =>
+            _scalarPropertyAssignment(
+              propertyName,
+              refer(
+                'encodeAnyValueToString',
+                'package:tonik_util/tonik_util.dart',
+              ).call(
+                [receiver.property('toJson').call([])],
+                {
+                  'allowEmpty': refer('allowEmpty'),
+                },
+              ),
+            );
+
         if (isFieldNullable) {
           propertyAssignments.addAll([
             Code('if ($name != null) {'),
             Code('  if ($name!.currentEncodingShape == '),
             encodingShapeRef.property('simple').code,
             const Code(') {'),
-            Code(
-              '    _\$result[${specLiteralStringCode(propertyName)}] = '
-              '$name!.toSimple(explode: false, allowEmpty: allowEmpty);',
-            ),
+            mixedScalarAssign(refer(name).nullChecked),
             const Code('} else {'),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
@@ -1684,10 +1595,7 @@ if ($name != null) {
             Code('if ($name.currentEncodingShape == '),
             encodingShapeRef.property('simple').code,
             const Code(') {'),
-            Code(
-              '  _\$result[${specLiteralStringCode(propertyName)}] = '
-              '$name.toSimple(explode: false, allowEmpty: allowEmpty);',
-            ),
+            mixedScalarAssign(refer(name)),
             const Code('} else {'),
             generateEncodingExceptionExpression(
               'parameterProperties not supported for $className: '
@@ -1702,7 +1610,7 @@ if ($name != null) {
 
     final methodBody = [
       const Code(r'final _$result = '),
-      buildEmptyMapStringString().statement,
+      buildEmptyMapStringPropertyValue().statement,
       ...propertyAssignments,
       ..._buildAdditionalPropertiesParameterLoop(model),
       const Code(r'return _$result;'),
@@ -1711,7 +1619,7 @@ if ($name != null) {
     return Method(
       (b) => b
         ..name = 'parameterProperties'
-        ..returns = buildMapStringStringType()
+        ..returns = buildMapStringPropertyValueType()
         ..optionalParameters.addAll(_buildParameterPropertiesParameters())
         ..body = Block.of(methodBody),
     );
@@ -1730,7 +1638,6 @@ if ($name != null) {
             .call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
-              'alreadyEncoded': literalBool(true),
             })
             .returned
             .statement,
@@ -2009,20 +1916,16 @@ if ($name != null) {
       ..optionalParameters.addAll(buildFormEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
-            .call([], {
-              'allowEmpty': refer('allowEmpty'),
-              'useQueryComponent': refer('useQueryComponent'),
-              'allowReserved': refer('allowReserved'),
-              'fieldEncodings': refer('fieldEncodings'),
-            })
+            .call([], {'allowEmpty': refer('allowEmpty')})
             .property('toForm')
             .call(
               [refer('paramName')],
               {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
-                'alreadyEncoded': literalBool(true),
                 'useQueryComponent': refer('useQueryComponent'),
+                'allowReserved': refer('allowReserved'),
+                'fieldEncodings': refer('fieldEncodings'),
               },
             )
             .returned
@@ -2043,7 +1946,6 @@ if ($name != null) {
             .call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
-              'alreadyEncoded': literalBool(true),
             })
             .returned
             .statement,
@@ -2072,7 +1974,6 @@ if ($name != null) {
               {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
-                'alreadyEncoded': literalBool(true),
               },
             )
             .returned
@@ -2105,18 +2006,14 @@ if ($name != null) {
       ..optionalParameters.addAll(buildDeepObjectEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
-            .call([], {
-              'allowEmpty': refer('allowEmpty'),
-              'allowLists': literalBool(false),
-              'allowReserved': refer('allowReserved'),
-            })
+            .call([], {'allowEmpty': refer('allowEmpty')})
             .property('toDeepObject')
             .call(
               [refer('paramName')],
               {
                 'explode': refer('explode'),
                 'allowEmpty': refer('allowEmpty'),
-                'alreadyEncoded': literalBool(true),
+                'allowReserved': refer('allowReserved'),
               },
             )
             .returned

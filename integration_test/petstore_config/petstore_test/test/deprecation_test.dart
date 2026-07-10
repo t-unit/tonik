@@ -138,30 +138,18 @@ void main() {
     test(
       'PetApi should not have getLegacyPets (deprecated operation excluded)',
       () {
-        // The getLegacyPets operation is deprecated in the spec
-        // With deprecated.operations = exclude, it should not be generated
-
         final api = AnimalsApi(CustomServer(baseUrl: 'http://localhost:8080'));
 
         expect(api, isA<AnimalsApi>());
-
-        // If this test compiles, the operation was successfully excluded
-        // Attempting to call api.getLegacyPets() would be a compile error
       },
     );
 
     test(
       'StoreApi should not have getLegacyInventory',
       () {
-        // The getLegacyInventory operation is deprecated in the spec
-        // With deprecated.operations = exclude, it should not be generated
-
         final api = OrdersApi(CustomServer(baseUrl: 'http://localhost:8080'));
 
         expect(api, isA<OrdersApi>());
-
-        // If this test compiles, the operation was successfully excluded
-        // Attempting to call api.getLegacyInventory() would be a compile error
       },
     );
   });
@@ -170,13 +158,6 @@ void main() {
     test(
       'LegacyPet schema should not be generated (deprecated schema excluded)',
       () {
-        // The LegacyPet schema is marked as deprecated in the spec
-        // With deprecated.schemas = exclude, it should not be generated
-
-        // If LegacyPet type existed, this would be a compile error:
-        // const pet = LegacyPet(id: 1, oldName: 'Fido');
-
-        // Instead, we verify that non-deprecated schemas exist
         const activePet = ActivePet(id: 1, petName: 'Fluffy');
 
         expect(activePet.id, 1);
@@ -189,17 +170,9 @@ void main() {
     test(
       'searchPets should not have legacyFilter parameter',
       () {
-        // The legacyFilter parameter in searchPets is marked as deprecated
-        // With deprecated.parameters = exclude, it should not be included
-
         final api = AnimalsApi(CustomServer(baseUrl: 'http://localhost:8080'));
 
         expect(api, isA<AnimalsApi>());
-
-        // The searchPets method should exist with only the
-        // non-deprecated 'name' parameter
-        // If legacyFilter existed, calling without it would be a compile error
-        // This compilation test verifies legacyFilter was excluded
       },
     );
   });
@@ -208,9 +181,6 @@ void main() {
     test(
       'Order should not have shipDate property (deprecated property excluded)',
       () {
-        // The shipDate property in Order is marked as deprecated
-        // With deprecated.properties = exclude, it should not be generated
-
         const order = Order(
           id: 1,
           animalId: 100,
@@ -234,11 +204,6 @@ void main() {
           orderWithDate.deliveryDate,
           DateTime.parse('2024-01-15T10:00:00Z'),
         );
-
-        // If shipDate existed, this would be a compile error:
-        // expect(order.shipDate, isNull);
-
-        // The fact this compiles means shipDate was successfully excluded
       },
     );
   });
@@ -249,10 +214,7 @@ void main() {
         CustomServer(baseUrl: 'http://localhost:8080'),
       );
 
-      // These operations are not deprecated and should exist
       expect(api, isA<AnimalsApi>());
-      // getActivePets, searchPets should be available
-      // We verify the API class exists which includes these methods
     });
 
     test('Order should have non-deprecated properties', () {
@@ -264,7 +226,6 @@ void main() {
         complete: true,
       );
 
-      // Non-deprecated properties should still exist
       expect(order.id, 1);
       expect(order.animalId, 100);
       expect(order.quantity, 5);
@@ -273,7 +234,6 @@ void main() {
     });
 
     test('Category schema should exist (not deprecated)', () {
-      // Category is not deprecated
       const category = Category(id: 1, name: 'Dogs');
 
       expect(category.id, 1);
@@ -281,7 +241,6 @@ void main() {
     });
 
     test('User schema should exist (not deprecated)', () {
-      // User schema is not deprecated
       const user = User(
         username: 'john_doe',
         firstName: 'John',
@@ -296,7 +255,6 @@ void main() {
     });
 
     test('ActivePet schema should exist (not deprecated)', () {
-      // ActivePet is not deprecated
       const pet = ActivePet(
         id: 1,
         petName: 'Fluffy',

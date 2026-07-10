@@ -53,17 +53,12 @@ void main() {
       expect(method.name, 'parameterProperties');
       expect(
         method.returns?.accept(emitter).toString().replaceAll(' ', ''),
-        'Map<String,String>',
+        'Map<String,PropertyValue>',
       );
-      expect(method.optionalParameters.length, 4);
+      expect(method.optionalParameters.length, 1);
       expect(
         method.optionalParameters.map((p) => p.name),
-        containsAll([
-          'allowEmpty',
-          'allowLists',
-          'allowReserved',
-          'fieldEncodings',
-        ]),
+        containsAll(['allowEmpty']),
       );
     });
 
@@ -82,11 +77,7 @@ void main() {
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   throw EncodingException(
     r'parameterProperties not supported for Combined: contains primitive types',
   );
@@ -120,18 +111,10 @@ Map<String, String> parameterProperties({
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$mergedProperties = <String, String>{};
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$mergedProperties = <String, PropertyValue>{};
   _$mergedProperties.addAll(
-    $base.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowLists: allowLists,
-      allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-    ),
+    $base.parameterProperties(allowEmpty: allowEmpty),
   );
   return _$mergedProperties;
 }
@@ -165,11 +148,7 @@ Map<String, String> parameterProperties({
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
   throw EncodingException(
     r'parameterProperties not supported for Mixed: contains primitive types',
   );
@@ -210,25 +189,13 @@ Map<String, String> parameterProperties({
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$mergedProperties = <String, String>{};
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$mergedProperties = <String, PropertyValue>{};
   _$mergedProperties.addAll(
-    firstModel.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowLists: allowLists,
-      allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-    ),
+    firstModel.parameterProperties(allowEmpty: allowEmpty),
   );
   _$mergedProperties.addAll(
-    secondModel.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowLists: allowLists,
-      allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-    ),
+    secondModel.parameterProperties(allowEmpty: allowEmpty),
   );
   return _$mergedProperties;
 }
@@ -239,6 +206,80 @@ Map<String, String> parameterProperties({
         contains(collapseWhitespace(expectedMethod)),
       );
     });
+
+    test(
+      'merges a duplicate property that is an array in one member and a scalar '
+      'in another as a plain last-member-wins overwrite',
+      () {
+        final model = AllOfModel(
+          isDeprecated: false,
+          name: 'DuplicateShapeAllOf',
+          models: {
+            ClassModel(
+              isDeprecated: false,
+              name: 'ArrayMember',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: ListModel(
+                    content: StringModel(context: context),
+                    context: context,
+                    examples: const [],
+                  ),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
+              examples: const [],
+            ),
+            ClassModel(
+              isDeprecated: false,
+              name: 'ScalarMember',
+              properties: [
+                Property(
+                  name: 'value',
+                  model: StringModel(context: context),
+                  isRequired: true,
+                  isNullable: false,
+                  isDeprecated: false,
+                  examples: const [],
+                  defaultValue: null,
+                ),
+              ],
+              context: context,
+              examples: const [],
+            ),
+          },
+          context: context,
+          examples: const [],
+        );
+
+        final combinedClass = generator.generateClass(model);
+        final classCode = format(combinedClass.accept(emitter).toString());
+
+        const expectedMethod = r'''
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$mergedProperties = <String, PropertyValue>{};
+  _$mergedProperties.addAll(
+    arrayMember.parameterProperties(allowEmpty: allowEmpty),
+  );
+  _$mergedProperties.addAll(
+    scalarMember.parameterProperties(allowEmpty: allowEmpty),
+  );
+  return _$mergedProperties;
+}
+''';
+
+        expect(
+          collapseWhitespace(classCode),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      },
+    );
 
     test(
       'runtime check for allOf with complex class and mixed encoding anyOf',
@@ -304,25 +345,13 @@ Map<String, String> parameterProperties({
         final classCode = format(combinedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  final _$mergedProperties = <String, String>{};
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$mergedProperties = <String, PropertyValue>{};
   _$mergedProperties.addAll(
-    stringOrComplex.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowLists: allowLists,
-      allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-    ),
+    stringOrComplex.parameterProperties(allowEmpty: allowEmpty),
   );
   _$mergedProperties.addAll(
-    simpleModel.parameterProperties(
-      allowEmpty: allowEmpty,
-      allowLists: allowLists,
-      allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-    ),
+    simpleModel.parameterProperties(allowEmpty: allowEmpty),
   );
   return _$mergedProperties;
 }
@@ -348,13 +377,7 @@ Map<String, String> parameterProperties({
       final classCode = format(combinedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, String> parameterProperties({
-  bool allowEmpty = true,
-  bool allowLists = true,
-  bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-}) {
-  return <String, String>{};
-}
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return <String, PropertyValue>{}; }
 ''';
 
       expect(

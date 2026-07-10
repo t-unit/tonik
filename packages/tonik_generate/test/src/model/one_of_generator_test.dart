@@ -746,15 +746,9 @@ void main() {
       expect(method.name, 'parameterProperties');
       expect(
         method.returns?.accept(emitter).toString().replaceAll(' ', ''),
-        'Map<String,String>',
+        'Map<String,PropertyValue>',
       );
-      expect(method.optionalParameters.length, 4);
-
-      final allowReservedParam = method.optionalParameters.firstWhere(
-        (p) => p.name == 'allowReserved',
-      );
-      expect(allowReservedParam.named, isTrue);
-      expect(allowReservedParam.required, isFalse);
+      expect(method.optionalParameters.length, 1);
 
       final allowEmptyParam = method.optionalParameters.firstWhere(
         (p) => p.name == 'allowEmpty',
@@ -767,20 +761,6 @@ void main() {
       );
       expect(
         allowEmptyParam.type?.accept(emitter).toString(),
-        'bool',
-      );
-
-      final allowListsParam = method.optionalParameters.firstWhere(
-        (p) => p.name == 'allowLists',
-      );
-      expect(allowListsParam.named, isTrue);
-      expect(allowListsParam.required, isFalse);
-      expect(
-        allowListsParam.defaultTo?.accept(emitter).toString(),
-        'true',
-      );
-      expect(
-        allowListsParam.type?.accept(emitter).toString(),
         'bool',
       );
     });
@@ -801,15 +781,8 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Value');
 
       const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) =>
-          throw EncodingException(
-            r'parameterProperties not supported for Value: only contains primitive types',
-          );
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for Value: only contains primitive types', );
+''';
 
       expect(
         collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -841,15 +814,8 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Value');
 
       const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) =>
-          throw EncodingException(
-            r'parameterProperties not supported for Value: only contains primitive types',
-          );
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for Value: only contains primitive types', );
+''';
 
       expect(
         collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -890,20 +856,8 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
       const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          return switch (this) {
-            ResponseUser(:final value) => value.parameterProperties(
-              allowEmpty: allowEmpty,
-              allowLists: allowLists,
-              allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-            ),
-          };
-        }
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { ResponseUser(:final value) => value.parameterProperties( allowEmpty: allowEmpty, ), }; }
+''';
 
       expect(
         collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -964,31 +918,8 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
       const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          return switch (this) {
-            EntityCompany(:final value) => {
-              ...value.parameterProperties(
-                allowEmpty: allowEmpty,
-                allowLists: allowLists,
-                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-              ),
-              r'type': r'company',
-            },
-            EntityUser(:final value) => {
-              ...value.parameterProperties(
-                allowEmpty: allowEmpty,
-                allowLists: allowLists,
-                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-              ),
-              r'type': r'person',
-            },
-          };
-        }
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'company'), }, EntityUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }, }; }
+''';
 
       expect(
         collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -1032,23 +963,8 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Value');
 
         const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          return switch (this) {
-            ValueUser(:final value) => value.parameterProperties(
-              allowEmpty: allowEmpty,
-              allowLists: allowLists,
-              allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-            ),
-            ValueString() => throw EncodingException(
-              r'parameterProperties not supported for Value: cannot determine properties at runtime',
-            ),
-          };
-        }
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { ValueUser(:final value) => value.parameterProperties( allowEmpty: allowEmpty, ), ValueString() => throw EncodingException( r'parameterProperties not supported for Value: cannot determine properties at runtime', ), }; }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -1097,26 +1013,8 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
         const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          return switch (this) {
-            ResponseMessage() => throw EncodingException(
-              r'parameterProperties not supported for Response: cannot determine properties at runtime',
-            ),
-            ResponseUser(:final value) => {
-              ...value.parameterProperties(
-                allowEmpty: allowEmpty,
-                allowLists: allowLists,
-                allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-              ),
-              r'type': r'user',
-            },
-          };
-        }
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { ResponseMessage() => throw EncodingException( r'parameterProperties not supported for Response: cannot determine properties at runtime', ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }, }; }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -1173,18 +1071,10 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
         const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
+        Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           return switch (this) {
             OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
-              ? value.parameterProperties(
-                  allowEmpty: allowEmpty,
-                  allowLists: allowLists,
-                  allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-                )
+              ? value.parameterProperties(allowEmpty: allowEmpty)
               : throw EncodingException(
                   r'parameterProperties not supported for Outer: cannot determine properties at runtime',
                 ),
@@ -1248,27 +1138,8 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Outer');
 
         const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) {
-          return switch (this) {
-            OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex
-              ? {
-                  ...value.parameterProperties(
-                    allowEmpty: allowEmpty,
-                    allowLists: allowLists,
-                    allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-                  ),
-                  r'type': r'inner',
-                }
-              : throw EncodingException(
-                  r'parameterProperties not supported for Outer: cannot determine properties at runtime',
-                ),
-          };
-        }
-      ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { OuterInner(:final value) => value.currentEncodingShape == EncodingShape.complex ? { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'inner'), } : throw EncodingException( r'parameterProperties not supported for Outer: cannot determine properties at runtime', ), }; }
+''';
 
         expect(
           collapseWhitespace(format(baseClass.accept(emitter).toString())),
@@ -1881,11 +1752,7 @@ void main() {
         collapseWhitespace(generated),
         contains(
           collapseWhitespace('''
-            Map<String, String> parameterProperties({
-              bool allowEmpty = true,
-              bool allowLists = true,
-              bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-            }) {
+            Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               return switch (this) {
                 ValueList() => throw EncodingException(
                   'Lists are not supported in parameterProperties',
@@ -2388,11 +2255,7 @@ void main() {
           collapseWhitespace(generated),
           contains(
             collapseWhitespace('''
-              Map<String, String> parameterProperties({
-                bool allowEmpty = true,
-                bool allowLists = true,
-                bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-              }) {
+              Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 return switch (this) {
                   ValueList() => throw EncodingException(
                     'Lists are not supported in parameterProperties',
@@ -2560,22 +2423,8 @@ void main() {
         final generated = format(baseClass.accept(emitter).toString());
 
         const expectedMethod = '''
-          Map<String, String> parameterProperties({
-            bool allowEmpty = true,
-            bool allowLists = true,
-            bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-          }) {
-            return switch (this) {
-              ValueDetails(:final value) => value == null
-                ? <String, String>{}
-                : value.parameterProperties(
-                    allowEmpty: allowEmpty,
-                    allowLists: allowLists,
-                    allowReserved: allowReserved, fieldEncodings: fieldEncodings,
-                  ),
-            };
-          }
-        ''';
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { return switch (this) { ValueDetails(:final value) => value == null ? <String, PropertyValue>{} : value.parameterProperties(allowEmpty: allowEmpty), }; }
+''';
 
         expect(
           collapseWhitespace(generated),

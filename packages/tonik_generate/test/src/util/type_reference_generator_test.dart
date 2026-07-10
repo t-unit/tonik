@@ -81,21 +81,6 @@ void main() {
       });
     });
 
-    group('buildMapStringStringType', () {
-      test('returns correct TypeReference for Map<String, String>', () {
-        final result = buildMapStringStringType();
-
-        expect(result.symbol, 'Map');
-        expect(result.url, 'dart:core');
-        expect(result.isNullable, isNull);
-        expect(result.types, hasLength(2));
-        expect(result.types[0].symbol, 'String');
-        expect(result.types[0].url, 'dart:core');
-        expect(result.types[1].symbol, 'String');
-        expect(result.types[1].url, 'dart:core');
-      });
-    });
-
     group('buildEncodingParameters', () {
       test('returns correct list of encoding parameters', () {
         final result = buildEncodingParameters();
@@ -116,21 +101,6 @@ void main() {
         expect(allowEmptyParam.named, isTrue);
         expect(allowEmptyParam.required, isTrue);
       });
-    });
-
-    group('buildEmptyMapStringString', () {
-      test(
-        'returns correct LiteralMapExpression for empty Map<String, String>',
-        () {
-          final result = buildEmptyMapStringString();
-
-          expect(result, isA<LiteralMapExpression>());
-          expect(result.keyType?.symbol, 'String');
-          expect(result.keyType?.url, 'dart:core');
-          expect(result.valueType?.symbol, 'String');
-          expect(result.valueType?.url, 'dart:core');
-        },
-      );
     });
 
     group('typeReference', () {

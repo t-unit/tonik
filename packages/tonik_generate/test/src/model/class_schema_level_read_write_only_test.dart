@@ -216,12 +216,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool useQueryComponent = false,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) => throw EncodingException(
+        Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException(
           r'ServerStatus is read-only and cannot be encoded.',
         );
       ''';

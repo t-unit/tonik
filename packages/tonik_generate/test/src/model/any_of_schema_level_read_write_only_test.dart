@@ -174,11 +174,7 @@ void main() {
       final classCode = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        Map<String, String> parameterProperties({
-          bool allowEmpty = true,
-          bool allowLists = true,
-          bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {},
-        }) => throw EncodingException(
+        Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException(
           r'ServerEvent is read-only and cannot be encoded.',
         );
       ''';
@@ -201,24 +197,8 @@ void main() {
       final classCode = format(baseClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        List<ParameterEntry> toDeepObject(
-          String paramName, {
-          required bool explode,
-          required bool allowEmpty,
-          bool allowReserved = false,
-        }) {
-          return parameterProperties(
-            allowEmpty: allowEmpty,
-            allowLists: false,
-            allowReserved: allowReserved,
-          ).toDeepObject(
-            paramName,
-            explode: explode,
-            allowEmpty: allowEmpty,
-            alreadyEncoded: true,
-          );
-        }
-      ''';
+List<ParameterEntry> toDeepObject( String paramName, { required bool explode, required bool allowEmpty, bool allowReserved = false, }) { return parameterProperties(allowEmpty: allowEmpty).toDeepObject( paramName, explode: explode, allowEmpty: allowEmpty, allowReserved: allowReserved, ); }
+''';
 
       expect(
         collapseWhitespace(classCode),
