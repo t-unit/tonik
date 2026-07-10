@@ -11,6 +11,7 @@ environment:
 dependencies:
   adversarial_strings_api:
     path: ../adversarial_strings_api
+  dio: ^5.8.0+1
   tonik_util: ^0.1.0
 
 dev_dependencies:

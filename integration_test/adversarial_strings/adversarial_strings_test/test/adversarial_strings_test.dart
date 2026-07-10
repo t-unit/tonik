@@ -1,4 +1,9 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:adversarial_strings_api/adversarial_strings_api.dart';
+import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -274,6 +279,42 @@ void main() {
     });
   });
 
+  group('root JSON string request bodies', () {
+    test('alias body is sent as a quoted JSON string', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootAlias(dio).call(body: 'alias-body');
+
+      expect(adapter.capturedBodyAsString, jsonEncode('alias-body'));
+      expect(jsonDecode(adapter.capturedBodyAsString), 'alias-body');
+    });
+
+    test('oneOf string variant is sent as a quoted JSON string', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootOneOf(dio).call(
+        body: const RootStringOneOfString('one-of-body'),
+      );
+
+      expect(adapter.capturedBodyAsString, jsonEncode('one-of-body'));
+      expect(jsonDecode(adapter.capturedBodyAsString), 'one-of-body');
+    });
+
+    test('anyOf string variant is sent as a quoted JSON string', () async {
+      final adapter = _CapturingAdapter();
+      final dio = _capturingDio(adapter);
+
+      await SendRootAnyOf(dio).call(
+        body: const RootStringAnyOf(string: 'any-of-body'),
+      );
+
+      expect(adapter.capturedBodyAsString, jsonEncode('any-of-body'));
+      expect(jsonDecode(adapter.capturedBodyAsString), 'any-of-body');
+    });
+  });
+
   group('object with quoted property name', () {
     test('toJson uses quoted property key', () {
       const obj = ObjectWithQuotedProp(id: 'x');
@@ -294,4 +335,32 @@ void main() {
       expect(reconstructed.id, 'round-trip');
     });
   });
+}
+
+Dio _capturingDio(_CapturingAdapter adapter) {
+  return Dio(BaseOptions(baseUrl: 'https://example.com'))
+    ..httpClientAdapter = adapter;
+}
+
+class _CapturingAdapter implements HttpClientAdapter {
+  List<int>? capturedBody;
+
+  String get capturedBodyAsString => utf8.decode(capturedBody!);
+
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    final chunks = requestStream == null
+        ? const <Uint8List>[]
+        : await requestStream.toList();
+    capturedBody = chunks.expand((chunk) => chunk).toList();
+
+    return ResponseBody.fromString('', 204);
+  }
+
+  @override
+  void close({bool force = false}) {}
 }

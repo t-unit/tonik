@@ -185,8 +185,69 @@ paths:
         '200':
           description: OK
 
+  /json-root-alias:
+    post:
+      operationId: sendRootAlias
+      tags:
+        - adversarial
+      summary: JSON string alias request body
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RootStringAlias'
+      responses:
+        '204':
+          description: Stored
+
+  /json-root-one-of:
+    post:
+      operationId: sendRootOneOf
+      tags:
+        - adversarial
+      summary: JSON string oneOf request body
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RootStringOneOf'
+      responses:
+        '204':
+          description: Stored
+
+  /json-root-any-of:
+    post:
+      operationId: sendRootAnyOf
+      tags:
+        - adversarial
+      summary: JSON string anyOf request body
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RootStringAnyOf'
+      responses:
+        '204':
+          description: Stored
+
 components:
   schemas:
+    RootStringAlias:
+      type: string
+
+    RootStringOneOf:
+      oneOf:
+        - type: string
+        - type: integer
+
+    RootStringAnyOf:
+      anyOf:
+        - type: string
+        - type: boolean
+
     BasicObject:
       type: object
       required:
