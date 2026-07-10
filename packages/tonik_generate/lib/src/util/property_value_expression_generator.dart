@@ -30,12 +30,11 @@ Expression additionalPropertyRawScalar(Expression value, Model valueModel) {
 /// Builds a `List<String>` of per-element strings for a simple-content list
 /// whose element type is [contentModel].
 ///
-/// For scalar content these are raw (unescaped): the traversal mirrors the
-/// URI-encode list handling minus the per-element percent-encoding, so element
-/// boundaries reach the form encoder intact (`.unlock` for immutable
-/// collections, a null-element to `''` guard for nullable content). Composite
-/// content is instead pre-encoded here, so it is double-encoded once the form
-/// encoder runs.
+/// Both scalar and composite content are raw (unescaped): the traversal mirrors
+/// the URI-encode list handling minus the per-element percent-encoding, so
+/// element boundaries reach the form encoder intact (`.unlock` for immutable
+/// collections, a null-element to `''` guard for nullable content). The late
+/// style/form encoder does the single percent-encode.
 Expression buildRawStringListExpression(
   Expression valueExpression,
   Model contentModel, {
@@ -80,13 +79,11 @@ Expression buildRawStringListExpression(
     EnumModel() => mapToRaw(
       nullGuard(buildRawStringExpression(refer('e'), contentModel)),
     ),
-    // Elements are percent-encoded here, then again by the form encoder, so
-    // composite content stays double-encoded on the wire as it was before.
     AnyModel() || AnyOfModel() || OneOfModel() || AllOfModel() => mapToRaw(
       nullGuard(
-        refer('encodeAnyToUri', _tonikUtilUrl).call(
+        refer('encodeAnyValueToString', _tonikUtilUrl).call(
           [
-            refer('e'),
+            refer('e').property('toJson').call([]),
           ],
           {'allowEmpty': refer('allowEmpty')},
         ),

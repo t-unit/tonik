@@ -200,10 +200,16 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/PriorityEnum'
+        - name: simpleCompositeList
+          in: query
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/SimpleCompositeListClass'
       responses:
         '204':
           description: OK
-  
+
   /form-complex-explode:
     get:
       operationId: testFormComplexExplode
@@ -1866,3 +1872,14 @@ components:
           type: string
         nested:
           $ref: '#/components/schemas/ClassNested'
+    SimpleCompositeListClass:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: integer

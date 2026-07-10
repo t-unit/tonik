@@ -402,6 +402,25 @@ void main() {
           .data;
       expect(requestData, 'tags=');
     });
+
+    test('single-encodes a reserved char in a composite array elem', () async {
+      const form = CompositeListForm(
+        tags: [
+          CompositeListFormTagsArrayOneOfModelString('a,b'),
+          CompositeListFormTagsArrayOneOfModelInt(7),
+        ],
+      );
+
+      final response = await api.postCompositeListForm(body: form);
+
+      expect(response, isA<TonikSuccess<CompositeListForm>>());
+
+      final requestData = (response as TonikSuccess<CompositeListForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, 'tags=a%2Cb&tags=7');
+    });
   });
 
   group('Type conversions', () {

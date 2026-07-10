@@ -686,6 +686,30 @@ paths:
               schema:
                 $ref: '#/components/schemas/OptionalArrayForm'
 
+  /form/composite-list:
+    post:
+      operationId: postCompositeListForm
+      tags:
+        - form
+      summary: Post a form body with an array-of-oneOf property
+      description: >-
+        Tests that a property typed as an array of a simple composite
+        (oneOf of scalars) single-encodes each element on the wire, so a
+        reserved character in an element renders once, not double-encoded.
+      requestBody:
+        required: true
+        content:
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CompositeListForm'
+      responses:
+        '200':
+          description: Echo response with exact request body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/CompositeListForm'
+
   /custom/form:
     post:
       operationId: postCustomForm
@@ -996,3 +1020,18 @@ components:
           items:
             type: string
           description: Optional array property omitted entirely when absent
+
+    CompositeListForm:
+      type: object
+      required:
+        - tags
+      properties:
+        tags:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: integer
+          description: >-
+            Array of a simple composite whose elements single-encode on the
+            wire

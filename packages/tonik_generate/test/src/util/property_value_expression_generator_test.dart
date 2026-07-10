@@ -101,8 +101,7 @@ void main() {
       );
     });
 
-    test('composite content is double-encoded (legacy behavior '
-        'preserved)', () {
+    test('composite content maps each element to its raw string', () {
       expectListEmission(
         OneOfModel(
           isDeprecated: false,
@@ -115,13 +114,12 @@ void main() {
           examples: const [],
         ),
         'myValue.map((e) => '
-        'encodeAnyToUri(e, allowEmpty: allowEmpty)).toList()',
+        'encodeAnyValueToString(e.toJson(), allowEmpty: allowEmpty)).toList()',
         isContentNullable: false,
       );
     });
 
-    test('content-nullable composite guards null elements and double-encodes '
-        'the rest', () {
+    test('content-nullable composite guards null elements to empty string', () {
       expectListEmission(
         OneOfModel(
           isDeprecated: false,
@@ -134,7 +132,7 @@ void main() {
           examples: const [],
         ),
         "myValue.map((e) => e == null ? '' : "
-        'encodeAnyToUri(e, allowEmpty: allowEmpty)).toList()',
+        'encodeAnyValueToString(e.toJson(), allowEmpty: allowEmpty)).toList()',
         isContentNullable: true,
       );
     });
