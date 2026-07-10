@@ -120,6 +120,15 @@ This means:
 - Add or remove a response in your spec, regenerate, and the compiler flags every call site that needs updating
 - Different content types on the same status code (e.g. JSON vs plain text) each get their own typed variant
 
+Response content types may also use simple media-type ranges. Tonik supports
+`type/*` and `*/*` response entries, matching them against the concrete
+`Content-Type` header after stripping parameters such as `charset=utf-8`.
+Exact content types take precedence over `type/*`, and `type/*` takes
+precedence over `*/*`. For example, if a response declares both
+`application/json` and `application/*`, an `application/json; charset=utf-8`
+response uses the exact JSON variant, while `application/problem+json` can
+match the `application/*` variant.
+
 Error types on `TonikError`: `encoding`, `decoding`, `network`, `cancelled`, `other`.
 
 ### Request Cancellation
@@ -289,6 +298,7 @@ Each operation generates a sealed response class. Every status code and content 
 |---------|--------|
 | Distinct type per status code | ✅ |
 | Distinct type per content type | ✅ |
+| Response media-type ranges | ✅ (`type/*`, `*/*`) |
 | Exhaustive pattern matching | ✅ |
 | Range codes (`2XX`, `4XX`) | ✅ |
 | `default` response | ✅ |

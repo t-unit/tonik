@@ -40,6 +40,39 @@ paths:
             application/problem+json:
               schema:
                 $ref: '#/components/schemas/Widget'
+  /wildcard/application:
+    get:
+      tags:
+        - widgets
+      summary: Get bytes through an application media-type range
+      description: |-
+        Returns application/json while the response is declared as
+        application/*, so the client should match the range and deliver raw
+        bytes.
+      operationId: getApplicationWildcard
+      responses:
+        '200':
+          description: Wildcard application response retrieved successfully
+          content:
+            'application/*':
+              schema:
+                $ref: '#/components/schemas/Widget'
+  /wildcard/catch-all:
+    get:
+      tags:
+        - widgets
+      summary: Get bytes through the catch-all media-type range
+      description: |-
+        Returns text/plain while the response is declared as */*, so the client
+        should match the range and deliver raw bytes.
+      operationId: getCatchAllWildcard
+      responses:
+        '200':
+          description: Catch-all wildcard response retrieved successfully
+          content:
+            '*/*':
+              schema:
+                $ref: '#/components/schemas/Widget'
 components:
   schemas:
     Widget:

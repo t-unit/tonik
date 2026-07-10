@@ -401,10 +401,9 @@ class NameGenerator {
           final partWithoutDollars = p.replaceAll(r'$', '');
 
           if (partWithoutDollars.isEmpty) {
-            return dollars; // Just return the $ characters
+            return dollars;
           }
 
-          // Apply PascalCase and restore $ characters at the beginning
           return dollars + partWithoutDollars.toPascalCase();
         })
         .where((part) => part.isNotEmpty)

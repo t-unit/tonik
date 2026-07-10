@@ -33,9 +33,7 @@ void main() {
   });
 
   group('NestedOneOfInAllOf header roundtrip', () {
-    // Note: NestedOneOfInAllOf has EncodingShape.mixed because it combines
-    // a OneOfPrimitive (simple) with an object (complex). This means simple
-    // encoding is not supported and should fail.
+    // Combining simple and complex branches makes header encoding invalid.
 
     group('encoding fails for mixed shapes', () {
       test('string variant with metadata fails at encoding', () async {
@@ -46,7 +44,6 @@ void main() {
           ),
         );
 
-        // Mixed encoding shapes cannot be encoded in simple style
         expect(
           result,
           isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>>(),
@@ -67,7 +64,6 @@ void main() {
           ),
         );
 
-        // Mixed encoding shapes cannot be encoded in simple style
         expect(
           result,
           isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>>(),
@@ -88,7 +84,6 @@ void main() {
           ),
         );
 
-        // Even without metadata, the mixed shape prevents simple encoding
         expect(
           result,
           isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>>(),

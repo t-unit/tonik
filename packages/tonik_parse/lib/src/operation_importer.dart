@@ -196,7 +196,6 @@ class OperationImporter {
       securitySchemes: _importSecuritySchemes(operation.security),
     );
 
-    // Apply x-dart-name vendor extension to operation
     if (operation.xDartName != null) {
       coreOperation.nameOverride = operation.xDartName;
     }

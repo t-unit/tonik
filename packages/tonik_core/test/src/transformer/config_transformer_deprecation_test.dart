@@ -392,10 +392,8 @@ void main() {
 
       final result = transformer.apply(mixedDoc, config);
 
-      // Operations should be excluded
       expect(result.operations, isEmpty);
 
-      // Schemas should have isDeprecated set to false
       expect(result.models, hasLength(2));
       expect(deprecatedClass.isDeprecated, isFalse);
       expect(nonDeprecatedClass.isDeprecated, isFalse);
