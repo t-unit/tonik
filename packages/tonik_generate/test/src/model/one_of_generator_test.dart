@@ -1906,15 +1906,21 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           contains(
             collapseWhitespace('''
               @override
-              String toSimple({required bool explode, required bool allowEmpty}) {
+              String toSimple({
+                required bool explode,
+                required bool allowEmpty,
+                bool literal = false,
+              }) {
                 return switch (this) {
                   ValueList(:final value) => value.toSimple(
                     explode: explode,
                     allowEmpty: allowEmpty,
+                    literal: literal,
                   ),
                   ValueStr(:final value) => value.toSimple(
                     explode: explode,
                     allowEmpty: allowEmpty,
+                    literal: literal,
                   ),
                 };
               }
@@ -1964,7 +1970,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           contains(
             collapseWhitespace('''
               @override
-              String toSimple({required bool explode, required bool allowEmpty}) {
+              String toSimple({
+                required bool explode,
+                required bool allowEmpty,
+                bool literal = false,
+              }) {
                 return switch (this) {
                   ValueList() => throw EncodingException(
                     'Lists with complex content are not supported for encoding',
@@ -1972,6 +1982,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
                   ValueStr(:final value) => value.toSimple(
                     explode: explode,
                     allowEmpty: allowEmpty,
+                    literal: literal,
                   ),
                 };
               }
@@ -2377,8 +2388,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
           contains(
             collapseWhitespace(
               'ValueDetails(:final value) => value == null '
-              "? '' : value.toSimple(explode: explode, "
-              'allowEmpty: allowEmpty),',
+              "? '' : value.toSimple( explode: explode, "
+              'allowEmpty: allowEmpty, literal: literal, ),',
             ),
           ),
         );
@@ -3567,15 +3578,21 @@ bool operator ==(Object other) {
 
         const expectedMethod = '''
           @override
-          String toSimple({required bool explode, required bool allowEmpty}) {
+          String toSimple({
+            required bool explode,
+            required bool allowEmpty,
+            bool literal = false,
+          }) {
             return switch (this) {
               ValueBase64(:final value) => value.toBase64String().toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                literal: literal,
               ),
               ValueText(:final value) => value.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                literal: literal,
               ),
             };
           }
@@ -3639,17 +3656,23 @@ bool operator ==(Object other) {
 
         const expectedMethod = '''
           @override
-          String toSimple({required bool explode, required bool allowEmpty}) {
+          String toSimple({
+            required bool explode,
+            required bool allowEmpty,
+            bool literal = false,
+          }) {
             return switch (this) {
               ValueNullableData(:final value) => value == null
                   ? ''
                   : value.toBase64String().toSimple(
                       explode: explode,
                       allowEmpty: allowEmpty,
+                      literal: literal,
                     ),
               ValueText(:final value) => value.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                literal: literal,
               ),
             };
           }

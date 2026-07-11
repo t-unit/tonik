@@ -438,9 +438,10 @@ class EnumGenerator {
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
           ..lambda = true
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildSimpleEncodingParameters())
           ..body = const Code(
-            'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+            'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty, '
+            'literal: literal)',
           ),
       );
     }
@@ -451,7 +452,7 @@ class EnumGenerator {
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
         ..lambda = false
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildSimpleEncodingParameters())
         ..body = Block.of([
           Code('if (this == $actualEnumName.$fallbackNormalizedName) {'),
           generateEncodingExceptionExpression(
@@ -461,7 +462,7 @@ class EnumGenerator {
           const Code('}'),
           const Code(
             '''
-return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
+return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
 ''',
           ),
         ]),

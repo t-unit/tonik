@@ -69,10 +69,10 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
 
-        // Spaces are URL encoded in simple-style headers.
+        // Header field-values are transmitted literally: the space survives.
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
-          'name,hello%20world',
+          'name,hello world',
         );
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class1, isNotNull);

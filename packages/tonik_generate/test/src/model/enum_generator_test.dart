@@ -27,6 +27,18 @@ void main() {
     );
   }
 
+  String formatMethod(Method method, String className) {
+    final clazz = Class(
+      (b) => b
+        ..name = className
+        ..methods.add(method),
+    );
+    final library = Library((b) => b..body.add(clazz));
+    return format(
+      library.accept(DartEmitter(useNullSafetySyntax: true)).toString(),
+    );
+  }
+
   setUp(() {
     nameGenerator = NameGenerator();
     nameManager = NameManager(
@@ -1038,7 +1050,7 @@ void main() {
         );
 
         expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(toSimple.optionalParameters, hasLength(2));
+        expect(toSimple.optionalParameters, hasLength(3));
 
         final explodeParam = toSimple.optionalParameters.firstWhere(
           (p) => p.name == 'explode',
@@ -1054,10 +1066,23 @@ void main() {
         expect(allowEmptyParam.named, isTrue);
         expect(allowEmptyParam.required, isTrue);
 
-        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expected = '''
+          class Status {
+            @override
+            String toSimple({
+              required bool explode,
+              required bool allowEmpty,
+              bool literal = false,
+            }) => rawValue.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            );
+          }
+        ''';
         expect(
-          body,
-          'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+          collapseWhitespace(formatMethod(toSimple, 'Status')),
+          collapseWhitespace(format(expected)),
         );
         expect(toSimple.lambda, isTrue);
       });
@@ -1082,12 +1107,25 @@ void main() {
         );
 
         expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(toSimple.optionalParameters, hasLength(2));
+        expect(toSimple.optionalParameters, hasLength(3));
 
-        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expected = '''
+          class Status {
+            @override
+            String toSimple({
+              required bool explode,
+              required bool allowEmpty,
+              bool literal = false,
+            }) => rawValue.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            );
+          }
+        ''';
         expect(
-          body,
-          'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+          collapseWhitespace(formatMethod(toSimple, 'Status')),
+          collapseWhitespace(format(expected)),
         );
         expect(toSimple.lambda, isTrue);
       });
@@ -1111,12 +1149,25 @@ void main() {
         );
 
         expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(toSimple.optionalParameters, hasLength(2));
+        expect(toSimple.optionalParameters, hasLength(3));
 
-        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expected = '''
+          class Status {
+            @override
+            String toSimple({
+              required bool explode,
+              required bool allowEmpty,
+              bool literal = false,
+            }) => rawValue.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            );
+          }
+        ''';
         expect(
-          body,
-          'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+          collapseWhitespace(formatMethod(toSimple, 'Status')),
+          collapseWhitespace(format(expected)),
         );
         expect(toSimple.lambda, isTrue);
       });
@@ -1141,12 +1192,25 @@ void main() {
         );
 
         expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
-        expect(toSimple.optionalParameters, hasLength(2));
+        expect(toSimple.optionalParameters, hasLength(3));
 
-        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
+        const expected = '''
+          class Status {
+            @override
+            String toSimple({
+              required bool explode,
+              required bool allowEmpty,
+              bool literal = false,
+            }) => rawValue.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            );
+          }
+        ''';
         expect(
-          body,
-          'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty)',
+          collapseWhitespace(formatMethod(toSimple, 'Status')),
+          collapseWhitespace(format(expected)),
         );
         expect(toSimple.lambda, isTrue);
       });
@@ -2087,14 +2151,14 @@ void main() {
 
         expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
         expect(toSimple.lambda, isFalse);
-        expect(toSimple.optionalParameters, hasLength(2));
+        expect(toSimple.optionalParameters, hasLength(3));
 
         final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
         const expectedBody = '''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty);
+          return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });

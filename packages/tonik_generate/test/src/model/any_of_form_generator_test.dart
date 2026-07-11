@@ -1108,7 +1108,11 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
             switch (innerChoice!.currentEncodingShape) {
               case EncodingShape.simple:
                 _$values.add(
-                  innerChoice!.toSimple(explode: explode, allowEmpty: allowEmpty),
+                  innerChoice!.toSimple(
+                    explode: explode,
+                    allowEmpty: allowEmpty,
+                    literal: literal,
+                  ),
                 );
                 break;
               case EncodingShape.complex:
@@ -1147,12 +1151,17 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         final generated = format(klass.accept(emitter).toString());
 
         const expected = r'''
-          String toSimple({required bool explode, required bool allowEmpty}) {
+          String toSimple({
+            required bool explode,
+            required bool allowEmpty,
+            bool literal = false,
+          }) {
             final _$values = <String>{};
             if (int != null) {
               final _$intSimple = int!.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                literal: literal,
               );
               _$values.add(_$intSimple);
             }
@@ -1160,6 +1169,7 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
               final _$stringSimple = string!.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
+                literal: literal,
               );
               _$values.add(_$stringSimple);
             }

@@ -937,11 +937,13 @@ class OneOfGenerator {
             const Code(','),
             const Code('}'),
             const Code(
-              '.toSimple(explode: explode, allowEmpty: allowEmpty) : ',
+              '.toSimple(explode: explode, allowEmpty: allowEmpty, '
+              'literal: literal) : ',
             ),
             refer('value').property('toSimple').call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
+              'literal': refer('literal'),
             }).code,
             const Code(','),
           ]);
@@ -970,7 +972,8 @@ class OneOfGenerator {
             const Code(','),
             const Code('}'),
             const Code(
-              '.toSimple(explode: explode, allowEmpty: allowEmpty),',
+              '.toSimple(explode: explode, allowEmpty: allowEmpty, '
+              'literal: literal),',
             ),
           ]);
         }
@@ -987,6 +990,7 @@ class OneOfGenerator {
             m.model.resolved as ListModel,
             explode: refer('explode'),
             allowEmpty: refer('allowEmpty'),
+            literal: refer('literal'),
           ).code,
           const Code(','),
         ]);
@@ -1022,6 +1026,7 @@ class OneOfGenerator {
           ).property('toBase64String').call([]).property('toSimple').call([], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
+            'literal': refer('literal'),
           }).code,
           const Code(','),
         ]);
@@ -1064,6 +1069,7 @@ class OneOfGenerator {
           refer('value').property('toSimple').call([], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
+            'literal': refer('literal'),
           }).code,
           const Code(','),
         ]);
@@ -1081,7 +1087,7 @@ class OneOfGenerator {
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildSimpleEncodingParameters())
         ..lambda = false
         ..body = body,
     );

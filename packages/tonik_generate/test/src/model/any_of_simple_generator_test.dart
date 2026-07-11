@@ -277,7 +277,7 @@ void main() {
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-String toSimple({required bool explode, required bool allowEmpty}) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (a != null) { final _$aSimple = a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aSimple); _$discriminatorValue ??= r'a'; } if (b != null) { final _$bSimple = b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bSimple); _$discriminatorValue ??= r'b'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'disc', () => PropertyValue.scalar(_$discValue)); } return _$map.toSimple(explode: explode, allowEmpty: allowEmpty); }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (a != null) { final _$aSimple = a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aSimple); _$discriminatorValue ??= r'a'; } if (b != null) { final _$bSimple = b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bSimple); _$discriminatorValue ??= r'b'; } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'disc', () => PropertyValue.scalar(_$discValue)); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); }
 ''';
 
       expect(
@@ -343,7 +343,7 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$map
         final generated = format(klass.accept(emitter).toString());
 
         const expectedMethod = r'''
-String toSimple({required bool explode, required bool allowEmpty}) { final _$mapValues = <Map<String, PropertyValue>>[]; if (a != null) { final _$aSimple = a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aSimple); } if (b != null) { final _$bSimple = b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bSimple); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toSimple(explode: explode, allowEmpty: allowEmpty); }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$mapValues = <Map<String, PropertyValue>>[]; if (a != null) { final _$aSimple = a!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$aSimple); } if (b != null) { final _$bSimple = b!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$bSimple); } final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); }
 ''';
 
         expect(
@@ -374,21 +374,26 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$map
       final generated = format(klass.accept(emitter).toString());
 
       const expectedMethod = r'''
-        String toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
           final _$values = <String>{};
           if (bool != null) {
-            final _$boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, );
+            final _$boolSimple = bool!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
             _$values.add(_$boolSimple);
           }
           if (int != null) {
             final _$intSimple = int!.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
+              literal: literal,
             );
             _$values.add(_$intSimple);
           }
           if (string != null) {
-            final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, );
+            final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, );
             _$values.add(_$stringSimple);
           }
 
@@ -449,7 +454,7 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$map
         final generated = format(klass.accept(emitter).toString());
 
         const expectedMethod = r'''
-String toSimple({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (string != null) { final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, ); _$values.add(_$stringSimple); } if (user != null) { final _$userSimple = user!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$userSimple); _$discriminatorValue ??= r'user'; } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf simple encoding for MixedSimple: multiple values provided, anyOf requires exactly one value', ); } return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'disc', () => PropertyValue.scalar(_$discValue)); } return _$map.toSimple(explode: explode, allowEmpty: allowEmpty); } }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; String? _$discriminatorValue; if (string != null) { final _$stringSimple = string!.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); _$values.add(_$stringSimple); } if (user != null) { final _$userSimple = user!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$userSimple); _$discriminatorValue ??= r'user'; } if (_$values.isEmpty && _$mapValues.isEmpty) return ''; if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf simple encoding for MixedSimple: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf simple encoding for MixedSimple: multiple values provided, anyOf requires exactly one value', ); } return _$values.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } final _$discValue = _$discriminatorValue; if (_$discValue != null) { _$map.putIfAbsent(r'disc', () => PropertyValue.scalar(_$discValue)); } return _$map.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ); } }
 ''';
 
         expect(

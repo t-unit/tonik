@@ -36,9 +36,12 @@ abstract interface class SimpleEncodable {
   ///
   /// When [explode] is true, object properties become key=value pairs.
   /// When [allowEmpty] is false, empty values throw an exception.
+  /// When [literal] is true, values are transmitted without URI encoding, as
+  /// required for HTTP header field-values.
   String toSimple({
     required bool explode,
     required bool allowEmpty,
+    bool literal = false,
   });
 }
 

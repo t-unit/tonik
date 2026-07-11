@@ -700,13 +700,17 @@ void main() {
         );
         expect(toSimpleMethod.name, 'toSimple');
         expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
-        expect(toSimpleMethod.optionalParameters.length, 2);
+        expect(toSimpleMethod.optionalParameters.length, 3);
         expect(
           toSimpleMethod.optionalParameters.any((p) => p.name == 'explode'),
           isTrue,
         );
         expect(
           toSimpleMethod.optionalParameters.any((p) => p.name == 'allowEmpty'),
+          isTrue,
+        );
+        expect(
+          toSimpleMethod.optionalParameters.any((p) => p.name == 'literal'),
           isTrue,
         );
 
@@ -717,7 +721,11 @@ void main() {
 
         const expectedMethod = r'''
 @override
-String toSimple({required bool explode, required bool allowEmpty}) {
+String toSimple({
+  required bool explode,
+  required bool allowEmpty,
+  bool literal = false,
+}) {
   final _$mapValues = <Map<String, PropertyValue>>[];
   String? _$discriminatorValue;
   if (company != null) {
@@ -740,7 +748,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
   if (_$discValue != null) {
     _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue));
   }
-  return _$map.toSimple(explode: explode, allowEmpty: allowEmpty);
+  return _$map.toSimple(
+    explode: explode,
+    allowEmpty: allowEmpty,
+    literal: literal,
+  );
 }
 ''';
 
@@ -904,7 +916,7 @@ List<ParameterEntry> toForm(
         );
         expect(toSimpleMethod.name, 'toSimple');
         expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
-        expect(toSimpleMethod.optionalParameters.length, 2);
+        expect(toSimpleMethod.optionalParameters.length, 3);
 
         final format = DartFormatter(
           languageVersion: DartFormatter.latestLanguageVersion,
@@ -913,16 +925,25 @@ List<ParameterEntry> toForm(
 
         const expectedMethod = r'''
 @override
-String toSimple({required bool explode, required bool allowEmpty}) {
+String toSimple({
+  required bool explode,
+  required bool allowEmpty,
+  bool literal = false,
+}) {
   final _$values = <String>{};
   if (int != null) {
-    final _$intSimple = int!.toSimple(explode: explode, allowEmpty: allowEmpty);
+    final _$intSimple = int!.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
     _$values.add(_$intSimple);
   }
   if (string != null) {
     final _$stringSimple = string!.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     );
     _$values.add(_$stringSimple);
   }
@@ -990,7 +1011,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
 
         const expectedMethod = r'''
 @override
-String toSimple({required bool explode, required bool allowEmpty}) {
+String toSimple({
+  required bool explode,
+  required bool allowEmpty,
+  bool literal = false,
+}) {
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
   String? _$discriminatorValue;
@@ -1003,6 +1028,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     final _$stringSimple = string!.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     );
     _$values.add(_$stringSimple);
   }
@@ -1028,7 +1054,11 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     if (_$discValue != null) {
       _$map.putIfAbsent(r'type', () => PropertyValue.scalar(_$discValue));
     }
-    return _$map.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return _$map.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
 }
 ''';
@@ -2854,13 +2884,18 @@ bool operator ==(Object other) {
 
         const expectedMethod = r'''
 @override
-String toSimple({required bool explode, required bool allowEmpty}) {
+String toSimple({
+  required bool explode,
+  required bool allowEmpty,
+  bool literal = false,
+}) {
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
   if (tonikFile != null) {
     final _$tonikFileSimple = tonikFile!.toBase64String().toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     );
     _$values.add(_$tonikFileSimple);
   }
@@ -2889,6 +2924,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     return _$map.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     );
   }
 }
@@ -3201,7 +3237,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       const expected = r'''
 @override
-String toSimple({required bool explode, required bool allowEmpty}) {
+String toSimple({
+  required bool explode,
+  required bool allowEmpty,
+  bool literal = false,
+}) {
   final _$values = <String>{};
   final _$mapValues = <Map<String, PropertyValue>>[];
   if (object != null) {
@@ -3236,6 +3276,7 @@ String toSimple({required bool explode, required bool allowEmpty}) {
     return _$map.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     );
   }
 }

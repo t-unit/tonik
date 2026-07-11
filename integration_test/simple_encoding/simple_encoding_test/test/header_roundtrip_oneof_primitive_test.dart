@@ -176,7 +176,7 @@ void main() {
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
-          'hello%20world',
+          'hello world',
         );
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());

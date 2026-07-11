@@ -1329,8 +1329,8 @@ void main() {
 
       test('toSimple', () {
         expectContainsBody(
-          'String toSimple({required bool explode, required bool '
-          'allowEmpty}) => $throwExpr',
+          'String toSimple({ required bool explode, required bool allowEmpty, '
+          'bool literal = false, }) => $throwExpr',
         );
       });
 

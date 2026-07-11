@@ -296,5 +296,100 @@ void main() {
         expect(success.value.xUserProfile, isNull);
       });
     });
+
+    group('literal special characters', () {
+      test('object property value keeps spaces, slash, percent literal '
+          'on the wire and through decode', () async {
+        final api = buildApi(responseStatus: '200');
+        const name = 'a/b c%2Fd 100%';
+        final response = await api.testHeaderRoundtripObjects(
+          simpleObject: const SimpleObject(name: name, value: 7),
+        );
+
+        final success =
+            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+        expect(
+          success.response.requestOptions.headers['X-Simple-Object'],
+          'name,a/b c%2Fd 100%,value,7',
+        );
+        expect(success.value.xSimpleObject?.name, name);
+        expect(success.value.xSimpleObject?.value, 7);
+      });
+
+      test('object Uri property keeps its literal slashes and colon', () async {
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripObjects(
+          userProfile: UserProfile(
+            id: 1,
+            username: 'john_doe',
+            isVerified: true,
+            createdAt: DateTime.utc(2024),
+            email: 'john@example.com',
+            website: Uri.parse('https://example.com/a/b'),
+          ),
+        );
+
+        final success =
+            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+        final wire =
+            success.response.requestOptions.headers['X-User-Profile'] as String;
+        expect(wire, contains('website,https://example.com/a/b'));
+        expect(
+          success.value.xUserProfile?.website,
+          Uri.parse('https://example.com/a/b'),
+        );
+      });
+    });
+
+    group('delimiter collision', () {
+      test('a comma inside an object value cannot round-trip: it is '
+          'transmitted literally and decode reads it as a new key/value',
+          () async {
+        // Literal encoding does not escape the simple-style `,` delimiter, so
+        // an in-value comma is indistinguishable from the property separator.
+        // The value transmits verbatim; decode cannot recover the original.
+        final api = buildApi(responseStatus: '200');
+        final response = await api.testHeaderRoundtripObjects(
+          simpleObject: const SimpleObject(name: 'a,b', value: 5),
+        );
+
+        final success =
+            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+        expect(
+          success.response.requestOptions.headers['X-Simple-Object'],
+          'name,a,b,value,5',
+        );
+        expect(success.value.xSimpleObject?.name, 'a');
+      });
+    });
+
+    group('server-originated composite response', () {
+      test('literal percent sequences in an injected object header '
+          'survive decode without re-decoding', () async {
+        // Inject the header value directly via Dio, NOT through Tonik's
+        // request encoder, so the server-originated value is echoed verbatim
+        // and the client must decode it literally.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Simple-Object': 'name,x%2Fy 50%,value,9',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final response = await injected.testHeaderRoundtripObjects();
+
+        final success =
+            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+        expect(success.value.xSimpleObject?.name, 'x%2Fy 50%');
+        expect(success.value.xSimpleObject?.value, 9);
+      });
+    });
   });
 }

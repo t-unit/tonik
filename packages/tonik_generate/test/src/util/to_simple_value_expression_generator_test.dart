@@ -328,7 +328,7 @@ void main() {
       );
     });
 
-    test('enum header stays non-literal (deferred)', () {
+    test('enum header emits literal toSimple', () {
       final model = EnumModel<String>(
         name: 'Status',
         values: {const EnumEntry(value: 'active')},
@@ -346,14 +346,46 @@ void main() {
         collapseWhitespace(
           format('''
             test() {
-              final result = value.toSimple(explode: false, allowEmpty: true);
+              final result = value.toSimple(
+                explode: false,
+                allowEmpty: true,
+                literal: true,
+              );
             }
           '''),
         ),
       );
     });
 
-    test('alias header stays non-literal (deferred)', () {
+    test('class header emits literal toSimple', () {
+      final model = ClassModel(
+        name: 'Point',
+        properties: const [],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(model),
+      );
+      expect(
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = value.toSimple(
+                explode: false,
+                allowEmpty: true,
+                literal: true,
+              );
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('alias header threads literal into the resolved model', () {
       final model = AliasModel(
         name: 'MyString',
         model: StringModel(context: context),
@@ -370,14 +402,18 @@ void main() {
         collapseWhitespace(
           format('''
             test() {
-              final result = value.toSimple(explode: false, allowEmpty: true);
+              final result = value.toSimple(
+                explode: false,
+                allowEmpty: true,
+                literal: true,
+              );
             }
           '''),
         ),
       );
     });
 
-    test('map header stays non-literal (deferred)', () {
+    test('map header emits literal toSimple', () {
       final model = MapModel(
         valueModel: StringModel(context: context),
         context: context,
@@ -392,7 +428,69 @@ void main() {
         collapseWhitespace(
           format('''
             test() {
-              final result = value.toSimple(explode: false, allowEmpty: true);
+              final result = value.toSimple(
+                explode: false,
+                allowEmpty: true,
+                literal: true,
+              );
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('AnyModel header emits encodeAnyToSimple with literal: true', () {
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(AnyModel(context: context)),
+      );
+      expect(
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = encodeAnyToSimple(
+                value,
+                explode: false,
+                allowEmpty: true,
+                literal: true,
+              );
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('enum list header emits literal on element and list', () {
+      final model = EnumModel<String>(
+        name: 'Status',
+        values: {const EnumEntry(value: 'active')},
+        isNullable: false,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+      );
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(
+          ListModel(content: model, context: context, examples: const []),
+        ),
+      );
+      expect(
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = value
+                  .map(
+                    (e) => e.toSimple(
+                      explode: false,
+                      allowEmpty: true,
+                      literal: true,
+                    ),
+                  )
+                  .toList()
+                  .toSimple(explode: false, allowEmpty: true, literal: true);
             }
           '''),
         ),
@@ -1197,6 +1295,65 @@ void main() {
           );
         },
       );
+
+      test(
+        'header List<Map<String, int>> threads literal into element and list '
+        'toSimple',
+        () {
+          final built = buildToSimpleHeaderParameterExpression(
+            'value',
+            RequestHeaderObject(
+              name: 'value',
+              rawName: 'X-Value',
+              description: 'header',
+              model: ListModel(
+                content: MapModel(
+                  valueModel: IntegerModel(context: context),
+                  context: context,
+                  examples: const [],
+                ),
+                context: context,
+                examples: const [],
+              ),
+              encoding: HeaderParameterEncoding.simple,
+              explode: false,
+              allowEmptyValue: false,
+              isRequired: true,
+              isDeprecated: false,
+              context: context,
+              examples: const [],
+              defaultValue: null,
+            ),
+          );
+
+          expect(
+            collapseWhitespace(methodBody(built)),
+            collapseWhitespace(
+              format('''
+                test() {
+                  final result = value
+                      .map(
+                        (e) => e
+                            .map((k, v) => MapEntry(k, v.toString()))
+                            .toSimple(
+                              explode: false,
+                              allowEmpty: true,
+                              literal: true,
+                            ),
+                      )
+                      .toList()
+                      .toSimple(
+                        explode: false,
+                        allowEmpty: true,
+                        alreadyEncoded: true,
+                        literal: true,
+                      );
+                }
+              '''),
+            ),
+          );
+        },
+      );
     });
 
     group('nullable list content', () {
@@ -1366,7 +1523,8 @@ void main() {
         emit(
           buildToSimpleHeaderParameterExpression('xCustomHeader', parameter),
         ),
-        'xCustomHeader?.toSimple(explode: false, allowEmpty: true, )',
+        'xCustomHeader?.toSimple(explode: false, allowEmpty: true, '
+        'literal: true, )',
       );
     });
 
@@ -1403,7 +1561,8 @@ void main() {
               isNullChecked: true,
             ),
           ),
-          'xCustomHeader.toSimple(explode: false, allowEmpty: true, )',
+          'xCustomHeader.toSimple(explode: false, allowEmpty: true, '
+          'literal: true, )',
         );
       },
     );
@@ -1441,7 +1600,8 @@ void main() {
               isNullChecked: true,
             ),
           ),
-          'xNullableObject.toSimple(explode: false, allowEmpty: true, )',
+          'xNullableObject.toSimple(explode: false, allowEmpty: true, '
+          'literal: true, )',
         );
       },
     );
@@ -1477,10 +1637,75 @@ void main() {
               parameter,
             ),
           ),
-          'xNullableHeader?.toSimple(explode: false, allowEmpty: true, )',
+          'xNullableHeader?.toSimple(explode: false, allowEmpty: true, '
+          'literal: true, )',
         );
       },
     );
+  });
+
+  group('dual-context: same model literal in header, URI-encoded in path', () {
+    test('ClassModel header emits literal while path stays byte-identical', () {
+      final model = ClassModel(
+        name: 'Point',
+        properties: const [],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final headerBuilt = buildToSimpleHeaderParameterExpression(
+        'value',
+        RequestHeaderObject(
+          name: 'value',
+          rawName: 'X-Value',
+          description: 'header',
+          model: model,
+          encoding: HeaderParameterEncoding.simple,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        ),
+      );
+      final pathBuilt = buildToSimplePathParameterExpression(
+        'value',
+        PathParameterObject(
+          name: 'value',
+          rawName: 'value',
+          description: 'path',
+          model: model,
+          encoding: PathParameterEncoding.simple,
+          explode: false,
+          allowEmptyValue: false,
+          isRequired: true,
+          isDeprecated: false,
+          context: context,
+          examples: const [],
+          defaultValue: null,
+        ),
+      );
+      expect(
+        collapseWhitespace(methodBody(headerBuilt)),
+        collapseWhitespace(
+          format(
+            'test() { final result = value.toSimple(explode: false, '
+            'allowEmpty: true, literal: true); }',
+          ),
+        ),
+      );
+      expect(
+        collapseWhitespace(methodBody(pathBuilt)),
+        collapseWhitespace(
+          format(
+            'test() { final result = '
+            'value.toSimple(explode: false, allowEmpty: true); }',
+          ),
+        ),
+      );
+    });
   });
 
   group('simpleEncodingThrowReason', () {

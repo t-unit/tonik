@@ -503,8 +503,11 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               if (xNullableObject != null) {
-                _$headers[r'X-Nullable-Object'] =
-                    xNullableObject.toSimple(explode: false, allowEmpty: false);
+                _$headers[r'X-Nullable-Object'] = xNullableObject.toSimple(
+                  explode: false,
+                  allowEmpty: false,
+                  literal: true,
+                );
               }
               return Options(
                 method: 'GET',
@@ -645,9 +648,15 @@ void main() {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
             _$headers[r'X-Colors'] = xColors
-                .map((e) => e.toSimple(explode: true, allowEmpty: false))
+                .map(
+                  (e) => e.toSimple(
+                    explode: true,
+                    allowEmpty: false,
+                    literal: true,
+                  ),
+                )
                 .toList()
-                .toSimple(explode: true, allowEmpty: false);
+                .toSimple(explode: true, allowEmpty: false, literal: true);
             return Options(
               method: 'GET',
               headers: _$headers,

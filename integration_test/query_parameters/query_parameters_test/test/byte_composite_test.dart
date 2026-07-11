@@ -49,7 +49,11 @@ void main() {
         tonikFile: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF]),
       );
 
-      final wire = value.uriEncode(allowEmpty: false);
+      final wire = value.toSimple(
+        explode: true,
+        allowEmpty: false,
+        literal: true,
+      );
       final decoded = AnyOfByte.fromSimple(wire, explode: true);
 
       expect(decoded.tonikFile?.toBytes(), [0xDE, 0xAD, 0xBE, 0xEF]);
@@ -77,7 +81,11 @@ void main() {
     test('decoder round-trips the encoder output', () {
       const value = OneOfByteBase64(TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF]));
 
-      final wire = value.uriEncode(allowEmpty: false);
+      final wire = value.toSimple(
+        explode: true,
+        allowEmpty: false,
+        literal: true,
+      );
       final decoded = OneOfByte.fromSimple(wire, explode: true);
 
       expect(decoded, isA<OneOfByteBase64>());
@@ -111,7 +119,11 @@ void main() {
         tonikFile: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF]),
       );
 
-      final wire = value.uriEncode(allowEmpty: false);
+      final wire = value.toSimple(
+        explode: true,
+        allowEmpty: false,
+        literal: true,
+      );
       final decoded = AllOfByte.fromSimple(wire, explode: true);
 
       expect(decoded.tonikFile.toBytes(), [0xDE, 0xAD, 0xBE, 0xEF]);

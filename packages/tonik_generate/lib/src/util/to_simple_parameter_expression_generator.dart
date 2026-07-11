@@ -4,12 +4,16 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
+/// [literal], when supplied, is forwarded as the `literal:` named argument to
+/// every leaf `toSimple`/`uriEncode` call so composite header field-values are
+/// transmitted without URI encoding. It is omitted for path/query callers.
 BuiltExpression buildSimpleParameterExpression(
   Expression valueExpression,
   Model model, {
   required Expression explode,
   required Expression allowEmpty,
   bool isNullable = false,
+  Expression? literal,
 }) {
   return BuiltExpression.simple(
     _buildSimpleParameterExpression(
@@ -18,9 +22,22 @@ BuiltExpression buildSimpleParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      literal: literal,
     ),
   );
 }
+
+Map<String, Expression> _simpleArgs(
+  Expression explode,
+  Expression allowEmpty,
+  Expression? literal, {
+  bool alreadyEncoded = false,
+}) => {
+  'explode': explode,
+  'allowEmpty': allowEmpty,
+  if (alreadyEncoded) 'alreadyEncoded': literalBool(true),
+  'literal': ?literal,
+};
 
 Expression _buildSimpleParameterExpression(
   Expression valueExpression,
@@ -28,6 +45,7 @@ Expression _buildSimpleParameterExpression(
   required Expression explode,
   required Expression allowEmpty,
   bool isNullable = false,
+  Expression? literal,
 }) {
   final propertyAccess = isNullable
       ? valueExpression.nullSafeProperty('toSimple')
@@ -49,10 +67,7 @@ Expression _buildSimpleParameterExpression(
     OneOfModel() ||
     AnyOfModel() => propertyAccess.call(
       [],
-      {
-        'explode': explode,
-        'allowEmpty': allowEmpty,
-      },
+      _simpleArgs(explode, allowEmpty, literal),
     ),
     final ListModel m => _buildListSimpleExpression(
       valueExpression,
@@ -61,6 +76,7 @@ Expression _buildSimpleParameterExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
       isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
+      literal: literal,
     ),
     AliasModel() => _buildSimpleParameterExpression(
       valueExpression,
@@ -68,14 +84,12 @@ Expression _buildSimpleParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      literal: literal,
     ),
     AnyModel() =>
       refer('encodeAnyToSimple', 'package:tonik_util/tonik_util.dart').call(
         [valueExpression],
-        {
-          'explode': explode,
-          'allowEmpty': allowEmpty,
-        },
+        _simpleArgs(explode, allowEmpty, literal),
       ),
     Base64Model() =>
       (isNullable
@@ -85,10 +99,7 @@ Expression _buildSimpleParameterExpression(
           .property('toSimple')
           .call(
             [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-            },
+            _simpleArgs(explode, allowEmpty, literal),
           ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be simple-encoded',
@@ -99,6 +110,7 @@ Expression _buildSimpleParameterExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      literal: literal,
     ),
     _ => generateEncodingExceptionExpression(
       'Unsupported model type for simple encoding.',
@@ -113,6 +125,7 @@ Expression _buildListSimpleExpression(
   required Expression allowEmpty,
   bool isNullable = false,
   bool isContentNullable = false,
+  Expression? literal,
 }) {
   final listPropertyAccess = isNullable
       ? valueExpression.nullSafeProperty('toSimple')
@@ -131,10 +144,7 @@ Expression _buildListSimpleExpression(
   return switch (contentModel) {
     StringModel() when !isContentNullable => listPropertyAccess.call(
       [],
-      {
-        'explode': explode,
-        'allowEmpty': allowEmpty,
-      },
+      _simpleArgs(explode, allowEmpty, literal),
     ),
     StringModel() =>
       listMapAccess
@@ -152,10 +162,7 @@ Expression _buildListSimpleExpression(
           .property('toSimple')
           .call(
             [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-            },
+            _simpleArgs(explode, allowEmpty, literal),
           ),
     IntegerModel() ||
     DoubleModel() ||
@@ -179,6 +186,7 @@ Expression _buildListSimpleExpression(
                     contentModel,
                     explode: explode,
                     allowEmpty: allowEmpty,
+                    literal: literal,
                   ),
                 ).code,
             ).closure,
@@ -188,11 +196,7 @@ Expression _buildListSimpleExpression(
           .property('toSimple')
           .call(
             [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalBool(true),
-            },
+            _simpleArgs(explode, allowEmpty, literal, alreadyEncoded: true),
           ),
     AliasModel() => _buildListSimpleExpression(
       valueExpression,
@@ -201,6 +205,7 @@ Expression _buildListSimpleExpression(
       allowEmpty: allowEmpty,
       isNullable: isNullable,
       isContentNullable: isContentNullable,
+      literal: literal,
     ),
     AnyModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
       listMapAccess
@@ -211,9 +216,13 @@ Expression _buildListSimpleExpression(
                   Parameter((b) => b..name = 'e'),
                 )
                 ..body = refer(
-                  'encodeAnyToUri',
+                  'encodeAnyToSimple',
                   'package:tonik_util/tonik_util.dart',
-                ).call([refer('e')], {'allowEmpty': allowEmpty}).code,
+                ).call([refer('e')], _simpleArgs(
+                  explode,
+                  allowEmpty,
+                  literal,
+                )).code,
             ).closure,
           ])
           .property('toList')
@@ -221,11 +230,7 @@ Expression _buildListSimpleExpression(
           .property('toSimple')
           .call(
             [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalBool(true),
-            },
+            _simpleArgs(explode, allowEmpty, literal, alreadyEncoded: true),
           ),
     Base64Model() =>
       listMapAccess
@@ -243,11 +248,7 @@ Expression _buildListSimpleExpression(
           .property('toSimple')
           .call(
             [],
-            {
-              'explode': explode,
-              'allowEmpty': allowEmpty,
-              'alreadyEncoded': literalBool(true),
-            },
+            _simpleArgs(explode, allowEmpty, literal, alreadyEncoded: true),
           ),
     MapModel() => _buildListMapContentSimpleExpression(
       valueExpression,
@@ -255,13 +256,11 @@ Expression _buildListSimpleExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isNullable: isNullable,
+      literal: literal,
     ),
     ClassModel() || ListModel() => listPropertyAccess.call(
       [],
-      {
-        'explode': explode,
-        'allowEmpty': allowEmpty,
-      },
+      _simpleArgs(explode, allowEmpty, literal),
     ),
     BinaryModel() => generateEncodingExceptionExpression(
       'Binary data cannot be simple-encoded',
@@ -278,6 +277,7 @@ Expression _buildMapSimpleExpression(
   required Expression explode,
   required Expression allowEmpty,
   bool isNullable = false,
+  Expression? literal,
 }) {
   final converted = buildMapToStringMapExpression(
     valueExpression,
@@ -299,10 +299,7 @@ Expression _buildMapSimpleExpression(
 
   return toSimpleAccess.call(
     [],
-    {
-      'explode': explode,
-      'allowEmpty': allowEmpty,
-    },
+    _simpleArgs(explode, allowEmpty, literal),
   );
 }
 
@@ -312,6 +309,7 @@ Expression _buildListMapContentSimpleExpression(
   required Expression explode,
   required Expression allowEmpty,
   bool isNullable = false,
+  Expression? literal,
 }) {
   final converted = buildMapToStringMapExpression(
     refer('e'),
@@ -339,10 +337,7 @@ Expression _buildListMapContentSimpleExpression(
             )
             ..body = converted.property('toSimple').call(
               [],
-              {
-                'explode': explode,
-                'allowEmpty': allowEmpty,
-              },
+              _simpleArgs(explode, allowEmpty, literal),
             ).code,
         ).closure,
       ])
@@ -351,10 +346,6 @@ Expression _buildListMapContentSimpleExpression(
       .property('toSimple')
       .call(
         [],
-        {
-          'explode': explode,
-          'allowEmpty': allowEmpty,
-          'alreadyEncoded': literalBool(true),
-        },
+        _simpleArgs(explode, allowEmpty, literal, alreadyEncoded: true),
       );
 }
