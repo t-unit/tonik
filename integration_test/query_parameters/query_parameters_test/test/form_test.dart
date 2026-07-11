@@ -548,6 +548,28 @@ void main() {
         'listNullableInteger=1,,2',
       );
     });
+
+    test('empty array is the only param and drops the whole query', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormList(listString: const []);
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('empty array is dropped while a populated param remains', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormList(
+        listString: const [],
+        listNullableInteger: [1, 2],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listNullableInteger=1,2',
+      );
+    });
   });
 
   group('list - explode true', () {
@@ -620,6 +642,14 @@ void main() {
         success.response.requestOptions.uri.query,
         'listNullableInteger=1&listNullableInteger=&listNullableInteger=2',
       );
+    });
+
+    test('empty array drops the whole query', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormListExplode(listString: const []);
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
     });
   });
 

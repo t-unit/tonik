@@ -2,6 +2,7 @@ import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/src/decoding/form_decoder.dart';
 import 'package:tonik_util/src/encoding/form_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/parameter_entry.dart';
 
 /// Tests to verify that form encoding and decoding are perfect inverses.
 /// These tests ensure data integrity through encode/decode cycles.
@@ -336,14 +337,10 @@ void main() {
         expect(decoded, original);
       });
 
-      test('empty list', () {
+      test('empty list produces no wire entries', () {
         const original = <String>[];
-        final encoded = original
-            .toForm('p', explode: false, allowEmpty: true)
-            .single
-            .value;
-        final decoded = encoded.decodeFormStringList();
-        expect(decoded, original);
+        final encoded = original.toForm('p', explode: false, allowEmpty: true);
+        expect(encoded, const <ParameterEntry>[]);
       });
 
       test('list with empty strings', () {

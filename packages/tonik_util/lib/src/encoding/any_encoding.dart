@@ -392,6 +392,33 @@ String encodeAnyToForm(
   );
 }
 
+/// Encodes a top-level form query parameter whose runtime value has an unknown
+/// type, omitting an empty list so the parameter is absent from the query.
+List<ParameterEntry> encodeAnyToFormEntries(
+  Object? value, {
+  required String name,
+  required bool explode,
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+  bool allowReserved = false,
+}) {
+  if (value is List && value.isEmpty) {
+    return const [];
+  }
+  return [
+    (
+      name: name,
+      value: encodeAnyToForm(
+        value,
+        explode: explode,
+        allowEmpty: allowEmpty,
+        useQueryComponent: useQueryComponent,
+        allowReserved: allowReserved,
+      ),
+    ),
+  ];
+}
+
 String _formEntriesToString(
   List<ParameterEntry> entries, {
   required bool explode,

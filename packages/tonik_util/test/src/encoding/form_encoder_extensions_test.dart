@@ -224,28 +224,22 @@ void main() {
       );
     });
 
-    test('empty list with explode=false yields a single empty-value entry', () {
+    test('empty list is omitted regardless of explode and allowEmpty', () {
       expect(
         <String>[].toForm('p', explode: false, allowEmpty: true),
-        const <ParameterEntry>[(name: 'p', value: '')],
+        const <ParameterEntry>[],
       );
-    });
-
-    test('empty list with explode=true yields no entries', () {
       expect(
         <String>[].toForm('p', explode: true, allowEmpty: true),
         const <ParameterEntry>[],
       );
-    });
-
-    test('empty list throws when allowEmpty=false', () {
       expect(
-        () => <String>[].toForm('p', explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        <String>[].toForm('p', explode: false, allowEmpty: false),
+        const <ParameterEntry>[],
       );
       expect(
-        () => <String>[].toForm('p', explode: true, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        <String>[].toForm('p', explode: true, allowEmpty: false),
+        const <ParameterEntry>[],
       );
     });
 

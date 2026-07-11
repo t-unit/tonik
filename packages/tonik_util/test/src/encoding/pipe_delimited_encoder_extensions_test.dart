@@ -29,26 +29,21 @@ void main() {
         expect(result, ['a%26b|c%3Dd']);
       });
 
-      test('encodes empty list when allowEmpty is true', () {
+      test('omits empty list when allowEmpty is true', () {
         final result = <String>[].toPipeDelimited(
           explode: false,
           allowEmpty: true,
         );
-        expect(result, ['']);
+        expect(result, const <String>[]);
       });
 
-      test(
-        'throws EmptyValueException when empty list and allowEmpty is false',
-        () {
-          expect(
-            () => <String>[].toPipeDelimited(
-              explode: false,
-              allowEmpty: false,
-            ),
-            throwsA(isA<EmptyValueException>()),
-          );
-        },
-      );
+      test('omits empty list when allowEmpty is false', () {
+        final result = <String>[].toPipeDelimited(
+          explode: false,
+          allowEmpty: false,
+        );
+        expect(result, const <String>[]);
+      });
 
       test('encodes single item list', () {
         final result = ['single'].toPipeDelimited(
@@ -96,26 +91,21 @@ void main() {
         expect(result, ['item%201', 'item%202']);
       });
 
-      test('encodes empty list when allowEmpty is true', () {
+      test('omits empty list when allowEmpty is true', () {
         final result = <String>[].toPipeDelimited(
           explode: true,
           allowEmpty: true,
         );
-        expect(result, ['']);
+        expect(result, const <String>[]);
       });
 
-      test(
-        'throws EmptyValueException when empty list and allowEmpty is false',
-        () {
-          expect(
-            () => <String>[].toPipeDelimited(
-              explode: true,
-              allowEmpty: false,
-            ),
-            throwsA(isA<EmptyValueException>()),
-          );
-        },
-      );
+      test('omits empty list when allowEmpty is false', () {
+        final result = <String>[].toPipeDelimited(
+          explode: true,
+          allowEmpty: false,
+        );
+        expect(result, const <String>[]);
+      });
 
       test('encodes single item list', () {
         final result = ['single'].toPipeDelimited(

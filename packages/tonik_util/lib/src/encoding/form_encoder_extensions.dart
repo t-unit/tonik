@@ -192,6 +192,8 @@ extension FormBigDecimalEncoder on BigDecimal {
 extension FormStringListEncoder on List<String> {
   /// Encodes this List value using form style encoding.
   ///
+  /// An empty list is omitted, regardless of [allowEmpty].
+  ///
   /// The [alreadyEncoded] parameter indicates whether the items are already
   /// URI-encoded and should not be encoded again.
   List<ParameterEntry> toForm(
@@ -202,8 +204,8 @@ extension FormStringListEncoder on List<String> {
     bool useQueryComponent = false,
     bool allowReserved = false,
   }) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
+    if (isEmpty) {
+      return const [];
     }
 
     if (!explode) {

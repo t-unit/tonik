@@ -2286,15 +2286,15 @@ void main() {
       const expectedMethod = r'''
         String? _queryParameters({required Object? meta}) {
           final _$entries = <ParameterEntry>[];
-          _$entries.add((
-            name: r'meta',
-            value: encodeAnyToForm(
+          _$entries.addAll(
+            encodeAnyToFormEntries(
               meta,
+              name: r'meta',
               explode: false,
               allowEmpty: false,
               allowReserved: true,
             ),
-          ));
+          );
           if (_$entries.isEmpty) {
             return null;
           }

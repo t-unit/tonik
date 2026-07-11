@@ -255,7 +255,7 @@ void main() {
         );
       });
 
-      test('AnyModel appends a single encodeAnyToForm entry', () {
+      test('AnyModel appends entries via encodeAnyToFormEntries', () {
         final parameter = createParameter(
           name: 'anyParam',
           rawName: 'anyParam',
@@ -272,14 +272,14 @@ void main() {
         final generated = emitCodes(codes);
         final expected = format(r'''
           test() {
-            _$entries.add((
-              name: r'anyParam',
-              value: _i1.encodeAnyToForm(
+            _$entries.addAll(
+              _i1.encodeAnyToFormEntries(
                 anyParam,
+                name: r'anyParam',
                 explode: false,
                 allowEmpty: true,
               ),
-            ));
+            );
           }
         ''');
 
