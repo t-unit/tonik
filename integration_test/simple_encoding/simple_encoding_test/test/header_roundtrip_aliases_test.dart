@@ -106,19 +106,20 @@ void main() {
         expect(success.value.xUserName, userName);
       });
 
-      test('fails to encode empty string', () async {
-        // Empty strings fail encoding with EmptyValueException
+      test('sends empty string as an empty header, decoded back as null',
+          () async {
         const userName = '';
 
         final result = await api.testHeaderRoundtripAliases(userName: userName);
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
         );
-        final error =
-            result as TonikError<HeadersRoundtripAliasesGet200Response>;
-        expect(error.type, TonikErrorType.encoding);
+        final success =
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+        expect(success.response.requestOptions.headers['X-User-Name'], '');
+        expect(success.value.xUserName, isNull);
       });
 
       test('roundtrips UserName with special characters', () async {

@@ -186,24 +186,29 @@ void main() {
         );
       });
 
-      test('empty string fails at encoding', () async {
+      test('round-trips empty string', () async {
         final result = await api.testHeaderRoundtripOneOfPrimitive.call(
           primitiveUnion: const OneOfPrimitiveString(''),
         );
 
-        // Empty strings throw EmptyValueException during encoding
-        // because allowEmpty is false for headers
         expect(
           result,
-          isA<TonikError<HeadersRoundtripOneofPrimitiveGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>>(),
         );
-        final error =
-            result as TonikError<HeadersRoundtripOneofPrimitiveGet200Response>;
+        final success =
+            result
+                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
 
-        expect(error.type, TonikErrorType.encoding);
+        expect(
+          success.response.requestOptions.headers['X-Primitive-Union'],
+          '',
+        );
 
-        // No response because request was never sent
-        expect(error.response, isNull);
+        expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
+        expect(
+          (success.value.xPrimitiveUnion! as OneOfPrimitiveString).value,
+          '',
+        );
       });
 
       test('round-trips numeric string', () async {

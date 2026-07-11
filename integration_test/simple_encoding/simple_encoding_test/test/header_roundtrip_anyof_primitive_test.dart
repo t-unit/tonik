@@ -76,20 +76,25 @@ void main() {
         expect(success.value.xFlexibleValue!.string, 'hello world');
       });
 
-      test('empty string fails at encoding', () async {
+      test('round-trips empty string', () async {
         final result = await api.testHeaderRoundtripAnyOfPrimitive.call(
           flexibleValue: const AnyOfPrimitive(string: ''),
         );
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripAnyofPrimitiveGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>>(),
         );
-        final error =
-            result as TonikError<HeadersRoundtripAnyofPrimitiveGet200Response>;
+        final success =
+            result
+                as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
 
-        expect(error.type, TonikErrorType.encoding);
-        expect(error.response, isNull);
+        expect(
+          success.response.requestOptions.headers['X-Flexible-Value'],
+          '',
+        );
+        expect(success.value.xFlexibleValue, isNotNull);
+        expect(success.value.xFlexibleValue!.string, '');
       });
     });
 
