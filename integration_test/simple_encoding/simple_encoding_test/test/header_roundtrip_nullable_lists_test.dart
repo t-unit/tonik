@@ -41,7 +41,7 @@ void main() {
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.headers['x-nullable-string-list'],
-        'hello%20world,foo%2Fbar,',
+        'hello world,foo/bar,',
       );
     });
 

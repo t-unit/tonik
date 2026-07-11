@@ -27,6 +27,15 @@ void main() {
   String emit(BuiltExpression built) =>
       built.expression.accept(emitter).toString();
 
+  String methodBody(BuiltExpression built) {
+    final method = Method(
+      (b) => b
+        ..name = 'test'
+        ..body = declareFinal('result').assign(built.expression).statement,
+    );
+    return format(method.accept(emitter).toString());
+  }
+
   group('buildToSimplePathParameterExpression', () {
     test('for String parameter', () {
       final parameter = PathParameterObject(
@@ -98,6 +107,42 @@ void main() {
       );
     });
 
+    test('for integer list parameter omits literal arg', () {
+      final parameter = PathParameterObject(
+        name: 'ids',
+        rawName: 'ids',
+        description: 'IDs parameter',
+        model: ListModel(
+          content: IntegerModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        encoding: PathParameterEncoding.simple,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        collapseWhitespace(
+          methodBody(buildToSimplePathParameterExpression('ids', parameter)),
+        ),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = ids
+                  .map((e) => e.uriEncode(allowEmpty: true))
+                  .toList()
+                  .toSimple(explode: false, allowEmpty: true, alreadyEncoded: true);
+            }
+          '''),
+        ),
+      );
+    });
+
     test('for NeverModel parameter throws EncodingException', () {
       final parameter = PathParameterObject(
         name: 'neverParam',
@@ -121,75 +166,246 @@ void main() {
   });
 
   group('buildToSimpleHeaderParameterExpression', () {
-    test('for String header', () {
-      final parameter = RequestHeaderObject(
-        name: 'authorization',
-        rawName: 'Authorization',
-        description: 'Authorization header',
-        model: StringModel(context: context),
-        encoding: HeaderParameterEncoding.simple,
-        explode: false,
-        allowEmptyValue: false,
-        isRequired: true,
-        isDeprecated: false,
-        context: context,
-        examples: const [],
-        defaultValue: null,
+    RequestHeaderObject header(Model model) => RequestHeaderObject(
+      name: 'value',
+      rawName: 'X-Value',
+      description: 'header',
+      model: model,
+      encoding: HeaderParameterEncoding.simple,
+      explode: false,
+      allowEmptyValue: false,
+      isRequired: true,
+      isDeprecated: false,
+      context: context,
+      examples: const [],
+      defaultValue: null,
+    );
+
+    for (final model in <Model>[
+      StringModel(context: Context.initial()),
+      IntegerModel(context: Context.initial()),
+      DoubleModel(context: Context.initial()),
+      NumberModel(context: Context.initial()),
+      BooleanModel(context: Context.initial()),
+      DateTimeModel(context: Context.initial()),
+      DecimalModel(context: Context.initial()),
+      UriModel(context: Context.initial()),
+      DateModel(context: Context.initial()),
+    ]) {
+      test('primitive ${model.runtimeType} header emits literal: true', () {
+        final built = buildToSimpleHeaderParameterExpression(
+          'value',
+          header(model),
+        );
+        expect(
+          collapseWhitespace(methodBody(built)),
+          collapseWhitespace(
+            format('''
+              test() {
+                final result = value.toSimple(
+                  explode: false,
+                  allowEmpty: true,
+                  literal: true,
+                );
+              }
+            '''),
+          ),
+        );
+      });
+    }
+
+    test('base64 header emits literal toSimple on base64 string', () {
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(Base64Model(context: context)),
       );
       expect(
-        emit(
-          buildToSimpleHeaderParameterExpression('authorization', parameter),
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = value.toBase64String().toSimple(
+                explode: false,
+                allowEmpty: true,
+                literal: true,
+              );
+            }
+          '''),
         ),
-        'authorization.toSimple(explode: false, allowEmpty: true, )',
       );
     });
 
-    test('for DateTime header with custom params', () {
-      final parameter = RequestHeaderObject(
-        name: 'ifModifiedSince',
-        rawName: 'If-Modified-Since',
-        description: 'If-Modified-Since header',
-        model: DateTimeModel(context: context),
-        encoding: HeaderParameterEncoding.simple,
-        explode: false,
-        allowEmptyValue: false,
-        isRequired: true,
+    test('string list header emits literal toSimple on the list', () {
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(
+          ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+        ),
+      );
+      expect(
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = value.toSimple(
+                explode: false,
+                allowEmpty: true,
+                literal: true,
+              );
+            }
+          '''),
+        ),
+      );
+    });
+
+    test(
+      'integer list header emits literal on element encode and final toSimple',
+      () {
+        final built = buildToSimpleHeaderParameterExpression(
+          'value',
+          header(
+            ListModel(
+              content: IntegerModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+          ),
+        );
+        expect(
+          collapseWhitespace(methodBody(built)),
+          collapseWhitespace(
+            format('''
+              test() {
+                final result = value
+                    .map((e) => e.uriEncode(allowEmpty: true, literal: true))
+                    .toList()
+                    .toSimple(
+                      explode: false,
+                      allowEmpty: true,
+                      literal: true,
+                      alreadyEncoded: true,
+                    );
+              }
+            '''),
+          ),
+        );
+      },
+    );
+
+    test('dateTime list header emits literal on element and list', () {
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(
+          ListModel(
+            content: DateTimeModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+        ),
+      );
+      expect(
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = value
+                  .map(
+                    (e) => e.toSimple(
+                      explode: false,
+                      allowEmpty: true,
+                      literal: true,
+                    ),
+                  )
+                  .toList()
+                  .toSimple(explode: false, allowEmpty: true, literal: true);
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('enum header stays non-literal (deferred)', () {
+      final model = EnumModel<String>(
+        name: 'Status',
+        values: {const EnumEntry(value: 'active')},
+        isNullable: false,
         isDeprecated: false,
+        context: context,
+        examples: const [],
+      );
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(model),
+      );
+      expect(
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = value.toSimple(explode: false, allowEmpty: true);
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('alias header stays non-literal (deferred)', () {
+      final model = AliasModel(
+        name: 'MyString',
+        model: StringModel(context: context),
         context: context,
         examples: const [],
         defaultValue: null,
       );
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(model),
+      );
       expect(
-        emit(
-          buildToSimpleHeaderParameterExpression(
-            'ifModifiedSince',
-            parameter,
-            explode: true,
-            allowEmpty: false,
-          ),
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = value.toSimple(explode: false, allowEmpty: true);
+            }
+          '''),
         ),
-        'ifModifiedSince.toSimple(explode: true, allowEmpty: false, )',
+      );
+    });
+
+    test('map header stays non-literal (deferred)', () {
+      final model = MapModel(
+        valueModel: StringModel(context: context),
+        context: context,
+        examples: const [],
+      );
+      final built = buildToSimpleHeaderParameterExpression(
+        'value',
+        header(model),
+      );
+      expect(
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = value.toSimple(explode: false, allowEmpty: true);
+            }
+          '''),
+        ),
       );
     });
 
     test('for NeverModel header throws EncodingException', () {
-      final parameter = RequestHeaderObject(
-        name: 'neverHeader',
-        rawName: 'NeverHeader',
-        description: 'Never header',
-        model: NeverModel(context: context),
-        encoding: HeaderParameterEncoding.simple,
-        explode: false,
-        allowEmptyValue: false,
-        isRequired: true,
-        isDeprecated: false,
-        context: context,
-        examples: const [],
-        defaultValue: null,
-      );
       expect(
         emit(
-          buildToSimpleHeaderParameterExpression('neverHeader', parameter),
+          buildToSimpleHeaderParameterExpression(
+            'neverHeader',
+            header(NeverModel(context: context)),
+          ),
         ),
         '''throw  EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
