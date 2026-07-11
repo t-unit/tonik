@@ -300,5 +300,45 @@ void main() {
         );
       });
     });
+
+    group('server-originated response', () {
+      test('literal percent sequences in an injected dynamic-composite header '
+          'decode verbatim', () async {
+        // X-Dynamic-Value is not set as a request param here, so the value
+        // Imposter echoes back is the injected literal, independent of Tonik's
+        // request encoder.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Dynamic-Value': 'name,x%2Fy 50%,value,9',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final result = await injected.testHeaderRoundtripDynamicComposite();
+
+        final success =
+            result
+                as TonikSuccess<
+                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                >;
+        expect(success.value.xDynamicValue, isNotNull);
+        expect(success.value.xDynamicValue!.flexibleValue, isNotNull);
+        expect(
+          success.value.xDynamicValue!.flexibleValue!.simpleObject,
+          isNotNull,
+        );
+        expect(
+          success.value.xDynamicValue!.flexibleValue!.simpleObject!.name,
+          'x%2Fy 50%',
+        );
+      });
+    });
   });
 }

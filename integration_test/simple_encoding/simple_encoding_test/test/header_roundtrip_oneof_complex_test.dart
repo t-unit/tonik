@@ -222,5 +222,35 @@ void main() {
         expect(success.value.xComplexUnion, isNull);
       });
     });
+
+    group('server-originated response', () {
+      test('literal percent sequences in an injected oneOf object header '
+          'decode verbatim', () async {
+        // X-Complex-Union is not set as a request param here, so the value
+        // Imposter echoes back is the injected literal, independent of Tonik's
+        // request encoder.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Complex-Union': 'name,x%2Fy 50%',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final result = await injected.testHeaderRoundtripOneOfComplex.call();
+
+        final success =
+            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
+        expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
+        final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
+        expect(class1.value.name, 'x%2Fy 50%');
+      });
+    });
   });
 }

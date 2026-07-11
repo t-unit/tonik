@@ -152,5 +152,42 @@ void main() {
         },
       );
     });
+
+    group('server-originated response', () {
+      test('literal percent sequences in an injected allOf object header '
+          'decode verbatim', () async {
+        // X-Composite-Entity is not set as a request param here, so the value
+        // Imposter echoes back is the injected literal, independent of Tonik's
+        // request encoder.
+        // The value is one simple-style object literal; created_at is required
+        // and must parse as a date-time for the object to decode.
+        // ignore: lines_longer_than_80_chars
+        const literal = 'name,x%2Fy 50%,created_at,2024-01-15T10:30:00.000Z,specific_field,keep%2Fraw';
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Composite-Entity': literal,
+                },
+              ),
+            ),
+          ),
+        );
+
+        final result = await injected.testHeaderRoundtripAllOfSimple.call();
+
+        final success =
+            result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
+        expect(success.value.xCompositeEntity, isNotNull);
+        expect(success.value.xCompositeEntity!.baseEntity.name, 'x%2Fy 50%');
+        expect(
+          success.value.xCompositeEntity!.compositeEntityModel.specificField,
+          'keep%2Fraw',
+        );
+      });
+    });
   });
 }
