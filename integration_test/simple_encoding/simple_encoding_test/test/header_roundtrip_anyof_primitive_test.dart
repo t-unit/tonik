@@ -220,5 +220,35 @@ void main() {
         },
       );
     });
+
+    group('server-originated response', () {
+      test('literal percent sequences in an injected anyOf header '
+          'decode verbatim', () async {
+        // X-Flexible-Value is not set as a request param here, so the value
+        // Imposter echoes back is the injected literal, independent of Tonik's
+        // request encoder.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Flexible-Value': 'a%2Fb 50%',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final result = await injected.testHeaderRoundtripAnyOfPrimitive.call();
+
+        final success =
+            result
+                as TonikSuccess<HeadersRoundtripAnyofPrimitiveGet200Response>;
+        expect(success.value.xFlexibleValue, isNotNull);
+        expect(success.value.xFlexibleValue!.string, 'a%2Fb 50%');
+      });
+    });
   });
 }

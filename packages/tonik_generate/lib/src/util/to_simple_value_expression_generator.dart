@@ -293,8 +293,6 @@ Expression _handleListExpression(
       .property('toList')
       .call([]);
 
-  // [asLiteral] threads literal encoding through both the per-element and the
-  // whole-list toSimple; composite element kinds pass false.
   Expression mappedSerialize({required bool asLiteral}) => mappedList(
     nullGuard(
       _buildSimpleSerializationExpression(

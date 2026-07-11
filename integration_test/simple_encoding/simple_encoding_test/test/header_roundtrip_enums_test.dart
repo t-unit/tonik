@@ -299,5 +299,30 @@ void main() {
         expect(success.value.xPriority, PriorityEnum.two);
       });
     });
+
+    group('server-originated response', () {
+      test('an injected enum header whose member value carries a percent '
+          'sequence decodes literally', () async {
+        // X-Status is not set as a request param here, so the value Imposter
+        // echoes back is the injected literal, independent of Tonik's request
+        // encoder.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {'X-Response-Status': '200', 'X-Status': '50% off'},
+              ),
+            ),
+          ),
+        );
+
+        final response = await injected.testHeaderRoundtripEnums();
+
+        final success =
+            response as TonikSuccess<HeadersRoundtripEnumsGet200Response>;
+        expect(success.value.xStatus, StatusEnum.$50PercentOff);
+      });
+    });
   });
 }

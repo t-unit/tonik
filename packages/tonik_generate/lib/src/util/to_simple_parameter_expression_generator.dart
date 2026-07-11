@@ -5,7 +5,8 @@ import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
 /// [literal], when supplied, is forwarded as the `literal:` named argument to
-/// every leaf `toSimple`/`uriEncode` call so composite header field-values are
+/// every leaf `toSimple` (and to `encodeAnyToSimple` for the
+/// AnyModel/composite-list branch) so composite header field-values are
 /// transmitted without URI encoding. It is omitted for path/query callers.
 BuiltExpression buildSimpleParameterExpression(
   Expression valueExpression,
