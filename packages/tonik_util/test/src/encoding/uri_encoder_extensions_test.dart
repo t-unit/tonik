@@ -1,9 +1,13 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 void main() {
+  setUpAll(tz.initializeTimeZones);
+
   group('UriEncoder', () {
     test('encodes URI values', () {
       final uri = Uri.parse('https://example.com/path?query=value');
@@ -511,11 +515,59 @@ void main() {
       );
     });
 
+    test('non-UTC DateTime keeps the offset colon literal', () {
+      final dateTime = tz.TZDateTime(
+        tz.getLocation('Asia/Kolkata'),
+        2023,
+        12,
+        25,
+        20,
+        0,
+        45,
+      );
+      expect(
+        dateTime.uriEncode(allowEmpty: true, literal: true),
+        '2023-12-25T20:00:45+05:30',
+      );
+    });
+
+    test('non-UTC DateTime offset colon is percent-encoded by default', () {
+      final dateTime = tz.TZDateTime(
+        tz.getLocation('Asia/Kolkata'),
+        2023,
+        12,
+        25,
+        20,
+        0,
+        45,
+      );
+      expect(
+        dateTime.uriEncode(allowEmpty: true),
+        '2023-12-25T20%3A00%3A45%2B05%3A30',
+      );
+    });
+
     test('Uri keeps punctuation literal', () {
       final uri = Uri.parse('https://example.com/path?query=value');
       expect(
         uri.uriEncode(allowEmpty: true, literal: true),
         'https://example.com/path?query=value',
+      );
+    });
+
+    test('Uri keeps the fragment delimiter literal', () {
+      final uri = Uri.parse('https://example.com/p#frag');
+      expect(
+        uri.uriEncode(allowEmpty: true, literal: true),
+        'https://example.com/p#frag',
+      );
+    });
+
+    test('Uri fragment delimiter is percent-encoded without literal', () {
+      final uri = Uri.parse('https://example.com/p#frag');
+      expect(
+        uri.uriEncode(allowEmpty: true),
+        'https%3A%2F%2Fexample.com%2Fp%23frag',
       );
     });
 
