@@ -1,5 +1,7 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/src/date.dart';
+import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
 
 void main() {
@@ -1275,6 +1277,94 @@ void main() {
         value.toSimple(explode: true, allowEmpty: true),
         value.toSimple(explode: false, allowEmpty: true),
       );
+    });
+  });
+
+  group('literal', () {
+    test('string is returned byte-for-byte unchanged', () {
+      expect(
+        'a b%,/:&=+%2F'.toSimple(explode: false, allowEmpty: true, literal: true),
+        'a b%,/:&=+%2F',
+      );
+    });
+
+    test('empty string still throws when allowEmpty is false', () {
+      expect(
+        () => ''.toSimple(explode: false, allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('DateTime keeps literal colons', () {
+      final dateTime = DateTime.utc(2023, 12, 25, 10, 30, 45);
+      expect(
+        dateTime.toSimple(explode: false, allowEmpty: true, literal: true),
+        '2023-12-25T10:30:45.000Z',
+      );
+    });
+
+    test('Uri keeps punctuation literal', () {
+      final uri = Uri.parse('https://example.com/path?query=value');
+      expect(
+        uri.toSimple(explode: false, allowEmpty: true, literal: true),
+        'https://example.com/path?query=value',
+      );
+    });
+
+    test('int uses plain string form', () {
+      expect(
+        (-123).toSimple(explode: false, allowEmpty: true, literal: true),
+        '-123',
+      );
+    });
+
+    test('double uses plain string form', () {
+      expect(
+        3.14.toSimple(explode: false, allowEmpty: true, literal: true),
+        '3.14',
+      );
+    });
+
+    test('num uses plain string form', () {
+      expect(
+        (3.14 as num).toSimple(explode: false, allowEmpty: true, literal: true),
+        '3.14',
+      );
+    });
+
+    test('bool uses plain string form', () {
+      expect(
+        true.toSimple(explode: false, allowEmpty: true, literal: true),
+        'true',
+      );
+    });
+
+    test('BigDecimal uses plain string form', () {
+      expect(
+        BigDecimal.parse(
+          '123.456',
+        ).toSimple(explode: false, allowEmpty: true, literal: true),
+        '123.456',
+      );
+    });
+
+    test('Date uses plain string form', () {
+      expect(
+        Date(
+          2023,
+          12,
+          25,
+        ).toSimple(explode: false, allowEmpty: true, literal: true),
+        '2023-12-25',
+      );
+    });
+
+    test('literal false stays byte-identical to default simple behavior', () {
+      expect(
+        'a b/:'.toSimple(explode: false, allowEmpty: true),
+        'a%20b%2F%3A',
+      );
+      expect(42.toSimple(explode: false, allowEmpty: true), '42');
     });
   });
 }

@@ -11,57 +11,81 @@ extension SimpleUriEncoder on Uri {
   ///
   /// The [explode] and [allowEmpty] parameters are accepted for consistency
   /// but have no effect on Uri encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 }
 
 /// Extension for encoding String values.
 extension SimpleStringEncoder on String {
   /// Encodes this string value using simple style encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 }
 
 /// Extension for encoding int values.
 extension SimpleIntEncoder on int {
   /// Encodes this int value using simple style encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 }
 
 /// Extension for encoding double values.
 extension SimpleDoubleEncoder on double {
   /// Encodes this double value using simple style encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 }
 
 /// Extension for encoding num values.
 extension SimpleNumEncoder on num {
   /// Encodes this num value using simple style encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 }
 
 /// Extension for encoding bool values.
 extension SimpleBoolEncoder on bool {
   /// Encodes this bool value using simple style encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 }
 
 /// Extension for encoding DateTime values.
 extension SimpleDateTimeEncoder on DateTime {
   /// Encodes this DateTime value using simple style encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 }
 
 /// Extension for encoding BigDecimal values.
 extension SimpleBigDecimalEncoder on BigDecimal {
   /// Encodes this BigDecimal value using simple style encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 }
 
 /// Extension for encoding List values.

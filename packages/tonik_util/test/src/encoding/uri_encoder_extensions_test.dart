@@ -479,4 +479,92 @@ void main() {
       );
     });
   });
+
+  group('literal', () {
+    test('string is returned byte-for-byte unchanged', () {
+      expect(
+        'a b%,/:&=+%2F'.uriEncode(allowEmpty: true, literal: true),
+        'a b%,/:&=+%2F',
+      );
+    });
+
+    test('string literal keeps unicode unchanged', () {
+      expect('你好'.uriEncode(allowEmpty: true, literal: true), '你好');
+    });
+
+    test('empty string still throws when allowEmpty is false', () {
+      expect(
+        () => ''.uriEncode(allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('empty string allowed when allowEmpty is true', () {
+      expect(''.uriEncode(allowEmpty: true, literal: true), '');
+    });
+
+    test('DateTime keeps literal colons', () {
+      final dateTime = DateTime.utc(2023, 12, 25, 10, 30, 45);
+      expect(
+        dateTime.uriEncode(allowEmpty: true, literal: true),
+        '2023-12-25T10:30:45.000Z',
+      );
+    });
+
+    test('Uri keeps punctuation literal', () {
+      final uri = Uri.parse('https://example.com/path?query=value');
+      expect(
+        uri.uriEncode(allowEmpty: true, literal: true),
+        'https://example.com/path?query=value',
+      );
+    });
+
+    test('int uses plain string form', () {
+      expect((-123).uriEncode(allowEmpty: true, literal: true), '-123');
+    });
+
+    test('double uses plain string form', () {
+      expect(3.14.uriEncode(allowEmpty: true, literal: true), '3.14');
+    });
+
+    test('num uses plain string form', () {
+      expect((3.14 as num).uriEncode(allowEmpty: true, literal: true), '3.14');
+    });
+
+    test('bool uses plain string form', () {
+      expect(true.uriEncode(allowEmpty: true, literal: true), 'true');
+    });
+
+    test('BigDecimal uses plain string form', () {
+      expect(
+        BigDecimal.parse('123.456').uriEncode(allowEmpty: true, literal: true),
+        '123.456',
+      );
+    });
+
+    test('takes precedence over useQueryComponent', () {
+      expect(
+        'a b'.uriEncode(
+          allowEmpty: true,
+          literal: true,
+          useQueryComponent: true,
+        ),
+        'a b',
+      );
+    });
+
+    test('takes precedence over allowReserved', () {
+      expect(
+        'a&b=c'.uriEncode(allowEmpty: true, literal: true, allowReserved: true),
+        'a&b=c',
+      );
+    });
+
+    test('literal false stays byte-identical to default URI behavior', () {
+      expect('a b/:'.uriEncode(allowEmpty: true), 'a%20b%2F%3A');
+      expect(42.uriEncode(allowEmpty: true), '42');
+      final uri = Uri.parse('https://example.com');
+      expect(uri.uriEncode(allowEmpty: true), 'https%3A%2F%2Fexample.com');
+    });
+  });
 }
