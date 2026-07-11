@@ -280,8 +280,8 @@ void main() {
     group('server-originated response', () {
       test('injected literal enum list splits on commas and maps each '
           'element to its enum value', () async {
-        // X-Status-List is injected via Dio, not through Tonik's request
-        // encoder, so the decoded list reflects the server-originated literal.
+        // Server-originated: X-Status-List is injected via Dio, not
+        // sent by Tonik's encoder.
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,

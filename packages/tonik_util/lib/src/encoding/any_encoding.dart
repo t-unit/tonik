@@ -118,10 +118,8 @@ String encodeAnyToLabel(
 /// message identifies only the inner type — no path / key context is attached
 /// to indicate where in the structure the failure originated.
 ///
-/// When [literal] is true, values are transmitted without URI encoding, as
-/// required for HTTP header field-values; the flag is threaded through the
-/// [ParameterEncodable] branch, every primitive branch, and recursive
-/// map / list element encoding.
+/// When [literal] is true, values are sent without URI encoding (HTTP header
+/// field-values), including nested map/list elements.
 String encodeAnyToSimple(
   Object? value, {
   required bool explode,

@@ -74,10 +74,8 @@ void main() {
     group('server-originated response', () {
       test('injected literal decodes reserved chars verbatim and empty '
           'elements as null', () async {
-        // X-Nullable-String-List is not set as a request parameter here, so the
-        // echoed value is a server-originated literal independent of Tonik's
-        // request encoder. This exercises the nullable-item decoder branch that
-        // splits on commas and converts empty elements to null.
+        // Server-originated: X-Nullable-String-List injected via Dio;
+        // exercises the empty-element→null branch.
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,

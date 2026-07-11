@@ -345,9 +345,8 @@ void main() {
       test('a comma inside an object value cannot round-trip: it is '
           'transmitted literally and decode reads it as a new key/value',
           () async {
-        // Literal encoding does not escape the simple-style `,` delimiter, so
-        // an in-value comma is indistinguishable from the property separator.
-        // The value transmits verbatim; decode cannot recover the original.
+        // Literal encoding doesn't escape the `,` delimiter, so an in-value
+        // comma can't round-trip.
         final api = buildApi(responseStatus: '200');
         final response = await api.testHeaderRoundtripObjects(
           simpleObject: const SimpleObject(name: 'a,b', value: 5),
@@ -366,9 +365,8 @@ void main() {
     group('server-originated composite response', () {
       test('literal percent sequences in an injected object header '
           'survive decode without re-decoding', () async {
-        // Inject the header value directly via Dio, NOT through Tonik's
-        // request encoder, so the server-originated value is echoed verbatim
-        // and the client must decode it literally.
+        // Server-originated: X-Simple-Object is injected via Dio, not
+        // sent by Tonik's encoder.
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,

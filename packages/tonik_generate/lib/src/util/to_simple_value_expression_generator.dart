@@ -106,8 +106,7 @@ BuiltExpression buildToSimplePathParameterExpression(
 /// [isNullChecked] suppresses null-aware access for callers already
 /// inside an `if (param != null)` block.
 ///
-/// Every supported header model is encoded literally, since HTTP header
-/// field-values are transmitted as-is.
+/// Header field-values are encoded literally (sent as-is).
 BuiltExpression buildToSimpleHeaderParameterExpression(
   String parameterName,
   RequestHeaderObject parameter, {

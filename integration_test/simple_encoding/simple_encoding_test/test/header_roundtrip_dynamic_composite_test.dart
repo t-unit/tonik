@@ -272,9 +272,8 @@ void main() {
 
       test('two complex variants merge into one property map and decode back',
           () async {
-        // entityType and compositeEntity are both complex (map) shapes, so
-        // there is no simple/complex mix: their property maps merge into a
-        // single header and both variants decode back from it.
+        // Both variants share one merged property map, so either decodes
+        // from it.
         const company = CompanyEntity(
           $type: CompanyEntityTypeModel.company,
           companyName: 'Acme',
@@ -317,9 +316,8 @@ void main() {
     group('server-originated response', () {
       test('literal percent sequences in an injected dynamic-composite header '
           'decode verbatim', () async {
-        // X-Dynamic-Value is not set as a request param here, so the value
-        // Imposter echoes back is the injected literal, independent of Tonik's
-        // request encoder.
+        // Server-originated: X-Dynamic-Value is injected via Dio, not
+        // sent by Tonik's encoder.
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,

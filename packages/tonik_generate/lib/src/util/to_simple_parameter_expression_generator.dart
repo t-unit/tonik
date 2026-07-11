@@ -4,10 +4,8 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
 
-/// [literal], when supplied, is forwarded as the `literal:` named argument to
-/// every leaf `toSimple` (and to `encodeAnyToSimple` for the
-/// AnyModel/composite-list branch) so composite header field-values are
-/// transmitted without URI encoding. It is omitted for path/query callers.
+/// [literal] emits `literal: true` for composite header field-values (sent
+/// without URI encoding); omitted for path/query callers.
 BuiltExpression buildSimpleParameterExpression(
   Expression valueExpression,
   Model model, {

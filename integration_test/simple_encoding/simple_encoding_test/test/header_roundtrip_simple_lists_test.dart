@@ -341,8 +341,8 @@ void main() {
     group('server-originated response', () {
       test('injected literal string list splits on commas only and keeps '
           'reserved chars verbatim', () async {
-        // X-String-List is injected via Dio, not through Tonik's request
-        // encoder, so the decoded list reflects the server-originated literal.
+        // Server-originated: X-String-List is injected via Dio, not
+        // sent by Tonik's encoder.
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,

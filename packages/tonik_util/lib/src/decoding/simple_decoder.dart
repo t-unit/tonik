@@ -7,9 +7,8 @@ import 'package:tonik_util/src/offset_date_time.dart';
 
 /// Extensions for decoding simple form values from strings.
 ///
-/// Simple-style input is treated as a literal (unencoded) field value:
-/// percent-decoding is intentionally not performed, so reserved characters
-/// like `%2F` reach the caller verbatim.
+/// Input is a literal field value: percent-decoding is intentionally not
+/// performed.
 extension SimpleDecoder on String? {
   /// Decodes a string to a string.
   ///
@@ -225,8 +224,7 @@ extension SimpleDecoder on String? {
 
   /// Decodes a base64-encoded string to binary data (`List<int>`).
   ///
-  /// The raw base64 text is passed directly to `base64.decode`; standard
-  /// `+`, `/` and `=` characters are preserved.
+  /// Base64 text is decoded as-is; `+`, `/` and `=` are preserved.
   /// Throws [InvalidTypeException] if the value is null or cannot be decoded.
   List<int> decodeSimpleBase64({String? context}) {
     if (this == null) {

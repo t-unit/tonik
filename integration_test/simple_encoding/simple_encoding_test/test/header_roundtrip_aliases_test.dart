@@ -137,8 +137,7 @@ void main() {
 
       test('UserName with non-ASCII characters cannot be sent literally',
           () async {
-        // Header field-values are transmitted literally, but HTTP forbids
-        // non-ASCII octets in a header value, so the transport rejects it.
+        // HTTP forbids non-ASCII header octets, so the transport rejects it.
         const userName = 'José García';
 
         final result = await api.testHeaderRoundtripAliases(userName: userName);

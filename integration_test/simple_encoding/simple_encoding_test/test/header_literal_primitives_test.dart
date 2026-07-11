@@ -142,8 +142,8 @@ void main() {
         final error =
             response
                 as TonikError<HeadersRoundtripPrimitivesGet200Response>;
-        // Rejection is transport-provided: Dio refuses to send a header with a
-        // control character, so the request never dispatches.
+        // Rejection is transport-provided (Dio refuses control chars), not
+        // a Tonik guard.
         expect(error.type, TonikErrorType.network);
         expect(error.response, isNull);
       });

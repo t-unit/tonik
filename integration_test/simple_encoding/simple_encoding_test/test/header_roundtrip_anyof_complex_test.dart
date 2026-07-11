@@ -184,9 +184,8 @@ void main() {
     group('server-originated response', () {
       test('literal percent sequences in an injected anyOf object header '
           'decode verbatim', () async {
-        // X-Flexible-Object is not set as a request param here, so the value
-        // Imposter echoes back is the injected literal, independent of Tonik's
-        // request encoder.
+        // Server-originated: X-Flexible-Object is injected via Dio, not
+        // sent by Tonik's encoder.
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,

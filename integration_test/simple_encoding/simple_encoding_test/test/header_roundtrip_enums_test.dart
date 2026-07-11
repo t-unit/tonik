@@ -303,9 +303,8 @@ void main() {
     group('server-originated response', () {
       test('an injected enum header whose member value carries a percent '
           'sequence decodes literally', () async {
-        // X-Status is not set as a request param here, so the value Imposter
-        // echoes back is the injected literal, independent of Tonik's request
-        // encoder.
+        // Server-originated: X-Status is injected via Dio, not sent by
+        // Tonik's encoder.
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
