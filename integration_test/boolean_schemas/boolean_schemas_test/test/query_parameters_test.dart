@@ -78,6 +78,31 @@ void main() {
         'anyValue=first%20name,Jane,a%2Cb,v1,c%26d,v2',
       );
     });
+
+    test('getQueryAny with empty list value omits the parameter', () async {
+      final api = buildApi();
+      final result = await api.getQueryAny(anyValue: const <dynamic>[]);
+      final success = result as TonikSuccess;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('getQueryAnyNoExplode with empty list value omits the parameter',
+        () async {
+      final api = buildApi();
+      final result = await api.getQueryAnyNoExplode(
+        anyValue: const <dynamic>[],
+      );
+      final success = result as TonikSuccess;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test('getQueryAny with non-empty list serializes comma-separated',
+        () async {
+      final api = buildApi();
+      final result = await api.getQueryAny(anyValue: <dynamic>['a', 'b', 'c']);
+      final success = result as TonikSuccess;
+      expect(success.response.requestOptions.uri.query, 'anyValue=a,b,c');
+    });
   });
 
   group('Query parameters - spaceDelimited style', () {

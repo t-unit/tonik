@@ -1843,6 +1843,68 @@ void main() {
     });
   });
 
+  group('encodeAnyToFormEntries', () {
+    test('empty list value yields no entries', () {
+      expect(
+        encodeAnyToFormEntries(
+          <dynamic>[],
+          name: 'anyValue',
+          explode: false,
+          allowEmpty: false,
+        ),
+        const <ParameterEntry>[],
+      );
+    });
+
+    test('empty list value yields no entries when explode is true', () {
+      expect(
+        encodeAnyToFormEntries(
+          <dynamic>[],
+          name: 'anyValue',
+          explode: true,
+          allowEmpty: false,
+        ),
+        const <ParameterEntry>[],
+      );
+    });
+
+    test('populated list value yields a single joined entry', () {
+      expect(
+        encodeAnyToFormEntries(
+          <dynamic>['a', 'b', 'c'],
+          name: 'anyValue',
+          explode: false,
+          allowEmpty: false,
+        ),
+        const [(name: 'anyValue', value: 'a,b,c')],
+      );
+    });
+
+    test('scalar value yields a single entry', () {
+      expect(
+        encodeAnyToFormEntries(
+          'hello',
+          name: 'anyValue',
+          explode: false,
+          allowEmpty: false,
+        ),
+        const [(name: 'anyValue', value: 'hello')],
+      );
+    });
+
+    test('empty map value throws EmptyValueException', () {
+      expect(
+        () => encodeAnyToFormEntries(
+          <String, dynamic>{},
+          name: 'anyValue',
+          explode: false,
+          allowEmpty: false,
+        ),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+  });
+
   group('encodeAnyToDeepObject', () {
     group('ParameterEncodable', () {
       test('encodes ParameterEncodable instance', () {

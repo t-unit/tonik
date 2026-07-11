@@ -192,8 +192,7 @@ extension FormBigDecimalEncoder on BigDecimal {
 extension FormStringListEncoder on List<String> {
   /// Encodes this List value using form style encoding.
   ///
-  /// An empty list is omitted; [allowEmpty] gates empty-string values, not
-  /// empty arrays.
+  /// An empty list is omitted, regardless of [allowEmpty].
   ///
   /// The [alreadyEncoded] parameter indicates whether the items are already
   /// URI-encoded and should not be encoded again.
