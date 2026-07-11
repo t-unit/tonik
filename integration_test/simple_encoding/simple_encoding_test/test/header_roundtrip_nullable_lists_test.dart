@@ -70,5 +70,34 @@ void main() {
         isA<TonikError<HeadersRoundtripListsNullableGet200Response>>(),
       );
     });
+
+    group('server-originated response', () {
+      test('injected literal decodes reserved chars verbatim and empty '
+          'elements as null', () async {
+        // X-Nullable-String-List is not set as a request parameter here, so the
+        // echoed value is a server-originated literal independent of Tonik's
+        // request encoder. This exercises the nullable-item decoder branch that
+        // splits on commas and converts empty elements to null.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Nullable-String-List': 'a%2Fb,,50%',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final response = await injected.testHeaderRoundtripNullableLists();
+
+        final success = response
+            as TonikSuccess<HeadersRoundtripListsNullableGet200Response>;
+        expect(success.value.xNullableStringList, ['a%2Fb', null, '50%']);
+      });
+    });
   });
 }
