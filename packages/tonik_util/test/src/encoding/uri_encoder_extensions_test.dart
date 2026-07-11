@@ -28,15 +28,9 @@ void main() {
       );
     });
 
-    test('handles empty strings with allowEmpty true', () {
+    test('encodes empty string as empty regardless of allowEmpty', () {
       expect(''.uriEncode(allowEmpty: true), '');
-    });
-
-    test('throws exception for empty strings with allowEmpty false', () {
-      expect(
-        () => ''.uriEncode(allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(''.uriEncode(allowEmpty: false), '');
     });
 
     test('encodes special characters', () {

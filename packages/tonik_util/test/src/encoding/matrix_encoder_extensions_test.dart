@@ -42,10 +42,7 @@ void main() {
     });
 
     test('encodes empty string with allowEmpty=false', () {
-      expect(
-        () => ''.toMatrix('name', allowEmpty: false, explode: true),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(''.toMatrix('name', allowEmpty: false, explode: true), ';name=');
     });
 
     test('encodes special characters', () {

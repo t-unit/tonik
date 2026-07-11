@@ -26,9 +26,6 @@ extension StringUriEncoder on String {
     bool useQueryComponent = false,
     bool allowReserved = false,
   }) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
-    }
     return encodeUriValue(
       this,
       allowReserved: allowReserved,

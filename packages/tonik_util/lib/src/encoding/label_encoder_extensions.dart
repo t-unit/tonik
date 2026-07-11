@@ -14,9 +14,6 @@ extension LabelUriEncoder on Uri {
 extension LabelStringEncoder on String {
   /// Encodes this string value using label style encoding.
   String toLabel({required bool explode, required bool allowEmpty}) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
-    }
     if (isEmpty) {
       return '.';
     }

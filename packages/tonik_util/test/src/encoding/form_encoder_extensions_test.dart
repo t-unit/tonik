@@ -54,14 +54,14 @@ void main() {
       );
     });
 
-    test('handles empty strings based on allowEmpty', () {
+    test('encodes empty string as an empty value regardless of allowEmpty', () {
       expect(
         ''.toForm('p', explode: false, allowEmpty: true),
         const <ParameterEntry>[(name: 'p', value: '')],
       );
       expect(
-        () => ''.toForm('p', explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        ''.toForm('p', explode: false, allowEmpty: false),
+        const <ParameterEntry>[(name: 'p', value: '')],
       );
     });
 

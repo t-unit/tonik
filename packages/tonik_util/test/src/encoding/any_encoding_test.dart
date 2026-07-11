@@ -2223,11 +2223,8 @@ void main() {
         );
       });
 
-      test('throws for empty string with allowEmpty=false', () {
-        expect(
-          () => encodeAnyToUri('', allowEmpty: false),
-          throwsA(isA<EmptyValueException>()),
-        );
+      test('encodes empty string as empty with allowEmpty=false', () {
+        expect(encodeAnyToUri('', allowEmpty: false), '');
       });
 
       test('uses query component encoding when requested', () {
