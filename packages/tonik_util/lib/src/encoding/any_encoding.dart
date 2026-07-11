@@ -394,10 +394,6 @@ String encodeAnyToForm(
 
 /// Encodes a top-level form query parameter whose runtime value has an unknown
 /// type, omitting an empty list so the parameter is absent from the query.
-///
-/// An empty [List] value yields no entries; every other value (including an
-/// empty [Map], which still raises [EmptyValueException]) is delegated to
-/// [encodeAnyToForm] and returned as a single entry.
 List<ParameterEntry> encodeAnyToFormEntries(
   Object? value, {
   required String name,
