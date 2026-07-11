@@ -2153,14 +2153,29 @@ void main() {
         expect(toSimple.lambda, isFalse);
         expect(toSimple.optionalParameters, hasLength(3));
 
-        final body = toSimple.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
-          if (this == Status.unknown) {
-            throw EncodingException(r'Cannot encode unknown enum value');
+        const expected = '''
+          class Status {
+            @override
+            String toSimple({
+              required bool explode,
+              required bool allowEmpty,
+              bool literal = false,
+            }) {
+              if (this == Status.unknown) {
+                throw EncodingException(r'Cannot encode unknown enum value');
+              }
+              return rawValue.toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                literal: literal,
+              );
+            }
           }
-          return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
         ''';
-        expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
+        expect(
+          collapseWhitespace(formatMethod(toSimple, 'Status')),
+          collapseWhitespace(format(expected)),
+        );
       });
 
       test('toForm throws when encoding fallback case', () {

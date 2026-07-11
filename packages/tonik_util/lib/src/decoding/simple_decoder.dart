@@ -6,6 +6,10 @@ import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/offset_date_time.dart';
 
 /// Extensions for decoding simple form values from strings.
+///
+/// Simple-style input is treated as a literal (unencoded) field value:
+/// percent-decoding is intentionally not performed, so reserved characters
+/// like `%2F` reach the caller verbatim.
 extension SimpleDecoder on String? {
   /// Decodes a string to a string.
   ///

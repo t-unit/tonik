@@ -54,9 +54,10 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        expect(success.value.xDynamicValue, isNotNull);
-        expect(success.value.xDynamicValue!.flexibleValue, isNotNull);
-        expect(success.value.xDynamicValue!.flexibleValue!.string, isNotNull);
+        expect(
+          success.value.xDynamicValue!.flexibleValue!.string,
+          'hello',
+        );
       });
 
       test('roundtrips FlexibleValue with integer', () async {
@@ -79,8 +80,7 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        expect(success.value.xDynamicValue, isNotNull);
-        expect(success.value.xDynamicValue!.flexibleValue, isNotNull);
+        expect(success.value.xDynamicValue!.flexibleValue!.int, 42);
       });
 
       test('roundtrips FlexibleValue with boolean', () async {
@@ -103,8 +103,7 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        expect(success.value.xDynamicValue, isNotNull);
-        expect(success.value.xDynamicValue!.flexibleValue, isNotNull);
+        expect(success.value.xDynamicValue!.flexibleValue!.bool, isTrue);
       });
     });
 
@@ -131,7 +130,10 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        expect(success.value.xDynamicValue, isNotNull);
+        final object =
+            success.value.xDynamicValue!.flexibleValue!.simpleObject;
+        expect(object?.name, 'test-object');
+        expect(object?.value, 100);
       });
     });
 
@@ -160,8 +162,12 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        expect(success.value.xDynamicValue, isNotNull);
-        expect(success.value.xDynamicValue!.entityType, isNotNull);
+        final entity = success.value.xDynamicValue!.entityType;
+        expect(entity, isA<EntityTypeCompanyEntity>());
+        expect(
+          (entity! as EntityTypeCompanyEntity).value.companyName,
+          'Acme Inc',
+        );
       });
 
       test('roundtrips PersonEntity', () async {
@@ -189,8 +195,11 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        expect(success.value.xDynamicValue, isNotNull);
-        expect(success.value.xDynamicValue!.entityType, isNotNull);
+        final entity = success.value.xDynamicValue!.entityType;
+        expect(entity, isA<EntityTypePersonEntity>());
+        final decoded = (entity! as EntityTypePersonEntity).value;
+        expect(decoded.firstName, 'John');
+        expect(decoded.lastName, 'Doe');
       });
     });
 
@@ -224,12 +233,15 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        expect(success.value.xDynamicValue, isNotNull);
-        expect(success.value.xDynamicValue!.compositeEntity, isNotNull);
+        final composite = success.value.xDynamicValue!.compositeEntity;
+        expect(composite?.baseEntity.name, 'entity-123');
+        expect(composite?.compositeEntityModel.specificField, 'Test Entity');
+        expect(composite?.timestampMixin.createdAt, DateTime.utc(2024, 1, 15));
+        expect(composite?.timestampMixin.updatedAt, DateTime.utc(2024, 1, 16));
       });
     });
 
-    group('with mixed variants (encoding error expected)', () {
+    group('with multiple variants set', () {
       test('fails when FlexibleValue has mixed shapes', () async {
         // FlexibleValue with both primitive (string) and complex (SimpleObject)
         // should cause encoding error due to mixed shapes
@@ -258,9 +270,11 @@ void main() {
         expect(error.type, TonikErrorType.encoding);
       });
 
-      test('fails when multiple complex variants are set', () async {
-        // Setting both entityType and compositeEntity should cause encoding
-        // issues as anyOf requires exactly one value
+      test('two complex variants merge into one property map and decode back',
+          () async {
+        // entityType and compositeEntity are both complex (map) shapes, so
+        // there is no simple/complex mix: their property maps merge into a
+        // single header and both variants decode back from it.
         const company = CompanyEntity(
           $type: CompanyEntityTypeModel.company,
           companyName: 'Acme',
@@ -283,20 +297,19 @@ void main() {
           dynamicValue: input,
         );
 
-        // This may encode successfully if both map to the same encoding shape
-        // or fail if there's ambiguity
+        final success =
+            result
+                as TonikSuccess<
+                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                >;
+        final value = success.value.xDynamicValue!;
+        final entity = value.entityType;
+        expect(entity, isA<EntityTypeCompanyEntity>());
+        expect((entity! as EntityTypeCompanyEntity).value.companyName, 'Acme');
+        expect(value.compositeEntity?.baseEntity.name, 'id');
         expect(
-          result,
-          anyOf(
-            isA<
-              TonikSuccess<
-                HeadersRoundtripComplexDynamicCompositeGet200Response
-              >
-            >(),
-            isA<
-              TonikError<HeadersRoundtripComplexDynamicCompositeGet200Response>
-            >(),
-          ),
+          value.compositeEntity?.compositeEntityModel.specificField,
+          'name',
         );
       });
     });

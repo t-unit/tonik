@@ -276,5 +276,36 @@ void main() {
         expect(success.value.xPriorityList, isNull);
       });
     });
+
+    group('server-originated response', () {
+      test('injected literal enum list splits on commas and maps each '
+          'element to its enum value', () async {
+        // X-Status-List is injected via Dio, not through Tonik's request
+        // encoder, so the decoded list reflects the server-originated literal.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Status-List': 'active,pending,archived',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final response = await injected.testHeaderRoundtripEnumLists();
+
+        final success =
+            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response>;
+        expect(success.value.xStatusList, [
+          StatusEnum.active,
+          StatusEnum.pending,
+          StatusEnum.archived,
+        ]);
+      });
+    });
   });
 }
