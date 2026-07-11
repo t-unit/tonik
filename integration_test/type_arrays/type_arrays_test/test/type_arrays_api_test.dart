@@ -44,6 +44,18 @@ void main() {
     });
   });
 
+  group('nullable object response', () {
+    test('decodes JSON null as a successful null value', () async {
+      final api = buildApi();
+
+      final result = await api.getNullableWidget();
+
+      expect(result, isA<TonikSuccess<NullableWidget>>());
+      final success = result as TonikSuccess<NullableWidget>;
+      expect(success.value, isNull);
+    });
+  });
+
   group('testSimpleTypes - JSON roundtrip', () {
     test('requiredStringOrNumber: string variant', () async {
       final api = buildApi();
