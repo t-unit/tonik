@@ -1630,7 +1630,7 @@ class ClassGenerator {
       ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toSimple'
       ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll(buildEncodingParameters())
+      ..optionalParameters.addAll(buildSimpleEncodingParameters())
       ..body = Block.of([
         refer('parameterProperties')
             .call([], {'allowEmpty': refer('allowEmpty')})
@@ -1638,6 +1638,7 @@ class ClassGenerator {
             .call([], {
               'explode': refer('explode'),
               'allowEmpty': refer('allowEmpty'),
+              'literal': refer('literal'),
             })
             .returned
             .statement,

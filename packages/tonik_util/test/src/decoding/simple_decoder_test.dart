@@ -326,35 +326,41 @@ void main() {
       });
     });
 
-    group('Escaping and percent-encoding', () {
-      test('decodeSimpleString decodes percent-encoded comma', () {
-        expect('foo%2Cbar'.decodeSimpleString(), 'foo,bar');
+    group('Literal percent handling', () {
+      test('decodeSimpleString returns percent signs literally', () {
+        expect('50%'.decodeSimpleString(), '50%');
+        expect('75%2Fdone'.decodeSimpleString(), '75%2Fdone');
+        expect('a%20b'.decodeSimpleString(), 'a%20b');
+        expect('foo%2Cbar'.decodeSimpleString(), 'foo%2Cbar');
+        expect('%ZZ'.decodeSimpleString(), '%ZZ');
+        expect('trailing%'.decodeSimpleString(), 'trailing%');
       });
 
-      test('decodeSimpleNullableString decodes percent-encoded comma', () {
-        expect('foo%2Cbar'.decodeSimpleNullableString(), 'foo,bar');
+      test('decodeSimpleNullableString returns percent signs literally', () {
+        expect('50%'.decodeSimpleNullableString(), '50%');
+        expect('foo%2Cbar'.decodeSimpleNullableString(), 'foo%2Cbar');
+        expect('%ZZ'.decodeSimpleNullableString(), '%ZZ');
         expect(''.decodeSimpleNullableString(), isNull);
         expect((null as String?).decodeSimpleNullableString(), isNull);
       });
 
-      test(
-        'decodeSimpleStringList splits only on unescaped commas and decodes',
-        () {
-          expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringList(), [
-            'foo',
-            'bar,baz',
-            '',
-            'qux',
-          ]);
-          expect('foo%2Cbar'.decodeSimpleStringList(), ['foo,bar']);
-          expect(''.decodeSimpleStringList(), isEmpty);
-        },
-      );
+      test('decodeSimpleStringList splits on commas and keeps members raw', () {
+        expect('a%2Cb,c'.decodeSimpleStringList(), ['a%2Cb', 'c']);
+        expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringList(), [
+          'foo',
+          'bar%2Cbaz',
+          '',
+          'qux',
+        ]);
+        expect('foo%2Cbar'.decodeSimpleStringList(), ['foo%2Cbar']);
+        expect(''.decodeSimpleStringList(), isEmpty);
+      });
 
-      test('decodeSimpleNullableStringList splits and decodes', () {
+      test('decodeSimpleNullableStringList keeps members raw', () {
+        expect('a%2Cb,c'.decodeSimpleNullableStringList(), ['a%2Cb', 'c']);
         expect('foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringList(), [
           'foo',
-          'bar,baz',
+          'bar%2Cbaz',
           '',
           'qux',
         ]);
@@ -362,51 +368,49 @@ void main() {
         expect((null as String?).decodeSimpleNullableStringList(), isNull);
       });
 
-      test('decodeSimpleStringNullableList splits, decodes, and converts empty '
-          'to null', () {
+      test('decodeSimpleStringNullableList keeps members raw and empty to null',
+          () {
         expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringNullableList(), [
           'foo',
-          'bar,baz',
+          'bar%2Cbaz',
           null,
           'qux',
         ]);
-        expect('foo%2Cbar'.decodeSimpleStringNullableList(), ['foo,bar']);
+        expect('foo%2Cbar'.decodeSimpleStringNullableList(), ['foo%2Cbar']);
         expect(''.decodeSimpleStringNullableList(), isEmpty);
       });
 
-      test(
-        'decodeSimpleNullableStringNullableList splits, decodes, and converts '
-        'empty to null',
-        () {
-          expect(
-            'foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringNullableList(),
-            ['foo', 'bar,baz', null, 'qux'],
-          );
-          expect(''.decodeSimpleNullableStringNullableList(), isNull);
-          expect(
-            (null as String?).decodeSimpleNullableStringNullableList(),
-            isNull,
-          );
-        },
-      );
-
-      test('decodeSimpleDateTime accepts percent-encoded ISO strings', () {
+      test('decodeSimpleNullableStringNullableList keeps members raw', () {
         expect(
-          '2023-12-25T10%3A30%3A00.000Z'.decodeSimpleDateTime().toUtc(),
-          DateTime.utc(2023, 12, 25, 10, 30),
+          'foo,bar%2Cbaz,,qux'.decodeSimpleNullableStringNullableList(),
+          ['foo', 'bar%2Cbaz', null, 'qux'],
+        );
+        expect(''.decodeSimpleNullableStringNullableList(), isNull);
+        expect(
+          (null as String?).decodeSimpleNullableStringNullableList(),
+          isNull,
         );
       });
 
-      test('decodeSimpleUri accepts percent-encoded values', () {
+      test('decodeSimpleDateTime does not percent-decode before parsing', () {
         expect(
-          'https%3A%2F%2Fexample.com%2Fpath%3Fq%3D1'.decodeSimpleUri(),
-          Uri.parse('https://example.com/path?q=1'),
+          () => '2023-12-25T10%3A30%3A00.000Z'.decodeSimpleDateTime(),
+          throwsA(isA<InvalidTypeException>()),
         );
       });
 
-      test('decodeSimpleDouble accepts percent-encoded exponent plus sign', () {
-        const s = '1.7976931348623157e%2B308';
-        expect(s.decodeSimpleDouble(), closeTo(1.7976931348623157e308, 0));
+      test('decodeSimpleUri does not percent-decode before parsing', () {
+        expect(
+          'https://example.com/a%20b'.decodeSimpleUri(),
+          Uri.parse('https://example.com/a%20b'),
+        );
+      });
+
+      test('decodeSimpleDouble does not percent-decode before parsing', () {
+        expect(
+          () => '1.5%2B0'.decodeSimpleDouble(),
+          throwsA(isA<InvalidTypeException>()),
+        );
       });
     });
 
@@ -472,14 +476,14 @@ void main() {
         expect(decoded, original);
       });
 
-      test('percent-decodes base64 padding before decoding', () {
-        const encoded = '3q2%2B7w%3D%3D';
+      test('decodes standard base64 with padding directly', () {
+        const encoded = '3q2+7w==';
         final result = encoded.decodeSimpleBase64();
         expect(result, [0xDE, 0xAD, 0xBE, 0xEF]);
       });
 
-      test('percent-decodes base64 forward slashes before decoding', () {
-        const encoded = '%2F%2F8%3D';
+      test('decodes standard base64 with forward slashes directly', () {
+        const encoded = '//8=';
         final result = encoded.decodeSimpleBase64();
         expect(result, [0xFF, 0xFF]);
       });
@@ -498,9 +502,9 @@ void main() {
         );
       });
 
-      test('throws InvalidTypeException for malformed percent-escape', () {
+      test('throws InvalidTypeException for percent-encoded base64', () {
         expect(
-          () => '%ZZ'.decodeSimpleBase64(),
+          () => '3q2%2B7w%3D%3D'.decodeSimpleBase64(),
           throwsA(isA<InvalidTypeException>()),
         );
       });

@@ -3,28 +3,39 @@ import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/property_value.dart';
 import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
-String _encodeValue(PropertyValue value) => switch (value) {
-  ScalarPropertyValue(:final value) => encodeUriValue(
-    value,
-    allowReserved: false,
-    useQueryComponent: false,
-  ),
-  ArrayPropertyValue(:final values) => values
-      .map(
-        (element) => encodeUriValue(
-          element,
-          allowReserved: false,
-          useQueryComponent: false,
-        ),
-      )
-      .join(','),
-};
+String _encodeValue(PropertyValue value, {required bool literal}) =>
+    switch (value) {
+      ScalarPropertyValue(:final value) => literal
+          ? value
+          : encodeUriValue(
+              value,
+              allowReserved: false,
+              useQueryComponent: false,
+            ),
+      ArrayPropertyValue(:final values) => values
+          .map(
+            (element) => literal
+                ? element
+                : encodeUriValue(
+                    element,
+                    allowReserved: false,
+                    useQueryComponent: false,
+                  ),
+          )
+          .join(','),
+    };
 
-String _collapsedPairs(Map<String, PropertyValue> map) => map.entries
+String _encodeKey(String key, {required bool literal}) =>
+    literal ? key : Uri.encodeComponent(key);
+
+String _collapsedPairs(
+  Map<String, PropertyValue> map, {
+  required bool literal,
+}) => map.entries
     .expand(
       (e) => [
-        Uri.encodeComponent(e.key),
-        _encodeValue(e.value),
+        _encodeKey(e.key, literal: literal),
+        _encodeValue(e.value, literal: literal),
       ],
     )
     .join(',');
@@ -55,7 +66,14 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
 /// not a parity gap to "fix".
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   /// Encodes this property map using simple style encoding.
-  String toSimple({required bool explode, required bool allowEmpty}) {
+  ///
+  /// When [literal] is true, keys and values are emitted without URI encoding,
+  /// as required for HTTP header field-values.
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) {
     _guardEmpty(this, allowEmpty: allowEmpty);
     if (isEmpty) {
       return '';
@@ -64,12 +82,12 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
       return entries
           .map(
             (e) =>
-                '${Uri.encodeComponent(e.key)}='
-                '${_encodeValue(e.value)}',
+                '${_encodeKey(e.key, literal: literal)}='
+                '${_encodeValue(e.value, literal: literal)}',
           )
           .join(',');
     }
-    return _collapsedPairs(this);
+    return _collapsedPairs(this, literal: literal);
   }
 
   /// Encodes this property map using label style encoding.
@@ -83,11 +101,11 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
           .map(
             (e) =>
                 '.${Uri.encodeComponent(e.key)}='
-                '${_encodeValue(e.value)}',
+                '${_encodeValue(e.value, literal: false)}',
           )
           .join();
     }
-    return '.${_collapsedPairs(this)}';
+    return '.${_collapsedPairs(this, literal: false)}';
   }
 
   /// Encodes this property map using matrix style encoding.
@@ -105,11 +123,11 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
           .map(
             (e) =>
                 ';${Uri.encodeComponent(e.key)}='
-                '${_encodeValue(e.value)}',
+                '${_encodeValue(e.value, literal: false)}',
           )
           .join();
     }
-    return ';$paramName=${_collapsedPairs(this)}';
+    return ';$paramName=${_collapsedPairs(this, literal: false)}';
   }
 
   /// Encodes this property map using deepObject style encoding.

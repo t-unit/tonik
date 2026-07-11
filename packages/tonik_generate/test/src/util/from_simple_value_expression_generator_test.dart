@@ -366,6 +366,40 @@ void main() {
       );
     });
 
+    test('generates empty-to-null decoder for nullable-item string lists', () {
+      final value = refer('value');
+      final nullableItemStringListModel = ListModel(
+        content: StringModel(context: context),
+        context: context,
+        examples: const [],
+        isContentNullable: true,
+      );
+
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: nullableItemStringListModel,
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          explode: literalBool(false),
+        ).accept(emitter).toString(),
+        'value.decodeSimpleStringNullableList()',
+      );
+
+      expect(
+        buildSimpleValueExpression(
+          value,
+          model: nullableItemStringListModel,
+          isRequired: false,
+          nameManager: nameManager,
+          package: 'tonik_core',
+          explode: literalBool(false),
+        ).accept(emitter).toString(),
+        'value.decodeSimpleNullableStringNullableList()',
+      );
+    });
+
     test('generates for alias types', () {
       final value = refer('value');
       final stringAlias = AliasModel(

@@ -130,6 +130,30 @@ void main() {
       expect(value.toSimple(explode: false, allowEmpty: false), 'k,');
       expect(value.toSimple(explode: true, allowEmpty: false), 'k=');
     });
+
+    test('literal leaves reserved keys and values unencoded with '
+        'explode=false', () {
+      const value = {
+        'a/b': PropertyValue.scalar('x=y+z'),
+        'tags': PropertyValue.array(['a,b', 'c d']),
+      };
+      expect(
+        value.toSimple(explode: false, allowEmpty: true, literal: true),
+        'a/b,x=y+z,tags,a,b,c d',
+      );
+    });
+
+    test('literal leaves reserved keys and values unencoded with '
+        'explode=true', () {
+      const value = {
+        'a/b': PropertyValue.scalar('x=y+z'),
+        'tags': PropertyValue.array(['a,b', 'c d']),
+      };
+      expect(
+        value.toSimple(explode: true, allowEmpty: true, literal: true),
+        'a/b=x=y+z,tags=a,b,c d',
+      );
+    });
   });
 
   group('PropertyValueStyleEncoders.toLabel', () {

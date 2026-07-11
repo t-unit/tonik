@@ -51,7 +51,7 @@ void main() {
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToSimple = r'''
-String toSimple({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$listSimple = list .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty)) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listSimple); if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } return _$values.first; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$values = <String>{}; final _$listSimple = list .map( (e) => e.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), ) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, literal: literal, ); _$values.add(_$listSimple); if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } return _$values.first; }
 ''';
 
     expect(
@@ -95,7 +95,7 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToSimple = r'''
-String toSimple({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; final _$listSimple = list .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty)) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listSimple); final _$list2Simple = list2 .map((e) => encodeAnyToUri(e, allowEmpty: allowEmpty)) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$list2Simple); if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } return _$values.first; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$values = <String>{}; final _$listSimple = list .map( (e) => e.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), ) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, literal: literal, ); _$values.add(_$listSimple); final _$list2Simple = list2 .map( (e) => encodeAnyToSimple( e, explode: explode, allowEmpty: allowEmpty, literal: literal, ), ) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, literal: literal, ); _$values.add(_$list2Simple); if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } return _$values.first; }
 ''';
 
     expect(
@@ -151,9 +151,13 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
     final combinedClass = generator.generateClass(model);
 
     const expectedToSimpleMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
           return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
         }
       ''';
 
@@ -178,8 +182,16 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
     final combinedClass = generator.generateClass(model);
 
     const expectedToSimpleMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
-          return bigDecimal.toSimple(explode: explode, allowEmpty: allowEmpty);
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
+          return bigDecimal.toSimple(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            literal: literal,
+          );
         }
       ''';
 
@@ -216,8 +228,16 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
       final combinedClass = generator.generateClass(model);
 
       const expectedToSimpleMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
-          return status.toSimple(explode: explode, allowEmpty: allowEmpty);
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
+          return status.toSimple(
+            explode: explode,
+            allowEmpty: allowEmpty,
+            literal: literal,
+          );
         }
       ''';
 
@@ -261,7 +281,11 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
       final combinedClass = generator.generateClass(model);
 
       const expectedToSimpleMethod = '''
-          String toSimple({required bool explode, required bool allowEmpty}) {
+          String toSimple({
+            required bool explode,
+            required bool allowEmpty,
+            bool literal = false,
+          }) {
             throw EncodingException(
               'Simple encoding not supported: contains complex types',
             );
@@ -303,8 +327,16 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
       final combinedClass = generator.generateClass(model);
 
       const expectedToSimpleMethod = '''
-          String toSimple({required bool explode, required bool allowEmpty}) {
-            return status.toSimple(explode: explode, allowEmpty: allowEmpty);
+          String toSimple({
+            required bool explode,
+            required bool allowEmpty,
+            bool literal = false,
+          }) {
+            return status.toSimple(
+              explode: explode,
+              allowEmpty: allowEmpty,
+              literal: literal,
+            );
           }
         ''';
 
@@ -361,14 +393,18 @@ String toSimple({required bool explode, required bool allowEmpty}) { final _$val
     final generated = format(combinedClass.accept(emitter).toString());
 
     const expectedToSimpleMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
           if (currentEncodingShape == EncodingShape.mixed) {
             throw EncodingException(
               'Simple encoding not supported: contains complex types',
             );
           }
           return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
         }
       ''';
 

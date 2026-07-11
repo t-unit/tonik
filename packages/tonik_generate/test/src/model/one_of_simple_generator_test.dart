@@ -55,10 +55,14 @@ void main() {
       final baseClass = classes.firstWhere((c) => c.name == 'Result');
 
       const expectedMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
           return switch (this) {
-            ResultError(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
-            ResultSuccess(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ),
+            ResultError(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ),
+            ResultSuccess(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ),
           };
         }
       ''';
@@ -113,7 +117,7 @@ void main() {
         final baseClass = classes.firstWhere((c) => c.name == 'Response');
 
         const expectedMethod = '''
-String toSimple({required bool explode, required bool allowEmpty}) { return switch (this) { ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toSimple(explode: explode, allowEmpty: allowEmpty), }; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { ResponseMessage(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), ResponseUser(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'user'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
 ''';
 
         expect(
@@ -179,7 +183,7 @@ String toSimple({required bool explode, required bool allowEmpty}) { return swit
         final baseClass = classes.firstWhere((c) => c.name == 'Entity');
 
         const expectedMethod = '''
-String toSimple({required bool explode, required bool allowEmpty}) { return switch (this) { EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'company'), }.toSimple(explode: explode, allowEmpty: allowEmpty), EntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty), }; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { EntityCompany(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'company'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), EntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'entity_type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
 ''';
 
         expect(
@@ -227,7 +231,7 @@ String toSimple({required bool explode, required bool allowEmpty}) { return swit
         final baseClass = classes.firstWhere((c) => c.name == 'MixedEntity');
 
         const expectedMethod = '''
-String toSimple({required bool explode, required bool allowEmpty}) { return switch (this) { MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, ), MixedEntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty), }; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { return switch (this) { MixedEntityId(:final value) => value.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), MixedEntityPerson(:final value) => { ...value.parameterProperties(allowEmpty: allowEmpty), r'type': PropertyValue.scalar(r'person'), }.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal), }; }
 ''';
 
         expect(

@@ -223,6 +223,13 @@ List<Parameter> buildEncodingParameters() => [
   buildBoolParameter('allowEmpty', required: true),
 ];
 
+/// Encoding parameters for simple-style `toSimple`, which additionally accepts
+/// [literal] so header field-values are transmitted without URI encoding.
+List<Parameter> buildSimpleEncodingParameters() => [
+  ...buildEncodingParameters(),
+  buildBoolParameter('literal'),
+];
+
 /// A `Map<String, FormFieldEncoding> fieldEncodings = const {}` parameter that
 /// carries per-property reserved-character overrides into form encoding.
 Parameter buildFieldEncodingsParameter() => Parameter(

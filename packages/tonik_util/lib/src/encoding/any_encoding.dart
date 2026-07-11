@@ -117,10 +117,14 @@ String encodeAnyToLabel(
 /// Note: when an unsupported nested element raises [EncodingException], the
 /// message identifies only the inner type — no path / key context is attached
 /// to indicate where in the structure the failure originated.
+///
+/// When [literal] is true, values are sent without URI encoding (HTTP header
+/// field-values), including nested map/list elements.
 String encodeAnyToSimple(
   Object? value, {
   required bool explode,
   required bool allowEmpty,
+  bool literal = false,
 }) {
   if (value == null) {
     if (!allowEmpty) {
@@ -129,28 +133,60 @@ String encodeAnyToSimple(
     return '';
   }
   if (value is ParameterEncodable) {
-    return value.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return value.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
   if (value is String) {
-    return value.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return value.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
   if (value is int) {
-    return value.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return value.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
   if (value is double) {
-    return value.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return value.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
   if (value is bool) {
-    return value.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return value.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
   if (value is DateTime) {
-    return value.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return value.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
   if (value is Uri) {
-    return value.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return value.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
   if (value is BigDecimal) {
-    return value.toSimple(explode: explode, allowEmpty: allowEmpty);
+    return value.toSimple(
+      explode: explode,
+      allowEmpty: allowEmpty,
+      literal: literal,
+    );
   }
   if (value is Map<String, dynamic>) {
     if (value.isEmpty && !allowEmpty) {
@@ -162,12 +198,14 @@ String encodeAnyToSimple(
           entry.value,
           explode: explode,
           allowEmpty: allowEmpty,
+          literal: literal,
         ),
     };
     return encoded.toSimple(
       explode: explode,
       allowEmpty: allowEmpty,
       alreadyEncoded: true,
+      literal: literal,
     );
   }
   if (value is List<dynamic>) {
@@ -180,6 +218,7 @@ String encodeAnyToSimple(
             item,
             explode: explode,
             allowEmpty: allowEmpty,
+            literal: literal,
           ),
         )
         .toList();
@@ -187,6 +226,7 @@ String encodeAnyToSimple(
       explode: explode,
       allowEmpty: allowEmpty,
       alreadyEncoded: true,
+      literal: literal,
     );
   }
   throw EncodingException(

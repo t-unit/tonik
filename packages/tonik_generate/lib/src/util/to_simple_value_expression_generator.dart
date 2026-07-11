@@ -105,6 +105,8 @@ BuiltExpression buildToSimplePathParameterExpression(
 
 /// [isNullChecked] suppresses null-aware access for callers already
 /// inside an `if (param != null)` block.
+///
+/// Header field-values are encoded literally (sent as-is).
 BuiltExpression buildToSimpleHeaderParameterExpression(
   String parameterName,
   RequestHeaderObject parameter, {
@@ -120,6 +122,7 @@ BuiltExpression buildToSimpleHeaderParameterExpression(
       isNullable: !isNullChecked && model.isEffectivelyNullable,
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: true,
     ),
   );
 }
@@ -148,14 +151,16 @@ Expression _buildSimpleSerializationExpression(
   required bool isNullable,
   required bool explode,
   required bool allowEmpty,
+  bool literal = false,
 }) {
   final useNullAware = isNullable;
 
-  Expression callToSimple(Expression target) {
+  Expression callToSimple(Expression target, {required bool asLiteral}) {
     const methodName = 'toSimple';
     final args = <String, Expression>{
       'explode': literalBool(explode),
       'allowEmpty': literalBool(allowEmpty),
+      if (asLiteral) 'literal': literalBool(true),
     };
     if (useNullAware) {
       return target.nullSafeProperty(methodName).call([], args);
@@ -176,15 +181,14 @@ Expression _buildSimpleSerializationExpression(
     BooleanModel() ||
     DateTimeModel() ||
     DecimalModel() ||
-    UriModel() => callToSimple(receiver),
+    UriModel() ||
+    DateModel() => callToSimple(receiver, asLiteral: literal),
 
-    // Complex types that should have toSimple methods
-    DateModel() ||
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => callToSimple(receiver),
+    AnyOfModel() => callToSimple(receiver, asLiteral: literal),
 
     // MapModel: convert values to strings, then call toSimple
     MapModel() => _buildMapSimpleExpression(
@@ -193,6 +197,7 @@ Expression _buildSimpleSerializationExpression(
       isNullable: isNullable,
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     ),
 
     // Base64Model: convert to base64 string, then call toSimple
@@ -203,6 +208,7 @@ Expression _buildSimpleSerializationExpression(
       final args = <String, Expression>{
         'explode': literalBool(explode),
         'allowEmpty': literalBool(allowEmpty),
+        if (literal) 'literal': literalBool(true),
       };
       return base64Expr.property('toSimple').call([], args);
     }(),
@@ -215,15 +221,16 @@ Expression _buildSimpleSerializationExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isContentNullable: m.isContentNullable || m.content.isEffectivelyNullable,
+      literal: literal,
     ),
 
-    // Alias models delegate to their underlying type
     AliasModel() => _buildSimpleSerializationExpression(
       receiver,
       model.model,
       isNullable: isNullable,
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     ),
 
     AnyModel() =>
@@ -232,6 +239,7 @@ Expression _buildSimpleSerializationExpression(
         {
           'explode': literalBool(explode),
           'allowEmpty': literalBool(allowEmpty),
+          if (literal) 'literal': literalBool(true),
         },
       ),
 
@@ -248,10 +256,12 @@ Expression _handleListExpression(
   required bool explode,
   required bool allowEmpty,
   required bool isContentNullable,
+  bool literal = false,
 }) {
   final toSimpleArgs = <String, Expression>{
     'explode': literalBool(explode),
     'allowEmpty': literalBool(allowEmpty),
+    if (literal) 'literal': literalBool(true),
   };
 
   Expression callToSimpleOnList(Expression listExpr) {
@@ -282,6 +292,23 @@ Expression _handleListExpression(
       .property('toList')
       .call([]);
 
+  Expression mappedSerialize({required bool asLiteral}) => mappedList(
+    nullGuard(
+      _buildSimpleSerializationExpression(
+        refer('e'),
+        contentModel,
+        isNullable: false,
+        explode: explode,
+        allowEmpty: allowEmpty,
+        literal: asLiteral,
+      ),
+    ),
+  ).property('toSimple').call([], {
+    'explode': literalBool(explode),
+    'allowEmpty': literalBool(allowEmpty),
+    if (asLiteral) 'literal': literalBool(true),
+  });
+
   return switch (contentModel) {
     NeverModel() => generateEncodingExceptionExpression(
       'Cannot encode List<NeverModel> - this type does not permit any value.',
@@ -302,6 +329,7 @@ Expression _handleListExpression(
         nullGuard(
           refer('e').property('uriEncode').call([], {
             'allowEmpty': literalBool(allowEmpty),
+            if (literal) 'literal': literalBool(true),
           }),
         ),
       ).property('toSimple').call([], {
@@ -309,25 +337,14 @@ Expression _handleListExpression(
         'alreadyEncoded': literalBool(true),
       }),
 
-    DateTimeModel() ||
-    DecimalModel() ||
-    UriModel() ||
-    DateModel() ||
+    DateTimeModel() || DecimalModel() || UriModel() || DateModel() =>
+      mappedSerialize(asLiteral: literal),
+
     EnumModel() ||
     ClassModel() ||
     AllOfModel() ||
     OneOfModel() ||
-    AnyOfModel() => mappedList(
-      nullGuard(
-        _buildSimpleSerializationExpression(
-          refer('e'),
-          contentModel,
-          isNullable: false,
-          explode: explode,
-          allowEmpty: allowEmpty,
-        ),
-      ),
-    ).property('toSimple').call([], toSimpleArgs),
+    AnyOfModel() => mappedSerialize(asLiteral: literal),
 
     AliasModel() => _handleListExpression(
       receiver,
@@ -336,6 +353,7 @@ Expression _handleListExpression(
       explode: explode,
       allowEmpty: allowEmpty,
       isContentNullable: isContentNullable,
+      literal: literal,
     ),
 
     AnyModel() => callToSimpleOnList(receiver),
@@ -352,6 +370,7 @@ Expression _handleListExpression(
       isNullable: isNullable,
       explode: explode,
       allowEmpty: allowEmpty,
+      literal: literal,
     ),
 
     _ => generateEncodingExceptionExpression(
@@ -366,6 +385,7 @@ Expression _buildMapSimpleExpression(
   required bool isNullable,
   required bool explode,
   required bool allowEmpty,
+  bool literal = false,
 }) {
   final converted = buildMapToStringMapExpression(
     receiver,
@@ -390,6 +410,7 @@ Expression _buildMapSimpleExpression(
     {
       'explode': literalBool(explode),
       'allowEmpty': literalBool(allowEmpty),
+      if (literal) 'literal': literalBool(true),
     },
   );
 }
@@ -400,6 +421,7 @@ Expression _buildListMapContentSimpleExpression(
   required bool isNullable,
   required bool explode,
   required bool allowEmpty,
+  bool literal = false,
 }) {
   final converted = buildMapToStringMapExpression(
     refer('e'),
@@ -430,6 +452,7 @@ Expression _buildListMapContentSimpleExpression(
               {
                 'explode': literalBool(explode),
                 'allowEmpty': literalBool(allowEmpty),
+                if (literal) 'literal': literalBool(true),
               },
             ).code,
         ).closure,
@@ -443,6 +466,7 @@ Expression _buildListMapContentSimpleExpression(
           'explode': literalBool(explode),
           'allowEmpty': literalBool(allowEmpty),
           'alreadyEncoded': literalBool(true),
+          if (literal) 'literal': literalBool(true),
         },
       );
 }

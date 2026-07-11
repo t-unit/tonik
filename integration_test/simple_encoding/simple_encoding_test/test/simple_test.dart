@@ -277,7 +277,7 @@ void main() {
     );
     expect(
       success.response.requestOptions.headers['x-timestamp'],
-      '1970-01-01T14%3A30%3A00.000Z',
+      '1970-01-01T14:30:00.000Z',
     );
   });
 }

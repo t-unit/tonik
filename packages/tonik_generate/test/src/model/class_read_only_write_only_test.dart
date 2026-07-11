@@ -405,9 +405,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
           return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
         }
       ''';
 

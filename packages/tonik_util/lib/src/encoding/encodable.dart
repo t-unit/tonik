@@ -36,9 +36,12 @@ abstract interface class SimpleEncodable {
   ///
   /// When [explode] is true, object properties become key=value pairs.
   /// When [allowEmpty] is false, empty values throw an exception.
+  /// When [literal] is true, the value is sent without URI encoding (HTTP
+  /// header field-values); encode-only — `fromSimple` does not reverse it.
   String toSimple({
     required bool explode,
     required bool allowEmpty,
+    bool literal = false,
   });
 }
 
@@ -100,6 +103,9 @@ abstract interface class JsonEncodable {
 }
 
 /// Marker interface for types that support URI encoding.
+///
+/// `literal` is intentionally omitted here: it is only passed on
+/// statically-typed receivers, never through this marker type.
 abstract interface class UriEncodable {
   /// URI encodes this value.
   ///

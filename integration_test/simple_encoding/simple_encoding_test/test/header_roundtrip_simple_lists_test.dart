@@ -337,5 +337,32 @@ void main() {
         expect(success.value.xBooleanList, isNull);
       });
     });
+
+    group('server-originated response', () {
+      test('injected literal string list splits on commas only and keeps '
+          'reserved chars verbatim', () async {
+        // Server-originated: X-String-List is injected via Dio, not
+        // sent by Tonik's encoder.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-String-List': 'a%2Fb,50%,c d',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final response = await injected.testHeaderRoundtripSimpleLists();
+
+        final success =
+            response as TonikSuccess<HeadersRoundtripListsSimpleGet200Response>;
+        expect(success.value.xStringList, ['a%2Fb', '50%', 'c d']);
+      });
+    });
   });
 }

@@ -1256,6 +1256,7 @@ components:
         - inactive
         - pending
         - archived
+        - 50% off
 
     PriorityEnum:
       type: integer

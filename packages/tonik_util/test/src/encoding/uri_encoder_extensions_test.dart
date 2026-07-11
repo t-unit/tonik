@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 void main() {
+  setUpAll(tz.initializeTimeZones);
+
   group('UriEncoder', () {
     test('encodes URI values', () {
       final uri = Uri.parse('https://example.com/path?query=value');
@@ -477,6 +483,237 @@ void main() {
         ),
         'a%26b,c%3Ad',
       );
+    });
+  });
+
+  group('literal', () {
+    test('string is returned byte-for-byte unchanged', () {
+      expect(
+        'a b%,/:&=+%2F'.uriEncode(allowEmpty: true, literal: true),
+        'a b%,/:&=+%2F',
+      );
+    });
+
+    test('string literal keeps unicode unchanged', () {
+      expect('你好'.uriEncode(allowEmpty: true, literal: true), '你好');
+    });
+
+    test('empty string still throws when allowEmpty is false', () {
+      expect(
+        () => ''.uriEncode(allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('empty string allowed when allowEmpty is true', () {
+      expect(''.uriEncode(allowEmpty: true, literal: true), '');
+    });
+
+    test('DateTime keeps literal colons', () {
+      final dateTime = DateTime.utc(2023, 12, 25, 10, 30, 45);
+      expect(
+        dateTime.uriEncode(allowEmpty: true, literal: true),
+        '2023-12-25T10:30:45.000Z',
+      );
+    });
+
+    test('non-UTC DateTime keeps the offset colon literal', () {
+      final dateTime = tz.TZDateTime(
+        tz.getLocation('Asia/Kolkata'),
+        2023,
+        12,
+        25,
+        20,
+        0,
+        45,
+      );
+      expect(
+        dateTime.uriEncode(allowEmpty: true, literal: true),
+        '2023-12-25T20:00:45+05:30',
+      );
+    });
+
+    test('non-UTC DateTime offset colon is percent-encoded by default', () {
+      final dateTime = tz.TZDateTime(
+        tz.getLocation('Asia/Kolkata'),
+        2023,
+        12,
+        25,
+        20,
+        0,
+        45,
+      );
+      expect(
+        dateTime.uriEncode(allowEmpty: true),
+        '2023-12-25T20%3A00%3A45%2B05%3A30',
+      );
+    });
+
+    test('Uri keeps punctuation literal', () {
+      final uri = Uri.parse('https://example.com/path?query=value');
+      expect(
+        uri.uriEncode(allowEmpty: true, literal: true),
+        'https://example.com/path?query=value',
+      );
+    });
+
+    test('Uri keeps the fragment delimiter literal', () {
+      final uri = Uri.parse('https://example.com/p#frag');
+      expect(
+        uri.uriEncode(allowEmpty: true, literal: true),
+        'https://example.com/p#frag',
+      );
+    });
+
+    test('Uri fragment delimiter is percent-encoded without literal', () {
+      final uri = Uri.parse('https://example.com/p#frag');
+      expect(
+        uri.uriEncode(allowEmpty: true),
+        'https%3A%2F%2Fexample.com%2Fp%23frag',
+      );
+    });
+
+    test('int uses plain string form', () {
+      expect((-123).uriEncode(allowEmpty: true, literal: true), '-123');
+    });
+
+    test('double uses plain string form', () {
+      expect(3.14.uriEncode(allowEmpty: true, literal: true), '3.14');
+    });
+
+    test('num uses plain string form', () {
+      expect((3.14 as num).uriEncode(allowEmpty: true, literal: true), '3.14');
+    });
+
+    test('bool uses plain string form', () {
+      expect(true.uriEncode(allowEmpty: true, literal: true), 'true');
+    });
+
+    test('BigDecimal uses plain string form', () {
+      expect(
+        BigDecimal.parse('123.456').uriEncode(allowEmpty: true, literal: true),
+        '123.456',
+      );
+    });
+
+    test('takes precedence over useQueryComponent', () {
+      expect(
+        'a b'.uriEncode(
+          allowEmpty: true,
+          literal: true,
+          useQueryComponent: true,
+        ),
+        'a b',
+      );
+    });
+
+    test('takes precedence over allowReserved', () {
+      expect(
+        'a&b=c'.uriEncode(allowEmpty: true, literal: true, allowReserved: true),
+        'a&b=c',
+      );
+    });
+
+    test('list joins members without encoding them', () {
+      expect(
+        ['a b', 'c/d', '50%'].uriEncode(allowEmpty: true, literal: true),
+        'a b,c/d,50%',
+      );
+    });
+
+    test('list keeps already-percent-encoded members verbatim', () {
+      expect(
+        ['%2F', 'plain%'].uriEncode(allowEmpty: true, literal: true),
+        '%2F,plain%',
+      );
+    });
+
+    test('list joins members verbatim when literal and alreadyEncoded', () {
+      expect(
+        ['a b', 'c/d', '%2F'].uriEncode(
+          allowEmpty: true,
+          literal: true,
+          alreadyEncoded: true,
+        ),
+        'a b,c/d,%2F',
+      );
+    });
+
+    test('empty list still throws when allowEmpty is false', () {
+      expect(
+        () => <String>[].uriEncode(allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('empty list allowed when allowEmpty is true', () {
+      expect(<String>[].uriEncode(allowEmpty: true, literal: true), '');
+    });
+
+    test('map emits keys and values verbatim as k1,v1,k2,v2', () {
+      expect(
+        {'k1': 'a b', 'k2': 'c/d'}.uriEncode(allowEmpty: true, literal: true),
+        'k1,a b,k2,c/d',
+      );
+    });
+
+    test('map keeps percent sequences in keys and values verbatim', () {
+      expect(
+        {'50%': '%2F'}.uriEncode(allowEmpty: true, literal: true),
+        '50%,%2F',
+      );
+    });
+
+    test('empty map still throws when allowEmpty is false', () {
+      expect(
+        () => <String, String>{}.uriEncode(allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('empty map allowed when allowEmpty is true', () {
+      expect(<String, String>{}.uriEncode(allowEmpty: true, literal: true), '');
+    });
+
+    test('binary returns UTF-8 conversion without a URI-encoding pass', () {
+      expect(
+        utf8.encode('a b/:').uriEncode(allowEmpty: true, literal: true),
+        'a b/:',
+      );
+    });
+
+    test('empty binary still throws when allowEmpty is false', () {
+      expect(
+        () => <int>[].uriEncode(allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('empty binary allowed when allowEmpty is true', () {
+      expect(<int>[].uriEncode(allowEmpty: true, literal: true), '');
+    });
+
+    test('base64-shaped string keeps + / = literal', () {
+      expect(
+        'YWI+Y2Q/ZWY='.uriEncode(allowEmpty: true, literal: true),
+        'YWI+Y2Q/ZWY=',
+      );
+    });
+
+    test('literal false stays byte-identical to default URI behavior', () {
+      expect('a b/:'.uriEncode(allowEmpty: true), 'a%20b%2F%3A');
+      expect(42.uriEncode(allowEmpty: true), '42');
+      final uri = Uri.parse('https://example.com');
+      expect(uri.uriEncode(allowEmpty: true), 'https%3A%2F%2Fexample.com');
+      expect(
+        ['a b', 'c/d'].uriEncode(allowEmpty: true),
+        'a%20b,c%2Fd',
+      );
+      expect(
+        {'k': 'a b'}.uriEncode(allowEmpty: true),
+        'k,a%20b',
+      );
+      expect(utf8.encode('a b/:').uriEncode(allowEmpty: true), 'a%20b%2F%3A');
     });
   });
 }

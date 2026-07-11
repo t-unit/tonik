@@ -41,7 +41,7 @@ void main() {
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.headers['x-nullable-string-list'],
-        'hello%20world,foo%2Fbar,',
+        'hello world,foo/bar,',
       );
     });
 
@@ -69,6 +69,33 @@ void main() {
         response,
         isA<TonikError<HeadersRoundtripListsNullableGet200Response>>(),
       );
+    });
+
+    group('server-originated response', () {
+      test('injected literal decodes reserved chars verbatim and empty '
+          'elements as null', () async {
+        // Server-originated: X-Nullable-String-List injected via Dio;
+        // exercises the empty-element→null branch.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Nullable-String-List': 'a%2Fb,,50%',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final response = await injected.testHeaderRoundtripNullableLists();
+
+        final success = response
+            as TonikSuccess<HeadersRoundtripListsNullableGet200Response>;
+        expect(success.value.xNullableStringList, ['a%2Fb', null, '50%']);
+      });
     });
   });
 }
