@@ -112,6 +112,32 @@ void main() {
     rawDefault: null,
   );
 
+  final inlineNullableClass = Schema(
+    ref: null,
+    type: ['object', 'null'],
+    format: null,
+    required: [],
+    enumerated: null,
+    allOf: null,
+    anyOf: null,
+    oneOf: null,
+    not: null,
+    items: null,
+    properties: {},
+    description: '',
+    isNullable: null,
+    discriminator: null,
+    isDeprecated: false,
+    uniqueItems: false,
+    xDartName: null,
+    xDartEnum: null,
+    defs: null,
+    contentEncoding: null,
+    contentMediaType: null,
+    contentSchema: null,
+    rawDefault: null,
+  );
+
   final inlineUri = Schema(
     ref: null,
     type: ['string'],
@@ -220,6 +246,15 @@ void main() {
 
     final result = importer.importSchema(inlineClass, context);
     expect(importer.models, contains(result));
+  });
+
+  test('imports inline object with null type as nullable', () {
+    final context = Context.initial().pushAll(['paths', 'response']);
+
+    final result = importer.importSchema(inlineNullableClass, context);
+
+    expect(result, isA<ClassModel>());
+    expect((result as ClassModel).isNullable, isTrue);
   });
 
   test('does not add inline primitive schema to models', () {

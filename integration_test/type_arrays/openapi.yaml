@@ -134,6 +134,20 @@ paths:
               schema:
                 $ref: '#/components/schemas/StringOrNumber'
 
+  /nullable-object-response:
+    get:
+      operationId: getNullableWidget
+      tags:
+        - type-arrays
+      summary: Return a nullable object
+      responses:
+        '200':
+          description: A widget or JSON null
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullableWidget'
+
 components:
   schemas:
     # Simple type arrays (no null)
@@ -181,6 +195,16 @@ components:
     NullableMultiType:
       type: [string, integer, boolean, 'null']
       description: Multiple types, nullable
+
+    NullableWidget:
+      type: [object, 'null']
+      properties:
+        id:
+          type: string
+        size:
+          type: integer
+      required:
+        - id
 
     # Type arrays in object properties
     SimpleTypeArrays:
