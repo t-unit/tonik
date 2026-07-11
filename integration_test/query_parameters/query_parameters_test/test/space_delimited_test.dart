@@ -563,6 +563,16 @@ void main() {
         'listEnum=high%20priority%20urgent%20low%20priority',
       );
     });
+
+    test('empty array is dropped from the query', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedList(
+        listString: const [],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
   });
 
   group('list - explode true', () {

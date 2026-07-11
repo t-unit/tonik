@@ -29,26 +29,21 @@ void main() {
         expect(result, ['a%26b%20c%3Dd']);
       });
 
-      test('encodes empty list when allowEmpty is true', () {
+      test('omits empty list when allowEmpty is true', () {
         final result = <String>[].toSpaceDelimited(
           explode: false,
           allowEmpty: true,
         );
-        expect(result, ['']);
+        expect(result, const <String>[]);
       });
 
-      test(
-        'throws EmptyValueException when empty list and allowEmpty is false',
-        () {
-          expect(
-            () => <String>[].toSpaceDelimited(
-              explode: false,
-              allowEmpty: false,
-            ),
-            throwsA(isA<EmptyValueException>()),
-          );
-        },
-      );
+      test('omits empty list when allowEmpty is false', () {
+        final result = <String>[].toSpaceDelimited(
+          explode: false,
+          allowEmpty: false,
+        );
+        expect(result, const <String>[]);
+      });
 
       test('encodes single item list', () {
         final result = ['single'].toSpaceDelimited(
@@ -129,26 +124,21 @@ void main() {
         expect(result, ['item%201', 'item%202']);
       });
 
-      test('encodes empty list when allowEmpty is true', () {
+      test('omits empty list when allowEmpty is true', () {
         final result = <String>[].toSpaceDelimited(
           explode: true,
           allowEmpty: true,
         );
-        expect(result, ['']);
+        expect(result, const <String>[]);
       });
 
-      test(
-        'throws EmptyValueException when empty list and allowEmpty is false',
-        () {
-          expect(
-            () => <String>[].toSpaceDelimited(
-              explode: true,
-              allowEmpty: false,
-            ),
-            throwsA(isA<EmptyValueException>()),
-          );
-        },
-      );
+      test('omits empty list when allowEmpty is false', () {
+        final result = <String>[].toSpaceDelimited(
+          explode: true,
+          allowEmpty: false,
+        );
+        expect(result, const <String>[]);
+      });
 
       test('encodes single item list', () {
         final result = ['single'].toSpaceDelimited(
