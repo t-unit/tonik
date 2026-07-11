@@ -172,7 +172,8 @@ extension SimpleBinaryEncoder on List<int> {
   /// Encodes binary data to a UTF-8 string using simple style encoding.
   ///
   /// Uses Utf8Decoder with allowMalformed: true to handle any byte sequence.
-  /// The resulting string is then URL-encoded for safe transport.
+  /// The resulting string is then URL-encoded for safe transport, unless
+  /// [literal] is set.
   ///
   /// The [explode] parameter is accepted for consistency but has no effect
   /// on binary encoding (binary data is treated as a primitive value).

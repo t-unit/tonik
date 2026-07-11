@@ -628,6 +628,17 @@ void main() {
       );
     });
 
+    test('list joins members verbatim when literal and alreadyEncoded', () {
+      expect(
+        ['a b', 'c/d', '%2F'].uriEncode(
+          allowEmpty: true,
+          literal: true,
+          alreadyEncoded: true,
+        ),
+        'a b,c/d,%2F',
+      );
+    });
+
     test('empty list still throws when allowEmpty is false', () {
       expect(
         () => <String>[].uriEncode(allowEmpty: false, literal: true),

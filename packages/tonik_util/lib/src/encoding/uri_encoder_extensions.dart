@@ -235,7 +235,11 @@ extension StringListUriEncoder on List<String> {
       return '';
     }
 
-    if (literal || alreadyEncoded) {
+    if (literal) {
+      return join(',');
+    }
+
+    if (alreadyEncoded) {
       return join(',');
     }
 
