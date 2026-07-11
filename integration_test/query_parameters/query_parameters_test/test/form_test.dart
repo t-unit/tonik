@@ -633,6 +633,14 @@ void main() {
         'listNullableInteger=1&listNullableInteger=&listNullableInteger=2',
       );
     });
+
+    test('empty array drops the whole query', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormListExplode(listString: const []);
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
   });
 
   group('primitive - new types', () {

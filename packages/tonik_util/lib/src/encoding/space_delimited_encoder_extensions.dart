@@ -18,9 +18,8 @@ extension SpaceDelimitedStringListEncoder on List<String> {
   /// - explode=false: space-separated values (value1%20value2%20value3)
   /// - explode=true: multiple parameter instances (handled at parameter level)
   ///
-  /// An empty list is omitted entirely (returns `const []`), per RFC 6570
-  /// form expansion — an empty array is a valid value and is not gated by
-  /// [allowEmpty], which concerns empty-string values.
+  /// An empty list is omitted; [allowEmpty] gates empty-string values, not
+  /// empty arrays.
   ///
   /// The [alreadyEncoded] parameter indicates whether the list items are
   /// already URI-encoded and should not be encoded again.

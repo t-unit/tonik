@@ -573,6 +573,20 @@ void main() {
       final success = response as TonikSuccess<void>;
       expect(success.response.requestOptions.uri.query, '');
     });
+
+    test('empty array is dropped while a populated param remains', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedList(
+        listString: const [],
+        listOneOfPrimitive: [const OneOfPrimitiveString('test')],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'listOneOfPrimitive=test',
+      );
+    });
   });
 
   group('list - explode true', () {
@@ -631,6 +645,16 @@ void main() {
         success.response.requestOptions.uri.query,
         'listEnum=high%20priority&listEnum=urgent&listEnum=low%20priority',
       );
+    });
+
+    test('empty array drops the whole query', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedListExplode(
+        listString: const [],
+      );
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
     });
   });
 
