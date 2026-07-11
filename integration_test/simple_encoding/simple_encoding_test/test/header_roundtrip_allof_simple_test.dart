@@ -159,8 +159,8 @@ void main() {
         // Server-originated: X-Composite-Entity is injected via Dio, not
         // sent by Tonik's encoder.
         // created_at is required for the merged allOf object to decode.
-        // ignore: lines_longer_than_80_chars
-        const literal = 'name,x%2Fy 50%,created_at,2024-01-15T10:30:00.000Z,specific_field,keep%2Fraw';
+        const literal =
+            '''name,x%2Fy 50%,created_at,2024-01-15T10:30:00.000Z,specific_field,keep%2Fraw''';
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
