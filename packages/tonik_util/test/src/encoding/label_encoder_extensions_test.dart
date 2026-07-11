@@ -20,11 +20,8 @@ void main() {
       expect(''.toLabel(explode: false, allowEmpty: true), '.');
     });
 
-    test('throws exception for empty String when allowEmpty is false', () {
-      expect(
-        () => ''.toLabel(explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+    test('encodes empty String as a bare dot when allowEmpty is false', () {
+      expect(''.toLabel(explode: false, allowEmpty: false), '.');
     });
 
     test('explode parameter has no effect on primitives', () {

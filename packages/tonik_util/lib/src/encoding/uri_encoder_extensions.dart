@@ -39,9 +39,6 @@ extension StringUriEncoder on String {
     bool allowReserved = false,
     bool literal = false,
   }) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
-    }
     if (literal) {
       return this;
     }

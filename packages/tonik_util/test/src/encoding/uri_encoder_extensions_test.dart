@@ -34,15 +34,9 @@ void main() {
       );
     });
 
-    test('handles empty strings with allowEmpty true', () {
+    test('encodes empty string as empty regardless of allowEmpty', () {
       expect(''.uriEncode(allowEmpty: true), '');
-    });
-
-    test('throws exception for empty strings with allowEmpty false', () {
-      expect(
-        () => ''.uriEncode(allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(''.uriEncode(allowEmpty: false), '');
     });
 
     test('encodes special characters', () {
@@ -498,15 +492,9 @@ void main() {
       expect('你好'.uriEncode(allowEmpty: true, literal: true), '你好');
     });
 
-    test('empty string still throws when allowEmpty is false', () {
-      expect(
-        () => ''.uriEncode(allowEmpty: false, literal: true),
-        throwsA(isA<EmptyValueException>()),
-      );
-    });
-
-    test('empty string allowed when allowEmpty is true', () {
+    test('empty string literal is empty regardless of allowEmpty', () {
       expect(''.uriEncode(allowEmpty: true, literal: true), '');
+      expect(''.uriEncode(allowEmpty: false, literal: true), '');
     });
 
     test('DateTime keeps literal colons', () {

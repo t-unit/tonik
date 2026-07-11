@@ -24,11 +24,18 @@ extension MatrixUriEncoder on Uri {
 /// Extension for encoding String values.
 extension MatrixStringEncoder on String {
   /// Encodes this string value using matrix style encoding.
+  ///
+  /// A defined empty string expands to `;name` without `=`.
   String toMatrix(
     String paramName, {
     required bool explode,
     required bool allowEmpty,
-  }) => ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }) {
+    if (isEmpty) {
+      return ';$paramName';
+    }
+    return ';$paramName=${uriEncode(allowEmpty: allowEmpty)}';
+  }
 }
 
 /// Extension for encoding int values.

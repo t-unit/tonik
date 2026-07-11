@@ -361,12 +361,9 @@ void main() {
     });
 
     group('allowEmpty parameter behavior', () {
-      test('empty string should throw with allowEmpty=false', () {
+      test('empty string encodes to empty with allowEmpty=false', () {
         const value = '';
-        expect(
-          () => value.toSimple(explode: false, allowEmpty: false),
-          throwsException,
-        );
+        expect(value.toSimple(explode: false, allowEmpty: false), '');
       });
 
       test('non-empty string ignores allowEmpty parameter', () {
@@ -1294,11 +1291,9 @@ void main() {
       );
     });
 
-    test('empty string still throws when allowEmpty is false', () {
-      expect(
-        () => ''.toSimple(explode: false, allowEmpty: false, literal: true),
-        throwsA(isA<EmptyValueException>()),
-      );
+    test('empty string literal is empty regardless of allowEmpty', () {
+      expect(''.toSimple(explode: false, allowEmpty: true, literal: true), '');
+      expect(''.toSimple(explode: false, allowEmpty: false, literal: true), '');
     });
 
     test('DateTime keeps literal colons', () {

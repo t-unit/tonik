@@ -78,6 +78,16 @@ void main() {
       expect(success.response.requestOptions.uri.query, 'string=test');
     });
 
+    test('empty string sends the name with an empty value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormPrimitive(string: '');
+
+      expect(response, isA<TonikSuccess<void>>());
+
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, 'string=');
+    });
+
     test('boolean', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(boolean: true);
@@ -646,6 +656,16 @@ void main() {
       expect(response, isA<TonikSuccess<void>>());
       final success = response as TonikSuccess<void>;
       expect(success.response.requestOptions.uri.query, 'nullableString=test');
+    });
+
+    test('nullableString with empty string sends an empty value, not omitted',
+        () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormPrimitive(nullableString: '');
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, 'nullableString=');
     });
 
     test('nullableString with null', () async {
