@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -612,11 +614,95 @@ void main() {
       );
     });
 
+    test('list joins members without encoding them', () {
+      expect(
+        ['a b', 'c/d', '50%'].uriEncode(allowEmpty: true, literal: true),
+        'a b,c/d,50%',
+      );
+    });
+
+    test('list keeps already-percent-encoded members verbatim', () {
+      expect(
+        ['%2F', 'plain%'].uriEncode(allowEmpty: true, literal: true),
+        '%2F,plain%',
+      );
+    });
+
+    test('empty list still throws when allowEmpty is false', () {
+      expect(
+        () => <String>[].uriEncode(allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('empty list allowed when allowEmpty is true', () {
+      expect(<String>[].uriEncode(allowEmpty: true, literal: true), '');
+    });
+
+    test('map emits keys and values verbatim as k1,v1,k2,v2', () {
+      expect(
+        {'k1': 'a b', 'k2': 'c/d'}.uriEncode(allowEmpty: true, literal: true),
+        'k1,a b,k2,c/d',
+      );
+    });
+
+    test('map keeps percent sequences in keys and values verbatim', () {
+      expect(
+        {'50%': '%2F'}.uriEncode(allowEmpty: true, literal: true),
+        '50%,%2F',
+      );
+    });
+
+    test('empty map still throws when allowEmpty is false', () {
+      expect(
+        () => <String, String>{}.uriEncode(allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('empty map allowed when allowEmpty is true', () {
+      expect(<String, String>{}.uriEncode(allowEmpty: true, literal: true), '');
+    });
+
+    test('binary returns UTF-8 conversion without a URI-encoding pass', () {
+      expect(
+        utf8.encode('a b/:').uriEncode(allowEmpty: true, literal: true),
+        'a b/:',
+      );
+    });
+
+    test('empty binary still throws when allowEmpty is false', () {
+      expect(
+        () => <int>[].uriEncode(allowEmpty: false, literal: true),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('empty binary allowed when allowEmpty is true', () {
+      expect(<int>[].uriEncode(allowEmpty: true, literal: true), '');
+    });
+
+    test('base64-shaped string keeps + / = literal', () {
+      expect(
+        'YWI+Y2Q/ZWY='.uriEncode(allowEmpty: true, literal: true),
+        'YWI+Y2Q/ZWY=',
+      );
+    });
+
     test('literal false stays byte-identical to default URI behavior', () {
       expect('a b/:'.uriEncode(allowEmpty: true), 'a%20b%2F%3A');
       expect(42.uriEncode(allowEmpty: true), '42');
       final uri = Uri.parse('https://example.com');
       expect(uri.uriEncode(allowEmpty: true), 'https%3A%2F%2Fexample.com');
+      expect(
+        ['a b', 'c/d'].uriEncode(allowEmpty: true),
+        'a%20b,c%2Fd',
+      );
+      expect(
+        {'k': 'a b'}.uriEncode(allowEmpty: true),
+        'k,a%20b',
+      );
+      expect(utf8.encode('a b/:').uriEncode(allowEmpty: true), 'a%20b%2F%3A');
     });
   });
 }

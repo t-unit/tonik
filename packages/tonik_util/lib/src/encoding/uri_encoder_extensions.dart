@@ -184,16 +184,23 @@ extension BinaryUriEncoder on List<int> {
   /// URI encodes this binary data value.
   ///
   /// Converts the binary data to a UTF-8 string first, then URI encodes it.
+  ///
+  /// [literal] returns the UTF-8 conversion unencoded, overriding
+  /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    bool literal = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
     if (isEmpty) {
       return '';
+    }
+    if (literal) {
+      return decodeToString();
     }
     return encodeUriValue(
       decodeToString(),
@@ -210,11 +217,15 @@ extension StringListUriEncoder on List<String> {
   /// The [alreadyEncoded] parameter indicates whether the list items are
   /// already URL-encoded. When `true`, items are not re-encoded to prevent
   /// double encoding.
+  ///
+  /// [literal] joins members with `,` without encoding any member, overriding
+  /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    bool literal = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -224,7 +235,7 @@ extension StringListUriEncoder on List<String> {
       return '';
     }
 
-    if (alreadyEncoded) {
+    if (literal || alreadyEncoded) {
       return join(',');
     }
 
@@ -241,11 +252,15 @@ extension StringListUriEncoder on List<String> {
 /// Extension for URI encoding Map values.
 extension StringMapUriEncoder on Map<String, String> {
   /// URI encodes this Map value.
+  ///
+  /// [literal] emits keys and values unencoded as `k1,v1,k2,v2`, overriding
+  /// [useQueryComponent] and [allowReserved].
   String uriEncode({
     required bool allowEmpty,
     bool alreadyEncoded = false,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    bool literal = false,
   }) {
     if (isEmpty && !allowEmpty) {
       throw const EmptyValueException();
@@ -253,6 +268,10 @@ extension StringMapUriEncoder on Map<String, String> {
 
     if (isEmpty) {
       return '';
+    }
+
+    if (literal) {
+      return entries.expand((e) => [e.key, e.value]).join(',');
     }
 
     String encode(String value) => encodeUriValue(

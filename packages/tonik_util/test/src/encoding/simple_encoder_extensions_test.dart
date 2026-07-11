@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
 import 'package:timezone/data/latest.dart' as tz;
@@ -1411,12 +1413,138 @@ void main() {
       );
     });
 
+    test('list joins members without encoding them', () {
+      expect(
+        ['a b', 'c/d', '50%'].toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'a b,c/d,50%',
+      );
+    });
+
+    test('list keeps percent sequences verbatim under explode', () {
+      expect(
+        ['%2F', 'plain%'].toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        ),
+        '%2F,plain%',
+      );
+    });
+
+    test('empty list still throws when allowEmpty is false', () {
+      expect(
+        () => <String>[].toSimple(
+          explode: false,
+          allowEmpty: false,
+          literal: true,
+        ),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('non-explode map emits k1,v1,k2,v2 verbatim', () {
+      expect(
+        {'k': 'a b'}.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'k,a b',
+      );
+    });
+
+    test('explode map emits k=v verbatim', () {
+      expect(
+        {'k': 'a b'}.toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'k=a b',
+      );
+    });
+
+    test('explode map keeps percent sequences in keys and values verbatim', () {
+      expect(
+        {'50%': '%2F', 'k2': 'c/d'}.toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        ),
+        '50%=%2F,k2=c/d',
+      );
+    });
+
+    test('empty explode map still throws when allowEmpty is false', () {
+      expect(
+        () => <String, String>{}.toSimple(
+          explode: true,
+          allowEmpty: false,
+          literal: true,
+        ),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('binary returns UTF-8 conversion without a URI-encoding pass', () {
+      expect(
+        utf8.encode('a b/:').toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'a b/:',
+      );
+    });
+
+    test('empty binary still throws when allowEmpty is false', () {
+      expect(
+        () => <int>[].toSimple(
+          explode: false,
+          allowEmpty: false,
+          literal: true,
+        ),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('base64-shaped string keeps + / = literal', () {
+      expect(
+        'YWI+Y2Q/ZWY='.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'YWI+Y2Q/ZWY=',
+      );
+    });
+
     test('literal false stays byte-identical to default simple behavior', () {
       expect(
         'a b/:'.toSimple(explode: false, allowEmpty: true),
         'a%20b%2F%3A',
       );
       expect(42.toSimple(explode: false, allowEmpty: true), '42');
+      expect(
+        ['a b', 'c/d'].toSimple(explode: false, allowEmpty: true),
+        'a%20b,c%2Fd',
+      );
+      expect(
+        {'k': 'a b'}.toSimple(explode: false, allowEmpty: true),
+        'k,a%20b',
+      );
+      expect(
+        {'k': 'a b'}.toSimple(explode: true, allowEmpty: true),
+        'k=a%20b',
+      );
+      expect(
+        utf8.encode('a b/:').toSimple(explode: false, allowEmpty: true),
+        'a%20b%2F%3A',
+      );
     });
   });
 }
