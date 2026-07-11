@@ -242,15 +242,16 @@ Expression _buildFromSimpleExpression(
 Expression _buildListDecode(
   Expression value,
   bool isRequired, {
+  bool nullableElements = false,
   Map<String, Expression> contextParam = const {},
 }) {
-  return value
-      .property(
-        isRequired
-            ? 'decodeSimpleStringList'
-            : 'decodeSimpleNullableStringList',
-      )
-      .call([], contextParam);
+  final decoder = switch ((isRequired, nullableElements)) {
+    (true, false) => 'decodeSimpleStringList',
+    (false, false) => 'decodeSimpleNullableStringList',
+    (true, true) => 'decodeSimpleStringNullableList',
+    (false, true) => 'decodeSimpleNullableStringNullableList',
+  };
+  return value.property(decoder).call([], contextParam);
 }
 
 Expression _buildListFromSimpleExpression(
@@ -281,7 +282,12 @@ Expression _buildListFromSimpleExpression(
   );
 
   return switch (content) {
-    StringModel() => listDecode,
+    StringModel() => _buildListDecode(
+      value,
+      isRequired,
+      nullableElements: model.isContentNullable,
+      contextParam: contextParam,
+    ),
     IntegerModel() => _buildPrimitiveList(
       listDecode,
       'decodeSimpleInt',

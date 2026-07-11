@@ -1179,21 +1179,27 @@ void main() {
       );
 
       expect(toSimpleMethod.returns?.accept(emitter).toString(), 'String');
-      expect(toSimpleMethod.optionalParameters, hasLength(2));
+      expect(toSimpleMethod.optionalParameters, hasLength(3));
       expect(
         toSimpleMethod.optionalParameters.map((p) => p.name),
-        containsAll(['explode', 'allowEmpty']),
+        containsAll(['explode', 'allowEmpty', 'literal']),
       );
       expect(
-        toSimpleMethod.optionalParameters.every((p) => p.required),
+        toSimpleMethod.optionalParameters
+            .where((p) => p.name != 'literal')
+            .every((p) => p.required),
         isTrue,
       );
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
           return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
         }
       ''';
 
@@ -1248,9 +1254,13 @@ void main() {
 
         final classCode = format(generatedClass.accept(emitter).toString());
         const expectedMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
           return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
         }
       ''';
 
@@ -1279,9 +1289,13 @@ void main() {
 
       final classCode = format(generatedClass.accept(emitter).toString());
       const expectedMethod = '''
-        String toSimple({required bool explode, required bool allowEmpty}) {
+        String toSimple({
+          required bool explode,
+          required bool allowEmpty,
+          bool literal = false,
+        }) {
           return parameterProperties(allowEmpty: allowEmpty)
-            .toSimple(explode: explode, allowEmpty: allowEmpty);
+            .toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
         }
       ''';
 

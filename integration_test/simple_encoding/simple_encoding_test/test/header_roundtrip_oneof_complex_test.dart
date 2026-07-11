@@ -69,10 +69,10 @@ void main() {
         final success =
             result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
 
-        // Spaces are URL encoded in simple-style headers.
+        // Header field-values are transmitted literally: the space survives.
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
-          'name,hello%20world',
+          'name,hello world',
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
@@ -220,6 +220,35 @@ void main() {
           isNull,
         );
         expect(success.value.xComplexUnion, isNull);
+      });
+    });
+
+    group('server-originated response', () {
+      test('literal percent sequences in an injected oneOf object header '
+          'decode verbatim', () async {
+        // Server-originated: X-Complex-Union is injected via Dio, not
+        // sent by Tonik's encoder.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Complex-Union': 'name,x%2Fy 50%',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final result = await injected.testHeaderRoundtripOneOfComplex.call();
+
+        final success =
+            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
+        expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
+        final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
+        expect(class1.value.name, 'x%2Fy 50%');
       });
     });
   });

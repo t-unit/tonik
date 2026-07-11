@@ -176,7 +176,7 @@ void main() {
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
-          'hello%20world',
+          'hello world',
         );
 
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
@@ -252,6 +252,38 @@ void main() {
         );
 
         expect(success.value.xPrimitiveUnion, isNull);
+      });
+    });
+
+    group('server-originated response', () {
+      test('literal percent sequences in an injected oneOf header '
+          'decode verbatim', () async {
+        // Server-originated: X-Primitive-Union is injected via Dio, not
+        // sent by Tonik's encoder.
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Primitive-Union': 'x%2Fy 50%',
+                },
+              ),
+            ),
+          ),
+        );
+
+        final result = await injected.testHeaderRoundtripOneOfPrimitive.call();
+
+        final success =
+            result
+                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response>;
+        expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
+        expect(
+          (success.value.xPrimitiveUnion! as OneOfPrimitiveString).value,
+          'x%2Fy 50%',
+        );
       });
     });
   });

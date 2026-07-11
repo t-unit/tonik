@@ -35,11 +35,16 @@ class TestEncodableModel implements ParameterEncodable {
   }
 
   @override
-  String toSimple({required bool explode, required bool allowEmpty}) {
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) {
+    final suffix = literal ? '!literal' : '';
     if (explode) {
-      return 'name=$name,value=$value';
+      return 'name=$name$suffix,value=$value';
     }
-    return 'name,$name,value,$value';
+    return 'name,$name$suffix,value,$value';
   }
 
   @override
@@ -144,8 +149,11 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
       throw UnimplementedError();
 
   @override
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      throw UnimplementedError();
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => throw UnimplementedError();
 
   @override
   List<ParameterEntry> toDeepObject(
@@ -985,6 +993,100 @@ void main() {
             allowEmpty: true,
           ),
           '',
+        );
+      });
+    });
+
+    group('literal', () {
+      test('forwards literal to the ParameterEncodable branch', () {
+        const model = TestEncodableModel(name: 'has space', value: 42);
+        expect(
+          encodeAnyToSimple(
+            model,
+            explode: false,
+            allowEmpty: false,
+            literal: true,
+          ),
+          'name,has space!literal,value,42',
+        );
+      });
+
+      test('forwards literal to a primitive string branch', () {
+        expect(
+          encodeAnyToSimple(
+            'a/b c%2Fd',
+            explode: false,
+            allowEmpty: true,
+            literal: true,
+          ),
+          'a/b c%2Fd',
+        );
+      });
+
+      test('emits map keys and values literally with explode=false', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{'q p': 'a/b', 'e%2Fc': 'x y'},
+            explode: false,
+            allowEmpty: true,
+            literal: true,
+          ),
+          'q p,a/b,e%2Fc,x y',
+        );
+      });
+
+      test('emits map keys and values literally with explode=true', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{'q p': 'a/b', 'e%2Fc': 'x y'},
+            explode: true,
+            allowEmpty: true,
+            literal: true,
+          ),
+          'q p=a/b,e%2Fc=x y',
+        );
+      });
+
+      test('emits list elements literally', () {
+        expect(
+          encodeAnyToSimple(
+            <dynamic>['hello world', 'a/b', 'c%2Fd'],
+            explode: false,
+            allowEmpty: true,
+            literal: true,
+          ),
+          'hello world,a/b,c%2Fd',
+        );
+      });
+
+      test('emits nested map and list values literally including percent, '
+          'slash, space, and comma', () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{
+              'tags': <dynamic>['a%2Fb', 'c d'],
+              'path': 'x/y%2Fz',
+            },
+            explode: false,
+            allowEmpty: true,
+            literal: true,
+          ),
+          'tags,a%2Fb,c d,path,x/y%2Fz',
+        );
+      });
+
+      test('default literal=false remains byte-identical for nested map/list',
+          () {
+        expect(
+          encodeAnyToSimple(
+            <String, dynamic>{
+              'tags': <dynamic>['a%2Fb', 'c d'],
+              'path': 'x/y%2Fz',
+            },
+            explode: false,
+            allowEmpty: true,
+          ),
+          'tags,a%252Fb,c%20d,path,x%2Fy%252Fz',
         );
       });
     });

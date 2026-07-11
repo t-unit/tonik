@@ -1387,7 +1387,7 @@ String toMatrix( String paramName, { required bool explode, required bool allowE
 
       const expectedToSimple = r'''
 @override
-String toSimple({required bool explode, required bool allowEmpty}) { final _$values = <String>{}; if (list != null) { final _$listSimple = list! .map((e) => e.toSimple(explode: explode, allowEmpty: allowEmpty)) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, ); _$values.add(_$listSimple); } if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( 'Cannot encode to simple: all properties are null', ); } return _$values.first; }
+String toSimple({ required bool explode, required bool allowEmpty, bool literal = false, }) { final _$values = <String>{}; if (list != null) { final _$listSimple = list! .map( (e) => e.toSimple( explode: explode, allowEmpty: allowEmpty, literal: literal, ), ) .toList() .toSimple( explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true, literal: literal, ); _$values.add(_$listSimple); } if (_$values.length > 1) { throw EncodingException( 'Inconsistent allOf simple encoding: all values must encode to the same result', ); } if (_$values.isEmpty) { throw EncodingException( 'Cannot encode to simple: all properties are null', ); } return _$values.first; }
 ''';
 
       expect(
@@ -2533,10 +2533,15 @@ String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, boo
     test('toSimple base64-encodes byte member', () {
       const expected = '''
 @override
-String toSimple({required bool explode, required bool allowEmpty}) {
+String toSimple({
+  required bool explode,
+  required bool allowEmpty,
+  bool literal = false,
+}) {
   return signature!.toBase64String().toSimple(
     explode: explode,
     allowEmpty: allowEmpty,
+    literal: literal,
   );
 }
 ''';
@@ -2630,7 +2635,11 @@ String toMatrix(
     test('toSimple throws for binary member', () {
       const expected = '''
 @override
-String toSimple({required bool explode, required bool allowEmpty}) {
+String toSimple({
+  required bool explode,
+  required bool allowEmpty,
+  bool literal = false,
+}) {
   throw EncodingException('Binary data cannot be simple-encoded');
 }
 ''';

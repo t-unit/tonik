@@ -1,8 +1,16 @@
+import 'dart:convert';
+
 import 'package:big_decimal/big_decimal.dart';
 import 'package:test/test.dart';
+import 'package:timezone/data/latest.dart' as tz;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:tonik_util/src/date.dart';
+import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
 
 void main() {
+  setUpAll(tz.initializeTimeZones);
+
   group('SimpleUriEncoder', () {
     test('encodes HTTPS Uri', () {
       final value = Uri.parse('https://example.com/path?query=value');
@@ -1271,6 +1279,266 @@ void main() {
       expect(
         value.toSimple(explode: true, allowEmpty: true),
         value.toSimple(explode: false, allowEmpty: true),
+      );
+    });
+  });
+
+  group('literal', () {
+    test('string is returned byte-for-byte unchanged', () {
+      expect(
+        'a b%,/:&=+%2F'.toSimple(explode: false, allowEmpty: true, literal: true),
+        'a b%,/:&=+%2F',
+      );
+    });
+
+    test('empty string literal is empty regardless of allowEmpty', () {
+      expect(''.toSimple(explode: false, allowEmpty: true, literal: true), '');
+      expect(''.toSimple(explode: false, allowEmpty: false, literal: true), '');
+    });
+
+    test('DateTime keeps literal colons', () {
+      final dateTime = DateTime.utc(2023, 12, 25, 10, 30, 45);
+      expect(
+        dateTime.toSimple(explode: false, allowEmpty: true, literal: true),
+        '2023-12-25T10:30:45.000Z',
+      );
+    });
+
+    test('non-UTC DateTime keeps the offset colon literal', () {
+      final dateTime = tz.TZDateTime(
+        tz.getLocation('Asia/Kolkata'),
+        2023,
+        12,
+        25,
+        20,
+        0,
+        45,
+      );
+      expect(
+        dateTime.toSimple(explode: false, allowEmpty: true, literal: true),
+        '2023-12-25T20:00:45+05:30',
+      );
+    });
+
+    test('non-UTC DateTime offset colon is percent-encoded by default', () {
+      final dateTime = tz.TZDateTime(
+        tz.getLocation('Asia/Kolkata'),
+        2023,
+        12,
+        25,
+        20,
+        0,
+        45,
+      );
+      expect(
+        dateTime.toSimple(explode: false, allowEmpty: true),
+        '2023-12-25T20%3A00%3A45%2B05%3A30',
+      );
+    });
+
+    test('Uri keeps punctuation literal', () {
+      final uri = Uri.parse('https://example.com/path?query=value');
+      expect(
+        uri.toSimple(explode: false, allowEmpty: true, literal: true),
+        'https://example.com/path?query=value',
+      );
+    });
+
+    test('Uri keeps the fragment delimiter literal', () {
+      final uri = Uri.parse('https://example.com/p#frag');
+      expect(
+        uri.toSimple(explode: false, allowEmpty: true, literal: true),
+        'https://example.com/p#frag',
+      );
+    });
+
+    test('Uri fragment delimiter is percent-encoded without literal', () {
+      final uri = Uri.parse('https://example.com/p#frag');
+      expect(
+        uri.toSimple(explode: false, allowEmpty: true),
+        'https%3A%2F%2Fexample.com%2Fp%23frag',
+      );
+    });
+
+    test('int uses plain string form', () {
+      expect(
+        (-123).toSimple(explode: false, allowEmpty: true, literal: true),
+        '-123',
+      );
+    });
+
+    test('double uses plain string form', () {
+      expect(
+        3.14.toSimple(explode: false, allowEmpty: true, literal: true),
+        '3.14',
+      );
+    });
+
+    test('num uses plain string form', () {
+      expect(
+        (3.14 as num).toSimple(explode: false, allowEmpty: true, literal: true),
+        '3.14',
+      );
+    });
+
+    test('bool uses plain string form', () {
+      expect(
+        true.toSimple(explode: false, allowEmpty: true, literal: true),
+        'true',
+      );
+    });
+
+    test('BigDecimal uses plain string form', () {
+      expect(
+        BigDecimal.parse(
+          '123.456',
+        ).toSimple(explode: false, allowEmpty: true, literal: true),
+        '123.456',
+      );
+    });
+
+    test('Date uses plain string form', () {
+      expect(
+        Date(
+          2023,
+          12,
+          25,
+        ).toSimple(explode: false, allowEmpty: true, literal: true),
+        '2023-12-25',
+      );
+    });
+
+    test('list joins members without encoding them', () {
+      expect(
+        ['a b', 'c/d', '50%'].toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'a b,c/d,50%',
+      );
+    });
+
+    test('list keeps percent sequences verbatim under explode', () {
+      expect(
+        ['%2F', 'plain%'].toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        ),
+        '%2F,plain%',
+      );
+    });
+
+    test('empty list still throws when allowEmpty is false', () {
+      expect(
+        () => <String>[].toSimple(
+          explode: false,
+          allowEmpty: false,
+          literal: true,
+        ),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('non-explode map emits k1,v1,k2,v2 verbatim', () {
+      expect(
+        {'k': 'a b'}.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'k,a b',
+      );
+    });
+
+    test('explode map emits k=v verbatim', () {
+      expect(
+        {'k': 'a b'}.toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'k=a b',
+      );
+    });
+
+    test('explode map keeps percent sequences in keys and values verbatim', () {
+      expect(
+        {'50%': '%2F', 'k2': 'c/d'}.toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        ),
+        '50%=%2F,k2=c/d',
+      );
+    });
+
+    test('empty explode map still throws when allowEmpty is false', () {
+      expect(
+        () => <String, String>{}.toSimple(
+          explode: true,
+          allowEmpty: false,
+          literal: true,
+        ),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('binary returns UTF-8 conversion without a URI-encoding pass', () {
+      expect(
+        utf8.encode('a b/:').toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'a b/:',
+      );
+    });
+
+    test('empty binary still throws when allowEmpty is false', () {
+      expect(
+        () => <int>[].toSimple(
+          explode: false,
+          allowEmpty: false,
+          literal: true,
+        ),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+
+    test('base64-shaped string keeps + / = literal', () {
+      expect(
+        'YWI+Y2Q/ZWY='.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
+        'YWI+Y2Q/ZWY=',
+      );
+    });
+
+    test('literal false stays byte-identical to default simple behavior', () {
+      expect(
+        'a b/:'.toSimple(explode: false, allowEmpty: true),
+        'a%20b%2F%3A',
+      );
+      expect(42.toSimple(explode: false, allowEmpty: true), '42');
+      expect(
+        ['a b', 'c/d'].toSimple(explode: false, allowEmpty: true),
+        'a%20b,c%2Fd',
+      );
+      expect(
+        {'k': 'a b'}.toSimple(explode: false, allowEmpty: true),
+        'k,a%20b',
+      );
+      expect(
+        {'k': 'a b'}.toSimple(explode: true, allowEmpty: true),
+        'k=a%20b',
+      );
+      expect(
+        utf8.encode('a b/:').toSimple(explode: false, allowEmpty: true),
+        'a%20b%2F%3A',
       );
     });
   });

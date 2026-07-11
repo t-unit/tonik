@@ -496,7 +496,7 @@ void main() {
         final success = response as TonikSuccess<PostEventHitResponse>;
         expect(
           success.response.requestOptions.headers['User-Agent'],
-          '''Mozilla%2F5.0%20(Windows%20NT%2010.0%3B%20Win64%3B%20x64)%20AppleWebKit%2F537.36''',
+          'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         );
       });
 
@@ -518,7 +518,7 @@ void main() {
         final success = response as TonikSuccess<PostEventHitResponse>;
         expect(
           success.response.requestOptions.headers['Accept-Language'],
-          'en-US%2Cen%3Bq%3D0.9%2Cde%3Bq%3D0.8',
+          'en-US,en;q=0.9,de;q=0.8',
         );
       });
 
@@ -541,7 +541,7 @@ void main() {
         final success = response as TonikSuccess<PostEventHitResponse>;
         expect(
           success.response.requestOptions.headers['User-Agent'],
-          'TestBrowser%2F1.0',
+          'TestBrowser/1.0',
         );
         expect(
           success.response.requestOptions.headers['Accept-Language'],
@@ -561,13 +561,13 @@ void main() {
               q: false,
             ),
           ),
-          acceptLanguage: 'en-US,en;q=0.9,zh-CN;q=0.8,日本語;q=0.7',
+          acceptLanguage: 'en-US,en;q=0.9,zh-CN;q=0.8,*;q=0.5',
         );
 
         final success = response as TonikSuccess<PostEventHitResponse>;
         expect(
           success.response.requestOptions.headers['Accept-Language'],
-          '''en-US%2Cen%3Bq%3D0.9%2Czh-CN%3Bq%3D0.8%2C%E6%97%A5%E6%9C%AC%E8%AA%9E%3Bq%3D0.7''',
+          'en-US,en;q=0.9,zh-CN;q=0.8,*;q=0.5',
         );
       });
     });
@@ -843,7 +843,7 @@ void main() {
         final success = response as TonikSuccess<GetEventPingResponse>;
         expect(
           success.response.requestOptions.headers['If-Modified-Since'],
-          'Wed%2C%2021%20Oct%202015%2007%3A28%3A00%20GMT',
+          'Wed, 21 Oct 2015 07:28:00 GMT',
         );
       });
 

@@ -6,6 +6,9 @@ import 'package:tonik_util/src/decoding/decoding_exception.dart';
 import 'package:tonik_util/src/offset_date_time.dart';
 
 /// Extensions for decoding simple form values from strings.
+///
+/// Input is a literal field value: percent-decoding is intentionally not
+/// performed.
 extension SimpleDecoder on String? {
   /// Decodes a string to a string.
   ///
@@ -20,15 +23,7 @@ extension SimpleDecoder on String? {
       );
     }
 
-    try {
-      return Uri.decodeComponent(this!);
-    } on Object {
-      throw InvalidTypeException(
-        value: this!,
-        targetType: String,
-        context: context,
-      );
-    }
+    return this!;
   }
 
   /// Decodes a string to a nullable string.
@@ -36,16 +31,7 @@ extension SimpleDecoder on String? {
   /// Returns null if the string is empty or null.
   String? decodeSimpleNullableString({String? context}) {
     if (this?.isEmpty ?? true) return null;
-
-    try {
-      return Uri.decodeComponent(this!);
-    } on Object {
-      throw InvalidTypeException(
-        value: this!,
-        targetType: String,
-        context: context,
-      );
-    }
+    return this!;
   }
 
   /// Decodes a string to an integer.
@@ -93,8 +79,7 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      final decoded = Uri.decodeComponent(this!);
-      return double.parse(decoded);
+      return double.parse(this!);
     } on Object {
       throw InvalidTypeException(
         value: this!,
@@ -158,8 +143,7 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      final decoded = Uri.decodeComponent(this!);
-      return OffsetDateTime.parse(decoded);
+      return OffsetDateTime.parse(this!);
     } on Object {
       throw InvalidTypeException(
         value: this!,
@@ -240,9 +224,7 @@ extension SimpleDecoder on String? {
 
   /// Decodes a base64-encoded string to binary data (`List<int>`).
   ///
-  /// Base64 output can contain `+`, `/` and `=`, which are percent-encoded on
-  /// the wire, so the value is percent-decoded before base64 decoding, like
-  /// [decodeSimpleString].
+  /// Base64 text is decoded as-is; `+`, `/` and `=` are preserved.
   /// Throws [InvalidTypeException] if the value is null or cannot be decoded.
   List<int> decodeSimpleBase64({String? context}) {
     if (this == null) {
@@ -256,7 +238,7 @@ extension SimpleDecoder on String? {
       return <int>[];
     }
     try {
-      return base64.decode(Uri.decodeComponent(this!));
+      return base64.decode(this!);
     } on Object {
       throw InvalidTypeException(
         value: this!,
@@ -399,8 +381,7 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      final decoded = Uri.decodeComponent(this!);
-      return Uri.parse(decoded);
+      return Uri.parse(this!);
     } on FormatException catch (e) {
       throw InvalidTypeException(
         value: this!,

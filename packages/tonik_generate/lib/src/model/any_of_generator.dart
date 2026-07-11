@@ -344,7 +344,7 @@ class AnyOfGenerator {
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.toBase64String().$toMethodName( '
-          'explode: explode, allowEmpty: allowEmpty);',
+          'explode: explode, allowEmpty: allowEmpty, literal: literal);',
         ),
       );
       if (needsValues) {
@@ -360,7 +360,7 @@ class AnyOfGenerator {
       codes.add(
         Code(
           'final $tmpVarName = $fieldName!.$toMethodName( '
-          'explode: explode, allowEmpty: allowEmpty);',
+          'explode: explode, allowEmpty: allowEmpty, literal: literal);',
         ),
       );
       if (needsValues) {
@@ -376,6 +376,7 @@ class AnyOfGenerator {
               fieldModel,
               explode: refer('explode'),
               allowEmpty: refer('allowEmpty'),
+              literal: refer('literal'),
             ).expression.statement,
           ]),
         );
@@ -434,7 +435,7 @@ class AnyOfGenerator {
         codes.add(
           Code(
             '_\$values.add($fieldName!.$toMethodName('
-            'explode: explode, allowEmpty: allowEmpty));',
+            'explode: explode, allowEmpty: allowEmpty, literal: literal));',
           ),
         );
       }
@@ -1046,7 +1047,8 @@ class AnyOfGenerator {
       ..add(const Code(r'return _$map.toSimple('))
       ..addAll([
         const Code('explode: explode, '),
-        const Code('allowEmpty: allowEmpty'),
+        const Code('allowEmpty: allowEmpty, '),
+        const Code('literal: literal'),
         const Code(');'),
       ]);
 
@@ -1098,7 +1100,7 @@ class AnyOfGenerator {
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildSimpleEncodingParameters())
         ..lambda = false
         ..body = Block.of(body),
     );

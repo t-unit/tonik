@@ -85,8 +85,11 @@ class Date {
   /// Converts this [Date] to a simple string format.
   ///
   /// Returns the date in ISO 8601 format (YYYY-MM-DD).
-  String toSimple({required bool explode, required bool allowEmpty}) =>
-      uriEncode(allowEmpty: allowEmpty);
+  String toSimple({
+    required bool explode,
+    required bool allowEmpty,
+    bool literal = false,
+  }) => uriEncode(allowEmpty: allowEmpty, literal: literal);
 
   /// Converts this [Date] to a form-encoded parameter entry.
   List<ParameterEntry> toForm(
@@ -125,14 +128,19 @@ class Date {
   }
 
   /// URI encodes this Date value.
+  ///
+  /// [literal] returns the value unencoded, overriding [useQueryComponent] and
+  /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
     bool allowReserved = false,
+    bool literal = false,
   }) => toString().uriEncode(
     allowEmpty: allowEmpty,
     useQueryComponent: useQueryComponent,
     allowReserved: allowReserved,
+    literal: literal,
   );
 
   /// Creates a copy of this [Date] with the given fields replaced

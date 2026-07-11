@@ -64,7 +64,7 @@ Method buildReadOnlyToSimpleMethod(Code exceptionBody) {
       ..annotations.add(refer('override', 'dart:core'))
       ..name = 'toSimple'
       ..returns = refer('String', 'dart:core')
-      ..optionalParameters.addAll(buildEncodingParameters())
+      ..optionalParameters.addAll(buildSimpleEncodingParameters())
       ..lambda = true
       ..body = exceptionBody,
   );

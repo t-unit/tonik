@@ -62,7 +62,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfPrimitive.fromSimple(simple, explode: true);
       expect(reconstructed, allOf);
     });
@@ -72,7 +76,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfPrimitive.fromSimple(simple, explode: false);
       expect(reconstructed, allOf);
     });
@@ -163,10 +171,16 @@ void main() {
       );
     });
 
-    test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
-      final reconstructed = AllOfPrimitive.fromSimple(simple, explode: true);
-      expect(reconstructed, allOf);
+    test('literal simple explode true is not round-trippable', () {
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
+      expect(
+        () => AllOfPrimitive.fromSimple(simple, explode: true),
+        throwsA(isA<InvalidFormatException>()),
+      );
     });
 
     test('toSimple - explode false', () {
@@ -177,7 +191,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfPrimitive.fromSimple(simple, explode: false);
       expect(reconstructed, allOf);
     });
@@ -275,7 +293,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfComplex.fromSimple(simple, explode: true);
       expect(reconstructed, allOf);
     });
@@ -288,7 +310,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfComplex.fromSimple(simple, explode: false);
       expect(reconstructed, allOf);
     });
@@ -386,7 +412,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfComplex.fromSimple(simple, explode: true);
       expect(reconstructed, allOf);
     });
@@ -399,7 +429,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfComplex.fromSimple(simple, explode: false);
       expect(reconstructed, allOf);
     });
@@ -497,7 +531,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfEnum.fromSimple(simple, explode: true);
       expect(reconstructed, allOf);
     });
@@ -510,7 +548,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfEnum.fromSimple(simple, explode: false);
       expect(reconstructed, allOf);
     });
@@ -666,7 +708,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = NestedAllOfInAllOf.fromSimple(
         simple,
         explode: true,
@@ -682,7 +728,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = NestedAllOfInAllOf.fromSimple(
         simple,
         explode: false,
@@ -888,7 +938,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = TwoLevelAllOf.fromSimple(simple, explode: true);
       expect(reconstructed, allOf);
     });
@@ -901,7 +955,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = TwoLevelAllOf.fromSimple(simple, explode: false);
       expect(reconstructed, allOf);
     });
@@ -1016,7 +1074,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = ThreeLevelAllOf.fromSimple(simple, explode: true);
       expect(reconstructed, allOf);
     });
@@ -1029,7 +1091,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = ThreeLevelAllOf.fromSimple(simple, explode: false);
       expect(reconstructed, allOf);
     });
@@ -1570,7 +1636,11 @@ void main() {
       });
 
       test('simple roundtrip - explode true', () {
-        final simple = allOf.toSimple(explode: true, allowEmpty: true);
+        final simple = allOf.toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        );
         final reconstructed = ComplexNestedMix.fromSimple(
           simple,
           explode: true,
@@ -1586,7 +1656,11 @@ void main() {
       });
 
       test('simple roundtrip - explode false', () {
-        final simple = allOf.toSimple(explode: false, allowEmpty: true);
+        final simple = allOf.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        );
         final reconstructed = ComplexNestedMix.fromSimple(
           simple,
           explode: false,
@@ -1747,7 +1821,11 @@ void main() {
       });
 
       test('simple roundtrip - explode true', () {
-        final simple = allOf.toSimple(explode: true, allowEmpty: true);
+        final simple = allOf.toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        );
         final reconstructed = MultiLevelNesting.fromSimple(
           simple,
           explode: true,
@@ -1763,7 +1841,11 @@ void main() {
       });
 
       test('simple roundtrip - explode false', () {
-        final simple = allOf.toSimple(explode: false, allowEmpty: true);
+        final simple = allOf.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        );
         final reconstructed = MultiLevelNesting.fromSimple(
           simple,
           explode: false,
@@ -1981,7 +2063,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfWithSimpleList.fromSimple(
         simple,
         explode: true,
@@ -1997,7 +2083,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       expect(
         () => AllOfWithSimpleList.fromSimple(simple, explode: false),
         throwsA(isA<InvalidTypeException>()),
@@ -2186,7 +2276,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfWithEnumList.fromSimple(simple, explode: true);
       expect(reconstructed, allOf);
     });
@@ -2199,7 +2293,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       expect(
         () => AllOfWithEnumList.fromSimple(simple, explode: false),
         throwsA(isA<InvalidTypeException>()),
@@ -2397,7 +2495,11 @@ void main() {
       });
 
       test('simple roundtrip - explode true', () {
-        final simple = allOf.toSimple(explode: true, allowEmpty: true);
+        final simple = allOf.toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        );
         expect(
           () => ComplexListComposition.fromSimple(simple, explode: false),
           throwsA(isA<DecodingException>()),
@@ -2416,7 +2518,11 @@ void main() {
       });
 
       test('simple roundtrip - explode false', () {
-        final simple = allOf.toSimple(explode: false, allowEmpty: true);
+        final simple = allOf.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        );
         expect(
           () => ComplexListComposition.fromSimple(simple, explode: false),
           throwsA(isA<DecodingException>()),
@@ -2745,7 +2851,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfDoubleList.fromSimple(simple, explode: true);
       expect(reconstructed, allOf);
     });
@@ -2758,7 +2868,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfDoubleList.fromSimple(simple, explode: false);
       expect(reconstructed, allOf);
     });
@@ -2861,7 +2975,11 @@ void main() {
       });
 
       test('simple roundtrip - explode true', () {
-        final simple = allOf.toSimple(explode: true, allowEmpty: true);
+        final simple = allOf.toSimple(
+          explode: true,
+          allowEmpty: true,
+          literal: true,
+        );
         final reconstructed = AllOfOneOfDoubleList.fromSimple(
           simple,
           explode: true,
@@ -2877,7 +2995,11 @@ void main() {
       });
 
       test('simple roundtrip - explode false', () {
-        final simple = allOf.toSimple(explode: false, allowEmpty: true);
+        final simple = allOf.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        );
         final reconstructed = AllOfOneOfDoubleList.fromSimple(
           simple,
           explode: false,
@@ -3026,7 +3148,11 @@ void main() {
     });
 
     test('simple roundtrip - explode true', () {
-      final simple = allOf.toSimple(explode: true, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: true,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfDirectPrimitive.fromSimple(
         simple,
         explode: true,
@@ -3039,7 +3165,11 @@ void main() {
     });
 
     test('simple roundtrip - explode false', () {
-      final simple = allOf.toSimple(explode: false, allowEmpty: true);
+      final simple = allOf.toSimple(
+        explode: false,
+        allowEmpty: true,
+        literal: true,
+      );
       final reconstructed = AllOfDirectPrimitive.fromSimple(
         simple,
         explode: false,

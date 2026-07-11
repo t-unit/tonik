@@ -152,5 +152,40 @@ void main() {
         },
       );
     });
+
+    group('server-originated response', () {
+      test('literal percent sequences in an injected allOf object header '
+          'decode verbatim', () async {
+        // Server-originated: X-Composite-Entity is injected via Dio, not
+        // sent by Tonik's encoder.
+        // created_at is required for the merged allOf object to decode.
+        const literal =
+            '''name,x%2Fy 50%,created_at,2024-01-15T10:30:00.000Z,specific_field,keep%2Fraw''';
+        final injected = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: baseUrl,
+            serverConfig: ServerConfig(
+              baseOptions: BaseOptions(
+                headers: {
+                  'X-Response-Status': '200',
+                  'X-Composite-Entity': literal,
+                },
+              ),
+            ),
+          ),
+        );
+
+        final result = await injected.testHeaderRoundtripAllOfSimple.call();
+
+        final success =
+            result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
+        expect(success.value.xCompositeEntity, isNotNull);
+        expect(success.value.xCompositeEntity!.baseEntity.name, 'x%2Fy 50%');
+        expect(
+          success.value.xCompositeEntity!.compositeEntityModel.specificField,
+          'keep%2Fraw',
+        );
+      });
+    });
   });
 }

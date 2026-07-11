@@ -467,6 +467,11 @@ void main() {
           .value;
       expect(encoded, '2023-12-25');
     });
+
+    test('literal returns plain string form', () {
+      final date = Date(2023, 12, 25);
+      expect(date.uriEncode(allowEmpty: true, literal: true), '2023-12-25');
+    });
   });
 
   group('matrix encoding', () {

@@ -245,8 +245,11 @@ void main() {
           Options _options({required String xMyHeader}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
-            _$headers[r'X-My-Header'] =
-                xMyHeader.toSimple(explode: false, allowEmpty: false);
+            _$headers[r'X-My-Header'] = xMyHeader.toSimple(
+              explode: false,
+              allowEmpty: false,
+              literal: true,
+            );
             return Options(
               method: 'GET',
               headers: _$headers,
@@ -392,17 +395,29 @@ void main() {
           }) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
-            _$headers[r'X-Required-String'] =
-                xRequiredString.toSimple(explode: false, allowEmpty: false);
-            _$headers[r'X-Required-Date'] =
-                xRequiredDate.toSimple(explode: false, allowEmpty: true);
+            _$headers[r'X-Required-String'] = xRequiredString.toSimple(
+              explode: false,
+              allowEmpty: false,
+              literal: true,
+            );
+            _$headers[r'X-Required-Date'] = xRequiredDate.toSimple(
+              explode: false,
+              allowEmpty: true,
+              literal: true,
+            );
             if (xOptionalBool != null) {
-              _$headers[r'X-Optional-Bool'] = xOptionalBool
-                  .toSimple(explode: false, allowEmpty: false);
+              _$headers[r'X-Optional-Bool'] = xOptionalBool.toSimple(
+                explode: false,
+                allowEmpty: false,
+                literal: true,
+              );
             }
             if (xOptionalList != null) {
-              _$headers[r'X-Optional-List'] = xOptionalList
-                  .toSimple(explode: true, allowEmpty: false);
+              _$headers[r'X-Optional-List'] = xOptionalList.toSimple(
+                explode: true,
+                allowEmpty: false,
+                literal: true,
+              );
             }
             return Options(
               method: 'GET',
@@ -488,8 +503,11 @@ void main() {
               final _$headers = <String, dynamic>{};
               _$headers['Accept'] = r'*/*';
               if (xNullableObject != null) {
-                _$headers[r'X-Nullable-Object'] =
-                    xNullableObject.toSimple(explode: false, allowEmpty: false);
+                _$headers[r'X-Nullable-Object'] = xNullableObject.toSimple(
+                  explode: false,
+                  allowEmpty: false,
+                  literal: true,
+                );
               }
               return Options(
                 method: 'GET',
@@ -547,7 +565,11 @@ void main() {
         Options _options({required String xMyHeader}) {
           final _$headers = <String, dynamic>{};
           _$headers['Accept'] = r'*/*';
-          _$headers[r'X-My-Header'] = xMyHeader.toSimple(explode: true, allowEmpty: true);
+          _$headers[r'X-My-Header'] = xMyHeader.toSimple(
+            explode: true,
+            allowEmpty: true,
+            literal: true,
+          );
           return Options(
             method: 'GET',
             headers: _$headers,
@@ -626,9 +648,15 @@ void main() {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
             _$headers[r'X-Colors'] = xColors
-                .map((e) => e.toSimple(explode: true, allowEmpty: false))
+                .map(
+                  (e) => e.toSimple(
+                    explode: true,
+                    allowEmpty: false,
+                    literal: true,
+                  ),
+                )
                 .toList()
-                .toSimple(explode: true, allowEmpty: false);
+                .toSimple(explode: true, allowEmpty: false, literal: true);
             return Options(
               method: 'GET',
               headers: _$headers,
@@ -1058,7 +1086,11 @@ void main() {
       const expectedMethod = r'''
         Options _options({required String accept}) {
           final _$headers = <String, dynamic>{};
-          _$headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
+          _$headers[r'Accept'] = accept.toSimple(
+            explode: false,
+            allowEmpty: false,
+            literal: true,
+          );
           return Options(
             method: 'GET',
             headers: _$headers,
@@ -1137,7 +1169,11 @@ void main() {
         Options _options({String? accept}) {
           final _$headers = <String, dynamic>{};
           if (accept != null) {
-            _$headers[r'Accept'] = accept.toSimple(explode: false, allowEmpty: false);
+            _$headers[r'Accept'] = accept.toSimple(
+              explode: false,
+              allowEmpty: false,
+              literal: true,
+            );
           } else {
             _$headers['Accept'] = r'application/json,application/xml';
           }

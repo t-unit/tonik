@@ -1489,7 +1489,7 @@ class AllOfGenerator {
         const Code('allowEmpty: allowEmpty,'),
         const Code(
           ').toSimple('
-          'explode: explode, allowEmpty: allowEmpty);',
+          'explode: explode, allowEmpty: allowEmpty, literal: literal);',
         ),
       ];
 
@@ -1498,65 +1498,9 @@ class AllOfGenerator {
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildSimpleEncodingParameters())
           ..lambda = false
           ..body = Block.of(bodyCode),
-      );
-    }
-
-    final dynamicModels = normalizedProperties.where((prop) {
-      final shape = prop.property.model.encodingShape;
-      return shape == EncodingShape.mixed;
-    }).toList();
-
-    final hasDynamicModelsOld = dynamicModels.isNotEmpty;
-    final needsRuntimeValidation = hasDynamicModelsOld && model.hasSimpleTypes;
-
-    if (needsRuntimeValidation) {
-      final encodingShapeType = refer(
-        'EncodingShape',
-        'package:tonik_util/tonik_util.dart',
-      );
-      final validationCode = <Code>[];
-
-      for (final prop in dynamicModels) {
-        validationCode.addAll([
-          Code('if (${prop.normalizedName}.currentEncodingShape != '),
-          encodingShapeType.property('simple').code,
-          const Code(') {'),
-          refer('EncodingException', 'package:tonik_util/tonik_util.dart')
-              .call([
-                literalString(
-                  'Cannot encode mixed allOf ${model.name}: '
-                  '${prop.normalizedName} is complex',
-                ),
-              ])
-              .thrown
-              .statement,
-          const Code('}'),
-        ]);
-      }
-
-      validationCode.addAll([
-        refer('parameterProperties')
-            .call([], {'allowEmpty': refer('allowEmpty')})
-            .property('toSimple')
-            .call([], {
-              'explode': refer('explode'),
-              'allowEmpty': refer('allowEmpty'),
-            })
-            .returned
-            .statement,
-      ]);
-
-      return Method(
-        (b) => b
-          ..annotations.add(refer('override', 'dart:core'))
-          ..name = 'toSimple'
-          ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
-          ..lambda = false
-          ..body = Block.of(validationCode),
       );
     }
 
@@ -1566,7 +1510,7 @@ class AllOfGenerator {
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildSimpleEncodingParameters())
           ..lambda = false
           ..body = generateEncodingExceptionExpression(
             'Simple encoding not supported: contains complex types',
@@ -1613,6 +1557,7 @@ class AllOfGenerator {
                     prop.property.model,
                     explode: refer('explode'),
                     allowEmpty: refer('allowEmpty'),
+                    literal: refer('literal'),
                   ).expression,
                 )
                 .statement,
@@ -1645,7 +1590,7 @@ class AllOfGenerator {
             ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toSimple'
             ..returns = refer('String', 'dart:core')
-            ..optionalParameters.addAll(buildEncodingParameters())
+            ..optionalParameters.addAll(buildSimpleEncodingParameters())
             ..lambda = false
             ..body = Block.of(valueCollectionCode),
         );
@@ -1657,7 +1602,7 @@ class AllOfGenerator {
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildSimpleEncodingParameters())
           ..lambda = false
           ..body = Block.of([
             refer('parameterProperties')
@@ -1666,6 +1611,7 @@ class AllOfGenerator {
                 .call([], {
                   'explode': refer('explode'),
                   'allowEmpty': refer('allowEmpty'),
+                  'literal': refer('literal'),
                 })
                 .returned
                 .statement,
@@ -1679,7 +1625,7 @@ class AllOfGenerator {
           ..annotations.add(refer('override', 'dart:core'))
           ..name = 'toSimple'
           ..returns = refer('String', 'dart:core')
-          ..optionalParameters.addAll(buildEncodingParameters())
+          ..optionalParameters.addAll(buildSimpleEncodingParameters())
           ..lambda = false
           ..body = const Code("return '';"),
       );
@@ -1704,6 +1650,7 @@ class AllOfGenerator {
           .call([], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
+            'literal': refer('literal'),
           })
           .returned
           .statement;
@@ -1717,6 +1664,7 @@ class AllOfGenerator {
           .call([], {
             'explode': refer('explode'),
             'allowEmpty': refer('allowEmpty'),
+            'literal': refer('literal'),
           })
           .returned
           .statement;
@@ -1727,7 +1675,7 @@ class AllOfGenerator {
         ..annotations.add(refer('override', 'dart:core'))
         ..name = 'toSimple'
         ..returns = refer('String', 'dart:core')
-        ..optionalParameters.addAll(buildEncodingParameters())
+        ..optionalParameters.addAll(buildSimpleEncodingParameters())
         ..lambda = false
         ..body = Block.of([simpleBody]),
     );

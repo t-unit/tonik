@@ -135,18 +135,17 @@ void main() {
         expect(success.value.xUserName, isNotNull);
       });
 
-      test('roundtrips UserName with unicode characters', () async {
+      test('UserName with non-ASCII characters cannot be sent literally',
+          () async {
+        // HTTP forbids non-ASCII header octets, so the transport rejects it.
         const userName = 'José García';
 
         final result = await api.testHeaderRoundtripAliases(userName: userName);
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikError<HeadersRoundtripAliasesGet200Response>>(),
         );
-        final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.value.xUserName, isNotNull);
       });
     });
 
