@@ -20,15 +20,7 @@ extension SimpleDecoder on String? {
       );
     }
 
-    try {
-      return Uri.decodeComponent(this!);
-    } on Object {
-      throw InvalidTypeException(
-        value: this!,
-        targetType: String,
-        context: context,
-      );
-    }
+    return this!;
   }
 
   /// Decodes a string to a nullable string.
@@ -36,16 +28,7 @@ extension SimpleDecoder on String? {
   /// Returns null if the string is empty or null.
   String? decodeSimpleNullableString({String? context}) {
     if (this?.isEmpty ?? true) return null;
-
-    try {
-      return Uri.decodeComponent(this!);
-    } on Object {
-      throw InvalidTypeException(
-        value: this!,
-        targetType: String,
-        context: context,
-      );
-    }
+    return this!;
   }
 
   /// Decodes a string to an integer.
@@ -93,8 +76,7 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      final decoded = Uri.decodeComponent(this!);
-      return double.parse(decoded);
+      return double.parse(this!);
     } on Object {
       throw InvalidTypeException(
         value: this!,
@@ -158,8 +140,7 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      final decoded = Uri.decodeComponent(this!);
-      return OffsetDateTime.parse(decoded);
+      return OffsetDateTime.parse(this!);
     } on Object {
       throw InvalidTypeException(
         value: this!,
@@ -240,9 +221,8 @@ extension SimpleDecoder on String? {
 
   /// Decodes a base64-encoded string to binary data (`List<int>`).
   ///
-  /// Base64 output can contain `+`, `/` and `=`, which are percent-encoded on
-  /// the wire, so the value is percent-decoded before base64 decoding, like
-  /// [decodeSimpleString].
+  /// The raw base64 text is passed directly to `base64.decode`; standard
+  /// `+`, `/` and `=` characters are preserved.
   /// Throws [InvalidTypeException] if the value is null or cannot be decoded.
   List<int> decodeSimpleBase64({String? context}) {
     if (this == null) {
@@ -256,7 +236,7 @@ extension SimpleDecoder on String? {
       return <int>[];
     }
     try {
-      return base64.decode(Uri.decodeComponent(this!));
+      return base64.decode(this!);
     } on Object {
       throw InvalidTypeException(
         value: this!,
@@ -399,8 +379,7 @@ extension SimpleDecoder on String? {
       );
     }
     try {
-      final decoded = Uri.decodeComponent(this!);
-      return Uri.parse(decoded);
+      return Uri.parse(this!);
     } on FormatException catch (e) {
       throw InvalidTypeException(
         value: this!,
