@@ -1729,6 +1729,35 @@ paths:
         '204':
           description: OK
 
+  /parameter-override:
+    parameters:
+      - name: status
+        in: query
+        required: false
+        style: form
+        explode: false
+        schema:
+          type: string
+    get:
+      operationId: testParameterOverride
+      tags:
+        - query
+      summary: Test operation-level override of a path-item-level parameter
+      description: >-
+        The path-item-level status parameter is overridden by the
+        operation-level status parameter of the same name and location
+      parameters:
+        - name: status
+          in: query
+          required: true
+          style: form
+          explode: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: OK
+
 components:
   schemas:
     Filter:
