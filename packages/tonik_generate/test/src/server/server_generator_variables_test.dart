@@ -530,15 +530,13 @@ void main() {
           .map((parameter) => parameter.name)
           .toList();
 
-      expect(
-        fieldNames,
-        isNot(contains(anyOf('baseUrl', 'serverConfig', 'dio'))),
-      );
-      expect(parameterNames.toSet(), hasLength(parameterNames.length));
-      expect(
-        parameterNames.where((name) => name == 'serverConfig'),
-        hasLength(1),
-      );
+      expect(fieldNames, [r'$baseUrl', r'$serverConfig', r'$dio']);
+      expect(parameterNames, [
+        r'$baseUrl',
+        r'$serverConfig',
+        r'$dio',
+        'serverConfig',
+      ]);
     });
   });
 

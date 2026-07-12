@@ -60,16 +60,15 @@ void main() {
       );
       expect(serverConfigField.modifier, FieldModifier.final$);
 
-      final dioField = fields.firstWhere((f) => f.name == '_dio');
+      final dioField = fields.firstWhere((f) => f.name == r'_$dio');
       expect(dioField.type?.accept(emitter).toString(), 'Dio?');
-      // _dio should not be final because it needs to be initialized lazily
+      // The Dio field cannot be final because it is initialized lazily.
       expect(dioField.modifier, isNot(FieldModifier.final$));
     });
 
     test('generates constructor with named parameters', () {
       final constructor = baseClass.constructors.first;
-      // Constructor should not be const since _dio is not final
-      // and initialized later
+      // The constructor cannot be const because Dio is initialized lazily.
       expect(constructor.constant, isFalse);
       expect(constructor.optionalParameters.length, 2);
 
@@ -92,9 +91,9 @@ void main() {
       expect(dioGetter.returns?.accept(emitter).toString(), 'Dio');
 
       final bodyCode = dioGetter.body!.accept(emitter).toString();
-      expect(bodyCode, contains('if (_dio == null)'));
+      expect(bodyCode, contains(r'if (_$dio == null)'));
       expect(bodyCode, contains('serverConfig.configureDio'));
-      expect(bodyCode, contains('return _dio!'));
+      expect(bodyCode, contains(r'return _$dio!'));
     });
   });
 

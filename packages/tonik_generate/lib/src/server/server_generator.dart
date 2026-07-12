@@ -11,6 +11,8 @@ import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
+const _baseServerMemberNames = {'baseUrl', 'serverConfig', 'dio'};
+
 /// Generates server classes for API client.
 class ServerGenerator {
   /// Creates a new ServerGenerator.
@@ -154,7 +156,7 @@ class ServerGenerator {
           ),
           Field(
             (f) => f
-              ..name = '_dio'
+              ..name = r'_$dio'
               ..type = dioNullableType,
           ),
         ])
@@ -186,13 +188,13 @@ class ServerGenerator {
               ..type = MethodType.getter
               ..returns = dioType
               ..body = Block.of([
-                const Code('if (_dio == null) {'),
-                Code.scope((a) => '  _dio = ${a(dioType)}();'),
+                const Code(r'if (_$dio == null) {'),
+                Code.scope((a) => '  _\$dio = ${a(dioType)}();'),
                 const Code(
-                  '  serverConfig.configureDio(_dio!, baseUrl);',
+                  r'  serverConfig.configureDio(_$dio!, baseUrl);',
                 ),
                 const Code('}'),
-                const Code('return _dio!;'),
+                const Code(r'return _$dio!;'),
               ]),
           ),
         ),
@@ -274,24 +276,24 @@ class ServerGenerator {
     final variableParams = <Parameter>[];
     final variableFields = <Field>[];
 
-    final normalizedVariables =
-        ensureUniqueness<ServerVariable?>([
-          for (final name in const ['baseUrl', 'serverConfig', 'dio'])
-            (normalizedName: name, originalValue: null),
-          for (final variable in server.variables)
-            (
-              normalizedName: normalizeSingle(
-                variable.name,
-                preserveNumbers: true,
-              ),
-              originalValue: variable,
-            ),
-        ], defaultPrefix: defaultFieldPrefix).where((item) {
-          return item.originalValue != null;
-        });
+    final normalizedVariables = ensureUniqueness([
+      for (final variable in server.variables)
+        () {
+          final normalized = normalizeSingle(
+            variable.name,
+            preserveNumbers: true,
+          );
+          return (
+            normalizedName: _baseServerMemberNames.contains(normalized)
+                ? '\$$normalized'
+                : normalized,
+            originalValue: variable,
+          );
+        }(),
+    ], defaultPrefix: defaultFieldPrefix);
     final variableNameMap = {
       for (final item in normalizedVariables)
-        item.originalValue!: item.normalizedName,
+        item.originalValue: item.normalizedName,
     };
 
     for (final variable in server.variables) {

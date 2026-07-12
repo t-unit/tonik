@@ -470,9 +470,9 @@ void main() {
         field2: 'two-value',
         apiVersion: 'first-version',
         apiVersion2: 'second-version',
-        baseUrl2: 'base-value',
-        serverConfig2: 'config-value',
-        dio2: 'dio-value',
+        $baseUrl: 'base-value',
+        $serverConfig: 'config-value',
+        $dio: 'dio-value',
       );
 
       expect(
