@@ -487,7 +487,7 @@ class OneOfGenerator {
     // JSON decoders overlap leniently, so numeric/bool members dispatch on the
     // runtime type instead of joining the string-encoded try-each below.
     for (final m in sortedModels.where(
-      (m) => _numericRuntimeType(m.model.resolved) != null,
+      (m) => _scalarRuntimeType(m.model.resolved) != null,
     )) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
@@ -509,7 +509,7 @@ class OneOfGenerator {
         continue;
       }
 
-      final typeRef = _numericRuntimeType(resolvedType)!;
+      final typeRef = _scalarRuntimeType(resolvedType)!;
       blocks.addAll([
         const Code('if ('),
         refer('json').isA(typeRef).code,
@@ -519,12 +519,12 @@ class OneOfGenerator {
       ]);
     }
 
-    // String-encoded primitives and non-primitive members share an ordered
-    // try-each — a decimal/date-time/base64 string is parsed into its variant
-    // before a sibling plain-string variant can capture it.
+    // Members are attempted in stable member order. A string-encoded variant is
+    // only reachable when the plain-string member sorts after it — the same
+    // ordering the uri-vs-string residual rides on, in reverse.
     for (final m in sortedModels.where(
       (m) =>
-          _numericRuntimeType(m.model.resolved) == null &&
+          _scalarRuntimeType(m.model.resolved) == null &&
           m.model.resolved is! AnyModel &&
           m.model.resolved is! NeverModel,
     )) {
@@ -605,7 +605,7 @@ class OneOfGenerator {
     ]);
   }
 
-  Reference? _numericRuntimeType(Model resolved) => switch (resolved) {
+  Reference? _scalarRuntimeType(Model resolved) => switch (resolved) {
     DoubleModel() => refer('double', 'dart:core'),
     NumberModel() => refer('num', 'dart:core'),
     BooleanModel() => refer('bool', 'dart:core'),
