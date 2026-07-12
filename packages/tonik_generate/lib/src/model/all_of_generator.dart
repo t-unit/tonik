@@ -330,7 +330,8 @@ class AllOfGenerator {
       );
     }).toList();
 
-    if (hasActiveAdditionalProperties(model.additionalProperties)) {
+    final fieldApPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+    if (fieldApPolicy != null) {
       final apFieldName = nameManager.additionalPropertiesFieldName(
         normalizedProperties,
       );
@@ -339,8 +340,8 @@ class AllOfGenerator {
           (b) => b
             ..name = apFieldName
             ..modifier = FieldModifier.final$
-            ..type = additionalPropertiesType(
-              model.additionalProperties,
+            ..type = apMapTypeReference(
+              fieldApPolicy.valueModel,
               nameManager,
               package,
               useImmutableCollections: useImmutableCollections,
@@ -367,7 +368,7 @@ class AllOfGenerator {
     }).toList();
 
     if (model != null &&
-        hasActiveAdditionalProperties(model.additionalProperties)) {
+        activeApPolicy(model.additionalPropertiesPolicy) != null) {
       final apFieldName = nameManager.additionalPropertiesFieldName(
         normalizedProperties,
       );
@@ -401,7 +402,7 @@ class AllOfGenerator {
               );
             }),
           );
-        if (hasActiveAdditionalProperties(model.additionalProperties)) {
+        if (activeApPolicy(model.additionalPropertiesPolicy) != null) {
           final apFieldName = nameManager.additionalPropertiesFieldName(
             normalizedProperties,
           );
@@ -451,7 +452,7 @@ class AllOfGenerator {
       fromJsonParams.add(built.unsafeRawBody);
     }
 
-    final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
+    final hasAP = activeApPolicy(model.additionalPropertiesPolicy) != null;
 
     if (!hasAP) {
       final returnStatement = refer(className)
@@ -2596,15 +2597,16 @@ class AllOfGenerator {
       );
     }).toList();
 
-    if (hasActiveAdditionalProperties(model.additionalProperties)) {
+    final copyWithApPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+    if (copyWithApPolicy != null) {
       final apFieldName = nameManager.additionalPropertiesFieldName(
         normalizedProperties,
       );
       copyWithProps.add(
         (
           normalizedName: apFieldName,
-          typeRef: additionalPropertiesType(
-            model.additionalProperties,
+          typeRef: apMapTypeReference(
+            copyWithApPolicy.valueModel,
             nameManager,
             package,
             useImmutableCollections: useImmutableCollections,
