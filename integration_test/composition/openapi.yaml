@@ -41,6 +41,42 @@ paths:
               schema:
                 $ref: '#/components/schemas/Shape'
 
+  /one-of-primitive/echo:
+    post:
+      operationId: echoOneOfPrimitive
+      tags:
+        - composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneOfPrimitive'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfPrimitive'
+
+  /one-of-integer-or-object/echo:
+    post:
+      operationId: echoOneOfIntegerOrClass1
+      tags:
+        - composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneOfIntegerOrClass1'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfIntegerOrClass1'
+
 components:
   schemas:
     Class1:
@@ -71,12 +107,17 @@ components:
         - 1
         - 2
 
-    OneOfPrimitive: 
+    OneOfPrimitive:
       oneOf:
         - type: string
         - type: integer
 
-    OneOfComplex: 
+    OneOfIntegerOrClass1:
+      oneOf:
+        - type: integer
+        - $ref: '#/components/schemas/Class1'
+
+    OneOfComplex:
       oneOf:
         - $ref: '#/components/schemas/Class1'
         - $ref: '#/components/schemas/Class2'

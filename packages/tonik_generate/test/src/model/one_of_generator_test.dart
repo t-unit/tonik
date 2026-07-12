@@ -3456,7 +3456,7 @@ bool operator ==(Object other) {
           collapseWhitespace(r"""
             factory Value.fromJson(Object? json) {
               return switch (json) {
-                int s => ValueInt(s),
+                num s => ValueInt(s.decodeJsonInt(context: r'Value')),
                 String s => ValueString(s),
                 _ => throw JsonDecodingException(
                   r'Invalid JSON type for Value: ${json.runtimeType}',
@@ -4254,5 +4254,118 @@ bool operator ==(Object other) {
         );
       },
     );
+  });
+
+  group('whole-number double decodes to integer variant', () {
+    test('all-primitive string+integer routes integer through decode', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(r'''
+            factory Value.fromJson(Object? json) {
+              return switch (json) {
+                num s => ValueInt(s.decodeJsonInt(context: r'Value')),
+                String s => ValueString(s),
+                _ => throw JsonDecodingException(
+                  r'Invalid JSON type for Value: ${json.runtimeType}',
+                ),
+              };
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('mixed integer+object routes integer through decode in try', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Thing',
+              properties: const [],
+              context: context,
+              isDeprecated: false,
+              examples: const [],
+            ),
+          ),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              try {
+                return ValueInt(json.decodeJsonInt(context: r'Value'));
+              } on InvalidTypeException catch (_) {}
+              try {
+                return ValueThing(Thing.fromJson(json));
+              } on Object catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('integer+number keeps type-pattern arms without decodeJsonInt', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: NumberModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(r'''
+            factory Value.fromJson(Object? json) {
+              return switch (json) {
+                int s => ValueInt(s),
+                num s => ValueNumber(s),
+                _ => throw JsonDecodingException(
+                  r'Invalid JSON type for Value: ${json.runtimeType}',
+                ),
+              };
+            }
+          '''),
+        ),
+      );
+    });
   });
 }

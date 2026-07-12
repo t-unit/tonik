@@ -96,7 +96,7 @@ void main() {
         const expectedMethod = r'''
           factory Result.fromJson(Object? json) {
             return switch (json) {
-              int s => ResultError(s),
+              num s => ResultError(s.decodeJsonInt(context: r'Result')),
               String s => ResultSuccess(s),
               _ => throw JsonDecodingException(
                 r'Invalid JSON type for Result: ${json.runtimeType}',
@@ -1141,7 +1141,7 @@ void main() {
           factory Result.fromJson(Object? json) {
             return switch (json) {
               String s => ResultErrorCode(s),
-              int s => ResultInt(s),
+              num s => ResultInt(s.decodeJsonInt(context: r'Result')),
               _ => throw JsonDecodingException(
                 r'Invalid JSON type for Result: ${json.runtimeType}',
               ),

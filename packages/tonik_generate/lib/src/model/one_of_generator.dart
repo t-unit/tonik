@@ -482,6 +482,17 @@ class OneOfGenerator {
       (m) => m.model.resolved is AnyModel,
     );
 
+    // A whole-number JSON double denotes an integer, so an integer member
+    // decodes through decodeJsonInt. Skip this when a double/num member is
+    // present so that variant keeps owning whole-number doubles.
+    final hasNumberMember = model.models.any(
+      (m) =>
+          m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
+    );
+    final routeIntegerThroughDecode =
+        !hasNumberMember &&
+        model.models.any((m) => m.model.resolved is IntegerModel);
+
     if (hasPrimitives && hasOnlyPrimitives && !hasAnyModel) {
       final cases = <Code>[];
 
@@ -492,6 +503,26 @@ class OneOfGenerator {
                 (m) => m.model.resolved is PrimitiveModel,
               )) {
         final variantName = variantNames[m]!;
+
+        if (routeIntegerThroughDecode && m.model.resolved is IntegerModel) {
+          final decodeBuilt = buildFromJsonValueExpression(
+            'json',
+            model: m.model,
+            nameManager: nameManager,
+            package: package,
+            helperContext: helperContext,
+            contextClass: className,
+            useImmutableCollections: useImmutableCollections,
+            receiverOverride: refer('s'),
+          );
+          cases.addAll([
+            refer('num', 'dart:core').code,
+            const Code(' s => '),
+            refer(variantName).call([decodeBuilt.unsafeRawBody]).code,
+            const Code(','),
+          ]);
+          continue;
+        }
 
         cases.addAll([
           typeReference(
@@ -526,12 +557,38 @@ class OneOfGenerator {
             .where(
               (m) => m.model.resolved is PrimitiveModel,
             )) {
+      final variantName = variantNames[m]!;
+
+      if (routeIntegerThroughDecode && m.model.resolved is IntegerModel) {
+        final decodeBuilt = buildFromJsonValueExpression(
+          'json',
+          model: m.model,
+          nameManager: nameManager,
+          package: package,
+          helperContext: helperContext,
+          contextClass: className,
+          useImmutableCollections: useImmutableCollections,
+        );
+        blocks.addAll([
+          const Code('try {'),
+          refer(
+            variantName,
+          ).call([decodeBuilt.unsafeRawBody]).returned.statement,
+          const Code('} on '),
+          refer(
+            'InvalidTypeException',
+            'package:tonik_util/tonik_util.dart',
+          ).code,
+          const Code(' catch (_) {}'),
+        ]);
+        continue;
+      }
+
       final typeRef = typeReference(
         m.model.resolved,
         nameManager,
         package,
       );
-      final variantName = variantNames[m]!;
 
       blocks.addAll([
         const Code('if ('),
