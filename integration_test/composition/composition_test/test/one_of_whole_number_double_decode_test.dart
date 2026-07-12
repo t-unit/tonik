@@ -66,6 +66,29 @@ void main() {
 
       expect(success.value, const OneOfPrimitiveString('hello'));
     });
+
+    test('fractional double 42.5 surfaces a decoding TonikError', () async {
+      final api = buildApi('42.5');
+      final result = await api.echoOneOfPrimitive(
+        body: const OneOfPrimitiveInt(0),
+      );
+      final error = result as TonikError<OneOfPrimitive>;
+
+      expect(error.type, TonikErrorType.decoding);
+      expect(error.error, isA<InvalidTypeException>());
+    });
+  });
+
+  group('OneOfIntegerOrNumber decodes JSON number to the number variant', () {
+    test('whole-number double 42.0 decodes to the number variant', () async {
+      final api = buildApi('42.0');
+      final result = await api.echoOneOfIntegerOrNumber(
+        body: const OneOfIntegerOrNumberInt(0),
+      );
+      final success = result as TonikSuccess<OneOfIntegerOrNumber>;
+
+      expect(success.value, const OneOfIntegerOrNumberNumber(42.0));
+    });
   });
 
   group('OneOfIntegerOrClass1 decodes JSON number to the integer variant', () {
@@ -100,6 +123,17 @@ void main() {
         success.value,
         const OneOfIntegerOrClass1Class1(Class1(name: 'widget')),
       );
+    });
+
+    test('fractional double 42.5 surfaces a decoding TonikError', () async {
+      final api = buildApi('42.5');
+      final result = await api.echoOneOfIntegerOrClass1(
+        body: const OneOfIntegerOrClass1Int(0),
+      );
+      final error = result as TonikError<OneOfIntegerOrClass1>;
+
+      expect(error.type, TonikErrorType.decoding);
+      expect(error.error, isA<JsonDecodingException>());
     });
   });
 }

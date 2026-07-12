@@ -484,7 +484,7 @@ class OneOfGenerator {
 
     // A whole-number JSON double denotes an integer, so an integer member
     // decodes through decodeJsonInt. Skip this when a double/num member is
-    // present so that variant keeps owning whole-number doubles.
+    // present so the double/num variant keeps owning whole-number doubles.
     final hasNumberMember = model.models.any(
       (m) =>
           m.model.resolved is DoubleModel || m.model.resolved is NumberModel,

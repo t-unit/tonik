@@ -4367,5 +4367,73 @@ bool operator ==(Object other) {
         ),
       );
     });
+
+    test('integer+double keeps type-pattern arms without decodeJsonInt', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: DoubleModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(r'''
+            factory Value.fromJson(Object? json) {
+              return switch (json) {
+                double s => ValueDouble(s),
+                int s => ValueInt(s),
+                _ => throw JsonDecodingException(
+                  r'Invalid JSON type for Value: ${json.runtimeType}',
+                ),
+              };
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('integer+decimal routes integer through decode', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: DecimalModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(r'''
+            factory Value.fromJson(Object? json) {
+              return switch (json) {
+                BigDecimal s => ValueDecimal(s),
+                num s => ValueInt(s.decodeJsonInt(context: r'Value')),
+                _ => throw JsonDecodingException(
+                  r'Invalid JSON type for Value: ${json.runtimeType}',
+                ),
+              };
+            }
+          '''),
+        ),
+      );
+    });
   });
 }

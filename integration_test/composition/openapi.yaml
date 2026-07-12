@@ -59,6 +59,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/OneOfPrimitive'
 
+  /one-of-integer-or-number/echo:
+    post:
+      operationId: echoOneOfIntegerOrNumber
+      tags:
+        - composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneOfIntegerOrNumber'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfIntegerOrNumber'
+
   /one-of-integer-or-object/echo:
     post:
       operationId: echoOneOfIntegerOrClass1
@@ -116,6 +134,11 @@ components:
       oneOf:
         - type: integer
         - $ref: '#/components/schemas/Class1'
+
+    OneOfIntegerOrNumber:
+      oneOf:
+        - type: integer
+        - type: number
 
     OneOfComplex:
       oneOf:
