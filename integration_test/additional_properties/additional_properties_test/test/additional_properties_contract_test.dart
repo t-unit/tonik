@@ -1,20 +1,11 @@
-// Behavioral contract for additionalProperties handling across JSON and
-// flat (simple/form/label/matrix/deepObject) encodings. Expected wire
-// values are literal; they are never derived through tonik encoders.
-// ignore_for_file: prefer_const_literals_to_create_immutables
-
 import 'package:additional_properties_api/additional_properties_api.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  // -------------------------------------------------------------------
-  // Bare type: object property (free-form object)
-  // -------------------------------------------------------------------
-
   group('FreeformHolder (bare type: object property)', () {
     test('fromJson/toJson round-trips arbitrary freeform content', () {
-      final holder = FreeformHolder.fromJson({
+      final holder = FreeformHolder.fromJson(const {
         'id': 'abc',
         'freeform': {
           'a': 1,
@@ -33,10 +24,6 @@ void main() {
       });
     });
   });
-
-  // -------------------------------------------------------------------
-  // Enum-valued additionalProperties: simple/form decode and encode
-  // -------------------------------------------------------------------
 
   group('MixedEnumAp (enum-valued AP)', () {
     test('fromSimple decodes enum-valued additional properties', () {
@@ -86,10 +73,6 @@ void main() {
       expect(obj.toJson(), {'name': 'server-a', 'web': 'active'});
     });
   });
-
-  // -------------------------------------------------------------------
-  // Unrestricted AP values in flat encodings
-  // -------------------------------------------------------------------
 
   group('MixedUntyped flat encoding of unrestricted AP values', () {
     test('toSimple encodes string, int, and bool AP values as scalars', () {
@@ -200,10 +183,6 @@ void main() {
     });
   });
 
-  // -------------------------------------------------------------------
-  // Typed nullable AP values in flat encodings
-  // -------------------------------------------------------------------
-
   group('MixedNullableValues flat encoding', () {
     test('toForm omits null typed AP entries', () {
       const obj = MixedNullableValues(
@@ -217,10 +196,6 @@ void main() {
       ]);
     });
   });
-
-  // -------------------------------------------------------------------
-  // Unrestricted AP values in JSON
-  // -------------------------------------------------------------------
 
   group('MixedUntyped JSON encoding of unrestricted AP values', () {
     test('toJson keeps nested JSON maps and lists', () {
@@ -299,10 +274,6 @@ void main() {
     });
   });
 
-  // -------------------------------------------------------------------
-  // Any-valued collections in JSON
-  // -------------------------------------------------------------------
-
   group('AnyCollectionHolder (Any-valued map property)', () {
     test('toJson converts DateTime values inside the Any map', () {
       final obj = AnyCollectionHolder(
@@ -342,7 +313,7 @@ void main() {
     });
 
     test('json round-trip preserves Any map content', () {
-      final decoded = AnyCollectionHolder.fromJson({
+      final decoded = AnyCollectionHolder.fromJson(const {
         'lookup': {
           'k': 'v',
           'nested': {'flag': true},
@@ -357,10 +328,6 @@ void main() {
       });
     });
   });
-
-  // -------------------------------------------------------------------
-  // Typed AP wire parity with declared properties
-  // -------------------------------------------------------------------
 
   group('MixedTypedString typed AP wire parity', () {
     test('toForm encodes an AP value identically to a declared property', () {
@@ -435,10 +402,6 @@ void main() {
     });
   });
 
-  // -------------------------------------------------------------------
-  // Declared/AP wire key collisions
-  // -------------------------------------------------------------------
-
   group('declared/AP key collisions', () {
     test('toJson throws when an AP key collides with a declared wire key', () {
       const obj = MixedTypedString(
@@ -464,10 +427,6 @@ void main() {
     });
   });
 
-  // -------------------------------------------------------------------
-  // Active AP with no request-readable declared properties
-  // -------------------------------------------------------------------
-
   group('AuditedSettings (read-only declared property with active AP)', () {
     test('toForm emits AP entries', () {
       const obj = AuditedSettings(additionalProperties: {'theme': 'dark'});
@@ -489,10 +448,6 @@ void main() {
       expect(obj.additionalProperties, {'theme': 'dark'});
     });
   });
-
-  // -------------------------------------------------------------------
-  // allOf additionalProperties
-  // -------------------------------------------------------------------
 
   group('ExtendedPerson (allOf with string-valued AP)', () {
     test('fromSimple captures string AP beyond all member keys', () {
