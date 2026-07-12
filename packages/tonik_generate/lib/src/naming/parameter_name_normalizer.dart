@@ -5,6 +5,7 @@ const _pathSuffix = 'Path';
 const _querySuffix = 'Query';
 const _headerSuffix = 'Header';
 const _cookieSuffix = 'Cookie';
+const _defaultParameterPrefix = 'parameter';
 
 /// `cancelToken` is reserved because the generated `call(...)` method
 /// always declares a built-in `CancelToken? cancelToken` parameter.
@@ -288,5 +289,6 @@ String normalizeMultipartHeaderName(
 
 /// Normalizes a single parameter name.
 String _normalizeName(String name) {
-  return normalizeSingle(name, preserveNumbers: true);
+  final normalized = normalizeSingle(name, preserveNumbers: true);
+  return normalized.isEmpty ? _defaultParameterPrefix : normalized;
 }

@@ -4509,6 +4509,75 @@ void main() {
           );
         },
       );
+
+      test('colliding per-part header names use their distinct parameters', () {
+        final model = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+        final headers = {
+          for (final rawName in ['X-Trace-Id', 'Trace-Id'])
+            rawName: ResponseHeaderObject(
+              name: rawName,
+              description: null,
+              isRequired: true,
+              isDeprecated: false,
+              explode: false,
+              model: StringModel(context: testContext),
+              context: testContext,
+              encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
+            ),
+        };
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          multipartEncoding: _multipartEncoding(model, {
+            'file': PartEncoding(
+              contentType: ContentType.bytes,
+              rawContentType: 'application/octet-stream',
+              headers: headers,
+              style: null,
+              explode: null,
+              allowReserved: null,
+            ),
+          }),
+          examples: const [],
+        );
+
+        final code = emitStatements(
+          buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          ),
+        );
+
+        expect(
+          collapseWhitespace(code),
+          contains(
+            collapseWhitespace(
+              'fileTraceIdPartHeader.toSimple('
+              'explode: false, allowEmpty: true)',
+            ),
+          ),
+        );
+      });
     });
   });
 

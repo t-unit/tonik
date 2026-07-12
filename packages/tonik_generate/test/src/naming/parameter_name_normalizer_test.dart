@@ -37,6 +37,22 @@ void main() {
       ]);
     });
 
+    test('uses fallback names when normalization removes every character', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {
+          createQueryParameter('❤️'),
+          createQueryParameter('_'),
+        },
+        headers: {},
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'parameter',
+        'parameter2',
+      ]);
+    });
+
     test('normalizes header parameters and removes x- prefix', () {
       final result = normalizeRequestParameters(
         pathParameters: {},

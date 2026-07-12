@@ -484,6 +484,62 @@ void main() {
     });
   });
 
+  group('hostile variable names', () {
+    test('uses unique fallback and normalized names within one server', () {
+      final servers = [
+        const Server(
+          url: 'https://{_}.{❤️}.example.com/{api-version}/{api_version}',
+          description: 'Hostile variable server',
+          variables: [
+            ServerVariable(name: '_', defaultValue: 'one'),
+            ServerVariable(name: '❤️', defaultValue: 'two'),
+            ServerVariable(name: 'api-version', defaultValue: 'v1'),
+            ServerVariable(name: 'api_version', defaultValue: 'v2'),
+          ],
+        ),
+      ];
+
+      final serverClass = generator.generateClasses(servers)[1];
+      final fieldNames = serverClass.fields.map((field) => field.name).toList();
+
+      expect(fieldNames, ['field', 'field2', 'apiVersion', 'apiVersion2']);
+      expect(
+        serverClass.constructors.single.optionalParameters
+            .map((parameter) => parameter.name)
+            .toList(),
+        [...fieldNames, 'serverConfig'],
+      );
+    });
+
+    test('does not shadow members of the generated base server', () {
+      final servers = [
+        const Server(
+          url: 'https://{baseUrl}.{serverConfig}.example.com/{dio}',
+          description: 'Inherited member collision server',
+          variables: [
+            ServerVariable(name: 'baseUrl', defaultValue: 'base'),
+            ServerVariable(name: 'serverConfig', defaultValue: 'config'),
+            ServerVariable(name: 'dio', defaultValue: 'client'),
+          ],
+        ),
+      ];
+
+      final serverClass = generator.generateClasses(servers)[1];
+      final fieldNames = serverClass.fields.map((field) => field.name).toList();
+      final parameterNames = serverClass.constructors.single.optionalParameters
+          .map((parameter) => parameter.name)
+          .toList();
+
+      expect(fieldNames, [r'$baseUrl', r'$serverConfig', r'$dio']);
+      expect(parameterNames, [
+        r'$baseUrl',
+        r'$serverConfig',
+        r'$dio',
+        'serverConfig',
+      ]);
+    });
+  });
+
   group('ServerGenerator templated URLs with empty url template', () {
     test('emits empty baseUrl literal when no placeholders are present', () {
       // An empty url combined with any variables means no placeholders match

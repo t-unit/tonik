@@ -413,12 +413,10 @@ class OperationGenerator {
               if (hasRequestBody)
                 ...() {
                   final args = <String, Expression>{};
-                  for (final c in operation.requestBody!.resolvedContent) {
-                    if (c.contentType == ContentType.multipart) {
-                      for (final info in extractMultipartHeaderParamInfo(c)) {
-                        args[info.name] = refer(info.name);
-                      }
-                    }
+                  for (final info in extractOperationMultipartHeaderParamInfo(
+                    operation,
+                  )) {
+                    args[info.name] = refer(info.name);
                   }
                   return args;
                 }(),

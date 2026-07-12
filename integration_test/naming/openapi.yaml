@@ -14,6 +14,24 @@ servers:
           - staging
       default:
         default: v1
+  - url: >-
+      https://{_}.{❤️}.example.com/{api-version}/{api_version}/{baseUrl}/{serverConfig}/{dio}
+    description: Server with hostile variable names
+    variables:
+      _:
+        default: one
+      "❤️":
+        default: two
+      api-version:
+        default: v1
+      api_version:
+        default: v2
+      baseUrl:
+        default: base
+      serverConfig:
+        default: config
+      dio:
+        default: client
 
 paths:
   /keyword/switch:
@@ -1014,8 +1032,80 @@ paths:
               schema:
                 $ref: '#/components/schemas/SelfNamedProperty'
 
+  /hostile-query-names:
+    get:
+      operationId: getHostileQueryNames
+      parameters:
+        # OpenAPI 3.0.4 Appendix C.4.4 uses this exact parameter name.
+        - name: "❤️"
+          in: query
+          required: true
+          schema:
+            type: string
+        # jQuery uses this parameter for cache-busting timestamps.
+        - name: _
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: expand[]
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: meta.<field>[<operator>]
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /multipart-name-collisions:
+    post:
+      operationId: postMultipartNameCollisions
+      parameters:
+        - name: file_custom
+          in: query
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultipartNameCollisionForm'
+            encoding:
+              file:
+                headers:
+                  X-Trace-Id:
+                    required: true
+                    schema:
+                      type: string
+                  Trace-Id:
+                    required: true
+                    schema:
+                      type: string
+                  Trace_Id:
+                    required: true
+                    schema:
+                      type: string
+      responses:
+        '204':
+          description: OK
+
 components:
   schemas:
+    MultipartNameCollisionForm:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          format: binary
+
     SimpleResult:
       type: object
       required:
