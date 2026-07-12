@@ -52,8 +52,8 @@ void main() {
     return (result as TonikSuccess<OneOfBase64OrString>).value;
   }
 
-  group('OneOfScalarMix picks the first matching variant in declaration order '
-      '[integer, double, decimal, string]', () {
+  group('OneOfScalarMix [integer, double, decimal, string] routes each JSON '
+      'value to its typed variant', () {
     test('integer 42 decodes to the integer variant', () async {
       expect(await decode('42'), const OneOfScalarMixInt(42));
     });
@@ -84,6 +84,11 @@ void main() {
 
     test('non-numeric string "hello" decodes to the string variant', () async {
       expect(await decode('"hello"'), const OneOfScalarMixString('hello'));
+    });
+
+    test('decimal-shaped but invalid string "1.2.3" falls through to the '
+        'string variant', () async {
+      expect(await decode('"1.2.3"'), const OneOfScalarMixString('1.2.3'));
     });
   });
 

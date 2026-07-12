@@ -487,7 +487,7 @@ class OneOfGenerator {
     // JSON decoders overlap leniently, so numeric/bool members dispatch on the
     // runtime type instead of joining the string-encoded try-each below.
     for (final m in sortedModels.where(
-      (m) => _isNumericOrBoolMember(m.model.resolved),
+      (m) => _numericRuntimeType(m.model.resolved) != null,
     )) {
       final variantName = variantNames[m]!;
       final resolvedType = m.model.resolved;
@@ -509,7 +509,7 @@ class OneOfGenerator {
         continue;
       }
 
-      final typeRef = _numericRuntimeType(resolvedType);
+      final typeRef = _numericRuntimeType(resolvedType)!;
       blocks.addAll([
         const Code('if ('),
         refer('json').isA(typeRef).code,
@@ -524,7 +524,7 @@ class OneOfGenerator {
     // before a sibling plain-string variant can capture it.
     for (final m in sortedModels.where(
       (m) =>
-          !_isNumericOrBoolMember(m.model.resolved) &&
+          _numericRuntimeType(m.model.resolved) == null &&
           m.model.resolved is! AnyModel &&
           m.model.resolved is! NeverModel,
     )) {
@@ -605,20 +605,12 @@ class OneOfGenerator {
     ]);
   }
 
-  bool _isNumericOrBoolMember(Model resolved) =>
-      resolved is IntegerModel ||
-      resolved is DoubleModel ||
-      resolved is NumberModel ||
-      resolved is BooleanModel;
-
-  Reference _numericRuntimeType(Model resolved) => switch (resolved) {
+  Reference? _numericRuntimeType(Model resolved) => switch (resolved) {
     DoubleModel() => refer('double', 'dart:core'),
     NumberModel() => refer('num', 'dart:core'),
     BooleanModel() => refer('bool', 'dart:core'),
     IntegerModel() => refer('int', 'dart:core'),
-    _ => throw ArgumentError(
-      'Not a numeric/bool member: ${resolved.runtimeType}',
-    ),
+    _ => null,
   };
 
   /// Builds a fromSimple or fromForm factory constructor for oneOf.
