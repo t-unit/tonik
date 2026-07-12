@@ -628,13 +628,19 @@ void main() {
 
   group('Type Array with null (OpenAPI 3.1 style)', () {
     const typeArrayNullSpec = {
-      'openapi': '3.0.0',
+      'openapi': '3.1.0',
       'info': {'title': 'Test API', 'version': '1.0.0'},
       'paths': <String, dynamic>{},
       'components': {
         'schemas': {
           'FlexibleString': {
             'type': ['string', 'null'],
+          },
+          'NullableTypeArrayAddress': {
+            'type': ['object', 'null'],
+            'properties': {
+              'street': {'type': 'string'},
+            },
           },
         },
       },
@@ -650,6 +656,18 @@ void main() {
       final aliasModel = model as AliasModel;
       expect(aliasModel.isNullable, isTrue);
       expect(aliasModel.model, isA<StringModel>());
+    });
+
+    test('parses object with null type as nullable', () {
+      final api = Importer().import(typeArrayNullSpec);
+      final model = api.models.firstWhere(
+        (m) => m is NamedModel && m.name == 'NullableTypeArrayAddress',
+      );
+
+      expect(model, isA<ClassModel>());
+      final classModel = model as ClassModel;
+      expect(classModel.isNullable, isTrue);
+      expect(classModel.properties.single.name, 'street');
     });
   });
 

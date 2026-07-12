@@ -22,6 +22,11 @@ if (path == '/simple-types' ||
         .withStatusCode(200)
         .withHeader('Content-Type', 'application/json')
         .withContent('"test-value"')
+} else if (path == '/nullable-object-response') {
+    respond()
+        .withStatusCode(200)
+        .withHeader('Content-Type', 'application/json')
+        .withContent('null')
 } else {
     // For other methods, use default OpenAPI behavior
     respond().usingDefaultBehaviour()
