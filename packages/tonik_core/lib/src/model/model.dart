@@ -1,5 +1,6 @@
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:tonik_core/src/model/additional_properties_policy.dart';
 import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/src/model/example.dart';
 import 'package:tonik_core/src/util/context.dart';
@@ -282,17 +283,21 @@ class ListModel extends Model with NamedModel {
 class ClassModel extends Model with NamedModel {
   ClassModel({
     required this.properties,
-    required super.context,
+    required Context context,
     required this.isDeprecated,
     required this.examples,
     this.name,
     this.nameOverride,
     this.description,
-    this.additionalProperties,
+    AdditionalProperties? additionalProperties,
+    AdditionalPropertiesPolicy? additionalPropertiesPolicy,
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
-  });
+  }) : additionalPropertiesPolicy =
+           additionalPropertiesPolicy ??
+           AdditionalPropertiesPolicy.fromLegacy(additionalProperties, context),
+       super(context: context);
 
   @override
   final String? name;
@@ -301,12 +306,23 @@ class ClassModel extends Model with NamedModel {
   String? nameOverride;
   List<Property> properties;
   String? description;
-  AdditionalProperties? additionalProperties;
+  AdditionalPropertiesPolicy additionalPropertiesPolicy;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
   List<Example> examples;
+
+  /// Legacy additional-properties view for not-yet-migrated consumers.
+  AdditionalProperties? get additionalProperties =>
+      additionalPropertiesPolicy.legacyView;
+
+  set additionalProperties(AdditionalProperties? value) {
+    additionalPropertiesPolicy = AdditionalPropertiesPolicy.fromLegacy(
+      value,
+      context,
+    );
+  }
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -315,7 +331,7 @@ class ClassModel extends Model with NamedModel {
   String toString() =>
       'ClassModel{name: $name, nameOverride: $nameOverride, '
       'properties: [${properties.map((p) => p.name).join(', ')}], '
-      'additionalProperties: $additionalProperties, '
+      'additionalPropertiesPolicy: $additionalPropertiesPolicy, '
       'description: $description, isDeprecated: $isDeprecated, '
       'examples: $examples}';
 }
@@ -390,17 +406,21 @@ class EnumModel<T> extends Model with NamedModel {
 class AllOfModel extends Model with NamedModel, CompositeModel {
   AllOfModel({
     required this.models,
-    required super.context,
+    required Context context,
     required this.isDeprecated,
     required this.examples,
     this.name,
     this.nameOverride,
     this.description,
-    this.additionalProperties,
+    AdditionalProperties? additionalProperties,
+    AdditionalPropertiesPolicy? additionalPropertiesPolicy,
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
-  });
+  }) : additionalPropertiesPolicy =
+           additionalPropertiesPolicy ??
+           AdditionalPropertiesPolicy.fromLegacy(additionalProperties, context),
+       super(context: context);
 
   @override
   final String? name;
@@ -408,13 +428,24 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   @override
   String? nameOverride;
   String? description;
-  AdditionalProperties? additionalProperties;
+  AdditionalPropertiesPolicy additionalPropertiesPolicy;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
   Set<Model> models;
   List<Example> examples;
+
+  /// Legacy additional-properties view for not-yet-migrated consumers.
+  AdditionalProperties? get additionalProperties =>
+      additionalPropertiesPolicy.legacyView;
+
+  set additionalProperties(AdditionalProperties? value) {
+    additionalPropertiesPolicy = AdditionalPropertiesPolicy.fromLegacy(
+      value,
+      context,
+    );
+  }
 
   @override
   Set<Model> get containedModels => models;
@@ -423,7 +454,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   String toString() =>
       'AllOfModel{name: $name, nameOverride: $nameOverride, '
       'models: {${models.map((m) => m._ref).join(', ')}}, '
-      'additionalProperties: $additionalProperties, '
+      'additionalPropertiesPolicy: $additionalPropertiesPolicy, '
       'description: $description, isDeprecated: $isDeprecated, '
       'examples: $examples}';
 }

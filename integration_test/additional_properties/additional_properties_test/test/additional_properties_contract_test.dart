@@ -150,7 +150,7 @@ void main() {
     });
 
     test('toSimple throws EncodingException for custom object AP values', () {
-      final obj = MixedUntyped(
+      const obj = MixedUntyped(
         id: 1,
         name: 'n',
         additionalProperties: {'obj': Object()},
@@ -289,13 +289,13 @@ void main() {
     });
 
     test('toJson throws EncodingException for custom object AP values', () {
-      final obj = MixedUntyped(
+      const obj = MixedUntyped(
         id: 1,
         name: 'n',
         additionalProperties: {'obj': Object()},
       );
 
-      expect(() => obj.toJson(), throwsA(isA<EncodingException>()));
+      expect(obj.toJson, throwsA(isA<EncodingException>()));
     });
   });
 

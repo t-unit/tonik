@@ -869,6 +869,39 @@ void main() {
     );
 
     test(
+      'implicit and explicit unrestricted additional properties get '
+      'different keys',
+      () {
+        final implicit = unnamedClass();
+        final explicit = ClassModel(
+          properties: [
+            Property(
+              name: 'id',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+            origin: AdditionalPropertiesOrigin.explicit,
+          ),
+        );
+
+        expect(
+          sorter.stableKeyOf(implicit),
+          isNot(sorter.stableKeyOf(explicit)),
+        );
+      },
+    );
+
+    test(
       'unrestricted and forbidden additional properties get different keys',
       () {
         final unrestricted = unnamedClass(

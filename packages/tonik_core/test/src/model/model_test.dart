@@ -89,7 +89,7 @@ void main() {
   });
 
   group('ClassModel with additionalProperties', () {
-    test('additionalProperties defaults to null', () {
+    test('legacy additionalProperties view defaults to null', () {
       final model = ClassModel(
         name: 'Test',
         properties: const [],
@@ -101,7 +101,7 @@ void main() {
       expect(model.additionalProperties, isNull);
     });
 
-    test('toString includes additionalProperties', () {
+    test('toString includes the additional-properties policy', () {
       final model = ClassModel(
         name: 'Test',
         properties: const [],
@@ -114,14 +114,15 @@ void main() {
       expect(
         model.toString(),
         'ClassModel{name: Test, nameOverride: null, properties: [], '
-        "additionalProperties: Instance of 'UnrestrictedAdditionalProperties', "
+        'additionalPropertiesPolicy: AllowedAdditionalProperties{'
+        'origin: explicit, valueModel: AnyModel}, '
         'description: null, isDeprecated: false, examples: []}',
       );
     });
   });
 
   group('AllOfModel with additionalProperties', () {
-    test('additionalProperties defaults to null', () {
+    test('legacy additionalProperties view defaults to null', () {
       final model = AllOfModel(
         name: 'Test',
         models: {StringModel(context: context)},
@@ -133,7 +134,7 @@ void main() {
       expect(model.additionalProperties, isNull);
     });
 
-    test('toString includes additionalProperties', () {
+    test('toString includes the additional-properties policy', () {
       final model = AllOfModel(
         name: 'Test',
         models: {StringModel(context: context)},
@@ -146,7 +147,8 @@ void main() {
       expect(
         model.toString(),
         'AllOfModel{name: Test, nameOverride: null, models: {StringModel}, '
-        "additionalProperties: Instance of 'UnrestrictedAdditionalProperties', "
+        'additionalPropertiesPolicy: AllowedAdditionalProperties{'
+        'origin: explicit, valueModel: AnyModel}, '
         'description: null, isDeprecated: false, examples: []}',
       );
     });
