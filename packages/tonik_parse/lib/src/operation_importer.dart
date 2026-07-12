@@ -271,7 +271,9 @@ class OperationImporter {
         }
 
         final seen = visitedRefs ?? <String>{};
-        if (!seen.add(wrapper.ref)) return null;
+        if (!seen.add(wrapper.ref)) {
+          throw ArgumentError('Cyclic parameter reference: ${wrapper.ref}');
+        }
 
         final refName = wrapper.ref.split('/').last;
         final refParameter = openApiObject.components?.parameters?[refName];

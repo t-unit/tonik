@@ -285,4 +285,43 @@ void main() {
     expect(params, hasLength(1));
     expect(params.single.isRequired, isTrue);
   });
+
+  test(r'cyclic parameter $ref chain throws ArgumentError', () {
+    final fileContent = specWith(
+      pathParameter: {r'$ref': '#/components/parameters/A'},
+      operationParameter: {
+        'name': 'kind',
+        'in': 'query',
+        'required': true,
+        'schema': {'type': 'string'},
+      },
+      components: {
+        'A': {r'$ref': '#/components/parameters/B'},
+        'B': {r'$ref': '#/components/parameters/A'},
+      },
+    );
+
+    expect(
+      () => Importer().import(fileContent),
+      throwsA(isA<ArgumentError>()),
+    );
+  });
+
+  test(r'unresolvable parameter $ref is passed through to the importer '
+      'and throws', () {
+    final fileContent = specWith(
+      pathParameter: {r'$ref': '#/components/parameters/DoesNotExist'},
+      operationParameter: {
+        'name': 'kind',
+        'in': 'query',
+        'required': true,
+        'schema': {'type': 'string'},
+      },
+    );
+
+    expect(
+      () => Importer().import(fileContent),
+      throwsA(isA<ArgumentError>()),
+    );
+  });
 }
