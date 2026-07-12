@@ -193,9 +193,7 @@ class ModelImporter {
       return;
     }
 
-    if ((schema.properties == null || schema.properties!.isEmpty) &&
-        schema.additionalProperties != null &&
-        schema.additionalProperties != false) {
+    if (_isOpenMapSchema(schema, types)) {
       final model = MapModel(
         valueModel: AnyModel(context: context),
         context: context,
@@ -428,9 +426,7 @@ class ModelImporter {
       return;
     }
 
-    if ((schema.properties == null || schema.properties!.isEmpty) &&
-        schema.additionalProperties != null &&
-        schema.additionalProperties != false) {
+    if (_isOpenMapSchema(schema, types)) {
       _populateMapShell(name, schema, context, existingModel as MapModel);
       applyExamples(existingModel, examples);
       return;
@@ -841,13 +837,29 @@ class ModelImporter {
   ) {
     final ap = schema.additionalProperties;
     final mapContext = context.push(name);
-    if (ap == true) {
-      shell.valueModel = AnyModel(context: mapContext);
-    } else if (ap is Schema) {
+    if (ap is Schema && !_isEmptySchema(ap)) {
       shell
         ..valueModel = _resolveSchemaRef(null, ap, mapContext)
         ..isValueNullable = ap.isNullable ?? ap.type.contains('null');
+    } else {
+      shell.valueModel = AnyModel(context: mapContext);
     }
+  }
+
+  /// Whether [schema] is an open map: an object shape with no declared
+  /// properties whose additional properties are not forbidden.
+  ///
+  /// A bare `type: object` with an omitted keyword is included — the JSON
+  /// Schema default permits arbitrary members, and only a map representation
+  /// can hold them. Schemas without an object type still need an explicit
+  /// additionalProperties value to classify as maps.
+  bool _isOpenMapSchema(Schema schema, List<String> types) {
+    if (schema.properties != null && schema.properties!.isNotEmpty) {
+      return false;
+    }
+    final ap = schema.additionalProperties;
+    if (ap == false) return false;
+    return ap != null || types.contains('object');
   }
 
   /// Populates a ListModel shell.
@@ -1398,19 +1410,16 @@ class ModelImporter {
       return _parseMultiType(types, schema, hasNullType, context, name);
     }
 
-    if ((schema.properties == null || schema.properties!.isEmpty) &&
-        schema.additionalProperties != null &&
-        schema.additionalProperties != false) {
+    if (_isOpenMapSchema(schema, types)) {
       final ap = schema.additionalProperties;
       final mapContext = context.push(name ?? 'map');
       Model valueModel;
       var isValueNullable = false;
-      if (ap == true) {
-        valueModel = AnyModel(context: mapContext);
+      if (ap is Schema && !_isEmptySchema(ap)) {
+        valueModel = _resolveSchemaRef(null, ap, mapContext);
+        isValueNullable = ap.isNullable ?? ap.type.contains('null');
       } else {
-        final apSchema = ap! as Schema;
-        valueModel = _resolveSchemaRef(null, apSchema, mapContext);
-        isValueNullable = apSchema.isNullable ?? apSchema.type.contains('null');
+        valueModel = AnyModel(context: mapContext);
       }
       final model = MapModel(
         valueModel: valueModel,

@@ -410,6 +410,9 @@ BuiltExpression _buildListFromJsonBody(
       result = mapList(listExpr, mapFunction);
 
     case final MapModel mapModel:
+      // Element nullability lives in the map decode expression itself
+      // (decodeJsonNullableMap / the helper's null guard), so the closure
+      // stays a plain body and no analyzer-flagged ternary is emitted.
       final inner = _buildMapFromJsonExpression(
         'e',
         mapModel,
@@ -418,10 +421,15 @@ BuiltExpression _buildListFromJsonBody(
         package: package,
         contextClass: contextClass,
         contextProperty: contextProperty,
+        isNullable: isItemNullable,
         useImmutableCollections: useImmutableCollections,
       );
       inlineFunctions.addAll(inner.inlineFunctions);
-      final mapDecoderClosure = elementClosure(inner.unsafeRawBody);
+      final mapDecoderClosure = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body = inner.unsafeRawBody.code,
+      ).closure;
       final mapListExpr = receiver.property(listDecoder).call(
         [],
         contextParam,

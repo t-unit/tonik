@@ -637,7 +637,7 @@ void main() {
         );
       });
 
-      test('map items short-circuit null per element', () {
+      test('map items decode through the nullable map decoder', () {
         final addressModel = ClassModel(
           isDeprecated: false,
           context: context,
@@ -652,8 +652,8 @@ void main() {
         );
         expect(
           decode(mapModel),
-          'value.decodeJsonList<Object?>().map((e) => e == null ? null : '
-          'e.decodeJsonMap((v) => Address.fromJson(v))).toList()',
+          'value.decodeJsonList<Object?>().map((e) => '
+          'e.decodeJsonNullableMap((v) => Address.fromJson(v))).toList()',
         );
       });
     });

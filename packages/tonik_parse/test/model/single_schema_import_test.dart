@@ -237,8 +237,8 @@ void main() {
   test('returns model that is referenced', () {
     final result = importer.importSchema(reference, Context.initial());
 
-    expect(result, isA<ClassModel>());
-    expect((result as ClassModel).name, 'TestModel');
+    expect(result, isA<MapModel>());
+    expect((result as MapModel).name, 'TestModel');
   });
 
   test('adds inline schema to models', () {
@@ -253,8 +253,8 @@ void main() {
 
     final result = importer.importSchema(inlineNullableClass, context);
 
-    expect(result, isA<ClassModel>());
-    expect((result as ClassModel).isNullable, isTrue);
+    expect(result, isA<MapModel>());
+    expect((result as MapModel).isNullable, isTrue);
   });
 
   test('does not add inline primitive schema to models', () {
