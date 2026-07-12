@@ -388,7 +388,8 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
 
   // If it's just a number, spell it out (e.g. "600" -> "sixHundred")
   if (RegExp(r'^\d+$').hasMatch(processedName)) {
-    final number = int.parse(processedName);
+    final number = int.tryParse(processedName);
+    if (number == null) return '\$$processedName';
     final words = _numberToWords(number);
     return _normalizeText(words).toCamelCase();
   }
@@ -410,7 +411,10 @@ String normalizeSingle(String name, {bool preserveNumbers = false}) {
 String normalizeEnumValueName(String value) {
   // Only spell out numbers if the entire value is just a number (no prefix)
   if (RegExp(r'^-?\d+$').hasMatch(value)) {
-    final number = int.parse(value);
+    final number = int.tryParse(value);
+    if (number == null) {
+      return value.startsWith('-') ? 'minus${value.substring(1)}' : '\$$value';
+    }
     final words = number < 0
         ? 'minus ${_numberToWords(number.abs())}'
         : _numberToWords(number);
@@ -426,7 +430,10 @@ String normalizeEnumValueName(String value) {
 
     final segments = versionPart.split('.');
     final spelled = segments
-        .map((s) => _numberToWords(int.parse(s)))
+        .map((s) {
+          final number = int.tryParse(s);
+          return number == null ? s : _numberToWords(number);
+        })
         .join(' dot ');
 
     final fullSpelled = suffix.isNotEmpty ? '$spelled $suffix' : spelled;

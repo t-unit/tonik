@@ -12,7 +12,9 @@ import 'package:naming_api/src/model/object_method_collider.dart';
 import 'package:naming_api/src/model/self_referencer.dart';
 import 'package:naming_api/src/model/simple_result.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
+import 'package:naming_api/src/operation/get_hostile_query_names.dart';
 import 'package:naming_api/src/operation/get_param_counter_collision.dart';
+import 'package:naming_api/src/operation/get_suffix_induced_collision.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_cookie.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_header.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_path.dart';
@@ -420,5 +422,73 @@ void main() {
         );
       },
     );
+  });
+
+  group('hostile but valid query parameter names', () {
+    test('uses valid Dart names while preserving the wire names', () async {
+      final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
+      Uri? capturedUri;
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            capturedUri = options.uri;
+            handler.reject(
+              DioException(
+                requestOptions: options,
+                type: DioExceptionType.cancel,
+              ),
+            );
+          },
+        ),
+      );
+
+      await GetHostileQueryNames(dio).call(
+        parameter: 'love',
+        parameter2: 'cache-buster',
+        expand: 'customer',
+        metaLessThanFieldGreaterThanLessThanOperatorGreaterThan: 'value',
+      );
+
+      expect(capturedUri, isNotNull);
+      expect(capturedUri!.queryParameters, {
+        '❤️': 'love',
+        '_': 'cache-buster',
+        'expand[]': 'customer',
+        'meta.<field>[<operator>]': 'value',
+      });
+    });
+  });
+
+  group('location suffix induced collisions', () {
+    test('keeps all generated Dart parameters and wire names unique', () async {
+      final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
+      Uri? capturedUri;
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            capturedUri = options.uri;
+            handler.reject(
+              DioException(
+                requestOptions: options,
+                type: DioExceptionType.cancel,
+              ),
+            );
+          },
+        ),
+      );
+
+      await GetSuffixInducedCollision(dio).call(
+        idPath: 'path-id',
+        idQuery: 'query-id',
+        idPathQuery: 'literal-id-path',
+      );
+
+      expect(capturedUri, isNotNull);
+      expect(capturedUri!.path, '/suffix-induced-collision/path-id');
+      expect(capturedUri!.queryParameters, {
+        'id': 'query-id',
+        'idPath': 'literal-id-path',
+      });
+    });
   });
 }

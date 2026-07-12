@@ -37,6 +37,22 @@ void main() {
       ]);
     });
 
+    test('uses fallback names when normalization removes every character', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {
+          createQueryParameter('❤️'),
+          createQueryParameter('_'),
+        },
+        headers: {},
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'parameter',
+        'parameter2',
+      ]);
+    });
+
     test('normalizes header parameters and removes x- prefix', () {
       final result = normalizeRequestParameters(
         pathParameters: {},
@@ -76,6 +92,25 @@ void main() {
         ]);
       },
     );
+
+    test('resolves collisions introduced by location suffixes', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {createPathParameter('id')},
+        queryParameters: {
+          createQueryParameter('id'),
+          createQueryParameter('idPath'),
+        },
+        headers: {},
+      );
+
+      expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+        'idPath',
+      ]);
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'idQuery',
+        'idPathQuery',
+      ]);
+    });
 
     test('handles Dart keywords', () {
       final result = normalizeRequestParameters(

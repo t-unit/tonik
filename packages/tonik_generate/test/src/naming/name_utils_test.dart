@@ -76,6 +76,13 @@ void main() {
         );
       });
 
+      test('keeps numeric strings larger than Dart integers valid', () {
+        expect(
+          normalizeEnumValueName('18446744073709551616'),
+          r'$18446744073709551616',
+        );
+      });
+
       test('produces camelCase identifiers', () {
         // Based on existing test expectations
         expect(normalizeEnumValueName('1'), 'one');
@@ -170,6 +177,13 @@ void main() {
       test('handles two-segment version strings', () {
         expect(normalizeEnumValueName('1.0'), 'oneDotZero');
       });
+
+      test('keeps segments larger than Dart integers valid', () {
+        expect(
+          normalizeEnumValueName('18446744073709551616.1'),
+          r'$18446744073709551616DotOne',
+        );
+      });
     });
 
     group('dotted enum values', () {
@@ -229,6 +243,13 @@ void main() {
       expect(normalizeSingle('1'), 'one');
       expect(normalizeSingle('600'), 'sixHundred');
       expect(normalizeSingle('1000'), 'oneThousand');
+    });
+
+    test('keeps numeric strings larger than Dart integers valid', () {
+      expect(
+        normalizeSingle('18446744073709551616'),
+        r'$18446744073709551616',
+      );
     });
   });
 

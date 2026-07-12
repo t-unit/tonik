@@ -1014,6 +1014,59 @@ paths:
               schema:
                 $ref: '#/components/schemas/SelfNamedProperty'
 
+  /hostile-query-names:
+    get:
+      operationId: getHostileQueryNames
+      parameters:
+        # OpenAPI 3.0.4 Appendix C.4.4 uses this exact parameter name.
+        - name: "❤️"
+          in: query
+          required: true
+          schema:
+            type: string
+        # jQuery uses this parameter for cache-busting timestamps.
+        - name: _
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: expand[]
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: meta.<field>[<operator>]
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
+  /suffix-induced-collision/{id}:
+    get:
+      operationId: getSuffixInducedCollision
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: idPath
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+
 components:
   schemas:
     SimpleResult:

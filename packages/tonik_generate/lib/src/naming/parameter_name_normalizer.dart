@@ -5,6 +5,7 @@ const _pathSuffix = 'Path';
 const _querySuffix = 'Query';
 const _headerSuffix = 'Header';
 const _cookieSuffix = 'Cookie';
+const _defaultParameterPrefix = 'parameter';
 
 /// `cancelToken` is reserved because the generated `call(...)` method
 /// always declares a built-in `CancelToken? cancelToken` parameter.
@@ -143,11 +144,39 @@ NormalizedRequestParameters normalizeRequestParameters({
   final uniqueHeaderParams = _ensureUniquenessInGroup(resolvedHeaderParams);
   final uniqueCookieParams = _ensureUniquenessInGroup(resolvedCookieParams);
 
+  final usedNames = <String>{};
+  List<({String normalizedName, T parameter})> ensureGlobalUniqueness<T>(
+    List<({String normalizedName, T parameter})> parameters,
+    String locationSuffix,
+  ) {
+    return parameters.map((item) {
+      var name = item.normalizedName;
+      var lowerName = name.toLowerCase();
+      if (usedNames.contains(lowerName)) {
+        final baseName = '$name$locationSuffix';
+        name = baseName;
+        lowerName = name.toLowerCase();
+        var counter = 2;
+        while (usedNames.contains(lowerName)) {
+          name = '$baseName$counter';
+          lowerName = name.toLowerCase();
+          counter++;
+        }
+      }
+
+      usedNames.add(lowerName);
+      return (normalizedName: name, parameter: item.parameter);
+    }).toList();
+  }
+
   return NormalizedRequestParameters(
-    pathParameters: uniquePathParams,
-    queryParameters: uniqueQueryParams,
-    headers: uniqueHeaderParams,
-    cookieParameters: uniqueCookieParams,
+    pathParameters: ensureGlobalUniqueness(uniquePathParams, _pathSuffix),
+    queryParameters: ensureGlobalUniqueness(uniqueQueryParams, _querySuffix),
+    headers: ensureGlobalUniqueness(uniqueHeaderParams, _headerSuffix),
+    cookieParameters: ensureGlobalUniqueness(
+      uniqueCookieParams,
+      _cookieSuffix,
+    ),
   );
 }
 
@@ -288,5 +317,6 @@ String normalizeMultipartHeaderName(
 
 /// Normalizes a single parameter name.
 String _normalizeName(String name) {
-  return normalizeSingle(name, preserveNumbers: true);
+  final normalized = normalizeSingle(name, preserveNumbers: true);
+  return normalized.isEmpty ? _defaultParameterPrefix : normalized;
 }
