@@ -485,7 +485,7 @@ class OneOfGenerator {
 
     // int and double arrive as distinct Dart runtime types and the numeric
     // JSON decoders overlap leniently, so numeric/bool members dispatch on the
-    // runtime type instead of joining the string-encoded try-each below.
+    // runtime type instead of joining the ordered try-each below.
     for (final m in sortedModels.where(
       (m) => _scalarRuntimeType(m.model.resolved) != null,
     )) {
