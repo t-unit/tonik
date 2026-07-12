@@ -3,6 +3,7 @@ import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart' as core;
 import 'package:tonik_parse/src/model/open_api_object.dart';
 import 'package:tonik_parse/src/model/operation.dart';
+import 'package:tonik_parse/src/model/parameter.dart';
 import 'package:tonik_parse/src/model/path_item.dart';
 import 'package:tonik_parse/src/model/reference.dart';
 import 'package:tonik_parse/src/model/response.dart';
@@ -162,7 +163,10 @@ class OperationImporter {
 
     final pathParameters = pathItem.parameters ?? [];
     final operationParameters = operation.parameters ?? [];
-    final allParameters = [...pathParameters, ...operationParameters];
+    final allParameters = _dedupeParameters([
+      ...pathParameters,
+      ...operationParameters,
+    ]);
 
     final (headers, queryParams, pathParams, cookieParams) = parameterImporter
         .importOperationParameters(allParameters, context.push('parameters'));
@@ -222,6 +226,61 @@ class OperationImporter {
     }
 
     return schemes;
+  }
+
+  /// Later entries win, so an operation-level parameter (appended after
+  /// path-item-level ones) overrides an identically keyed path-item one.
+  /// Parameters whose key cannot be resolved are never dropped.
+  List<ReferenceWrapper<Parameter>> _dedupeParameters(
+    List<ReferenceWrapper<Parameter>> parameters,
+  ) {
+    final result = <ReferenceWrapper<Parameter>>[];
+    final keyToIndex = <(ParameterLocation, String), int>{};
+
+    for (final wrapper in parameters) {
+      final parameter = _resolveParameter(wrapper);
+
+      if (parameter == null) {
+        result.add(wrapper);
+        continue;
+      }
+
+      final key = (parameter.location, parameter.name);
+      final existingIndex = keyToIndex[key];
+      if (existingIndex == null) {
+        keyToIndex[key] = result.length;
+        result.add(wrapper);
+      } else {
+        result[existingIndex] = wrapper;
+      }
+    }
+
+    return result;
+  }
+
+  Parameter? _resolveParameter(
+    ReferenceWrapper<Parameter> wrapper, [
+    Set<String>? visitedRefs,
+  ]) {
+    switch (wrapper) {
+      case InlinedObject<Parameter>():
+        return wrapper.object;
+      case Reference<Parameter>():
+        if (!wrapper.ref.startsWith('#/components/parameters/')) {
+          return null;
+        }
+
+        final seen = visitedRefs ?? <String>{};
+        if (!seen.add(wrapper.ref)) {
+          throw ArgumentError('Cyclic parameter reference: ${wrapper.ref}');
+        }
+
+        final refName = wrapper.ref.split('/').last;
+        final refParameter = openApiObject.components?.parameters?[refName];
+        if (refParameter == null) return null;
+
+        return _resolveParameter(refParameter, seen);
+    }
   }
 
   PathItem _resolvePathItem(ReferenceWrapper<PathItem> wrapper) {
