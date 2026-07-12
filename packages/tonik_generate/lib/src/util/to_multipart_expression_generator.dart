@@ -1264,8 +1264,18 @@ Code _buildComplexObjectFileAddition(
   final isStyleBased = propertyEncoding?.isStyleBased ?? false;
 
   // An explicit style/explode/allowReserved ignores contentType: the part
-  // renders as raw style parts, never through the JSON fallthrough.
+  // renders as raw style parts, never through the JSON fallthrough. Only
+  // form has a defined object expansion here; other styles must not be
+  // silently rendered with form semantics.
   if (isStyleBased) {
+    final style = propertyEncoding?.style;
+    if (style != null && style != EncodingStyle.form) {
+      return generateEncodingExceptionExpression(
+        '${style.name} style is not supported for object multipart '
+        'part $rawName',
+        raw: true,
+      ).statement;
+    }
     return _buildRawStylePartsAddition(
       rawName,
       accessor,

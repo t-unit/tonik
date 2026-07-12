@@ -56,13 +56,6 @@ final class FlatScalarDecodePlan extends FlatDecodePlan {
   final Expression value;
 }
 
-/// The slot decodes to a list value.
-final class FlatArrayDecodePlan extends FlatDecodePlan {
-  const FlatArrayDecodePlan({required this.value});
-
-  final Expression value;
-}
-
 /// The original runtime type cannot be recovered from a flat string.
 final class UnsupportedFlatDecodePlan extends FlatDecodePlan {
   const UnsupportedFlatDecodePlan({required this.reason});
@@ -129,8 +122,8 @@ FlatEncodePlan buildFlatEncodePlan(
 
 /// Builds the flat decode plan for [value] of [model] from [format].
 ///
-/// Decode support is independent from encode support: a value may be
-/// encodable while its runtime type cannot be recovered from a flat string.
+/// Decode support is independent from encode support: Binary values decode
+/// from a flat slot but have no flat encoding.
 FlatDecodePlan buildFlatDecodePlan(
   Expression value,
   Model model, {
@@ -170,9 +163,6 @@ FlatDecodePlan buildFlatDecodePlan(
     ).expression,
   };
 
-  if (model.resolved is ListModel) {
-    return FlatArrayDecodePlan(value: expression);
-  }
   return FlatScalarDecodePlan(value: expression);
 }
 
@@ -181,7 +171,11 @@ FlatDecodePlan buildFlatDecodePlan(
 ///
 /// Nested objects and compositions have no OAS-defined single-slot text
 /// form, so they are unsupported here even though they expose fromSimple
-/// factories for whole-value decoding.
+/// factories for whole-value decoding. Lists are unsupported because the
+/// object decoder cannot recover element boundaries of unknown keys:
+/// exploded simple pairs split on the same comma that separates elements,
+/// and repeated form keys overwrite each other outside the declared
+/// list-key set.
 String? _flatSlotDecodingUnsupportedReason(Model model) => switch (model) {
   StringModel() ||
   IntegerModel() ||
@@ -197,13 +191,8 @@ String? _flatSlotDecodingUnsupportedReason(Model model) => switch (model) {
   EnumModel() ||
   AnyModel() => null,
   NeverModel() => 'NeverModel does not permit any value',
-  MapModel() => 'Map types cannot be simple-decoded',
-  ListModel(:final content) => switch (content.resolved) {
-    ListModel() => 'Nested lists are not supported in simple decoding',
-    final resolvedContent => _flatSlotDecodingUnsupportedReason(
-      resolvedContent,
-    ),
-  },
+  MapModel() => 'Map values cannot be decoded from a flat value',
+  ListModel() => 'List values cannot be decoded from a flat value',
   AliasModel(:final model) => _flatSlotDecodingUnsupportedReason(model),
   _ => '${model.runtimeType} values cannot be decoded from a flat value',
 };

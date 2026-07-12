@@ -419,7 +419,8 @@ void main() {
       );
     });
 
-    test('integer list decodes as an array plan', () {
+    test('lists are unsupported because unknown-key element boundaries '
+        'cannot be recovered', () {
       final plan = decodePlan(
         ListModel(
           content: IntegerModel(context: context),
@@ -428,7 +429,10 @@ void main() {
         ),
       );
 
-      expect(plan, isA<FlatArrayDecodePlan>());
+      expect(
+        (plan as UnsupportedFlatDecodePlan).reason,
+        'List values cannot be decoded from a flat value',
+      );
     });
 
     test('maps are unsupported', () {
@@ -442,7 +446,7 @@ void main() {
 
       expect(
         (plan as UnsupportedFlatDecodePlan).reason,
-        'Map types cannot be simple-decoded',
+        'Map values cannot be decoded from a flat value',
       );
     });
 
@@ -474,22 +478,6 @@ void main() {
 
     test('never is unsupported', () {
       final plan = decodePlan(NeverModel(context: context));
-
-      expect(plan, isA<UnsupportedFlatDecodePlan>());
-    });
-
-    test('nested lists are unsupported', () {
-      final plan = decodePlan(
-        ListModel(
-          content: ListModel(
-            content: StringModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          context: context,
-          examples: const [],
-        ),
-      );
 
       expect(plan, isA<UnsupportedFlatDecodePlan>());
     });

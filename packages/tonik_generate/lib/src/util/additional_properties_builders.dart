@@ -14,14 +14,13 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 /// Everything the shared additional-properties builders need for one
 /// entries owner: a pure map, a mixed class, or the selected allOf owner.
 ///
-/// The builders depend only on [valueModel] and the codec plans; they do not
-/// know which kind of owner is calling. Unrestricted additional properties
-/// are simply a plan whose [valueModel] is [AnyModel].
+/// The builders depend only on the plan, never on which kind of owner is
+/// calling. Unrestricted additional properties are simply a plan whose
+/// [valueModel] is [AnyModel].
 final class AdditionalPropertiesPlan {
   const AdditionalPropertiesPlan({
     required this.valueModel,
     required this.knownWireKeys,
-    this.fieldName,
   });
 
   final Model valueModel;
@@ -29,10 +28,6 @@ final class AdditionalPropertiesPlan {
   /// Declared wire keys: excluded from decode capture and rejected when a
   /// user-constructed value tries to encode them as additional properties.
   final Set<String> knownWireKeys;
-
-  /// Generated additional-properties field name; null when the receiver
-  /// itself is the entries map.
-  final String? fieldName;
 }
 
 /// Statements produced by a shared builder plus any inline helpers they need.
@@ -40,15 +35,30 @@ final class ApBuilderResult {
   const ApBuilderResult({
     required this.codes,
     this.inlineHelpers = const [],
-    this.capturesValues = true,
   });
 
   final List<Code> codes;
   final List<InlineHelper> inlineHelpers;
+}
 
-  /// Whether the emitted decode capture fills a `_$additional` map. False
-  /// when the value model cannot be decoded and unknown keys throw instead.
-  final bool capturesValues;
+/// Statements emitted by the flat decode capture builder.
+///
+/// Callers must decide the constructor-argument question per variant, so a
+/// capture that turned into a rejection cannot silently drop the field.
+sealed class ApFlatCaptureResult {
+  const ApFlatCaptureResult({required this.codes});
+
+  final List<Code> codes;
+}
+
+/// Unknown keys are decoded into a `_$additional` map.
+final class CapturingApFlatCapture extends ApFlatCaptureResult {
+  const CapturingApFlatCapture({required super.codes});
+}
+
+/// The value model has no flat decoding; unknown keys throw instead.
+final class RejectingApFlatCapture extends ApFlatCaptureResult {
+  const RejectingApFlatCapture({required super.codes});
 }
 
 const _ficUrl =
@@ -201,7 +211,7 @@ ApBuilderResult buildApJsonEncode(
 ///
 /// When the value model has no flat decoding, unknown keys throw a
 /// context-bearing decoding exception instead of being silently dropped.
-ApBuilderResult buildApFlatCaptureLoop(
+ApFlatCaptureResult buildApFlatCaptureLoop(
   AdditionalPropertiesPlan plan, {
   required FlatWireFormat format,
   required String sourceMapVar,
@@ -222,63 +232,56 @@ ApBuilderResult buildApFlatCaptureLoop(
     contextProperty: 'additionalProperties',
   );
 
-  if (decodePlan is UnsupportedFlatDecodePlan) {
-    final throwExpression = switch (format) {
-      FlatWireFormat.simple => generateSimpleDecodingExceptionExpression(
-        '${decodePlan.reason} at $contextClass.additionalProperties',
-        raw: true,
-      ),
-      FlatWireFormat.form => generateFormDecodingExceptionExpression(
-        '${decodePlan.reason} at $contextClass.additionalProperties',
-        raw: true,
-      ),
-    };
-    return ApBuilderResult(
-      capturesValues: false,
-      codes: [
-        ..._knownKeysConst(plan),
-        Code('for (final _\$entry in $sourceMapVar.entries) {'),
-        ..._exclusionOpen(plan),
-        throwExpression.statement,
-        ..._exclusionClose(plan),
-        const Code('}'),
-      ],
-    );
+  switch (decodePlan) {
+    case UnsupportedFlatDecodePlan(:final reason):
+      final throwExpression = switch (format) {
+        FlatWireFormat.simple => generateSimpleDecodingExceptionExpression(
+          '$reason at $contextClass.additionalProperties',
+          raw: true,
+        ),
+        FlatWireFormat.form => generateFormDecodingExceptionExpression(
+          '$reason at $contextClass.additionalProperties',
+          raw: true,
+        ),
+      };
+      return RejectingApFlatCapture(
+        codes: [
+          ..._knownKeysConst(plan),
+          Code('for (final _\$entry in $sourceMapVar.entries) {'),
+          ..._exclusionOpen(plan),
+          throwExpression.statement,
+          ..._exclusionClose(plan),
+          const Code('}'),
+        ],
+      );
+    case FlatScalarDecodePlan(:final value):
+      return CapturingApFlatCapture(
+        codes: [
+          ..._knownKeysConst(plan),
+          declareFinal(r'_$additional')
+              .assign(
+                literalMap(
+                  {},
+                  refer('String', 'dart:core'),
+                  apValueTypeReference(
+                    plan.valueModel,
+                    nameManager,
+                    package,
+                    useImmutableCollections: useImmutableCollections,
+                  ),
+                ),
+              )
+              .statement,
+          Code('for (final _\$entry in $sourceMapVar.entries) {'),
+          ..._exclusionOpen(plan),
+          const Code(r'_$additional[_$entry.key] = '),
+          value.code,
+          const Code(';'),
+          ..._exclusionClose(plan),
+          const Code('}'),
+        ],
+      );
   }
-
-  final decodeExpression = switch (decodePlan) {
-    FlatScalarDecodePlan(:final value) => value,
-    FlatArrayDecodePlan(:final value) =>
-      useImmutableCollections ? value.property('lock') : value,
-    UnsupportedFlatDecodePlan() => throw StateError('handled above'),
-  };
-
-  return ApBuilderResult(
-    codes: [
-      ..._knownKeysConst(plan),
-      declareFinal(r'_$additional')
-          .assign(
-            literalMap(
-              {},
-              refer('String', 'dart:core'),
-              apValueTypeReference(
-                plan.valueModel,
-                nameManager,
-                package,
-                useImmutableCollections: useImmutableCollections,
-              ),
-            ),
-          )
-          .statement,
-      Code('for (final _\$entry in $sourceMapVar.entries) {'),
-      ..._exclusionOpen(plan),
-      const Code(r'_$additional[_$entry.key] = '),
-      decodeExpression.code,
-      const Code(';'),
-      ..._exclusionClose(plan),
-      const Code('}'),
-    ],
-  );
 }
 
 /// `Map<String, PropertyValue>` entries for flat parameter and form
@@ -305,43 +308,62 @@ ApBuilderResult buildApPropertyValueEntries(
     useImmutableCollections: useImmutableCollections,
   );
 
-  if (encodePlan is UnsupportedFlatEncodePlan) {
-    return ApBuilderResult(
-      capturesValues: false,
-      codes: [
-        Code('if ($apAccess.isNotEmpty) {'),
-        generateEncodingExceptionExpression(
-          '${encodePlan.reason} at $context',
-          raw: true,
-        ).statement,
-        const Code('}'),
-      ],
-    );
+  switch (encodePlan) {
+    case UnsupportedFlatEncodePlan(:final reason):
+      return ApBuilderResult(
+        codes: [
+          Code('if ($apAccess.isNotEmpty) {'),
+          generateEncodingExceptionExpression(
+            '$reason at $context',
+            raw: true,
+          ).statement,
+          const Code('}'),
+        ],
+      );
+    case FlatScalarEncodePlan(:final value):
+      return _propertyValueEntriesLoop(
+        plan,
+        targetVar: targetVar,
+        apAccess: apAccess,
+        contextClass: contextClass,
+        omitsNull: omitsNull,
+        entryValue: propertyValueScalar(value),
+      );
+    case FlatArrayEncodePlan(:final values):
+      return _propertyValueEntriesLoop(
+        plan,
+        targetVar: targetVar,
+        apAccess: apAccess,
+        contextClass: contextClass,
+        omitsNull: omitsNull,
+        entryValue: propertyValueArray(values),
+      );
   }
-
-  final entryValue = switch (encodePlan) {
-    FlatScalarEncodePlan(:final value) => propertyValueScalar(value),
-    FlatArrayEncodePlan(:final values) => propertyValueArray(values),
-    UnsupportedFlatEncodePlan() => throw StateError('handled above'),
-  };
-
-  return ApBuilderResult(
-    codes: [
-      ..._knownKeysConst(plan),
-      Code('for (final _\$e in $apAccess.entries) {'),
-      ..._collisionThrowInLoop(plan, contextClass: contextClass),
-      if (omitsNull) ...[
-        declareFinal(r'_$v').assign(refer(r'_$e').property('value')).statement,
-        const Code(r'if (_$v == null) continue;'),
-      ],
-      refer(targetVar)
-          .index(refer(r'_$e').property('key'))
-          .assign(entryValue)
-          .statement,
-      const Code('}'),
-    ],
-  );
 }
+
+ApBuilderResult _propertyValueEntriesLoop(
+  AdditionalPropertiesPlan plan, {
+  required String targetVar,
+  required String apAccess,
+  required String contextClass,
+  required bool omitsNull,
+  required Expression entryValue,
+}) => ApBuilderResult(
+  codes: [
+    ..._knownKeysConst(plan),
+    Code('for (final _\$e in $apAccess.entries) {'),
+    ..._collisionThrowInLoop(plan, contextClass: contextClass),
+    if (omitsNull) ...[
+      declareFinal(r'_$v').assign(refer(r'_$e').property('value')).statement,
+      const Code(r'if (_$v == null) continue;'),
+    ],
+    refer(targetVar)
+        .index(refer(r'_$e').property('key'))
+        .assign(entryValue)
+        .statement,
+    const Code('}'),
+  ],
+);
 
 List<Code> _knownKeysConst(AdditionalPropertiesPlan plan) {
   if (plan.knownWireKeys.isEmpty) return const [];

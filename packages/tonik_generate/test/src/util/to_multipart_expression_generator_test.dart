@@ -4340,6 +4340,176 @@ void main() {
       );
 
       test(
+        'style-based raw parts pass per-part headers to every part',
+        () {
+          final innerClass = ClassModel(
+            name: 'Address',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+            examples: const [],
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'address',
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            multipartEncoding: _multipartEncoding(model, {
+              'address': PartEncoding(
+                contentType: null,
+                rawContentType: null,
+                style: EncodingStyle.form,
+                explode: true,
+                allowReserved: null,
+                headers: {
+                  'X-Custom-Header': ResponseHeaderObject(
+                    name: 'X-Custom-Header',
+                    description: null,
+                    isRequired: true,
+                    isDeprecated: false,
+                    explode: false,
+                    model: StringModel(context: testContext),
+                    context: testContext,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+              ),
+            }),
+            examples: const [],
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final _$formData = FormData();
+                final _$addressHeaders = <String, List<String>>{};
+                _$addressHeaders[r'X-Custom-Header'] = [
+                  addressCustomHeader.toSimple(explode: false, allowEmpty: true),
+                ];
+                final addressRawParts = body.address
+                    .parameterProperties(allowEmpty: true)
+                    .toRawStyleParts(r'address', explode: true);
+                for (final _$part in addressRawParts) {
+                  _$formData.files.add(
+                    MapEntry(
+                      _$part.name,
+                      MultipartFile.fromString(
+                        _$part.value,
+                        headers: _$addressHeaders,
+                      ),
+                    ),
+                  );
+                }
+                return _$formData;
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'non-form styled object parts throw instead of rendering with '
+        'form semantics',
+        () {
+          final innerClass = ClassModel(
+            name: 'Address',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+            examples: const [],
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'address',
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            multipartEncoding: _multipartEncoding(model, {
+              'address': const PartEncoding(
+                contentType: null,
+                rawContentType: null,
+                style: EncodingStyle.pipeDelimited,
+                explode: true,
+                allowReserved: null,
+                headers: null,
+              ),
+            }),
+            examples: const [],
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final _$formData = FormData();
+                throw EncodingException(
+                  r'pipeDelimited style is not supported for object multipart part address',
+                );
+                return _$formData;
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
         'non-exploded style-based mode emits one raw comma-joined part',
         () {
           final innerClass = ClassModel(

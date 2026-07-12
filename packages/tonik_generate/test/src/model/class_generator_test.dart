@@ -3298,8 +3298,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             generatedClass.accept(emitter).toString(),
           );
 
-          const expectedToJson =
-              '''Object? toJson() => {r'id': id, r"it's-field": encodeAnyToJson(itsField)};''';
+          const expectedToJson = '''
+            Object? toJson() => {
+              r'id': id,
+              r"it's-field": encodeUnknownJson(
+                itsField,
+                context: r"FlexibleData.it's-field",
+              ),
+            };''';
 
           expect(
             collapseWhitespace(generated),

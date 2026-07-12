@@ -1216,12 +1216,75 @@ void main() {
       }
     }
     _$map.addAll(
-      additionalProperties.map((k, v) => MapEntry(k, encodeAnyToJson(v))),
+      additionalProperties.map(
+        (k, v) => MapEntry(
+          k,
+          encodeUnknownJson(v, context: r'Config.additionalProperties'),
+        ),
+      ),
     );
     return _$map;
   }''';
 
         final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toJson keeping required write-only null checks '
+          'alongside the AP encode', () {
+        final writeOnlyModel = ClassModel(
+          isDeprecated: false,
+          name: 'Draft',
+          properties: [
+            Property(
+              name: 'secret',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              isWriteOnly: true,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
+          examples: const [],
+        );
+
+        const expectedMethod = r'''
+  Object? toJson() {
+    if (secret == null) {
+      throw EncodingException(r'Required property secret is null.');
+    }
+    final _$map = <String, Object?>{r'secret': secret!};
+    const _$knownKeys = {r'secret'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of Draft',
+        );
+      }
+    }
+    _$map.addAll(
+      additionalProperties.map(
+        (k, v) => MapEntry(
+          k,
+          encodeUnknownJson(v, context: r'Draft.additionalProperties'),
+        ),
+      ),
+    );
+    return _$map;
+  }''';
+
+        final generatedClass = generator.generateClass(writeOnlyModel);
         expect(
           collapseWhitespace(
             format(generatedClass.accept(emitter).toString()),

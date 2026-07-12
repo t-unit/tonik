@@ -3088,7 +3088,12 @@ String toMatrix(
       }
     }
     _$map.addAll(
-      additionalProperties.map((k, v) => MapEntry(k, encodeAnyToJson(v))),
+      additionalProperties.map(
+        (k, v) => MapEntry(
+          k,
+          encodeUnknownJson(v, context: r'ExtendedConfig.additionalProperties'),
+        ),
+      ),
     );
     return _$map;
   }''';
@@ -4498,7 +4503,13 @@ Object? toJson() {
   }
   _$map.addAll(
     additionalProperties.unlock.map(
-      (k, v) => MapEntry(k, encodeAnyToJson(v)),
+      (k, v) => MapEntry(
+        k,
+        encodeUnknownJson(
+          v,
+          context: r'ExtendedImmutable.additionalProperties',
+        ),
+      ),
     ),
   );
   return _$map;

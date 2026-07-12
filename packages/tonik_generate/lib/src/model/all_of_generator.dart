@@ -1164,14 +1164,17 @@ class AllOfGenerator {
     );
     codes.addAll(capture.codes);
 
-    if (capture.capturesValues) {
-      constructorArgs[apFieldName] = useImmutableCollections
-          ? refer(
-              'IMap',
-              'package:fast_immutable_collections/'
-                  'fast_immutable_collections.dart',
-            ).call([refer(r'_$additional')])
-          : refer(r'_$additional');
+    switch (capture) {
+      case CapturingApFlatCapture():
+        constructorArgs[apFieldName] = useImmutableCollections
+            ? refer(
+                'IMap',
+                'package:fast_immutable_collections/'
+                    'fast_immutable_collections.dart',
+              ).call([refer(r'_$additional')])
+            : refer(r'_$additional');
+      case RejectingApFlatCapture():
+        break;
     }
 
     codes.add(

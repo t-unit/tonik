@@ -656,7 +656,10 @@ Object? toJson() {
   }
   _$map.addAll(
     additionalProperties.unlock.map(
-      (k, v) => MapEntry(k, encodeAnyToJson(v)),
+      (k, v) => MapEntry(
+        k,
+        encodeUnknownJson(v, context: r'Flexible.additionalProperties'),
+      ),
     ),
   );
   return _$map;

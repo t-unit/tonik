@@ -191,6 +191,8 @@ Expression _buildSimpleValueExpression(
       explode: explode,
     ),
     NeverModel() => _buildNeverModelExpression(value, isRequired),
+    // Any values keep the raw wire token; nothing is percent-decoded and
+    // no boolean/number types are inferred from its shape.
     AnyModel() => value,
     MapModel() => generateSimpleDecodingExceptionExpression(
       'Map types cannot be simple-decoded.',

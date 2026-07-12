@@ -91,6 +91,30 @@ void main() {
       expect((freeform as MapModel).valueModel, isA<AnyModel>());
     });
 
+    test('bare object allOf member imports as an Any-valued map', () {
+      final spec = specWithSchemas({
+        'Base': {
+          'type': 'object',
+          'properties': {
+            'name': {'type': 'string'},
+          },
+        },
+        'Extended': {
+          'allOf': [
+            {r'$ref': '#/components/schemas/Base'},
+            {'type': 'object'},
+          ],
+        },
+      });
+
+      final api = Importer().import(spec);
+      final extended = api.models.whereType<AllOfModel>().first;
+
+      final mapMembers = extended.models.whereType<MapModel>();
+      expect(mapMembers, hasLength(1));
+      expect(mapMembers.first.valueModel, isA<AnyModel>());
+    });
+
     test(
       'object with declared properties and omitted additionalProperties '
       'stays a class',

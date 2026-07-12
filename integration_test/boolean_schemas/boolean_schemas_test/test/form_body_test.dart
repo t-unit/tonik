@@ -45,24 +45,27 @@ void main() {
       expect(body.count, 123);
     });
 
-    test('echoFormAny with complex anyValue', () async {
-      final api = buildApi();
-      const original = FormWithAny(
-        name: 'complex-form',
-        anyValue: {
-          'nested': 'object',
-          'array': [1, 2, 3],
-        },
-        count: 456,
-      );
+    test(
+      'echoFormAny with complex anyValue returns EncodingException',
+      () async {
+        final api = buildApi();
+        const original = FormWithAny(
+          name: 'complex-form',
+          anyValue: {
+            'nested': 'object',
+            'array': [1, 2, 3],
+          },
+          count: 456,
+        );
 
-      final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny>;
-      expect(success.response.statusCode, 200);
+        final result = await api.echoFormAny(body: original);
 
-      final body = success.value;
-      expect(body.name, 'complex-form');
-    });
+        expect(result, isA<TonikError<FormWithAny>>());
+        final error = result as TonikError<FormWithAny>;
+        expect(error.error, isA<EncodingException>());
+        expect(error.type, TonikErrorType.encoding);
+      },
+    );
 
     test('echoFormAny with null anyValue', () async {
       final api = buildApi();

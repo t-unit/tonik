@@ -128,7 +128,8 @@ extension ObjectDecoder on String? {
   /// Tokens that don't contain `=` are treated as continuation of the previous
   /// list value.
   /// Tokens without `=` that are not part of a list are skipped for forward
-  /// compatibility.
+  /// compatibility, except under additional-key capture, where unattributable
+  /// tokens are rejected.
   void _parseExploded(
     String value,
     String separator,
@@ -146,6 +147,15 @@ extension ObjectDecoder on String? {
       final parts = pair.split('=');
 
       if (parts.length == 1) {
+        // Orphaned tokens after declared list values are consumed above;
+        // under additional-key capture a bare token is unattributable data
+        // and must not be silently swallowed.
+        if (captureAdditionalKeys) {
+          throw InvalidFormatException(
+            value: pair,
+            format: 'key=value pair${context != null ? ' in $context' : ''}',
+          );
+        }
         i++;
         continue;
       }
@@ -161,6 +171,16 @@ extension ObjectDecoder on String? {
 
       if (!expectedKeys.contains(key)) {
         if (captureAdditionalKeys) {
+          // Additional keys hold one scalar slot; a repeat would silently
+          // overwrite the earlier value.
+          if (result.containsKey(key)) {
+            throw InvalidFormatException(
+              value: key,
+              format:
+                  'single occurrence per additional '
+                  'key${context != null ? ' in $context' : ''}',
+            );
+          }
           result[key] = parts[1];
         }
         i++;
@@ -219,7 +239,17 @@ extension ObjectDecoder on String? {
       final key = Uri.decodeComponent(rawKey);
 
       if (!expectedKeys.contains(key)) {
-        if (captureAdditionalKeys && i + 1 < parts.length) {
+        if (captureAdditionalKeys) {
+          // A dangling unknown key is the same malformation as a dangling
+          // expected key and must not be silently swallowed.
+          if (i + 1 >= parts.length) {
+            throw InvalidFormatException(
+              value: key,
+              format:
+                  'alternating key-value format with value after '
+                  'key${context != null ? ' in $context' : ''}',
+            );
+          }
           result[key] = parts[i + 1];
         }
         i += 2;

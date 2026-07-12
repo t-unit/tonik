@@ -195,6 +195,15 @@ void main() {
         (name: 'kept', value: 'v'),
       ]);
     });
+
+    test('toJson keeps explicit null typed AP entries', () {
+      const obj = MixedNullableValues(
+        name: 'n',
+        additionalProperties: {'gone': null, 'kept': 'v'},
+      );
+
+      expect(obj.toJson(), {'name': 'n', 'gone': null, 'kept': 'v'});
+    });
   });
 
   group('MixedUntyped JSON encoding of unrestricted AP values', () {

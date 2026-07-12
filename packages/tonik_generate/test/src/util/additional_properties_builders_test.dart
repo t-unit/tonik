@@ -192,7 +192,12 @@ void main() {
       const expected = r'''
         void run() {
           _$map.addAll(
-            additionalProperties.map((k, v) => MapEntry(k, encodeAnyToJson(v))),
+            additionalProperties.map(
+              (k, v) => MapEntry(
+                k,
+                encodeUnknownJson(v, context: r'Order.additionalProperties'),
+              ),
+            ),
           );
         }
       ''';
@@ -258,7 +263,7 @@ void main() {
         }
       ''';
 
-      expect(result.capturesValues, isTrue);
+      expect(result, isA<CapturingApFlatCapture>());
       expect(
         collapseWhitespace(formatCodes(result.codes)),
         contains(collapseWhitespace(expected)),
@@ -292,59 +297,19 @@ void main() {
         }
       ''';
 
-      expect(result.capturesValues, isTrue);
+      expect(result, isA<CapturingApFlatCapture>());
       expect(
         collapseWhitespace(formatCodes(result.codes)),
         contains(collapseWhitespace(expected)),
       );
     });
 
-    test('array values lock into immutable lists when immutable '
-        'collections are enabled', () {
+    test('list value models throw on unknown keys because element '
+        'boundaries cannot be recovered', () {
       final result = buildApFlatCaptureLoop(
         AdditionalPropertiesPlan(
           valueModel: ListModel(
             content: StringModel(context: context),
-            context: context,
-            examples: const [],
-          ),
-          knownWireKeys: const {'name'},
-        ),
-        format: FlatWireFormat.simple,
-        sourceMapVar: r'_$values',
-        nameManager: nameManager,
-        package: 'package:example/api.dart',
-        contextClass: 'Order',
-        useImmutableCollections: true,
-      );
-
-      const expected = r'''
-        void run() {
-          const _$knownKeys = {r'name'};
-          final _$additional = <String, IList<String>>{};
-          for (final _$entry in _$values.entries) {
-            if (!_$knownKeys.contains(_$entry.key)) {
-              _$additional[_$entry.key] = _$entry.value
-                  .decodeSimpleStringList(context: r'Order.additionalProperties')
-                  .lock;
-            }
-          }
-        }
-      ''';
-
-      expect(result.capturesValues, isTrue);
-      expect(
-        collapseWhitespace(formatCodes(result.codes)),
-        contains(collapseWhitespace(expected)),
-      );
-    });
-
-    test('undecodable value models throw on unknown keys instead of '
-        'dropping them', () {
-      final result = buildApFlatCaptureLoop(
-        AdditionalPropertiesPlan(
-          valueModel: MapModel(
-            valueModel: StringModel(context: context),
             context: context,
             examples: const [],
           ),
@@ -363,14 +328,52 @@ void main() {
           for (final _$entry in _$values.entries) {
             if (!_$knownKeys.contains(_$entry.key)) {
               throw SimpleDecodingException(
-                r'Map types cannot be simple-decoded at Order.additionalProperties',
+                r'List values cannot be decoded from a flat value at Order.additionalProperties',
               );
             }
           }
         }
       ''';
 
-      expect(result.capturesValues, isFalse);
+      expect(result, isA<RejectingApFlatCapture>());
+      expect(
+        collapseWhitespace(formatCodes(result.codes)),
+        contains(collapseWhitespace(expected)),
+      );
+    });
+
+    test('undecodable value models throw on unknown keys instead of '
+        'dropping them', () {
+      final result = buildApFlatCaptureLoop(
+        AdditionalPropertiesPlan(
+          valueModel: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          knownWireKeys: const {'name'},
+        ),
+        format: FlatWireFormat.form,
+        sourceMapVar: r'_$values',
+        nameManager: nameManager,
+        package: 'package:example/api.dart',
+        contextClass: 'Order',
+      );
+
+      const expected = r'''
+        void run() {
+          const _$knownKeys = {r'name'};
+          for (final _$entry in _$values.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
+              throw FormDecodingException(
+                r'Map values cannot be decoded from a flat value at Order.additionalProperties',
+              );
+            }
+          }
+        }
+      ''';
+
+      expect(result, isA<RejectingApFlatCapture>());
       expect(
         collapseWhitespace(formatCodes(result.codes)),
         contains(collapseWhitespace(expected)),
@@ -518,6 +521,39 @@ void main() {
         void run() {
           for (final _$e in additionalProperties.entries) {
             _$result[_$e.key] = PropertyValue.array(_$e.value);
+          }
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(formatCodes(result.codes)),
+        contains(collapseWhitespace(expected)),
+      );
+    });
+
+    test('array values unlock immutable lists when immutable collections '
+        'are enabled', () {
+      final result = buildApPropertyValueEntries(
+        AdditionalPropertiesPlan(
+          valueModel: ListModel(
+            content: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          knownWireKeys: const {},
+        ),
+        targetVar: r'_$result',
+        apAccess: 'additionalProperties',
+        contextClass: 'Order',
+        useImmutableCollections: true,
+      );
+
+      const expected = r'''
+        void run() {
+          for (final _$e in additionalProperties.entries) {
+            _$result[_$e.key] = PropertyValue.array(
+              _$e.value.unlock.map((e) => e.toString()).toList(),
+            );
           }
         }
       ''';

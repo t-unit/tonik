@@ -43,6 +43,18 @@ void main() {
       );
     });
 
+    test('converts Date, Uri, and BigDecimal to their canonical strings', () {
+      expect(encodeUnknownJson(Date(2024, 1, 15), context: 'v'), '2024-01-15');
+      expect(
+        encodeUnknownJson(Uri.parse('https://example.com/a%20b'), context: 'v'),
+        'https://example.com/a%20b',
+      );
+      expect(
+        encodeUnknownJson(BigDecimal.parse('1.50'), context: 'v'),
+        '1.50',
+      );
+    });
+
     test('recursively encodes maps and lists', () {
       expect(
         encodeUnknownJson({

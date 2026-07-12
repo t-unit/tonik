@@ -12,8 +12,7 @@ import 'package:tonik_util/src/offset_date_time.dart';
 extension SimpleDecoder on String? {
   /// Decodes a string to a string.
   ///
-  /// Returns the string value as is. Generic (Any-valued) decoding keeps
-  /// the raw string and never infers booleans or numbers from its shape.
+  /// Returns the string value as is.
   /// Throws [InvalidTypeException] if the value is null.
   String decodeSimpleString({String? context}) {
     if (this == null) {

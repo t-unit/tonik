@@ -7,8 +7,9 @@ import 'package:tonik_util/src/encoding/encoding_exception.dart';
 /// Encodes a runtime value of unknown type to a JSON-compatible value.
 ///
 /// JSON primitives pass through, [JsonEncodable] values use their `toJson`,
-/// [DateTime] uses its time-zoned ISO 8601 form, and maps and lists are
-/// converted recursively. Map keys must be strings.
+/// the scalar convenience types ([DateTime], [Date], [Uri], [BigDecimal])
+/// use their canonical string forms, and maps and lists are converted
+/// recursively. Map keys must be strings.
 ///
 /// [context] names the value's location and grows with `.key` and `[index]`
 /// segments while descending, so failures name the offending path.
@@ -20,6 +21,12 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
       return encodable.toJson();
     case final DateTime dateTime:
       return dateTime.toTimeZonedIso8601String();
+    case final Date date:
+      return date.toJson();
+    case final Uri uri:
+      return uri.toString();
+    case final BigDecimal decimal:
+      return decimal.toString();
     // Both collection branches are copy-on-write: an untouched subtree keeps
     // its identity so round-tripped values stay reference-equal.
     case final List<Object?> list:
