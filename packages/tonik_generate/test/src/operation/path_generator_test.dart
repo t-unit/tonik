@@ -2573,7 +2573,13 @@ void main() {
 
       const expectedMethod = '''
         List<String> _path({required Map<String, String> m}) {
-          return [r'x', m.toSimple(explode: false, allowEmpty: false) + r'.json'];
+          return [
+            r'x',
+            m
+                    .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                    .toSimple(explode: false, allowEmpty: false) +
+                r'.json',
+          ];
         }
       ''';
 
@@ -2631,11 +2637,21 @@ void main() {
         List<String> _path({required Map<String, Object?> m}) {
           return [
             r'r',
-            m
-                    .map(
-                      (k, v) =>
-                          MapEntry(k, encodeAnyValueToString(v, allowEmpty: false)),
-                    )
+            Map.fromEntries(
+                  m.entries
+                      .where((e) => e.value != null)
+                      .map(
+                        (e) => MapEntry(
+                          e.key,
+                          PropertyValue.scalar(
+                            encodeUnknownFlatScalar(
+                              e.value!,
+                              context: r'map parameter value',
+                            ),
+                          ),
+                        ),
+                      ),
+                )
                     .toSimple(explode: false, allowEmpty: false) +
                 r'.json',
           ];

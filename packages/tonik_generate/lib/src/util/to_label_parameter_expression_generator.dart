@@ -2,7 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 
 BuiltExpression buildLabelParameterExpression(
   Expression valueExpression,
@@ -253,29 +253,23 @@ Expression _buildMapLabelExpression(
   required Expression allowEmpty,
   bool isNullable = false,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     valueExpression,
     model,
     isNullable: isNullable,
+    context: model.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
-    return generateEncodingExceptionExpression(
-      'Map with complex value types cannot be label-encoded.',
-    );
-  }
-
-  final toLabelAccess = (isNullable && converted == valueExpression)
-      ? converted.nullSafeProperty('toLabel')
-      : converted.property('toLabel');
-
-  return toLabelAccess.call(
-    [],
-    {
-      'explode': explode,
-      'allowEmpty': allowEmpty,
-    },
-  );
+  return switch (conversion) {
+    SupportedMapPropertyValueConversion(:final expression) =>
+      (isNullable
+              ? expression.nullSafeProperty('toLabel')
+              : expression.property('toLabel'))
+          .call([], {'explode': explode, 'allowEmpty': allowEmpty}),
+    UnsupportedMapPropertyValueConversion() =>
+      generateEncodingExceptionExpression(
+        'Map with complex value types cannot be label-encoded.',
+      ),
+  };
 }
 
 Expression _buildListMapContentLabelExpression(
@@ -285,17 +279,19 @@ Expression _buildListMapContentLabelExpression(
   required Expression allowEmpty,
   bool isNullable = false,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     refer('e'),
     contentModel,
     isNullable: false,
+    context: contentModel.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
+  if (conversion is UnsupportedMapPropertyValueConversion) {
     return generateEncodingExceptionExpression(
       'List of maps with complex value types cannot be label-encoded.',
     );
   }
+  final converted =
+      (conversion as SupportedMapPropertyValueConversion).expression;
 
   final listMapAccess = isNullable
       ? valueExpression.nullSafeProperty('map')

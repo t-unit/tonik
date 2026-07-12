@@ -58,13 +58,37 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
   }
 }
 
-/// Style encoders over `Map<String, PropertyValue>` with raw (unescaped)
-/// values, matching the string-map encoders' wire output.
-///
-/// Unlike those siblings, an empty scalar or array throws [EmptyValueException]
-/// under `allowEmpty: false` instead of rendering `k,` — a deliberate guard,
-/// not a parity gap to "fix".
+/// Style encoders for raw property values.
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
+  /// Encodes this property map as comma-separated URI key/value pairs.
+  String toUri({
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+    bool allowReserved = false,
+    bool literal = false,
+  }) {
+    _guardEmpty(this, allowEmpty: allowEmpty);
+    if (isEmpty) {
+      return '';
+    }
+
+    String encode(String value) => literal
+        ? value
+        : encodeUriValue(
+            value,
+            allowReserved: allowReserved,
+            useQueryComponent: useQueryComponent,
+          );
+    String encodePropertyValue(PropertyValue value) => switch (value) {
+      ScalarPropertyValue(:final value) => encode(value),
+      ArrayPropertyValue(:final values) => values.map(encode).join(','),
+    };
+
+    return entries
+        .expand((e) => [encode(e.key), encodePropertyValue(e.value)])
+        .join(',');
+  }
+
   /// Encodes this property map using simple style encoding.
   ///
   /// When [literal] is true, keys and values are emitted without URI encoding,
@@ -130,13 +154,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return ';$paramName=${_collapsedPairs(this, literal: false)}';
   }
 
-  /// Renders raw style-based multipart part entries.
-  ///
-  /// Exploded objects emit one entry per key whose name is the RFC 6570
-  /// query name and whose value is the raw part body; non-exploded objects
-  /// emit one entry under [paramName] with the raw comma-joined expansion.
-  /// Nothing is URI- or form-percent-encoded, and `?`, `=`, and `&` never
-  /// appear as serialization delimiters.
+  /// Renders unescaped multipart style parts.
   List<ParameterEntry> toRawStyleParts(
     String paramName, {
     required bool explode,

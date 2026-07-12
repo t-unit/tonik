@@ -3,7 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 BuiltStatements buildToFormQueryParameterCode(
@@ -39,13 +39,21 @@ List<Code> _buildToFormQueryParameterCode(
     return [generateEncodingExceptionExpression(unsupported).statement];
   }
 
-  if (model is MapModel &&
-      !isMapValueTypeSimplyEncodable(model.valueModel)) {
-    return [
-      generateEncodingExceptionExpression(
-        'Map with complex value types cannot be form query encoded.',
-      ).statement,
-    ];
+  if (model is MapModel) {
+    final conversion = buildMapPropertyValueConversion(
+      refer(parameterName),
+      model,
+      isNullable: false,
+      context: rawName,
+    );
+    if (conversion case UnsupportedMapPropertyValueConversion(:final reason)) {
+      return [
+        generateEncodingExceptionExpression(
+          '$reason for form query parameter $rawName',
+          raw: true,
+        ).statement,
+      ];
+    }
   }
 
   if (isAnyModelFormValue(model)) {
@@ -72,6 +80,7 @@ List<Code> _buildToFormQueryParameterCode(
     explode: literalBool(explode),
     allowEmpty: literalBool(allowEmpty),
     allowReserved: allowReserved,
+    mapContext: rawName,
   );
 
   if (value == null) {

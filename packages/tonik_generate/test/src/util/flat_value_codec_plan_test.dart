@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -10,6 +11,10 @@ void main() {
   late DartEmitter emitter;
   late NameManager nameManager;
 
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
+
   setUp(() {
     context = Context.initial();
     emitter = DartEmitter(useNullSafetySyntax: true);
@@ -19,8 +24,15 @@ void main() {
     );
   });
 
-  String emit(Expression expression) =>
-      expression.accept(emitter).toString();
+  String emit(Expression expression) => expression.accept(emitter).toString();
+
+  String methodBody(Expression expression) => format(
+    Method(
+      (b) => b
+        ..name = 'test'
+        ..body = declareFinal('result').assign(expression).statement,
+    ).accept(emitter).toString(),
+  );
 
   FlatEncodePlan encodePlan(Model model) =>
       buildFlatEncodePlan(refer('v'), model, context: 'ctx');
@@ -126,8 +138,43 @@ void main() {
       final plan = encodePlan(AnyModel(context: context));
 
       expect(
-        emit((plan as FlatScalarEncodePlan).value),
-        "encodeUnknownFlatScalar(v, context: 'ctx', )",
+        collapseWhitespace(
+          methodBody((plan as FlatScalarEncodePlan).value),
+        ),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = encodeUnknownFlatScalar(
+                v,
+                context: r'ctx',
+              );
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('Any uses a safe spec literal for an adversarial context', () {
+      final plan = buildFlatEncodePlan(
+        refer('v'),
+        AnyModel(context: context),
+        context: r'''parameter "quo'te" \ $value''',
+      );
+
+      expect(
+        collapseWhitespace(
+          methodBody((plan as FlatScalarEncodePlan).value),
+        ),
+        collapseWhitespace(
+          format(r'''
+            test() {
+              final result = encodeUnknownFlatScalar(
+                v,
+                context: r"""parameter "quo'te" \ $value""",
+              );
+            }
+          '''),
+        ),
       );
     });
 
@@ -246,8 +293,23 @@ void main() {
       );
 
       expect(
-        emit((plan as FlatArrayEncodePlan).values),
-        "v.map((e) => encodeUnknownFlatScalar(e, context: 'ctx', )).toList()",
+        collapseWhitespace(
+          methodBody((plan as FlatArrayEncodePlan).values),
+        ),
+        collapseWhitespace(
+          format('''
+            test() {
+              final result = v
+                  .map(
+                    (e) => encodeUnknownFlatScalar(
+                      e,
+                      context: r'ctx',
+                    ),
+                  )
+                  .toList();
+            }
+          '''),
+        ),
       );
     });
 

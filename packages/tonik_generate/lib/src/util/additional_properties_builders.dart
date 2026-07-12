@@ -11,12 +11,7 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
-/// Everything the shared additional-properties builders need for one
-/// entries owner: a pure map, a mixed class, or the selected allOf owner.
-///
-/// The builders depend only on the plan, never on which kind of owner is
-/// calling. Unrestricted additional properties are simply a plan whose
-/// [valueModel] is [AnyModel].
+/// Inputs shared by additional-properties builders.
 final class AdditionalPropertiesPlan {
   const AdditionalPropertiesPlan({
     required this.valueModel,
@@ -25,12 +20,11 @@ final class AdditionalPropertiesPlan {
 
   final Model valueModel;
 
-  /// Declared wire keys: excluded from decode capture and rejected when a
-  /// user-constructed value tries to encode them as additional properties.
+  /// Declared wire keys excluded from additional properties.
   final Set<String> knownWireKeys;
 }
 
-/// Statements produced by a shared builder plus any inline helpers they need.
+/// Generated statements and inline helpers.
 final class ApBuilderResult {
   const ApBuilderResult({
     required this.codes,
@@ -41,22 +35,19 @@ final class ApBuilderResult {
   final List<InlineHelper> inlineHelpers;
 }
 
-/// Statements emitted by the flat decode capture builder.
-///
-/// Callers must decide the constructor-argument question per variant, so a
-/// capture that turned into a rejection cannot silently drop the field.
+/// Result of flat additional-property capture.
 sealed class ApFlatCaptureResult {
   const ApFlatCaptureResult({required this.codes});
 
   final List<Code> codes;
 }
 
-/// Unknown keys are decoded into a `_$additional` map.
+/// Captures unknown keys.
 final class CapturingApFlatCapture extends ApFlatCaptureResult {
   const CapturingApFlatCapture({required super.codes});
 }
 
-/// The value model has no flat decoding; unknown keys throw instead.
+/// Rejects unknown keys that cannot be flat-decoded.
 final class RejectingApFlatCapture extends ApFlatCaptureResult {
   const RejectingApFlatCapture({required super.codes});
 }
@@ -64,8 +55,7 @@ final class RejectingApFlatCapture extends ApFlatCaptureResult {
 const _ficUrl =
     'package:fast_immutable_collections/fast_immutable_collections.dart';
 
-/// The active (explicit) allowed policy of [policy], or null when no
-/// additional-properties surface is generated.
+/// Returns the explicit allowed policy, if present.
 AllowedAdditionalProperties? activeApPolicy(AdditionalPropertiesPolicy policy) {
   if (policy is AllowedAdditionalProperties &&
       policy.origin == AdditionalPropertiesOrigin.explicit) {
@@ -74,8 +64,7 @@ AllowedAdditionalProperties? activeApPolicy(AdditionalPropertiesPolicy policy) {
   return null;
 }
 
-/// `Map<String, V>` (or `IMap`) type for the additional-properties field of
-/// [valueModel].
+/// Builds the additional-properties map type.
 TypeReference apMapTypeReference(
   Model valueModel,
   NameManager nameManager,
@@ -96,8 +85,7 @@ TypeReference apMapTypeReference(
     ]),
 );
 
-/// `Map<String, V>` value type for the additional-properties entries of
-/// [valueModel]; [AnyModel] values map to `Object?`.
+/// Builds the additional-properties value type.
 Reference apValueTypeReference(
   Model valueModel,
   NameManager nameManager,
@@ -115,8 +103,7 @@ Reference apValueTypeReference(
   );
 }
 
-/// JSON decode capture: fills `_$additional` from [sourceMapVar], excluding
-/// [AdditionalPropertiesPlan.knownWireKeys].
+/// Builds JSON capture for unknown keys.
 ApBuilderResult buildApJsonCaptureLoop(
   AdditionalPropertiesPlan plan, {
   required String sourceMapVar,
@@ -172,8 +159,7 @@ ApBuilderResult buildApJsonCaptureLoop(
   return ApBuilderResult(codes: codes, inlineHelpers: helpers);
 }
 
-/// JSON encode: rejects declared-key collisions, then adds all encoded
-/// additional-property values to [targetMapVar].
+/// Builds JSON encoding for additional properties.
 ApBuilderResult buildApJsonEncode(
   AdditionalPropertiesPlan plan, {
   required String targetMapVar,
@@ -207,10 +193,7 @@ ApBuilderResult buildApJsonEncode(
   return ApBuilderResult(codes: codes, inlineHelpers: encoded.inlineFunctions);
 }
 
-/// Simple/form decode capture through the flat decode plan.
-///
-/// When the value model has no flat decoding, unknown keys throw a
-/// context-bearing decoding exception instead of being silently dropped.
+/// Builds simple or form capture for unknown keys.
 ApFlatCaptureResult buildApFlatCaptureLoop(
   AdditionalPropertiesPlan plan, {
   required FlatWireFormat format,
@@ -284,10 +267,7 @@ ApFlatCaptureResult buildApFlatCaptureLoop(
   }
 }
 
-/// `Map<String, PropertyValue>` entries for flat parameter and form
-/// encoding: rejects declared-key collisions, omits null (RFC 6570
-/// undefined) entries, and converts defined values through the flat encode
-/// plan. Unsupported value models throw before any entry is produced.
+/// Builds flat entries, omitting null values and rejecting key collisions.
 ApBuilderResult buildApPropertyValueEntries(
   AdditionalPropertiesPlan plan, {
   required String targetVar,

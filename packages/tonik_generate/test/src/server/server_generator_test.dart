@@ -62,13 +62,11 @@ void main() {
 
       final dioField = fields.firstWhere((f) => f.name == r'_$dio');
       expect(dioField.type?.accept(emitter).toString(), 'Dio?');
-      // The Dio field cannot be final because it is initialized lazily.
       expect(dioField.modifier, isNot(FieldModifier.final$));
     });
 
     test('generates constructor with named parameters', () {
       final constructor = baseClass.constructors.first;
-      // The constructor cannot be const because Dio is initialized lazily.
       expect(constructor.constant, isFalse);
       expect(constructor.optionalParameters.length, 2);
 

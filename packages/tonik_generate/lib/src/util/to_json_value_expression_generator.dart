@@ -751,9 +751,7 @@ bool _needsTransformationImpl(
     DoubleModel() ||
     NumberModel() ||
     BooleanModel() => false,
-    // Any values need the recursive unknown-value JSON conversion; passing
-    // the collection through would leak DateTime and JsonEncodable
-    // instances into the JSON structure.
+    // Any values may contain non-JSON scalar types.
     AnyModel() => true,
     DateTimeModel() ||
     DecimalModel() ||

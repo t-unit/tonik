@@ -127,9 +127,7 @@ extension ObjectDecoder on String? {
   /// and comma-separated values (e.g., `a=1,2,3`).
   /// Tokens that don't contain `=` are treated as continuation of the previous
   /// list value.
-  /// Tokens without `=` that are not part of a list are skipped for forward
-  /// compatibility, except under additional-key capture, where unattributable
-  /// tokens are rejected.
+  /// Unattributable tokens are rejected when capturing additional keys.
   void _parseExploded(
     String value,
     String separator,
@@ -147,9 +145,7 @@ extension ObjectDecoder on String? {
       final parts = pair.split('=');
 
       if (parts.length == 1) {
-        // Orphaned tokens after declared list values are consumed above;
-        // under additional-key capture a bare token is unattributable data
-        // and must not be silently swallowed.
+        // Captured additional values require a key.
         if (captureAdditionalKeys) {
           throw InvalidFormatException(
             value: pair,
@@ -171,8 +167,7 @@ extension ObjectDecoder on String? {
 
       if (!expectedKeys.contains(key)) {
         if (captureAdditionalKeys) {
-          // Additional keys hold one scalar slot; a repeat would silently
-          // overwrite the earlier value.
+          // Repeated additional keys would lose a value.
           if (result.containsKey(key)) {
             throw InvalidFormatException(
               value: key,
@@ -240,8 +235,7 @@ extension ObjectDecoder on String? {
 
       if (!expectedKeys.contains(key)) {
         if (captureAdditionalKeys) {
-          // A dangling unknown key is the same malformation as a dangling
-          // expected key and must not be silently swallowed.
+          // Captured additional keys require a value.
           if (i + 1 >= parts.length) {
             throw InvalidFormatException(
               value: key,

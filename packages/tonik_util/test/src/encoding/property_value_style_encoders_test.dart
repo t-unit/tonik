@@ -2,6 +2,29 @@ import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  group('PropertyValueStyleEncoders.toUri', () {
+    test('encodes scalar pairs once and keeps separators literal', () {
+      const value = {
+        'a/b': PropertyValue.scalar('x=y'),
+        'empty': PropertyValue.scalar(''),
+      };
+
+      expect(
+        value.toUri(allowEmpty: true),
+        'a%2Fb,x%3Dy,empty,',
+      );
+    });
+
+    test('preserves reserved values when requested', () {
+      const value = {'formula': PropertyValue.scalar('x/y?z')};
+
+      expect(
+        value.toUri(allowEmpty: true, allowReserved: true),
+        'formula,x/y?z',
+      );
+    });
+  });
+
   group('PropertyValueStyleEncoders.toSimple', () {
     test('scalar object with explode=false matches the string-map counterpart',
         () {

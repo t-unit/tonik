@@ -427,20 +427,25 @@ void main() {
       );
 
       const expected = r'''
-        void run() {
-          for (final _$e in additionalProperties.entries) {
-            final _$v = _$e.value;
-            if (_$v == null) continue;
-            _$result[_$e.key] = PropertyValue.scalar(
-              encodeUnknownFlatScalar(_$v, context: 'Order.additionalProperties'),
-            );
+        class Temp {
+          void run() {
+            for (final _$e in additionalProperties.entries) {
+              final _$v = _$e.value;
+              if (_$v == null) continue;
+              _$result[_$e.key] = PropertyValue.scalar(
+                encodeUnknownFlatScalar(
+                  _$v,
+                  context: r'Order.additionalProperties',
+                ),
+              );
+            }
           }
         }
       ''';
 
       expect(
         collapseWhitespace(formatCodes(result.codes)),
-        contains(collapseWhitespace(expected)),
+        collapseWhitespace(format(expected)),
       );
     });
 

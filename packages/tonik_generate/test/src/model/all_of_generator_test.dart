@@ -4100,7 +4100,7 @@ class Holder {
         );
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'id'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of ExtendedConfig', ); } final _$v = _$e.value; if (_$v == null) continue; _$mergedProperties[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar( _$v, context: 'ExtendedConfig.additionalProperties', ), ); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'id'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of ExtendedConfig', ); } final _$v = _$e.value; if (_$v == null) continue; _$mergedProperties[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar( _$v, context: r'ExtendedConfig.additionalProperties', ), ); } return _$mergedProperties; }
 ''';
 
         final combinedClass = generator.generateClass(model);

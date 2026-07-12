@@ -846,13 +846,7 @@ class ModelImporter {
     }
   }
 
-  /// Whether [schema] is an open map: an object shape with no declared
-  /// properties whose additional properties are not forbidden.
-  ///
-  /// A bare `type: object` with an omitted keyword is included — the JSON
-  /// Schema default permits arbitrary members, and only a map representation
-  /// can hold them. Schemas without an object type still need an explicit
-  /// additionalProperties value to classify as maps.
+  // Bare objects need maps to preserve unknown members.
   bool _isOpenMapSchema(Schema schema, List<String> types) {
     if (schema.properties != null && schema.properties!.isNotEmpty) {
       return false;
@@ -1860,9 +1854,6 @@ class ModelImporter {
       }
       return AllowedAdditionalProperties(valueModel: valueModel);
     }
-    // An empty schema {} matches any value in JSON Schema (like true), so
-    // explicit true/{} both allow arbitrary Any values; an omitted keyword
-    // is the same permission as the implicit default.
     return AllowedAdditionalProperties(
       valueModel: AnyModel(context: context),
       origin: ap == null

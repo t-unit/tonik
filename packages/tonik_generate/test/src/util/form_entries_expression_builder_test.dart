@@ -138,7 +138,12 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+          value.toForm(
+            'p',
+            explode: true,
+            allowEmpty: true,
+            allowReserved: true,
+          );
         }
       ''');
 
@@ -340,7 +345,11 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true);
+          value
+              .map(
+                (k, v) => _i1.MapEntry(k, _i2.PropertyValue.scalar(v)),
+              )
+              .toForm('p', explode: true, allowEmpty: true);
         }
       ''');
 
@@ -358,7 +367,16 @@ void main() {
 
       final expected = format('''
         test() {
-          value.toForm('p', explode: true, allowEmpty: true, allowReserved: true);
+          value
+              .map(
+                (k, v) => _i1.MapEntry(k, _i2.PropertyValue.scalar(v)),
+              )
+              .toForm(
+                'p',
+                explode: true,
+                allowEmpty: true,
+                allowReserved: true,
+              );
         }
       ''');
 
@@ -377,7 +395,12 @@ void main() {
       final expected = format('''
         test() {
           value
-              .map((k, v) => _i1.MapEntry(k, v.toString()))
+              .map(
+                (k, v) => _i1.MapEntry(
+                  k,
+                  _i2.PropertyValue.scalar(v.toString()),
+                ),
+              )
               .toForm('p', explode: true, allowEmpty: true);
         }
       ''');

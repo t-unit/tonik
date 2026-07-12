@@ -2,7 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 
 BuiltExpression buildUriEncodeExpression(
   Expression valueExpression,
@@ -247,26 +247,27 @@ Expression _buildMapUriEncodeExpression(
   Expression? useQueryComponent,
   Expression? allowReserved,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     valueExpression,
     model,
     isNullable: false,
+    context: model.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
-    return generateEncodingExceptionExpression(
-      'Map with complex value types cannot be URI-encoded.',
-    );
-  }
-
-  return converted.property('uriEncode').call(
-    [],
-    {
-      'allowEmpty': allowEmpty,
-      'useQueryComponent': ?useQueryComponent,
-      'allowReserved': ?allowReserved,
-    },
-  );
+  return switch (conversion) {
+    SupportedMapPropertyValueConversion(:final expression) =>
+      expression.property('toUri').call(
+        [],
+        {
+          'allowEmpty': allowEmpty,
+          'useQueryComponent': ?useQueryComponent,
+          'allowReserved': ?allowReserved,
+        },
+      ),
+    UnsupportedMapPropertyValueConversion() =>
+      generateEncodingExceptionExpression(
+        'Map with complex value types cannot be URI-encoded.',
+      ),
+  };
 }
 
 Expression _buildListMapContentUriEncodeExpression(
@@ -276,17 +277,19 @@ Expression _buildListMapContentUriEncodeExpression(
   Expression? useQueryComponent,
   Expression? allowReserved,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     refer('e'),
     contentModel,
     isNullable: false,
+    context: contentModel.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
+  if (conversion is UnsupportedMapPropertyValueConversion) {
     return generateEncodingExceptionExpression(
       'List of maps with complex value types cannot be URI-encoded.',
     );
   }
+  final converted =
+      (conversion as SupportedMapPropertyValueConversion).expression;
 
   return listExpression
       .property('map')
@@ -296,7 +299,7 @@ Expression _buildListMapContentUriEncodeExpression(
             ..requiredParameters.add(
               Parameter((b) => b..name = 'e'),
             )
-            ..body = converted.property('uriEncode').call(
+            ..body = converted.property('toUri').call(
               [],
               {
                 'allowEmpty': allowEmpty,

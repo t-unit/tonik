@@ -132,7 +132,14 @@ void main() {
         final expected = format(r'''
           test() {
             _$entries.addAll(
-              mapParam.toForm(r'mapParam', explode: false, allowEmpty: true),
+              mapParam
+                  .map(
+                    (k, v) => _i1.MapEntry(
+                      k,
+                      _i2.PropertyValue.scalar(v),
+                    ),
+                  )
+                  .toForm(r'mapParam', explode: false, allowEmpty: true),
             );
           }
         ''');
@@ -166,7 +173,12 @@ void main() {
           test() {
             _$entries.addAll(
               mapParam
-                  .map((k, v) => _i1.MapEntry(k, v.toString()))
+                  .map(
+                    (k, v) => _i1.MapEntry(
+                      k,
+                      _i2.PropertyValue.scalar(v.toString()),
+                    ),
+                  )
                   .toForm(r'mapParam', explode: false, allowEmpty: true),
             );
           }
@@ -208,7 +220,7 @@ void main() {
           final expected = format('''
           test() {
             throw _i1.EncodingException(
-              'Map with complex value types cannot be form query encoded.',
+              r'ClassModel values have no flat representation for form query parameter mapParam',
             );
           }
         ''');

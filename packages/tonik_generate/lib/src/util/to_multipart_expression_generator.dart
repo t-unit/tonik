@@ -1263,10 +1263,7 @@ Code _buildComplexObjectFileAddition(
 
   final isStyleBased = propertyEncoding?.isStyleBased ?? false;
 
-  // An explicit style/explode/allowReserved ignores contentType: the part
-  // renders as raw style parts, never through the JSON fallthrough. Only
-  // form has a defined object expansion here; other styles must not be
-  // silently rendered with form semantics.
+  // Explicit style fields take precedence over contentType.
   if (isStyleBased) {
     final style = propertyEncoding?.style;
     if (style != null && style != EncodingStyle.form) {
@@ -1321,13 +1318,6 @@ Code _buildComplexObjectFileAddition(
   ]).statement;
 }
 
-/// Builds a URL-encoded (`application/x-www-form-urlencoded`) file part for a
-/// complex object in content-based serialization mode.
-///
-/// The object's flat `PropertyValue` entries are rendered with
-/// query-component escaping (`+` for spaces), matching ordinary urlencoded
-/// bodies. Null entries drop out of the property map; values without a flat
-/// representation throw before the part is built.
 Code _buildUrlEncodedObjectFileAddition(
   String rawName,
   String accessor, {
@@ -1383,11 +1373,6 @@ Code _buildUrlEncodedObjectFileAddition(
   ]);
 }
 
-/// Builds raw style-based multipart parts for an explicitly styled object.
-///
-/// The RFC 6570 query name becomes the `Content-Disposition` name and the
-/// scalar value becomes the raw part body; nothing is URI- or form-percent
-/// encoded and `?`, `=`, and `&` never appear as serialization delimiters.
 Code _buildRawStylePartsAddition(
   String rawName,
   String accessor, {
@@ -1436,9 +1421,7 @@ typedef MultipartHeaderParamInfo = ({
   bool isDeprecated,
 });
 
-/// Extracts per-part header parameters from a multipart request content.
-///
-/// Returns info needed to generate method parameters or call arguments.
+/// Extracts per-part multipart headers.
 List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   RequestContent content, {
   Set<String> reservedNames = const {},

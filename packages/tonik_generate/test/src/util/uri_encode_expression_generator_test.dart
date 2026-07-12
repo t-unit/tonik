@@ -904,9 +904,17 @@ void main() {
         allowEmpty: refer('allowEmpty'),
       );
 
-      final generated = format('final result = ${expression.accept(emitter)};');
+      final generated = format('''
+        test() {
+          final result = ${expression.accept(emitter)};
+        }
+      ''');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty);
+        test() {
+          final result = value
+              .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+              .toUri(allowEmpty: allowEmpty);
+        }
       ''';
 
       expect(
@@ -928,9 +936,17 @@ void main() {
         allowReserved: literalBool(true),
       );
 
-      final generated = format('final result = ${expression.accept(emitter)};');
+      final generated = format('''
+        test() {
+          final result = ${expression.accept(emitter)};
+        }
+      ''');
       const expected = '''
-        final result = value.uriEncode(allowEmpty: allowEmpty, allowReserved: true);
+        test() {
+          final result = value
+              .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+              .toUri(allowEmpty: allowEmpty, allowReserved: true);
+        }
       ''';
 
       expect(
@@ -965,8 +981,8 @@ void main() {
         final expected = format('''
         test() {
           final result = value
-              .map((k, v) => MapEntry(k, v.toString()))
-              .uriEncode(allowEmpty: allowEmpty);
+              .map((k, v) => MapEntry(k, PropertyValue.scalar(v.toString())))
+              .toUri(allowEmpty: allowEmpty);
         }
       ''');
 
@@ -1050,8 +1066,10 @@ void main() {
           final result = value
               .map(
                 (e) => e
-                    .map((k, v) => MapEntry(k, v.toString()))
-                    .uriEncode(allowEmpty: allowEmpty),
+                    .map(
+                      (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                    )
+                    .toUri(allowEmpty: allowEmpty),
               )
               .toList()
               .uriEncode(allowEmpty: allowEmpty);
@@ -1096,8 +1114,10 @@ void main() {
           final result = value
               .map(
                 (e) => e
-                    .map((k, v) => MapEntry(k, v.toString()))
-                    .uriEncode(allowEmpty: allowEmpty, allowReserved: true),
+                    .map(
+                      (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                    )
+                    .toUri(allowEmpty: allowEmpty, allowReserved: true),
               )
               .toList()
               .uriEncode(allowEmpty: allowEmpty, allowReserved: true);

@@ -1361,7 +1361,7 @@ void main() {
 
       test('generates parameterProperties with AP loop', () {
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Config', ); } final _$v = _$e.value; if (_$v == null) continue; _$result[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar(_$v, context: 'Config.additionalProperties'), ); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Config', ); } final _$v = _$e.value; if (_$v == null) continue; _$result[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar(_$v, context: r'Config.additionalProperties'), ); } return _$result; }
 ''';
 
         final generatedClass = generator.generateClass(model);

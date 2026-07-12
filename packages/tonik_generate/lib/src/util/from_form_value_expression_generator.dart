@@ -164,8 +164,7 @@ Expression _buildFromFormValueExpression(
 
     NeverModel() => _buildNeverModelExpression(value, isRequired),
 
-    // Any values keep the raw wire token; nothing is percent-decoded and
-    // no boolean/number types are inferred from its shape.
+    // Flat Any decoding preserves the wire token.
     AnyModel() => value,
 
     MapModel() => generateFormDecodingExceptionExpression(

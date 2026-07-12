@@ -2,7 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 
 BuiltExpression buildMatrixParameterExpression(
   Expression valueExpression,
@@ -124,12 +124,13 @@ bool matrixParameterExpressionUsesValue(Model model) {
 }
 
 bool _mapMatrixUsesValue(MapModel model) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     refer('_'),
     model,
     isNullable: false,
+    context: model.name ?? 'map parameter value',
   );
-  return converted != null;
+  return conversion is SupportedMapPropertyValueConversion;
 }
 
 bool _listMatrixContentUsesValue(Model content) {
@@ -324,29 +325,26 @@ Expression _buildMapMatrixExpression(
   required Expression allowEmpty,
   bool isNullable = false,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     valueExpression,
     model,
     isNullable: isNullable,
+    context: model.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
-    return generateEncodingExceptionExpression(
-      'Map with complex value types cannot be matrix-encoded.',
-    );
-  }
-
-  final toMatrixAccess = (isNullable && converted == valueExpression)
-      ? converted.nullSafeProperty('toMatrix')
-      : converted.property('toMatrix');
-
-  return toMatrixAccess.call(
-    [paramName],
-    {
-      'explode': explode,
-      'allowEmpty': allowEmpty,
-    },
-  );
+  return switch (conversion) {
+    SupportedMapPropertyValueConversion(:final expression) =>
+      (isNullable
+              ? expression.nullSafeProperty('toMatrix')
+              : expression.property('toMatrix'))
+          .call(
+            [paramName],
+            {'explode': explode, 'allowEmpty': allowEmpty},
+          ),
+    UnsupportedMapPropertyValueConversion() =>
+      generateEncodingExceptionExpression(
+        'Map with complex value types cannot be matrix-encoded.',
+      ),
+  };
 }
 
 Expression _buildListMapContentMatrixExpression(
@@ -357,17 +355,19 @@ Expression _buildListMapContentMatrixExpression(
   required Expression allowEmpty,
   bool isNullable = false,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     refer('e'),
     contentModel,
     isNullable: false,
+    context: contentModel.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
+  if (conversion is UnsupportedMapPropertyValueConversion) {
     return generateEncodingExceptionExpression(
       'List of maps with complex value types cannot be matrix-encoded.',
     );
   }
+  final converted =
+      (conversion as SupportedMapPropertyValueConversion).expression;
 
   final listMapAccess = isNullable
       ? valueExpression.nullSafeProperty('map')

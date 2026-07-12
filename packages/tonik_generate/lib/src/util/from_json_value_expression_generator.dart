@@ -410,9 +410,7 @@ BuiltExpression _buildListFromJsonBody(
       result = mapList(listExpr, mapFunction);
 
     case final MapModel mapModel:
-      // Element nullability lives in the map decode expression itself
-      // (decodeJsonNullableMap / the helper's null guard), so the closure
-      // stays a plain body and no analyzer-flagged ternary is emitted.
+      // The map decoder owns element nullability.
       final inner = _buildMapFromJsonExpression(
         'e',
         mapModel,

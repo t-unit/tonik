@@ -4,68 +4,61 @@ import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_simple_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/raw_string_expression_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 const _tonikUtilUrl = 'package:tonik_util/tonik_util.dart';
 
-/// Which flat wire medium a decode plan targets.
+/// Flat decoding medium.
 enum FlatWireFormat { simple, form }
 
-/// Plan for encoding one model occupying one flat object-property slot.
-///
-/// Callers omit null (RFC 6570 undefined) entries before rendering a plan;
-/// plan expressions therefore receive defined, non-null values. Whether a
-/// specific encode operation exists is answered here — never by a separate
-/// boolean capability gate.
+/// Encoding plan for one flat property slot.
 sealed class FlatEncodePlan {
   const FlatEncodePlan();
 }
 
-/// The value converts to one raw scalar wire string.
+/// Scalar flat encoding.
 final class FlatScalarEncodePlan extends FlatEncodePlan {
   const FlatScalarEncodePlan({required this.value});
 
-  /// Raw (unescaped) `String` expression for the defined value.
+  /// Raw string expression.
   final Expression value;
 }
 
-/// The value converts to a raw string per element, preserving boundaries
-/// for the late style renderer.
+/// Array flat encoding.
 final class FlatArrayEncodePlan extends FlatEncodePlan {
   const FlatArrayEncodePlan({required this.values});
 
-  /// Raw (unescaped) `List<String>` expression.
+  /// Raw string-list expression.
   final Expression values;
 }
 
-/// The model has no defined flat representation.
+/// Unsupported flat encoding.
 final class UnsupportedFlatEncodePlan extends FlatEncodePlan {
   const UnsupportedFlatEncodePlan({required this.reason});
 
   final String reason;
 }
 
-/// Plan for decoding one model from one flat object-property slot.
+/// Decoding plan for one flat property slot.
 sealed class FlatDecodePlan {
   const FlatDecodePlan();
 }
 
-/// The slot decodes to a single value.
+/// Scalar flat decoding.
 final class FlatScalarDecodePlan extends FlatDecodePlan {
   const FlatScalarDecodePlan({required this.value});
 
   final Expression value;
 }
 
-/// The original runtime type cannot be recovered from a flat string.
+/// Unsupported flat decoding.
 final class UnsupportedFlatDecodePlan extends FlatDecodePlan {
   const UnsupportedFlatDecodePlan({required this.reason});
 
   final String reason;
 }
 
-/// Builds the flat encode plan for [value] of [model].
-///
-/// [context] names the value's location for runtime unknown-value errors.
+/// Builds a flat encoding plan.
 FlatEncodePlan buildFlatEncodePlan(
   Expression value,
   Model model, {
@@ -120,10 +113,7 @@ FlatEncodePlan buildFlatEncodePlan(
   }
 }
 
-/// Builds the flat decode plan for [value] of [model] from [format].
-///
-/// Decode support is independent from encode support: Binary values decode
-/// from a flat slot but have no flat encoding.
+/// Builds a flat decoding plan.
 FlatDecodePlan buildFlatDecodePlan(
   Expression value,
   Model model, {
@@ -166,16 +156,6 @@ FlatDecodePlan buildFlatDecodePlan(
   return FlatScalarDecodePlan(value: expression);
 }
 
-/// Why [model] cannot be decoded from one flat object-property slot, or
-/// null when it can.
-///
-/// Nested objects and compositions have no OAS-defined single-slot text
-/// form, so they are unsupported here even though they expose fromSimple
-/// factories for whole-value decoding. Lists are unsupported because the
-/// object decoder cannot recover element boundaries of unknown keys:
-/// exploded simple pairs split on the same comma that separates elements,
-/// and repeated form keys overwrite each other outside the declared
-/// list-key set.
 String? _flatSlotDecodingUnsupportedReason(Model model) => switch (model) {
   StringModel() ||
   IntegerModel() ||
@@ -200,7 +180,7 @@ String? _flatSlotDecodingUnsupportedReason(Model model) => switch (model) {
 Expression _unknownFlatScalarCall(Expression value, String context) => refer(
   'encodeUnknownFlatScalar',
   _tonikUtilUrl,
-).call([value], {'context': literalString(context)});
+).call([value], {'context': specLiteralString(context)});
 
 FlatEncodePlan _buildArrayEncodePlan(
   Expression value,

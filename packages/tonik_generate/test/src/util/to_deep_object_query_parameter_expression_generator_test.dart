@@ -1,6 +1,8 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/to_deep_object_query_parameter_expression_generator.dart';
 
@@ -9,6 +11,9 @@ void main() {
     late Context context;
     late DartEmitter emitter;
     late DartEmitter scopedEmitter;
+    final format = DartFormatter(
+      languageVersion: DartFormatter.latestLanguageVersion,
+    ).format;
 
     setUp(() {
       context = Context.initial();
@@ -18,6 +23,15 @@ void main() {
         allocator: CorePrefixedAllocator(),
       );
     });
+
+    String methodBody(BuiltExpression built) {
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal('result').assign(built.expression).statement,
+      );
+      return format(method.accept(emitter).toString());
+    }
 
     QueryParameterObject createParameter({
       required String name,
@@ -407,13 +421,20 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            "filter.toDeepObject(r'filter', "
-            'explode: true, allowEmpty: false, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = filter
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toDeepObject(
+                    r'filter',
+                    explode: true,
+                    allowEmpty: false,
+                  );
+            }
+          ''')),
         );
       });
 
@@ -436,13 +457,20 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            "filter.toDeepObject(r'filter', "
-            'explode: true, allowEmpty: true, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = filter
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toDeepObject(
+                    r'filter',
+                    explode: true,
+                    allowEmpty: true,
+                  );
+            }
+          ''')),
         );
       });
 
@@ -464,15 +492,22 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            'counts.map((k, v, ) => MapEntry(k, '
-            "v.uriEncode(allowEmpty: false), )).toDeepObject(r'counts', "
-            'explode: true, allowEmpty: false, '
-            'alreadyEncoded: true, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = counts
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                  )
+                  .toDeepObject(
+                    r'counts',
+                    explode: true,
+                    allowEmpty: false,
+                  );
+            }
+          ''')),
         );
       });
 
@@ -494,15 +529,22 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            'flags.map((k, v, ) => MapEntry(k, '
-            "v.uriEncode(allowEmpty: false), )).toDeepObject(r'flags', "
-            'explode: true, allowEmpty: false, '
-            'alreadyEncoded: true, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = flags
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                  )
+                  .toDeepObject(
+                    r'flags',
+                    explode: true,
+                    allowEmpty: false,
+                  );
+            }
+          ''')),
         );
       });
 
@@ -534,15 +576,22 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            'statuses.map((k, v, ) => MapEntry(k, '
-            "v.uriEncode(allowEmpty: false), )).toDeepObject(r'statuses', "
-            'explode: true, allowEmpty: false, '
-            'alreadyEncoded: true, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = statuses
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toJson())),
+                  )
+                  .toDeepObject(
+                    r'statuses',
+                    explode: true,
+                    allowEmpty: false,
+                  );
+            }
+          ''')),
         );
       });
 
@@ -564,15 +613,32 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            'meta.map((k, v, ) => MapEntry(k, '
-            "encodeAnyToUri(v, allowEmpty: false, ), )).toDeepObject(r'meta', "
-            'explode: true, allowEmpty: false, '
-            'alreadyEncoded: true, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = Map.fromEntries(
+                meta.entries
+                    .where((e) => e.value != null)
+                    .map(
+                      (e) => MapEntry(
+                        e.key,
+                        PropertyValue.scalar(
+                          encodeUnknownFlatScalar(
+                            e.value!,
+                            context: r'meta',
+                          ),
+                        ),
+                      ),
+                    ),
+              ).toDeepObject(
+                r'meta',
+                explode: true,
+                allowEmpty: false,
+              );
+            }
+          ''')),
         );
       });
 
@@ -600,14 +666,16 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            "throw EncodingException(r'deepObject encoding is not "
-            'supported for Map types with complex values. '
-            "Parameter \"nested\" cannot be encoded.')",
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = throw EncodingException(
+                r'deepObject encoding is not supported for Map types with complex values. Parameter "nested" cannot be encoded.',
+              );
+            }
+          ''')),
         );
       });
 
@@ -633,14 +701,16 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            "throw EncodingException(r'deepObject encoding is not "
-            'supported for Map types with complex values. '
-            "Parameter \"tags\" cannot be encoded.')",
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = throw EncodingException(
+                r'deepObject encoding is not supported for Map types with complex values. Parameter "tags" cannot be encoded.',
+              );
+            }
+          ''')),
         );
       });
 
@@ -668,13 +738,20 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            "aliasedMap.toDeepObject(r'aliased_map', "
-            'explode: true, allowEmpty: false, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = aliasedMap
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toDeepObject(
+                    r'aliased_map',
+                    explode: true,
+                    allowEmpty: false,
+                  );
+            }
+          ''')),
         );
       });
 
@@ -702,16 +779,22 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            'aliasedCounts.map((k, v, ) => '
-            'MapEntry(k, v.uriEncode(allowEmpty: '
-            "false), )).toDeepObject(r'aliased_counts', "
-            'explode: true, allowEmpty: false, '
-            'alreadyEncoded: true, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = aliasedCounts
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                  )
+                  .toDeepObject(
+                    r'aliased_counts',
+                    explode: true,
+                    allowEmpty: false,
+                  );
+            }
+          ''')),
         );
       });
     });
@@ -737,13 +820,21 @@ void main() {
           allowReserved: true,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            "filter.toDeepObject(r'filter', "
-            'explode: true, allowEmpty: false, allowReserved: true, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = filter
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toDeepObject(
+                    r'filter',
+                    explode: true,
+                    allowEmpty: false,
+                    allowReserved: true,
+                  );
+            }
+          ''')),
         );
       });
 
@@ -765,13 +856,20 @@ void main() {
           parameter,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            "filter.toDeepObject(r'filter', "
-            'explode: true, allowEmpty: false, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = filter
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toDeepObject(
+                    r'filter',
+                    explode: true,
+                    allowEmpty: false,
+                  );
+            }
+          ''')),
         );
       });
 
@@ -795,16 +893,23 @@ void main() {
           allowReserved: true,
         );
 
-        final code = result.accept(emitter).toString();
+        final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(
-            'counts.map((k, v, ) => MapEntry(k, '
-            'v.uriEncode(allowEmpty: false, allowReserved: true, ), '
-            ")).toDeepObject(r'counts', "
-            'explode: true, allowEmpty: false, '
-            'alreadyEncoded: true, )',
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = counts
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                  )
+                  .toDeepObject(
+                    r'counts',
+                    explode: true,
+                    allowEmpty: false,
+                    allowReserved: true,
+                  );
+            }
+          ''')),
         );
       });
 

@@ -4,15 +4,7 @@ import 'package:tonik_util/src/encoding/datetime_extension.dart';
 import 'package:tonik_util/src/encoding/encodable.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 
-/// Encodes a runtime value of unknown type to a JSON-compatible value.
-///
-/// JSON primitives pass through, [JsonEncodable] values use their `toJson`,
-/// the scalar convenience types ([DateTime], [Date], [Uri], [BigDecimal])
-/// use their canonical string forms, and maps and lists are converted
-/// recursively. Map keys must be strings.
-///
-/// [context] names the value's location and grows with `.key` and `[index]`
-/// segments while descending, so failures name the offending path.
+/// Converts an unknown runtime value to JSON-compatible data.
 Object? encodeUnknownJson(Object? value, {required String context}) {
   switch (value) {
     case null || String() || num() || bool():
@@ -27,8 +19,7 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
       return uri.toString();
     case final BigDecimal decimal:
       return decimal.toString();
-    // Both collection branches are copy-on-write: an untouched subtree keeps
-    // its identity so round-tripped values stay reference-equal.
+    // Preserve unchanged collection identity.
     case final List<Object?> list:
       List<Object?>? changed;
       for (var i = 0; i < list.length; i++) {
@@ -74,15 +65,7 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
   }
 }
 
-/// Encodes a runtime value of unknown type occupying one flat property slot
-/// to its scalar wire string.
-///
-/// Supports the safe scalar runtime types; lists, maps, generated values,
-/// and other custom types throw an [EncodingException] naming [context].
-///
-/// Null is intentionally not accepted: schema-aware callers treat a null
-/// entry as RFC 6570 undefined and omit it before constructing a
-/// `PropertyValue`. An empty string is a defined empty scalar.
+/// Converts an unknown runtime scalar to its flat wire value.
 String encodeUnknownFlatScalar(Object value, {required String context}) =>
     switch (value) {
       final String string => string,

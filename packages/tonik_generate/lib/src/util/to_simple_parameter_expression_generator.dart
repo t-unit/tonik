@@ -2,7 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 
 /// [literal] emits `literal: true` for composite header field-values (sent
 /// without URI encoding); omitted for path/query callers.
@@ -278,28 +278,23 @@ Expression _buildMapSimpleExpression(
   bool isNullable = false,
   Expression? literal,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     valueExpression,
     model,
     isNullable: isNullable,
+    context: model.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
-    return generateEncodingExceptionExpression(
-      'Map with complex value types cannot be simple-encoded.',
-    );
-  }
-
-  // For StringModel values, converted == valueExpression (identity).
-  // For other types, converted is the .map() call result.
-  final toSimpleAccess = (isNullable && converted == valueExpression)
-      ? converted.nullSafeProperty('toSimple')
-      : converted.property('toSimple');
-
-  return toSimpleAccess.call(
-    [],
-    _simpleArgs(explode, allowEmpty, literal),
-  );
+  return switch (conversion) {
+    SupportedMapPropertyValueConversion(:final expression) =>
+      (isNullable
+              ? expression.nullSafeProperty('toSimple')
+              : expression.property('toSimple'))
+          .call([], _simpleArgs(explode, allowEmpty, literal)),
+    UnsupportedMapPropertyValueConversion() =>
+      generateEncodingExceptionExpression(
+        'Map with complex value types cannot be simple-encoded.',
+      ),
+  };
 }
 
 Expression _buildListMapContentSimpleExpression(
@@ -310,23 +305,24 @@ Expression _buildListMapContentSimpleExpression(
   bool isNullable = false,
   Expression? literal,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     refer('e'),
     contentModel,
     isNullable: false,
+    context: contentModel.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
+  if (conversion is UnsupportedMapPropertyValueConversion) {
     return generateEncodingExceptionExpression(
       'List of maps with complex value types cannot be simple-encoded.',
     );
   }
+  final converted =
+      (conversion as SupportedMapPropertyValueConversion).expression;
 
   final listMapAccess = isNullable
       ? valueExpression.nullSafeProperty('map')
       : valueExpression.property('map');
 
-  // Each element is converted to Map<String, String>, then simple-encoded.
   return listMapAccess
       .call([
         Method(
@@ -334,10 +330,13 @@ Expression _buildListMapContentSimpleExpression(
             ..requiredParameters.add(
               Parameter((b) => b..name = 'e'),
             )
-            ..body = converted.property('toSimple').call(
-              [],
-              _simpleArgs(explode, allowEmpty, literal),
-            ).code,
+            ..body = converted
+                .property('toSimple')
+                .call(
+                  [],
+                  _simpleArgs(explode, allowEmpty, literal),
+                )
+                .code,
         ).closure,
       ])
       .property('toList')

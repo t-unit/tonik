@@ -34,6 +34,40 @@ paths:
                 properties:
                   status:
                     type: string
+  /pure-map-form:
+    get:
+      operationId: encodePureMapForm
+      tags:
+        - additional-properties
+      parameters:
+        - name: values
+          in: query
+          required: true
+          style: form
+          explode: true
+          allowEmptyValue: true
+          schema:
+            $ref: '#/components/schemas/UntypedMap'
+      responses:
+        '204':
+          description: Encoded
+  /pure-map-deep-object:
+    get:
+      operationId: encodePureMapDeepObject
+      tags:
+        - additional-properties
+      parameters:
+        - name: values
+          in: query
+          required: true
+          style: deepObject
+          explode: true
+          allowEmptyValue: true
+          schema:
+            $ref: '#/components/schemas/UntypedMap'
+      responses:
+        '204':
+          description: Encoded
 
 components:
   schemas:
