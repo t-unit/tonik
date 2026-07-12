@@ -3,6 +3,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
+import 'package:tonik_generate/src/util/additional_properties_builders.dart';
 import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/composite_guard_builders.dart';
@@ -11,6 +12,7 @@ import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/flat_value_codec_plan.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
@@ -486,69 +488,29 @@ class AllOfGenerator {
     final apFieldName = nameManager.additionalPropertiesFieldName(
       normalizedProperties,
     );
-    final knownKeys = collectKnownKeys(model);
-    final knownKeysLiteral = knownKeys.map((k) => "r'$k'").join(', ');
 
-    final ap = model.additionalProperties;
+    final apPolicy = activeApPolicy(model.additionalPropertiesPolicy)!;
     final codes = <Code>[
       Code(
         r"final _$map = json.decodeMap(context: r'"
         "$className');",
       ),
-      Code(
-        'const _\$knownKeys = {$knownKeysLiteral};',
-      ),
     ];
 
-    final mapType = additionalPropertiesType(
-      model.additionalProperties,
-      nameManager,
-      package,
+    final capture = buildApJsonCaptureLoop(
+      AdditionalPropertiesPlan(
+        valueModel: apPolicy.valueModel,
+        knownWireKeys: collectKnownKeys(model),
+      ),
+      sourceMapVar: r'_$map',
+      nameManager: nameManager,
+      package: package,
+      contextClass: className,
+      helperContext: helperContext,
       useImmutableCollections: useImmutableCollections,
     );
-
-    codes.add(
-      declareFinal(r'_$additional')
-          .assign(
-            literalMap(
-              {},
-              refer('String', 'dart:core'),
-              mapType.types.last,
-            ),
-          )
-          .statement,
-    );
-
-    if (ap is TypedAdditionalProperties) {
-      final decodeBuilt = buildFromJsonValueExpression(
-        r'_$entry.value',
-        model: ap.valueModel,
-        nameManager: nameManager,
-        package: package,
-        helperContext: helperContext,
-        contextClass: className,
-        contextProperty: 'additionalProperties',
-        useImmutableCollections: useImmutableCollections,
-      );
-      inlineHelpers.addAll(decodeBuilt.inlineFunctions);
-      codes.addAll([
-        const Code(r'for (final _$entry in _$map.entries) {'),
-        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
-        const Code(r'_$additional[_$entry.key] = '),
-        decodeBuilt.unsafeRawBody.code,
-        const Code(';'),
-        const Code('}'),
-        const Code('}'),
-      ]);
-    } else {
-      codes.addAll([
-        const Code(r'for (final _$entry in _$map.entries) {'),
-        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
-        const Code(r'_$additional[_$entry.key] = _$entry.value;'),
-        const Code('}'),
-        const Code('}'),
-      ]);
-    }
+    inlineHelpers.addAll(capture.inlineHelpers);
+    codes.addAll(capture.codes);
 
     final constructorArgs = Map.fromEntries(
       List.generate(
@@ -873,38 +835,26 @@ class AllOfGenerator {
         }
       }
 
-      if (hasActiveAdditionalProperties(model.additionalProperties)) {
+      final apPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+      if (apPolicy != null) {
         final apFieldName = nameManager.additionalPropertiesFieldName(
           normalizedProperties,
         );
-        final ap = model.additionalProperties;
-        final apAccess = useImmutableCollections
-            ? '$apFieldName.unlock'
-            : apFieldName;
-        if (ap is TypedAdditionalProperties) {
-          final apBuilt = buildToJsonAdditionalPropertiesExpression(
-            apFieldName,
-            ap.valueModel,
-            nameManager: nameManager,
-            package: package,
-            helperContext: helperContext,
-            contextClass: className,
-            useImmutableCollections: useImmutableCollections,
-          );
-          inlineHelpers.addAll(apBuilt.inlineFunctions);
-          bodyCode.addAll([
-            const Code(r'_$map.addAll('),
-            apBuilt.unsafeRawBody.code,
-            const Code(');'),
-          ]);
-        } else {
-          bodyCode.add(
-            Code(
-              r'_$map.addAll('
-              '$apAccess);',
-            ),
-          );
-        }
+        final apEncode = buildApJsonEncode(
+          AdditionalPropertiesPlan(
+            valueModel: apPolicy.valueModel,
+            knownWireKeys: collectKnownKeys(model),
+          ),
+          targetMapVar: r'_$map',
+          apAccess: apFieldName,
+          nameManager: nameManager,
+          package: package,
+          contextClass: className,
+          helperContext: helperContext,
+          useImmutableCollections: useImmutableCollections,
+        );
+        inlineHelpers.addAll(apEncode.inlineHelpers);
+        bodyCode.addAll(apEncode.codes);
       }
 
       bodyCode.add(const Code(r'return _$map;'));
@@ -1053,38 +1003,26 @@ class AllOfGenerator {
           }
         }
 
-        if (hasActiveAdditionalProperties(model.additionalProperties)) {
+        final mixedApPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+        if (mixedApPolicy != null) {
           final apFieldName = nameManager.additionalPropertiesFieldName(
             normalizedProperties,
           );
-          final ap = model.additionalProperties;
-          final apAccess = useImmutableCollections
-              ? '$apFieldName.unlock'
-              : apFieldName;
-          if (ap is TypedAdditionalProperties) {
-            final apBuilt = buildToJsonAdditionalPropertiesExpression(
-              apFieldName,
-              ap.valueModel,
-              nameManager: nameManager,
-              package: package,
-              helperContext: helperContext,
-              contextClass: className,
-              useImmutableCollections: useImmutableCollections,
-            );
-            inlineHelpers.addAll(apBuilt.inlineFunctions);
-            mapParts.addAll([
-              const Code(r'_$map.addAll('),
-              apBuilt.unsafeRawBody.code,
-              const Code(');'),
-            ]);
-          } else {
-            mapParts.add(
-              Code(
-                r'_$map.addAll('
-                '$apAccess);',
-              ),
-            );
-          }
+          final apEncode = buildApJsonEncode(
+            AdditionalPropertiesPlan(
+              valueModel: mixedApPolicy.valueModel,
+              knownWireKeys: collectKnownKeys(model),
+            ),
+            targetMapVar: r'_$map',
+            apAccess: apFieldName,
+            nameManager: nameManager,
+            package: package,
+            contextClass: className,
+            helperContext: helperContext,
+            useImmutableCollections: useImmutableCollections,
+          );
+          inlineHelpers.addAll(apEncode.inlineHelpers);
+          mapParts.addAll(apEncode.codes);
         }
 
         mapParts.add(const Code(r'return _$map;'));
@@ -1164,9 +1102,9 @@ class AllOfGenerator {
       constructorArgs[name] = expression.expression;
     }
 
-    final captureAP = _hasStringCapturableAP(model);
+    final apPolicy = activeApPolicy(model.additionalPropertiesPolicy);
 
-    if (!captureAP) {
+    if (apPolicy == null) {
       return Constructor(
         (b) => b
           ..factory = true
@@ -1194,11 +1132,8 @@ class AllOfGenerator {
     final listKeys = collectListKeys(model);
     final separator = isForm ? '&' : ',';
 
-    final knownKeysLiteral = knownKeys.map((k) => "r'$k'").join(', ');
     final expectedKeysExpr = literalSet(knownKeys.map(specLiteralString));
     final listKeysExpr = literalSet(listKeys.map(specLiteralString));
-
-    final strRef = refer('String', 'dart:core');
 
     final codes = <Code>[
       declareFinal(r'_$values')
@@ -1213,28 +1148,31 @@ class AllOfGenerator {
             }),
           )
           .statement,
-      Code('const _\$knownKeys = {$knownKeysLiteral};'),
-      declareFinal(
-        r'_$additional',
-      ).assign(literalMap({}, strRef, strRef)).statement,
-      const Code(r'for (final _$entry in _$values.entries) {'),
-      const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
-      Code(
-        r'_$additional[_$entry.key] = _$entry.value.'
-        '${isForm ? 'decodeFormString' : 'decodeSimpleString'}'
-        "(context: r'$className.additionalProperties');",
-      ),
-      const Code('}'),
-      const Code('}'),
     ];
 
-    constructorArgs[apFieldName] = useImmutableCollections
-        ? refer(
-            'IMap',
-            'package:fast_immutable_collections/'
-                'fast_immutable_collections.dart',
-          ).call([refer(r'_$additional')])
-        : refer(r'_$additional');
+    final capture = buildApFlatCaptureLoop(
+      AdditionalPropertiesPlan(
+        valueModel: apPolicy.valueModel,
+        knownWireKeys: knownKeys,
+      ),
+      format: isForm ? FlatWireFormat.form : FlatWireFormat.simple,
+      sourceMapVar: r'_$values',
+      nameManager: nameManager,
+      package: package,
+      contextClass: className,
+      useImmutableCollections: useImmutableCollections,
+    );
+    codes.addAll(capture.codes);
+
+    if (capture.capturesValues) {
+      constructorArgs[apFieldName] = useImmutableCollections
+          ? refer(
+              'IMap',
+              'package:fast_immutable_collections/'
+                  'fast_immutable_collections.dart',
+            ).call([refer(r'_$additional')])
+          : refer(r'_$additional');
+    }
 
     codes.add(
       refer(className).call([], constructorArgs).returned.statement,
@@ -1258,27 +1196,13 @@ class AllOfGenerator {
     );
   }
 
-  /// Whether the allOf model has additional properties that can be captured
-  /// from string-based encodings (simple/form).
-  ///
-  /// Only unrestricted AP or typed AP with string values can be captured,
-  /// since simple/form encoding produces string key-value pairs.
-  bool _hasStringCapturableAP(AllOfModel model) {
-    final ap = model.additionalProperties;
-    if (ap is UnrestrictedAdditionalProperties) return true;
-    if (ap is TypedAdditionalProperties) {
-      final resolved = ap.valueModel.resolved;
-      return resolved is StringModel;
-    }
-    return false;
-  }
-
   Method _buildParameterPropertiesMethod(
     String className,
     List<({String normalizedName, Property property})> normalizedProperties,
     AllOfModel model,
   ) {
-    if (normalizedProperties.isEmpty) {
+    if (normalizedProperties.isEmpty &&
+        activeApPolicy(model.additionalPropertiesPolicy) == null) {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
@@ -1404,61 +1328,24 @@ class AllOfGenerator {
     AllOfModel model,
     List<({String normalizedName, Property property})> normalizedProperties,
   ) {
-    if (!hasActiveAdditionalProperties(model.additionalProperties)) return [];
+    final apPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+    if (apPolicy == null) return [];
 
     final apFieldName = nameManager.additionalPropertiesFieldName(
       normalizedProperties,
     );
-    final ap = model.additionalProperties;
+    final className = nameManager.modelName(model);
 
-    if (ap is TypedAdditionalProperties &&
-        ap.valueModel.encodingShape == EncodingShape.simple) {
-      return [
-        Code('for (final _\$e in $apFieldName.entries) {'),
-        refer(r'_$mergedProperties')
-            .index(refer(r'_$e').property('key'))
-            .assign(
-              propertyValueScalar(
-                additionalPropertyRawScalar(
-                  refer(r'_$e').property('value'),
-                  ap.valueModel,
-                ),
-              ),
-            )
-            .statement,
-        const Code('}'),
-      ];
-    } else if (ap is UnrestrictedAdditionalProperties) {
-      return [
-        Code('for (final _\$e in $apFieldName.entries) {'),
-        refer(r'_$mergedProperties')
-            .index(refer(r'_$e').property('key'))
-            .assign(
-              propertyValueScalar(
-                refer(r'_$e')
-                    .property('value')
-                    .nullSafeProperty('toString')
-                    .call([])
-                    .ifNullThen(literalString('')),
-              ),
-            )
-            .statement,
-        const Code('}'),
-      ];
-    } else {
-      // Typed with complex value model — throw
-      return [
-        Code(
-          'if ($apFieldName.isNotEmpty) {',
-        ),
-        generateEncodingExceptionExpression(
-          'Additional properties with complex types cannot be parameter '
-          'encoded.',
-          raw: true,
-        ).statement,
-        const Code('}'),
-      ];
-    }
+    return buildApPropertyValueEntries(
+      AdditionalPropertiesPlan(
+        valueModel: apPolicy.valueModel,
+        knownWireKeys: collectKnownKeys(model),
+      ),
+      targetVar: r'_$mergedProperties',
+      apAccess: apFieldName,
+      contextClass: className,
+      useImmutableCollections: useImmutableCollections,
+    ).codes;
   }
 
   Method _buildToSimpleMethod(
