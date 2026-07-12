@@ -4435,5 +4435,41 @@ bool operator ==(Object other) {
         ),
       );
     });
+
+    test('integer+double+string keeps int and double arms distinct', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: DoubleModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace(r'''
+            factory Value.fromJson(Object? json) {
+              return switch (json) {
+                double s => ValueDouble(s),
+                int s => ValueInt(s),
+                String s => ValueString(s),
+                _ => throw JsonDecodingException(
+                  r'Invalid JSON type for Value: ${json.runtimeType}',
+                ),
+              };
+            }
+          '''),
+        ),
+      );
+    });
   });
 }
