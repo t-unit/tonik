@@ -274,7 +274,6 @@ class ClassModel extends Model with NamedModel {
     this.isReadOnly = false,
     this.isWriteOnly = false,
   }) {
-    // An omitted policy is the JSON Schema default for an omitted keyword.
     this.additionalPropertiesPolicy =
         additionalPropertiesPolicy ??
         AllowedAdditionalProperties(
@@ -390,7 +389,6 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     this.isReadOnly = false,
     this.isWriteOnly = false,
   }) {
-    // An omitted policy is the JSON Schema default for an omitted keyword.
     this.additionalPropertiesPolicy =
         additionalPropertiesPolicy ??
         AllowedAdditionalProperties(

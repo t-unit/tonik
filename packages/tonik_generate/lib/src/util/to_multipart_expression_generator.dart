@@ -1284,7 +1284,6 @@ Code _buildComplexObjectFileAddition(
     );
   }
 
-  // Content-based mode with application/x-www-form-urlencoded → URL-encode.
   if (propertyEncoding?.contentType == ContentType.form) {
     return _buildUrlEncodedObjectFileAddition(
       rawName,

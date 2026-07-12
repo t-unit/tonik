@@ -3382,11 +3382,6 @@ class Holder {
         r'splices _$encode helper into toJson dynamic branch when a member has '
         'mixed encoding shape and AP is recursive',
         () {
-          // A OneOf member mixing a primitive (simple) with a class (complex)
-          // resolves to `EncodingShape.mixed`, which triggers the
-          // `hasDynamicModels` branch of `toJson` — exactly the path that
-          // routes a typed additional-properties value through the inline
-          // helper splice point.
           final mixedOneOf = OneOfModel(
             name: 'IdOrUser',
             models: {
