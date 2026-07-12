@@ -130,6 +130,34 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return ';$paramName=${_collapsedPairs(this, literal: false)}';
   }
 
+  /// Renders raw style-based multipart part entries.
+  ///
+  /// Exploded objects emit one entry per key whose name is the RFC 6570
+  /// query name and whose value is the raw part body; non-exploded objects
+  /// emit one entry under [paramName] with the raw comma-joined expansion.
+  /// Nothing is URI- or form-percent-encoded, and `?`, `=`, and `&` never
+  /// appear as serialization delimiters.
+  List<ParameterEntry> toRawStyleParts(
+    String paramName, {
+    required bool explode,
+  }) {
+    String raw(PropertyValue value) => switch (value) {
+      ScalarPropertyValue(:final value) => value,
+      ArrayPropertyValue(:final values) => values.join(','),
+    };
+
+    if (explode) {
+      return [
+        for (final entry in entries)
+          (name: entry.key, value: raw(entry.value)),
+      ];
+    }
+    final parts = <String>[
+      for (final entry in entries) ...[entry.key, raw(entry.value)],
+    ];
+    return [(name: paramName, value: parts.join(','))];
+  }
+
   /// Encodes this property map using deepObject style encoding.
   ///
   /// [allowReserved] applies to values only; keys are always component-encoded.

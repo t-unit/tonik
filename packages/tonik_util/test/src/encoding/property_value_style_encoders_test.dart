@@ -392,6 +392,66 @@ void main() {
     });
   });
 
+  group('PropertyValueStyleEncoders.toRawStyleParts', () {
+    test('exploded object emits one raw part per key', () {
+      const value = {
+        'note': PropertyValue.scalar('a b'),
+        'query': PropertyValue.scalar('m&n=o?p'),
+      };
+      expect(value.toRawStyleParts('obj', explode: true), [
+        (name: 'note', value: 'a b'),
+        (name: 'query', value: 'm&n=o?p'),
+      ]);
+    });
+
+    test('exploded array values join elements with commas, raw', () {
+      const value = {
+        'tags': PropertyValue.array(['x y', 'z&w']),
+      };
+      expect(value.toRawStyleParts('obj', explode: true), [
+        (name: 'tags', value: 'x y,z&w'),
+      ]);
+    });
+
+    test('non-exploded object emits one raw comma-joined part', () {
+      const value = {
+        'a': PropertyValue.scalar('1 2'),
+        'b': PropertyValue.scalar('3&4'),
+      };
+      expect(value.toRawStyleParts('obj', explode: false), [
+        (name: 'obj', value: 'a,1 2,b,3&4'),
+      ]);
+    });
+
+    test('non-exploded array values join inside the expansion', () {
+      const value = {
+        'tags': PropertyValue.array(['x', 'y']),
+      };
+      expect(value.toRawStyleParts('obj', explode: false), [
+        (name: 'obj', value: 'tags,x,y'),
+      ]);
+    });
+
+    test('empty-string scalar values stay defined', () {
+      const value = {'note': PropertyValue.scalar('')};
+      expect(value.toRawStyleParts('obj', explode: true), [
+        (name: 'note', value: ''),
+      ]);
+    });
+
+    test('empty exploded object emits no parts', () {
+      const value = <String, PropertyValue>{};
+      expect(value.toRawStyleParts('obj', explode: true), isEmpty);
+    });
+
+    test('empty non-exploded object emits one empty part', () {
+      const value = <String, PropertyValue>{};
+      expect(value.toRawStyleParts('obj', explode: false), [
+        (name: 'obj', value: ''),
+      ]);
+    });
+  });
+
   group('PropertyValueStyleEncoders.toDeepObject', () {
     test('scalar object produces bracketed name entries', () {
       const value = {
