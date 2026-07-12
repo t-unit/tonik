@@ -93,15 +93,16 @@ void main() {
         );
 
         final generatedCode = format(baseClass.accept(emitter).toString());
-        const expectedMethod = r'''
+        const expectedMethod = '''
           factory Result.fromJson(Object? json) {
-            return switch (json) {
-              int s => ResultError(s),
-              String s => ResultSuccess(s),
-              _ => throw JsonDecodingException(
-                r'Invalid JSON type for Result: ${json.runtimeType}',
-              ),
-            };
+            if (json is num) {
+              return ResultError(json.decodeJsonInt(context: r'Result'));
+            }
+            try {
+              return ResultSuccess(json.decodeJsonString(context: r'Result'));
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
+            throw JsonDecodingException(r'Invalid JSON for Result');
           }''';
 
         expect(
@@ -355,10 +356,6 @@ void main() {
               return _$result;
             }
 
-            if (json is String) {
-              return ResultString(json);
-            }
-
             try {
               return ResultError(Error.fromJson(json));
             } on Object catch (_) {}
@@ -366,6 +363,11 @@ void main() {
             try {
               return ResultSuccess(Success.fromJson(json));
             } on Object catch (_) {}
+
+            try {
+              return ResultString(json.decodeJsonString(context: r'Result'));
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
 
             throw JsonDecodingException(r'Invalid JSON for Result');
           }''';
@@ -1112,7 +1114,7 @@ void main() {
 
     group('with alias-to-primitive types', () {
       test(
-        'fromJson uses primitive switch for only alias-to-primitive types',
+        'fromJson routes alias-to-primitive members through their decoders',
         () {
           final aliasModel = AliasModel(
             name: 'ErrorCode',
@@ -1137,15 +1139,16 @@ void main() {
           final baseClass = classes.firstWhere((c) => c.name == 'Result');
           final generatedCode = format(baseClass.accept(emitter).toString());
 
-          const expectedMethod = r'''
+          const expectedMethod = '''
           factory Result.fromJson(Object? json) {
-            return switch (json) {
-              String s => ResultErrorCode(s),
-              int s => ResultInt(s),
-              _ => throw JsonDecodingException(
-                r'Invalid JSON type for Result: ${json.runtimeType}',
-              ),
-            };
+            if (json is num) {
+              return ResultInt(json.decodeJsonInt(context: r'Result'));
+            }
+            try {
+              return ResultErrorCode(json.decodeJsonString(context: r'Result'));
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
+            throw JsonDecodingException(r'Invalid JSON for Result');
           }''';
 
           expect(
@@ -1156,7 +1159,7 @@ void main() {
       );
 
       test(
-        'fromJson uses type check for alias-to-primitive mixed with class',
+        'fromJson tries alias-to-primitive then class in ordered try-each',
         () {
           final aliasModel = AliasModel(
             name: 'ErrorCode',
@@ -1202,9 +1205,10 @@ void main() {
 
           const expectedMethod = '''
           factory Result.fromJson(Object? json) {
-            if (json is String) {
-              return ResultErrorCode(json);
-            }
+            try {
+              return ResultErrorCode(json.decodeJsonString(context: r'Result'));
+            } on DecodingException catch (_) {
+            } on FormatException catch (_) {}
 
             try {
               return ResultTestClass(TestClass.fromJson(json));

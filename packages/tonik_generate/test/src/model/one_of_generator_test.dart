@@ -1668,12 +1668,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
         contains(
           collapseWhitespace('''
             factory Value.fromJson(Object? json) {
-              if (json is String) {
-                return ValueString(json);
-              }
               try {
                 return ValueList(json.decodeJsonList<String>(context: r'Value'));
               } on Object catch (_) {}
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
               throw JsonDecodingException(r'Invalid JSON for Value');
             }
           '''),
@@ -3218,9 +3219,10 @@ bool operator ==(Object other) {
         contains(
           collapseWhitespace('''
             factory Value.fromJson(Object? json) {
-              if (json is String) {
-                return ValueString(json);
-              }
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
               return ValueUnknown(json);
             }
           '''),
@@ -3449,19 +3451,19 @@ bool operator ==(Object other) {
       final baseClass = classes.firstWhere((c) => c.name == 'Value');
       final generated = format(baseClass.accept(emitter).toString());
 
-      // NeverModel should not appear in fromJson - only primitives are tried
       expect(
         collapseWhitespace(generated),
         contains(
-          collapseWhitespace(r"""
+          collapseWhitespace("""
             factory Value.fromJson(Object? json) {
-              return switch (json) {
-                int s => ValueInt(s),
-                String s => ValueString(s),
-                _ => throw JsonDecodingException(
-                  r'Invalid JSON type for Value: ${json.runtimeType}',
-                ),
-              };
+              if (json is num) {
+                return ValueInt(json.decodeJsonInt(context: r'Value'));
+              }
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
             }
           """),
         ),
@@ -4254,5 +4256,417 @@ bool operator ==(Object other) {
         );
       },
     );
+  });
+
+  group('primitive oneOf fromJson dispatch', () {
+    test('all-primitive string+integer routes integer through decode', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is num) {
+                return ValueInt(json.decodeJsonInt(context: r'Value'));
+              }
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('mixed integer+object routes integer through decode in try', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'Thing',
+              properties: const [],
+              context: context,
+              isDeprecated: false,
+              examples: const [],
+            ),
+          ),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is num) {
+                return ValueInt(json.decodeJsonInt(context: r'Value'));
+              }
+              try {
+                return ValueThing(Thing.fromJson(json));
+              } on Object catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('integer+number keeps type-pattern arms without decodeJsonInt', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: NumberModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is int) {
+                return ValueInt(json);
+              }
+              if (json is num) {
+                return ValueNumber(json);
+              }
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('integer+double keeps type-pattern arms without decodeJsonInt', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: DoubleModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is double) {
+                return ValueDouble(json);
+              }
+              if (json is int) {
+                return ValueInt(json);
+              }
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('integer+decimal routes integer through decode', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: DecimalModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is num) {
+                return ValueInt(json.decodeJsonInt(context: r'Value'));
+              }
+              try {
+                return ValueDecimal(json.decodeJsonBigDecimal(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('integer+double+string keeps int and double arms distinct', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: DoubleModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is double) {
+                return ValueDouble(json);
+              }
+              if (json is int) {
+                return ValueInt(json);
+              }
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('integer+double+decimal+string dispatches numerics then a try-each',
+        () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+          (discriminatorValue: null, model: DoubleModel(context: context)),
+          (discriminatorValue: null, model: DecimalModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is double) {
+                return ValueDouble(json);
+              }
+              if (json is int) {
+                return ValueInt(json);
+              }
+              try {
+                return ValueDecimal(json.decodeJsonBigDecimal(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('date-time+string decodes both through the ordered try-each', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: DateTimeModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              try {
+                return ValueDateTime(json.decodeJsonDateTime(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('date+string decodes both through the ordered try-each', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: DateModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              try {
+                return ValueDate(json.decodeJsonDate(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('base64+string decodes both through the ordered try-each', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: Base64Model(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              try {
+                return ValueBase64(
+                  TonikFileBytes(json.decodeJsonBase64(context: r'Value')),
+                );
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
+
+    test('boolean+string dispatches bool on runtime type then string try', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: BooleanModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is bool) {
+                return ValueBool(json);
+              }
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
   });
 }

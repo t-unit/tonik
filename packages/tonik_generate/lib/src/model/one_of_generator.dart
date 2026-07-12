@@ -470,69 +470,46 @@ class OneOfGenerator {
       ]);
     }
 
-    final hasPrimitives = model.models.any(
-      (m) => m.model.resolved is PrimitiveModel,
-    );
-    final hasOnlyPrimitives = !model.models.any(
-      (m) =>
-          m.model.resolved is! PrimitiveModel &&
-          m.model.resolved is! NeverModel,
-    );
     final hasAnyModel = model.models.any(
       (m) => m.model.resolved is AnyModel,
     );
 
-    if (hasPrimitives && hasOnlyPrimitives && !hasAnyModel) {
-      final cases = <Code>[];
+    final hasNumberMember = model.models.any(
+      (m) =>
+          m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
+    );
 
-      for (final m
-          in stableModelSorter
-              .sortDiscriminatedModels(model.models)
-              .where(
-                (m) => m.model.resolved is PrimitiveModel,
-              )) {
-        final variantName = variantNames[m]!;
+    final sortedModels = stableModelSorter.sortDiscriminatedModels(
+      model.models,
+    );
 
-        cases.addAll([
-          typeReference(
-            m.model.resolved,
-            nameManager,
-            package,
-            useImmutableCollections: useImmutableCollections,
-          ).code,
-          Code(' s => $variantName(s),'),
+    // int and double arrive as distinct Dart runtime types and the numeric
+    // JSON decoders overlap leniently, so numeric/bool members dispatch on the
+    // runtime type instead of joining the ordered try-each below.
+    for (final m in sortedModels.where(
+      (m) => _scalarRuntimeType(m.model.resolved) != null,
+    )) {
+      final variantName = variantNames[m]!;
+      final resolvedType = m.model.resolved;
+
+      if (resolvedType is IntegerModel && !hasNumberMember) {
+        // Without a double/num sibling the integer member absorbs
+        // whole-number doubles via the lenient decoder.
+        blocks.addAll([
+          const Code('if ('),
+          refer('json').isA(refer('num', 'dart:core')).code,
+          const Code(') {'),
+          refer(variantName).call([
+            refer('json').property('decodeJsonInt').call([], {
+              'context': specLiteralString(className),
+            }),
+          ]).returned.statement,
+          const Code('}'),
         ]);
+        continue;
       }
 
-      cases.addAll([
-        const Code('_ => '),
-        generateJsonDecodingExceptionExpression(
-          'Invalid JSON type for $className: \${json.runtimeType}',
-          raw: true,
-        ).code,
-        const Code(','),
-      ]);
-
-      return Block.of([
-        const Code('return switch (json) {'),
-        ...cases,
-        const Code('};'),
-      ]);
-    }
-
-    for (final m
-        in stableModelSorter
-            .sortDiscriminatedModels(model.models)
-            .where(
-              (m) => m.model.resolved is PrimitiveModel,
-            )) {
-      final typeRef = typeReference(
-        m.model.resolved,
-        nameManager,
-        package,
-      );
-      final variantName = variantNames[m]!;
-
+      final typeRef = _scalarRuntimeType(resolvedType)!;
       blocks.addAll([
         const Code('if ('),
         refer('json').isA(typeRef).code,
@@ -542,22 +519,22 @@ class OneOfGenerator {
       ]);
     }
 
-    // Fallback: try all non-primitive variants when discriminator doesn't match
-    // Skip AnyModel (handled as catch-all last) and NeverModel (not decodable)
-    for (final m
-        in stableModelSorter
-            .sortDiscriminatedModels(model.models)
-            .where(
-              (m) =>
-                  m.model.resolved is! PrimitiveModel &&
-                  m.model.resolved is! AnyModel &&
-                  m.model.resolved is! NeverModel,
-            )) {
+    // Members are attempted in stable member order. A string-encoded variant is
+    // only reachable when the plain-string member sorts after it.
+    for (final m in sortedModels.where(
+      (m) =>
+          _scalarRuntimeType(m.model.resolved) == null &&
+          m.model.resolved is! AnyModel &&
+          m.model.resolved is! NeverModel,
+    )) {
       final modelType = m.model;
       final resolvedType = modelType.resolved;
       final variantName = variantNames[m]!;
 
-      if (resolvedType is ListModel || resolvedType is MapModel) {
+      final Expression decodeArg;
+      if (resolvedType is ListModel ||
+          resolvedType is MapModel ||
+          resolvedType is PrimitiveModel) {
         final decodeBuilt = buildFromJsonValueExpression(
           'json',
           model: modelType,
@@ -568,28 +545,33 @@ class OneOfGenerator {
           useImmutableCollections: useImmutableCollections,
         );
         inlineHelpers.addAll(decodeBuilt.inlineFunctions);
-        blocks.addAll([
-          const Code('try {'),
-          refer(
-            variantName,
-          ).call([decodeBuilt.unsafeRawBody]).returned.statement,
-          const Code('} on '),
-          refer('Object', 'dart:core').code,
-          const Code(' catch(_) {}'),
-        ]);
+        decodeArg = decodeBuilt.unsafeRawBody;
       } else {
         final modelName = nameManager.modelName(modelType);
+        decodeArg = refer(
+          modelName,
+          sourceFileUrl(package, 'model', modelName),
+        ).property('fromJson').call([refer('json')]);
+      }
+
+      blocks
+        ..add(const Code('try {'))
+        ..add(refer(variantName).call([decodeArg]).returned.statement);
+
+      // Only a string-encoded primitive can pass its raw String to a sibling
+      // plain-string variant, so its catch must fall through on the strict
+      // decoders' DecodingException/FormatException. Every other decoder can
+      // throw arbitrary types and stays on the broad Object catch.
+      if (resolvedType is PrimitiveModel) {
         blocks.addAll([
-          const Code('try {'),
-          refer(variantName)
-              .call([
-                refer(
-                  modelName,
-                  sourceFileUrl(package, 'model', modelName),
-                ).property('fromJson').call([refer('json')]),
-              ])
-              .returned
-              .statement,
+          const Code('} on '),
+          refer('DecodingException', 'package:tonik_util/tonik_util.dart').code,
+          const Code(' catch (_) {} on '),
+          refer('FormatException', 'dart:core').code,
+          const Code(' catch (_) {}'),
+        ]);
+      } else {
+        blocks.addAll([
           const Code('} on '),
           refer('Object', 'dart:core').code,
           const Code(' catch(_) {}'),
@@ -621,6 +603,14 @@ class OneOfGenerator {
       ...blocks,
     ]);
   }
+
+  Reference? _scalarRuntimeType(Model resolved) => switch (resolved) {
+    DoubleModel() => refer('double', 'dart:core'),
+    NumberModel() => refer('num', 'dart:core'),
+    BooleanModel() => refer('bool', 'dart:core'),
+    IntegerModel() => refer('int', 'dart:core'),
+    _ => null,
+  };
 
   /// Builds a fromSimple or fromForm factory constructor for oneOf.
   Constructor _generateFromValueConstructor({
