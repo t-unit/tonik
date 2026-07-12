@@ -264,7 +264,7 @@ class ModelImporter {
       properties: <Property>[],
       context: context,
       description: schema.description,
-      isNullable: schema.isNullable ?? hasNullType,
+      isNullable: schema.isNullable ?? (hasNullType && firstType == 'object'),
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: const [],
@@ -1885,7 +1885,9 @@ class ModelImporter {
       context: context,
       description: schema.description,
       additionalProperties: _resolveAdditionalProperties(schema, context),
-      isNullable: schema.isNullable ?? schema.type.contains('null'),
+      isNullable:
+          schema.isNullable ??
+          (schema.type.contains('object') && schema.type.contains('null')),
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
