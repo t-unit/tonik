@@ -95,6 +95,60 @@ paths:
               schema:
                 $ref: '#/components/schemas/OneOfIntegerOrClass1'
 
+  /one-of-scalar-mix/echo:
+    post:
+      operationId: echoOneOfScalarMix
+      tags:
+        - composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneOfScalarMix'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfScalarMix'
+
+  /one-of-date-time-or-string/echo:
+    post:
+      operationId: echoOneOfDateTimeOrString
+      tags:
+        - composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneOfDateTimeOrString'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfDateTimeOrString'
+
+  /one-of-base64-or-string/echo:
+    post:
+      operationId: echoOneOfBase64OrString
+      tags:
+        - composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OneOfBase64OrString'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OneOfBase64OrString'
+
 components:
   schemas:
     Class1:
@@ -139,6 +193,27 @@ components:
       oneOf:
         - type: integer
         - type: number
+
+    OneOfScalarMix:
+      oneOf:
+        - type: integer
+        - type: number
+          format: double
+        - type: string
+          format: decimal
+        - type: string
+
+    OneOfDateTimeOrString:
+      oneOf:
+        - type: string
+          format: date-time
+        - type: string
+
+    OneOfBase64OrString:
+      oneOf:
+        - type: string
+          format: byte
+        - type: string
 
     OneOfComplex:
       oneOf:

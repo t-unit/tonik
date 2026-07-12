@@ -154,7 +154,7 @@ void main() {
       final error = result as TonikError<OneOfIntegerOrClass1>;
 
       expect(error.type, TonikErrorType.decoding);
-      expect(error.error, isA<JsonDecodingException>());
+      expect(error.error, isA<InvalidTypeException>());
     });
   });
 }

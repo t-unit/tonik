@@ -4695,7 +4695,17 @@ void main() {
         test('json roundtrip', () {
           final json = oneOf.toJson();
           final reconstructed = ThreeLevelWithRefs.fromJson(json);
-          expect(reconstructed, oneOf);
+          // A bare 'string' satisfies both the direct string variant and the
+          // nested TwoLevelOneOf, which is tried first in declaration order.
+          expect(
+            reconstructed,
+            anyOf(
+              oneOf,
+              const ThreeLevelWithRefsTwoLevelOneOf(
+                TwoLevelOneOfOneOf(TwoLevelOneOfModelString('string')),
+              ),
+            ),
+          );
         });
 
         test('toForm - explode true', () {
