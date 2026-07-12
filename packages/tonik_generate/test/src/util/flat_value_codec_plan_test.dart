@@ -448,6 +448,32 @@ void main() {
       );
     });
 
+    test('classes and compositions are unsupported in one flat slot', () {
+      final models = <Model>[
+        ClassModel(
+          properties: const [],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        ),
+        AllOfModel(
+          models: {StringModel(context: context)},
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        ),
+      ];
+
+      for (final model in models) {
+        final plan = decodePlan(model);
+        expect(
+          (plan as UnsupportedFlatDecodePlan).reason,
+          '${model.runtimeType} values cannot be decoded from a flat value',
+          reason: model.runtimeType.toString(),
+        );
+      }
+    });
+
     test('never is unsupported', () {
       final plan = decodePlan(NeverModel(context: context));
 

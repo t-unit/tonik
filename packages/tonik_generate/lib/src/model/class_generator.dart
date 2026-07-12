@@ -6,6 +6,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/util/additional_properties_builders.dart';
 import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
@@ -14,6 +15,7 @@ import 'package:tonik_generate/src/util/default_resolution.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/flat_value_codec_plan.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/from_json_value_expression_generator.dart';
@@ -127,7 +129,7 @@ class ClassGenerator {
     Method? copyWithGetter,
   }) {
     final normalizedProperties = normalizeProperties(model.properties.toList());
-    final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
+    final hasAP = activeApPolicy(model.additionalPropertiesPolicy) != null;
     final apFieldName = nameManager.additionalPropertiesFieldName(
       normalizedProperties,
     );
@@ -301,8 +303,8 @@ class ClassGenerator {
               (b) => b
                 ..name = apFieldName
                 ..modifier = FieldModifier.final$
-                ..type = additionalPropertiesType(
-                  model.additionalProperties,
+                ..type = apMapTypeReference(
+                  activeApPolicy(model.additionalPropertiesPolicy)!.valueModel,
                   nameManager,
                   package,
                   useImmutableCollections: useImmutableCollections,
@@ -400,13 +402,14 @@ class ClassGenerator {
       },
     ).toList();
 
-    if (hasActiveAdditionalProperties(model.additionalProperties)) {
+    final copyWithApPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+    if (copyWithApPolicy != null) {
       final apFieldName = nameManager.additionalPropertiesFieldName(properties);
       copyWithProps.add(
         (
           normalizedName: apFieldName,
-          typeRef: additionalPropertiesType(
-            model.additionalProperties,
+          typeRef: apMapTypeReference(
+            copyWithApPolicy.valueModel,
             nameManager,
             package,
             useImmutableCollections: useImmutableCollections,
@@ -587,7 +590,7 @@ class ClassGenerator {
         .map((p) => p.property.name)
         .toSet();
 
-    final captureAP = _hasStringCapturableAP(classModel);
+    final apPolicy = activeApPolicy(classModel.additionalPropertiesPolicy);
     final decodeObjectArgs = <String, Expression>{
       'explode': refer('explode'),
       'explodeSeparator': literalString(','),
@@ -595,7 +598,7 @@ class ClassGenerator {
       'listKeys': literalSet(listKeys.map(specLiteralString)),
       'context': specLiteralString(className),
     };
-    if (captureAP) {
+    if (apPolicy != null) {
       decodeObjectArgs['captureAdditionalKeys'] = literalTrue;
     }
 
@@ -607,74 +610,32 @@ class ClassGenerator {
           .statement,
     ];
 
-    final ap = classModel.additionalProperties;
-    if (captureAP && ap != null) {
+    if (apPolicy != null) {
       final apFieldName = nameManager.additionalPropertiesFieldName(
         allProperties,
       );
-      final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
-      final mapType = additionalPropertiesType(
-        ap,
-        nameManager,
-        package,
+      final capture = buildApFlatCaptureLoop(
+        AdditionalPropertiesPlan(
+          valueModel: apPolicy.valueModel,
+          knownWireKeys: expectedKeys,
+        ),
+        format: FlatWireFormat.simple,
+        sourceMapVar: r'_$values',
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
         useImmutableCollections: useImmutableCollections,
       );
-      codes.addAll([
-        Code('const _\$knownKeys = {$knownKeySet};'),
-        declareFinal(r'_$additional')
-            .assign(
-              literalMap(
-                {},
-                refer('String', 'dart:core'),
-                mapType.types.last,
-              ),
-            )
-            .statement,
-        const Code(r'for (final _$entry in _$values.entries) {'),
-        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
-      ]);
-
-      if (ap is TypedAdditionalProperties) {
-        final decodeExpr = buildSimpleValueExpression(
-          refer(r'_$entry').property('value'),
-          model: ap.valueModel,
-          isRequired: true,
-          nameManager: nameManager,
-          explode: refer('explode'),
-          package: package,
-          contextClass: className,
-          contextProperty: 'additionalProperties',
-        );
-        codes.addAll([
-          const Code(r'_$additional[_$entry.key] = '),
-          decodeExpr.code,
-          const Code(';'),
-        ]);
-      } else {
-        codes.addAll([
-          const Code(r'_$additional[_$entry.key] = '),
-          refer(
-            r'_$entry',
-          ).property('value').property('decodeSimpleString').call([], {
-            'context': specLiteralString(
-              '$className.additionalProperties',
-            ),
-          }).code,
-          const Code(';'),
-        ]);
+      codes.addAll(capture.codes);
+      if (capture.capturesValues) {
+        constructorArgs[apFieldName] = useImmutableCollections
+            ? refer(
+                'IMap',
+                'package:fast_immutable_collections/'
+                    'fast_immutable_collections.dart',
+              ).call([refer(r'_$additional')])
+            : refer(r'_$additional');
       }
-
-      codes.addAll([
-        const Code('}'),
-        const Code('}'),
-      ]);
-      constructorArgs[apFieldName] = useImmutableCollections
-          ? refer(
-              'IMap',
-              'package:fast_immutable_collections/'
-                  'fast_immutable_collections.dart',
-            ).call([refer(r'_$additional')])
-          : refer(r'_$additional');
     }
 
     codes.add(
@@ -733,7 +694,7 @@ class ClassGenerator {
     final normalizedProperties = normalizeProperties(
       model.properties.where((p) => !p.isWriteOnly).toList(),
     );
-    final hasAP = hasActiveAdditionalProperties(model.additionalProperties);
+    final hasAP = activeApPolicy(model.additionalPropertiesPolicy) != null;
     final apFieldName = hasAP
         ? nameManager.additionalPropertiesFieldName(
             normalizeProperties(model.properties.toList()),
@@ -823,61 +784,21 @@ class ClassGenerator {
     }
 
     if (hasAP) {
-      final knownKeys = model.properties
-          .map((p) => specLiteralStringCode(p.name))
-          .join(', ');
-      codes.add(Code('const _\$knownKeys = {$knownKeys};'));
-
-      final ap = model.additionalProperties;
-      final mapType = additionalPropertiesType(
-        model.additionalProperties,
-        nameManager,
-        package,
+      final apPolicy = activeApPolicy(model.additionalPropertiesPolicy)!;
+      final capture = buildApJsonCaptureLoop(
+        AdditionalPropertiesPlan(
+          valueModel: apPolicy.valueModel,
+          knownWireKeys: model.properties.map((p) => p.name).toSet(),
+        ),
+        sourceMapVar: r'_$map',
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+        helperContext: helperContext,
         useImmutableCollections: useImmutableCollections,
       );
-
-      codes.addAll([
-        declareFinal(r'_$additional')
-            .assign(
-              literalMap(
-                {},
-                refer('String', 'dart:core'),
-                mapType.types.last,
-              ),
-            )
-            .statement,
-        const Code(r'for (final _$entry in _$map.entries) {'),
-        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
-      ]);
-
-      if (ap is TypedAdditionalProperties) {
-        final decodeBuilt = buildFromJsonValueExpression(
-          r'_$entry.value',
-          model: ap.valueModel,
-          nameManager: nameManager,
-          package: package,
-          helperContext: helperContext,
-          contextClass: className,
-          contextProperty: 'additionalProperties',
-          useImmutableCollections: useImmutableCollections,
-        );
-        inlineHelpers.addAll(decodeBuilt.inlineFunctions);
-        codes.addAll([
-          const Code(r'_$additional[_$entry.key] = '),
-          decodeBuilt.unsafeRawBody.code,
-          const Code(';'),
-        ]);
-      } else {
-        // Unrestricted: Map<String, Object?>
-        codes.add(
-          const Code(r'_$additional[_$entry.key] = _$entry.value;'),
-        );
-      }
-
-      codes.addAll([
-        const Code('}'),
-        const Code('}'),
-      ]);
+      inlineHelpers.addAll(capture.inlineHelpers);
+      codes.addAll(capture.codes);
 
       if (useImmutableCollections) {
         propertyAssignments
@@ -977,39 +898,65 @@ class ClassGenerator {
       }
     }
 
-    if (hasActiveAdditionalProperties(model.additionalProperties)) {
+    final toJsonApPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+    final apEncodeCodes = <Code>[];
+    if (toJsonApPolicy != null) {
       final allNormalized = normalizeProperties(model.properties.toList());
       final apFieldName = nameManager.additionalPropertiesFieldName(
         allNormalized,
       );
-      final ap = model.additionalProperties;
-      // When using immutable collections, unlock the IMap before spreading.
-      final apAccess = useImmutableCollections
-          ? '$apFieldName.unlock'
-          : apFieldName;
-      if (ap is TypedAdditionalProperties) {
-        final apBuilt = buildToJsonAdditionalPropertiesExpression(
-          apFieldName,
-          ap.valueModel,
-          nameManager: nameManager,
-          package: package,
-          helperContext: helperContext,
-          contextClass: className,
-          useImmutableCollections: useImmutableCollections,
-        );
-        inlineHelpers.addAll(apBuilt.inlineFunctions);
-        mapEntries.addAll([
-          const Code('...'),
-          apBuilt.unsafeRawBody.code,
-          const Code(','),
-        ]);
-      } else {
-        // Unrestricted: values are already Object?
-        mapEntries.add(Code('...$apAccess,'));
-      }
+      final apEncode = buildApJsonEncode(
+        AdditionalPropertiesPlan(
+          valueModel: toJsonApPolicy.valueModel,
+          knownWireKeys: model.properties.map((p) => p.name).toSet(),
+        ),
+        targetMapVar: r'_$map',
+        apAccess: apFieldName,
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
+        helperContext: helperContext,
+        useImmutableCollections: useImmutableCollections,
+      );
+      inlineHelpers.addAll(apEncode.inlineHelpers);
+      apEncodeCodes.addAll(apEncode.codes);
     }
 
     final helperPrelude = spliceInlineHelpers(inlineHelpers);
+
+    if (toJsonApPolicy != null) {
+      final nullChecks = <Code>[];
+      for (final prop in requiredWriteOnlyNonNullable) {
+        nullChecks
+          ..add(Code('if (${prop.normalizedName} == null) {'))
+          ..add(
+            generateEncodingExceptionExpression(
+              'Required property ${prop.property.name} is null.',
+              raw: true,
+            ).statement,
+          )
+          ..add(const Code('}'));
+      }
+      return Method(
+        (b) => b
+          ..annotations.add(refer('override', 'dart:core'))
+          ..name = 'toJson'
+          ..returns = refer('Object?', 'dart:core')
+          ..body = Block.of([
+            ...helperPrelude,
+            ...nullChecks,
+            const Code(r'final _$map = <'),
+            refer('String', 'dart:core').code,
+            const Code(', '),
+            refer('Object?', 'dart:core').code,
+            const Code('>{'),
+            ...mapEntries,
+            const Code('};'),
+            ...apEncodeCodes,
+            const Code(r'return _$map;'),
+          ]),
+      );
+    }
 
     if (requiredWriteOnlyNonNullable.isEmpty) {
       if (helperPrelude.isEmpty) {
@@ -1211,62 +1158,25 @@ class ClassGenerator {
   }
 
   List<Code> _buildAdditionalPropertiesParameterLoop(ClassModel model) {
-    if (!hasActiveAdditionalProperties(model.additionalProperties)) return [];
+    final apPolicy = activeApPolicy(model.additionalPropertiesPolicy);
+    if (apPolicy == null) return [];
 
     final allNormalized = normalizeProperties(model.properties.toList());
     final apFieldName = nameManager.additionalPropertiesFieldName(
       allNormalized,
     );
-    final ap = model.additionalProperties;
+    final className = nameManager.modelName(model);
 
-    if (ap is TypedAdditionalProperties &&
-        ap.valueModel.encodingShape == EncodingShape.simple) {
-      return [
-        Code('for (final _\$e in $apFieldName.entries) {'),
-        refer(r'_$result')
-            .index(refer(r'_$e').property('key'))
-            .assign(
-              propertyValueScalar(
-                additionalPropertyRawScalar(
-                  refer(r'_$e').property('value'),
-                  ap.valueModel,
-                ),
-              ),
-            )
-            .statement,
-        const Code('}'),
-      ];
-    } else if (ap is UnrestrictedAdditionalProperties) {
-      return [
-        Code('for (final _\$e in $apFieldName.entries) {'),
-        refer(r'_$result')
-            .index(refer(r'_$e').property('key'))
-            .assign(
-              propertyValueScalar(
-                refer(r'_$e')
-                    .property('value')
-                    .nullSafeProperty('toString')
-                    .call([])
-                    .ifNullThen(literalString('')),
-              ),
-            )
-            .statement,
-        const Code('}'),
-      ];
-    } else {
-      // Typed with complex value model — throw
-      return [
-        Code(
-          'if ($apFieldName.isNotEmpty) {',
-        ),
-        generateEncodingExceptionExpression(
-          'Additional properties with complex types cannot be parameter '
-          'encoded.',
-          raw: true,
-        ).statement,
-        const Code('}'),
-      ];
-    }
+    return buildApPropertyValueEntries(
+      AdditionalPropertiesPlan(
+        valueModel: apPolicy.valueModel,
+        knownWireKeys: model.properties.map((p) => p.name).toSet(),
+      ),
+      targetVar: r'_$result',
+      apAccess: apFieldName,
+      contextClass: className,
+      useImmutableCollections: useImmutableCollections,
+    ).codes;
   }
 
   List<Parameter> _buildParameterPropertiesParameters() =>
@@ -1338,7 +1248,8 @@ class ClassGenerator {
     List<({String normalizedName, Property property})> properties,
     ClassModel model,
   ) {
-    if (properties.isEmpty) {
+    if (properties.isEmpty &&
+        activeApPolicy(model.additionalPropertiesPolicy) == null) {
       return Method(
         (b) => b
           ..name = 'parameterProperties'
@@ -1520,15 +1431,22 @@ class ClassGenerator {
       final resolvedModel = model.resolved;
 
       if (resolvedModel is AnyModel) {
-        propertyAssignments.add(
+        propertyAssignments.addAll([
+          Code('if ($name != null) {'),
           _scalarPropertyAssignment(
             propertyName,
-            refer(name)
-                .nullSafeProperty('toString')
-                .call([])
-                .ifNullThen(literalString('')),
+            refer(
+              'encodeUnknownFlatScalar',
+              'package:tonik_util/tonik_util.dart',
+            ).call(
+              [refer(name).nullChecked],
+              {'context': literalString('$className.$propertyName')},
+            ),
           ),
-        );
+          const Code('} else if (allowEmpty) {'),
+          _scalarPropertyAssignment(propertyName, literalString('')),
+          const Code('}'),
+        ]);
         continue;
       }
 
@@ -1803,7 +1721,7 @@ class ClassGenerator {
         .map((p) => p.property.name)
         .toSet();
 
-    final captureAP = _hasStringCapturableAP(classModel);
+    final apPolicy = activeApPolicy(classModel.additionalPropertiesPolicy);
     final decodeObjectArgs = <String, Expression>{
       'explode': refer('explode'),
       'explodeSeparator': literalString('&'),
@@ -1811,7 +1729,7 @@ class ClassGenerator {
       'listKeys': literalSet(listKeys.map(specLiteralString)),
       'context': specLiteralString(className),
     };
-    if (captureAP) {
+    if (apPolicy != null) {
       decodeObjectArgs['captureAdditionalKeys'] = literalTrue;
     }
 
@@ -1823,76 +1741,32 @@ class ClassGenerator {
           .statement,
     ];
 
-    final ap = classModel.additionalProperties;
-    if (captureAP && ap != null) {
+    if (apPolicy != null) {
       final apFieldName = nameManager.additionalPropertiesFieldName(
         allProperties,
       );
-      final knownKeySet = expectedKeys.map(specLiteralStringCode).join(', ');
-      final mapType = additionalPropertiesType(
-        ap,
-        nameManager,
-        package,
+      final capture = buildApFlatCaptureLoop(
+        AdditionalPropertiesPlan(
+          valueModel: apPolicy.valueModel,
+          knownWireKeys: expectedKeys,
+        ),
+        format: FlatWireFormat.form,
+        sourceMapVar: r'_$values',
+        nameManager: nameManager,
+        package: package,
+        contextClass: className,
         useImmutableCollections: useImmutableCollections,
       );
-      codes.addAll([
-        Code('const _\$knownKeys = {$knownKeySet};'),
-        declareFinal(r'_$additional')
-            .assign(
-              literalMap(
-                {},
-                refer('String', 'dart:core'),
-                mapType.types.last,
-              ),
-            )
-            .statement,
-        const Code(r'for (final _$entry in _$values.entries) {'),
-        const Code(r'if (!_$knownKeys.contains(_$entry.key)) {'),
-      ]);
-
-      if (ap is TypedAdditionalProperties) {
-        final decodeExpr = buildFromFormValueExpression(
-          refer(r'_$entry').property('value'),
-          model: ap.valueModel,
-          isRequired: true,
-          nameManager: nameManager,
-          package: package,
-          contextClass: className,
-          contextProperty: 'additionalProperties',
-          explode: refer('explode'),
-          useImmutableCollections: useImmutableCollections,
-        );
-        codes.addAll([
-          const Code(r'_$additional[_$entry.key] = '),
-          decodeExpr.code,
-          const Code(';'),
-        ]);
-      } else {
-        codes.addAll([
-          const Code(r'_$additional[_$entry.key] = '),
-          refer(r'_$entry').property('value').property('decodeFormString').call(
-            [],
-            {
-              'context': specLiteralString(
-                '$className.additionalProperties',
-              ),
-            },
-          ).code,
-          const Code(';'),
-        ]);
+      codes.addAll(capture.codes);
+      if (capture.capturesValues) {
+        constructorArgs[apFieldName] = useImmutableCollections
+            ? refer(
+                'IMap',
+                'package:fast_immutable_collections/'
+                    'fast_immutable_collections.dart',
+              ).call([refer(r'_$additional')])
+            : refer(r'_$additional');
       }
-
-      codes.addAll([
-        const Code('}'),
-        const Code('}'),
-      ]);
-      constructorArgs[apFieldName] = useImmutableCollections
-          ? refer(
-              'IMap',
-              'package:fast_immutable_collections/'
-                  'fast_immutable_collections.dart',
-            ).call([refer(r'_$additional')])
-          : refer(r'_$additional');
     }
 
     codes.add(
@@ -2035,21 +1909,4 @@ class ClassGenerator {
       ).statement,
   );
 
-  bool _hasStringCapturableAP(ClassModel model) {
-    final ap = model.additionalProperties;
-    if (ap is UnrestrictedAdditionalProperties) return true;
-    if (ap is TypedAdditionalProperties) {
-      final resolved = ap.valueModel.resolved;
-      return resolved is StringModel ||
-          resolved is IntegerModel ||
-          resolved is NumberModel ||
-          resolved is DoubleModel ||
-          resolved is BooleanModel ||
-          resolved is DecimalModel ||
-          resolved is DateTimeModel ||
-          resolved is DateModel ||
-          resolved is UriModel;
-    }
-    return false;
-  }
 }

@@ -2887,7 +2887,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           );
 
           const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar(_$e.value.toString()); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Counts', ); } _$result[_$e.key] = PropertyValue.scalar(_$e.value.toString()); } return _$result; }
 ''';
 
           final generatedClass = generator.generateClass(model);
@@ -2935,7 +2935,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
     _$result[r'version'] = PropertyValue.scalar(version.toString());
     if (additionalProperties.isNotEmpty) {
       throw EncodingException(
-        r'Additional properties with complex types cannot be parameter encoded.',
+        r'ClassModel values have no flat representation at WidgetMap.additionalProperties',
       );
     }
     return _$result;
@@ -3009,7 +3009,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           );
         });
 
-        test('does not capture complex typed AP', () {
+        test('throws on unknown keys for complex typed AP', () {
           final model = ClassModel(
             isDeprecated: false,
             name: 'WidgetMap',
@@ -3045,7 +3045,16 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       expectedKeys: {r'version'},
       listKeys: {},
       context: r'WidgetMap',
+      captureAdditionalKeys: true,
     );
+    const _$knownKeys = {r'version'};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        throw SimpleDecodingException(
+          r'ClassModel values cannot be decoded from a flat value at WidgetMap.additionalProperties',
+        );
+      }
+    }
     return WidgetMap(
       version: _$values[r'version'].decodeSimpleInt(
         context: r'WidgetMap.version',
@@ -3176,7 +3185,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           );
         });
 
-        test('does not capture complex typed AP', () {
+        test('throws on unknown keys for complex typed AP', () {
           final model = ClassModel(
             isDeprecated: false,
             name: 'WidgetMap',
@@ -3212,7 +3221,16 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       expectedKeys: {r'version'},
       listKeys: {},
       context: r'WidgetMap',
+      captureAdditionalKeys: true,
     );
+    const _$knownKeys = {r'version'};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        throw FormDecodingException(
+          r'ClassModel values cannot be decoded from a flat value at WidgetMap.additionalProperties',
+        );
+      }
+    }
     return WidgetMap(
       version: _$values[r'version'].decodeFormInt(
         context: r'WidgetMap.version',

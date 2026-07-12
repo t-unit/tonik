@@ -1426,7 +1426,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
     );
 
     test(
-      'mixed model AnyModel property emits a raw scalar carrying toString',
+      'mixed model AnyModel property encodes through the unknown flat '
+      'scalar boundary',
       () {
         final model = ClassModel(
           isDeprecated: false,
@@ -1450,7 +1451,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'data'] = PropertyValue.scalar(data?.toString() ?? ''); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (data != null) { _$result[r'data'] = PropertyValue.scalar( encodeUnknownFlatScalar(data!, context: 'DynamicContainer.data'), ); } else if (allowEmpty) { _$result[r'data'] = PropertyValue.scalar(''); } return _$result; }
 ''';
 
         expect(
@@ -1494,7 +1495,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'data'] = PropertyValue.scalar(data?.toString() ?? ''); throw EncodingException( r'Cannot encode NeverModel property forbidden: this type does not permit any value', ); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (data != null) { _$result[r'data'] = PropertyValue.scalar( encodeUnknownFlatScalar(data!, context: 'ForbiddenContainer.data'), ); } else if (allowEmpty) { _$result[r'data'] = PropertyValue.scalar(''); } throw EncodingException( r'Cannot encode NeverModel property forbidden: this type does not permit any value', ); return _$result; }
 ''';
 
         expect(
@@ -2010,7 +2011,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'declared'] = PropertyValue.scalar(declared); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar(_$e.value); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'declared'] = PropertyValue.scalar(declared); const _$knownKeys = {r'declared'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Bag', ); } _$result[_$e.key] = PropertyValue.scalar(_$e.value); } return _$result; }
 ''';
 
         expect(
@@ -2049,7 +2050,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar(_$e.value.toBase64String()); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Filter', ); } _$result[_$e.key] = PropertyValue.scalar(_$e.value.toBase64String()); } return _$result; }
 ''';
 
         expect(
@@ -2199,8 +2200,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
     );
 
     test(
-      'base64-encodes nullable byte additionalProperties values before '
-      'percent-encoding',
+      'base64-encodes nullable byte additionalProperties values and omits '
+      'null entries',
       () {
         final nullableByte = AliasModel(
           name: 'NullableSignature',
@@ -2239,7 +2240,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final methodCode = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar( _$e.value == null ? '' : _$e.value!.toBase64String(), ); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Filter', ); } final _$v = _$e.value; if (_$v == null) continue; _$result[_$e.key] = PropertyValue.scalar(_$v.toBase64String()); } return _$result; }
 ''';
 
         expect(

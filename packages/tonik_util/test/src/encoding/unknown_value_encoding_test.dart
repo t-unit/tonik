@@ -64,6 +64,34 @@ void main() {
       );
     });
 
+    test('returns untouched lists and maps with their original identity', () {
+      final list = [
+        1,
+        'a',
+        {'k': 'v'},
+      ];
+      final map = {
+        'items': [true, 2],
+      };
+
+      expect(identical(encodeUnknownJson(list, context: 'v'), list), isTrue);
+      expect(identical(encodeUnknownJson(map, context: 'v'), map), isTrue);
+    });
+
+    test('copies only the collections a converted value lives in', () {
+      final untouched = [1, 2];
+      final map = {
+        'untouched': untouched,
+        'stamps': [DateTime.utc(2024, 1, 15, 10, 30)],
+      };
+
+      final encoded = encodeUnknownJson(map, context: 'v')! as Map;
+
+      expect(identical(encoded, map), isFalse);
+      expect(identical(encoded['untouched'], untouched), isTrue);
+      expect(encoded['stamps'], ['2024-01-15T10:30:00.000Z']);
+    });
+
     test('throws for non-string map keys naming the map location', () {
       expect(
         () => encodeUnknownJson({

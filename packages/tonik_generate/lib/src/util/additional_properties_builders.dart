@@ -51,6 +51,41 @@ final class ApBuilderResult {
   final bool capturesValues;
 }
 
+const _ficUrl =
+    'package:fast_immutable_collections/fast_immutable_collections.dart';
+
+/// The active (explicit) allowed policy of [policy], or null when no
+/// additional-properties surface is generated.
+AllowedAdditionalProperties? activeApPolicy(AdditionalPropertiesPolicy policy) {
+  if (policy is AllowedAdditionalProperties &&
+      policy.origin == AdditionalPropertiesOrigin.explicit) {
+    return policy;
+  }
+  return null;
+}
+
+/// `Map<String, V>` (or `IMap`) type for the additional-properties field of
+/// [valueModel].
+TypeReference apMapTypeReference(
+  Model valueModel,
+  NameManager nameManager,
+  String package, {
+  bool useImmutableCollections = false,
+}) => TypeReference(
+  (b) => b
+    ..symbol = useImmutableCollections ? 'IMap' : 'Map'
+    ..url = useImmutableCollections ? _ficUrl : 'dart:core'
+    ..types.addAll([
+      refer('String', 'dart:core'),
+      apValueTypeReference(
+        valueModel,
+        nameManager,
+        package,
+        useImmutableCollections: useImmutableCollections,
+      ),
+    ]),
+);
+
 /// `Map<String, V>` value type for the additional-properties entries of
 /// [valueModel]; [AnyModel] values map to `Object?`.
 Reference apValueTypeReference(
@@ -213,7 +248,8 @@ ApBuilderResult buildApFlatCaptureLoop(
 
   final decodeExpression = switch (decodePlan) {
     FlatScalarDecodePlan(:final value) => value,
-    FlatArrayDecodePlan(:final value) => value,
+    FlatArrayDecodePlan(:final value) =>
+      useImmutableCollections ? value.property('lock') : value,
     UnsupportedFlatDecodePlan() => throw StateError('handled above'),
   };
 

@@ -20,13 +20,22 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
       return encodable.toJson();
     case final DateTime dateTime:
       return dateTime.toTimeZonedIso8601String();
+    // Both collection branches are copy-on-write: an untouched subtree keeps
+    // its identity so round-tripped values stay reference-equal.
     case final List<Object?> list:
-      return [
-        for (var i = 0; i < list.length; i++)
-          encodeUnknownJson(list[i], context: '$context[$i]'),
-      ];
+      List<Object?>? changed;
+      for (var i = 0; i < list.length; i++) {
+        final encoded = encodeUnknownJson(list[i], context: '$context[$i]');
+        if (changed != null) {
+          changed.add(encoded);
+        } else if (!identical(encoded, list[i])) {
+          changed = [...list.take(i), encoded];
+        }
+      }
+      return changed ?? list;
     case final Map<Object?, Object?> map:
-      final result = <String, Object?>{};
+      Map<String, Object?>? changed;
+      var index = 0;
       for (final entry in map.entries) {
         final key = entry.key;
         if (key is! String) {
@@ -35,9 +44,22 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
             "'$key' (${key.runtimeType}) to JSON at $context",
           );
         }
-        result[key] = encodeUnknownJson(entry.value, context: '$context.$key');
+        final encoded = encodeUnknownJson(
+          entry.value,
+          context: '$context.$key',
+        );
+        if (changed != null) {
+          changed[key] = encoded;
+        } else if (!identical(encoded, entry.value)) {
+          changed = <String, Object?>{
+            for (final prior in map.entries.take(index))
+              prior.key as String: prior.value,
+            key: encoded,
+          };
+        }
+        index++;
       }
-      return result;
+      return changed ?? map;
     default:
       throw EncodingException(
         'Cannot encode ${value.runtimeType} to JSON at $context',

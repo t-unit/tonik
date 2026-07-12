@@ -299,6 +299,46 @@ void main() {
       );
     });
 
+    test('array values lock into immutable lists when immutable '
+        'collections are enabled', () {
+      final result = buildApFlatCaptureLoop(
+        AdditionalPropertiesPlan(
+          valueModel: ListModel(
+            content: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          knownWireKeys: const {'name'},
+        ),
+        format: FlatWireFormat.simple,
+        sourceMapVar: r'_$values',
+        nameManager: nameManager,
+        package: 'package:example/api.dart',
+        contextClass: 'Order',
+        useImmutableCollections: true,
+      );
+
+      const expected = '''
+        void run() {
+          const _\$knownKeys = {r'name'};
+          final _\$additional = <String, IList<String>>{};
+          for (final _\$entry in _\$values.entries) {
+            if (!_\$knownKeys.contains(_\$entry.key)) {
+              _\$additional[_\$entry.key] = _\$entry.value
+                  .decodeSimpleStringList(context: r'Order.additionalProperties')
+                  .lock;
+            }
+          }
+        }
+      ''';
+
+      expect(result.capturesValues, isTrue);
+      expect(
+        collapseWhitespace(formatCodes(result.codes)),
+        contains(collapseWhitespace(expected)),
+      );
+    });
+
     test('undecodable value models throw on unknown keys instead of '
         'dropping them', () {
       final result = buildApFlatCaptureLoop(

@@ -142,7 +142,7 @@ FlatDecodePlan buildFlatDecodePlan(
   String? contextClass,
   String? contextProperty,
 }) {
-  final reason = getSimpleDecodingUnsupportedReason(model);
+  final reason = _flatSlotDecodingUnsupportedReason(model);
   if (reason != null) {
     return UnsupportedFlatDecodePlan(reason: reason);
   }
@@ -175,6 +175,38 @@ FlatDecodePlan buildFlatDecodePlan(
   }
   return FlatScalarDecodePlan(value: expression);
 }
+
+/// Why [model] cannot be decoded from one flat object-property slot, or
+/// null when it can.
+///
+/// Nested objects and compositions have no OAS-defined single-slot text
+/// form, so they are unsupported here even though they expose fromSimple
+/// factories for whole-value decoding.
+String? _flatSlotDecodingUnsupportedReason(Model model) => switch (model) {
+  StringModel() ||
+  IntegerModel() ||
+  NumberModel() ||
+  DoubleModel() ||
+  DecimalModel() ||
+  BooleanModel() ||
+  DateTimeModel() ||
+  DateModel() ||
+  UriModel() ||
+  BinaryModel() ||
+  Base64Model() ||
+  EnumModel() ||
+  AnyModel() => null,
+  NeverModel() => 'NeverModel does not permit any value',
+  MapModel() => 'Map types cannot be simple-decoded',
+  ListModel(:final content) => switch (content.resolved) {
+    ListModel() => 'Nested lists are not supported in simple decoding',
+    final resolvedContent => _flatSlotDecodingUnsupportedReason(
+      resolvedContent,
+    ),
+  },
+  AliasModel(:final model) => _flatSlotDecodingUnsupportedReason(model),
+  _ => '${model.runtimeType} values cannot be decoded from a flat value',
+};
 
 Expression _unknownFlatScalarCall(Expression value, String context) => refer(
   'encodeUnknownFlatScalar',
