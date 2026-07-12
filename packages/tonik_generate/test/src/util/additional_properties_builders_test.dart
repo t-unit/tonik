@@ -63,13 +63,13 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          const _\$knownKeys = {r'name'};
-          final _\$additional = <String, Status>{};
-          for (final _\$entry in _\$map.entries) {
-            if (!_\$knownKeys.contains(_\$entry.key)) {
-              _\$additional[_\$entry.key] = Status.fromJson(_\$entry.value);
+          const _$knownKeys = {r'name'};
+          final _$additional = <String, Status>{};
+          for (final _$entry in _$map.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
+              _$additional[_$entry.key] = Status.fromJson(_$entry.value);
             }
           }
         }
@@ -93,13 +93,13 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          const _\$knownKeys = {r'name'};
-          final _\$additional = <String, Object?>{};
-          for (final _\$entry in _\$map.entries) {
-            if (!_\$knownKeys.contains(_\$entry.key)) {
-              _\$additional[_\$entry.key] = _\$entry.value;
+          const _$knownKeys = {r'name'};
+          final _$additional = <String, Object?>{};
+          for (final _$entry in _$map.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
+              _$additional[_$entry.key] = _$entry.value;
             }
           }
         }
@@ -123,11 +123,11 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          final _\$additional = <String, String>{};
-          for (final _\$entry in _\$map.entries) {
-            _\$additional[_\$entry.key] = _\$entry.value.decodeJsonString(
+          final _$additional = <String, String>{};
+          for (final _$entry in _$map.entries) {
+            _$additional[_$entry.key] = _$entry.value.decodeJsonString(
               context: r'Order.additionalProperties',
             );
           }
@@ -156,17 +156,17 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          const _\$knownKeys = {r'name'};
-          for (final _\$k in additionalProperties.keys) {
-            if (_\$knownKeys.contains(_\$k)) {
+          const _$knownKeys = {r'name'};
+          for (final _$k in additionalProperties.keys) {
+            if (_$knownKeys.contains(_$k)) {
               throw EncodingException(
                 r'Additional property keys must not collide with declared wire keys of Order',
               );
             }
           }
-          _\$map.addAll(additionalProperties);
+          _$map.addAll(additionalProperties);
         }
       ''';
 
@@ -189,9 +189,9 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          _\$map.addAll(
+          _$map.addAll(
             additionalProperties.map((k, v) => MapEntry(k, encodeAnyToJson(v))),
           );
         }
@@ -216,9 +216,9 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          _\$map.addAll(additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
+          _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
         }
       ''';
 
@@ -243,14 +243,14 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          const _\$knownKeys = {r'name'};
-          final _\$additional = <String, Status>{};
-          for (final _\$entry in _\$values.entries) {
-            if (!_\$knownKeys.contains(_\$entry.key)) {
-              _\$additional[_\$entry.key] = Status.fromSimple(
-                _\$entry.value,
+          const _$knownKeys = {r'name'};
+          final _$additional = <String, Status>{};
+          for (final _$entry in _$values.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
+              _$additional[_$entry.key] = Status.fromSimple(
+                _$entry.value,
                 explode: explode,
               );
             }
@@ -278,13 +278,13 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          const _\$knownKeys = {r'name'};
-          final _\$additional = <String, int>{};
-          for (final _\$entry in _\$values.entries) {
-            if (!_\$knownKeys.contains(_\$entry.key)) {
-              _\$additional[_\$entry.key] = _\$entry.value.decodeFormInt(
+          const _$knownKeys = {r'name'};
+          final _$additional = <String, int>{};
+          for (final _$entry in _$values.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
+              _$additional[_$entry.key] = _$entry.value.decodeFormInt(
                 context: r'Order.additionalProperties',
               );
             }
@@ -318,13 +318,13 @@ void main() {
         useImmutableCollections: true,
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          const _\$knownKeys = {r'name'};
-          final _\$additional = <String, IList<String>>{};
-          for (final _\$entry in _\$values.entries) {
-            if (!_\$knownKeys.contains(_\$entry.key)) {
-              _\$additional[_\$entry.key] = _\$entry.value
+          const _$knownKeys = {r'name'};
+          final _$additional = <String, IList<String>>{};
+          for (final _$entry in _$values.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
+              _$additional[_$entry.key] = _$entry.value
                   .decodeSimpleStringList(context: r'Order.additionalProperties')
                   .lock;
             }
@@ -357,11 +357,11 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          const _\$knownKeys = {r'name'};
-          for (final _\$entry in _\$values.entries) {
-            if (!_\$knownKeys.contains(_\$entry.key)) {
+          const _$knownKeys = {r'name'};
+          for (final _$entry in _$values.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
               throw SimpleDecodingException(
                 r'Map types cannot be simple-decoded at Order.additionalProperties',
               );
@@ -391,16 +391,16 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          const _\$knownKeys = {r'name'};
-          for (final _\$e in additionalProperties.entries) {
-            if (_\$knownKeys.contains(_\$e.key)) {
+          const _$knownKeys = {r'name'};
+          for (final _$e in additionalProperties.entries) {
+            if (_$knownKeys.contains(_$e.key)) {
               throw EncodingException(
                 r'Additional property keys must not collide with declared wire keys of Order',
               );
             }
-            _\$result[_\$e.key] = PropertyValue.scalar(_\$e.value);
+            _$result[_$e.key] = PropertyValue.scalar(_$e.value);
           }
         }
       ''';
@@ -423,13 +423,13 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          for (final _\$e in additionalProperties.entries) {
-            final _\$v = _\$e.value;
-            if (_\$v == null) continue;
-            _\$result[_\$e.key] = PropertyValue.scalar(
-              encodeUnknownFlatScalar(_\$v, context: 'Order.additionalProperties'),
+          for (final _$e in additionalProperties.entries) {
+            final _$v = _$e.value;
+            if (_$v == null) continue;
+            _$result[_$e.key] = PropertyValue.scalar(
+              encodeUnknownFlatScalar(_$v, context: 'Order.additionalProperties'),
             );
           }
         }
@@ -458,12 +458,12 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          for (final _\$e in additionalProperties.entries) {
-            final _\$v = _\$e.value;
-            if (_\$v == null) continue;
-            _\$result[_\$e.key] = PropertyValue.scalar(_\$v);
+          for (final _$e in additionalProperties.entries) {
+            final _$v = _$e.value;
+            if (_$v == null) continue;
+            _$result[_$e.key] = PropertyValue.scalar(_$v);
           }
         }
       ''';
@@ -485,10 +485,10 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          for (final _\$e in additionalProperties.entries) {
-            _\$result[_\$e.key] = PropertyValue.scalar(_\$e.value.toJson());
+          for (final _$e in additionalProperties.entries) {
+            _$result[_$e.key] = PropertyValue.scalar(_$e.value.toJson());
           }
         }
       ''';
@@ -514,10 +514,10 @@ void main() {
         contextClass: 'Order',
       );
 
-      const expected = '''
+      const expected = r'''
         void run() {
-          for (final _\$e in additionalProperties.entries) {
-            _\$result[_\$e.key] = PropertyValue.array(_\$e.value);
+          for (final _$e in additionalProperties.entries) {
+            _$result[_$e.key] = PropertyValue.array(_$e.value);
           }
         }
       ''';

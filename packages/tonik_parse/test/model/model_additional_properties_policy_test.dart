@@ -14,8 +14,7 @@ Map<String, dynamic> classSchema({required Object? additionalProperties}) => {
   'properties': {
     'name': {'type': 'string'},
   },
-  if (additionalProperties != null)
-    'additionalProperties': additionalProperties,
+  'additionalProperties': ?additionalProperties,
 };
 
 void main() {

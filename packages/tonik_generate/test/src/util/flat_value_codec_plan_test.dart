@@ -307,14 +307,12 @@ void main() {
         ),
         OneOfModel(
           models: const {},
-          discriminator: null,
           context: context,
           isDeprecated: false,
           examples: const [],
         ),
         AnyOfModel(
           models: const {},
-          discriminator: null,
           context: context,
           isDeprecated: false,
           examples: const [],

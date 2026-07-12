@@ -1,5 +1,5 @@
+import 'package:meta/meta.dart';
 import 'package:tonik_core/src/model/model.dart';
-import 'package:tonik_core/src/util/context.dart';
 
 /// Whether an additional-properties policy was written in the document or
 /// is the JSON Schema default for an omitted keyword.
@@ -11,53 +11,11 @@ enum AdditionalPropertiesOrigin { implicitDefault, explicit }
 /// [AllowedAdditionalProperties] with an [AnyModel] value model.
 sealed class AdditionalPropertiesPolicy {
   const AdditionalPropertiesPolicy();
-
-  /// Normalizes a legacy [AdditionalProperties] state into a policy.
-  ///
-  /// One-to-one with the importer states: an omitted keyword (null) is the
-  /// implicit JSON Schema default, `true`/`{}` are explicit Any values, a
-  /// schema is an explicit typed value, and `false` is forbidden.
-  factory AdditionalPropertiesPolicy.fromLegacy(
-    AdditionalProperties? legacy,
-    Context context,
-  ) => switch (legacy) {
-    null => AllowedAdditionalProperties(
-      valueModel: AnyModel(context: context),
-      origin: AdditionalPropertiesOrigin.implicitDefault,
-    ),
-    UnrestrictedAdditionalProperties() => AllowedAdditionalProperties(
-      valueModel: AnyModel(context: context),
-      origin: AdditionalPropertiesOrigin.explicit,
-    ),
-    TypedAdditionalProperties(:final valueModel) => AllowedAdditionalProperties(
-      valueModel: valueModel,
-      origin: AdditionalPropertiesOrigin.explicit,
-    ),
-    NoAdditionalProperties() => const ForbiddenAdditionalProperties(),
-  };
-
-  /// Projects this policy back onto the legacy [AdditionalProperties] view
-  /// consumed by not-yet-migrated generators.
-  AdditionalProperties? get legacyView => switch (this) {
-    ForbiddenAdditionalProperties() => const NoAdditionalProperties(),
-    AllowedAdditionalProperties(
-      valueModel: AnyModel(),
-      origin: AdditionalPropertiesOrigin.implicitDefault,
-    ) =>
-      null,
-    AllowedAdditionalProperties(
-      valueModel: AnyModel(),
-      origin: AdditionalPropertiesOrigin.explicit,
-    ) =>
-      const UnrestrictedAdditionalProperties(),
-    AllowedAdditionalProperties(:final valueModel) => TypedAdditionalProperties(
-      valueModel: valueModel,
-    ),
-  };
 }
 
 /// `additionalProperties: false` — extra keys are schema-invalid; no map
 /// field is generated and no runtime validation is performed.
+@immutable
 final class ForbiddenAdditionalProperties extends AdditionalPropertiesPolicy {
   const ForbiddenAdditionalProperties();
 
@@ -72,10 +30,15 @@ final class ForbiddenAdditionalProperties extends AdditionalPropertiesPolicy {
 }
 
 /// Additional properties are allowed and their values use [valueModel].
+///
+/// [origin] defaults to explicit because a hand-constructed policy models a
+/// written keyword; only an omitted keyword is the implicit default, which
+/// the model constructors and the importer supply themselves.
+@immutable
 final class AllowedAdditionalProperties extends AdditionalPropertiesPolicy {
   const AllowedAdditionalProperties({
     required this.valueModel,
-    required this.origin,
+    this.origin = AdditionalPropertiesOrigin.explicit,
   });
 
   final Model valueModel;

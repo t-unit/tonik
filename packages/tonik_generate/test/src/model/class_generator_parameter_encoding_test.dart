@@ -2001,7 +2001,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
           examples: const [],
@@ -2040,7 +2040,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: Base64Model(context: context),
           ),
           examples: const [],
@@ -2227,7 +2227,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: nullableByte,
           ),
           examples: const [],

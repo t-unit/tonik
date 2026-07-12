@@ -8,26 +8,6 @@ import 'package:tonik_util/tonik_util.dart';
 
 final Logger _aliasModelLog = Logger('AliasModel');
 
-sealed class AdditionalProperties {
-  const AdditionalProperties();
-}
-
-/// `additionalProperties: true` or `{}` → `Map<String, Object?>`
-class UnrestrictedAdditionalProperties extends AdditionalProperties {
-  const UnrestrictedAdditionalProperties();
-}
-
-/// `additionalProperties: {schema}` → `Map<String, T>`
-class TypedAdditionalProperties extends AdditionalProperties {
-  const TypedAdditionalProperties({required this.valueModel});
-  final Model valueModel;
-}
-
-/// additionalProperties: false → no-op (no map field, no validation)
-class NoAdditionalProperties extends AdditionalProperties {
-  const NoAdditionalProperties();
-}
-
 sealed class Model {
   Model({required this.context});
 
@@ -283,21 +263,25 @@ class ListModel extends Model with NamedModel {
 class ClassModel extends Model with NamedModel {
   ClassModel({
     required this.properties,
-    required Context context,
+    required super.context,
     required this.isDeprecated,
     required this.examples,
     this.name,
     this.nameOverride,
     this.description,
-    AdditionalProperties? additionalProperties,
     AdditionalPropertiesPolicy? additionalPropertiesPolicy,
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
-  }) : additionalPropertiesPolicy =
-           additionalPropertiesPolicy ??
-           AdditionalPropertiesPolicy.fromLegacy(additionalProperties, context),
-       super(context: context);
+  }) {
+    // An omitted policy is the JSON Schema default for an omitted keyword.
+    this.additionalPropertiesPolicy =
+        additionalPropertiesPolicy ??
+        AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+          origin: AdditionalPropertiesOrigin.implicitDefault,
+        );
+  }
 
   @override
   final String? name;
@@ -306,23 +290,12 @@ class ClassModel extends Model with NamedModel {
   String? nameOverride;
   List<Property> properties;
   String? description;
-  AdditionalPropertiesPolicy additionalPropertiesPolicy;
+  late AdditionalPropertiesPolicy additionalPropertiesPolicy;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
   List<Example> examples;
-
-  /// Legacy additional-properties view for not-yet-migrated consumers.
-  AdditionalProperties? get additionalProperties =>
-      additionalPropertiesPolicy.legacyView;
-
-  set additionalProperties(AdditionalProperties? value) {
-    additionalPropertiesPolicy = AdditionalPropertiesPolicy.fromLegacy(
-      value,
-      context,
-    );
-  }
 
   @override
   EncodingShape get encodingShape => EncodingShape.complex;
@@ -406,21 +379,25 @@ class EnumModel<T> extends Model with NamedModel {
 class AllOfModel extends Model with NamedModel, CompositeModel {
   AllOfModel({
     required this.models,
-    required Context context,
+    required super.context,
     required this.isDeprecated,
     required this.examples,
     this.name,
     this.nameOverride,
     this.description,
-    AdditionalProperties? additionalProperties,
     AdditionalPropertiesPolicy? additionalPropertiesPolicy,
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
-  }) : additionalPropertiesPolicy =
-           additionalPropertiesPolicy ??
-           AdditionalPropertiesPolicy.fromLegacy(additionalProperties, context),
-       super(context: context);
+  }) {
+    // An omitted policy is the JSON Schema default for an omitted keyword.
+    this.additionalPropertiesPolicy =
+        additionalPropertiesPolicy ??
+        AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+          origin: AdditionalPropertiesOrigin.implicitDefault,
+        );
+  }
 
   @override
   final String? name;
@@ -428,24 +405,13 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   @override
   String? nameOverride;
   String? description;
-  AdditionalPropertiesPolicy additionalPropertiesPolicy;
+  late AdditionalPropertiesPolicy additionalPropertiesPolicy;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
   bool isWriteOnly;
   Set<Model> models;
   List<Example> examples;
-
-  /// Legacy additional-properties view for not-yet-migrated consumers.
-  AdditionalProperties? get additionalProperties =>
-      additionalPropertiesPolicy.legacyView;
-
-  set additionalProperties(AdditionalProperties? value) {
-    additionalPropertiesPolicy = AdditionalPropertiesPolicy.fromLegacy(
-      value,
-      context,
-    );
-  }
 
   @override
   Set<Model> get containedModels => models;

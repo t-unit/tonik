@@ -2389,7 +2389,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 ),
               ],
               context: context,
-              additionalProperties: const UnrestrictedAdditionalProperties(),
+              additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
               examples: const [],
             );
 
@@ -2425,7 +2427,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
             examples: const [],
@@ -2446,7 +2448,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           );
         });
 
-        test('omits AP parameter for NoAdditionalProperties', () {
+        test('omits AP parameter for forbidden additional properties', () {
           final model = ClassModel(
             isDeprecated: false,
             name: 'Strict',
@@ -2462,7 +2464,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: const NoAdditionalProperties(),
+            additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
             examples: const [],
           );
 
@@ -2521,7 +2523,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: const UnrestrictedAdditionalProperties(),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
             examples: const [],
           );
 
@@ -2553,7 +2557,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
             examples: const [],
@@ -2586,7 +2590,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: ClassModel(
                 isDeprecated: false,
                 name: 'Widget',
@@ -2609,7 +2613,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           );
         });
 
-        test('omits AP field for NoAdditionalProperties', () {
+        test('omits AP field for forbidden additional properties', () {
           final model = ClassModel(
             isDeprecated: false,
             name: 'Strict',
@@ -2625,7 +2629,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: const NoAdditionalProperties(),
+            additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
             examples: const [],
           );
 
@@ -2656,7 +2660,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
                 ),
               ],
               context: context,
-              additionalProperties: const UnrestrictedAdditionalProperties(),
+              additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
               examples: const [],
             );
 
@@ -2698,7 +2704,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: const UnrestrictedAdditionalProperties(),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
             examples: const [],
           );
 
@@ -2731,7 +2739,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: const UnrestrictedAdditionalProperties(),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
             examples: const [],
           );
 
@@ -2773,7 +2783,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: const UnrestrictedAdditionalProperties(),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
             examples: const [],
           );
 
@@ -2793,7 +2805,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           );
         });
 
-        test('excludes AP from equals for NoAdditionalProperties', () {
+        test('excludes AP from equals for forbidden additional properties', () {
           final model = ClassModel(
             isDeprecated: false,
             name: 'Strict',
@@ -2809,7 +2821,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: const NoAdditionalProperties(),
+            additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
             examples: const [],
           );
 
@@ -2829,7 +2841,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
           );
         });
 
-        test('excludes AP from hashCode for NoAdditionalProperties', () {
+        test('excludes AP from hashCode for forbidden additional '
+            'properties', () {
           final model = ClassModel(
             isDeprecated: false,
             name: 'Strict',
@@ -2845,7 +2858,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: const NoAdditionalProperties(),
+            additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
             examples: const [],
           );
 
@@ -2880,7 +2893,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: IntegerModel(context: context),
             ),
             examples: const [],
@@ -2917,7 +2930,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
                 ),
               ],
               context: context,
-              additionalProperties: TypedAdditionalProperties(
+              additionalPropertiesPolicy: AllowedAdditionalProperties(
                 valueModel: ClassModel(
                   isDeprecated: false,
                   name: 'Widget',
@@ -2969,7 +2982,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
             examples: const [],
@@ -3025,7 +3038,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: ClassModel(
                 isDeprecated: false,
                 name: 'Widget',
@@ -3089,7 +3102,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
             examples: const [],
@@ -3145,7 +3158,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: BooleanModel(context: context),
             ),
             examples: const [],
@@ -3201,7 +3214,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             ],
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: ClassModel(
                 isDeprecated: false,
                 name: 'Widget',
@@ -3328,7 +3341,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
                 ),
               ],
               context: context,
-              additionalProperties: TypedAdditionalProperties(
+              additionalPropertiesPolicy: AllowedAdditionalProperties(
                 valueModel: ListModel(
                   content: StringModel(context: context),
                   context: context,

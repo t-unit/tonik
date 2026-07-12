@@ -68,28 +68,8 @@ void main() {
     });
   });
 
-  group('AdditionalProperties', () {
-    test('UnrestrictedAdditionalProperties can be instantiated', () {
-      const ap = UnrestrictedAdditionalProperties();
-      expect(ap, isA<AdditionalProperties>());
-    });
-
-    test('TypedAdditionalProperties holds valueModel', () {
-      final ap = TypedAdditionalProperties(
-        valueModel: StringModel(context: context),
-      );
-      expect(ap, isA<AdditionalProperties>());
-      expect(ap.valueModel, isA<StringModel>());
-    });
-
-    test('NoAdditionalProperties can be instantiated', () {
-      const ap = NoAdditionalProperties();
-      expect(ap, isA<AdditionalProperties>());
-    });
-  });
-
   group('ClassModel with additionalProperties', () {
-    test('legacy additionalProperties view defaults to null', () {
+    test('an omitted policy defaults to the implicit Any policy', () {
       final model = ClassModel(
         name: 'Test',
         properties: const [],
@@ -98,7 +78,9 @@ void main() {
         examples: const [],
       );
 
-      expect(model.additionalProperties, isNull);
+      final policy =
+          model.additionalPropertiesPolicy as AllowedAdditionalProperties;
+      expect(policy.origin, AdditionalPropertiesOrigin.implicitDefault);
     });
 
     test('toString includes the additional-properties policy', () {
@@ -107,22 +89,24 @@ void main() {
         properties: const [],
         context: context,
         isDeprecated: false,
-        additionalProperties: const UnrestrictedAdditionalProperties(),
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+        ),
         examples: const [],
       );
 
       expect(
         model.toString(),
         'ClassModel{name: Test, nameOverride: null, properties: [], '
-        'additionalPropertiesPolicy: AllowedAdditionalProperties{'
-        'origin: explicit, valueModel: AnyModel}, '
+        'additionalPropertiesPolicy: '
+        'AllowedAdditionalProperties{origin: explicit, valueModel: AnyModel}, '
         'description: null, isDeprecated: false, examples: []}',
       );
     });
   });
 
   group('AllOfModel with additionalProperties', () {
-    test('legacy additionalProperties view defaults to null', () {
+    test('an omitted policy defaults to the implicit Any policy', () {
       final model = AllOfModel(
         name: 'Test',
         models: {StringModel(context: context)},
@@ -131,7 +115,9 @@ void main() {
         examples: const [],
       );
 
-      expect(model.additionalProperties, isNull);
+      final policy =
+          model.additionalPropertiesPolicy as AllowedAdditionalProperties;
+      expect(policy.origin, AdditionalPropertiesOrigin.implicitDefault);
     });
 
     test('toString includes the additional-properties policy', () {
@@ -140,15 +126,17 @@ void main() {
         models: {StringModel(context: context)},
         context: context,
         isDeprecated: false,
-        additionalProperties: const UnrestrictedAdditionalProperties(),
+        additionalPropertiesPolicy: AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+        ),
         examples: const [],
       );
 
       expect(
         model.toString(),
         'AllOfModel{name: Test, nameOverride: null, models: {StringModel}, '
-        'additionalPropertiesPolicy: AllowedAdditionalProperties{'
-        'origin: explicit, valueModel: AnyModel}, '
+        'additionalPropertiesPolicy: '
+        'AllowedAdditionalProperties{origin: explicit, valueModel: AnyModel}, '
         'description: null, isDeprecated: false, examples: []}',
       );
     });

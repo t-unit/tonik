@@ -811,24 +811,25 @@ void main() {
   });
 
   group('additional properties in stable keys', () {
-    ClassModel unnamedClass({AdditionalProperties? additionalProperties}) =>
-        ClassModel(
-          properties: [
-            Property(
-              name: 'id',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
+    ClassModel unnamedClass({
+      AdditionalPropertiesPolicy? additionalPropertiesPolicy,
+    }) => ClassModel(
+      properties: [
+        Property(
+          name: 'id',
+          model: StringModel(context: context),
+          isRequired: true,
+          isNullable: false,
           isDeprecated: false,
           examples: const [],
-          additionalProperties: additionalProperties,
-        );
+          defaultValue: null,
+        ),
+      ],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+      additionalPropertiesPolicy: additionalPropertiesPolicy,
+    );
 
     test(
       'classes differing only in additional-properties presence get '
@@ -836,7 +837,9 @@ void main() {
       () {
         final closed = unnamedClass();
         final open = unnamedClass(
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
         );
 
         expect(
@@ -851,12 +854,12 @@ void main() {
       'different keys',
       () {
         final stringValued = unnamedClass(
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
         );
         final intValued = unnamedClass(
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: IntegerModel(context: context),
           ),
         );
@@ -873,24 +876,9 @@ void main() {
       'different keys',
       () {
         final implicit = unnamedClass();
-        final explicit = ClassModel(
-          properties: [
-            Property(
-              name: 'id',
-              model: StringModel(context: context),
-              isRequired: true,
-              isNullable: false,
-              isDeprecated: false,
-              examples: const [],
-              defaultValue: null,
-            ),
-          ],
-          context: context,
-          isDeprecated: false,
-          examples: const [],
+        final explicit = unnamedClass(
           additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AnyModel(context: context),
-            origin: AdditionalPropertiesOrigin.explicit,
           ),
         );
 
@@ -905,10 +893,12 @@ void main() {
       'unrestricted and forbidden additional properties get different keys',
       () {
         final unrestricted = unnamedClass(
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
         );
         final forbidden = unnamedClass(
-          additionalProperties: const NoAdditionalProperties(),
+          additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
         );
 
         expect(
@@ -934,7 +924,7 @@ void main() {
           context: sharedContext,
           isDeprecated: false,
           examples: const [],
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: sharedContext),
           ),
         );

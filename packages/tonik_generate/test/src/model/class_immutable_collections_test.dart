@@ -569,7 +569,9 @@ Object? toJson() => {r'tags': tags};
               defaultValue: null,
             ),
           ],
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           context: context,
           examples: const [],
         );

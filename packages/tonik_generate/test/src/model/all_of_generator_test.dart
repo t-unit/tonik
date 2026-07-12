@@ -3033,7 +3033,9 @@ String toMatrix(
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
       });
@@ -3128,7 +3130,7 @@ String toMatrix(
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
           examples: const [],
@@ -3191,7 +3193,7 @@ String toMatrix(
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ClassModel(
               isDeprecated: false,
               name: 'Widget',
@@ -3266,7 +3268,7 @@ String toMatrix(
 
     group('typed additionalProperties with recursive named typedef', () {
       AllOfModel buildRecursiveTreeBag({
-        AdditionalProperties? overrideAdditionalProperties,
+        AdditionalPropertiesPolicy? overrideAdditionalPropertiesPolicy,
       }) {
         final tree = MapModel(
           name: 'Tree',
@@ -3298,9 +3300,9 @@ String toMatrix(
             ),
           },
           context: context,
-          additionalProperties:
-              overrideAdditionalProperties ??
-              TypedAdditionalProperties(valueModel: tree),
+          additionalPropertiesPolicy:
+              overrideAdditionalPropertiesPolicy ??
+              AllowedAdditionalProperties(valueModel: tree),
           examples: const [],
         );
       }
@@ -3378,7 +3380,7 @@ class Holder {
           // A OneOf member mixing a primitive (simple) with a class (complex)
           // resolves to `EncodingShape.mixed`, which triggers the
           // `hasDynamicModels` branch of `toJson` — exactly the path that
-          // routes a TypedAdditionalProperties value through the inline
+          // routes a typed additional-properties value through the inline
           // helper splice point.
           final mixedOneOf = OneOfModel(
             name: 'IdOrUser',
@@ -3415,7 +3417,9 @@ class Holder {
             name: 'DynamicTreeBag',
             models: {mixedOneOf},
             context: context,
-            additionalProperties: TypedAdditionalProperties(valueModel: tree),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+              valueModel: tree,
+            ),
             examples: const [],
           );
 
@@ -3557,7 +3561,9 @@ class Holder {
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(valueModel: a),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+              valueModel: a,
+            ),
             examples: const [],
           );
 
@@ -3601,7 +3607,7 @@ class Holder {
       );
     });
 
-    group('NoAdditionalProperties', () {
+    group('forbidden additionalProperties', () {
       test('generates fromJson without AP logic', () {
         final model = AllOfModel(
           isDeprecated: false,
@@ -3626,7 +3632,7 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const NoAdditionalProperties(),
+          additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
           examples: const [],
         );
 
@@ -3687,7 +3693,9 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -3743,7 +3751,9 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -3803,7 +3813,7 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
           examples: const [],
@@ -3868,7 +3878,7 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ClassModel(
               isDeprecated: false,
               name: 'Widget',
@@ -3953,7 +3963,9 @@ class Holder {
               ),
             },
             context: context,
-            additionalProperties: const UnrestrictedAdditionalProperties(),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
             examples: const [],
           );
 
@@ -4017,7 +4029,9 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -4079,7 +4093,9 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -4122,7 +4138,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
             examples: const [],
@@ -4169,7 +4185,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: Base64Model(context: context),
             ),
             examples: const [],
@@ -4224,7 +4240,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: nullableByte,
             ),
             examples: const [],
@@ -4279,7 +4295,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: ClassModel(
                 isDeprecated: false,
                 name: 'Widget',
@@ -4402,7 +4418,9 @@ bool operator ==(Object other) {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -4520,7 +4538,7 @@ Object? toJson() {
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ListModel(
               content: StringModel(context: context),
               context: context,

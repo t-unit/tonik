@@ -53,7 +53,7 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
         } else if (!identical(encoded, entry.value)) {
           changed = <String, Object?>{
             for (final prior in map.entries.take(index))
-              prior.key as String: prior.value,
+              prior.key! as String: prior.value,
             key: encoded,
           };
         }
