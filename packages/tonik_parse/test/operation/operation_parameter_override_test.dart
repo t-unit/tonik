@@ -286,6 +286,31 @@ void main() {
     expect(params.single.isRequired, isTrue);
   });
 
+  test(r'same $ref used by both path-item and operation resolves to one '
+      'param without cycle detection', () {
+    final operation = operationFor(
+      specWith(
+        pathParameter: {r'$ref': '#/components/parameters/Status'},
+        operationParameter: {r'$ref': '#/components/parameters/Status'},
+        components: {
+          'Status': {
+            'name': 'status',
+            'in': 'query',
+            'required': true,
+            'schema': {'type': 'string'},
+          },
+        },
+      ),
+    );
+
+    final params = operation.queryParameters
+        .whereType<QueryParameterObject>()
+        .where((p) => p.rawName == 'status')
+        .toList();
+    expect(params, hasLength(1));
+    expect(params.single.isRequired, isTrue);
+  });
+
   test(r'cyclic parameter $ref chain throws ArgumentError', () {
     final fileContent = specWith(
       pathParameter: {r'$ref': '#/components/parameters/A'},
