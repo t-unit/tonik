@@ -2709,6 +2709,108 @@ void main() {
         },
       );
 
+      test('uses the operation-scoped name for multipart header values', () {
+        final uploadModel = ClassModel(
+          name: 'UploadForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: testContext),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+        final queryParameter = QueryParameterObject(
+          name: null,
+          rawName: 'file_custom',
+          description: null,
+          isRequired: false,
+          isDeprecated: false,
+          allowEmptyValue: false,
+          allowReserved: false,
+          explode: false,
+          model: StringModel(context: testContext),
+          encoding: QueryParameterEncoding.form,
+          context: testContext,
+          examples: const [],
+          defaultValue: null,
+        );
+        final operation = Operation(
+          operationId: 'uploadFile',
+          path: '/uploads',
+          method: HttpMethod.post,
+          requestBody: RequestBodyObject(
+            name: 'uploadFile',
+            context: testContext,
+            description: null,
+            isRequired: true,
+            content: {
+              RequestContent(
+                model: uploadModel,
+                contentType: ContentType.multipart,
+                rawContentType: 'multipart/form-data',
+                multipartEncoding: _multipartEncodingByName(uploadModel, {
+                  'file': PartEncoding(
+                    contentType: ContentType.bytes,
+                    rawContentType: 'application/octet-stream',
+                    style: null,
+                    explode: null,
+                    allowReserved: null,
+                    headers: {
+                      'X-Custom': ResponseHeaderObject(
+                        name: 'X-Custom',
+                        context: testContext,
+                        description: null,
+                        explode: false,
+                        model: StringModel(context: testContext),
+                        isRequired: true,
+                        isDeprecated: false,
+                        encoding: ResponseHeaderEncoding.simple,
+                        examples: const [],
+                      ),
+                    },
+                  ),
+                }),
+                examples: const [],
+              ),
+            },
+          ),
+          responses: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          queryParameters: {queryParameter},
+          headers: const {},
+          context: testContext,
+          tags: const {},
+          isDeprecated: false,
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateDataMethod(operation);
+        final methodString = format(method.accept(emitter).toString());
+
+        expect(
+          method.optionalParameters.map((parameter) => parameter.name),
+          ['body', 'fileCustomPartHeader'],
+        );
+        expect(
+          collapseWhitespace(methodString),
+          contains(
+            collapseWhitespace(
+              'fileCustomPartHeader.toSimple('
+              'explode: false, allowEmpty: true)',
+            ),
+          ),
+        );
+      });
+
       test('generates _data method for multi-content including multipart', () {
         final jsonModel = ClassModel(
           name: 'JsonPayload',

@@ -14,6 +14,24 @@ servers:
           - staging
       default:
         default: v1
+  - url: >-
+      https://{_}.{❤️}.example.com/{api-version}/{api_version}/{baseUrl}/{serverConfig}/{dio}
+    description: Server with hostile variable names
+    variables:
+      _:
+        default: one
+      "❤️":
+        default: two
+      api-version:
+        default: v1
+      api_version:
+        default: v2
+      baseUrl:
+        default: base
+      serverConfig:
+        default: config
+      dio:
+        default: client
 
 paths:
   /keyword/switch:
@@ -1044,31 +1062,50 @@ paths:
         '200':
           description: OK
 
-  /suffix-induced-collision/{id}:
-    get:
-      operationId: getSuffixInducedCollision
+  /multipart-name-collisions:
+    post:
+      operationId: postMultipartNameCollisions
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: string
-        - name: id
+        - name: file_custom
           in: query
-          required: true
           schema:
             type: string
-        - name: idPath
-          in: query
-          required: true
-          schema:
-            type: string
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/MultipartNameCollisionForm'
+            encoding:
+              file:
+                headers:
+                  X-Trace-Id:
+                    required: true
+                    schema:
+                      type: string
+                  Trace-Id:
+                    required: true
+                    schema:
+                      type: string
+                  Trace_Id:
+                    required: true
+                    schema:
+                      type: string
       responses:
-        '200':
+        '204':
           description: OK
 
 components:
   schemas:
+    MultipartNameCollisionForm:
+      type: object
+      required:
+        - file
+      properties:
+        file:
+          type: string
+          format: binary
+
     SimpleResult:
       type: object
       required:

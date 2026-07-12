@@ -38,6 +38,9 @@ class DataGenerator {
     final content = requestBody.resolvedContent;
     final hasMultipleContent = content.length > 1;
     final isRequired = requestBody.isRequired;
+    final multipartHeaderInfo = extractOperationMultipartHeaderParamInfo(
+      operation,
+    );
 
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
@@ -144,6 +147,9 @@ class DataGenerator {
                   'value.value',
                   nameManager,
                   package,
+                  headerParameters: multipartHeaderInfo
+                      .where((info) => identical(info.content, c))
+                      .toList(),
                 ).code,
               )
               ..add(const Code(','));
@@ -151,26 +157,22 @@ class DataGenerator {
       }
 
       final multipartHeaderParams = <Parameter>[];
-      for (final c in content) {
-        if (c.contentType == ContentType.multipart) {
-          for (final info in extractMultipartHeaderParamInfo(c)) {
-            multipartHeaderParams.add(
-              Parameter(
-                (b) => b
-                  ..name = info.name
-                  ..type = typeReference(
-                    info.model,
-                    nameManager,
-                    package,
-                    isNullableOverride: !info.isRequired,
-                    useImmutableCollections: useImmutableCollections,
-                  )
-                  ..named = true
-                  ..required = info.isRequired,
-              ),
-            );
-          }
-        }
+      for (final info in multipartHeaderInfo) {
+        multipartHeaderParams.add(
+          Parameter(
+            (b) => b
+              ..name = info.name
+              ..type = typeReference(
+                info.model,
+                nameManager,
+                package,
+                isNullableOverride: !info.isRequired,
+                useImmutableCollections: useImmutableCollections,
+              )
+              ..named = true
+              ..required = info.isRequired,
+          ),
+        );
       }
 
       return Method(
@@ -312,6 +314,7 @@ class DataGenerator {
               'body',
               nameManager,
               package,
+              headerParameters: multipartHeaderInfo,
             ).statements,
           ]);
     }
@@ -319,7 +322,7 @@ class DataGenerator {
     // Collect multipart header params for single-content multipart bodies.
     final multipartHeaderParams = <Parameter>[];
     if (contentType == ContentType.multipart) {
-      for (final info in extractMultipartHeaderParamInfo(content.first)) {
+      for (final info in multipartHeaderInfo) {
         multipartHeaderParams.add(
           Parameter(
             (b) => b

@@ -13,10 +13,17 @@ BuiltStatements buildMultipartBodyStatements(
   RequestContent content,
   String bodyAccessor,
   NameManager nameManager,
-  String package,
-) {
+  String package, {
+  List<MultipartHeaderParamInfo>? headerParameters,
+}) {
   return BuiltStatements.simple(
-    _buildMultipartFields(content, bodyAccessor, nameManager, package),
+    _buildMultipartFields(
+      content,
+      bodyAccessor,
+      nameManager,
+      package,
+      headerParameters: headerParameters,
+    ),
   );
 }
 
@@ -27,13 +34,15 @@ BuiltExpression buildMultipartBodyExpression(
   RequestContent content,
   String bodyAccessor,
   NameManager nameManager,
-  String package,
-) {
+  String package, {
+  List<MultipartHeaderParamInfo>? headerParameters,
+}) {
   final statements = _buildMultipartFields(
     content,
     bodyAccessor,
     nameManager,
     package,
+    headerParameters: headerParameters,
   );
 
   return BuiltExpression.simple(
@@ -50,8 +59,9 @@ List<Code> _buildMultipartFields(
   RequestContent content,
   String bodyAccessor,
   NameManager nameManager,
-  String package,
-) {
+  String package, {
+  List<MultipartHeaderParamInfo>? headerParameters,
+}) {
   final statements = <Code>[];
 
   // Resolve through alias chains.
@@ -84,6 +94,8 @@ List<Code> _buildMultipartFields(
   final writeProperties = model.properties.where((p) => !p.isReadOnly).toList();
 
   final normalizedProps = normalizeProperties(writeProperties);
+  final normalizedHeaderParameters =
+      headerParameters ?? extractMultipartHeaderParamInfo(content);
 
   for (final (:normalizedName, :property) in normalizedProps) {
     final rawName = property.name;
@@ -96,6 +108,7 @@ List<Code> _buildMultipartFields(
       normalizedName,
       isNullable,
       encoding: content.multipartEncoding?[property],
+      headerParameters: normalizedHeaderParameters,
     );
 
     if (fieldCode == null) continue;
@@ -121,6 +134,7 @@ Code? _buildFieldCode(
   String bodyAccessor,
   String normalizedName,
   bool isNullable, {
+  required List<MultipartHeaderParamInfo> headerParameters,
   PartEncoding? encoding,
 }) {
   final accessor = '$bodyAccessor.$normalizedName${isNullable ? '!' : ''}';
@@ -132,6 +146,7 @@ Code? _buildFieldCode(
   final headerResult = _buildHeaderMapStatements(
     normalizedName,
     encoding,
+    headerParameters: headerParameters,
     isPropertyOptional: isNullable,
   );
 
@@ -247,6 +262,7 @@ Code? _buildFieldCode(
       normalizedName,
       isNullable,
       encoding: encoding,
+      headerParameters: headerParameters,
     ),
 
     _ => generateEncodingExceptionExpression(
@@ -274,6 +290,7 @@ class _HeaderMapResult {
 _HeaderMapResult? _buildHeaderMapStatements(
   String normalizedPropertyName,
   PartEncoding? encoding, {
+  required List<MultipartHeaderParamInfo> headerParameters,
   bool isPropertyOptional = false,
 }) {
   final headers = encoding?.headers;
@@ -308,10 +325,13 @@ _HeaderMapResult? _buildHeaderMapStatements(
   for (final entry in filteredEntries) {
     final rawHeaderName = entry.key;
     final header = entry.value.resolve();
-    final paramName = normalizeMultipartHeaderName(
-      normalizedPropertyName,
-      rawHeaderName,
-    );
+    final paramName = headerParameters
+        .firstWhere(
+          (parameter) =>
+              parameter.normalizedPropertyName == normalizedPropertyName &&
+              parameter.rawHeaderName == rawHeaderName,
+        )
+        .name;
 
     // When the property is optional, required header params are nullable
     // at the method level but must be non-null here.
@@ -1381,18 +1401,22 @@ Code _buildUrlEncodedObjectFileAddition(
 
 /// Information about a per-part header parameter in multipart encoding.
 typedef MultipartHeaderParamInfo = ({
+  RequestContent content,
   String name,
+  String normalizedPropertyName,
+  String rawHeaderName,
   Model model,
   bool isRequired,
+  bool isDeprecated,
 });
 
 /// Extracts per-part header parameters from a multipart request content.
 ///
 /// Returns info needed to generate method parameters or call arguments.
-/// Content-Type headers are filtered per OAS spec.
 List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
-  RequestContent content,
-) {
+  RequestContent content, {
+  Set<String> reservedNames = const {},
+}) {
   final encoding = content.multipartEncoding;
   if (encoding == null) return const [];
 
@@ -1403,6 +1427,7 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   final normalizedProps = normalizeProperties(writeProperties);
 
   final result = <MultipartHeaderParamInfo>[];
+  final usedNames = reservedNames.map((name) => name.toLowerCase()).toSet();
 
   for (final (:normalizedName, :property) in normalizedProps) {
     final propertyEncoding = encoding[property];
@@ -1411,27 +1436,87 @@ List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
 
     final isPropertyOptional = !property.isRequired || property.isNullable;
 
-    final filteredEntries = headers.entries
-        .where((e) => e.key.toLowerCase() != 'content-type')
-        .toList();
-
-    for (final entry in filteredEntries) {
+    for (final entry in headers.entries) {
       final rawHeaderName = entry.key;
       final header = entry.value.resolve(name: rawHeaderName);
       final isRequired = !isPropertyOptional && header.isRequired;
 
-      final paramName = normalizeMultipartHeaderName(
+      final baseName = normalizeMultipartHeaderName(
         normalizedName,
         rawHeaderName,
       );
+      final paramName = _uniqueMultipartHeaderParameterName(
+        baseName,
+        usedNames,
+      );
 
       result.add((
+        content: content,
         name: paramName,
+        normalizedPropertyName: normalizedName,
+        rawHeaderName: rawHeaderName,
         model: header.model,
         isRequired: isRequired,
+        isDeprecated: header.isDeprecated,
       ));
     }
   }
 
   return result;
+}
+
+/// Extracts all per-part header parameters using names scoped to one operation.
+List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
+  Operation operation,
+) {
+  final hasRequestBody =
+      operation.requestBody?.resolvedContent.isNotEmpty ?? false;
+  if (!hasRequestBody) return const [];
+
+  final normalized = normalizeRequestParameters(
+    pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
+    queryParameters: operation.queryParameters.map((p) => p.resolve()).toSet(),
+    headers: operation.headers.map((p) => p.resolve()).toSet(),
+    cookieParameters: operation.cookieParameters
+        .map((p) => p.resolve())
+        .toSet(),
+    reservedNames: operationReservedParameterNames(hasRequestBody: true),
+  );
+  final usedNames = <String>{
+    'body',
+    'cancelToken',
+    ...normalized.pathParameters.map((p) => p.normalizedName),
+    ...normalized.queryParameters.map((p) => p.normalizedName),
+    ...normalized.headers.map((p) => p.normalizedName),
+    ...normalized.cookieParameters.map((p) => p.normalizedName),
+  };
+  final result = <MultipartHeaderParamInfo>[];
+
+  for (final content in operation.requestBody!.resolvedContent) {
+    if (content.contentType != ContentType.multipart) continue;
+    final parameters = extractMultipartHeaderParamInfo(
+      content,
+      reservedNames: usedNames,
+    );
+    result.addAll(parameters);
+    usedNames.addAll(parameters.map((parameter) => parameter.name));
+  }
+
+  return result;
+}
+
+String _uniqueMultipartHeaderParameterName(
+  String baseName,
+  Set<String> usedNames,
+) {
+  if (usedNames.add(baseName.toLowerCase())) return baseName;
+
+  final suffixedBase = '${baseName}PartHeader';
+  var candidate = suffixedBase;
+  var counter = 2;
+  while (!usedNames.add(candidate.toLowerCase())) {
+    candidate = '$suffixedBase$counter';
+    counter++;
+  }
+  return candidate;
 }

@@ -274,15 +274,30 @@ class ServerGenerator {
     final variableParams = <Parameter>[];
     final variableFields = <Field>[];
 
-    // Map from original variable name to sanitized Dart identifier,
-    // used by _buildBaseUrlExpression for URL interpolation.
-    final variableNameMap = <String, String>{};
+    final normalizedVariables =
+        ensureUniqueness<ServerVariable?>([
+          for (final name in const ['baseUrl', 'serverConfig', 'dio'])
+            (normalizedName: name, originalValue: null),
+          for (final variable in server.variables)
+            (
+              normalizedName: normalizeSingle(
+                variable.name,
+                preserveNumbers: true,
+              ),
+              originalValue: variable,
+            ),
+        ], defaultPrefix: defaultFieldPrefix).where((item) {
+          return item.originalValue != null;
+        });
+    final variableNameMap = {
+      for (final item in normalizedVariables)
+        item.originalValue!: item.normalizedName,
+    };
 
     for (final variable in server.variables) {
       final hasEnum =
           variable.enumValues != null && variable.enumValues!.isNotEmpty;
-      final fieldName = normalizeSingle(variable.name, preserveNumbers: true);
-      variableNameMap[variable.name] = fieldName;
+      final fieldName = variableNameMap[variable]!;
 
       if (hasEnum) {
         final enumName = nameManager.serverVariableEnumName(
@@ -377,7 +392,7 @@ class ServerGenerator {
   String _buildUrlExpression(
     String urlTemplate,
     List<ServerVariable> variables,
-    Map<String, String> variableNameMap,
+    Map<ServerVariable, String> variableNameMap,
   ) {
     // Split the template at variable placeholders so each literal segment
     // can be escaped independently, preserving Dart interpolation expressions.
@@ -408,7 +423,7 @@ class ServerGenerator {
       }
 
       final placeholder = '{${earliestVariable.name}}';
-      final dartName = variableNameMap[earliestVariable.name]!;
+      final dartName = variableNameMap[earliestVariable]!;
       final hasEnum =
           earliestVariable.enumValues != null &&
           earliestVariable.enumValues!.isNotEmpty;

@@ -444,22 +444,22 @@ void main() {
   group('multipart per-part header parameters', () {
     test('generates parameter for property with one header', () {
       final partModel1 = ClassModel(
-              name: 'UploadForm',
-              properties: [
-                Property(
-                  name: 'file',
-                  model: BinaryModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              isDeprecated: false,
-              examples: const [],
-            );
+        name: 'UploadForm',
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
       final requestBody = RequestBodyObject(
         name: 'uploadBody',
         context: context,
@@ -531,22 +531,22 @@ void main() {
 
     test('generates multiple header parameters for multiple headers', () {
       final partModel2 = ClassModel(
-              name: 'UploadForm',
-              properties: [
-                Property(
-                  name: 'file',
-                  model: BinaryModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              isDeprecated: false,
-              examples: const [],
-            );
+        name: 'UploadForm',
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
       final requestBody = RequestBodyObject(
         name: 'uploadBody',
         context: context,
@@ -637,22 +637,22 @@ void main() {
       'optional property with required header produces optional parameter',
       () {
         final partModel3 = ClassModel(
-                name: 'UploadForm',
-                properties: [
-                  Property(
-                    name: 'avatar',
-                    model: BinaryModel(context: context),
-                    isRequired: false,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                isDeprecated: false,
-                examples: const [],
-              );
+          name: 'UploadForm',
+          properties: [
+            Property(
+              name: 'avatar',
+              model: BinaryModel(context: context),
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        );
         final requestBody = RequestBodyObject(
           name: 'uploadBody',
           context: context,
@@ -723,22 +723,22 @@ void main() {
 
     test('does not filter out Content-Type header', () {
       final partModel4 = ClassModel(
-              name: 'UploadForm',
-              properties: [
-                Property(
-                  name: 'file',
-                  model: BinaryModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              isDeprecated: false,
-              examples: const [],
-            );
+        name: 'UploadForm',
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
       final requestBody = RequestBodyObject(
         name: 'uploadBody',
         context: context,
@@ -819,22 +819,22 @@ void main() {
 
     test('no extra parameters for property without headers', () {
       final partModel5 = ClassModel(
-              name: 'UploadForm',
-              properties: [
-                Property(
-                  name: 'name',
-                  model: StringModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              isDeprecated: false,
-              examples: const [],
-            );
+        name: 'UploadForm',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
       final requestBody = RequestBodyObject(
         name: 'uploadBody',
         context: context,
@@ -893,22 +893,22 @@ void main() {
       // Multipart header "X-Custom" on property "file" also normalizes to
       // "fileCustom". We need unique names.
       final partModel6 = ClassModel(
-              name: 'UploadForm',
-              properties: [
-                Property(
-                  name: 'file',
-                  model: BinaryModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              isDeprecated: false,
-              examples: const [],
-            );
+        name: 'UploadForm',
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
       final requestBody = RequestBodyObject(
         name: 'uploadBody',
         context: context,
@@ -996,24 +996,111 @@ void main() {
       );
     });
 
+    test('multipart headers remain unique after repeated normalization '
+        'collisions', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final headers = {
+        for (final rawName in ['X-Trace-Id', 'Trace-Id', 'Trace_Id'])
+          rawName: ResponseHeaderObject(
+            name: rawName,
+            context: context,
+            description: null,
+            explode: false,
+            model: StringModel(context: context),
+            isRequired: true,
+            isDeprecated: false,
+            encoding: ResponseHeaderEncoding.simple,
+            examples: const [],
+          ),
+      };
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            multipartEncoding: _multipartEncoding(model, {
+              'file': PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: headers,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            }),
+            examples: const [],
+          ),
+        },
+      );
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameterNames = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      ).map((parameter) => parameter.name).toList();
+
+      expect(parameterNames, [
+        'body',
+        'fileTraceId',
+        'fileTraceIdPartHeader',
+        'fileTraceIdPartHeader2',
+      ]);
+    });
+
     test('generates deprecated annotation for deprecated multipart header', () {
       final partModel7 = ClassModel(
-              name: 'UploadForm',
-              properties: [
-                Property(
-                  name: 'file',
-                  model: BinaryModel(context: context),
-                  isRequired: true,
-                  isNullable: false,
-                  isDeprecated: false,
-                  examples: const [],
-                  defaultValue: null,
-                ),
-              ],
-              context: context,
-              isDeprecated: false,
-              examples: const [],
-            );
+        name: 'UploadForm',
+        properties: [
+          Property(
+            name: 'file',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
       final requestBody = RequestBodyObject(
         name: 'uploadBody',
         context: context,
@@ -1192,22 +1279,22 @@ void main() {
         );
 
         final partModel8 = ClassModel(
-                name: 'UploadForm',
-                properties: [
-                  Property(
-                    name: 'file',
-                    model: BinaryModel(context: context),
-                    isRequired: true,
-                    isNullable: false,
-                    isDeprecated: false,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
-                ],
-                context: context,
-                isDeprecated: false,
-                examples: const [],
-              );
+          name: 'UploadForm',
+          properties: [
+            Property(
+              name: 'file',
+              model: BinaryModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        );
         final requestBody = RequestBodyObject(
           name: 'uploadBody',
           context: context,
@@ -2197,7 +2284,6 @@ void main() {
         expect(param.type?.accept(emitter).toString(), 'DateTime?');
       },
     );
-
   });
 }
 

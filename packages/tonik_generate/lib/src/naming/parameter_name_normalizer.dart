@@ -144,39 +144,11 @@ NormalizedRequestParameters normalizeRequestParameters({
   final uniqueHeaderParams = _ensureUniquenessInGroup(resolvedHeaderParams);
   final uniqueCookieParams = _ensureUniquenessInGroup(resolvedCookieParams);
 
-  final usedNames = <String>{};
-  List<({String normalizedName, T parameter})> ensureGlobalUniqueness<T>(
-    List<({String normalizedName, T parameter})> parameters,
-    String locationSuffix,
-  ) {
-    return parameters.map((item) {
-      var name = item.normalizedName;
-      var lowerName = name.toLowerCase();
-      if (usedNames.contains(lowerName)) {
-        final baseName = '$name$locationSuffix';
-        name = baseName;
-        lowerName = name.toLowerCase();
-        var counter = 2;
-        while (usedNames.contains(lowerName)) {
-          name = '$baseName$counter';
-          lowerName = name.toLowerCase();
-          counter++;
-        }
-      }
-
-      usedNames.add(lowerName);
-      return (normalizedName: name, parameter: item.parameter);
-    }).toList();
-  }
-
   return NormalizedRequestParameters(
-    pathParameters: ensureGlobalUniqueness(uniquePathParams, _pathSuffix),
-    queryParameters: ensureGlobalUniqueness(uniqueQueryParams, _querySuffix),
-    headers: ensureGlobalUniqueness(uniqueHeaderParams, _headerSuffix),
-    cookieParameters: ensureGlobalUniqueness(
-      uniqueCookieParams,
-      _cookieSuffix,
-    ),
+    pathParameters: uniquePathParams,
+    queryParameters: uniqueQueryParams,
+    headers: uniqueHeaderParams,
+    cookieParameters: uniqueCookieParams,
   );
 }
 

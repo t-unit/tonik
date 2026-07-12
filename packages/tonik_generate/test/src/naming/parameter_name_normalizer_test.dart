@@ -93,25 +93,6 @@ void main() {
       },
     );
 
-    test('resolves collisions introduced by location suffixes', () {
-      final result = normalizeRequestParameters(
-        pathParameters: {createPathParameter('id')},
-        queryParameters: {
-          createQueryParameter('id'),
-          createQueryParameter('idPath'),
-        },
-        headers: {},
-      );
-
-      expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
-        'idPath',
-      ]);
-      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
-        'idQuery',
-        'idPathQuery',
-      ]);
-    });
-
     test('handles Dart keywords', () {
       final result = normalizeRequestParameters(
         pathParameters: {createPathParameter('class')},

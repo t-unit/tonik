@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:dio/dio.dart';
 import 'package:naming_api/src/api_client/default_api2.dart';
 import 'package:naming_api/src/model/_function.dart';
@@ -8,19 +10,21 @@ import 'package:naming_api/src/model/error.dart' as naming;
 import 'package:naming_api/src/model/generated_method_collider.dart';
 import 'package:naming_api/src/model/keyword_enum.dart';
 import 'package:naming_api/src/model/keyword_property_names.dart';
+import 'package:naming_api/src/model/multipart_name_collision_form.dart';
 import 'package:naming_api/src/model/object_method_collider.dart';
 import 'package:naming_api/src/model/self_referencer.dart';
 import 'package:naming_api/src/model/simple_result.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
 import 'package:naming_api/src/operation/get_hostile_query_names.dart';
 import 'package:naming_api/src/operation/get_param_counter_collision.dart';
-import 'package:naming_api/src/operation/get_suffix_induced_collision.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_cookie.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_header.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_path.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_query.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_sanitized.dart';
+import 'package:naming_api/src/operation/post_multipart_name_collisions.dart';
 import 'package:naming_api/src/operation/post_with_cancel_token_and_body.dart';
+import 'package:naming_api/src/server/server.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -459,14 +463,34 @@ void main() {
     });
   });
 
-  group('location suffix induced collisions', () {
-    test('keeps all generated Dart parameters and wire names unique', () async {
+  group('hostile server variable names', () {
+    test('keeps every variable independently configurable', () {
+      final server = BdBe29Da4Efb88F7DServer(
+        field: 'one-value',
+        field2: 'two-value',
+        apiVersion: 'first-version',
+        apiVersion2: 'second-version',
+        baseUrl2: 'base-value',
+        serverConfig2: 'config-value',
+        dio2: 'dio-value',
+      );
+
+      expect(
+        server.baseUrl,
+        'https://one-value.two-value.example.com/'
+        'first-version/second-version/base-value/config-value/dio-value',
+      );
+    });
+  });
+
+  group('multipart header name collisions', () {
+    test('uses every distinct argument for its original wire header', () async {
       final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
-      Uri? capturedUri;
+      RequestOptions? capturedRequest;
       dio.interceptors.add(
         InterceptorsWrapper(
           onRequest: (options, handler) {
-            capturedUri = options.uri;
+            capturedRequest = options;
             handler.reject(
               DioException(
                 requestOptions: options,
@@ -477,17 +501,26 @@ void main() {
         ),
       );
 
-      await GetSuffixInducedCollision(dio).call(
-        idPath: 'path-id',
-        idQuery: 'query-id',
-        idPathQuery: 'literal-id-path',
+      await PostMultipartNameCollisions(dio).call(
+        body: MultipartNameCollisionForm(
+          file: TonikFileBytes(Uint8List.fromList([1, 2, 3])),
+        ),
+        fileCustom: 'query-value',
+        fileTraceId: 'first-header',
+        fileTraceIdPartHeader: 'second-header',
+        fileTraceIdPartHeader2: 'third-header',
       );
 
-      expect(capturedUri, isNotNull);
-      expect(capturedUri!.path, '/suffix-induced-collision/path-id');
-      expect(capturedUri!.queryParameters, {
-        'id': 'query-id',
-        'idPath': 'literal-id-path',
+      expect(capturedRequest, isNotNull);
+      expect(capturedRequest!.uri.queryParameters, {
+        'file_custom': 'query-value',
+      });
+      final formData = capturedRequest!.data as FormData;
+      final headers = formData.files.single.value.headers;
+      expect(headers, {
+        'X-Trace-Id': ['first-header'],
+        'Trace-Id': ['second-header'],
+        'Trace_Id': ['third-header'],
       });
     });
   });
