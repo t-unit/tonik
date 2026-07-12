@@ -4633,5 +4633,40 @@ bool operator ==(Object other) {
         ),
       );
     });
+
+    test('boolean+string dispatches bool on runtime type then string try', () {
+      final model = OneOfModel(
+        isDeprecated: false,
+        name: 'Value',
+        models: {
+          (discriminatorValue: null, model: BooleanModel(context: context)),
+          (discriminatorValue: null, model: StringModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      final classes = generator.generateClasses(model);
+      final baseClass = classes.firstWhere((c) => c.name == 'Value');
+      final generated = format(baseClass.accept(emitter).toString());
+
+      expect(
+        collapseWhitespace(generated),
+        contains(
+          collapseWhitespace('''
+            factory Value.fromJson(Object? json) {
+              if (json is bool) {
+                return ValueBool(json);
+              }
+              try {
+                return ValueString(json.decodeJsonString(context: r'Value'));
+              } on DecodingException catch (_) {
+              } on FormatException catch (_) {}
+              throw JsonDecodingException(r'Invalid JSON for Value');
+            }
+          '''),
+        ),
+      );
+    });
   });
 }

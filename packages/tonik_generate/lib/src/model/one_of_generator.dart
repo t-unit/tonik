@@ -520,8 +520,7 @@ class OneOfGenerator {
     }
 
     // Members are attempted in stable member order. A string-encoded variant is
-    // only reachable when the plain-string member sorts after it — the same
-    // ordering the uri-vs-string residual rides on, in reverse.
+    // only reachable when the plain-string member sorts after it.
     for (final m in sortedModels.where(
       (m) =>
           _scalarRuntimeType(m.model.resolved) == null &&
