@@ -89,6 +89,27 @@ void main() {
 
       expect(success.value, const OneOfIntegerOrNumberNumber(42.0));
     });
+
+    test('integer 42 decodes to OneOfIntegerOrNumberInt(42)', () async {
+      final api = buildApi('42');
+      final result = await api.echoOneOfIntegerOrNumber(
+        body: const OneOfIntegerOrNumberInt(0),
+      );
+      final success = result as TonikSuccess<OneOfIntegerOrNumber>;
+
+      expect(success.value, const OneOfIntegerOrNumberInt(42));
+    });
+
+    test('fractional double 42.5 decodes to OneOfIntegerOrNumberNumber(42.5)',
+        () async {
+      final api = buildApi('42.5');
+      final result = await api.echoOneOfIntegerOrNumber(
+        body: const OneOfIntegerOrNumberInt(0),
+      );
+      final success = result as TonikSuccess<OneOfIntegerOrNumber>;
+
+      expect(success.value, const OneOfIntegerOrNumberNumber(42.5));
+    });
   });
 
   group('OneOfIntegerOrClass1 decodes JSON number to the integer variant', () {
