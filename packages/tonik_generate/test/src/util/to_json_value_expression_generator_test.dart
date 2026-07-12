@@ -2135,6 +2135,86 @@ void main() {
     });
   });
 
+  group('buildToJsonPropertyExpression for Any collections', () {
+    test('list of Any maps elements through encodeAnyToJson', () {
+      final property = Property(
+        name: 'items',
+        model: ListModel(
+          content: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'items',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
+        'items.map((e) => encodeAnyToJson(e)).toList()',
+      );
+    });
+
+    test('nullable list of Any maps elements through encodeAnyToJson', () {
+      final property = Property(
+        name: 'items',
+        model: ListModel(
+          content: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: false,
+        isNullable: true,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'items',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
+        'items?.map((e) => encodeAnyToJson(e)).toList()',
+      );
+    });
+
+    test('map of Any maps values through encodeAnyToJson', () {
+      final property = Property(
+        name: 'lookup',
+        model: MapModel(
+          valueModel: AnyModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        emit(
+          buildToJsonPropertyExpression(
+            'lookup',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
+        'lookup.map((k, v, ) => MapEntry(k, encodeAnyToJson(v), ))',
+      );
+    });
+  });
+
   group('with useImmutableCollections', () {
     test('simple list produces .unlock', () {
       final property = Property(

@@ -9,6 +9,7 @@ import 'package:tonik_util/src/encoding/label_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/matrix_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/unknown_value_encoding.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
 /// Encodes any value to matrix-style. Used for AnyModel fields.
@@ -575,17 +576,7 @@ String encodeAnyValueToString(
     }
     return '';
   }
-  if (value is String) return value;
-  if (value is int) return value.toString();
-  if (value is double) return value.toString();
-  if (value is bool) return value.toString();
-  if (value is DateTime) return value.toTimeZonedIso8601String();
-  if (value is Date) return value.toString();
-  if (value is Uri) return value.toString();
-  if (value is BigDecimal) return value.toString();
-  throw EncodingException(
-    'Cannot encode ${value.runtimeType} to string for map parameter encoding',
-  );
+  return encodeUnknownFlatScalar(value, context: 'map parameter value');
 }
 
 /// Encodes any value to JSON. Used for AnyModel fields.
@@ -593,31 +584,6 @@ String encodeAnyValueToString(
 /// Handles runtime type detection for values of unknown type.
 /// Generated models implementing [JsonEncodable] call toJson().
 /// Primitives pass through as-is.
-/// Collections are recursively encoded.
-Object? encodeAnyToJson(Object? value) {
-  if (value == null) {
-    return null;
-  }
-  if (value is JsonEncodable) {
-    return value.toJson();
-  }
-
-  if (value is String || value is num || value is bool) {
-    return value;
-  }
-
-  if (value is DateTime) {
-    return value.toTimeZonedIso8601String();
-  }
-
-  if (value is List) {
-    return value.map(encodeAnyToJson).toList();
-  }
-
-  if (value is Map) {
-    return value.map((key, val) => MapEntry(key, encodeAnyToJson(val)));
-  }
-  throw EncodingException(
-    'Cannot encode ${value.runtimeType} to JSON',
-  );
-}
+/// Collections are recursively encoded; map keys must be strings.
+Object? encodeAnyToJson(Object? value) =>
+    encodeUnknownJson(value, context: 'value');

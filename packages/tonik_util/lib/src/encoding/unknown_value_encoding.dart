@@ -1,0 +1,71 @@
+import 'package:big_decimal/big_decimal.dart';
+import 'package:tonik_util/src/date.dart';
+import 'package:tonik_util/src/encoding/datetime_extension.dart';
+import 'package:tonik_util/src/encoding/encodable.dart';
+import 'package:tonik_util/src/encoding/encoding_exception.dart';
+
+/// Encodes a runtime value of unknown type to a JSON-compatible value.
+///
+/// JSON primitives pass through, [JsonEncodable] values use their `toJson`,
+/// [DateTime] uses its time-zoned ISO 8601 form, and maps and lists are
+/// converted recursively. Map keys must be strings.
+///
+/// [context] names the value's location and grows with `.key` and `[index]`
+/// segments while descending, so failures name the offending path.
+Object? encodeUnknownJson(Object? value, {required String context}) {
+  switch (value) {
+    case null || String() || num() || bool():
+      return value;
+    case final JsonEncodable encodable:
+      return encodable.toJson();
+    case final DateTime dateTime:
+      return dateTime.toTimeZonedIso8601String();
+    case final List<Object?> list:
+      return [
+        for (var i = 0; i < list.length; i++)
+          encodeUnknownJson(list[i], context: '$context[$i]'),
+      ];
+    case final Map<Object?, Object?> map:
+      final result = <String, Object?>{};
+      for (final entry in map.entries) {
+        final key = entry.key;
+        if (key is! String) {
+          throw EncodingException(
+            'Cannot encode map with non-string key '
+            "'$key' (${key.runtimeType}) to JSON at $context",
+          );
+        }
+        result[key] = encodeUnknownJson(entry.value, context: '$context.$key');
+      }
+      return result;
+    default:
+      throw EncodingException(
+        'Cannot encode ${value.runtimeType} to JSON at $context',
+      );
+  }
+}
+
+/// Encodes a runtime value of unknown type occupying one flat property slot
+/// to its scalar wire string.
+///
+/// Supports the safe scalar runtime types; lists, maps, generated values,
+/// and other custom types throw an [EncodingException] naming [context].
+///
+/// Null is intentionally not accepted: schema-aware callers treat a null
+/// entry as RFC 6570 undefined and omit it before constructing a
+/// `PropertyValue`. An empty string is a defined empty scalar.
+String encodeUnknownFlatScalar(Object value, {required String context}) =>
+    switch (value) {
+      final String string => string,
+      final int number => number.toString(),
+      final double number => number.toString(),
+      final bool boolean => boolean.toString(),
+      final DateTime dateTime => dateTime.toTimeZonedIso8601String(),
+      final Date date => date.toString(),
+      final Uri uri => uri.toString(),
+      final BigDecimal decimal => decimal.toString(),
+      _ => throw EncodingException(
+        'Cannot encode ${value.runtimeType} as a flat scalar value '
+        'at $context',
+      ),
+    };

@@ -334,6 +334,16 @@ components:
       additionalProperties:
         type: string
 
+    # Class with an untyped (Any-valued) map property
+    AnyCollectionHolder:
+      type: object
+      required:
+        - lookup
+      properties:
+        lookup:
+          type: object
+          additionalProperties: true
+
     # allOf with integer-valued additionalProperties on the composite
     ExtendedScores:
       allOf:

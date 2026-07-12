@@ -300,6 +300,65 @@ void main() {
   });
 
   // -------------------------------------------------------------------
+  // Any-valued collections in JSON
+  // -------------------------------------------------------------------
+
+  group('AnyCollectionHolder (Any-valued map property)', () {
+    test('toJson converts DateTime values inside the Any map', () {
+      final obj = AnyCollectionHolder(
+        lookup: {'ts': DateTime.utc(2024, 1, 15, 10, 30)},
+      );
+
+      expect(obj.toJson(), {
+        'lookup': {'ts': '2024-01-15T10:30:00.000Z'},
+      });
+    });
+
+    test('toJson keeps plain JSON content inside the Any map', () {
+      const obj = AnyCollectionHolder(
+        lookup: {
+          'k': 'v',
+          'nested': {
+            'flags': [true],
+          },
+        },
+      );
+
+      expect(obj.toJson(), {
+        'lookup': {
+          'k': 'v',
+          'nested': {
+            'flags': [true],
+          },
+        },
+      });
+    });
+
+    test('toJson throws EncodingException for unsupported values inside '
+        'the Any map', () {
+      const obj = AnyCollectionHolder(lookup: {'bad': Object()});
+
+      expect(obj.toJson, throwsA(isA<EncodingException>()));
+    });
+
+    test('json round-trip preserves Any map content', () {
+      final decoded = AnyCollectionHolder.fromJson({
+        'lookup': {
+          'k': 'v',
+          'nested': {'flag': true},
+        },
+      });
+
+      expect(decoded.toJson(), {
+        'lookup': {
+          'k': 'v',
+          'nested': {'flag': true},
+        },
+      });
+    });
+  });
+
+  // -------------------------------------------------------------------
   // Typed AP wire parity with declared properties
   // -------------------------------------------------------------------
 

@@ -740,8 +740,11 @@ bool _needsTransformationImpl(
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
-    BooleanModel() ||
-    AnyModel() => false,
+    BooleanModel() => false,
+    // Any values need the recursive unknown-value JSON conversion; passing
+    // the collection through would leak DateTime and JsonEncodable
+    // instances into the JSON structure.
+    AnyModel() => true,
     DateTimeModel() ||
     DecimalModel() ||
     UriModel() ||

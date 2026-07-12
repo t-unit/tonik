@@ -13,7 +13,8 @@ extension FormDecoder on String? {
   /// Decodes a form-encoded string to a string.
   ///
   /// Uses URI query component decoding (+ becomes space, %XX becomes
-  /// character).
+  /// character). Generic (Any-valued) decoding keeps the decoded string
+  /// and never infers booleans or numbers from its shape.
   /// Throws [InvalidTypeException] if the value is null.
   String decodeFormString({String? context}) {
     if (this == null) {
