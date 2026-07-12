@@ -2825,9 +2825,9 @@ void main() {
             'address': const PartEncoding(
               contentType: ContentType.json,
               rawContentType: 'application/json',
-              style: EncodingStyle.form,
-              explode: true,
-              allowReserved: false,
+              style: null,
+              explode: null,
+              allowReserved: null,
               headers: null,
             ),
           }),
@@ -2900,9 +2900,9 @@ void main() {
           'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
+            style: null,
+            explode: null,
+            allowReserved: null,
             headers: null,
           ),
         }),
@@ -2974,9 +2974,9 @@ void main() {
           'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
+            style: null,
+            explode: null,
+            allowReserved: null,
             headers: null,
           ),
         }),
@@ -3048,9 +3048,9 @@ void main() {
           'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
+            style: null,
+            explode: null,
+            allowReserved: null,
             headers: null,
           ),
         }),
@@ -3120,9 +3120,9 @@ void main() {
           'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
+            style: null,
+            explode: null,
+            allowReserved: null,
             headers: null,
           ),
         }),
@@ -3194,9 +3194,9 @@ void main() {
           'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
+            style: null,
+            explode: null,
+            allowReserved: null,
             headers: null,
           ),
         }),
@@ -3268,9 +3268,9 @@ void main() {
           'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/xml',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
+            style: null,
+            explode: null,
+            allowReserved: null,
             headers: null,
           ),
         }),
@@ -3722,9 +3722,9 @@ void main() {
           'address': const PartEncoding(
             contentType: ContentType.json,
             rawContentType: 'application/json',
-            style: EncodingStyle.form,
-            explode: true,
-            allowReserved: false,
+            style: null,
+            explode: null,
+            allowReserved: null,
             headers: null,
           ),
         }),
@@ -3820,26 +3820,16 @@ void main() {
               format(r'''
               void test() {
                 final _$formData = FormData();
-                final addressParts = <String>[];
-                for (final entry in ((body.address.toJson() as Map)).entries) {
-                  final value = entry.value;
-                  if (value == null) continue;
-                  if (value is Map || value is List) {
-                    throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: ' r'address' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
-                    );
-                  }
-                  addressParts.add(
-                    [
-                      Uri.encodeQueryComponent(entry.key.toString()),
-                      Uri.encodeQueryComponent(value.toString()),
-                    ].join('='),
-                  );
-                }
+                final addressEntries = body.address.toForm(
+                  r'address',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                );
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
-                    addressParts.join('&'),
+                    addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
                       r'application/x-www-form-urlencoded',
                     ),
@@ -3913,26 +3903,16 @@ void main() {
               format(r'''
               void test() {
                 final _$formData = FormData();
-                final addressParts = <String>[];
-                for (final entry in ((body.address.toJson() as Map)).entries) {
-                  final value = entry.value;
-                  if (value == null) continue;
-                  if (value is Map || value is List) {
-                    throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: ' r'address' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
-                    );
-                  }
-                  addressParts.add(
-                    [
-                      Uri.encodeQueryComponent(entry.key.toString()),
-                      Uri.encodeQueryComponent(value.toString()),
-                    ].join('='),
-                  );
-                }
+                final addressEntries = body.address.toForm(
+                  r'address',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                );
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
-                    addressParts.join('&'),
+                    addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
                       r'application/x-www-form-urlencoded',
                     ),
@@ -3948,7 +3928,7 @@ void main() {
 
       test(
         'URL-encoded ClassModel property with single quote in rawName escapes '
-        'rawName in the EncodingException literal',
+        'rawName in the part name literal',
         () {
           final innerClass = ClassModel(
             name: 'PersonName',
@@ -4007,26 +3987,16 @@ void main() {
               format(r'''
               void test() {
                 final _$formData = FormData();
-                final itsFormParts = <String>[];
-                for (final entry in ((body.itsForm.toJson() as Map)).entries) {
-                  final value = entry.value;
-                  if (value == null) continue;
-                  if (value is Map || value is List) {
-                    throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: ' r"it's-form" ', key: ${entry.key}). Only flat key=value pairs are allowed.',
-                    );
-                  }
-                  itsFormParts.add(
-                    [
-                      Uri.encodeQueryComponent(entry.key.toString()),
-                      Uri.encodeQueryComponent(value.toString()),
-                    ].join('='),
-                  );
-                }
+                final itsFormEntries = body.itsForm.toForm(
+                  r"it's-form",
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                );
                 _$formData.files.add(MapEntry(
                   r"it's-form",
                   MultipartFile.fromString(
-                    itsFormParts.join('&'),
+                    itsFormEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
                       r'application/x-www-form-urlencoded',
                     ),
@@ -4042,7 +4012,7 @@ void main() {
 
       test(
         'URL-encoded ClassModel property with backslash in rawName escapes '
-        'rawName in the EncodingException literal',
+        'rawName in the part name literal',
         () {
           final innerClass = ClassModel(
             name: 'PathTo',
@@ -4101,27 +4071,18 @@ void main() {
               format(r'''
               void test() {
                 final _$formData = FormData();
-                final pathBackslashFormParts = <String>[];
-                for (final entry
-                    in ((body.pathBackslashForm.toJson() as Map)).entries) {
-                  final value = entry.value;
-                  if (value == null) continue;
-                  if (value is Map || value is List) {
-                    throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: ' r'path\form' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
-                    );
-                  }
-                  pathBackslashFormParts.add(
-                    [
-                      Uri.encodeQueryComponent(entry.key.toString()),
-                      Uri.encodeQueryComponent(value.toString()),
-                    ].join('='),
-                  );
-                }
+                final pathBackslashFormEntries = body.pathBackslashForm.toForm(
+                  r'path\form',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                );
                 _$formData.files.add(MapEntry(
                   r'path\form',
                   MultipartFile.fromString(
-                    pathBackslashFormParts.join('&'),
+                    pathBackslashFormEntries
+                        .map((e) => '${e.name}=${e.value}')
+                        .join('&'),
                     contentType: DioMediaType.parse(
                       r'application/x-www-form-urlencoded',
                     ),
@@ -4137,7 +4098,7 @@ void main() {
 
       test(
         'URL-encoded ClassModel property with dollar sign in rawName escapes '
-        'rawName in the EncodingException literal',
+        'rawName in the part name literal',
         () {
           final innerClass = ClassModel(
             name: 'DollarForm',
@@ -4196,26 +4157,16 @@ void main() {
               format(r'''
               void test() {
                 final _$formData = FormData();
-                final $totalParts = <String>[];
-                for (final entry in ((body.$total.toJson() as Map)).entries) {
-                  final value = entry.value;
-                  if (value == null) continue;
-                  if (value is Map || value is List) {
-                    throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: ' r'$total' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
-                    );
-                  }
-                  $totalParts.add(
-                    [
-                      Uri.encodeQueryComponent(entry.key.toString()),
-                      Uri.encodeQueryComponent(value.toString()),
-                    ].join('='),
-                  );
-                }
+                final $totalEntries = body.$total.toForm(
+                  r'$total',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                );
                 _$formData.files.add(MapEntry(
                   r'$total',
                   MultipartFile.fromString(
-                    $totalParts.join('&'),
+                    $totalEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
                       r'application/x-www-form-urlencoded',
                     ),
@@ -4288,26 +4239,16 @@ void main() {
             void test() {
               final _$formData = FormData();
               if (body.address != null) {
-                final addressParts = <String>[];
-                for (final entry in ((body.address!.toJson() as Map)).entries) {
-                  final value = entry.value;
-                  if (value == null) continue;
-                  if (value is Map || value is List) {
-                    throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: ' r'address' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
-                    );
-                  }
-                  addressParts.add(
-                    [
-                      Uri.encodeQueryComponent(entry.key.toString()),
-                      Uri.encodeQueryComponent(value.toString()),
-                    ].join('='),
-                  );
-                }
+                final addressEntries = body.address!.toForm(
+                  r'address',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                );
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
-                    addressParts.join('&'),
+                    addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
                       r'application/x-www-form-urlencoded',
                     ),
@@ -4322,7 +4263,7 @@ void main() {
       });
 
       test(
-        'style-based mode with URL-encoded contentType uses JSON serialization',
+        'style-based mode ignores contentType and emits raw style parts',
         () {
           final innerClass = ClassModel(
             name: 'Address',
@@ -4382,15 +4323,90 @@ void main() {
               format(r'''
               void test() {
                 final _$formData = FormData();
-                _$formData.files.add(MapEntry(
-                  r'address',
-                  MultipartFile.fromString(
-                    jsonEncode(body.address.toJson()),
-                    contentType: DioMediaType.parse(
-                      r'application/x-www-form-urlencoded',
-                    ),
-                  ),
-                ));
+                final addressRawParts = body.address
+                    .parameterProperties(allowEmpty: true)
+                    .toRawStyleParts(r'address', explode: true);
+                for (final _$part in addressRawParts) {
+                  _$formData.files.add(
+                    MapEntry(_$part.name, MultipartFile.fromString(_$part.value)),
+                  );
+                }
+                return _$formData;
+              }
+            '''),
+            ),
+          );
+        },
+      );
+
+      test(
+        'non-exploded style-based mode emits one raw comma-joined part',
+        () {
+          final innerClass = ClassModel(
+            name: 'Address',
+            isDeprecated: false,
+            properties: [],
+            context: testContext,
+            examples: const [],
+          );
+
+          final model = ClassModel(
+            name: 'PersonForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'address',
+                model: innerClass,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: testContext,
+            examples: const [],
+          );
+
+          final content = RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            multipartEncoding: _multipartEncoding(model, {
+              'address': const PartEncoding(
+                contentType: null,
+                rawContentType: null,
+                style: EncodingStyle.form,
+                explode: false,
+                allowReserved: null,
+                headers: null,
+              ),
+            }),
+            examples: const [],
+          );
+
+          final result = buildMultipartBodyStatements(
+            content,
+            'body',
+            nameManager,
+            'test_package',
+          );
+
+          final code = emitStatements(result);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
+              void test() {
+                final _$formData = FormData();
+                final addressRawParts = body.address
+                    .parameterProperties(allowEmpty: true)
+                    .toRawStyleParts(r'address', explode: false);
+                for (final _$part in addressRawParts) {
+                  _$formData.files.add(
+                    MapEntry(_$part.name, MultipartFile.fromString(_$part.value)),
+                  );
+                }
                 return _$formData;
               }
             '''),
@@ -4476,26 +4492,16 @@ void main() {
                 _$addressHeaders[r'X-Custom-Header'] = [
                   addressCustomHeader.toSimple(explode: false, allowEmpty: true),
                 ];
-                final addressParts = <String>[];
-                for (final entry in ((body.address.toJson() as Map)).entries) {
-                  final value = entry.value;
-                  if (value == null) continue;
-                  if (value is Map || value is List) {
-                    throw EncodingException(
-                      'Standard URL encoding does not support nested values (property: ' r'address' ', key: ${entry.key}). Only flat key=value pairs are allowed.',
-                    );
-                  }
-                  addressParts.add(
-                    [
-                      Uri.encodeQueryComponent(entry.key.toString()),
-                      Uri.encodeQueryComponent(value.toString()),
-                    ].join('='),
-                  );
-                }
+                final addressEntries = body.address.toForm(
+                  r'address',
+                  explode: true,
+                  allowEmpty: true,
+                  useQueryComponent: true,
+                );
                 _$formData.files.add(MapEntry(
                   r'address',
                   MultipartFile.fromString(
-                    addressParts.join('&'),
+                    addressEntries.map((e) => '${e.name}=${e.value}').join('&'),
                     contentType: DioMediaType.parse(
                       r'application/x-www-form-urlencoded',
                     ),
