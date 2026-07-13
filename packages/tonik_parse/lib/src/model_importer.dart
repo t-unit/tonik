@@ -1510,12 +1510,18 @@ class ModelImporter {
     if (mediaType != null && _contentMediaTypes.containsKey(mediaType)) {
       return switch (_contentMediaTypes[mediaType]!) {
         .text => StringModel(context: context),
-        .binary => BinaryModel(context: context),
+        .binary => _contentEncodedBinaryModel(schema, context),
       };
     }
 
-    return BinaryModel(context: context);
+    return _contentEncodedBinaryModel(schema, context);
   }
+
+  Model _contentEncodedBinaryModel(Schema schema, Context context) =>
+      switch (schema.contentEncoding?.toLowerCase()) {
+        'base64' => Base64Model(context: context),
+        _ => BinaryModel(context: context),
+      };
 
   OneOfModel _parseMultiType(
     List<String> types,

@@ -53,48 +53,33 @@ void main() {
       expect(imageEncodedData.imageData.toBytes(), equals(imageBytes));
     });
 
-    test('ImageEncodedData serializes imageData to string in JSON', () {
-      final imageBytes = Uint8List.fromList([
-        72,
-        101,
-        108,
-        108,
-        111,
-      ]); // "Hello"
+    test('ImageEncodedData serializes imageData to base64 in JSON', () {
+      final imageBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
 
       final imageEncodedData = ImageEncodedData(
         name: 'test-image',
         imageData: TonikFileBytes(imageBytes),
       );
 
-      // Serialize to JSON
       final json = imageEncodedData.toJson()! as Map<String, dynamic>;
 
-      // The schema has contentEncoding: base64, but this test uses
-      // ASCII-compatible bytes that are valid UTF-8 to demonstrate the
-      // bidirectional conversion. In this test, List<int> is decoded as UTF-8
-      // string in JSON for simplicity.
       expect(json['imageData'], isA<String>());
-      expect(json['imageData'], equals('Hello'));
+      expect(json['imageData'], '3q2+7w==');
     });
 
-    test('ImageEncodedData deserializes string from JSON to List<int>', () {
-      // Server sends data in JSON as a string
-      const jsonString = 'Hello';
-
+    test('ImageEncodedData deserializes base64 imageData from JSON', () {
       final json = {
         'name': 'test-image',
-        'imageData': jsonString,
+        'imageData': 'iVBORw0KGgo=',
       };
 
       final imageEncodedData = ImageEncodedData.fromJson(json);
 
-      // fromJson UTF-8 encodes the string to TonikFile.
       expect(imageEncodedData.imageData, isA<TonikFile>());
       expect(
         imageEncodedData.imageData.toBytes(),
-        equals([72, 101, 108, 108, 111]),
-      ); // UTF-8 bytes of "Hello"
+        [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A],
+      );
     });
 
     test('201 - uploads image data', () async {
@@ -129,6 +114,7 @@ void main() {
       final responseBody =
           (success.value as GetContentMediaTypeImageResponse200).body;
       expect(responseBody.imageData, isA<TonikFile>());
+      expect(responseBody.imageData.toBytes(), hasLength(256));
     });
   });
 
@@ -222,41 +208,32 @@ void main() {
       expect(unconfiguredData.data.toBytes(), equals(dataBytes));
     });
 
-    test('UnconfiguredEncodedData serializes data to string in JSON', () {
-      final dataBytes = Uint8List.fromList([87, 111, 114, 108, 100]); // "World"
+    test('UnconfiguredEncodedData serializes data to base64 in JSON', () {
+      final dataBytes = Uint8List.fromList([0x64, 0xC8, 0xFF]);
 
       final unconfiguredData = UnconfiguredEncodedData(
         name: 'test-unconfigured',
         data: TonikFileBytes(dataBytes),
       );
 
-      // Serialize to JSON
       final json = unconfiguredData.toJson()! as Map<String, dynamic>;
 
-      // In JSON, the List<int> is UTF-8 decoded to string (not base64)
       expect(json['data'], isA<String>());
-      expect(json['data'], equals('World'));
+      expect(json['data'], 'ZMj/');
     });
 
     test(
-      'UnconfiguredEncodedData deserializes string from JSON to List<int>',
+      'UnconfiguredEncodedData deserializes base64 data from JSON',
       () {
-        // Server sends data in JSON as a string
-        const jsonString = 'Test';
-
         final json = {
           'name': 'test-unconfigured',
-          'data': jsonString,
+          'data': '3q2+7w==',
         };
 
         final unconfiguredData = UnconfiguredEncodedData.fromJson(json);
 
-        // fromJson UTF-8 encodes the string to TonikFile.
         expect(unconfiguredData.data, isA<TonikFile>());
-        expect(
-          unconfiguredData.data.toBytes(),
-          equals([84, 101, 115, 116]),
-        ); // UTF-8 bytes of "Test"
+        expect(unconfiguredData.data.toBytes(), [0xDE, 0xAD, 0xBE, 0xEF]);
       },
     );
 
@@ -292,6 +269,7 @@ void main() {
       final responseBody =
           (success.value as GetContentMediaTypeUnconfiguredResponse200).body;
       expect(responseBody.data, isA<TonikFile>());
+      expect(responseBody.data.toBytes(), hasLength(64));
     });
   });
 }

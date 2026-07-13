@@ -325,7 +325,8 @@ void main() {
 
     group('contentEncoding string in _createPrimitiveModel', () {
       test(
-        'top-level string with contentEncoding creates BinaryModel alias',
+        'top-level string with contentEncoding: base64 creates '
+        'Base64Model alias',
         () {
           const spec = {
             'openapi': '3.0.0',
@@ -349,7 +350,7 @@ void main() {
           expect(model, isA<AliasModel>());
 
           final alias = model as AliasModel;
-          expect(alias.model, isA<BinaryModel>());
+          expect(alias.model, isA<Base64Model>());
         },
       );
     });
