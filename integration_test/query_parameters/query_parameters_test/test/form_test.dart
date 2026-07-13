@@ -48,17 +48,19 @@ void main() {
       expect(success.response.requestOptions.uri.query, 'double=1.0');
     });
 
-    test('number', () async {
+    test('number percent-encodes plus in a positive exponent', () async {
       final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormPrimitive(number: 1.0);
+      final response = await api.testFormPrimitive(number: 6.022e23);
 
       expect(response, isA<TonikSuccess<void>>());
 
       final success = response as TonikSuccess<void>;
-      expect(success.response.requestOptions.uri.query, 'number=1.0');
+      final uri = success.response.requestOptions.uri;
+      expect(uri.query, 'number=6.022e%2B23');
+      expect(uri.queryParameters['number'], '6.022e+23');
     });
 
-    test('number', () async {
+    test('number without exponent', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(number: 1.0);
 

@@ -525,6 +525,15 @@ void main() {
       );
     });
 
+    test('percent-encodes plus in a positive exponent', () {
+      const num value = 6.022e23;
+
+      expect(
+        value.toSimple(explode: false, allowEmpty: true),
+        '6.022e%2B23',
+      );
+    });
+
     test('explode parameter has no effect on num encoding', () {
       const num value = 123.45;
       expect(
@@ -693,7 +702,7 @@ void main() {
       final value = BigDecimal.parse('1.23E+10');
       expect(
         value.toSimple(explode: false, allowEmpty: true),
-        value.toString(),
+        '1.23e%2B10',
       );
     });
 

@@ -138,6 +138,15 @@ void main() {
         const <ParameterEntry>[(name: 'p', value: '3.14')],
       );
     });
+
+    test('percent-encodes plus in a positive exponent', () {
+      const num value = 6.022e23;
+
+      expect(
+        value.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '6.022e%2B23')],
+      );
+    });
   });
 
   group('FormBoolEncoder', () {
@@ -182,6 +191,15 @@ void main() {
       expect(
         BigDecimal.parse('-42.5').toForm('p', explode: false, allowEmpty: true),
         const <ParameterEntry>[(name: 'p', value: '-42.5')],
+      );
+    });
+
+    test('percent-encodes plus in a positive exponent', () {
+      final value = BigDecimal.parse('1.23E+10');
+
+      expect(
+        value.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: '1.23e%2B10')],
       );
     });
   });
@@ -646,7 +664,7 @@ void main() {
       );
     });
 
-    test('numeric and bool encoders accept the flag as a no-op', () {
+    test('numeric and bool safe values are unchanged', () {
       expect(
         42.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
         const <ParameterEntry>[(name: 'p', value: '42')],
