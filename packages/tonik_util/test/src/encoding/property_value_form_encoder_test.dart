@@ -86,10 +86,21 @@ void main() {
       );
     });
 
-    test('emits one empty-value entry for a non-exploded empty array', () {
+    test('omits a non-exploded empty array beside a scalar', () {
       expect(
         <String, PropertyValue>{
+          'name': const PropertyValue.scalar('John'),
           'tags': const PropertyValue.array([]),
+        }.toForm('p', explode: true, allowEmpty: true),
+        const <ParameterEntry>[(name: 'name', value: 'John')],
+      );
+    });
+
+    test('emits one empty-value entry for a non-exploded single empty-string '
+        'element', () {
+      expect(
+        <String, PropertyValue>{
+          'tags': const PropertyValue.array(['']),
         }.toForm('p', explode: true, allowEmpty: true),
         const <ParameterEntry>[(name: 'tags', value: '')],
       );

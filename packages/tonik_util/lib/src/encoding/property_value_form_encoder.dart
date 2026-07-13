@@ -104,6 +104,10 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
             ),
           ));
         case ArrayPropertyValue(:final values):
+          if (values.isEmpty) {
+            continue;
+          }
+
           if (explodeArray) {
             for (final element in values) {
               result.add((
