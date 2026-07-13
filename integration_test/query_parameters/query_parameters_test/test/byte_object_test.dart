@@ -44,6 +44,23 @@ void main() {
       );
     });
 
+    test('sends an empty string property as a named empty value', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormByteObject(
+        filter: const Filter(
+          signature: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF]),
+          label: '',
+        ),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'signature=3q2%2B7w%3D%3D&label=',
+      );
+    });
+
     test('decoder round-trips the encoder output for a byte property', () {
       const filter = Filter(
         signature: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF]),

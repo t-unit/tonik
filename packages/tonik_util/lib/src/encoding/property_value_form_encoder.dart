@@ -54,11 +54,11 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
 
     if (!allowEmpty) {
       for (final value in values) {
-        final isValueEmpty = switch (value) {
-          ScalarPropertyValue(:final value) => value.isEmpty,
+        final isEmptyCollection = switch (value) {
+          ScalarPropertyValue() => false,
           ArrayPropertyValue(:final values) => values.isEmpty,
         };
-        if (isValueEmpty) {
+        if (isEmptyCollection) {
           throw const EmptyValueException();
         }
       }

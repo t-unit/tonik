@@ -218,6 +218,16 @@ void main() {
         const <ParameterEntry>[(name: 'p', value: 'colors,')],
       );
     });
+
+    test('collapses a scalar empty string when allowEmpty is false', () {
+      expect(
+        <String, PropertyValue>{
+          'a': const PropertyValue.scalar(''),
+          'b': const PropertyValue.scalar('ok'),
+        }.toForm('filter', explode: false, allowEmpty: false),
+        const <ParameterEntry>[(name: 'filter', value: 'a,,b,ok')],
+      );
+    });
   });
 
   group('allowReserved', () {
@@ -330,12 +340,16 @@ void main() {
       );
     });
 
-    test('throws on a scalar empty string when allowEmpty is false', () {
+    test('encodes a scalar empty string when allowEmpty is false', () {
       expect(
-        () => <String, PropertyValue>{
-          'key': const PropertyValue.scalar(''),
-        }.toForm('p', explode: true, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        <String, PropertyValue>{
+          'a': const PropertyValue.scalar(''),
+          'b': const PropertyValue.scalar('ok'),
+        }.toForm('filter', explode: true, allowEmpty: false),
+        const <ParameterEntry>[
+          (name: 'a', value: ''),
+          (name: 'b', value: 'ok'),
+        ],
       );
     });
 
