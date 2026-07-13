@@ -1,15 +1,12 @@
 import 'package:meta/meta.dart';
 import 'package:tonik_core/src/model/model.dart';
 
-/// Source of an additional-properties policy.
 enum AdditionalPropertiesOrigin { implicitDefault, explicit }
 
-/// Additional-properties policy of an object-like schema.
 sealed class AdditionalPropertiesPolicy {
   const AdditionalPropertiesPolicy();
 }
 
-/// Forbids additional properties.
 @immutable
 final class ForbiddenAdditionalProperties extends AdditionalPropertiesPolicy {
   const ForbiddenAdditionalProperties();
@@ -24,7 +21,6 @@ final class ForbiddenAdditionalProperties extends AdditionalPropertiesPolicy {
   String toString() => 'ForbiddenAdditionalProperties';
 }
 
-/// Allows additional properties whose values use [valueModel].
 @immutable
 final class AllowedAdditionalProperties extends AdditionalPropertiesPolicy {
   const AllowedAdditionalProperties({

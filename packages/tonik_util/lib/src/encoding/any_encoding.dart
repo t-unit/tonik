@@ -556,14 +556,7 @@ String encodeAnyToUri(
   );
 }
 
-/// Converts any value to its string representation for map parameter encoding.
-///
-/// Used when a map has AnyModel values (`Map<String, dynamic>`).
-/// Handles runtime type detection -- primitives produce their standard string
-/// form; unsupported types throw EncodingException.
-///
-/// When [allowEmpty] is false, null throws [EmptyValueException];
-/// when true, null produces an empty string.
+/// Returns an empty string for an allowed null and rejects non-scalar values.
 String encodeAnyValueToString(
   Object? value, {
   required bool allowEmpty,
@@ -577,11 +570,6 @@ String encodeAnyValueToString(
   return encodeUnknownFlatScalar(value, context: 'map parameter value');
 }
 
-/// Encodes any value to JSON. Used for AnyModel fields.
-///
-/// Handles runtime type detection for values of unknown type.
-/// Generated models implementing [JsonEncodable] call toJson().
-/// Primitives pass through as-is.
-/// Collections are recursively encoded; map keys must be strings.
+/// Rejects unsupported runtime types and maps with non-string keys.
 Object? encodeAnyToJson(Object? value) =>
     encodeUnknownJson(value, context: 'value');

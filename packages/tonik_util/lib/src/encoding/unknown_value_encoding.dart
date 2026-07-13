@@ -4,7 +4,7 @@ import 'package:tonik_util/src/encoding/datetime_extension.dart';
 import 'package:tonik_util/src/encoding/encodable.dart';
 import 'package:tonik_util/src/encoding/encoding_exception.dart';
 
-/// Converts an unknown runtime value to JSON-compatible data.
+/// Recursively handles Tonik scalar wrappers and string-keyed collections.
 Object? encodeUnknownJson(Object? value, {required String context}) {
   switch (value) {
     case null || String() || num() || bool():
@@ -19,7 +19,7 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
       return uri.toString();
     case final BigDecimal decimal:
       return decimal.toString();
-    // Preserve unchanged collection identity.
+    // Avoid allocating when nested values are already JSON-compatible.
     case final List<Object?> list:
       List<Object?>? changed;
       for (var i = 0; i < list.length; i++) {
@@ -65,7 +65,7 @@ Object? encodeUnknownJson(Object? value, {required String context}) {
   }
 }
 
-/// Converts an unknown runtime scalar to its flat wire value.
+/// Accepts Tonik wire scalars and rejects collections and other values.
 String encodeUnknownFlatScalar(Object value, {required String context}) =>
     switch (value) {
       final String string => string,

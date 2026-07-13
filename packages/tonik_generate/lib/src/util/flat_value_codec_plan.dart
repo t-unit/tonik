@@ -8,57 +8,46 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 const _tonikUtilUrl = 'package:tonik_util/tonik_util.dart';
 
-/// Flat decoding medium.
 enum FlatWireFormat { simple, form }
 
-/// Encoding plan for one flat property slot.
 sealed class FlatEncodePlan {
   const FlatEncodePlan();
 }
 
-/// Scalar flat encoding.
 final class FlatScalarEncodePlan extends FlatEncodePlan {
   const FlatScalarEncodePlan({required this.value});
 
-  /// Raw string expression.
   final Expression value;
 }
 
-/// Array flat encoding.
 final class FlatArrayEncodePlan extends FlatEncodePlan {
   const FlatArrayEncodePlan({required this.values});
 
-  /// Raw string-list expression.
   final Expression values;
 }
 
-/// Unsupported flat encoding.
 final class UnsupportedFlatEncodePlan extends FlatEncodePlan {
   const UnsupportedFlatEncodePlan({required this.reason});
 
   final String reason;
 }
 
-/// Decoding plan for one flat property slot.
 sealed class FlatDecodePlan {
   const FlatDecodePlan();
 }
 
-/// Scalar flat decoding.
 final class FlatScalarDecodePlan extends FlatDecodePlan {
   const FlatScalarDecodePlan({required this.value});
 
   final Expression value;
 }
 
-/// Unsupported flat decoding.
 final class UnsupportedFlatDecodePlan extends FlatDecodePlan {
   const UnsupportedFlatDecodePlan({required this.reason});
 
   final String reason;
 }
 
-/// Builds a flat encoding plan.
 FlatEncodePlan buildFlatEncodePlan(
   Expression value,
   Model model, {
@@ -113,7 +102,6 @@ FlatEncodePlan buildFlatEncodePlan(
   }
 }
 
-/// Builds a flat decoding plan.
 FlatDecodePlan buildFlatDecodePlan(
   Expression value,
   Model model, {

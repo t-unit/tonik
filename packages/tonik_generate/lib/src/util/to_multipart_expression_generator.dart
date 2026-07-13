@@ -1410,7 +1410,6 @@ Code _buildRawStylePartsAddition(
   ]);
 }
 
-/// Information about a per-part header parameter in multipart encoding.
 typedef MultipartHeaderParamInfo = ({
   RequestContent content,
   String name,
@@ -1421,7 +1420,6 @@ typedef MultipartHeaderParamInfo = ({
   bool isDeprecated,
 });
 
-/// Extracts per-part multipart headers.
 List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   RequestContent content, {
   Set<String> reservedNames = const {},

@@ -324,12 +324,6 @@ components:
             additionalProperties:
               $ref: '#/components/schemas/Address'
 
-    # ---------------------------------------------------------------
-    # 10. Contract schemas: enum-valued AP, bare objects, read-only
-    #     classes with AP, and allOf with non-string AP values
-    # ---------------------------------------------------------------
-
-    # Named string enum used as an additionalProperties value type
     Status:
       type: string
       enum:
@@ -337,7 +331,6 @@ components:
         - inactive
         - pending
 
-    # Named properties + enum-valued additionalProperties ($ref)
     MixedEnumAP:
       type: object
       properties:
@@ -346,8 +339,6 @@ components:
       additionalProperties:
         $ref: '#/components/schemas/Status'
 
-    # Property declared as a bare type: object (free-form object with
-    # implicit additionalProperties)
     FreeformHolder:
       type: object
       required:
@@ -358,7 +349,6 @@ components:
         freeform:
           type: object
 
-    # Class whose only declared property is read-only, plus active AP
     AuditedSettings:
       type: object
       properties:
@@ -368,7 +358,6 @@ components:
       additionalProperties:
         type: string
 
-    # Class with an untyped (Any-valued) map property
     AnyCollectionHolder:
       type: object
       required:
@@ -378,7 +367,6 @@ components:
           type: object
           additionalProperties: true
 
-    # allOf with integer-valued additionalProperties on the composite
     ExtendedScores:
       allOf:
         - $ref: '#/components/schemas/Person'

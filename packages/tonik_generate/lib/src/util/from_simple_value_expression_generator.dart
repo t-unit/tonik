@@ -191,7 +191,6 @@ Expression _buildSimpleValueExpression(
       explode: explode,
     ),
     NeverModel() => _buildNeverModelExpression(value, isRequired),
-    // Flat Any decoding preserves the wire token.
     AnyModel() => value,
     MapModel() => generateSimpleDecodingExceptionExpression(
       'Map types cannot be simple-decoded.',

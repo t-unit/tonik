@@ -828,7 +828,6 @@ class ModelImporter {
     }
   }
 
-  /// Populates a MapModel shell's valueModel.
   void _populateMapShell(
     String name,
     Schema schema,

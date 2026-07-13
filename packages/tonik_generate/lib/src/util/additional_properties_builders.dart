@@ -11,7 +11,6 @@ import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_json_value_expression_generator.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
-/// Inputs shared by additional-properties builders.
 final class AdditionalPropertiesPlan {
   const AdditionalPropertiesPlan({
     required this.valueModel,
@@ -20,11 +19,9 @@ final class AdditionalPropertiesPlan {
 
   final Model valueModel;
 
-  /// Declared wire keys excluded from additional properties.
   final Set<String> knownWireKeys;
 }
 
-/// Generated statements and inline helpers.
 final class ApBuilderResult {
   const ApBuilderResult({
     required this.codes,
@@ -35,19 +32,16 @@ final class ApBuilderResult {
   final List<InlineHelper> inlineHelpers;
 }
 
-/// Result of flat additional-property capture.
 sealed class ApFlatCaptureResult {
   const ApFlatCaptureResult({required this.codes});
 
   final List<Code> codes;
 }
 
-/// Captures unknown keys.
 final class CapturingApFlatCapture extends ApFlatCaptureResult {
   const CapturingApFlatCapture({required super.codes});
 }
 
-/// Rejects unknown keys that cannot be flat-decoded.
 final class RejectingApFlatCapture extends ApFlatCaptureResult {
   const RejectingApFlatCapture({required super.codes});
 }
@@ -55,7 +49,6 @@ final class RejectingApFlatCapture extends ApFlatCaptureResult {
 const _ficUrl =
     'package:fast_immutable_collections/fast_immutable_collections.dart';
 
-/// Returns the explicit allowed policy, if present.
 AllowedAdditionalProperties? activeApPolicy(AdditionalPropertiesPolicy policy) {
   if (policy is AllowedAdditionalProperties &&
       policy.origin == AdditionalPropertiesOrigin.explicit) {
@@ -64,7 +57,6 @@ AllowedAdditionalProperties? activeApPolicy(AdditionalPropertiesPolicy policy) {
   return null;
 }
 
-/// Builds the additional-properties map type.
 TypeReference apMapTypeReference(
   Model valueModel,
   NameManager nameManager,
@@ -85,7 +77,6 @@ TypeReference apMapTypeReference(
     ]),
 );
 
-/// Builds the additional-properties value type.
 Reference apValueTypeReference(
   Model valueModel,
   NameManager nameManager,
@@ -103,7 +94,6 @@ Reference apValueTypeReference(
   );
 }
 
-/// Builds JSON capture for unknown keys.
 ApBuilderResult buildApJsonCaptureLoop(
   AdditionalPropertiesPlan plan, {
   required String sourceMapVar,
@@ -159,7 +149,6 @@ ApBuilderResult buildApJsonCaptureLoop(
   return ApBuilderResult(codes: codes, inlineHelpers: helpers);
 }
 
-/// Builds JSON encoding for additional properties.
 ApBuilderResult buildApJsonEncode(
   AdditionalPropertiesPlan plan, {
   required String targetMapVar,
@@ -193,7 +182,6 @@ ApBuilderResult buildApJsonEncode(
   return ApBuilderResult(codes: codes, inlineHelpers: encoded.inlineFunctions);
 }
 
-/// Builds simple or form capture for unknown keys.
 ApFlatCaptureResult buildApFlatCaptureLoop(
   AdditionalPropertiesPlan plan, {
   required FlatWireFormat format,
@@ -267,7 +255,6 @@ ApFlatCaptureResult buildApFlatCaptureLoop(
   }
 }
 
-/// Builds flat entries, omitting null values and rejecting key collisions.
 ApBuilderResult buildApPropertyValueEntries(
   AdditionalPropertiesPlan plan, {
   required String targetVar,

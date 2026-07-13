@@ -484,7 +484,6 @@ class AllOfGenerator {
       );
     }
 
-    // With additional properties: decode map, collect unknown keys
     final apFieldName = nameManager.additionalPropertiesFieldName(
       normalizedProperties,
     );

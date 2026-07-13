@@ -3,30 +3,24 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/flat_value_codec_plan.dart';
 import 'package:tonik_generate/src/util/property_value_expression_generator.dart';
 
-/// Pure-map conversion result.
 sealed class MapPropertyValueConversion {
   const MapPropertyValueConversion();
 }
 
-/// Supported pure-map conversion.
 final class SupportedMapPropertyValueConversion
     extends MapPropertyValueConversion {
   const SupportedMapPropertyValueConversion(this.expression);
 
-  /// Generated property-value map.
   final Expression expression;
 }
 
-/// Unsupported pure-map conversion.
 final class UnsupportedMapPropertyValueConversion
     extends MapPropertyValueConversion {
   const UnsupportedMapPropertyValueConversion(this.reason);
 
-  /// Unsupported reason.
   final String reason;
 }
 
-/// Converts [receiver] using the shared flat plan.
 MapPropertyValueConversion buildMapPropertyValueConversion(
   Expression receiver,
   MapModel model, {

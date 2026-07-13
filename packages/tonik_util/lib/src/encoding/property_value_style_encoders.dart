@@ -58,9 +58,9 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
   }
 }
 
-/// Style encoders for raw property values.
+/// Enforces empty-value and URI-escaping rules for object-valued parameters.
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
-  /// Encodes this property map as comma-separated URI key/value pairs.
+  /// Produces alternating key/value tokens with configurable URI escaping.
   String toUri({
     required bool allowEmpty,
     bool useQueryComponent = false,
@@ -89,10 +89,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
         .join(',');
   }
 
-  /// Encodes this property map using simple style encoding.
-  ///
-  /// When [literal] is true, keys and values are emitted without URI encoding,
-  /// as required for HTTP header field-values.
+  /// Set [literal] for header field-values that must bypass URI encoding.
   String toSimple({
     required bool explode,
     required bool allowEmpty,
@@ -114,7 +111,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return _collapsedPairs(this, literal: literal);
   }
 
-  /// Encodes this property map using label style encoding.
+  /// Emits `.key=value` pairs when exploded and `.key,value` when collapsed.
   String toLabel({required bool explode, required bool allowEmpty}) {
     _guardEmpty(this, allowEmpty: allowEmpty);
     if (isEmpty) {
@@ -132,7 +129,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return '.${_collapsedPairs(this, literal: false)}';
   }
 
-  /// Encodes this property map using matrix style encoding.
+  /// Uses property names when exploded and [paramName] when collapsed.
   String toMatrix(
     String paramName, {
     required bool explode,
@@ -154,7 +151,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return ';$paramName=${_collapsedPairs(this, literal: false)}';
   }
 
-  /// Renders unescaped multipart style parts.
+  /// Leaves values unescaped for the multipart encoder to transfer-encode.
   List<ParameterEntry> toRawStyleParts(
     String paramName, {
     required bool explode,
@@ -176,9 +173,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return [(name: paramName, value: parts.join(','))];
   }
 
-  /// Encodes this property map using deepObject style encoding.
-  ///
-  /// [allowReserved] applies to values only; keys are always component-encoded.
+  /// Keeps keys component-encoded when [allowReserved] preserves value bytes.
   /// Throws [EncodingException] for a non-explode call or an array value, and
   /// [EmptyValueException] on an empty map or value under `allowEmpty: false`.
   List<ParameterEntry> toDeepObject(

@@ -410,7 +410,6 @@ BuiltExpression _buildListFromJsonBody(
       result = mapList(listExpr, mapFunction);
 
     case final MapModel mapModel:
-      // The map decoder owns element nullability.
       final inner = _buildMapFromJsonExpression(
         'e',
         mapModel,
