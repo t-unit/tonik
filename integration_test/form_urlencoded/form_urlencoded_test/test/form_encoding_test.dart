@@ -312,6 +312,20 @@ void main() {
       expect(requestData, 'tags=a,b');
     });
 
+    test('omits an empty array property with explicit explode false', () async {
+      const form = ArrayExplodeForm(tags: []);
+
+      final response = await api.postArrayExplodeFalseForm(body: form);
+
+      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+
+      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+          .response
+          .requestOptions
+          .data;
+      expect(requestData, '');
+    });
+
     test('comma-joins a spaceDelimited array property with explode omitted',
         () async {
       const form = ArrayExplodeForm(tags: ['a', 'b']);
