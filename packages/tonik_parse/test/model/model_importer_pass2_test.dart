@@ -325,10 +325,11 @@ void main() {
 
     group('contentEncoding string in _createPrimitiveModel', () {
       test(
-        'top-level string with contentEncoding creates BinaryModel alias',
+        'top-level string with contentEncoding: base64 creates '
+        'Base64Model alias',
         () {
           const spec = {
-            'openapi': '3.0.0',
+            'openapi': '3.1.0',
             'info': {'title': 'Test API', 'version': '1.0.0'},
             'paths': <String, dynamic>{},
             'components': {
@@ -349,9 +350,36 @@ void main() {
           expect(model, isA<AliasModel>());
 
           final alias = model as AliasModel;
-          expect(alias.model, isA<BinaryModel>());
+          expect(alias.model, isA<Base64Model>());
         },
       );
+
+      test('contentEncoding: base64 overrides format: binary', () {
+        const spec = {
+          'openapi': '3.1.0',
+          'info': {'title': 'Test API', 'version': '1.0.0'},
+          'paths': <String, dynamic>{},
+          'components': {
+            'schemas': {
+              'FileData': {
+                'type': 'string',
+                'format': 'binary',
+                'contentEncoding': 'base64',
+              },
+            },
+          },
+        };
+
+        final api = Importer().import(spec);
+
+        final model = api.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'FileData',
+        );
+        expect(model, isA<AliasModel>());
+
+        final alias = model as AliasModel;
+        expect(alias.model, isA<Base64Model>());
+      });
     });
 
     group('ClassModel shell with not schema', () {

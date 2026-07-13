@@ -305,9 +305,9 @@ class ModelImporter {
         DecimalModel(context: context),
       'string' when schema.format == 'uri' || schema.format == 'url' =>
         UriModel(context: context),
-      'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.contentEncoding != null =>
         _resolveContentEncodedModel(schema, context),
+      'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.format == 'byte' => Base64Model(context: context),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
@@ -1449,9 +1449,9 @@ class ModelImporter {
         DecimalModel(context: context),
       'string' when schema.format == 'uri' || schema.format == 'url' =>
         UriModel(context: context),
-      'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.contentEncoding != null =>
         _resolveContentEncodedModel(schema, context),
+      'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.format == 'byte' => Base64Model(context: context),
       'string' when schema.enumerated != null => _parseEnum<String>(
         name,
@@ -1510,12 +1510,18 @@ class ModelImporter {
     if (mediaType != null && _contentMediaTypes.containsKey(mediaType)) {
       return switch (_contentMediaTypes[mediaType]!) {
         .text => StringModel(context: context),
-        .binary => BinaryModel(context: context),
+        .binary => _contentEncodedBinaryModel(schema, context),
       };
     }
 
-    return BinaryModel(context: context);
+    return _contentEncodedBinaryModel(schema, context);
   }
+
+  Model _contentEncodedBinaryModel(Schema schema, Context context) =>
+      switch (schema.contentEncoding?.toLowerCase()) {
+        'base64' => Base64Model(context: context),
+        _ => BinaryModel(context: context),
+      };
 
   OneOfModel _parseMultiType(
     List<String> types,

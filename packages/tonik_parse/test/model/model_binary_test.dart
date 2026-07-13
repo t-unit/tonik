@@ -141,7 +141,7 @@ void main() {
     });
 
     test(
-      'returns BinaryModel for contentEncoding: base64 without config',
+      'returns Base64Model for contentEncoding: base64 without config',
       () {
         final context = Context.initial().pushAll(['components', 'schemas']);
 
@@ -150,9 +150,7 @@ void main() {
           context,
         );
 
-        // Without contentMediaTypes config, contentEncoding falls back to
-        // BinaryModel
-        expect(result, isA<BinaryModel>());
+        expect(result, isA<Base64Model>());
         expect(result.context.path, ['components', 'schemas']);
       },
     );
@@ -248,6 +246,31 @@ void main() {
             contentSchema: null,
             rawDefault: null,
           ),
+          'EncodedData': Schema(
+            ref: null,
+            type: ['string'],
+            format: null,
+            required: [],
+            enumerated: null,
+            allOf: null,
+            anyOf: null,
+            oneOf: null,
+            not: null,
+            items: null,
+            properties: {},
+            description: 'Base64 encoded binary data',
+            isNullable: false,
+            discriminator: null,
+            isDeprecated: false,
+            uniqueItems: false,
+            xDartName: null,
+            xDartEnum: null,
+            defs: null,
+            contentEncoding: 'base64',
+            contentMediaType: null,
+            contentSchema: null,
+            rawDefault: null,
+          ),
         },
         responses: {},
         parameters: {},
@@ -286,6 +309,19 @@ void main() {
       expect(base64Data, isA<AliasModel>());
       expect((base64Data as AliasModel).model, isA<Base64Model>());
     });
+
+    test(
+      'creates AliasModel wrapping Base64Model for named '
+      'contentEncoding: base64 schema',
+      () {
+        final encodedData = importer.models.firstWhere(
+          (m) => m is NamedModel && m.name == 'EncodedData',
+        );
+
+        expect(encodedData, isA<AliasModel>());
+        expect((encodedData as AliasModel).model, isA<Base64Model>());
+      },
+    );
   });
 
   group('contentMediaType parsing', () {
@@ -315,7 +351,6 @@ void main() {
       tags: [],
     );
 
-    // contentEncoding without config should fallback to BinaryModel.
     final stringWithEncodingAndMediaType = Schema(
       ref: null,
       type: ['string'],
@@ -342,8 +377,6 @@ void main() {
       rawDefault: null,
     );
 
-    // contentEncoding without contentMediaType should also fallback
-    // to BinaryModel.
     final stringWithEncodingNoMediaType = Schema(
       ref: null,
       type: ['string'],
@@ -370,8 +403,35 @@ void main() {
       rawDefault: null,
     );
 
+    final stringWithBinaryFormatAndBase64Encoding = Schema(
+      ref: null,
+      type: ['string'],
+      format: 'binary',
+      required: [],
+      enumerated: null,
+      allOf: null,
+      anyOf: null,
+      oneOf: null,
+      not: null,
+      items: null,
+      properties: {},
+      description: '',
+      isNullable: false,
+      discriminator: null,
+      isDeprecated: false,
+      uniqueItems: false,
+      xDartName: null,
+      xDartEnum: null,
+      defs: null,
+      contentEncoding: 'base64',
+      contentMediaType: null,
+      contentSchema: null,
+      rawDefault: null,
+    );
+
     test(
-      'returns BinaryModel when contentEncoding present (fallback, no config)',
+      'returns Base64Model for contentEncoding: base64 with unconfigured '
+      'contentMediaType',
       () {
         final importer = ModelImporter(
           openApiObject,
@@ -384,12 +444,12 @@ void main() {
           context,
         );
 
-        expect(result, isA<BinaryModel>());
+        expect(result, isA<Base64Model>());
       },
     );
 
-    test('returns BinaryModel when contentEncoding present but no '
-        'contentMediaType (fallback)', () {
+    test('returns Base64Model for contentEncoding: base64 without '
+        'contentMediaType', () {
       final importer = ModelImporter(
         openApiObject,
         exampleImporter: ExampleImporter(openApiObject: openApiObject),
@@ -401,10 +461,26 @@ void main() {
         context,
       );
 
-      expect(result, isA<BinaryModel>());
+      expect(result, isA<Base64Model>());
     });
 
-    test('returns BinaryModel when config maps contentMediaType to binary', () {
+    test('contentEncoding: base64 overrides format: binary', () {
+      final importer = ModelImporter(
+        openApiObject,
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
+      )..import();
+      final context = Context.initial().pushAll(['components', 'schemas']);
+
+      final result = importer.importSchema(
+        stringWithBinaryFormatAndBase64Encoding,
+        context,
+      );
+
+      expect(result, isA<Base64Model>());
+    });
+
+    test('returns Base64Model for contentEncoding: base64 when config maps '
+        'contentMediaType to binary', () {
       final importer = ModelImporter(
         openApiObject,
         contentMediaTypes: {
@@ -416,6 +492,88 @@ void main() {
       final context = Context.initial().pushAll(['components', 'schemas']);
       final result = importer.importSchema(
         stringWithEncodingAndMediaType,
+        context,
+      );
+
+      expect(result, isA<Base64Model>());
+    });
+
+    test('returns Base64Model for uppercase contentEncoding value', () {
+      final stringWithUppercaseEncoding = Schema(
+        ref: null,
+        type: ['string'],
+        format: null,
+        required: [],
+        enumerated: null,
+        allOf: null,
+        anyOf: null,
+        oneOf: null,
+        not: null,
+        items: null,
+        properties: {},
+        description: '',
+        isNullable: false,
+        discriminator: null,
+        isDeprecated: false,
+        uniqueItems: false,
+        xDartName: null,
+        xDartEnum: null,
+        defs: null,
+        contentEncoding: 'BASE64',
+        contentMediaType: null,
+        contentSchema: null,
+        rawDefault: null,
+      );
+
+      final importer = ModelImporter(
+        openApiObject,
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
+      )..import();
+      final context = Context.initial().pushAll(['components', 'schemas']);
+
+      final result = importer.importSchema(
+        stringWithUppercaseEncoding,
+        context,
+      );
+
+      expect(result, isA<Base64Model>());
+    });
+
+    test('returns BinaryModel for unsupported contentEncoding', () {
+      final stringWithUnsupportedEncoding = Schema(
+        ref: null,
+        type: ['string'],
+        format: null,
+        required: [],
+        enumerated: null,
+        allOf: null,
+        anyOf: null,
+        oneOf: null,
+        not: null,
+        items: null,
+        properties: {},
+        description: '',
+        isNullable: false,
+        discriminator: null,
+        isDeprecated: false,
+        uniqueItems: false,
+        xDartName: null,
+        xDartEnum: null,
+        defs: null,
+        contentEncoding: 'quoted-printable',
+        contentMediaType: null,
+        contentSchema: null,
+        rawDefault: null,
+      );
+
+      final importer = ModelImporter(
+        openApiObject,
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
+      )..import();
+      final context = Context.initial().pushAll(['components', 'schemas']);
+
+      final result = importer.importSchema(
+        stringWithUnsupportedEncoding,
         context,
       );
 

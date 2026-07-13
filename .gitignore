@@ -58,3 +58,15 @@ coverage/
 
 # Internal planning docs
 docs/plans/
+
+# Local agent configuration
+AGENTS.md
+.agents/
+.claude/
+.codex/
+
+# Local bug-hunting tools and findings
+/bugs/
+/bugs_oas/
+/findings/
+/scripts/*bug_hunter*
