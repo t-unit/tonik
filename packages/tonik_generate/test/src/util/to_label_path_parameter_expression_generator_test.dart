@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
@@ -7,6 +8,9 @@ import 'package:tonik_generate/src/util/to_label_path_parameter_expression_gener
 void main() {
   late Context context;
   late DartEmitter emitter;
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     context = Context.initial();
@@ -15,6 +19,15 @@ void main() {
 
   String emit(BuiltExpression built) =>
       built.expression.accept(emitter).toString();
+
+  String methodBody(BuiltExpression built) {
+    final method = Method(
+      (b) => b
+        ..name = 'test'
+        ..body = declareFinal('result').assign(built.expression).statement,
+    );
+    return format(method.accept(emitter).toString());
+  }
 
   group('buildToLabelPathParameterExpression', () {
     test('generates toLabel expression for primitive path parameter', () {
@@ -702,9 +715,16 @@ void main() {
         examples: const [],
         defaultValue: null,
       );
+      final built = buildToLabelPathParameterExpression('tags', parameter);
       expect(
-        emit(buildToLabelPathParameterExpression('tags', parameter)),
-        'tags.toLabel(explode: false, allowEmpty: false, )',
+        collapseWhitespace(methodBody(built)),
+        collapseWhitespace(format('''
+          test() {
+            final result = tags
+                .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                .toLabel(explode: false, allowEmpty: false);
+          }
+        ''')),
       );
     });
 
@@ -729,17 +749,20 @@ void main() {
           examples: const [],
           defaultValue: null,
         );
-        final result = emit(
+        final result = methodBody(
           buildToLabelPathParameterExpression('counts', parameter),
         );
         expect(
           collapseWhitespace(result),
-          collapseWhitespace(
-            [
-              'counts.map((k, v, ) => MapEntry(k, v.toString(), ))',
-              '.toLabel(explode: false, allowEmpty: false, )',
-            ].join(),
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = counts
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                  )
+                  .toLabel(explode: false, allowEmpty: false);
+            }
+          ''')),
         );
       },
     );
@@ -893,21 +916,30 @@ void main() {
           examples: const [],
           defaultValue: null,
         );
-        final result = emit(
+        final result = methodBody(
           buildToLabelPathParameterExpression('items', parameter),
         );
         expect(
           collapseWhitespace(result),
-          collapseWhitespace(
-            [
-              'items.map((e) => e.map((k, v, ) ',
-              '=> MapEntry(k, v.toString(), ))',
-              '.toLabel(explode: false, allowEmpty: false, ))',
-              '.toList()',
-              '.toLabel(explode: false, ',
-              'allowEmpty: false, alreadyEncoded: true, )',
-            ].join(),
-          ),
+          collapseWhitespace(format('''
+            test() {
+              final result = items
+                  .map(
+                    (e) => e
+                        .map(
+                          (k, v) =>
+                              MapEntry(k, PropertyValue.scalar(v.toString())),
+                        )
+                        .toLabel(explode: false, allowEmpty: false),
+                  )
+                  .toList()
+                  .toLabel(
+                    explode: false,
+                    allowEmpty: false,
+                    alreadyEncoded: true,
+                  );
+            }
+          ''')),
         );
       },
     );

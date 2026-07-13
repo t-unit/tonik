@@ -803,6 +803,57 @@ void main() {
         expect(result, {'name': 'John'});
         expect(result.containsKey('extra'), isFalse);
       });
+
+      test('throws for an orphaned token without = in exploded input', () {
+        expect(
+          () => 'name=John,extra=1,2'.decodeObject(
+            explode: true,
+            explodeSeparator: ',',
+            expectedKeys: {'name'},
+            listKeys: {},
+            captureAdditionalKeys: true,
+          ),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('skips an orphaned token without = when captureAdditionalKeys '
+          'is false', () {
+        final result = 'name=John,orphan'.decodeObject(
+          explode: true,
+          explodeSeparator: ',',
+          expectedKeys: {'name'},
+          listKeys: {},
+        );
+
+        expect(result, {'name': 'John'});
+      });
+
+      test('throws for a repeated additional key in exploded input', () {
+        expect(
+          () => 'name=John&extra=1&extra=2'.decodeObject(
+            explode: true,
+            explodeSeparator: '&',
+            expectedKeys: {'name'},
+            listKeys: {},
+            captureAdditionalKeys: true,
+          ),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
+
+      test('throws for a dangling additional key in non-exploded input', () {
+        expect(
+          () => 'name,John,extra'.decodeObject(
+            explode: false,
+            explodeSeparator: '&',
+            expectedKeys: {'name'},
+            listKeys: {},
+            captureAdditionalKeys: true,
+          ),
+          throwsA(isA<InvalidFormatException>()),
+        );
+      });
     });
   });
 }

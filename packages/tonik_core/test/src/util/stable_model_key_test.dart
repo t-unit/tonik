@@ -810,6 +810,133 @@ void main() {
     );
   });
 
+  group('additional properties in stable keys', () {
+    ClassModel unnamedClass({
+      AdditionalPropertiesPolicy? additionalPropertiesPolicy,
+    }) => ClassModel(
+      properties: [
+        Property(
+          name: 'id',
+          model: StringModel(context: context),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        ),
+      ],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+      additionalPropertiesPolicy: additionalPropertiesPolicy,
+    );
+
+    test(
+      'classes differing only in additional-properties presence get '
+      'different keys',
+      () {
+        final closed = unnamedClass();
+        final open = unnamedClass(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
+        );
+
+        expect(
+          sorter.stableKeyOf(closed),
+          isNot(sorter.stableKeyOf(open)),
+        );
+      },
+    );
+
+    test(
+      'classes differing only in additional-properties value model get '
+      'different keys',
+      () {
+        final stringValued = unnamedClass(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: StringModel(context: context),
+          ),
+        );
+        final intValued = unnamedClass(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: IntegerModel(context: context),
+          ),
+        );
+
+        expect(
+          sorter.stableKeyOf(stringValued),
+          isNot(sorter.stableKeyOf(intValued)),
+        );
+      },
+    );
+
+    test(
+      'implicit and explicit unrestricted additional properties get '
+      'different keys',
+      () {
+        final implicit = unnamedClass();
+        final explicit = unnamedClass(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
+        );
+
+        expect(
+          sorter.stableKeyOf(implicit),
+          isNot(sorter.stableKeyOf(explicit)),
+        );
+      },
+    );
+
+    test(
+      'unrestricted and forbidden additional properties get different keys',
+      () {
+        final unrestricted = unnamedClass(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
+        );
+        final forbidden = unnamedClass(
+          additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
+        );
+
+        expect(
+          sorter.stableKeyOf(unrestricted),
+          isNot(sorter.stableKeyOf(forbidden)),
+        );
+      },
+    );
+
+    test(
+      'allOf models differing only in additional properties get '
+      'different keys',
+      () {
+        final sharedContext = context.push('Test').push('allOf');
+        final withoutAp = AllOfModel(
+          models: {StringModel(context: sharedContext)},
+          context: sharedContext,
+          isDeprecated: false,
+          examples: const [],
+        );
+        final withAp = AllOfModel(
+          models: {StringModel(context: sharedContext)},
+          context: sharedContext,
+          isDeprecated: false,
+          examples: const [],
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: StringModel(context: sharedContext),
+          ),
+        );
+
+        expect(
+          sorter.stableKeyOf(withoutAp),
+          isNot(sorter.stableKeyOf(withAp)),
+        );
+      },
+    );
+  });
+
   group('sortDiscriminatedModels', () {
     test('returns consistently ordered list', () {
       final sharedContext = context.push('Test');

@@ -3,7 +3,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
@@ -436,15 +436,23 @@ class OptionsGenerator {
       return;
     }
 
-    if (resolved is MapModel &&
-        !isMapValueTypeSimplyEncodable(resolved.valueModel)) {
-      bodyStatements.add(
-        generateEncodingExceptionExpression(
-          'Map with complex value types cannot be form-encoded '
-          'for cookie $rawName',
-        ).statement,
+    if (resolved is MapModel) {
+      final conversion = buildMapPropertyValueConversion(
+        refer(paramName),
+        resolved,
+        isNullable: false,
+        context: rawName,
       );
-      return;
+      if (conversion is UnsupportedMapPropertyValueConversion) {
+        bodyStatements.add(
+          generateEncodingExceptionExpression(
+            'Map with complex value types cannot be form-encoded '
+            'for cookie $rawName',
+            raw: true,
+          ).statement,
+        );
+        return;
+      }
     }
 
     if (isAnyModelFormValue(model)) {
@@ -476,6 +484,7 @@ class OptionsGenerator {
       paramName: specLiteralString(rawName),
       explode: literalBool(explode),
       allowEmpty: literalBool(true),
+      mapContext: rawName,
     );
 
     if (entries == null) {

@@ -1261,9 +1261,27 @@ Code _buildComplexObjectFileAddition(
     );
   }
 
-  // Content-based mode with application/x-www-form-urlencoded → URL-encode.
   final isStyleBased = propertyEncoding?.isStyleBased ?? false;
-  if (!isStyleBased && propertyEncoding?.contentType == ContentType.form) {
+
+  // Explicit style fields take precedence over contentType.
+  if (isStyleBased) {
+    final style = propertyEncoding?.style;
+    if (style != null && style != EncodingStyle.form) {
+      return generateEncodingExceptionExpression(
+        '${style.name} style is not supported for object multipart '
+        'part $rawName',
+        raw: true,
+      ).statement;
+    }
+    return _buildRawStylePartsAddition(
+      rawName,
+      accessor,
+      explode: propertyEncoding?.explode ?? true,
+      headerVarName: headerVarName,
+    );
+  }
+
+  if (propertyEncoding?.contentType == ContentType.form) {
     return _buildUrlEncodedObjectFileAddition(
       rawName,
       accessor,
@@ -1300,20 +1318,13 @@ Code _buildComplexObjectFileAddition(
   ]).statement;
 }
 
-/// Builds a URL-encoded (`application/x-www-form-urlencoded`) file part for a
-/// complex object in content-based serialization mode.
-///
-/// Calls `toJson()` on the object at runtime, iterates its entries, and builds
-/// a flat `key=value` string joined with `&`. Values that are themselves `Map`
-/// or `List` throw an `EncodingException` at runtime — standard URL encoding
-/// (RFC 3986) does not support nested structures.
 Code _buildUrlEncodedObjectFileAddition(
   String rawName,
   String accessor, {
   String? headerVarName,
 }) {
   final propVarName = accessor.split('.').last.replaceAll('!', '');
-  final partsVarName = '${propVarName}Parts';
+  final entriesVarName = '${propVarName}Entries';
 
   final contentTypeExpr = refer('DioMediaType', 'package:dio/dio.dart')
       .property('parse')
@@ -1324,82 +1335,81 @@ Code _buildUrlEncodedObjectFileAddition(
     if (headerVarName != null) 'headers': refer(headerVarName),
   };
 
+  final joinedBody = refer(entriesVarName)
+      .property('map')
+      .call([
+        Method(
+          (b) => b
+            ..requiredParameters.add(Parameter((p) => p..name = 'e'))
+            ..lambda = true
+            ..body = const Code(r"'${e.name}=${e.value}'"),
+        ).closure,
+      ])
+      .property('join')
+      .call([literalString('&')]);
+
   return Block.of([
-    // final <propName>Parts = <String>[];
-    declareFinal(partsVarName)
+    declareFinal(entriesVarName)
         .assign(
-          literalList(
-            [],
-            refer('String', 'dart:core'),
+          refer(accessor).property('toForm').call(
+            [specLiteralString(rawName)],
+            {
+              'explode': literalTrue,
+              'allowEmpty': literalTrue,
+              'useQueryComponent': literalTrue,
+            },
           ),
         )
         .statement,
-    // for (final entry in (<accessor>.toJson() as Map).entries) {
-    const Code('for (final entry in ('),
-    refer(accessor)
-        .property('toJson')
-        .call([])
-        .asA(
-          refer('Map', 'dart:core'),
-        )
-        .code,
-    const Code(').entries) {'),
-    // final value = entry.value;
-    declareFinal('value').assign(refer('entry').property('value')).statement,
-    // if (value == null) continue;
-    const Code('if (value == null) continue;'),
-    // if (value is Map || value is List) { throw EncodingException(...); }
-    const Code('if (value is '),
-    refer('Map', 'dart:core').code,
-    const Code(' || value is '),
-    refer('List', 'dart:core').code,
-    const Code(') {'),
-    Block.of([
-      const Code('throw '),
-      refer('EncodingException', 'package:tonik_util/tonik_util.dart').code,
-      Code(
-        "('Standard URL encoding does not support nested values "
-        "(property: ' ${specLiteralStringCode(rawName)} "
-        r"', key: ${entry.key}). "
-        "Only flat key=value pairs are allowed.');",
-      ),
-    ]),
-    const Code('}'),
-    // <partsVarName>.add(
-    //   Uri.encodeQueryComponent(entry.key.toString()) +
-    //       '=' +
-    //       Uri.encodeQueryComponent(value.toString()),
-    // );
-    refer(partsVarName).property('add').call([
-      literalList([
-        refer('Uri', 'dart:core').property('encodeQueryComponent').call([
-          refer('entry').property('key').property('toString').call([]),
-        ]),
-        refer('Uri', 'dart:core').property('encodeQueryComponent').call([
-          refer('value').property('toString').call([]),
-        ]),
-      ]).property('join').call([literalString('=')]),
-    ]).statement,
-    const Code('}'),
-    // _$formData.files.add(MapEntry(...));
     refer(r'_$formData').property('files').property('add').call([
       refer('MapEntry', 'dart:core').call([
         specLiteralString(rawName),
         refer(
           'MultipartFile',
           'package:dio/dio.dart',
-        ).property('fromString').call(
-          [
-            refer(partsVarName).property('join').call([literalString('&')]),
-          ],
-          namedArgs,
-        ),
+        ).property('fromString').call([joinedBody], namedArgs),
       ]),
     ]).statement,
   ]);
 }
 
-/// Information about a per-part header parameter in multipart encoding.
+Code _buildRawStylePartsAddition(
+  String rawName,
+  String accessor, {
+  required bool explode,
+  String? headerVarName,
+}) {
+  final propVarName = accessor.split('.').last.replaceAll('!', '');
+  final partsVarName = '${propVarName}RawParts';
+
+  return Block.of([
+    declareFinal(partsVarName)
+        .assign(
+          refer(accessor)
+              .property('parameterProperties')
+              .call([], {'allowEmpty': literalTrue})
+              .property('toRawStyleParts')
+              .call(
+                [specLiteralString(rawName)],
+                {'explode': literalBool(explode)},
+              ),
+        )
+        .statement,
+    Code('for (final _\$part in $partsVarName) {'),
+    refer(r'_$formData').property('files').property('add').call([
+      refer('MapEntry', 'dart:core').call([
+        refer(r'_$part').property('name'),
+        refer('MultipartFile', 'package:dio/dio.dart').property('fromString')
+            .call(
+              [refer(r'_$part').property('value')],
+              {if (headerVarName != null) 'headers': refer(headerVarName)},
+            ),
+      ]),
+    ]).statement,
+    const Code('}'),
+  ]);
+}
+
 typedef MultipartHeaderParamInfo = ({
   RequestContent content,
   String name,
@@ -1410,9 +1420,6 @@ typedef MultipartHeaderParamInfo = ({
   bool isDeprecated,
 });
 
-/// Extracts per-part header parameters from a multipart request content.
-///
-/// Returns info needed to generate method parameters or call arguments.
 List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
   RequestContent content, {
   Set<String> reservedNames = const {},

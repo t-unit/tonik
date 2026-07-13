@@ -2317,6 +2317,38 @@ void main() {
         );
       });
     });
+
+    group('map key validation', () {
+      test('throws EncodingException for map with non-string keys', () {
+        expect(
+          () => encodeAnyToJson({1: 'a'}),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws EncodingException for nested map with non-string keys', () {
+        expect(
+          () => encodeAnyToJson({
+            'outer': {
+              2: 'b',
+            },
+          }),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test(
+        'throws EncodingException for non-string keys in a map inside a list',
+        () {
+          expect(
+            () => encodeAnyToJson([
+              {true: 'c'},
+            ]),
+            throwsA(isA<EncodingException>()),
+          );
+        },
+      );
+    });
   });
 
   group('encodeAnyToUri', () {

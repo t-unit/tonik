@@ -418,10 +418,15 @@ BuiltExpression _buildListFromJsonBody(
         package: package,
         contextClass: contextClass,
         contextProperty: contextProperty,
+        isNullable: isItemNullable,
         useImmutableCollections: useImmutableCollections,
       );
       inlineFunctions.addAll(inner.inlineFunctions);
-      final mapDecoderClosure = elementClosure(inner.unsafeRawBody);
+      final mapDecoderClosure = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body = inner.unsafeRawBody.code,
+      ).closure;
       final mapListExpr = receiver.property(listDecoder).call(
         [],
         contextParam,

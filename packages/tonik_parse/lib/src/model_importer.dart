@@ -193,9 +193,7 @@ class ModelImporter {
       return;
     }
 
-    if ((schema.properties == null || schema.properties!.isEmpty) &&
-        schema.additionalProperties != null &&
-        schema.additionalProperties != false) {
+    if (_isOpenMapSchema(schema, types)) {
       final model = MapModel(
         valueModel: AnyModel(context: context),
         context: context,
@@ -428,9 +426,7 @@ class ModelImporter {
       return;
     }
 
-    if ((schema.properties == null || schema.properties!.isEmpty) &&
-        schema.additionalProperties != null &&
-        schema.additionalProperties != false) {
+    if (_isOpenMapSchema(schema, types)) {
       _populateMapShell(name, schema, context, existingModel as MapModel);
       applyExamples(existingModel, examples);
       return;
@@ -636,7 +632,7 @@ class ModelImporter {
   ) {
     final modelContext = context.push(name);
 
-    shell.additionalProperties = _resolveAdditionalProperties(
+    shell.additionalPropertiesPolicy = _resolveAdditionalProperties(
       schema,
       modelContext,
     );
@@ -832,7 +828,6 @@ class ModelImporter {
     }
   }
 
-  /// Populates a MapModel shell's valueModel.
   void _populateMapShell(
     String name,
     Schema schema,
@@ -841,13 +836,23 @@ class ModelImporter {
   ) {
     final ap = schema.additionalProperties;
     final mapContext = context.push(name);
-    if (ap == true) {
-      shell.valueModel = AnyModel(context: mapContext);
-    } else if (ap is Schema) {
+    if (ap is Schema && !_isEmptySchema(ap)) {
       shell
         ..valueModel = _resolveSchemaRef(null, ap, mapContext)
         ..isValueNullable = ap.isNullable ?? ap.type.contains('null');
+    } else {
+      shell.valueModel = AnyModel(context: mapContext);
     }
+  }
+
+  // Bare objects need maps to preserve unknown members.
+  bool _isOpenMapSchema(Schema schema, List<String> types) {
+    if (schema.properties != null && schema.properties!.isNotEmpty) {
+      return false;
+    }
+    final ap = schema.additionalProperties;
+    if (ap == false) return false;
+    return ap != null || types.contains('object');
   }
 
   /// Populates a ListModel shell.
@@ -876,7 +881,10 @@ class ModelImporter {
     Context context,
     ClassModel shell,
   ) {
-    shell.additionalProperties = _resolveAdditionalProperties(schema, context);
+    shell.additionalPropertiesPolicy = _resolveAdditionalProperties(
+      schema,
+      context,
+    );
 
     if (schema.not != null) {
       log.warning(
@@ -1398,19 +1406,16 @@ class ModelImporter {
       return _parseMultiType(types, schema, hasNullType, context, name);
     }
 
-    if ((schema.properties == null || schema.properties!.isEmpty) &&
-        schema.additionalProperties != null &&
-        schema.additionalProperties != false) {
+    if (_isOpenMapSchema(schema, types)) {
       final ap = schema.additionalProperties;
       final mapContext = context.push(name ?? 'map');
       Model valueModel;
       var isValueNullable = false;
-      if (ap == true) {
-        valueModel = AnyModel(context: mapContext);
+      if (ap is Schema && !_isEmptySchema(ap)) {
+        valueModel = _resolveSchemaRef(null, ap, mapContext);
+        isValueNullable = ap.isNullable ?? ap.type.contains('null');
       } else {
-        final apSchema = ap! as Schema;
-        valueModel = _resolveSchemaRef(null, apSchema, mapContext);
-        isValueNullable = apSchema.isNullable ?? apSchema.type.contains('null');
+        valueModel = AnyModel(context: mapContext);
       }
       final model = MapModel(
         valueModel: valueModel,
@@ -1618,7 +1623,10 @@ class ModelImporter {
       context: modelContext,
       name: name,
       description: schema.description,
-      additionalProperties: _resolveAdditionalProperties(schema, modelContext),
+      additionalPropertiesPolicy: _resolveAdditionalProperties(
+        schema,
+        modelContext,
+      ),
       isNullable: schema.isNullable ?? false,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
@@ -1825,21 +1833,13 @@ class ModelImporter {
     return null;
   }
 
-  AdditionalProperties? _resolveAdditionalProperties(
+  AdditionalPropertiesPolicy _resolveAdditionalProperties(
     Schema schema,
     Context context,
   ) {
     final ap = schema.additionalProperties;
-    if (ap == null) return null;
-    if (ap == false) return const NoAdditionalProperties();
-    if (ap == true) return const UnrestrictedAdditionalProperties();
-    if (ap is Schema) {
-      // An empty schema {} matches any value in JSON Schema (like true).
-      // As additionalProperties it means "any extra keys, any value type"
-      // — the same as additionalProperties: true.
-      if (_isEmptySchema(ap)) {
-        return const UnrestrictedAdditionalProperties();
-      }
+    if (ap == false) return const ForbiddenAdditionalProperties();
+    if (ap is Schema && !_isEmptySchema(ap)) {
       var valueModel = _resolveSchemaRef(null, ap, context);
       final isNullable = ap.isNullable ?? ap.type.contains('null');
       if (isNullable && !valueModel.isEffectivelyNullable) {
@@ -1851,9 +1851,14 @@ class ModelImporter {
           examples: const [],
         );
       }
-      return TypedAdditionalProperties(valueModel: valueModel);
+      return AllowedAdditionalProperties(valueModel: valueModel);
     }
-    return null;
+    return AllowedAdditionalProperties(
+      valueModel: AnyModel(context: context),
+      origin: ap == null
+          ? AdditionalPropertiesOrigin.implicitDefault
+          : AdditionalPropertiesOrigin.explicit,
+    );
   }
 
   /// Returns `true` when the schema carries no meaningful constraints,
@@ -1884,7 +1889,7 @@ class ModelImporter {
       properties: properties,
       context: context,
       description: schema.description,
-      additionalProperties: _resolveAdditionalProperties(schema, context),
+      additionalPropertiesPolicy: _resolveAdditionalProperties(schema, context),
       isNullable:
           schema.isNullable ??
           (schema.type.contains('object') && schema.type.contains('null')),

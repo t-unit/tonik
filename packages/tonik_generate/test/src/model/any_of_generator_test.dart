@@ -3428,7 +3428,7 @@ String uriEncode({ required bool allowEmpty, bool useQueryComponent = false, boo
       expect(generated.trim(), format(expected).trim());
     });
 
-    test('toJson uses encodeAnyToJson for AnyModel field', () {
+    test('toJson uses the unknown-value codec for AnyModel field', () {
       final klass = generator.generateClass(makeMixedFilter());
       final method = klass.methods.firstWhere((m) => m.name == 'toJson');
       final generated = format(method.accept(emitter).toString());
@@ -3439,7 +3439,10 @@ Object? toJson() {
   final _$values = <Object?>{};
   final _$mapValues = <Map<String, Object?>>[];
   if (object != null) {
-    final Object? _$objectJson = encodeAnyToJson(object!);
+    final Object? _$objectJson = encodeUnknownJson(
+      object!,
+      context: r'MixedFilter.Object',
+    );
     if (_$objectJson is Map<String, Object?>) {
       _$mapValues.add(_$objectJson);
     } else {
@@ -3722,7 +3725,7 @@ EncodingShape get currentEncodingShape {
       expect(generated.trim(), format(expected).trim());
     });
 
-    test('toJson encodes AnyModel field via encodeAnyToJson', () {
+    test('toJson encodes AnyModel field via the unknown-value codec', () {
       final model = AnyOfModel(
         isDeprecated: false,
         name: 'OnlyAny',
@@ -3743,7 +3746,10 @@ Object? toJson() {
   final _$values = <Object?>{};
   final _$mapValues = <Map<String, Object?>>[];
   if (object != null) {
-    final Object? _$objectJson = encodeAnyToJson(object!);
+    final Object? _$objectJson = encodeUnknownJson(
+      object!,
+      context: r'OnlyAny.Object',
+    );
     if (_$objectJson is Map<String, Object?>) {
       _$mapValues.add(_$objectJson);
     } else {

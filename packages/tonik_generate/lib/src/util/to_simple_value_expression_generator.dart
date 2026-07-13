@@ -2,7 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 
 /// Returns a non-null reason if simple-encoding [model] would produce a
 /// throw expression rather than a real value. Path-generator pre-flight
@@ -13,10 +13,15 @@ String? simpleEncodingThrowReason(Model model) {
     NeverModel() => 'never-typed values',
     BinaryModel() => 'binary values',
     ListModel(:final content) => _listContentThrowReason(content),
-    MapModel(:final valueModel)
-        when !isMapValueTypeSimplyEncodable(valueModel) =>
-      'map with complex value types',
-    MapModel() => null,
+    MapModel() => switch (buildMapPropertyValueConversion(
+      refer('_'),
+      model,
+      isNullable: false,
+      context: model.name ?? 'map parameter value',
+    )) {
+      SupportedMapPropertyValueConversion() => null,
+      UnsupportedMapPropertyValueConversion() => 'map with complex value types',
+    },
     AliasModel(:final model) => simpleEncodingThrowReason(model),
     ClassModel() ||
     EnumModel() ||
@@ -52,10 +57,15 @@ String? _listContentThrowReason(Model content) {
     // `list.toSimple(...)` which has no extension on `List<Object?>` — the
     // predicate intercepts before codegen so the bad code never lands.
     NeverModel() || BinaryModel() || ListModel() || AnyModel() => unsupported,
-    MapModel(:final valueModel)
-        when !isMapValueTypeSimplyEncodable(valueModel) =>
-      unsupported,
-    MapModel() => null,
+    MapModel() => switch (buildMapPropertyValueConversion(
+      refer('_'),
+      content,
+      isNullable: false,
+      context: content.name ?? 'map parameter value',
+    )) {
+      SupportedMapPropertyValueConversion() => null,
+      UnsupportedMapPropertyValueConversion() => unsupported,
+    },
     AliasModel(:final model) => _listContentThrowReason(model),
     ClassModel() ||
     EnumModel() ||
@@ -387,32 +397,30 @@ Expression _buildMapSimpleExpression(
   required bool allowEmpty,
   bool literal = false,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     receiver,
     model,
     isNullable: isNullable,
+    context: model.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
-    return generateEncodingExceptionExpression(
-      'Map with complex value types cannot be simple-encoded.',
-    );
-  }
-
-  // For StringModel values, converted == receiver (identity).
-  // For other types, converted is the .map() call result.
-  final toSimpleAccess = (isNullable && converted == receiver)
-      ? converted.nullSafeProperty('toSimple')
-      : converted.property('toSimple');
-
-  return toSimpleAccess.call(
-    [],
-    {
-      'explode': literalBool(explode),
-      'allowEmpty': literalBool(allowEmpty),
-      if (literal) 'literal': literalBool(true),
-    },
-  );
+  return switch (conversion) {
+    SupportedMapPropertyValueConversion(:final expression) =>
+      (isNullable
+              ? expression.nullSafeProperty('toSimple')
+              : expression.property('toSimple'))
+          .call(
+            [],
+            {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(allowEmpty),
+              if (literal) 'literal': literalBool(true),
+            },
+          ),
+    UnsupportedMapPropertyValueConversion() =>
+      generateEncodingExceptionExpression(
+        'Map with complex value types cannot be simple-encoded.',
+      ),
+  };
 }
 
 Expression _buildListMapContentSimpleExpression(
@@ -423,23 +431,24 @@ Expression _buildListMapContentSimpleExpression(
   required bool allowEmpty,
   bool literal = false,
 }) {
-  final converted = buildMapToStringMapExpression(
+  final conversion = buildMapPropertyValueConversion(
     refer('e'),
     contentModel,
     isNullable: false,
+    context: contentModel.name ?? 'map parameter value',
   );
-
-  if (converted == null) {
+  if (conversion is UnsupportedMapPropertyValueConversion) {
     return generateEncodingExceptionExpression(
       'List of maps with complex value types cannot be simple-encoded.',
     );
   }
+  final converted =
+      (conversion as SupportedMapPropertyValueConversion).expression;
 
   final listMapAccess = isNullable
       ? receiver.nullSafeProperty('map')
       : receiver.property('map');
 
-  // Each element is converted to Map<String, String>, then simple-encoded.
   return listMapAccess
       .call([
         Method(

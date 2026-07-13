@@ -1,31 +1,12 @@
 import 'package:logging/logging.dart';
 import 'package:meta/meta.dart';
+import 'package:tonik_core/src/model/additional_properties_policy.dart';
 import 'package:tonik_core/src/model/effective_default.dart';
 import 'package:tonik_core/src/model/example.dart';
 import 'package:tonik_core/src/util/context.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 final Logger _aliasModelLog = Logger('AliasModel');
-
-sealed class AdditionalProperties {
-  const AdditionalProperties();
-}
-
-/// `additionalProperties: true` or `{}` → `Map<String, Object?>`
-class UnrestrictedAdditionalProperties extends AdditionalProperties {
-  const UnrestrictedAdditionalProperties();
-}
-
-/// `additionalProperties: {schema}` → `Map<String, T>`
-class TypedAdditionalProperties extends AdditionalProperties {
-  const TypedAdditionalProperties({required this.valueModel});
-  final Model valueModel;
-}
-
-/// additionalProperties: false → no-op (no map field, no validation)
-class NoAdditionalProperties extends AdditionalProperties {
-  const NoAdditionalProperties();
-}
 
 sealed class Model {
   Model({required this.context});
@@ -288,11 +269,18 @@ class ClassModel extends Model with NamedModel {
     this.name,
     this.nameOverride,
     this.description,
-    this.additionalProperties,
+    AdditionalPropertiesPolicy? additionalPropertiesPolicy,
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
-  });
+  }) {
+    this.additionalPropertiesPolicy =
+        additionalPropertiesPolicy ??
+        AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+          origin: AdditionalPropertiesOrigin.implicitDefault,
+        );
+  }
 
   @override
   final String? name;
@@ -301,7 +289,7 @@ class ClassModel extends Model with NamedModel {
   String? nameOverride;
   List<Property> properties;
   String? description;
-  AdditionalProperties? additionalProperties;
+  late AdditionalPropertiesPolicy additionalPropertiesPolicy;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
@@ -315,7 +303,7 @@ class ClassModel extends Model with NamedModel {
   String toString() =>
       'ClassModel{name: $name, nameOverride: $nameOverride, '
       'properties: [${properties.map((p) => p.name).join(', ')}], '
-      'additionalProperties: $additionalProperties, '
+      'additionalPropertiesPolicy: $additionalPropertiesPolicy, '
       'description: $description, isDeprecated: $isDeprecated, '
       'examples: $examples}';
 }
@@ -396,11 +384,18 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
     this.name,
     this.nameOverride,
     this.description,
-    this.additionalProperties,
+    AdditionalPropertiesPolicy? additionalPropertiesPolicy,
     this.isNullable = false,
     this.isReadOnly = false,
     this.isWriteOnly = false,
-  });
+  }) {
+    this.additionalPropertiesPolicy =
+        additionalPropertiesPolicy ??
+        AllowedAdditionalProperties(
+          valueModel: AnyModel(context: context),
+          origin: AdditionalPropertiesOrigin.implicitDefault,
+        );
+  }
 
   @override
   final String? name;
@@ -408,7 +403,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   @override
   String? nameOverride;
   String? description;
-  AdditionalProperties? additionalProperties;
+  late AdditionalPropertiesPolicy additionalPropertiesPolicy;
   bool isDeprecated;
   bool isNullable;
   bool isReadOnly;
@@ -423,7 +418,7 @@ class AllOfModel extends Model with NamedModel, CompositeModel {
   String toString() =>
       'AllOfModel{name: $name, nameOverride: $nameOverride, '
       'models: {${models.map((m) => m._ref).join(', ')}}, '
-      'additionalProperties: $additionalProperties, '
+      'additionalPropertiesPolicy: $additionalPropertiesPolicy, '
       'description: $description, isDeprecated: $isDeprecated, '
       'examples: $examples}';
 }

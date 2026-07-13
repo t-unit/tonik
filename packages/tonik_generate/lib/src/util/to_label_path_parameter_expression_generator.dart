@@ -2,7 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 
 /// For lists of non-string primitives, enums, or composite types
 /// (OneOf, AnyOf), items are first mapped to their URI-encoded string
@@ -115,17 +115,19 @@ Expression _buildToLabelPathParameterExpression(
     }
 
     if (contentModel is MapModel) {
-      final converted = buildMapToStringMapExpression(
+      final conversion = buildMapPropertyValueConversion(
         refer('e'),
         contentModel,
         isNullable: false,
+        context: contentModel.name ?? 'map parameter value',
       );
-
-      if (converted == null) {
+      if (conversion is UnsupportedMapPropertyValueConversion) {
         return generateEncodingExceptionExpression(
           'Label encoding does not support arrays of maps with complex values',
         );
       }
+      final converted =
+          (conversion as SupportedMapPropertyValueConversion).expression;
 
       return valueRef
           .property('map')
@@ -237,22 +239,23 @@ Expression _buildToLabelPathParameterExpression(
   }
 
   if (model is MapModel) {
-    final converted = buildMapToStringMapExpression(
+    final conversion = buildMapPropertyValueConversion(
       valueRef,
       model,
       isNullable: false,
+      context: model.name ?? 'map parameter value',
     );
-
-    if (converted == null) {
-      return generateEncodingExceptionExpression(
-        'Map with complex value types cannot be label-encoded.',
-      );
-    }
-
-    return converted.property('toLabel').call([], {
-      'explode': explode,
-      'allowEmpty': allowEmpty,
-    });
+    return switch (conversion) {
+      SupportedMapPropertyValueConversion(:final expression) =>
+        expression.property('toLabel').call([], {
+          'explode': explode,
+          'allowEmpty': allowEmpty,
+        }),
+      UnsupportedMapPropertyValueConversion() =>
+        generateEncodingExceptionExpression(
+          'Map with complex value types cannot be label-encoded.',
+        ),
+    };
   }
 
   return valueRef.property('toLabel').call([], {

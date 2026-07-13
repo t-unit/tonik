@@ -1,3 +1,4 @@
+import 'package:tonik_core/src/model/additional_properties_policy.dart';
 import 'package:tonik_core/src/model/model.dart';
 
 /// Computes and caches stable sort keys for models.
@@ -93,8 +94,9 @@ class StableModelSorter {
     if (!visited.add(model)) return '<cycle>';
 
     return switch (model) {
-      AllOfModel(:final models) =>
-        'AllOfModel{${_stableSortedModels(models, visited, depth)}}',
+      AllOfModel(:final models, :final additionalPropertiesPolicy) =>
+        'AllOfModel{${_stableSortedModels(models, visited, depth)},'
+            'ap:${_policyKey(additionalPropertiesPolicy, visited, depth)}}',
       OneOfModel(:final models, :final discriminator) =>
         'OneOfModel{$discriminator,'
             '${_stableSortedDiscriminatedModels(models, visited, depth)}}',
@@ -103,13 +105,18 @@ class StableModelSorter {
             '${_stableSortedDiscriminatedModels(models, visited, depth)}}',
       ListModel(:final content, :final name) =>
         'ListModel{$name,${_computeStableKey(content, visited, depth + 1)}}',
-      ClassModel(:final name, :final properties) =>
+      ClassModel(
+        :final name,
+        :final properties,
+        :final additionalPropertiesPolicy,
+      ) =>
         'ClassModel{'
             '$name,'
             '${properties.map(
               (p) => '${p.name}:'
                   '${_computeStableKey(p.model, visited, depth + 1)}',
-            ).join(',')}'
+            ).join(',')},'
+            'ap:${_policyKey(additionalPropertiesPolicy, visited, depth)}'
             '}',
       EnumModel(:final name, :final values) =>
         'EnumModel{$name,${_stableSortedEnumValues(values)}}',
@@ -136,6 +143,17 @@ class StableModelSorter {
       ),
     };
   }
+
+  String _policyKey(
+    AdditionalPropertiesPolicy policy,
+    Set<Model> visited,
+    int depth,
+  ) => switch (policy) {
+    ForbiddenAdditionalProperties() => 'forbidden',
+    AllowedAdditionalProperties(:final valueModel, :final origin) =>
+      'allowed(${origin.name},'
+          '${_computeStableKey(valueModel, visited, depth + 1)})',
+  };
 
   /// Sorts models by a cheap deterministic key, then computes full keys
   /// in that fixed order.

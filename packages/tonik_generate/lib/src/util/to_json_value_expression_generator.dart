@@ -5,6 +5,7 @@ import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/inline_helper_context.dart';
 import 'package:tonik_generate/src/util/recursion_detector.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
 /// Creates a [BuiltExpression] that correctly serializes a property to its
@@ -253,11 +254,20 @@ BuiltExpression _buildSerializationExpression(
     case PrimitiveModel():
       return BuiltExpression.simple(directReceiver);
     case AnyModel():
+      final location = [?contextClass, ?contextProperty].join('.');
+      if (location.isEmpty) {
+        return BuiltExpression.simple(
+          refer(
+            'encodeAnyToJson',
+            'package:tonik_util/tonik_util.dart',
+          ).call([directReceiver]),
+        );
+      }
       return BuiltExpression.simple(
         refer(
-          'encodeAnyToJson',
+          'encodeUnknownJson',
           'package:tonik_util/tonik_util.dart',
-        ).call([directReceiver]),
+        ).call([directReceiver], {'context': specLiteralString(location)}),
       );
     default:
       return BuiltExpression.simple(
@@ -740,8 +750,9 @@ bool _needsTransformationImpl(
     IntegerModel() ||
     DoubleModel() ||
     NumberModel() ||
-    BooleanModel() ||
-    AnyModel() => false,
+    BooleanModel() => false,
+    // Any values may contain non-JSON scalar types.
+    AnyModel() => true,
     DateTimeModel() ||
     DecimalModel() ||
     UriModel() ||

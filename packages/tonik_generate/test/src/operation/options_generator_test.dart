@@ -1513,23 +1513,33 @@ void main() {
         'Map<String,String>',
       );
 
-      // For string values, the map is passed directly to toForm.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        contains(
-          collapseWhitespace(r'''
+        collapseWhitespace(format(r'''
+          Options _options({required Map<String, String> labels}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             _$cookieParts.addAll(
-  labels
-.toForm(r'labels', explode: false, allowEmpty: true)
-      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
-);
+              labels
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toForm(r'labels', explode: false, allowEmpty: true)
+                  .map(
+                    (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}',
+                  ),
+            );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
-          '''),
-        ),
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''')),
       );
     });
 
@@ -1581,24 +1591,35 @@ void main() {
         'Map<String,int>',
       );
 
-      // For integer values, the map is converted to Map<String, String> first.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        contains(
-          collapseWhitespace(r'''
+        collapseWhitespace(format(r'''
+          Options _options({required Map<String, int> prefs}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             _$cookieParts.addAll(
-  prefs
-                    .map((k, v) => MapEntry(k, v.toString()))
-                    .toForm(r'prefs', explode: true, allowEmpty: true)
-      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
-);
+              prefs
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                  )
+                  .toForm(r'prefs', explode: true, allowEmpty: true)
+                  .map(
+                    (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}',
+                  ),
+            );
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
-          '''),
-        ),
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''')),
       );
     });
 
@@ -1650,26 +1671,38 @@ void main() {
         'Map<String,int>?',
       );
 
-      // Optional map cookie wraps in null check.
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        contains(
-          collapseWhitespace(r'''
+        collapseWhitespace(format(r'''
+          Options _options({Map<String, int>? settings}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
             final _$cookieParts = <String>[];
             if (settings != null) {
               _$cookieParts.addAll(
-  settings
-                      .map((k, v) => MapEntry(k, v.toString()))
-                      .toForm(r'settings', explode: false, allowEmpty: true)
-      .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
-);
+                settings
+                    .map(
+                      (k, v) =>
+                          MapEntry(k, PropertyValue.scalar(v.toString())),
+                    )
+                    .toForm(r'settings', explode: false, allowEmpty: true)
+                    .map(
+                      (e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}',
+                    ),
+              );
             }
             if (_$cookieParts.isNotEmpty) {
               _$headers[r'Cookie'] = _$cookieParts.join('; ');
             }
-          '''),
-        ),
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''')),
       );
     });
 
@@ -1722,13 +1755,25 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        contains(
-          collapseWhitespace('''
+        collapseWhitespace(format(r'''
+          Options _options({required Map<String, Nested> data}) {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            final _$cookieParts = <String>[];
             throw EncodingException(
-              'Map with complex value types cannot be form-encoded for cookie data',
+              r'Map with complex value types cannot be form-encoded for cookie data',
             );
-          '''),
-        ),
+            if (_$cookieParts.isNotEmpty) {
+              _$headers[r'Cookie'] = _$cookieParts.join('; ');
+            }
+            return Options(
+              method: 'GET',
+              headers: _$headers,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''')),
       );
     });
 
@@ -3191,7 +3236,10 @@ void main() {
             final _$cookieParts = <String>[];
             _$cookieParts.addAll(
   prefs
-                    .map((k, v) => MapEntry(k, v.toString()))
+                    .map(
+                      (k, v) =>
+                          MapEntry(k, PropertyValue.scalar(v.toString())),
+                    )
                     .toForm(r'prefs', explode: false, allowEmpty: true)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );
@@ -3536,7 +3584,7 @@ void main() {
               _$headers['Accept'] = r'*/*';
               final _$cookieParts = <String>[];
               throw EncodingException(
-                'Map with complex value types cannot be form-encoded for cookie data',
+                r'Map with complex value types cannot be form-encoded for cookie data',
               );
               if (_$cookieParts.isNotEmpty) {
                 _$headers[r'Cookie'] = _$cookieParts.join('; ');
@@ -3618,7 +3666,10 @@ void main() {
             if (prefs != null) {
               _$cookieParts.addAll(
   prefs
-                      .map((k, v) => MapEntry(k, v.toString()))
+                      .map(
+                        (k, v) =>
+                            MapEntry(k, PropertyValue.scalar(v.toString())),
+                      )
                       .toForm(r'prefs', explode: false, allowEmpty: true)
       .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}'),
 );

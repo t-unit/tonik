@@ -569,7 +569,9 @@ Object? toJson() => {r'tags': tags};
               defaultValue: null,
             ),
           ],
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           context: context,
           examples: const [],
         );
@@ -641,8 +643,27 @@ factory Flexible.fromJson(Object? json) {
       test('toJson uses .unlock on additional properties', () {
         final generatedClass = generator.generateClass(model);
         final code = _formatClass(generatedClass);
-        const expectedBody = '''
-Object? toJson() => {r'name': name, ...additionalProperties.unlock};
+        const expectedBody = r'''
+Object? toJson() {
+  final _$map = <String, Object?>{r'name': name};
+  const _$knownKeys = {r'name'};
+  for (final _$k in additionalProperties.keys) {
+    if (_$knownKeys.contains(_$k)) {
+      throw EncodingException(
+        r'Additional property keys must not collide with declared wire keys of Flexible',
+      );
+    }
+  }
+  _$map.addAll(
+    additionalProperties.unlock.map(
+      (k, v) => MapEntry(
+        k,
+        encodeUnknownJson(v, context: r'Flexible.additionalProperties'),
+      ),
+    ),
+  );
+  return _$map;
+}
 ''';
         expect(
           collapseWhitespace(code),

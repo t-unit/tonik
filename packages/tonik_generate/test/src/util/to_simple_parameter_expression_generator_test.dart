@@ -445,9 +445,17 @@ void main() {
         allowEmpty: refer('allowEmpty'),
       );
 
-      final generated = format('final result = ${expression.accept(emitter)};');
+      final generated = format('''
+        test() {
+          final result = ${expression.accept(emitter)};
+        }
+      ''');
       const expected = '''
-        final result = value.toSimple(explode: explode, allowEmpty: allowEmpty);
+        test() {
+          final result = value
+              .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+              .toSimple(explode: explode, allowEmpty: allowEmpty);
+        }
       ''';
 
       expect(
@@ -483,7 +491,7 @@ void main() {
         final expected = format('''
         test() {
           final result = value
-              .map((k, v) => MapEntry(k, v.toString()))
+              .map((k, v) => MapEntry(k, PropertyValue.scalar(v.toString())))
               .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''');
@@ -522,7 +530,12 @@ void main() {
         final expected = format('''
         test() {
           final result = value
-              .map((k, v) => MapEntry(k, v.toTimeZonedIso8601String()))
+              .map(
+                (k, v) => MapEntry(
+                  k,
+                  PropertyValue.scalar(v.toTimeZonedIso8601String()),
+                ),
+              )
               .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''');
@@ -568,7 +581,7 @@ void main() {
       final expected = format('''
         test() {
           final result = value
-              .map((k, v) => MapEntry(k, v.toJson()))
+              .map((k, v) => MapEntry(k, PropertyValue.scalar(v.toJson())))
               .toSimple(explode: explode, allowEmpty: allowEmpty);
         }
       ''');
@@ -725,7 +738,9 @@ void main() {
           final result = value
               .map(
                 (e) => e
-                    .map((k, v) => MapEntry(k, v.toString()))
+                    .map(
+                      (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                    )
                     .toSimple(explode: explode, allowEmpty: allowEmpty),
               )
               .toList()

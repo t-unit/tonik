@@ -127,8 +127,6 @@ extension ObjectDecoder on String? {
   /// and comma-separated values (e.g., `a=1,2,3`).
   /// Tokens that don't contain `=` are treated as continuation of the previous
   /// list value.
-  /// Tokens without `=` that are not part of a list are skipped for forward
-  /// compatibility.
   void _parseExploded(
     String value,
     String separator,
@@ -146,6 +144,12 @@ extension ObjectDecoder on String? {
       final parts = pair.split('=');
 
       if (parts.length == 1) {
+        if (captureAdditionalKeys) {
+          throw InvalidFormatException(
+            value: pair,
+            format: 'key=value pair${context != null ? ' in $context' : ''}',
+          );
+        }
         i++;
         continue;
       }
@@ -161,6 +165,14 @@ extension ObjectDecoder on String? {
 
       if (!expectedKeys.contains(key)) {
         if (captureAdditionalKeys) {
+          if (result.containsKey(key)) {
+            throw InvalidFormatException(
+              value: key,
+              format:
+                  'single occurrence per additional '
+                  'key${context != null ? ' in $context' : ''}',
+            );
+          }
           result[key] = parts[1];
         }
         i++;
@@ -219,7 +231,15 @@ extension ObjectDecoder on String? {
       final key = Uri.decodeComponent(rawKey);
 
       if (!expectedKeys.contains(key)) {
-        if (captureAdditionalKeys && i + 1 < parts.length) {
+        if (captureAdditionalKeys) {
+          if (i + 1 >= parts.length) {
+            throw InvalidFormatException(
+              value: key,
+              format:
+                  'alternating key-value format with value after '
+                  'key${context != null ? ' in $context' : ''}',
+            );
+          }
           result[key] = parts[i + 1];
         }
         i += 2;

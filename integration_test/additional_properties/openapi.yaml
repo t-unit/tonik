@@ -34,6 +34,40 @@ paths:
                 properties:
                   status:
                     type: string
+  /pure-map-form:
+    get:
+      operationId: encodePureMapForm
+      tags:
+        - additional-properties
+      parameters:
+        - name: values
+          in: query
+          required: true
+          style: form
+          explode: true
+          allowEmptyValue: true
+          schema:
+            $ref: '#/components/schemas/UntypedMap'
+      responses:
+        '204':
+          description: Encoded
+  /pure-map-deep-object:
+    get:
+      operationId: encodePureMapDeepObject
+      tags:
+        - additional-properties
+      parameters:
+        - name: values
+          in: query
+          required: true
+          style: deepObject
+          explode: true
+          allowEmptyValue: true
+          schema:
+            $ref: '#/components/schemas/UntypedMap'
+      responses:
+        '204':
+          description: Encoded
 
 components:
   schemas:
@@ -289,6 +323,59 @@ components:
             type: object
             additionalProperties:
               $ref: '#/components/schemas/Address'
+
+    Status:
+      type: string
+      enum:
+        - active
+        - inactive
+        - pending
+
+    MixedEnumAP:
+      type: object
+      properties:
+        name:
+          type: string
+      additionalProperties:
+        $ref: '#/components/schemas/Status'
+
+    FreeformHolder:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        freeform:
+          type: object
+
+    AuditedSettings:
+      type: object
+      properties:
+        internalId:
+          type: string
+          readOnly: true
+      additionalProperties:
+        type: string
+
+    AnyCollectionHolder:
+      type: object
+      required:
+        - lookup
+      properties:
+        lookup:
+          type: object
+          additionalProperties: true
+
+    ExtendedScores:
+      allOf:
+        - $ref: '#/components/schemas/Person'
+        - type: object
+          properties:
+            grade:
+              type: string
+      additionalProperties:
+        type: integer
 
     # ---------------------------------------------------------------
     # Helper schemas (used by the above)

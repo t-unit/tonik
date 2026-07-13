@@ -529,9 +529,17 @@ void main() {
         allowEmpty: refer('allowEmpty'),
       );
 
-      final generated = format('final result = ${expression.accept(emitter)};');
+      final generated = format('''
+        test() {
+          final result = ${expression.accept(emitter)};
+        }
+      ''');
       const expected = '''
-        final result = value.toLabel(explode: explode, allowEmpty: allowEmpty);
+        test() {
+          final result = value
+              .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+              .toLabel(explode: explode, allowEmpty: allowEmpty);
+        }
       ''';
 
       expect(
@@ -565,7 +573,7 @@ void main() {
       final expected = format('''
         test() {
           final result = value
-              .map((k, v) => MapEntry(k, v.toString()))
+              .map((k, v) => MapEntry(k, PropertyValue.scalar(v.toString())))
               .toLabel(explode: explode, allowEmpty: allowEmpty);
         }
       ''');
@@ -722,7 +730,9 @@ void main() {
           final result = value
               .map(
                 (e) => e
-                    .map((k, v) => MapEntry(k, v.toString()))
+                    .map(
+                      (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                    )
                     .toLabel(explode: explode, allowEmpty: allowEmpty),
               )
               .toList()

@@ -1,7 +1,7 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/util/map_value_to_string_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 import 'package:tonik_generate/src/util/uri_encode_expression_generator.dart';
 
 /// Returns null for the throwing cases (never/binary/complex map) and the
@@ -18,6 +18,7 @@ Expression? buildFormEntriesValueExpression(
   Expression? useQueryComponent,
   bool allowReserved = false,
   Expression? fieldEncodings,
+  String mapContext = 'map parameter value',
 }) {
   final toFormArgs = <String, Expression>{
     'explode': explode,
@@ -70,14 +71,19 @@ Expression? buildFormEntriesValueExpression(
       );
 
     case MapModel():
-      final converted = buildMapToStringMapExpression(
+      final conversion = buildMapPropertyValueConversion(
         receiver,
         model,
         isNullable: false,
+        context: mapContext,
       );
-      if (converted == null) return null;
-      // Conversion does not URI-encode, so the Map extension must still encode.
-      return toForm(converted, reserved: allowReserved);
+      return switch (conversion) {
+        SupportedMapPropertyValueConversion(:final expression) => toForm(
+          expression,
+          reserved: allowReserved,
+        ),
+        UnsupportedMapPropertyValueConversion() => null,
+      };
 
     case final ListModel m:
       return _buildListFormEntriesExpression(
@@ -100,6 +106,7 @@ Expression? buildFormEntriesValueExpression(
         allowEmpty: allowEmpty,
         useQueryComponent: useQueryComponent,
         allowReserved: allowReserved,
+        mapContext: mapContext,
       );
 
     case NeverModel():

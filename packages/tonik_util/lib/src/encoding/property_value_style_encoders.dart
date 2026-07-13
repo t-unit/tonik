@@ -58,17 +58,38 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
   }
 }
 
-/// Style encoders over `Map<String, PropertyValue>` with raw (unescaped)
-/// values, matching the string-map encoders' wire output.
-///
-/// Unlike those siblings, an empty scalar or array throws [EmptyValueException]
-/// under `allowEmpty: false` instead of rendering `k,` — a deliberate guard,
-/// not a parity gap to "fix".
+/// Enforces empty-value and URI-escaping rules for object-valued parameters.
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
-  /// Encodes this property map using simple style encoding.
-  ///
-  /// When [literal] is true, keys and values are emitted without URI encoding,
-  /// as required for HTTP header field-values.
+  /// Produces alternating key/value tokens with configurable URI escaping.
+  String toUri({
+    required bool allowEmpty,
+    bool useQueryComponent = false,
+    bool allowReserved = false,
+    bool literal = false,
+  }) {
+    _guardEmpty(this, allowEmpty: allowEmpty);
+    if (isEmpty) {
+      return '';
+    }
+
+    String encode(String value) => literal
+        ? value
+        : encodeUriValue(
+            value,
+            allowReserved: allowReserved,
+            useQueryComponent: useQueryComponent,
+          );
+    String encodePropertyValue(PropertyValue value) => switch (value) {
+      ScalarPropertyValue(:final value) => encode(value),
+      ArrayPropertyValue(:final values) => values.map(encode).join(','),
+    };
+
+    return entries
+        .expand((e) => [encode(e.key), encodePropertyValue(e.value)])
+        .join(',');
+  }
+
+  /// Set [literal] for header field-values that must bypass URI encoding.
   String toSimple({
     required bool explode,
     required bool allowEmpty,
@@ -90,7 +111,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return _collapsedPairs(this, literal: literal);
   }
 
-  /// Encodes this property map using label style encoding.
+  /// Emits `.key=value` pairs when exploded and `.key,value` when collapsed.
   String toLabel({required bool explode, required bool allowEmpty}) {
     _guardEmpty(this, allowEmpty: allowEmpty);
     if (isEmpty) {
@@ -108,7 +129,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return '.${_collapsedPairs(this, literal: false)}';
   }
 
-  /// Encodes this property map using matrix style encoding.
+  /// Uses property names when exploded and [paramName] when collapsed.
   String toMatrix(
     String paramName, {
     required bool explode,
@@ -130,9 +151,29 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return ';$paramName=${_collapsedPairs(this, literal: false)}';
   }
 
-  /// Encodes this property map using deepObject style encoding.
-  ///
-  /// [allowReserved] applies to values only; keys are always component-encoded.
+  /// Leaves values unescaped for the multipart encoder to transfer-encode.
+  List<ParameterEntry> toRawStyleParts(
+    String paramName, {
+    required bool explode,
+  }) {
+    String raw(PropertyValue value) => switch (value) {
+      ScalarPropertyValue(:final value) => value,
+      ArrayPropertyValue(:final values) => values.join(','),
+    };
+
+    if (explode) {
+      return [
+        for (final entry in entries)
+          (name: entry.key, value: raw(entry.value)),
+      ];
+    }
+    final parts = <String>[
+      for (final entry in entries) ...[entry.key, raw(entry.value)],
+    ];
+    return [(name: paramName, value: parts.join(','))];
+  }
+
+  /// Keeps keys component-encoded when [allowReserved] preserves value bytes.
   /// Throws [EncodingException] for a non-explode call or an array value, and
   /// [EmptyValueException] on an empty map or value under `allowEmpty: false`.
   List<ParameterEntry> toDeepObject(

@@ -2439,7 +2439,9 @@ void main() {
         String? _queryParameters({required Map<String, String> filter}) {
           final _$entries = <ParameterEntry>[];
           _$entries.addAll(
-            filter.toForm(
+            filter
+                .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                .toForm(
               r'filter',
               explode: false,
               allowEmpty: false,
@@ -2489,7 +2491,9 @@ void main() {
         String? _queryParameters({required Map<String, String> filter}) {
           final _$entries = <ParameterEntry>[];
           _$entries.addAll(
-            filter.toForm(r'filter', explode: false, allowEmpty: false),
+            filter
+                .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                .toForm(r'filter', explode: false, allowEmpty: false),
           );
           if (_$entries.isEmpty) {
             return null;
@@ -2704,7 +2708,9 @@ void main() {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
             _$entries.addAll(
-              filter.toDeepObject(
+              filter
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toDeepObject(
                 r'filter',
                 explode: true,
                 allowEmpty: false,
@@ -2738,7 +2744,9 @@ void main() {
           final _$entries = <ParameterEntry>[];
           if (filter != null) {
             _$entries.addAll(
-              filter.toDeepObject(r'filter', explode: true, allowEmpty: false),
+              filter
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toDeepObject(r'filter', explode: true, allowEmpty: false),
             );
           }
           if (_$entries.isEmpty) {

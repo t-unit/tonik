@@ -204,11 +204,6 @@ List<Parameter> generateParameters({
   return parameters;
 }
 
-/// Adds per-part header parameters for multipart request bodies.
-///
-/// Per OAS spec, `encoding.headers` defines per-part MIME headers. Each header
-/// becomes a method parameter so callers can provide header values at runtime.
-///
 void _addMultipartHeaderParameters({
   required List<Parameter> parameters,
   required Operation operation,

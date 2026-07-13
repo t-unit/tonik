@@ -1339,7 +1339,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.getGithubRepositories(
-          body: const GithubRepositoriesRequest(),
+          body: const {},
         );
 
         final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
@@ -1353,7 +1353,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.getGithubRepositories(
-          body: const GithubRepositoriesRequest(),
+          body: const {},
         );
 
         final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
@@ -1364,7 +1364,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.getGithubRepositories(
-          body: const GithubRepositoriesRequest(),
+          body: const {},
         );
 
         final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
@@ -1380,7 +1380,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.getGithubRepositories(
-          body: const GithubRepositoriesRequest(),
+          body: const {},
         );
 
         expect(
@@ -1399,7 +1399,7 @@ void main() {
         final api = buildApi(responseStatus: '200');
 
         final response = await api.getGithubRepositories(
-          body: const GithubRepositoriesRequest(),
+          body: const {},
         );
 
         final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
@@ -1413,7 +1413,7 @@ void main() {
         final api = buildApi(responseStatus: '422');
 
         final response = await api.getGithubRepositories(
-          body: const GithubRepositoriesRequest(),
+          body: const {},
         );
 
         expect(
@@ -1432,7 +1432,7 @@ void main() {
         final api = buildApi(responseStatus: '422');
 
         final response = await api.getGithubRepositories(
-          body: const GithubRepositoriesRequest(),
+          body: const {},
         );
 
         final success = response as TonikSuccess<GetGithubRepositoriesResponse>;

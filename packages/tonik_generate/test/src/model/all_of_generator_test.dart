@@ -3033,7 +3033,9 @@ String toMatrix(
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
       });
@@ -3064,7 +3066,8 @@ String toMatrix(
         );
       });
 
-      test('generates toJson merging member JSON and spreading AP', () {
+      test('generates toJson merging member JSON with collision rejection '
+          'and recursive Any encoding', () {
         const expectedMethod = r'''
   @override
   Object? toJson() {
@@ -3076,7 +3079,22 @@ String toMatrix(
       );
     }
     _$map.addAll(_$$baseJson);
-    _$map.addAll(additionalProperties);
+    const _$knownKeys = {r'id'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of ExtendedConfig',
+        );
+      }
+    }
+    _$map.addAll(
+      additionalProperties.map(
+        (k, v) => MapEntry(
+          k,
+          encodeUnknownJson(v, context: r'ExtendedConfig.additionalProperties'),
+        ),
+      ),
+    );
     return _$map;
   }''';
 
@@ -3117,7 +3135,7 @@ String toMatrix(
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
           examples: const [],
@@ -3180,7 +3198,7 @@ String toMatrix(
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ClassModel(
               isDeprecated: false,
               name: 'Widget',
@@ -3231,6 +3249,14 @@ String toMatrix(
       );
     }
     _$map.addAll(_$$baseJson);
+    const _$knownKeys = {r'id'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of ComplexExtended',
+        );
+      }
+    }
     _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
     return _$map;
   }''';
@@ -3247,7 +3273,7 @@ String toMatrix(
 
     group('typed additionalProperties with recursive named typedef', () {
       AllOfModel buildRecursiveTreeBag({
-        AdditionalProperties? overrideAdditionalProperties,
+        AdditionalPropertiesPolicy? overrideAdditionalPropertiesPolicy,
       }) {
         final tree = MapModel(
           name: 'Tree',
@@ -3279,9 +3305,9 @@ String toMatrix(
             ),
           },
           context: context,
-          additionalProperties:
-              overrideAdditionalProperties ??
-              TypedAdditionalProperties(valueModel: tree),
+          additionalPropertiesPolicy:
+              overrideAdditionalPropertiesPolicy ??
+              AllowedAdditionalProperties(valueModel: tree),
           examples: const [],
         );
       }
@@ -3356,11 +3382,6 @@ class Holder {
         r'splices _$encode helper into toJson dynamic branch when a member has '
         'mixed encoding shape and AP is recursive',
         () {
-          // A OneOf member mixing a primitive (simple) with a class (complex)
-          // resolves to `EncodingShape.mixed`, which triggers the
-          // `hasDynamicModels` branch of `toJson` — exactly the path that
-          // routes a TypedAdditionalProperties value through the inline
-          // helper splice point.
           final mixedOneOf = OneOfModel(
             name: 'IdOrUser',
             models: {
@@ -3396,7 +3417,9 @@ class Holder {
             name: 'DynamicTreeBag',
             models: {mixedOneOf},
             context: context,
-            additionalProperties: TypedAdditionalProperties(valueModel: tree),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+              valueModel: tree,
+            ),
             examples: const [],
           );
 
@@ -3475,7 +3498,17 @@ class Holder {
       );
     }
     _$map.addAll(_$$baseJson);
-    _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))));
+    const _$knownKeys = {r'id'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of TreeBag',
+        );
+      }
+    }
+    _$map.addAll(
+      additionalProperties.map((k, v) => MapEntry(k, _$encodeTree(v))),
+    );
     return _$map;
   }
 }''';
@@ -3528,7 +3561,9 @@ class Holder {
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(valueModel: a),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+              valueModel: a,
+            ),
             examples: const [],
           );
 
@@ -3572,7 +3607,7 @@ class Holder {
       );
     });
 
-    group('NoAdditionalProperties', () {
+    group('forbidden additionalProperties', () {
       test('generates fromJson without AP logic', () {
         final model = AllOfModel(
           isDeprecated: false,
@@ -3597,7 +3632,7 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const NoAdditionalProperties(),
+          additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
           examples: const [],
         );
 
@@ -3658,7 +3693,9 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -3714,7 +3751,9 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -3729,12 +3768,10 @@ class Holder {
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'id'};
-    final _$additional = <String, String>{};
+    final _$additional = <String, Object?>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
-          context: r'ExtendedConfig.additionalProperties',
-        );
+        _$additional[_$entry.key] = _$entry.value;
       }
     }
     return ExtendedConfig(
@@ -3776,7 +3813,7 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
           examples: const [],
@@ -3816,7 +3853,8 @@ class Holder {
         );
       });
 
-      test('generates fromSimple without AP for typed complex AP', () {
+      test('generates fromSimple rejecting unknown keys for typed complex '
+          'AP', () {
         final model = AllOfModel(
           isDeprecated: false,
           name: 'ComplexExtended',
@@ -3840,7 +3878,7 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ClassModel(
               isDeprecated: false,
               name: 'Widget',
@@ -3854,6 +3892,22 @@ class Holder {
 
         const expectedMethod = r'''
   factory ComplexExtended.fromSimple(String? value, {required bool explode}) {
+    final _$values = value.decodeObject(
+      explode: explode,
+      explodeSeparator: ',',
+      expectedKeys: {r'id'},
+      listKeys: {},
+      context: r'ComplexExtended',
+      captureAdditionalKeys: true,
+    );
+    const _$knownKeys = {r'id'};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        throw SimpleDecodingException(
+          r'ClassModel values cannot be decoded from a flat value at ComplexExtended.additionalProperties',
+        );
+      }
+    }
     return ComplexExtended($base: Base.fromSimple(value, explode: explode));
   }''';
 
@@ -3909,7 +3963,9 @@ class Holder {
               ),
             },
             context: context,
-            additionalProperties: const UnrestrictedAdditionalProperties(),
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
             examples: const [],
           );
 
@@ -3924,12 +3980,10 @@ class Holder {
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'alpha', r'beta'};
-    final _$additional = <String, String>{};
+    final _$additional = <String, Object?>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
-          context: r'MultiMember.additionalProperties',
-        );
+        _$additional[_$entry.key] = _$entry.value;
       }
     }
     return MultiMember(
@@ -3975,7 +4029,9 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -3990,12 +4046,10 @@ class Holder {
       captureAdditionalKeys: true,
     );
     const _$knownKeys = {r'id'};
-    final _$additional = <String, String>{};
+    final _$additional = <String, Object?>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value.decodeFormString(
-          context: r'ExtendedConfig.additionalProperties',
-        );
+        _$additional[_$entry.key] = _$entry.value;
       }
     }
     return ExtendedConfig(
@@ -4039,12 +4093,14 @@ class Holder {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); for (final _$e in additionalProperties.entries) { _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value?.toString() ?? '', ); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'id'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of ExtendedConfig', ); } final _$v = _$e.value; if (_$v == null) continue; _$mergedProperties[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar( _$v, context: r'ExtendedConfig.additionalProperties', ), ); } return _$mergedProperties; }
 ''';
 
         final combinedClass = generator.generateClass(model);
@@ -4082,14 +4138,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: StringModel(context: context),
             ),
             examples: const [],
           );
 
           const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); for (final _$e in additionalProperties.entries) { _$mergedProperties[_$e.key] = PropertyValue.scalar(_$e.value); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of TypedExtended', ); } _$mergedProperties[_$e.key] = PropertyValue.scalar(_$e.value); } return _$mergedProperties; }
 ''';
 
           final combinedClass = generator.generateClass(model);
@@ -4129,14 +4185,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: Base64Model(context: context),
             ),
             examples: const [],
           );
 
           const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); for (final _$e in additionalProperties.entries) { _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value.toBase64String(), ); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of TypedByteExtended', ); } _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value.toBase64String(), ); } return _$mergedProperties; }
 ''';
 
           final combinedClass = generator.generateClass(model);
@@ -4184,7 +4240,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: nullableByte,
             ),
             examples: const [],
@@ -4200,7 +4256,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
           );
 
           const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); for (final _$e in additionalProperties.entries) { _$mergedProperties[_$e.key] = PropertyValue.scalar( _$e.value == null ? '' : _$e.value!.toBase64String(), ); } return _$mergedProperties; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$mergedProperties = <String, PropertyValue>{}; _$mergedProperties.addAll( $base.parameterProperties(allowEmpty: allowEmpty), ); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of NullableByteExtended', ); } final _$v = _$e.value; if (_$v == null) continue; _$mergedProperties[_$e.key] = PropertyValue.scalar(_$v.toBase64String()); } return _$mergedProperties; }
 ''';
 
           final combinedClass = generator.generateClass(model);
@@ -4239,7 +4295,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
               ),
             },
             context: context,
-            additionalProperties: TypedAdditionalProperties(
+            additionalPropertiesPolicy: AllowedAdditionalProperties(
               valueModel: ClassModel(
                 isDeprecated: false,
                 name: 'Widget',
@@ -4259,7 +4315,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
     );
     if (additionalProperties.isNotEmpty) {
       throw EncodingException(
-        r'Additional properties with complex types cannot be parameter encoded.',
+        r'ClassModel values have no flat representation at ComplexExtended.additionalProperties',
       );
     }
     return _$mergedProperties;
@@ -4362,7 +4418,9 @@ bool operator ==(Object other) {
             ),
           },
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -4430,7 +4488,25 @@ Object? toJson() {
     );
   }
   _$map.addAll(_$$baseJson);
-  _$map.addAll(additionalProperties.unlock);
+  const _$knownKeys = {r'id'};
+  for (final _$k in additionalProperties.keys) {
+    if (_$knownKeys.contains(_$k)) {
+      throw EncodingException(
+        r'Additional property keys must not collide with declared wire keys of ExtendedImmutable',
+      );
+    }
+  }
+  _$map.addAll(
+    additionalProperties.unlock.map(
+      (k, v) => MapEntry(
+        k,
+        encodeUnknownJson(
+          v,
+          context: r'ExtendedImmutable.additionalProperties',
+        ),
+      ),
+    ),
+  );
   return _$map;
 }
 ''';
@@ -4468,7 +4544,7 @@ Object? toJson() {
             ),
           },
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ListModel(
               content: StringModel(context: context),
               context: context,

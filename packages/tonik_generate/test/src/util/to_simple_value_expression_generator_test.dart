@@ -428,11 +428,13 @@ void main() {
         collapseWhitespace(
           format('''
             test() {
-              final result = value.toSimple(
-                explode: false,
-                allowEmpty: true,
-                literal: true,
-              );
+              final result = value
+                  .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                  .toSimple(
+                    explode: false,
+                    allowEmpty: true,
+                    literal: true,
+                  );
             }
           '''),
         ),
@@ -767,11 +769,13 @@ void main() {
           allowEmpty: true,
         );
 
-        final generated = format(
-          'final result = ${expression.accept(emitter)};',
-        );
+        final generated = methodBody(expression);
         const expected = '''
-          final result = value.toSimple(explode: false, allowEmpty: true);
+          test() {
+            final result = value
+                .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                .toSimple(explode: false, allowEmpty: true);
+          }
         ''';
 
         expect(
@@ -807,7 +811,9 @@ void main() {
           final expected = format('''
             test() {
               final result = value
-                  .map((k, v) => MapEntry(k, v.toString()))
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toString())),
+                  )
                   .toSimple(explode: false, allowEmpty: true);
             }
           ''');
@@ -846,7 +852,12 @@ void main() {
           final expected = format('''
             test() {
               final result = value
-                  .map((k, v) => MapEntry(k, v.toTimeZonedIso8601String()))
+                  .map(
+                    (k, v) => MapEntry(
+                      k,
+                      PropertyValue.scalar(v.toTimeZonedIso8601String()),
+                    ),
+                  )
                   .toSimple(explode: false, allowEmpty: true);
             }
           ''');
@@ -894,7 +905,9 @@ void main() {
           final expected = format('''
             test() {
               final result = value
-                  .map((k, v) => MapEntry(k, v.toJson()))
+                  .map(
+                    (k, v) => MapEntry(k, PropertyValue.scalar(v.toJson())),
+                  )
                   .toSimple(explode: false, allowEmpty: true);
             }
           ''');
@@ -968,11 +981,15 @@ void main() {
             isNullable: true,
           );
 
-          final generated = format(
-            'final result = ${expression.accept(emitter)};',
-          );
+          final generated = methodBody(expression);
           const expected = '''
-            final result = value?.toSimple(explode: false, allowEmpty: true);
+            test() {
+              final result = value == null
+                  ? null
+                  : value
+                      .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                      ?.toSimple(explode: false, allowEmpty: true);
+            }
           ''';
 
           expect(
@@ -1177,7 +1194,9 @@ void main() {
             test() {
               final result = value
                   .map(
-                    (e) => e.toSimple(explode: false, allowEmpty: true),
+                    (e) => e
+                        .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                        .toSimple(explode: false, allowEmpty: true),
                   )
                   .toList()
                   .toSimple(
@@ -1228,7 +1247,10 @@ void main() {
               final result = value
                   .map(
                     (e) => e
-                        .map((k, v) => MapEntry(k, v.toString()))
+                        .map(
+                          (k, v) =>
+                              MapEntry(k, PropertyValue.scalar(v.toString())),
+                        )
                         .toSimple(explode: false, allowEmpty: true),
                   )
                   .toList()
@@ -1334,7 +1356,12 @@ void main() {
                   final result = value
                       .map(
                         (e) => e
-                            .map((k, v) => MapEntry(k, v.toString()))
+                            .map(
+                              (k, v) => MapEntry(
+                                k,
+                                PropertyValue.scalar(v.toString()),
+                              ),
+                            )
                             .toSimple(
                               explode: false,
                               allowEmpty: true,

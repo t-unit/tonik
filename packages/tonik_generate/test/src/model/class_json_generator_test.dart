@@ -1169,7 +1169,9 @@ void main() {
             ),
           ],
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
       });
@@ -1200,11 +1202,89 @@ void main() {
         );
       });
 
-      test('generates toJson spreading AP into map', () {
-        const expectedMethod =
-            "Object? toJson() => {r'name': name, ...additionalProperties};";
+      test('generates toJson with collision rejection and recursive Any '
+          'encoding', () {
+        const expectedMethod = r'''
+  Object? toJson() {
+    final _$map = <String, Object?>{r'name': name};
+    const _$knownKeys = {r'name'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of Config',
+        );
+      }
+    }
+    _$map.addAll(
+      additionalProperties.map(
+        (k, v) => MapEntry(
+          k,
+          encodeUnknownJson(v, context: r'Config.additionalProperties'),
+        ),
+      ),
+    );
+    return _$map;
+  }''';
 
         final generatedClass = generator.generateClass(model);
+        expect(
+          collapseWhitespace(
+            format(generatedClass.accept(emitter).toString()),
+          ),
+          contains(collapseWhitespace(expectedMethod)),
+        );
+      });
+
+      test('generates toJson keeping required write-only null checks '
+          'alongside the AP encode', () {
+        final writeOnlyModel = ClassModel(
+          isDeprecated: false,
+          name: 'Draft',
+          properties: [
+            Property(
+              name: 'secret',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              isWriteOnly: true,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
+          examples: const [],
+        );
+
+        const expectedMethod = r'''
+  Object? toJson() {
+    if (secret == null) {
+      throw EncodingException(r'Required property secret is null.');
+    }
+    final _$map = <String, Object?>{r'secret': secret!};
+    const _$knownKeys = {r'secret'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of Draft',
+        );
+      }
+    }
+    _$map.addAll(
+      additionalProperties.map(
+        (k, v) => MapEntry(
+          k,
+          encodeUnknownJson(v, context: r'Draft.additionalProperties'),
+        ),
+      ),
+    );
+    return _$map;
+  }''';
+
+        final generatedClass = generator.generateClass(writeOnlyModel);
         expect(
           collapseWhitespace(
             format(generatedClass.accept(emitter).toString()),
@@ -1228,9 +1308,7 @@ void main() {
     final _$additional = <String, Object?>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value.decodeSimpleString(
-          context: r'Config.additionalProperties',
-        );
+        _$additional[_$entry.key] = _$entry.value;
       }
     }
     return Config(
@@ -1263,9 +1341,7 @@ void main() {
     final _$additional = <String, Object?>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value.decodeFormString(
-          context: r'Config.additionalProperties',
-        );
+        _$additional[_$entry.key] = _$entry.value;
       }
     }
     return Config(
@@ -1285,7 +1361,7 @@ void main() {
 
       test('generates parameterProperties with AP loop', () {
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); for (final _$e in additionalProperties.entries) { _$result[_$e.key] = PropertyValue.scalar(_$e.value?.toString() ?? ''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Config', ); } final _$v = _$e.value; if (_$v == null) continue; _$result[_$e.key] = PropertyValue.scalar( encodeUnknownFlatScalar(_$v, context: r'Config.additionalProperties'), ); } return _$result; }
 ''';
 
         final generatedClass = generator.generateClass(model);
@@ -1317,7 +1393,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: StringModel(context: context),
           ),
           examples: const [],
@@ -1352,9 +1428,21 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         );
       });
 
-      test('generates toJson spreading typed AP directly', () {
-        const expectedMethod =
-            "Object? toJson() => {r'id': id, ...additionalProperties};";
+      test('generates toJson adding typed AP after collision rejection', () {
+        const expectedMethod = r'''
+  Object? toJson() {
+    final _$map = <String, Object?>{r'id': id};
+    const _$knownKeys = {r'id'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of Labels',
+        );
+      }
+    }
+    _$map.addAll(additionalProperties);
+    return _$map;
+  }''';
 
         final generatedClass = generator.generateClass(model);
         expect(
@@ -1455,7 +1543,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ClassModel(
               isDeprecated: false,
               name: 'Widget',
@@ -1495,11 +1583,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       });
 
       test('generates toJson encoding complex AP values', () {
-        const expectedMethod = '''
-  Object? toJson() => {
-    r'version': version,
-    ...additionalProperties.map((k, v) => MapEntry(k, v.toJson())),
-  };''';
+        const expectedMethod = r'''
+  Object? toJson() {
+    final _$map = <String, Object?>{r'version': version};
+    const _$knownKeys = {r'version'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of WidgetMap',
+        );
+      }
+    }
+    _$map.addAll(additionalProperties.map((k, v) => MapEntry(k, v.toJson())));
+    return _$map;
+  }''';
 
         final generatedClass = generator.generateClass(model);
         expect(
@@ -1510,7 +1607,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         );
       });
 
-      test('generates fromSimple without AP capture', () {
+      test('generates fromSimple rejecting unknown keys', () {
         const expectedMethod = r'''
   factory WidgetMap.fromSimple(String? value, {required bool explode}) {
     final _$values = value.decodeObject(
@@ -1519,7 +1616,16 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       expectedKeys: {r'version'},
       listKeys: {},
       context: r'WidgetMap',
+      captureAdditionalKeys: true,
     );
+    const _$knownKeys = {r'version'};
+    for (final _$entry in _$values.entries) {
+      if (!_$knownKeys.contains(_$entry.key)) {
+        throw SimpleDecodingException(
+          r'ClassModel values cannot be decoded from a flat value at WidgetMap.additionalProperties',
+        );
+      }
+    }
     return WidgetMap(
       version: _$values[r'version'].decodeSimpleInt(
         context: r'WidgetMap.version',
@@ -1560,7 +1666,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ListModel(
               content: StringModel(context: context),
               context: context,
@@ -1571,12 +1677,26 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         );
       });
 
-      test('generates toJson spreading list-of-string AP directly', () {
-        const expectedMethod = '''
-  Object? toJson() => {
-    r'timestamps': timestamps.map((e) => e.toTimeZonedIso8601String()).toList(),
-    ...additionalProperties,
-  };''';
+      test('generates toJson adding list-of-string AP after collision '
+          'rejection', () {
+        const expectedMethod = r'''
+  Object? toJson() {
+    final _$map = <String, Object?>{
+      r'timestamps': timestamps
+          .map((e) => e.toTimeZonedIso8601String())
+          .toList(),
+    };
+    const _$knownKeys = {r'timestamps'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of Serie0',
+        );
+      }
+    }
+    _$map.addAll(additionalProperties);
+    return _$map;
+  }''';
 
         final generatedClass = generator.generateClass(model);
         expect(
@@ -1607,7 +1727,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: ListModel(
               content: ClassModel(
                 isDeprecated: false,
@@ -1625,13 +1745,24 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       });
 
       test('generates toJson mapping list-of-complex AP values', () {
-        const expectedMethod = '''
-  Object? toJson() => {
-    r'version': version,
-    ...additionalProperties.map(
-      (k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()),
-    ),
-  };''';
+        const expectedMethod = r'''
+  Object? toJson() {
+    final _$map = <String, Object?>{r'version': version};
+    const _$knownKeys = {r'version'};
+    for (final _$k in additionalProperties.keys) {
+      if (_$knownKeys.contains(_$k)) {
+        throw EncodingException(
+          r'Additional property keys must not collide with declared wire keys of WidgetGroups',
+        );
+      }
+    }
+    _$map.addAll(
+      additionalProperties.map(
+        (k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()),
+      ),
+    );
+    return _$map;
+  }''';
 
         final generatedClass = generator.generateClass(model);
         expect(
@@ -1643,7 +1774,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       });
     });
 
-    group('NoAdditionalProperties', () {
+    group('forbidden additionalProperties', () {
       test('generates fromJson without AP logic', () {
         final model = ClassModel(
           isDeprecated: false,
@@ -1660,7 +1791,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: const NoAdditionalProperties(),
+          additionalPropertiesPolicy: const ForbiddenAdditionalProperties(),
           examples: const [],
         );
 
@@ -1699,7 +1830,9 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: const UnrestrictedAdditionalProperties(),
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
+            valueModel: AnyModel(context: context),
+          ),
           examples: const [],
         );
 
@@ -1748,7 +1881,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: AliasModel(
               name: 'NullableString',
               model: StringModel(context: context),
@@ -1808,7 +1941,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: IntegerModel(context: context),
           ),
           examples: const [],
@@ -1864,7 +1997,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: IntegerModel(context: context),
           ),
           examples: const [],
@@ -1920,7 +2053,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
           ],
           context: context,
-          additionalProperties: TypedAdditionalProperties(
+          additionalPropertiesPolicy: AllowedAdditionalProperties(
             valueModel: BooleanModel(context: context),
           ),
           examples: const [],
