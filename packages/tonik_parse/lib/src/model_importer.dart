@@ -305,9 +305,9 @@ class ModelImporter {
         DecimalModel(context: context),
       'string' when schema.format == 'uri' || schema.format == 'url' =>
         UriModel(context: context),
-      'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.contentEncoding != null =>
         _resolveContentEncodedModel(schema, context),
+      'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.format == 'byte' => Base64Model(context: context),
       'string' => StringModel(context: context),
       'number' when schema.format == 'float' || schema.format == 'double' =>
@@ -1449,9 +1449,9 @@ class ModelImporter {
         DecimalModel(context: context),
       'string' when schema.format == 'uri' || schema.format == 'url' =>
         UriModel(context: context),
-      'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.contentEncoding != null =>
         _resolveContentEncodedModel(schema, context),
+      'string' when schema.format == 'binary' => BinaryModel(context: context),
       'string' when schema.format == 'byte' => Base64Model(context: context),
       'string' when schema.enumerated != null => _parseEnum<String>(
         name,

@@ -24,9 +24,9 @@ class Importer {
 
   /// Maps contentMediaType values to SchemaContentType for content-encoded
   /// string schemas. When a schema has contentEncoding set, this config
-  /// determines whether it generates StringModel (text) or BinaryModel
-  /// (binary).
-  /// If no match found, defaults to BinaryModel.
+  /// determines whether it generates a StringModel or a binary-backed model.
+  /// Binary mappings and unmatched media types generate a Base64Model for
+  /// base64 content and a BinaryModel for other encodings.
   final Map<String, core.SchemaContentType> contentMediaTypes;
 
   static final _log = Logger('Importer');

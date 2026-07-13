@@ -403,6 +403,32 @@ void main() {
       rawDefault: null,
     );
 
+    final stringWithBinaryFormatAndBase64Encoding = Schema(
+      ref: null,
+      type: ['string'],
+      format: 'binary',
+      required: [],
+      enumerated: null,
+      allOf: null,
+      anyOf: null,
+      oneOf: null,
+      not: null,
+      items: null,
+      properties: {},
+      description: '',
+      isNullable: false,
+      discriminator: null,
+      isDeprecated: false,
+      uniqueItems: false,
+      xDartName: null,
+      xDartEnum: null,
+      defs: null,
+      contentEncoding: 'base64',
+      contentMediaType: null,
+      contentSchema: null,
+      rawDefault: null,
+    );
+
     test(
       'returns Base64Model for contentEncoding: base64 with unconfigured '
       'contentMediaType',
@@ -432,6 +458,21 @@ void main() {
 
       final result = importer.importSchema(
         stringWithEncodingNoMediaType,
+        context,
+      );
+
+      expect(result, isA<Base64Model>());
+    });
+
+    test('contentEncoding: base64 overrides format: binary', () {
+      final importer = ModelImporter(
+        openApiObject,
+        exampleImporter: ExampleImporter(openApiObject: openApiObject),
+      )..import();
+      final context = Context.initial().pushAll(['components', 'schemas']);
+
+      final result = importer.importSchema(
+        stringWithBinaryFormatAndBase64Encoding,
         context,
       );
 
