@@ -321,28 +321,22 @@ void main() {
       );
     });
 
-    test('empty map with explode=false yields a single empty-value entry', () {
+    test('empty map is omitted regardless of explode and allowEmpty', () {
       expect(
         <String, String>{}.toForm('p', explode: false, allowEmpty: true),
-        const <ParameterEntry>[(name: 'p', value: '')],
+        const <ParameterEntry>[],
       );
-    });
-
-    test('empty map with explode=true yields no entries', () {
       expect(
         <String, String>{}.toForm('p', explode: true, allowEmpty: true),
         const <ParameterEntry>[],
       );
-    });
-
-    test('empty map throws when allowEmpty=false', () {
       expect(
-        () => <String, String>{}.toForm('p', explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        <String, String>{}.toForm('p', explode: false, allowEmpty: false),
+        const <ParameterEntry>[],
       );
       expect(
-        () => <String, String>{}.toForm('p', explode: true, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        <String, String>{}.toForm('p', explode: true, allowEmpty: false),
+        const <ParameterEntry>[],
       );
     });
 

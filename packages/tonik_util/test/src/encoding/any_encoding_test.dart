@@ -1892,15 +1892,42 @@ void main() {
       );
     });
 
-    test('empty map value throws EmptyValueException', () {
+    test('empty map value yields no entries regardless of encoding flags', () {
       expect(
-        () => encodeAnyToFormEntries(
+        encodeAnyToFormEntries(
+          <String, dynamic>{},
+          name: 'anyValue',
+          explode: false,
+          allowEmpty: true,
+        ),
+        const <ParameterEntry>[],
+      );
+      expect(
+        encodeAnyToFormEntries(
+          <String, dynamic>{},
+          name: 'anyValue',
+          explode: true,
+          allowEmpty: true,
+        ),
+        const <ParameterEntry>[],
+      );
+      expect(
+        encodeAnyToFormEntries(
           <String, dynamic>{},
           name: 'anyValue',
           explode: false,
           allowEmpty: false,
         ),
-        throwsA(isA<EmptyValueException>()),
+        const <ParameterEntry>[],
+      );
+      expect(
+        encodeAnyToFormEntries(
+          <String, dynamic>{},
+          name: 'anyValue',
+          explode: true,
+          allowEmpty: false,
+        ),
+        const <ParameterEntry>[],
       );
     });
   });

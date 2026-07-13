@@ -808,6 +808,32 @@ void main() {
       );
     });
 
+    test('all-optional empty object drops the whole query', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormComplexExplode(
+        allOptionalFilter: const AllOptionalFilter(),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(success.response.requestOptions.uri.query, '');
+    });
+
+    test(
+      'all-optional empty object is dropped beside a populated parameter',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormComplexExplode(
+          allOptionalFilter: const AllOptionalFilter(),
+          integerEnum: PriorityEnum.three,
+        );
+
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.requestOptions.uri.query, 'integerEnum=3');
+      },
+    );
+
     test('deeplyNestedClass', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode(

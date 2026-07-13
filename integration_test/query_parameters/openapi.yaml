@@ -284,6 +284,12 @@ paths:
           explode: true
           schema:
             $ref: '#/components/schemas/NullableClass'
+        - name: allOptionalFilter
+          in: query
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/AllOptionalFilter'
         - name: deeplyNestedClass
           in: query
           style: form
@@ -1891,6 +1897,13 @@ components:
         age:
           type: integer
           nullable: true
+    AllOptionalFilter:
+      type: object
+      properties:
+        category:
+          type: string
+        label:
+          type: string
     DeeplyNestedClass:
       type: object
       required:

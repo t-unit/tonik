@@ -35,6 +35,8 @@ String _joinEncoded(
 extension PropertyValueFormEncoder on Map<String, PropertyValue> {
   /// Encodes this property map using form style encoding.
   ///
+  /// An empty property map is omitted, regardless of [allowEmpty].
+  ///
   /// When the map is exploded, per-property [FormFieldEncoding.explode]
   /// controls array assembly and [FormFieldEncoding.allowReserved] applies to
   /// values only; keys are always component-encoded. In collapse mode
@@ -48,8 +50,8 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
     bool allowReserved = false,
     Map<String, FormFieldEncoding> fieldEncodings = const {},
   }) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
+    if (isEmpty) {
+      return const [];
     }
 
     if (!allowEmpty) {

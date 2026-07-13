@@ -392,7 +392,8 @@ String encodeAnyToForm(
 }
 
 /// Encodes a top-level form query parameter whose runtime value has an unknown
-/// type, omitting an empty list so the parameter is absent from the query.
+/// type, omitting an empty list or map so the parameter is absent from the
+/// query.
 List<ParameterEntry> encodeAnyToFormEntries(
   Object? value, {
   required String name,
@@ -401,7 +402,8 @@ List<ParameterEntry> encodeAnyToFormEntries(
   bool useQueryComponent = false,
   bool allowReserved = false,
 }) {
-  if (value is List && value.isEmpty) {
+  if ((value is List && value.isEmpty) ||
+      (value is Map<String, dynamic> && value.isEmpty)) {
     return const [];
   }
   return [

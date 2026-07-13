@@ -1,5 +1,4 @@
 import 'package:big_decimal/big_decimal.dart';
-import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
@@ -242,6 +241,8 @@ extension FormStringListEncoder on List<String> {
 extension FormStringMapEncoder on Map<String, String> {
   /// Encodes this Map value using form style encoding.
   ///
+  /// An empty map is omitted, regardless of [allowEmpty].
+  ///
   /// The [alreadyEncoded] parameter indicates whether the values are already
   /// URL-encoded, in which case they are not re-encoded to prevent double
   /// encoding.
@@ -253,8 +254,8 @@ extension FormStringMapEncoder on Map<String, String> {
     bool useQueryComponent = false,
     bool allowReserved = false,
   }) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
+    if (isEmpty) {
+      return const [];
     }
 
     if (!explode) {

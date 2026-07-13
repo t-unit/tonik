@@ -312,20 +312,37 @@ void main() {
   });
 
   group('EmptyValueException', () {
-    test('throws on an empty map when allowEmpty is false', () {
+    test('empty map is omitted regardless of explode and allowEmpty', () {
       expect(
-        () => <String, PropertyValue>{}.toForm(
+        <String, PropertyValue>{}.toForm(
+          'p',
+          explode: false,
+          allowEmpty: true,
+        ),
+        const <ParameterEntry>[],
+      );
+      expect(
+        <String, PropertyValue>{}.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+        ),
+        const <ParameterEntry>[],
+      );
+      expect(
+        <String, PropertyValue>{}.toForm(
+          'p',
+          explode: false,
+          allowEmpty: false,
+        ),
+        const <ParameterEntry>[],
+      );
+      expect(
+        <String, PropertyValue>{}.toForm(
           'p',
           explode: true,
           allowEmpty: false,
         ),
-        throwsA(isA<EmptyValueException>()),
-      );
-    });
-
-    test('does not throw on an empty map when allowEmpty is true', () {
-      expect(
-        <String, PropertyValue>{}.toForm('p', explode: true, allowEmpty: true),
         const <ParameterEntry>[],
       );
     });
