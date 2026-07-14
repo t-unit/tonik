@@ -50,6 +50,18 @@ servers:
           - '8443'
         description: Server port
 
+  # Server with enum-constrained variable whose default is not a member
+  - url: https://{zone}.fallback.example.com/api/v1
+    description: Zone server with default outside the enum
+    variables:
+      zone:
+        default: staging
+        enum:
+          - us-east
+          - eu-west
+          - ap-south
+        description: Deployment zone
+
 tags:
   - name: health
     description: Health check operations
