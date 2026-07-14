@@ -43,7 +43,7 @@ void main() {
 
       expect(albumBase, isA<AlbumBase>());
       expect(albumBase.albumType, isA<AlbumBaseAlbumTypeModel>());
-      expect(AlbumBaseAlbumTypeModel.values.map((v) => v.rawValue), [
+      expect(AlbumBaseAlbumTypeModel.values.map((v) => v.toJson()), [
         'album',
         'single',
         'compilation',
@@ -61,14 +61,14 @@ void main() {
         albumBase.releaseDatePrecision,
         isA<AlbumBaseReleaseDatePrecisionModel>(),
       );
-      expect(AlbumBaseReleaseDatePrecisionModel.values.map((v) => v.rawValue), [
+      expect(AlbumBaseReleaseDatePrecisionModel.values.map((v) => v.toJson()), [
         'year',
         'month',
         'day',
       ]);
       expect(albumBase.restrictions, isA<AlbumBaseRestrictionsAllOfModel?>());
       expect(albumBase.$type, isA<AlbumBaseTypeModel>());
-      expect(AlbumBaseTypeModel.values.map((v) => v.rawValue), ['album']);
+      expect(AlbumBaseTypeModel.values.map((v) => v.toJson()), ['album']);
       expect(albumBase.uri, isA<String>());
 
       final externalUrls = albumBase.externalUrls.externalUrlObject;
@@ -85,7 +85,7 @@ void main() {
         releaseDatePrecision?.reason,
         isA<AlbumRestrictionObjectReasonModel>(),
       );
-      expect(AlbumRestrictionObjectReasonModel.values.map((v) => v.rawValue), [
+      expect(AlbumRestrictionObjectReasonModel.values.map((v) => v.toJson()), [
         'market',
         'product',
         'explicit',
@@ -110,7 +110,7 @@ void main() {
       expect(artist?.id, isA<String?>());
       expect(artist?.name, isA<String?>());
       expect(artist?.$type, isA<SimplifiedArtistObjectTypeModel?>());
-      expect(SimplifiedArtistObjectTypeModel.values.map((v) => v.rawValue), [
+      expect(SimplifiedArtistObjectTypeModel.values.map((v) => v.toJson()), [
         'artist',
       ]);
       expect(artist?.uri, isA<String?>());

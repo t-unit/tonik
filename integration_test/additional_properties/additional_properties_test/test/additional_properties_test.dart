@@ -91,7 +91,7 @@ void main() {
     test('enum values are correct', () {
       expect(EnumValueMapModel.values, hasLength(3));
       expect(
-        EnumValueMapModel.values.map((e) => e.rawValue),
+        EnumValueMapModel.values.map((e) => e.toJson()),
         containsAll(['low', 'medium', 'high']),
       );
     });
