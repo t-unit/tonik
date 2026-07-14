@@ -1,5 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
+import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
@@ -120,13 +121,14 @@ class ServerGenerator {
     );
   }
 
-  /// Returns the normalized enum value name for the given value.
+  /// Returns the normalized enum value name for the given value, or null
+  /// when the value is not among the enum values.
   @visibleForTesting
-  String getNormalizedEnumValueName(ServerVariable variable, String value) {
+  String? getNormalizedEnumValueName(ServerVariable variable, String value) {
     final normalizedValues = normalizeEnumValues(variable.enumValues!);
     return normalizedValues
-        .firstWhere((n) => n.originalValue == value)
-        .normalizedName;
+        .firstWhereOrNull((n) => n.originalValue == value)
+        ?.normalizedName;
   }
 
   Class _generateBaseClass(String className) {
@@ -312,13 +314,17 @@ class ServerGenerator {
         );
 
         variableParams.add(
-          Parameter(
-            (p) => p
+          Parameter((p) {
+            p
               ..name = fieldName
               ..named = true
-              ..toThis = true
-              ..defaultTo = Code('$enumName.$defaultEnumValue'),
-          ),
+              ..toThis = true;
+            if (defaultEnumValue == null) {
+              p.required = true;
+            } else {
+              p.defaultTo = Code('$enumName.$defaultEnumValue');
+            }
+          }),
         );
 
         variableFields.add(

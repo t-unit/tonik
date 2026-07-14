@@ -128,6 +128,30 @@ void main() {
     });
   });
 
+  group('Server with enum variable whose default is not a member', () {
+    test('Server6 builds URL from explicitly provided zone', () {
+      expect(
+        Server6(zone: Server6Zone.usEast).baseUrl,
+        'https://us-east.fallback.example.com/api/v1',
+      );
+      expect(
+        Server6(zone: Server6Zone.euWest).baseUrl,
+        'https://eu-west.fallback.example.com/api/v1',
+      );
+      expect(
+        Server6(zone: Server6Zone.apSouth).baseUrl,
+        'https://ap-south.fallback.example.com/api/v1',
+      );
+    });
+
+    test('Server6Zone has only the declared values', () {
+      expect(Server6Zone.values, hasLength(3));
+      expect(Server6Zone.usEast.value, 'us-east');
+      expect(Server6Zone.euWest.value, 'eu-west');
+      expect(Server6Zone.apSouth.value, 'ap-south');
+    });
+  });
+
   group('CustomServer', () {
     test('CustomServer can use any base URL', () {
       final server = CustomServer(baseUrl: 'https://custom.example.com/api');
@@ -146,6 +170,7 @@ void main() {
       expect(Server3(), isA<Server>());
       expect(Server4(), isA<Server>());
       expect(Server5(), isA<Server>());
+      expect(Server6(zone: Server6Zone.usEast), isA<Server>());
       expect(CustomServer(baseUrl: 'https://test.com'), isA<Server>());
     });
   });

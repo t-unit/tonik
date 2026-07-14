@@ -334,6 +334,114 @@ void main() {
     });
   });
 
+  group('ServerGenerator enum variable with default not in enum values', () {
+    late List<Server> servers;
+
+    setUp(() {
+      servers = [
+        const Server(
+          url: 'https://regional.example.com/{region}',
+          description: 'Regional server',
+          variables: [
+            ServerVariable(
+              name: 'region',
+              defaultValue: 'staging',
+              enumValues: ['us-east', 'us-west', 'eu-central'],
+            ),
+          ],
+        ),
+      ];
+    });
+
+    test('generates server class with required enum parameter', () {
+      final serverClass = generator.generateClasses(servers)[1];
+
+      const expectedClass = r'''
+        /// Regional server - https://regional.example.com/{region}
+        class RegionalServer extends Server {
+          RegionalServer({
+            required this.region,
+            super.serverConfig = const ServerConfig(),
+          }) : super(
+            baseUrl: r'https://regional.example.com/' '${region.value}',
+          );
+
+          final RegionalServerRegion region;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(serverClass.accept(emitter).toString())),
+        collapseWhitespace(format(expectedClass)),
+      );
+    });
+
+    test('generates enum with declared values only', () {
+      final regionEnum = generator.generateEnums(servers).single;
+
+      const expectedEnum = '''
+        /// Allowed values for the region variable.
+        enum RegionalServerRegion {
+          usEast(r'us-east'),
+          usWest(r'us-west'),
+          euCentral(r'eu-central');
+
+          const RegionalServerRegion(this.value);
+          final String value;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(regionEnum.accept(emitter).toString())),
+        collapseWhitespace(format(expectedEnum)),
+      );
+    });
+
+    test('keeps default for sibling enum variable with member default', () {
+      final mixedServers = [
+        const Server(
+          url: 'https://mixed.example.com/{region}:{port}',
+          description: 'Mixed server',
+          variables: [
+            ServerVariable(
+              name: 'region',
+              defaultValue: 'staging',
+              enumValues: ['us-east', 'us-west'],
+            ),
+            ServerVariable(
+              name: 'port',
+              defaultValue: '443',
+              enumValues: ['443', '8443'],
+            ),
+          ],
+        ),
+      ];
+
+      final serverClass = generator.generateClasses(mixedServers)[1];
+
+      const expectedClass = r'''
+        /// Mixed server - https://mixed.example.com/{region}:{port}
+        class MixedServer extends Server {
+          MixedServer({
+            required this.region,
+            this.port = MixedServerPort.fourHundredFortyThree,
+            super.serverConfig = const ServerConfig(),
+          }) : super(
+            baseUrl: r'https://mixed.example.com/' '${region.value}' r':' '${port.value}',
+          );
+
+          final MixedServerRegion region;
+          final MixedServerPort port;
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(format(serverClass.accept(emitter).toString())),
+        collapseWhitespace(format(expectedClass)),
+      );
+    });
+  });
+
   group('ServerGenerator mixed templated and static servers', () {
     late List<Server> servers;
     late List<Class> classes;
