@@ -538,6 +538,22 @@ paths:
         '200':
           description: OK
 
+  /response-body-collision/header-normalized:
+    get:
+      operationId: getResponseWithNormalizedBodyHeader
+      responses:
+        '200':
+          description: Response whose header name normalizes to body
+          headers:
+            body_:
+              required: true
+              schema:
+                type: string
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
   /cancel-token-collision/query:
     get:
       operationId: getWithCancelTokenQuery

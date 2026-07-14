@@ -1415,7 +1415,7 @@ String _parseResponse(Response<List<int>> response) {
       );
     });
 
-    test('generates for response with header named body', () {
+    test('generates for response with header that normalizes to body', () {
       final classModel = ClassModel(
         isDeprecated: false,
         name: 'User',
@@ -1427,10 +1427,10 @@ String _parseResponse(Response<List<int>> response) {
       final response = ResponseObject(
         name: 'BodyHeaderResponse',
         context: context,
-        description: 'Response with header named body',
+        description: 'Response with header that normalizes to body',
         headers: {
-          'body': ResponseHeaderObject(
-            name: 'body',
+          'body_': ResponseHeaderObject(
+            name: 'body_',
             context: context,
             description: 'Body header',
             model: StringModel(context: context),
@@ -1478,10 +1478,10 @@ String _parseResponse(Response<List<int>> response) {
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return BodyHeaderResponse(
-                body: _$body,
-                bodyHeader: response.headers
-                    .value(r'body')
-                    .decodeSimpleString(context: r'body'),
+                body2: _$body,
+                body: response.headers
+                    .value(r'body_')
+                    .decodeSimpleString(context: r'body_'),
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
@@ -1499,6 +1499,87 @@ String _parseResponse(Response<List<int>> response) {
         collapseWhitespace(expectedMethod),
       );
     });
+
+    test(
+      'keeps decoded body when a multi-response header normalizes to body',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: context,
+          examples: const [],
+        );
+        final response = ResponseObject(
+          name: 'BodyHeaderResponse',
+          context: context,
+          description: 'Response with header that normalizes to body',
+          headers: {
+            'body_': ResponseHeaderObject(
+              name: 'body_',
+              context: context,
+              description: 'Body header',
+              model: StringModel(context: context),
+              isRequired: true,
+              isDeprecated: false,
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
+            ),
+          },
+          bodies: {
+            ResponseBody(
+              model: classModel,
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+          },
+        );
+        final errorResponse = ResponseObject(
+          name: 'ErrorResponse',
+          context: context,
+          description: 'Empty error response',
+          headers: const {},
+          bodies: const {},
+        );
+        final operation = Operation(
+          operationId: 'multiBodyHeaderOp',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          securitySchemes: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): response,
+            const ExplicitResponseStatus(statusCode: 400): errorResponse,
+          },
+        );
+
+        final method = generator.generateParseResponseMethod(operation);
+        final generated = collapseWhitespace(
+          format(method.accept(emitter).toString()),
+        );
+
+        expect(
+          generated,
+          contains(
+            collapseWhitespace(r'''
+              body2: _$body,
+              body: response.headers
+                  .value(r'body_')
+                  .decodeSimpleString(context: r'body_'),
+            '''),
+          ),
+        );
+        expect(generated, contains('body2:'));
+      },
+    );
 
     test(
       'selects correct body model based on status code and content type',
@@ -1568,6 +1649,82 @@ String _parseResponse(Response<List<int>> response) {
           collapseWhitespace(format(method.accept(emitter).toString())),
           collapseWhitespace(expectedMethod),
         );
+      },
+    );
+
+    test(
+      'uses resolved body name for multi-content response implementations',
+      () {
+        final response = ResponseObject(
+          name: 'CollidingMultiContentResponse',
+          context: context,
+          description: 'A response with a colliding header',
+          headers: {
+            'body_': ResponseHeaderObject(
+              name: 'body_',
+              context: context,
+              description: 'Body header',
+              model: StringModel(context: context),
+              isRequired: true,
+              isDeprecated: false,
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
+            ),
+          },
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: context),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+            ResponseBody(
+              model: IntegerModel(context: context),
+              rawContentType: 'application/xml',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+          },
+        );
+        final operation = Operation(
+          operationId: 'getCollidingMultiContent',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/multi-content',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {const ExplicitResponseStatus(statusCode: 200): response},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateParseResponseMethod(operation);
+        final generated = collapseWhitespace(
+          format(method.accept(emitter).toString()),
+        );
+
+        for (final implementation in [
+          'CollidingMultiContentResponseJson',
+          'CollidingMultiContentResponseXml',
+        ]) {
+          expect(
+            generated,
+            contains(
+              collapseWhitespace('''
+                return $implementation(
+                  body2: _\$body,
+                  body: response.headers
+                      .value(r'body_')
+                      .decodeSimpleString(context: r'body_'),
+                );
+              '''),
+            ),
+          );
+        }
       },
     );
 

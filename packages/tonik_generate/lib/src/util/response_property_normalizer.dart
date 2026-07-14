@@ -4,18 +4,22 @@ import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 /// Normalizes and sorts properties from a response object.
 /// Returns a list of normalized properties with their original names.
 List<({String normalizedName, Property property, ResponseHeader? header})>
-normalizeResponseProperties(ResponseObject response) {
+normalizeResponseProperties(
+  ResponseObject response, {
+  ResponseBody? body,
+}) {
   final headerMap = <Property, ResponseHeader>{};
 
   final headerProperties = response.headers.entries.map((header) {
+    final resolvedHeader = header.value.resolve(name: header.key);
     final property = Property(
       name: header.key.toLowerCase() == 'body'
           ? '${header.key}Header'
           : header.key,
-      model: header.value.resolve(name: header.key).model,
-      isRequired: header.value.resolve(name: header.key).isRequired,
+      model: resolvedHeader.model,
+      isRequired: resolvedHeader.isRequired,
       isNullable: false,
-      isDeprecated: header.value.resolve(name: header.key).isDeprecated,
+      isDeprecated: resolvedHeader.isDeprecated,
       examples: const [],
       defaultValue: null,
     );
@@ -24,12 +28,14 @@ normalizeResponseProperties(ResponseObject response) {
     return property;
   });
 
+  final selectedBody =
+      body ?? (response.bodies.length == 1 ? response.bodies.first : null);
   final properties = <Property>[
     ...headerProperties,
-    if (response.bodies.length == 1)
+    if (selectedBody != null)
       Property(
         name: 'body',
-        model: response.bodies.first.model,
+        model: selectedBody.model,
         isRequired: true,
         isNullable: false,
         isDeprecated: false,

@@ -273,20 +273,11 @@ class ResponseGenerator {
           .implementationNames[body.rawContentType]!;
 
       final allProperties = normalizeResponseProperties(
-        ResponseObject(
-          name: null,
-          context: response.context,
-          headers: response.headers,
-          description: '',
-          bodies: {
-            ResponseBody(
-              model: body.model,
-              rawContentType: 'application/json',
-              contentType: ContentType.json,
-              examples: const [],
-            ),
-          },
-        ),
+        response,
+        body: body,
+      );
+      final bodyProperty = allProperties.singleWhere(
+        (property) => property.header == null,
       );
 
       final equalsMethod = generateEqualsMethod(
@@ -356,7 +347,7 @@ class ResponseGenerator {
                     ),
                     Parameter(
                       (b) => b
-                        ..name = 'body'
+                        ..name = bodyProperty.normalizedName
                         ..named = true
                         ..required = true
                         ..toThis = true,
@@ -368,7 +359,7 @@ class ResponseGenerator {
             ..fields.add(
               Field(
                 (b) => b
-                  ..name = 'body'
+                  ..name = bodyProperty.normalizedName
                   ..modifier = FieldModifier.final$
                   ..type = typeReference(
                     body.model,
