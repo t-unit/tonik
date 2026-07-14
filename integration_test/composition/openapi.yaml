@@ -939,3 +939,35 @@ components:
       anyOf:
         - true
         - $ref: '#/components/schemas/Class1'
+
+    NullType:
+      type: "null"
+
+    OneOfWithNull:
+      oneOf:
+        - $ref: '#/components/schemas/Class1'
+        - type: "null"
+
+    OneOfWithNullRef:
+      oneOf:
+        - $ref: '#/components/schemas/Class1'
+        - $ref: '#/components/schemas/NullType'
+
+    AnyOfWithNull:
+      anyOf:
+        - $ref: '#/components/schemas/Class1'
+        - type: "null"
+
+    NullMemberHolder:
+      type: object
+      required:
+        - oneOfValue
+        - oneOfRefValue
+        - anyOfValue
+      properties:
+        oneOfValue:
+          $ref: '#/components/schemas/OneOfWithNull'
+        oneOfRefValue:
+          $ref: '#/components/schemas/OneOfWithNullRef'
+        anyOfValue:
+          $ref: '#/components/schemas/AnyOfWithNull'
