@@ -686,6 +686,31 @@ paths:
               schema:
                 $ref: '#/components/schemas/SimpleResult'
 
+  /param-suffix-collision/{id}:
+    get:
+      operationId: getParamSuffixCollision
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: id
+          in: query
+          schema:
+            type: integer
+        - name: idPath
+          in: query
+          schema:
+            type: boolean
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SimpleResult'
+
   /param-duplicates/{id}:
     get:
       operationId: getWithDuplicateParams

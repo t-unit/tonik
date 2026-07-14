@@ -18,6 +18,7 @@ import 'package:naming_api/src/model/simple_result.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
 import 'package:naming_api/src/operation/get_hostile_query_names.dart';
 import 'package:naming_api/src/operation/get_param_counter_collision.dart';
+import 'package:naming_api/src/operation/get_param_suffix_collision.dart';
 import 'package:naming_api/src/operation/get_with_call_query.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_cookie.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_header.dart';
@@ -474,6 +475,68 @@ void main() {
       },
     );
   });
+
+  group(
+    'location-suffix collision with declared name (GetParamSuffixCollision)',
+    () {
+      test(
+        'exposes three distinct Dart parameter names — idPath2, idQuery, '
+        'idPath — and each serialises under its declared wire key',
+        () async {
+          final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
+          Uri? capturedUri;
+          dio.interceptors.add(
+            InterceptorsWrapper(
+              onRequest: (options, handler) {
+                capturedUri = options.uri;
+                handler.reject(
+                  DioException(
+                    requestOptions: options,
+                    type: DioExceptionType.cancel,
+                  ),
+                );
+              },
+            ),
+          );
+
+          final operation = GetParamSuffixCollision(dio);
+
+          await operation.call(
+            idPath2: 'P',
+            idQuery: 42,
+            idPath: true,
+          );
+
+          expect(capturedUri, isNotNull);
+          final uri = capturedUri!;
+
+          expect(uri.path, contains('/param-suffix-collision/P'));
+
+          final params = uri.queryParametersAll;
+
+          expect(
+            params['id'],
+            ['42'],
+            reason: 'idQuery must serialise under wire key "id".',
+          );
+          expect(
+            params['idPath'],
+            ['true'],
+            reason:
+                'The declared idPath parameter keeps both its Dart name and '
+                'its wire key "idPath".',
+          );
+          expect(
+            params.containsKey('idPath2'),
+            isFalse,
+            reason:
+                'No query key should adopt the renamed Dart identifier — that '
+                'would corrupt the outgoing request.',
+          );
+        },
+      );
+    },
+  );
 
   group('hostile but valid query parameter names', () {
     test('uses valid Dart names while preserving the wire names', () async {
