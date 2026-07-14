@@ -43,7 +43,6 @@ paths:
           explode: false
           schema:
             type: number
-            format: number
         - name: string
           in: query
           style: form

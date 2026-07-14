@@ -79,6 +79,16 @@ void main() {
       expect((3.14 as num).uriEncode(allowEmpty: true), '3.14');
     });
 
+    test('percent-encodes plus in a positive exponent', () {
+      const num value = 6.022e23;
+
+      expect(value.uriEncode(allowEmpty: true), '6.022e%2B23');
+      expect(
+        value.uriEncode(allowEmpty: true, allowReserved: true),
+        '6.022e%2B23',
+      );
+    });
+
     test('encodes num values with allowEmpty false', () {
       expect((42 as num).uriEncode(allowEmpty: false), '42');
     });
@@ -120,6 +130,16 @@ void main() {
     test('encodes BigDecimal values', () {
       final bigDecimal = BigDecimal.parse('123.456');
       expect(bigDecimal.uriEncode(allowEmpty: true), '123.456');
+    });
+
+    test('percent-encodes plus in a positive exponent', () {
+      final value = BigDecimal.parse('1.23E+10');
+
+      expect(value.uriEncode(allowEmpty: true), '1.23e%2B10');
+      expect(
+        value.uriEncode(allowEmpty: true, allowReserved: true),
+        '1.23e%2B10',
+      );
     });
 
     test('encodes BigDecimal values with allowEmpty false', () {
@@ -364,7 +384,7 @@ void main() {
       );
     });
 
-    test('numeric and bool types accept the flag as a no-op', () {
+    test('numeric and bool safe values are unchanged', () {
       expect(42.uriEncode(allowEmpty: true, allowReserved: true), '42');
       expect(
         (3.14 as num).uriEncode(allowEmpty: true, allowReserved: true),
@@ -570,7 +590,10 @@ void main() {
     });
 
     test('num uses plain string form', () {
-      expect((3.14 as num).uriEncode(allowEmpty: true, literal: true), '3.14');
+      expect(
+        (6.022e23 as num).uriEncode(allowEmpty: true, literal: true),
+        '6.022e+23',
+      );
     });
 
     test('bool uses plain string form', () {
@@ -579,8 +602,10 @@ void main() {
 
     test('BigDecimal uses plain string form', () {
       expect(
-        BigDecimal.parse('123.456').uriEncode(allowEmpty: true, literal: true),
-        '123.456',
+        BigDecimal.parse(
+          '1.23E+10',
+        ).uriEncode(allowEmpty: true, literal: true),
+        '1.23e+10',
       );
     });
 

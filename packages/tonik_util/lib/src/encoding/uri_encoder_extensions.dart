@@ -54,7 +54,8 @@ extension StringUriEncoder on String {
 extension IntUriEncoder on int {
   /// URI encodes this int value.
   ///
-  /// [literal] returns the value unencoded, overriding [useQueryComponent].
+  /// [literal] returns the value unencoded, overriding [useQueryComponent] and
+  /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
@@ -64,9 +65,11 @@ extension IntUriEncoder on int {
     if (literal) {
       return toString();
     }
-    return useQueryComponent
-        ? Uri.encodeQueryComponent(toString())
-        : toString();
+    return encodeUriValue(
+      toString(),
+      allowReserved: allowReserved,
+      useQueryComponent: useQueryComponent,
+    );
   }
 }
 
@@ -97,7 +100,8 @@ extension DoubleUriEncoder on double {
 extension NumUriEncoder on num {
   /// URI encodes this num value.
   ///
-  /// [literal] returns the value unencoded, overriding [useQueryComponent].
+  /// [literal] returns the value unencoded, overriding [useQueryComponent] and
+  /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
@@ -107,9 +111,11 @@ extension NumUriEncoder on num {
     if (literal) {
       return toString();
     }
-    return useQueryComponent
-        ? Uri.encodeQueryComponent(toString())
-        : toString();
+    return encodeUriValue(
+      toString(),
+      allowReserved: allowReserved,
+      useQueryComponent: useQueryComponent,
+    );
   }
 }
 
@@ -117,7 +123,8 @@ extension NumUriEncoder on num {
 extension BoolUriEncoder on bool {
   /// URI encodes this bool value.
   ///
-  /// [literal] returns the value unencoded, overriding [useQueryComponent].
+  /// [literal] returns the value unencoded, overriding [useQueryComponent] and
+  /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
@@ -127,9 +134,11 @@ extension BoolUriEncoder on bool {
     if (literal) {
       return toString();
     }
-    return useQueryComponent
-        ? Uri.encodeQueryComponent(toString())
-        : toString();
+    return encodeUriValue(
+      toString(),
+      allowReserved: allowReserved,
+      useQueryComponent: useQueryComponent,
+    );
   }
 }
 
@@ -160,7 +169,8 @@ extension DateTimeUriEncoder on DateTime {
 extension BigDecimalUriEncoder on BigDecimal {
   /// URI encodes this BigDecimal value.
   ///
-  /// [literal] returns the value unencoded, overriding [useQueryComponent].
+  /// [literal] returns the value unencoded, overriding [useQueryComponent] and
+  /// [allowReserved].
   String uriEncode({
     required bool allowEmpty,
     bool useQueryComponent = false,
@@ -170,9 +180,11 @@ extension BigDecimalUriEncoder on BigDecimal {
     if (literal) {
       return toString();
     }
-    return useQueryComponent
-        ? Uri.encodeQueryComponent(toString())
-        : toString();
+    return encodeUriValue(
+      toString(),
+      allowReserved: allowReserved,
+      useQueryComponent: useQueryComponent,
+    );
   }
 }
 
