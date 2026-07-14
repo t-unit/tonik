@@ -1478,8 +1478,8 @@ String _parseResponse(Response<List<int>> response) {
               final _$json = decodeResponseJson<Object?>(response.data);
               final _$body = User.fromJson(_$json);
               return BodyHeaderResponse(
-                body: _$body,
-                bodyHeader: response.headers
+                body2: _$body,
+                body: response.headers
                     .value(r'body_')
                     .decodeSimpleString(context: r'body_'),
               );
@@ -1570,14 +1570,14 @@ String _parseResponse(Response<List<int>> response) {
           generated,
           contains(
             collapseWhitespace(r'''
-              body: _$body,
-              bodyHeader: response.headers
+              body2: _$body,
+              body: response.headers
                   .value(r'body_')
                   .decodeSimpleString(context: r'body_'),
             '''),
           ),
         );
-        expect(generated, isNot(contains('body2:')));
+        expect(generated, contains('body2:'));
       },
     );
 
@@ -1649,6 +1649,82 @@ String _parseResponse(Response<List<int>> response) {
           collapseWhitespace(format(method.accept(emitter).toString())),
           collapseWhitespace(expectedMethod),
         );
+      },
+    );
+
+    test(
+      'uses resolved body name for multi-content response implementations',
+      () {
+        final response = ResponseObject(
+          name: 'CollidingMultiContentResponse',
+          context: context,
+          description: 'A response with a colliding header',
+          headers: {
+            'body_': ResponseHeaderObject(
+              name: 'body_',
+              context: context,
+              description: 'Body header',
+              model: StringModel(context: context),
+              isRequired: true,
+              isDeprecated: false,
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
+            ),
+          },
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: context),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+            ResponseBody(
+              model: IntegerModel(context: context),
+              rawContentType: 'application/xml',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+          },
+        );
+        final operation = Operation(
+          operationId: 'getCollidingMultiContent',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/multi-content',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {const ExplicitResponseStatus(statusCode: 200): response},
+          securitySchemes: const {},
+        );
+
+        final method = generator.generateParseResponseMethod(operation);
+        final generated = collapseWhitespace(
+          format(method.accept(emitter).toString()),
+        );
+
+        for (final implementation in [
+          'CollidingMultiContentResponseJson',
+          'CollidingMultiContentResponseXml',
+        ]) {
+          expect(
+            generated,
+            contains(
+              collapseWhitespace('''
+                return $implementation(
+                  body2: _\$body,
+                  body: response.headers
+                      .value(r'body_')
+                      .decodeSimpleString(context: r'body_'),
+                );
+              '''),
+            ),
+          );
+        }
       },
     );
 

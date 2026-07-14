@@ -61,35 +61,6 @@ void main() {
     ]);
   });
 
-  group('reserved name replacements', () {
-    test('applies replacement after normalizing the property name', () {
-      final result = normalizeProperties(
-        [createProperty('body_')],
-        reservedNameReplacements: const {'body': 'bodyHeader'},
-      );
-
-      expect(result.single.normalizedName, 'bodyHeader');
-    });
-
-    test('makes replacement unique against ordinary properties', () {
-      final result = normalizeProperties(
-        [createProperty('body_'), createProperty('bodyHeader')],
-        reservedNameReplacements: const {'body': 'bodyHeader'},
-      );
-
-      expect(result.map((r) => r.normalizedName), [
-        'bodyHeader',
-        'bodyHeader2',
-      ]);
-    });
-
-    test('does not reserve names unless the caller owns them', () {
-      final result = normalizeProperties([createProperty('body')]);
-
-      expect(result.single.normalizedName, 'body');
-    });
-  });
-
   test('normalizeAll handles Dart keywords and generated members', () {
     final result = normalizeProperties([
       createProperty('class'),

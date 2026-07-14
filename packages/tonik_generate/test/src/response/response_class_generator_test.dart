@@ -155,16 +155,16 @@ void main() {
       final fields = generatedClass.fields.toList();
       expect(fields.length, 2);
 
-      // Header field should be renamed to bodyHeader
+      // Header claims the first normalized name.
       final headerField = fields[0];
-      expect(headerField.name, 'bodyHeader');
+      expect(headerField.name, 'body');
       expect(headerField.type?.accept(emitter).toString(), 'String');
       expect(headerField.modifier, FieldModifier.final$);
       expect(headerField.annotations.isEmpty, isTrue);
 
-      // Body field should keep original name
+      // The synthetic body uses the resolved unique name.
       final bodyField = fields[1];
-      expect(bodyField.name, 'body');
+      expect(bodyField.name, 'body2');
       expect(bodyField.type?.accept(emitter).toString(), 'int');
       expect(bodyField.modifier, FieldModifier.final$);
       expect(bodyField.annotations.isEmpty, isTrue);
@@ -173,13 +173,13 @@ void main() {
       expect(params.length, 2);
 
       final headerParam = params[0];
-      expect(headerParam.name, 'bodyHeader');
+      expect(headerParam.name, 'body');
       expect(headerParam.named, isTrue);
       expect(headerParam.required, isTrue);
       expect(headerParam.toThis, isTrue);
 
       final bodyParam = params[1];
-      expect(bodyParam.name, 'body');
+      expect(bodyParam.name, 'body2');
       expect(bodyParam.named, isTrue);
       expect(bodyParam.required, isTrue);
       expect(bodyParam.toThis, isTrue);

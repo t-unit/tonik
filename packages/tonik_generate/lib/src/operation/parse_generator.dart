@@ -533,7 +533,9 @@ class ParseGenerator {
 
     final responseArgs = <String, Expression>{};
     if (bodyDecode != null) {
-      responseArgs['body'] = refer(bodyDecode.varName!);
+      responseArgs[_normalizedBodyPropertyName(response, contentType)] = refer(
+        bodyDecode.varName!,
+      );
     }
     responseArgs.addAll(headerResult.supported);
 
@@ -602,7 +604,9 @@ class ParseGenerator {
 
     final args = <String, Expression>{};
     if (bodyDecode != null) {
-      args['body'] = refer(bodyDecode.varName!);
+      args[_normalizedBodyPropertyName(response, contentType)] = refer(
+        bodyDecode.varName!,
+      );
     }
     args.addAll(headerResult.supported);
 
@@ -639,6 +643,22 @@ class ParseGenerator {
         const Code('}'),
       ]);
     }).toList();
+  }
+
+  String _normalizedBodyPropertyName(
+    ResponseObject response,
+    String? contentType,
+  ) {
+    final body = contentType != null
+        ? response.bodies.firstWhere(
+            (body) => body.rawContentType == contentType,
+            orElse: () => response.bodies.first,
+          )
+        : response.bodies.first;
+    return normalizeResponseProperties(
+      response,
+      body: body,
+    ).singleWhere((property) => property.header == null).normalizedName;
   }
 
   ({

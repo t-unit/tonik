@@ -134,7 +134,7 @@ void main() {
         expect(contentTypeField.modifier, FieldModifier.final$);
 
         final bodyHeaderField = fields[1];
-        expect(bodyHeaderField.name, 'bodyHeader');
+        expect(bodyHeaderField.name, 'body');
         expect(bodyHeaderField.type?.accept(emitter).toString(), 'String');
         expect(bodyHeaderField.modifier, FieldModifier.final$);
       });
@@ -148,7 +148,7 @@ void main() {
         expect(params[0].name, 'contentType');
         expect(params[0].required, isTrue);
         expect(params[0].toThis, isTrue);
-        expect(params[1].name, 'bodyHeader');
+        expect(params[1].name, 'body');
         expect(params[1].required, isTrue);
         expect(params[1].toThis, isTrue);
       });
@@ -179,7 +179,7 @@ void main() {
       test('has correct body field', () {
         final fields = plainClass.fields.toList();
         expect(fields.length, 1);
-        expect(fields[0].name, 'body');
+        expect(fields[0].name, 'body2');
         expect(fields[0].type?.accept(emitter).toString(), 'String');
         expect(fields[0].modifier, FieldModifier.final$);
       });
@@ -195,11 +195,11 @@ void main() {
         expect(params[0].required, isTrue);
         expect(params[0].toSuper, isTrue);
 
-        expect(params[1].name, 'bodyHeader');
+        expect(params[1].name, 'body');
         expect(params[1].required, isTrue);
         expect(params[1].toSuper, isTrue);
 
-        expect(params[2].name, 'body');
+        expect(params[2].name, 'body2');
         expect(params[2].required, isTrue);
         expect(params[2].toThis, isTrue);
       });
@@ -256,7 +256,7 @@ void main() {
       test('has correct body field', () {
         final fields = jsonClass.fields.toList();
         expect(fields.length, 1);
-        expect(fields[0].name, 'body');
+        expect(fields[0].name, 'body2');
         expect(fields[0].type?.accept(emitter).toString(), 'int');
         expect(fields[0].modifier, FieldModifier.final$);
       });
@@ -272,11 +272,11 @@ void main() {
         expect(params[0].required, isTrue);
         expect(params[0].toSuper, isTrue);
 
-        expect(params[1].name, 'bodyHeader');
+        expect(params[1].name, 'body');
         expect(params[1].required, isTrue);
         expect(params[1].toSuper, isTrue);
 
-        expect(params[2].name, 'body');
+        expect(params[2].name, 'body2');
         expect(params[2].required, isTrue);
         expect(params[2].toThis, isTrue);
       });

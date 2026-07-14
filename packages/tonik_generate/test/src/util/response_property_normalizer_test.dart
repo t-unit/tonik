@@ -9,8 +9,8 @@ void main() {
     context = Context.initial();
   });
 
-  for (final rawName in ['body', 'Body', 'body_', '__body__']) {
-    test('reserves body when header $rawName normalizes to body', () {
+  for (final rawName in ['body', 'Body']) {
+    test('keeps body reserved for literal header $rawName', () {
       final header = _header(rawName, context);
       final response = _response(
         context: context,
@@ -25,18 +25,38 @@ void main() {
         ['bodyHeader', 'body'],
       );
       expect(properties.first.header, same(header));
+      expect(properties.last.header, isNull);
+    });
+  }
+
+  for (final rawName in ['body_', '__body__']) {
+    test('disambiguates content body after header $rawName', () {
+      final header = _header(rawName, context);
+      final response = _response(
+        context: context,
+        headers: {rawName: header},
+        bodies: {_body('application/json', context)},
+      );
+
+      final properties = normalizeResponseProperties(response);
+
+      expect(
+        properties.map((property) => property.normalizedName),
+        ['body', 'body2'],
+      );
+      expect(properties.first.header, same(header));
       expect(properties.first.property.name, rawName);
       expect(properties.last.header, isNull);
     });
   }
 
-  test('disambiguates body_ from a literal bodyHeader header', () {
-    final normalizedBodyHeader = _header('body_', context);
+  test('keeps body_ distinct from a literal bodyHeader header', () {
+    final normalizedBody = _header('body_', context);
     final literalBodyHeader = _header('bodyHeader', context);
     final response = _response(
       context: context,
       headers: {
-        'body_': normalizedBodyHeader,
+        'body_': normalizedBody,
         'bodyHeader': literalBodyHeader,
       },
       bodies: {_body('application/json', context)},
@@ -46,14 +66,14 @@ void main() {
 
     expect(
       properties.map((property) => property.normalizedName),
-      ['bodyHeader', 'bodyHeader2', 'body'],
+      ['body', 'bodyHeader', 'body2'],
     );
-    expect(properties[0].header, same(normalizedBodyHeader));
+    expect(properties[0].header, same(normalizedBody));
     expect(properties[1].header, same(literalBodyHeader));
     expect(properties[2].header, isNull);
   });
 
-  test('reserves body for content-specific response subclasses', () {
+  test('resolves body separately for content-specific response subclasses', () {
     final header = _header('body_', context);
     final response = _response(
       context: context,
@@ -64,13 +84,23 @@ void main() {
       },
     );
 
-    final properties = normalizeResponseProperties(response);
+    final baseProperties = normalizeResponseProperties(response);
+    final implementationProperties = normalizeResponseProperties(
+      response,
+      body: response.bodies.first,
+    );
 
     expect(
-      properties.map((property) => property.normalizedName),
-      ['bodyHeader'],
+      baseProperties.map((property) => property.normalizedName),
+      ['body'],
     );
-    expect(properties.single.header, same(header));
+    expect(baseProperties.single.header, same(header));
+    expect(
+      implementationProperties.map((property) => property.normalizedName),
+      ['body', 'body2'],
+    );
+    expect(implementationProperties.first.header, same(header));
+    expect(implementationProperties.last.header, isNull);
   });
 }
 

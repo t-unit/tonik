@@ -1,19 +1,21 @@
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 
-/// Names owned by generated response classes that headers must not claim.
-const responseHeaderReservedNameReplacements = {'body': 'bodyHeader'};
-
 /// Normalizes and sorts properties from a response object.
 /// Returns a list of normalized properties with their original names.
 List<({String normalizedName, Property property, ResponseHeader? header})>
-normalizeResponseProperties(ResponseObject response) {
+normalizeResponseProperties(
+  ResponseObject response, {
+  ResponseBody? body,
+}) {
   final headerMap = <Property, ResponseHeader>{};
 
   final headerProperties = response.headers.entries.map((header) {
     final resolvedHeader = header.value.resolve(name: header.key);
     final property = Property(
-      name: header.key,
+      name: header.key.toLowerCase() == 'body'
+          ? '${header.key}Header'
+          : header.key,
       model: resolvedHeader.model,
       isRequired: resolvedHeader.isRequired,
       isNullable: false,
@@ -24,26 +26,25 @@ normalizeResponseProperties(ResponseObject response) {
 
     headerMap[property] = header.value;
     return property;
-  }).toList();
+  });
 
-  final normalizedProperties = [
-    ...normalizeProperties(
-      headerProperties,
-      reservedNameReplacements: responseHeaderReservedNameReplacements,
-    ),
-    if (response.bodies.length == 1)
-      ...normalizeProperties([
-        Property(
-          name: 'body',
-          model: response.bodies.first.model,
-          isRequired: true,
-          isNullable: false,
-          isDeprecated: false,
-          examples: const [],
-          defaultValue: null,
-        ),
-      ]),
+  final selectedBody =
+      body ?? (response.bodies.length == 1 ? response.bodies.first : null);
+  final properties = <Property>[
+    ...headerProperties,
+    if (selectedBody != null)
+      Property(
+        name: 'body',
+        model: selectedBody.model,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      ),
   ];
+
+  final normalizedProperties = normalizeProperties(properties);
 
   final sorted = [...normalizedProperties]
     ..sort((a, b) {

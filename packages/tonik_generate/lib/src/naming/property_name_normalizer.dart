@@ -15,39 +15,22 @@ import 'package:tonik_generate/src/naming/name_utils.dart';
 /// - user123 -> user123
 /// - empty string or _ -> field1, field2, etc.
 /// - property with nameOverride='customName' -> customName
-///
-/// [reservedNameReplacements] maps normalized names owned by the generated
-/// container to the name a property should use instead. The replacement is
-/// applied after normalization and before uniqueness handling.
 List<({String normalizedName, Property property})> normalizeProperties(
-  List<Property> properties, {
-  Map<String, String> reservedNameReplacements = const {},
-}) {
-  final normalizedReservedNameReplacements = {
-    for (final entry in reservedNameReplacements.entries)
-      normalizeSingle(
-        entry.key,
-        preserveNumbers: true,
-      ).toLowerCase(): normalizeSingle(
-        entry.value,
-        preserveNumbers: true,
-      ),
-  };
-
-  final normalized = properties.map((prop) {
-    final normalizedName = prop.nameOverride != null
-        ? normalizeSingle(
-            prop.nameOverride!,
-            preserveNumbers: true,
-          )
-        : normalizeSingle(prop.name, preserveNumbers: true);
-    return (
-      normalizedName:
-          normalizedReservedNameReplacements[normalizedName.toLowerCase()] ??
-          normalizedName,
-      originalValue: prop,
-    );
-  }).toList();
+  List<Property> properties,
+) {
+  final normalized = properties
+      .map(
+        (prop) => (
+          normalizedName: prop.nameOverride != null
+              ? normalizeSingle(
+                  prop.nameOverride!,
+                  preserveNumbers: true,
+                )
+              : normalizeSingle(prop.name, preserveNumbers: true),
+          originalValue: prop,
+        ),
+      )
+      .toList();
 
   final unique = ensureUniqueness(
     normalized,

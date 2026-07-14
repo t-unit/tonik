@@ -40,7 +40,7 @@ void main() {
                   ResponseBodyCollisionHeaderNormalizedGet200Response
                 >)
             .value;
-    expect(value.bodyHeader, 'header-value');
-    expect(value.body.id, 'body-value');
+    expect(value.body, 'header-value');
+    expect(value.body2.id, 'body-value');
   });
 }
