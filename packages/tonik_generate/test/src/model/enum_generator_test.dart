@@ -131,7 +131,7 @@ void main() {
       );
 
       final rawValueField = generated.enumValue.fields.firstWhere(
-        (f) => f.name == 'rawValue',
+        (f) => f.name == r'_$rawValue',
       );
       expect(rawValueField.modifier, FieldModifier.final$);
       expect(
@@ -144,8 +144,42 @@ void main() {
       );
       expect(mainConstructor.constant, isTrue);
       expect(mainConstructor.requiredParameters, hasLength(1));
-      expect(mainConstructor.requiredParameters[0].name, 'rawValue');
+      expect(mainConstructor.requiredParameters[0].name, r'_$rawValue');
       expect(mainConstructor.requiredParameters[0].toThis, isTrue);
+    });
+
+    test('keeps rawValue as an enum case and uses private storage', () {
+      final model = EnumModel<String>(
+        isDeprecated: false,
+        name: 'Status',
+        values: {const EnumEntry(value: 'rawValue')},
+        isNullable: false,
+        context: Context.initial(),
+        examples: const [],
+      );
+
+      final generated = generator.generateEnum(model, 'Status');
+
+      expect(generated.enumValue.values.single.name, 'rawValue');
+      expect(
+        generated.enumValue.values.single.arguments.single
+            .accept(DartEmitter())
+            .toString(),
+        "r'rawValue'",
+      );
+      expect(generated.enumValue.fields.single.name, r'_$rawValue');
+      expect(
+        generated.enumValue.constructors.first.requiredParameters.single.name,
+        r'_$rawValue',
+      );
+
+      final toJson = generated.enumValue.methods.firstWhere(
+        (method) => method.name == 'toJson',
+      );
+      expect(
+        toJson.body?.accept(DartEmitter()).toString(),
+        r'_$rawValue',
+      );
     });
 
     test('generates nullable enum code', () {
@@ -290,7 +324,7 @@ void main() {
       );
 
       final rawValueField = generated.enumValue.fields.firstWhere(
-        (f) => f.name == 'rawValue',
+        (f) => f.name == r'_$rawValue',
       );
       expect(rawValueField.modifier, FieldModifier.final$);
       expect(
@@ -303,7 +337,7 @@ void main() {
       );
       expect(mainConstructor.constant, isTrue);
       expect(mainConstructor.requiredParameters, hasLength(1));
-      expect(mainConstructor.requiredParameters[0].name, 'rawValue');
+      expect(mainConstructor.requiredParameters[0].name, r'_$rawValue');
       expect(mainConstructor.requiredParameters[0].toThis, isTrue);
     });
 
@@ -355,7 +389,7 @@ void main() {
         );
 
         final rawValueField = generated.enumValue.fields.firstWhere(
-          (f) => f.name == 'rawValue',
+          (f) => f.name == r'_$rawValue',
         );
         expect(rawValueField.modifier, FieldModifier.final$);
         expect(
@@ -368,7 +402,7 @@ void main() {
         );
         expect(mainConstructor.constant, isTrue);
         expect(mainConstructor.requiredParameters, hasLength(1));
-        expect(mainConstructor.requiredParameters[0].name, 'rawValue');
+        expect(mainConstructor.requiredParameters[0].name, r'_$rawValue');
         expect(mainConstructor.requiredParameters[0].toThis, isTrue);
       },
     );
@@ -648,7 +682,7 @@ void main() {
         );
 
         final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
-        expect(body, 'rawValue');
+        expect(body, r'_$rawValue');
         expect(toJson.returns?.accept(DartEmitter()).toString(), 'String');
       });
 
@@ -688,7 +722,7 @@ void main() {
               );
             }
             return values.firstWhere(
-              (e) => e.rawValue == value,
+              (e) => e._$rawValue == value,
               orElse: () =>
                   throw JsonDecodingException(r'No matching Color for value: $value'),
             );
@@ -732,7 +766,7 @@ void main() {
           factory Status.fromJson(dynamic value) {
             final decoded = (value as Object?).decodeJsonInt(context: r'Status');
             return values.firstWhere(
-              (e) => e.rawValue == decoded,
+              (e) => e._$rawValue == decoded,
               orElse: () => throw JsonDecodingException(
                 r'No matching Status for value: $decoded',
               ),
@@ -772,7 +806,7 @@ void main() {
               );
             }
             return values.firstWhere(
-              (e) => e.rawValue == value,
+              (e) => e._$rawValue == value,
               orElse: () =>
                   throw JsonDecodingException(r'No matching $2fa for value: $value'),
             );
@@ -807,7 +841,7 @@ void main() {
           factory $2fa.fromJson(dynamic value) {
             final decoded = (value as Object?).decodeJsonInt(context: r'$2fa');
             return values.firstWhere(
-              (e) => e.rawValue == decoded,
+              (e) => e._$rawValue == decoded,
               orElse: () =>
                   throw JsonDecodingException(r'No matching $2fa for value: $decoded'),
             );
@@ -854,7 +888,7 @@ void main() {
               );
             }
             return values.firstWhere(
-              (e) => e.rawValue == value,
+              (e) => e._$rawValue == value,
               orElse: () =>
                   throw JsonDecodingException(r'No matching Status for value: $value'),
             );
@@ -1066,14 +1100,14 @@ void main() {
         expect(allowEmptyParam.named, isTrue);
         expect(allowEmptyParam.required, isTrue);
 
-        const expected = '''
+        const expected = r'''
           class Status {
             @override
             String toSimple({
               required bool explode,
               required bool allowEmpty,
               bool literal = false,
-            }) => rawValue.toSimple(
+            }) => _$rawValue.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -1109,14 +1143,14 @@ void main() {
         expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
         expect(toSimple.optionalParameters, hasLength(3));
 
-        const expected = '''
+        const expected = r'''
           class Status {
             @override
             String toSimple({
               required bool explode,
               required bool allowEmpty,
               bool literal = false,
-            }) => rawValue.toSimple(
+            }) => _$rawValue.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -1151,14 +1185,14 @@ void main() {
         expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
         expect(toSimple.optionalParameters, hasLength(3));
 
-        const expected = '''
+        const expected = r'''
           class Status {
             @override
             String toSimple({
               required bool explode,
               required bool allowEmpty,
               bool literal = false,
-            }) => rawValue.toSimple(
+            }) => _$rawValue.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -1194,14 +1228,14 @@ void main() {
         expect(toSimple.returns?.accept(DartEmitter()).toString(), 'String');
         expect(toSimple.optionalParameters, hasLength(3));
 
-        const expected = '''
+        const expected = r'''
           class Status {
             @override
             String toSimple({
               required bool explode,
               required bool allowEmpty,
               bool literal = false,
-            }) => rawValue.toSimple(
+            }) => _$rawValue.toSimple(
               explode: explode,
               allowEmpty: allowEmpty,
               literal: literal,
@@ -1437,7 +1471,7 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toForm(paramName, explode: explode, '
+          r'_$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
           'allowReserved: allowReserved)',
         );
@@ -1473,7 +1507,7 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toForm(paramName, explode: explode, '
+          r'_$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
           'allowReserved: allowReserved)',
         );
@@ -1508,7 +1542,7 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toForm(paramName, explode: explode, '
+          r'_$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
           'allowReserved: allowReserved)',
         );
@@ -1544,7 +1578,7 @@ void main() {
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toForm(paramName, explode: explode, '
+          r'_$rawValue.toForm(paramName, explode: explode, '
           'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
           'allowReserved: allowReserved)',
         );
@@ -1592,7 +1626,7 @@ void main() {
         final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+          r'_$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -1621,7 +1655,7 @@ void main() {
         final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+          r'_$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
         );
       });
 
@@ -1650,7 +1684,7 @@ void main() {
         final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+          r'_$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
         );
       });
     });
@@ -1703,7 +1737,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, explode: explode, '
+          r'_$rawValue.toMatrix(paramName, explode: explode, '
           'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
@@ -1742,7 +1776,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, explode: explode, '
+          r'_$rawValue.toMatrix(paramName, explode: explode, '
           'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
@@ -1780,7 +1814,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, explode: explode, '
+          r'_$rawValue.toMatrix(paramName, explode: explode, '
           'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
@@ -1819,7 +1853,7 @@ void main() {
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.toMatrix(paramName, explode: explode, '
+          r'_$rawValue.toMatrix(paramName, explode: explode, '
           'allowEmpty: allowEmpty)',
         );
         expect(toMatrix.lambda, isTrue);
@@ -1873,7 +1907,7 @@ void main() {
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.uriEncode(allowEmpty: allowEmpty, '
+          r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
@@ -1918,7 +1952,7 @@ void main() {
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.uriEncode(allowEmpty: allowEmpty, '
+          r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
@@ -1962,7 +1996,7 @@ void main() {
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
         expect(
           body,
-          'rawValue.uriEncode(allowEmpty: allowEmpty, '
+          r'_$rawValue.uriEncode(allowEmpty: allowEmpty, '
           'useQueryComponent: useQueryComponent, allowReserved: allowReserved)',
         );
         expect(uriEncode.lambda, isTrue);
@@ -2008,7 +2042,7 @@ void main() {
                 );
               }
               return values.firstWhere(
-                (e) => e.rawValue == value,
+                (e) => e._$rawValue == value,
                 orElse: () => Status.unknown,
               );
             }
@@ -2088,7 +2122,7 @@ void main() {
               );
             }
             return values.firstWhere(
-              (e) => e.rawValue == value,
+              (e) => e._$rawValue == value,
               orElse: () => Status.unknown,
             );
           }
@@ -2130,11 +2164,11 @@ void main() {
         );
 
         final formatted = formatConstructor(fromJson, 'Code');
-        const expectedFactory = '''
+        const expectedFactory = r'''
           factory Code.fromJson(dynamic value) {
             final decoded = (value as Object?).decodeJsonInt(context: r'Code');
             return values.firstWhere(
-              (e) => e.rawValue == decoded,
+              (e) => e._$rawValue == decoded,
               orElse: () => Code.unknown,
             );
           }
@@ -2168,11 +2202,11 @@ void main() {
         expect(toJson.lambda, isFalse);
 
         final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
+        const expectedBody = r'''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue;
+          return _$rawValue;
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2200,7 +2234,7 @@ void main() {
         expect(toSimple.lambda, isFalse);
         expect(toSimple.optionalParameters, hasLength(3));
 
-        const expected = '''
+        const expected = r'''
           class Status {
             @override
             String toSimple({
@@ -2211,7 +2245,7 @@ void main() {
               if (this == Status.unknown) {
                 throw EncodingException(r'Cannot encode unknown enum value');
               }
-              return rawValue.toSimple(
+              return _$rawValue.toSimple(
                 explode: explode,
                 allowEmpty: allowEmpty,
                 literal: literal,
@@ -2253,11 +2287,11 @@ void main() {
         expect(toForm.optionalParameters, hasLength(5));
 
         final body = toForm.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
+        const expectedBody = r'''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
+          return _$rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2332,11 +2366,11 @@ void main() {
         expect(toLabel.optionalParameters, hasLength(2));
 
         final body = toLabel.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
+        const expectedBody = r'''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
+          return _$rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2386,11 +2420,11 @@ void main() {
         );
 
         final body = uriEncode.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
+        const expectedBody = r'''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
+          return _$rawValue.uriEncode(allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2420,11 +2454,11 @@ void main() {
         expect(toMatrix.optionalParameters, hasLength(2));
 
         final body = toMatrix.body?.accept(DartEmitter()).toString() ?? '';
-        const expectedBody = '''
+        const expectedBody = r'''
           if (this == Status.unknown) {
             throw EncodingException(r'Cannot encode unknown enum value');
           }
-          return rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
+          return _$rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
         ''';
         expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
       });
@@ -2455,7 +2489,7 @@ void main() {
               );
             }
             return values.firstWhere(
-              (e) => e.rawValue == value,
+              (e) => e._$rawValue == value,
               orElse: () =>
                   throw JsonDecodingException(r'No matching Status for value: $value'),
             );
@@ -2605,7 +2639,7 @@ void main() {
                 );
               }
               return values.firstWhere(
-                (e) => e.rawValue == value,
+                (e) => e._$rawValue == value,
                 orElse: () => Status.fallback,
               );
             }
@@ -2669,7 +2703,7 @@ void main() {
                 );
               }
               return values.firstWhere(
-                (e) => e.rawValue == value,
+                (e) => e._$rawValue == value,
                 orElse: () => Status.fallbackUnknown,
               );
             }
@@ -2706,11 +2740,11 @@ void main() {
           );
 
           final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
-          const expectedBody = '''
+          const expectedBody = r'''
             if (this == Status.unknown2) {
               throw EncodingException(r'Cannot encode unknown enum value');
             }
-            return rawValue;
+            return _$rawValue;
           ''';
           expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
         },
@@ -2944,11 +2978,11 @@ void main() {
           );
 
           final body = toJson.body?.accept(DartEmitter()).toString() ?? '';
-          const expectedBody = '''
+          const expectedBody = r'''
             if (this == Status.unKnown) {
               throw EncodingException(r'Cannot encode unknown enum value');
             }
-            return rawValue;
+            return _$rawValue;
           ''';
           expect(collapseWhitespace(body), collapseWhitespace(expectedBody));
         },

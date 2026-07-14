@@ -222,6 +222,12 @@ void main() {
         expect(normalizeEnumValueName('VALUES'), r'$values');
       });
 
+      test('keeps rawValue available as an enum case name', () {
+        expect(normalizeEnumValueName('rawValue'), 'rawValue');
+        expect(normalizeEnumValueName('RAW_VALUE'), 'rawValue');
+        expect(normalizeEnumValueName('raw_value'), 'rawValue');
+      });
+
       test('does not escape words that contain reserved names', () {
         expect(normalizeEnumValueName('reindex'), 'reindex');
         expect(normalizeEnumValueName('indexing'), 'indexing');

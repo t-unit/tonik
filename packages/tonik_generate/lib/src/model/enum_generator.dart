@@ -11,6 +11,8 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
+const _rawValueFieldName = r'_$rawValue';
+
 /// A generator for creating Dart enum files from enum model definitions.
 @immutable
 class EnumGenerator {
@@ -113,7 +115,7 @@ class EnumGenerator {
                 ..requiredParameters.add(
                   Parameter(
                     (b) => b
-                      ..name = 'rawValue'
+                      ..name = _rawValueFieldName
                       ..toThis = true,
                   ),
                 ),
@@ -188,7 +190,7 @@ class EnumGenerator {
           ..fields.add(
             Field(
               (b) => b
-                ..name = 'rawValue'
+                ..name = _rawValueFieldName
                 ..modifier = FieldModifier.final$
                 ..type = refer(T.toString(), 'dart:core'),
             ),
@@ -383,7 +385,10 @@ class EnumGenerator {
                       )
                       ..body = refer(
                         'e',
-                      ).property('rawValue').equalTo(refer(matchVariable)).code,
+                      )
+                          .property(_rawValueFieldName)
+                          .equalTo(refer(matchVariable))
+                          .code,
                   ).closure,
                 ],
                 {'orElse': orElse},
@@ -405,7 +410,7 @@ class EnumGenerator {
           ..name = 'toJson'
           ..returns = refer(T.toString(), 'dart:core')
           ..lambda = true
-          ..body = const Code('rawValue'),
+          ..body = refer(_rawValueFieldName).code,
       );
     }
 
@@ -422,7 +427,7 @@ class EnumGenerator {
             raw: true,
           ).statement,
           const Code('}'),
-          const Code('return rawValue;'),
+          refer(_rawValueFieldName).returned.statement,
         ]),
     );
   }
@@ -440,7 +445,8 @@ class EnumGenerator {
           ..lambda = true
           ..optionalParameters.addAll(buildSimpleEncodingParameters())
           ..body = const Code(
-            'rawValue.toSimple(explode: explode, allowEmpty: allowEmpty, '
+            '$_rawValueFieldName.toSimple(explode: explode, '
+            'allowEmpty: allowEmpty, '
             'literal: literal)',
           ),
       );
@@ -461,9 +467,8 @@ class EnumGenerator {
           ).statement,
           const Code('}'),
           const Code(
-            '''
-return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty, literal: literal);
-''',
+            'return $_rawValueFieldName.toSimple(explode: explode, '
+            'allowEmpty: allowEmpty, literal: literal);',
           ),
         ]),
     );
@@ -489,7 +494,7 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty, literal: lite
           )
           ..optionalParameters.addAll(buildFormEncodingParameters())
           ..body = const Code(
-            'rawValue.toForm(paramName, explode: explode, '
+            '$_rawValueFieldName.toForm(paramName, explode: explode, '
             'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved)',
           ),
@@ -518,9 +523,9 @@ return rawValue.toSimple(explode: explode, allowEmpty: allowEmpty, literal: lite
           ).statement,
           const Code('}'),
           const Code(
-            '''
-return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved);
-''',
+            'return $_rawValueFieldName.toForm(paramName, explode: explode, '
+            'allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, '
+            'allowReserved: allowReserved);',
           ),
         ]),
     );
@@ -539,7 +544,8 @@ return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQ
           ..lambda = true
           ..optionalParameters.addAll(buildEncodingParameters())
           ..body = const Code(
-            'rawValue.toLabel(explode: explode, allowEmpty: allowEmpty)',
+            '$_rawValueFieldName.toLabel(explode: explode, '
+            'allowEmpty: allowEmpty)',
           ),
       );
     }
@@ -559,9 +565,8 @@ return rawValue.toForm(paramName, explode: explode, allowEmpty: allowEmpty, useQ
           ).statement,
           const Code('}'),
           const Code(
-            '''
-return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
-''',
+            'return $_rawValueFieldName.toLabel(explode: explode, '
+            'allowEmpty: allowEmpty);',
           ),
         ]),
     );
@@ -580,7 +585,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
           ..lambda = true
           ..optionalParameters.addAll(buildUriEncodeParameters())
           ..body = const Code(
-            'rawValue.uriEncode(allowEmpty: allowEmpty, '
+            '$_rawValueFieldName.uriEncode(allowEmpty: allowEmpty, '
             'useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved)',
           ),
@@ -602,7 +607,7 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
           ).statement,
           const Code('}'),
           const Code(
-            'return rawValue.uriEncode(allowEmpty: allowEmpty, '
+            'return $_rawValueFieldName.uriEncode(allowEmpty: allowEmpty, '
             'useQueryComponent: useQueryComponent, '
             'allowReserved: allowReserved);',
           ),
@@ -630,7 +635,8 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
           )
           ..optionalParameters.addAll(buildEncodingParameters())
           ..body = const Code(
-            '''rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty)''',
+            '$_rawValueFieldName.toMatrix(paramName, explode: explode, '
+            'allowEmpty: allowEmpty)',
           ),
       );
     }
@@ -657,9 +663,8 @@ return rawValue.toLabel(explode: explode, allowEmpty: allowEmpty);
           ).statement,
           const Code('}'),
           const Code(
-            '''
-return rawValue.toMatrix(paramName, explode: explode, allowEmpty: allowEmpty);
-''',
+            'return $_rawValueFieldName.toMatrix(paramName, '
+            'explode: explode, allowEmpty: allowEmpty);',
           ),
         ]),
     );

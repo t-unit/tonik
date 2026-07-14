@@ -62,7 +62,7 @@ void main() {
 
     test('base: enum values do not include reservedForFutureUse rawValue', () {
       final hasReserved = base.OrderStatusModel.values.any(
-        (e) => e.rawValue == 'reservedForFutureUse',
+        (e) => e.toJson() == 'reservedForFutureUse',
       );
       expect(hasReserved, isFalse);
     });

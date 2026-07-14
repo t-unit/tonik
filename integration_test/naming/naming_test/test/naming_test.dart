@@ -6,6 +6,7 @@ import 'package:naming_api/src/model/_function.dart';
 import 'package:naming_api/src/model/camel_case_collider.dart';
 import 'package:naming_api/src/model/duration.dart' as naming;
 import 'package:naming_api/src/model/enum.dart' as naming;
+import 'package:naming_api/src/model/enum_reserved_names.dart';
 import 'package:naming_api/src/model/error.dart' as naming;
 import 'package:naming_api/src/model/generated_method_collider.dart';
 import 'package:naming_api/src/model/keyword_enum.dart';
@@ -320,13 +321,23 @@ void main() {
 
   group('keyword enum values', () {
     test('KeywordEnum has escaped values', () {
-      expect(KeywordEnum.$switch.rawValue, 'switch');
-      expect(KeywordEnum.$class.rawValue, 'class');
-      expect(KeywordEnum.$return.rawValue, 'return');
-      expect(KeywordEnum.$void.rawValue, 'void');
-      expect(KeywordEnum.$null.rawValue, 'null');
-      expect(KeywordEnum.$true.rawValue, 'true');
-      expect(KeywordEnum.$false.rawValue, 'false');
+      expect(KeywordEnum.$switch.toJson(), 'switch');
+      expect(KeywordEnum.$class.toJson(), 'class');
+      expect(KeywordEnum.$return.toJson(), 'return');
+      expect(KeywordEnum.$void.toJson(), 'void');
+      expect(KeywordEnum.$null.toJson(), 'null');
+      expect(KeywordEnum.$true.toJson(), 'true');
+      expect(KeywordEnum.$false.toJson(), 'false');
+    });
+  });
+
+  group('generated enum storage names', () {
+    test('keeps rawValue as the enum case name', () {
+      expect(EnumReservedNames.rawValue.toJson(), 'rawValue');
+      expect(
+        EnumReservedNames.fromJson('rawValue'),
+        EnumReservedNames.rawValue,
+      );
     });
   });
 

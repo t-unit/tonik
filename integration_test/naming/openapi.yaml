@@ -1554,6 +1554,7 @@ components:
         - index
         - values
         - name
+        - rawValue
         - normal
         - hashCode
         - toString
