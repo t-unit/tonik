@@ -1,6 +1,8 @@
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+
+/// Names owned by generated response classes that headers must not claim.
+const responseHeaderReservedNameReplacements = {'body': 'bodyHeader'};
 
 /// Normalizes and sorts properties from a response object.
 /// Returns a list of normalized properties with their original names.
@@ -10,12 +12,8 @@ normalizeResponseProperties(ResponseObject response) {
 
   final headerProperties = response.headers.entries.map((header) {
     final resolvedHeader = header.value.resolve(name: header.key);
-    final normalizedHeaderName = normalizeSingle(
-      header.key,
-      preserveNumbers: true,
-    );
     final property = Property(
-      name: normalizedHeaderName == 'body' ? '${header.key}Header' : header.key,
+      name: header.key,
       model: resolvedHeader.model,
       isRequired: resolvedHeader.isRequired,
       isNullable: false,
@@ -26,23 +24,26 @@ normalizeResponseProperties(ResponseObject response) {
 
     headerMap[property] = header.value;
     return property;
-  });
+  }).toList();
 
-  final properties = <Property>[
-    ...headerProperties,
+  final normalizedProperties = [
+    ...normalizeProperties(
+      headerProperties,
+      reservedNameReplacements: responseHeaderReservedNameReplacements,
+    ),
     if (response.bodies.length == 1)
-      Property(
-        name: 'body',
-        model: response.bodies.first.model,
-        isRequired: true,
-        isNullable: false,
-        isDeprecated: false,
-        examples: const [],
-        defaultValue: null,
-      ),
+      ...normalizeProperties([
+        Property(
+          name: 'body',
+          model: response.bodies.first.model,
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        ),
+      ]),
   ];
-
-  final normalizedProperties = normalizeProperties(properties);
 
   final sorted = [...normalizedProperties]
     ..sort((a, b) {

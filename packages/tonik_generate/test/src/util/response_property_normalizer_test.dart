@@ -25,6 +25,7 @@ void main() {
         ['bodyHeader', 'body'],
       );
       expect(properties.first.header, same(header));
+      expect(properties.first.property.name, rawName);
       expect(properties.last.header, isNull);
     });
   }
