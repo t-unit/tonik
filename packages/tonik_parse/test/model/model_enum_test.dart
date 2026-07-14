@@ -1,3 +1,4 @@
+import 'package:logging/logging.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_parse/tonik_parse.dart';
@@ -106,6 +107,118 @@ void main() {
     );
     expect(required, isA<EnumModel<String>>());
     expect((required as EnumModel).isNullable, isFalse);
+  });
+
+  group('empty enum', () {
+    test('adds typed fallback cases and warns', () {
+      final logs = <LogRecord>[];
+      final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
+      addTearDown(subscription.cancel);
+
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'EmptyString': {'type': 'string', 'enum': <String>[]},
+            'EmptyInteger': {'type': 'integer', 'enum': <int>[]},
+            'EmptyNullable': {
+              'type': 'string',
+              'enum': <String>[],
+              'nullable': true,
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(spec);
+      final emptyString =
+          api.models.firstWhere(
+                (model) => model is NamedModel && model.name == 'EmptyString',
+              )
+              as EnumModel<String>;
+      final emptyInteger =
+          api.models.firstWhere(
+                (model) => model is NamedModel && model.name == 'EmptyInteger',
+              )
+              as EnumModel<int>;
+      final emptyNullable =
+          api.models.firstWhere(
+                (model) => model is NamedModel && model.name == 'EmptyNullable',
+              )
+              as EnumModel<String>;
+
+      expect(emptyString.values, isEmpty);
+      expect(
+        emptyString.fallbackValue,
+        const EnumEntry(value: 'unknown', nameOverride: 'unknown'),
+      );
+      expect(emptyInteger.values, isEmpty);
+      expect(
+        emptyInteger.fallbackValue,
+        const EnumEntry(value: -1, nameOverride: 'unknown'),
+      );
+      expect(emptyNullable.values, isEmpty);
+      expect(emptyNullable.isNullable, isTrue);
+      expect(
+        emptyNullable.fallbackValue,
+        const EnumEntry(value: 'unknown', nameOverride: 'unknown'),
+      );
+
+      expect(
+        logs
+            .where((record) => record.level == Level.WARNING)
+            .map((record) => record.message),
+        [
+          'Enum components/schemas/EmptyString has no values. Adding an unknown fallback case.',
+          'Enum components/schemas/EmptyInteger has no values. Adding an unknown fallback case.',
+          'Enum components/schemas/EmptyNullable has no values. Adding an unknown fallback case.',
+        ],
+      );
+    });
+
+    test('adds a fallback when type filtering removes every value', () {
+      final logs = <LogRecord>[];
+      final subscription = Logger('ModelImporter').onRecord.listen(logs.add);
+      addTearDown(subscription.cancel);
+
+      const spec = {
+        'openapi': '3.0.0',
+        'info': {'title': 'Test API', 'version': '1.0.0'},
+        'paths': <String, dynamic>{},
+        'components': {
+          'schemas': {
+            'InvalidString': {
+              'type': 'string',
+              'enum': [1, 2],
+            },
+          },
+        },
+      };
+
+      final api = Importer().import(spec);
+      final model =
+          api.models.firstWhere(
+                (model) => model is NamedModel && model.name == 'InvalidString',
+              )
+              as EnumModel<String>;
+
+      expect(model.values, isEmpty);
+      expect(
+        model.fallbackValue,
+        const EnumEntry(value: 'unknown', nameOverride: 'unknown'),
+      );
+      expect(
+        logs
+            .where((record) => record.level == Level.WARNING)
+            .map((record) => record.message),
+        [
+          'Found non-matching values in enum for components/schemas/InvalidString. Ignoring non-matching values.',
+          'Enum components/schemas/InvalidString has no values. Adding an unknown fallback case.',
+        ],
+      );
+    });
   });
 
   group('description', () {
