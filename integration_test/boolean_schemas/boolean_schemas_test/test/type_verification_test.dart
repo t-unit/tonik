@@ -1,5 +1,6 @@
 import 'package:boolean_schemas_api/boolean_schemas_api.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   group('AnyModel type verification', () {
@@ -53,6 +54,36 @@ void main() {
       final copied = obj.copyWith(name: 'copied');
       expect(copied.name, 'copied');
       expect(copied.neverField, isNull);
+    });
+
+    test('Shape decode factories accept empty List<Never> properties', () {
+      expect(
+        Shape.fromJson(
+          const <String, Object?>{'corner': <Object?>[]},
+        ).corner,
+        isEmpty,
+      );
+      expect(Shape.fromSimple('corner=', explode: true).corner, isEmpty);
+      expect(Shape.fromForm('corner=', explode: true).corner, isEmpty);
+    });
+
+    test('Shape decode factories reject non-empty List<Never> properties', () {
+      expect(
+        () => Shape.fromJson(
+          const <String, Object?>{
+            'corner': <Object?>['forbidden'],
+          },
+        ),
+        throwsA(isA<JsonDecodingException>()),
+      );
+      expect(
+        () => Shape.fromSimple('corner=forbidden', explode: true),
+        throwsA(isA<SimpleDecodingException>()),
+      );
+      expect(
+        () => Shape.fromForm('corner=forbidden', explode: true),
+        throwsA(isA<FormDecodingException>()),
+      );
     });
   });
 }

@@ -824,7 +824,7 @@ void main() {
     });
 
     group('List of NeverModel', () {
-      test('generates bare throw for required non-nullable list', () {
+      test('decodes required non-nullable list before rejecting elements', () {
         final expression = buildFromFormValueExpression(
           refer('formString'),
           model: ListModel(
@@ -840,13 +840,12 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          """throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')""",
+          """formString.decodeFormStringList().map((e) => throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
         );
       });
 
       test(
-        'generates null-guarded throw for required nullable list so the '
-        'caller-supplied local stays referenced',
+        'decodes required nullable list before rejecting elements',
         () {
           final expression = buildFromFormValueExpression(
             refer('formString'),
@@ -864,12 +863,12 @@ void main() {
           final code = expression.accept(DartEmitter()).toString();
           expect(
             code,
-            """formString == null ? null : throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')""",
+            """formString.decodeFormStringList().map((e) => throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
           );
         },
       );
 
-      test('generates null-guarded throw for optional non-nullable list', () {
+      test('decodes optional non-nullable list before rejecting elements', () {
         final expression = buildFromFormValueExpression(
           refer('formString'),
           model: ListModel(
@@ -885,7 +884,7 @@ void main() {
         final code = expression.accept(DartEmitter()).toString();
         expect(
           code,
-          """formString == null ? null : throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')""",
+          """formString.decodeFormNullableStringList()?.map((e) => throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
         );
       });
 
@@ -915,7 +914,7 @@ void main() {
           final code = expression.accept(DartEmitter()).toString();
           expect(
             code,
-            """formString == null ? null : throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')""",
+            """formString.decodeFormStringList().map((e) => throw  FormDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
           );
         },
       );

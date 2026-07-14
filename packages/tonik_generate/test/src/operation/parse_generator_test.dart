@@ -2642,51 +2642,60 @@ DateTime _parseResponse(Response<List<int>> response) {
     });
 
     group('NeverModel response bodies', () {
-      test('generates pure throw for ListModel<NeverModel> JSON body', () {
-        final operation = Operation(
-          operationId: 'listNeverOp',
-          context: context,
-          summary: '',
-          description: '',
-          tags: const {},
-          isDeprecated: false,
-          path: '/list-never',
-          method: HttpMethod.get,
-          headers: const {},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          responses: {
-            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
-              name: null,
-              context: context,
-              headers: const {},
-              description: '',
-              bodies: {
-                ResponseBody(
-                  model: ListModel(
-                    content: NeverModel(context: context),
-                    context: context,
+      test(
+        'decodes ListModel<NeverModel> JSON body before rejecting items',
+        () {
+          final operation = Operation(
+            operationId: 'listNeverOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/list-never',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: ListModel(
+                      content: NeverModel(context: context),
+                      context: context,
+                      examples: const [],
+                    ),
+                    rawContentType: 'application/json',
+                    contentType: ContentType.json,
                     examples: const [],
                   ),
-                  rawContentType: 'application/json',
-                  contentType: ContentType.json,
-                  examples: const [],
-                ),
-              },
-            ),
-          },
-          securitySchemes: const {},
-        );
-        final method = generator.generateParseResponseMethod(operation);
-        const expectedMethod = r'''
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
 List<Never> _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
     case (200, r'application/json'):
-      throw JsonDecodingException(
-        'Cannot decode List<NeverModel> - this type does not permit any value.',
-      );
+      final _$json = decodeResponseJson<Object?>(response.data);
+      final _$body = _$json
+          .decodeJsonList<Object?>()
+          .map(
+            (e) => throw JsonDecodingException(
+              'Cannot decode List<NeverModel> - this type does not permit any value.',
+            ),
+          )
+          .toList();
+      return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
       final _$matched = _$mediaType ?? 'none';
@@ -2695,11 +2704,12 @@ List<Never> _parseResponse(Response<List<int>> response) {
   }
 }
 ''';
-        expect(
-          collapseWhitespace(format(method.accept(emitter).toString())),
-          collapseWhitespace(format(expectedMethod)),
-        );
-      });
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
 
       test('generates pure throw for non-nullable NeverModel JSON body', () {
         final operation = Operation(
@@ -3202,7 +3212,7 @@ Never _parseResponse(Response<List<int>> response) {
       );
 
       test(
-        'generates pure throw for required ListModel<NeverModel> '
+        'decodes required ListModel<NeverModel> '
         'form-urlencoded body',
         () {
           final operation = Operation(
@@ -3246,9 +3256,16 @@ List<Never> _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
     case (200, r'application/x-www-form-urlencoded'):
-      throw FormDecodingException(
-        'Cannot decode List<NeverModel> - this type does not permit any value.',
-      );
+      final _$formString = decodeResponseText(response.data);
+      final _$body = _$formString
+          .decodeFormStringList()
+          .map(
+            (e) => throw FormDecodingException(
+              'Cannot decode List<NeverModel> - this type does not permit any value.',
+            ),
+          )
+          .toList();
+      return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
       final _$matched = _$mediaType ?? 'none';
@@ -3267,8 +3284,8 @@ List<Never> _parseResponse(Response<List<int>> response) {
       );
 
       test(
-        'nullable ListModel<NeverModel> form body emits pure throw without '
-        r'declaring an unused _$formString local',
+        'decodes nullable ListModel<NeverModel> form body before rejecting '
+        'items',
         () {
           final operation = Operation(
             operationId: 'formNullableListNeverBodyOp',
@@ -3312,9 +3329,16 @@ List<Never>? _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
     case (200, r'application/x-www-form-urlencoded'):
-      throw FormDecodingException(
-        'Cannot decode List<NeverModel> - this type does not permit any value.',
-      );
+      final _$formString = decodeResponseText(response.data);
+      final _$body = _$formString
+          .decodeFormStringList()
+          .map(
+            (e) => throw FormDecodingException(
+              'Cannot decode List<NeverModel> - this type does not permit any value.',
+            ),
+          )
+          .toList();
+      return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
       final _$matched = _$mediaType ?? 'none';

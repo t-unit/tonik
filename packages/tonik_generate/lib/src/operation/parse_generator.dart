@@ -406,20 +406,14 @@ class ParseGenerator {
     return (statements: statements, varName: bodyVar);
   }
 
-  // Mirrors the *non-nullable* `NeverModel` and `ListModel<NeverModel>` arms
-  // in buildFromJsonValueExpression — only those emit a bare
-  // `throw JsonDecodingException(...)`. When the model is nullable the arms
-  // emit `value == null ? null : throw …`, which references `_$json` and so
-  // must NOT short-circuit here. The `!nullable` gates in the switch below
-  // enforce that.
+  // Mirrors the non-nullable `NeverModel` arm in
+  // buildFromJsonValueExpression, which emits a bare throw. Nullable models
+  // reference `_$json` in their null guard and must not short-circuit here.
   bool _isJsonBodyPureThrow(Model model, {bool isNullable = false}) {
     final nullable = isNullable || model.isEffectivelyNullable;
     switch (model) {
       case NeverModel():
         return !nullable;
-      case ListModel(:final content):
-        final unwrapped = content is AliasModel ? content.model : content;
-        return !nullable && unwrapped is NeverModel;
       case AliasModel():
         return _isJsonBodyPureThrow(model.model, isNullable: nullable);
       default:
@@ -427,20 +421,13 @@ class ParseGenerator {
     }
   }
 
-  // Bare `NeverModel` and `ListModel<NeverModel>` both collapse to a pure
-  // throw regardless of nullability, because `_$formString` comes from
-  // `decodeResponseText` and is typed `String` (non-null). Wrapping the throw
-  // in `_$formString == null ? null : throw …` would trip
-  // `unnecessary_null_comparison`. This differs from `_isJsonBodyPureThrow`,
-  // where `_$json` is `Object?` and the nullable arms emit the null-guarded
-  // ternary — see the `!nullable` gates there.
+  // A bare `NeverModel` collapses to a pure throw regardless of nullability,
+  // because `_$formString` comes from `decodeResponseText` and is typed
+  // `String` (non-null).
   bool _isFormBodyPureThrow(Model model) {
     switch (model) {
       case NeverModel():
         return true;
-      case ListModel(:final content):
-        final unwrapped = content is AliasModel ? content.model : content;
-        return unwrapped is NeverModel;
       case AliasModel():
         return _isFormBodyPureThrow(model.model);
       default:

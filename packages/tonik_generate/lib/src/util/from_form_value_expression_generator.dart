@@ -185,22 +185,22 @@ Expression _buildNeverModelExpression(Expression value, bool isRequired) {
       : value.equalTo(literalNull).conditional(literalNull, throwExpr);
 }
 
-// Wrap the bare throw whenever the surrounding list is nullable or the field
-// is optional so the caller's input local stays referenced; an unwrapped
-// throw on a nested-class form field would orphan the receiver expression
-// and trip unused_local_variable.
 Expression _buildListNeverFormExpression(
-  Expression value, {
-  required bool isRequired,
-  required bool isNullableList,
-}) {
-  final throwExpr = generateFormDecodingExceptionExpression(
-    'Cannot decode List<NeverModel> - this type does not permit any value.',
-  );
-  if (isRequired && !isNullableList) {
-    return throwExpr;
-  }
-  return value.equalTo(literalNull).conditional(literalNull, throwExpr);
+  Expression listDecode,
+  bool isRequired,
+) {
+  final mapFunction = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+      ..body = generateFormDecodingExceptionExpression(
+        'Cannot decode List<NeverModel> - this type does not permit any value.',
+      ).code,
+  ).closure;
+
+  final map = isRequired
+      ? listDecode.property('map')
+      : listDecode.nullSafeProperty('map');
+  return map.call([mapFunction]).property('toList').call([]);
 }
 
 Expression _buildFromFormExpression(
@@ -362,9 +362,8 @@ Expression _buildListFromFormExpression(
       useImmutableCollections: useImmutableCollections,
     ),
     NeverModel() => _buildListNeverFormExpression(
-      value,
-      isRequired: isRequired,
-      isNullableList: model.isEffectivelyNullable,
+      listDecode,
+      isRequired,
     ),
     AnyModel() => listDecode,
     NamedModel() || CompositeModel() => generateFormDecodingExceptionExpression(

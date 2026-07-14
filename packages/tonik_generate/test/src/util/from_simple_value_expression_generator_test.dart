@@ -867,6 +867,44 @@ void main() {
           """value == null ? null : throw  _i1.SimpleDecodingException('Cannot decode NeverModel - this type does not permit any value.')""",
         );
       });
+
+      test('decodes required List<Never> before rejecting elements', () {
+        final value = refer('value');
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: ListModel(
+              content: NeverModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            isRequired: true,
+            nameManager: nameManager,
+            package: 'my_package',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          """value.decodeSimpleStringList().map((e) => throw  _i1.SimpleDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
+        );
+      });
+
+      test('decodes optional List<Never> before rejecting elements', () {
+        final value = refer('value');
+        expect(
+          buildSimpleValueExpression(
+            value,
+            model: ListModel(
+              content: NeverModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            isRequired: false,
+            nameManager: nameManager,
+            package: 'my_package',
+            explode: literalBool(false),
+          ).accept(scopedEmitter).toString(),
+          """value.decodeSimpleNullableStringList()?.map((e) => throw  _i1.SimpleDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()""",
+        );
+      });
     });
 
     group('unsupported model types generate runtime throws', () {

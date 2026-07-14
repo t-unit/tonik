@@ -83,6 +83,109 @@ void main() {
       },
     );
 
+    group('Never property decoding', () {
+      ClassModel buildShape() => ClassModel(
+        isDeprecated: false,
+        name: 'Shape',
+        properties: [
+          Property(
+            name: 'corner',
+            model: ListModel(
+              content: NeverModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      test('validates List<Never> elements after decoding the list', () {
+        final generatedClass = generator.generateClass(buildShape());
+        final constructors = ['fromJson', 'fromSimple', 'fromForm'].map(
+          (name) => generatedClass.constructors.firstWhere(
+            (constructor) => constructor.name == name,
+          ),
+        );
+        final actual = format(
+          Class(
+            (b) => b
+              ..name = 'Shape'
+              ..constructors.addAll(constructors),
+          ).accept(emitter).toString(),
+        );
+
+        const expected = r'''
+          class Shape {
+            factory Shape.fromJson(Object? json) {
+              final _$map = json.decodeMap(context: r'Shape');
+              return Shape(
+                corner: _$map[r'corner']
+                    .decodeJsonList<Object?>(context: r'Shape.corner')
+                    .map(
+                      (e) => throw JsonDecodingException(
+                        'Cannot decode List<NeverModel> - this type does not permit any value.',
+                      ),
+                    )
+                    .toList(),
+              );
+            }
+
+            factory Shape.fromSimple(String? value, {required bool explode}) {
+              final _$values = value.decodeObject(
+                explode: explode,
+                explodeSeparator: ',',
+                expectedKeys: {r'corner'},
+                listKeys: {r'corner'},
+                context: r'Shape',
+              );
+              return Shape(
+                corner: _$values[r'corner']
+                    .decodeSimpleStringList(context: r'Shape.corner')
+                    .map(
+                      (e) => throw SimpleDecodingException(
+                        'Cannot decode List<NeverModel> - this type does not permit any value.',
+                      ),
+                    )
+                    .toList(),
+              );
+            }
+
+            factory Shape.fromForm(String? value, {required bool explode}) {
+              final _$values = value.decodeObject(
+                explode: explode,
+                explodeSeparator: '&',
+                expectedKeys: {r'corner'},
+                listKeys: {r'corner'},
+                context: r'Shape',
+              );
+              return Shape(
+                corner: _$values[r'corner']
+                    .decodeFormStringList(context: r'Shape.corner')
+                    .map(
+                      (e) => throw FormDecodingException(
+                        'Cannot decode List<NeverModel> - this type does not permit any value.',
+                      ),
+                    )
+                    .toList(),
+              );
+            }
+          }
+        ''';
+
+        expect(
+          collapseWhitespace(actual),
+          collapseWhitespace(format(expected)),
+        );
+      });
+    });
+
     group('uriEncode', () {
       test('generates uriEncode that throws for class with properties', () {
         final model = ClassModel(
@@ -2390,8 +2493,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ],
               context: context,
               additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
+                valueModel: AnyModel(context: context),
+              ),
               examples: const [],
             );
 
@@ -2524,8 +2627,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
+              valueModel: AnyModel(context: context),
+            ),
             examples: const [],
           );
 
@@ -2661,8 +2764,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
               ],
               context: context,
               additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
+                valueModel: AnyModel(context: context),
+              ),
               examples: const [],
             );
 
@@ -2705,8 +2808,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
+              valueModel: AnyModel(context: context),
+            ),
             examples: const [],
           );
 
@@ -2740,8 +2843,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
+              valueModel: AnyModel(context: context),
+            ),
             examples: const [],
           );
 
@@ -2784,8 +2887,8 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
             ],
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
+              valueModel: AnyModel(context: context),
+            ),
             examples: const [],
           );
 

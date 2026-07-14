@@ -381,15 +381,28 @@ Expression _buildListFromSimpleExpression(
       contextProperty: contextProperty,
       explode: explode,
     ),
-    NeverModel() => generateSimpleDecodingExceptionExpression(
-      'Cannot decode List<NeverModel> - this type does not permit any value.',
-    ),
+    NeverModel() => _buildNeverList(listDecode, isRequired),
     AnyModel() => listDecode,
     NamedModel() ||
     CompositeModel() => generateSimpleDecodingExceptionExpression(
       'Unsupported model type for simple decoding.',
     ),
   };
+}
+
+Expression _buildNeverList(Expression listDecode, bool isRequired) {
+  final mapFunction = Method(
+    (b) => b
+      ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+      ..body = generateSimpleDecodingExceptionExpression(
+        'Cannot decode List<NeverModel> - this type does not permit any value.',
+      ).code,
+  ).closure;
+
+  final map = isRequired
+      ? listDecode.property('map')
+      : listDecode.nullSafeProperty('map');
+  return map.call([mapFunction]).property('toList').call([]);
 }
 
 Expression _buildPrimitiveList(
