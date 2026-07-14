@@ -453,6 +453,19 @@ paths:
               schema:
                 $ref: '#/components/schemas/SimpleResult'
 
+  /call-parameter/query:
+    get:
+      operationId: getWithCallQuery
+      parameters:
+        - name: call
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: OK
+
   /body-collision/header:
     post:
       operationId: createWithBodyHeader
@@ -1432,6 +1445,8 @@ components:
     GeneratedMethodCollider:
       type: object
       properties:
+        call:
+          type: string
         fromJson:
           type: string
         toJson:

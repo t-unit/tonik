@@ -315,6 +315,7 @@ void main() {
     });
 
     test('prefixes generatedClassTokens with dollar sign', () {
+      expect(ensureNotKeyword('call'), r'$call');
       expect(ensureNotKeyword('fromJson'), r'$fromJson');
       expect(ensureNotKeyword('toJson'), r'$toJson');
       expect(ensureNotKeyword('copyWith'), r'$copyWith');

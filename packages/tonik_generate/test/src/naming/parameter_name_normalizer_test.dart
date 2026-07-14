@@ -111,6 +111,19 @@ void main() {
       ]);
     });
 
+    test('escapes call while preserving the request parameter wire name', () {
+      final parameter = createQueryParameter('call');
+
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {parameter},
+        headers: {},
+      );
+
+      expect(result.queryParameters.single.normalizedName, r'$call');
+      expect(result.queryParameters.single.parameter.rawName, 'call');
+    });
+
     test('preserves parameter metadata', () {
       final result = normalizeRequestParameters(
         pathParameters: {createPathParameter('id', isRequired: true)},

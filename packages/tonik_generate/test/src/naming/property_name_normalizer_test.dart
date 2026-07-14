@@ -61,7 +61,7 @@ void main() {
     ]);
   });
 
-  test('normalizeAll handles Dart keywords', () {
+  test('normalizeAll handles Dart keywords and generated members', () {
     final result = normalizeProperties([
       createProperty('class'),
       createProperty('void'),
@@ -77,6 +77,7 @@ void main() {
       createProperty('copyWith'),
       createProperty('toString'),
       createProperty('hashCode'),
+      createProperty('call'),
     ]);
 
     expect(result.map((r) => r.normalizedName).toList(), [
@@ -94,6 +95,7 @@ void main() {
       r'$copyWith',
       r'$toString',
       r'$hashCode',
+      r'$call',
     ]);
   });
 

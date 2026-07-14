@@ -18,6 +18,7 @@ import 'package:naming_api/src/model/simple_result.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
 import 'package:naming_api/src/operation/get_hostile_query_names.dart';
 import 'package:naming_api/src/operation/get_param_counter_collision.dart';
+import 'package:naming_api/src/operation/get_with_call_query.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_cookie.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_header.dart';
 import 'package:naming_api/src/operation/get_with_cancel_token_path.dart';
@@ -292,14 +293,49 @@ void main() {
   group('generated method name collisions', () {
     test('GeneratedMethodCollider has escaped field names', () {
       const model = GeneratedMethodCollider(
+        $call: 'invoke',
         $fromJson: 'factory',
         $toJson: 'serializer',
         $copyWith: 'cloner',
       );
 
+      expect(model.$call, 'invoke');
       expect(model.$fromJson, 'factory');
       expect(model.$toJson, 'serializer');
       expect(model.$copyWith, 'cloner');
+    });
+
+    test('GeneratedMethodCollider copyWith supports the call property', () {
+      const model = GeneratedMethodCollider($call: 'before');
+
+      final updated = model.copyWith($call: 'after');
+
+      expect(updated.$call, 'after');
+      expect(updated.toJson(), containsPair('call', 'after'));
+    });
+  });
+
+  group('call parameter collision', () {
+    test(r'uses $call in Dart and call on the wire', () async {
+      final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
+      Uri? capturedUri;
+      dio.interceptors.add(
+        InterceptorsWrapper(
+          onRequest: (options, handler) {
+            capturedUri = options.uri;
+            handler.reject(
+              DioException(
+                requestOptions: options,
+                type: DioExceptionType.cancel,
+              ),
+            );
+          },
+        ),
+      );
+
+      await GetWithCallQuery(dio).call($call: 'invoke');
+
+      expect(capturedUri?.queryParameters, {'call': 'invoke'});
     });
   });
 
