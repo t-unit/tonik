@@ -93,6 +93,74 @@ void main() {
       },
     );
 
+    test(
+      'renames suffixed parameter with counter when a declared parameter '
+      'already has the suffixed name',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {createPathParameter('id')},
+          queryParameters: {
+            createQueryParameter('id'),
+            createQueryParameter('idPath'),
+          },
+          headers: {},
+        );
+
+        expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+          'idPath2',
+        ]);
+        expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+          'idQuery',
+          'idPath',
+        ]);
+      },
+    );
+
+    test(
+      'skips counter values already taken by declared parameter names',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {createPathParameter('id')},
+          queryParameters: {
+            createQueryParameter('id'),
+            createQueryParameter('idPath'),
+            createQueryParameter('idPath2'),
+          },
+          headers: {},
+        );
+
+        expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+          'idPath3',
+        ]);
+        expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+          'idQuery',
+          'idPath',
+          'idPath2',
+        ]);
+      },
+    );
+
+    test(
+      'keeps declared header-suffixed name and renames the synthesized one',
+      () {
+        final result = normalizeRequestParameters(
+          pathParameters: {createPathParameter('id')},
+          queryParameters: {createQueryParameter('idHeader')},
+          headers: {createHeader('id')},
+        );
+
+        expect(result.pathParameters.map((r) => r.normalizedName).toList(), [
+          'idPath',
+        ]);
+        expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+          'idHeader',
+        ]);
+        expect(result.headers.map((r) => r.normalizedName).toList(), [
+          'idHeader2',
+        ]);
+      },
+    );
+
     test('handles Dart keywords', () {
       final result = normalizeRequestParameters(
         pathParameters: {createPathParameter('class')},

@@ -93,108 +93,101 @@ NormalizedRequestParameters normalizeRequestParameters({
   }
 
   // Parameters that collide across locations get a location suffix.
-  final resolvedPathParams = normalizedPathParams.map((item) {
-    final lowerName = item.normalizedName.toLowerCase();
-    if (nameInTypes[lowerName]!.length > 1) {
-      return (
-        normalizedName: '${item.normalizedName}$_pathSuffix',
-        parameter: item.parameter,
-      );
-    }
-    return item;
-  }).toList();
-
-  final resolvedQueryParams = normalizedQueryParams.map((item) {
-    final lowerName = item.normalizedName.toLowerCase();
-    if (nameInTypes[lowerName]!.length > 1) {
-      return (
-        normalizedName: '${item.normalizedName}$_querySuffix',
-        parameter: item.parameter,
-      );
-    }
-    return item;
-  }).toList();
-
-  final resolvedHeaderParams = normalizedHeaders.map((item) {
-    final lowerName = item.normalizedName.toLowerCase();
-    if (nameInTypes[lowerName]!.length > 1) {
-      return (
-        normalizedName: '${item.normalizedName}$_headerSuffix',
-        parameter: item.parameter,
-      );
-    }
-    return item;
-  }).toList();
-
-  final resolvedCookieParams = normalizedCookies
-      .map<({String normalizedName, CookieParameterObject parameter})>((item) {
-        final lowerName = item.normalizedName.toLowerCase();
-        if (nameInTypes[lowerName]!.length > 1) {
-          return (
-            normalizedName: '${item.normalizedName}$_cookieSuffix',
-            parameter: item.parameter,
-          );
-        }
-        return item;
-      })
+  final resolvedPathParams = normalizedPathParams
+      .map((item) => _applySuffix(item, nameInTypes, _pathSuffix))
       .toList();
 
-  final uniquePathParams = _ensureUniquenessInGroup(resolvedPathParams);
-  final uniqueQueryParams = _ensureUniquenessInGroup(resolvedQueryParams);
-  final uniqueHeaderParams = _ensureUniquenessInGroup(resolvedHeaderParams);
-  final uniqueCookieParams = _ensureUniquenessInGroup(resolvedCookieParams);
+  final resolvedQueryParams = normalizedQueryParams
+      .map((item) => _applySuffix(item, nameInTypes, _querySuffix))
+      .toList();
+
+  final resolvedHeaderParams = normalizedHeaders
+      .map((item) => _applySuffix(item, nameInTypes, _headerSuffix))
+      .toList();
+
+  final resolvedCookieParams = normalizedCookies
+      .map((item) => _applySuffix(item, nameInTypes, _cookieSuffix))
+      .toList();
+
+  final assigner = _NameAssigner(
+    totalParameterCount:
+        resolvedPathParams.length +
+        resolvedQueryParams.length +
+        resolvedHeaderParams.length +
+        resolvedCookieParams.length,
+    reservedNames: reservedNames,
+  );
+
+  final pathNames = List<String?>.filled(resolvedPathParams.length, null);
+  final queryNames = List<String?>.filled(resolvedQueryParams.length, null);
+  final headerNames = List<String?>.filled(resolvedHeaderParams.length, null);
+  final cookieNames = List<String?>.filled(resolvedCookieParams.length, null);
+
+  // Unsuffixed names are claimed across all locations first so a declared
+  // parameter keeps its own name; a synthesized (suffixed) name that lands
+  // on a declared one disambiguates further with a counter.
+  for (final suffixedPass in [false, true]) {
+    assigner
+      ..claimInto(resolvedPathParams, pathNames, suffixedPass: suffixedPass)
+      ..claimInto(resolvedQueryParams, queryNames, suffixedPass: suffixedPass)
+      ..claimInto(resolvedHeaderParams, headerNames, suffixedPass: suffixedPass)
+      ..claimInto(
+        resolvedCookieParams,
+        cookieNames,
+        suffixedPass: suffixedPass,
+      );
+  }
 
   return NormalizedRequestParameters(
-    pathParameters: uniquePathParams,
-    queryParameters: uniqueQueryParams,
-    headers: uniqueHeaderParams,
-    cookieParameters: uniqueCookieParams,
+    pathParameters: [
+      for (var i = 0; i < resolvedPathParams.length; i++)
+        (
+          normalizedName: pathNames[i]!,
+          parameter: resolvedPathParams[i].parameter,
+        ),
+    ],
+    queryParameters: [
+      for (var i = 0; i < resolvedQueryParams.length; i++)
+        (
+          normalizedName: queryNames[i]!,
+          parameter: resolvedQueryParams[i].parameter,
+        ),
+    ],
+    headers: [
+      for (var i = 0; i < resolvedHeaderParams.length; i++)
+        (
+          normalizedName: headerNames[i]!,
+          parameter: resolvedHeaderParams[i].parameter,
+        ),
+    ],
+    cookieParameters: [
+      for (var i = 0; i < resolvedCookieParams.length; i++)
+        (
+          normalizedName: cookieNames[i]!,
+          parameter: resolvedCookieParams[i].parameter,
+        ),
+    ],
   );
 }
 
-List<({String normalizedName, T parameter})> _ensureUniquenessInGroup<T>(
-  List<({String normalizedName, T parameter})> parameters,
+({String normalizedName, bool wasSuffixed, T parameter}) _applySuffix<T>(
+  ({String normalizedName, T parameter}) item,
+  Map<String, Set<String>> nameInTypes,
+  String suffix,
 ) {
-  final result = <({String normalizedName, T parameter})>[];
-  final usedNames = <String>{};
-  final nameCounters = <String, int>{};
-
-  // Worst case: all N parameters share the same base, so the maximum
-  // counter value reached is N. The +2 buffer gives headroom and matches
-  // the initial counter value of 2.
-  final convergenceBound = parameters.length + 2;
-
-  for (final item in parameters) {
-    final baseName = item.normalizedName;
-    final baseLowerName = baseName.toLowerCase();
-
-    var name = baseName;
-    var lowerName = baseLowerName;
-
-    nameCounters.putIfAbsent(baseLowerName, () => 2);
-
-    // Loop (not single increment) because a counter-generated candidate may
-    // itself collide with an earlier entry: group [tokenQuery, tokenQuery2,
-    // tokenQuery] — naive increment yields tokenQuery2, which already exists.
-    while (usedNames.contains(lowerName)) {
-      final counter = nameCounters[baseLowerName]!;
-      if (counter > convergenceBound) {
-        throw StateError(
-          'Counter for "$baseName" exceeded parameters.length + 2 '
-          '($convergenceBound); _ensureUniquenessInGroup is not '
-          'converging — counter increment is broken.',
-        );
-      }
-      name = '$baseName$counter';
-      lowerName = name.toLowerCase();
-      nameCounters[baseLowerName] = counter + 1;
-    }
-
-    usedNames.add(lowerName);
-    result.add((normalizedName: name, parameter: item.parameter));
+  final lowerName = item.normalizedName.toLowerCase();
+  if (nameInTypes[lowerName]!.length > 1) {
+    return (
+      normalizedName: '${item.normalizedName}$suffix',
+      wasSuffixed: true,
+      parameter: item.parameter,
+    );
   }
-
-  return result;
+  return (
+    normalizedName: item.normalizedName,
+    wasSuffixed: false,
+    parameter: item.parameter,
+  );
 }
 
 /// Normalizes path parameter names.
@@ -291,4 +284,64 @@ String normalizeMultipartHeaderName(
 String _normalizeName(String name) {
   final normalized = normalizeSingle(name, preserveNumbers: true);
   return normalized.isEmpty ? _defaultParameterPrefix : normalized;
+}
+
+/// Assigns final parameter names, unique (case-insensitively) across all
+/// locations and reserved names.
+class _NameAssigner {
+  _NameAssigner({
+    required int totalParameterCount,
+    required Set<String> reservedNames,
+  }) : _convergenceBound = totalParameterCount + reservedNames.length + 2 {
+    _usedNames.addAll(reservedNames.map((name) => name.toLowerCase()));
+  }
+
+  final Set<String> _usedNames = <String>{};
+  final Map<String, int> _nameCounters = <String, int>{};
+
+  // Worst case: all names share the same base, so the maximum counter value
+  // reached is the total name count. The +2 buffer gives headroom and matches
+  // the initial counter value of 2.
+  final int _convergenceBound;
+
+  void claimInto<T>(
+    List<({String normalizedName, bool wasSuffixed, T parameter})> group,
+    List<String?> names, {
+    required bool suffixedPass,
+  }) {
+    for (var i = 0; i < group.length; i++) {
+      if (group[i].wasSuffixed == suffixedPass) {
+        names[i] = _claim(group[i].normalizedName);
+      }
+    }
+  }
+
+  String _claim(String baseName) {
+    final baseLowerName = baseName.toLowerCase();
+
+    var name = baseName;
+    var lowerName = baseLowerName;
+
+    _nameCounters.putIfAbsent(baseLowerName, () => 2);
+
+    // Loop (not single increment) because a counter-generated candidate may
+    // itself collide with an earlier entry: [tokenQuery, tokenQuery2,
+    // tokenQuery] — naive increment yields tokenQuery2, which already exists.
+    while (_usedNames.contains(lowerName)) {
+      final counter = _nameCounters[baseLowerName]!;
+      if (counter > _convergenceBound) {
+        throw StateError(
+          'Counter for "$baseName" exceeded the total name count + 2 '
+          '($_convergenceBound); _NameAssigner is not converging — '
+          'counter increment is broken.',
+        );
+      }
+      name = '$baseName$counter';
+      lowerName = name.toLowerCase();
+      _nameCounters[baseLowerName] = counter + 1;
+    }
+
+    _usedNames.add(lowerName);
+    return name;
+  }
 }
