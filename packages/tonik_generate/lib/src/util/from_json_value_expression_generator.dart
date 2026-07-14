@@ -316,7 +316,7 @@ BuiltExpression _buildListFromJsonBody(
       ? 'decodeJsonNullableList'
       : 'decodeJsonList';
 
-  final unwrappedContent = content is AliasModel ? content.model : content;
+  final unwrappedContent = content.resolved;
   final isItemNullable =
       model.isContentNullable || content.isEffectivelyNullable;
   final inlineFunctions = <InlineHelper>[];
@@ -335,10 +335,9 @@ BuiltExpression _buildListFromJsonBody(
     return Method(
       (b) => b
         ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-        ..body = refer('e')
-            .equalTo(literalNull)
-            .conditional(literalNull, decodeOfE)
-            .code,
+        ..body = refer(
+          'e',
+        ).equalTo(literalNull).conditional(literalNull, decodeOfE).code,
     ).closure;
   }
 
@@ -485,16 +484,17 @@ BuiltExpression _buildListFromJsonBody(
         'Cannot decode List<NeverModel> - this type does not permit any '
         'value.',
       );
-      // Gate on isNullable, not effectiveNullable: useImmutableCollections
-      // must not erase nullable semantics (a `null` payload yields `null`,
-      // not a throw). The non-nullable case stays a bare throw so
-      // _isJsonBodyPureThrow can drop the surrounding _$json / _$body locals.
-      if (isNullable) {
-        return BuiltExpression.simple(
-          receiver.equalTo(literalNull).conditional(literalNull, throwExpr),
-        );
-      }
-      return BuiltExpression.simple(throwExpr);
+      final mapFunction = Method(
+        (b) => b
+          ..requiredParameters.add(Parameter((b) => b..name = 'e'))
+          ..body = throwExpr.code,
+      ).closure;
+      final listExpr = receiver.property(listDecoder).call(
+        [],
+        contextParam,
+        [refer('Object?', 'dart:core')],
+      );
+      result = mapList(listExpr, mapFunction);
 
     default:
       final typeArg = typeReference(
@@ -503,9 +503,7 @@ BuiltExpression _buildListFromJsonBody(
         package,
         isNullableOverride: isItemNullable,
       );
-      result = receiver
-          .property(listDecoder)
-          .call([], contextParam, [typeArg]);
+      result = receiver.property(listDecoder).call([], contextParam, [typeArg]);
   }
 
   if (useImmutableCollections) {

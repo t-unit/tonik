@@ -1196,6 +1196,15 @@ components:
         neverField:
           $ref: '#/components/schemas/NeverValid'
 
+    Shape:
+      type: object
+      required:
+        - corner
+      properties:
+        corner:
+          type: array
+          items: false
+
     FlexibleArray:
       type: array
       items: true
