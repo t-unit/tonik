@@ -42,8 +42,8 @@ void main() {
           encoding: ResponseHeaderEncoding.simple,
           examples: const [],
         ),
-        'body': ResponseHeaderObject(
-          name: 'body',
+        'body_': ResponseHeaderObject(
+          name: 'body_',
           context: testContext,
           description: 'Body header',
           model: StringModel(context: testContext),

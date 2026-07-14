@@ -1,4 +1,5 @@
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 
 /// Normalizes and sorts properties from a response object.
@@ -8,14 +9,17 @@ normalizeResponseProperties(ResponseObject response) {
   final headerMap = <Property, ResponseHeader>{};
 
   final headerProperties = response.headers.entries.map((header) {
+    final resolvedHeader = header.value.resolve(name: header.key);
+    final normalizedHeaderName = normalizeSingle(
+      header.key,
+      preserveNumbers: true,
+    );
     final property = Property(
-      name: header.key.toLowerCase() == 'body'
-          ? '${header.key}Header'
-          : header.key,
-      model: header.value.resolve(name: header.key).model,
-      isRequired: header.value.resolve(name: header.key).isRequired,
+      name: normalizedHeaderName == 'body' ? '${header.key}Header' : header.key,
+      model: resolvedHeader.model,
+      isRequired: resolvedHeader.isRequired,
       isNullable: false,
-      isDeprecated: header.value.resolve(name: header.key).isDeprecated,
+      isDeprecated: resolvedHeader.isDeprecated,
       examples: const [],
       defaultValue: null,
     );

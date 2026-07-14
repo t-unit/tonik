@@ -652,7 +652,7 @@ class ParseGenerator {
     final neverHeaders = <String>[];
     final normalizedProperties = normalizeResponseProperties(response);
     final normalizedHeaders = normalizedProperties.where(
-      (norm) => norm.property.name != 'body',
+      (norm) => norm.header != null,
     );
 
     for (final norm in normalizedHeaders) {

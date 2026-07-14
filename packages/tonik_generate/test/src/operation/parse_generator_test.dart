@@ -1415,7 +1415,7 @@ String _parseResponse(Response<List<int>> response) {
       );
     });
 
-    test('generates for response with header named body', () {
+    test('generates for response with header that normalizes to body', () {
       final classModel = ClassModel(
         isDeprecated: false,
         name: 'User',
@@ -1427,10 +1427,10 @@ String _parseResponse(Response<List<int>> response) {
       final response = ResponseObject(
         name: 'BodyHeaderResponse',
         context: context,
-        description: 'Response with header named body',
+        description: 'Response with header that normalizes to body',
         headers: {
-          'body': ResponseHeaderObject(
-            name: 'body',
+          'body_': ResponseHeaderObject(
+            name: 'body_',
             context: context,
             description: 'Body header',
             model: StringModel(context: context),
@@ -1480,8 +1480,8 @@ String _parseResponse(Response<List<int>> response) {
               return BodyHeaderResponse(
                 body: _$body,
                 bodyHeader: response.headers
-                    .value(r'body')
-                    .decodeSimpleString(context: r'body'),
+                    .value(r'body_')
+                    .decodeSimpleString(context: r'body_'),
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
@@ -1499,6 +1499,87 @@ String _parseResponse(Response<List<int>> response) {
         collapseWhitespace(expectedMethod),
       );
     });
+
+    test(
+      'keeps decoded body when a multi-response header normalizes to body',
+      () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: context,
+          examples: const [],
+        );
+        final response = ResponseObject(
+          name: 'BodyHeaderResponse',
+          context: context,
+          description: 'Response with header that normalizes to body',
+          headers: {
+            'body_': ResponseHeaderObject(
+              name: 'body_',
+              context: context,
+              description: 'Body header',
+              model: StringModel(context: context),
+              isRequired: true,
+              isDeprecated: false,
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
+            ),
+          },
+          bodies: {
+            ResponseBody(
+              model: classModel,
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+          },
+        );
+        final errorResponse = ResponseObject(
+          name: 'ErrorResponse',
+          context: context,
+          description: 'Empty error response',
+          headers: const {},
+          bodies: const {},
+        );
+        final operation = Operation(
+          operationId: 'multiBodyHeaderOp',
+          context: context,
+          tags: const {},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          securitySchemes: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): response,
+            const ExplicitResponseStatus(statusCode: 400): errorResponse,
+          },
+        );
+
+        final method = generator.generateParseResponseMethod(operation);
+        final generated = collapseWhitespace(
+          format(method.accept(emitter).toString()),
+        );
+
+        expect(
+          generated,
+          contains(
+            collapseWhitespace(r'''
+              body: _$body,
+              bodyHeader: response.headers
+                  .value(r'body_')
+                  .decodeSimpleString(context: r'body_'),
+            '''),
+          ),
+        );
+        expect(generated, isNot(contains('body2:')));
+      },
+    );
 
     test(
       'selects correct body model based on status code and content type',

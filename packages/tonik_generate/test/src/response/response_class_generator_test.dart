@@ -123,14 +123,14 @@ void main() {
       expect(bodyParam.toThis, isTrue);
     });
 
-    test('handles name conflict between header and body field', () {
+    test('handles normalized name conflict between header and body field', () {
       final response = ResponseObject(
         name: 'ConflictResponse',
         context: testContext,
-        description: 'Response with header named body',
+        description: 'Response with header that normalizes to body',
         headers: {
-          'Body': ResponseHeaderObject(
-            name: 'Body',
+          'body_': ResponseHeaderObject(
+            name: 'body_',
             context: testContext,
             description: 'Header that conflicts with body field',
             model: StringModel(context: testContext),
