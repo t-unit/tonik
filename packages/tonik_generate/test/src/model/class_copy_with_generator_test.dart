@@ -438,5 +438,82 @@ void main() {
         collapseWhitespace(expectedCallMethod),
       );
     });
+
+    test('escapes call property throughout copyWith infrastructure', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Widget',
+        properties: [
+          Property(
+            name: 'call',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final generatedSpecs = generator.generateClasses(model);
+      final mainClass = generatedSpecs[0] as Class;
+      final interfaceClass = generatedSpecs[1] as Class;
+      final implClass = generatedSpecs[2] as Class;
+
+      expect(mainClass.fields.map((field) => field.name), contains(r'$call'));
+      expect(
+        interfaceClass.methods.where((method) => method.name == 'call'),
+        hasLength(1),
+      );
+      expect(
+        interfaceClass.methods
+            .singleWhere((method) => method.name == r'$call')
+            .type,
+        MethodType.getter,
+      );
+      expect(
+        interfaceClass.methods
+            .singleWhere((method) => method.name == 'call')
+            .optionalParameters
+            .map((parameter) => parameter.name),
+        [r'$call', 'name'],
+      );
+      expect(
+        implClass.methods.where((method) => method.name == 'call'),
+        hasLength(1),
+      );
+
+      final implCallMethod = implClass.methods.singleWhere(
+        (method) => method.name == 'call',
+      );
+      const expectedCallMethod = r'''
+        @override
+        $Res call({Object? $call = _sentinel, Object? name = _sentinel, }) {
+          return (Widget($call: identical($call, _sentinel, )
+              ? this.$call
+              : ($call as String),
+            name: identical(name, _sentinel, )
+              ? this.name
+              : (name as String),
+          ) as $Res);
+        }
+      ''';
+      expect(
+        collapseWhitespace(implCallMethod.accept(emitter).toString()),
+        collapseWhitespace(expectedCallMethod),
+      );
+    });
   });
 }

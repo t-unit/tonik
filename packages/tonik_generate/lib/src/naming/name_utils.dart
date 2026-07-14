@@ -94,6 +94,7 @@ const _specialCharReplacements = {
 };
 
 const generatedClassTokens = {
+  'call', // copyWith apply method
   'fromJson',
   'toJson',
   'copyWith',
