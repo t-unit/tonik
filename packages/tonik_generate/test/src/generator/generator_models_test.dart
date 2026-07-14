@@ -10,6 +10,22 @@ void main() {
     late Directory tempDir;
     late Context ctx;
 
+    ApiDocument documentWithModels(Set<Model> models) => ApiDocument(
+      title: 'Test',
+      version: '0.0.1',
+      description: 'Test',
+      models: models,
+      responseHeaders: const {},
+      requestHeaders: const {},
+      servers: const {},
+      operations: const {},
+      responses: const <Response>{},
+      queryParameters: const {},
+      pathParameters: const {},
+      cookieParameters: const {},
+      requestBodies: const {},
+    );
+
     setUp(() {
       tempDir = Directory.systemTemp.createTempSync();
       ctx = Context.initial();
@@ -89,21 +105,7 @@ void main() {
           ),
         };
 
-        final apiDoc = ApiDocument(
-          title: 'Test',
-          version: '0.0.1',
-          description: 'Test',
-          models: models,
-          responseHeaders: const {},
-          requestHeaders: const {},
-          servers: const {},
-          operations: const {},
-          responses: const <Response>{},
-          queryParameters: const {},
-          pathParameters: const {},
-          cookieParameters: const {},
-          requestBodies: const {},
-        );
+        final apiDoc = documentWithModels(models);
 
         const packageName = 'test_package';
         await const Generator().generate(
@@ -134,5 +136,41 @@ void main() {
         }
       },
     );
+
+    test('generates a valid file for an empty enum', () async {
+      final apiDoc = documentWithModels({
+        EnumModel<String>(
+          isDeprecated: false,
+          name: 'Color',
+          values: {},
+          isNullable: false,
+          context: ctx.pushAll(['components', 'schemas', 'Color']),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+          examples: const [],
+        ),
+      });
+
+      const packageName = 'test_package';
+      await const Generator().generate(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: packageName,
+      );
+
+      final generatedFile = File(
+        path.join(
+          tempDir.path,
+          packageName,
+          'lib',
+          'src',
+          'model',
+          'color.dart',
+        ),
+      );
+      expect(generatedFile.existsSync(), isTrue);
+    });
   });
 }

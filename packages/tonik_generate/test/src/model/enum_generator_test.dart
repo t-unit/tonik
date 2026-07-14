@@ -1970,6 +1970,53 @@ void main() {
     });
 
     group('fallback/unknown case', () {
+      test('generates a fallback-only string enum', () {
+        final model = EnumModel<String>(
+          isDeprecated: false,
+          name: 'Status',
+          values: {},
+          isNullable: false,
+          context: Context.initial().push('Status'),
+          fallbackValue: const EnumEntry(
+            value: 'unknown',
+            nameOverride: 'unknown',
+          ),
+          examples: const [],
+        );
+
+        final generated = generator.generateEnum(model, 'Status');
+
+        expect(generated.enumValue.values, hasLength(1));
+        expect(generated.enumValue.values.single.name, 'unknown');
+        expect(
+          generated.enumValue.values.single.arguments.single
+              .accept(DartEmitter())
+              .toString(),
+          "r'unknown'",
+        );
+
+        final fromJson = generated.enumValue.constructors.firstWhere(
+          (c) => c.name == 'fromJson',
+        );
+        final formatted = formatConstructor(fromJson, 'Status');
+        final expected = format(r'''
+          class Status {
+            factory Status.fromJson(dynamic value) {
+              if (value is! String) {
+                throw JsonDecodingException(
+                  r'Expected String for Status, got ${value.runtimeType}',
+                );
+              }
+              return values.firstWhere(
+                (e) => e.rawValue == value,
+                orElse: () => Status.unknown,
+              );
+            }
+          }
+        ''');
+        expect(collapseWhitespace(formatted), collapseWhitespace(expected));
+      });
+
       test('includes fallback enum value when fallbackValue is set', () {
         final model = EnumModel<String>(
           isDeprecated: false,

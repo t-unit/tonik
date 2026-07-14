@@ -31,6 +31,8 @@ class ModelImporter {
   late Set<Model> models;
   final log = Logger('ModelImporter');
 
+  static const _unknownEnumCaseName = 'unknown';
+
   static Context get rootContext =>
       Context.initial().pushAll(['components', 'schemas']);
 
@@ -1458,6 +1460,7 @@ class ModelImporter {
         schema.enumerated!,
         schema.isNullable ?? hasNullType,
         context,
+        emptyFallbackValue: _unknownEnumCaseName,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isReadOnly: schema.isReadOnly ?? false,
@@ -1474,6 +1477,7 @@ class ModelImporter {
         schema.enumerated!,
         schema.isNullable ?? hasNullType,
         context,
+        emptyFallbackValue: -1,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
         isReadOnly: schema.isReadOnly ?? false,
@@ -1967,6 +1971,7 @@ class ModelImporter {
     List<dynamic> values,
     bool isNullable,
     Context context, {
+    required T emptyFallbackValue,
     required String? description,
     required bool isDeprecated,
     required List<Example> examples,
@@ -1975,6 +1980,11 @@ class ModelImporter {
     List<String>? xDartEnum,
   }) {
     log.fine('Parsing enum $name<$T> for $context with values $values');
+    final location = switch (name) {
+      final name? when name.isNotEmpty => context.push(name).toString(),
+      _ when context.path.isNotEmpty => context.toString(),
+      _ => '<anonymous>',
+    };
 
     final typedValues = values.whereType<T>().toSet();
     final hasNull = values.any((value) => value == null);
@@ -1983,7 +1993,7 @@ class ModelImporter {
     if (!hasNull && typedValues.length != values.length ||
         hasNull && (typedValues.length + 1) != values.length) {
       log.warning(
-        'Found non-matching values in enum for $context. '
+        'Found non-matching values in enum for $location. '
         'Ignoring non-matching values.',
       );
     }
@@ -2002,6 +2012,17 @@ class ModelImporter {
       enumValues.add(EnumEntry<T>(value: value, nameOverride: nameOverride));
     }
 
+    EnumEntry<T>? fallbackValue;
+    if (enumValues.isEmpty) {
+      log.warning(
+        'Enum $location has no values. Adding an unknown fallback case.',
+      );
+      fallbackValue = EnumEntry<T>(
+        value: emptyFallbackValue,
+        nameOverride: _unknownEnumCaseName,
+      );
+    }
+
     final model = EnumModel<T>(
       isDeprecated: isDeprecated,
       values: enumValues,
@@ -2012,6 +2033,7 @@ class ModelImporter {
       isReadOnly: isReadOnly,
       isWriteOnly: isWriteOnly,
       examples: examples,
+      fallbackValue: fallbackValue,
     );
 
     if (name == null || models.none((m) => m is NamedModel && m.name == name)) {
