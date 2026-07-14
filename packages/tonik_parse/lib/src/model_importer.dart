@@ -678,6 +678,10 @@ class ModelImporter {
 
     final resolvedModels = <DiscriminatedModel>{};
     for (final oneOfSchema in alternatives) {
+      if (_isNullOnlySchema(oneOfSchema)) {
+        shell.isNullable = true;
+        continue;
+      }
       final model = _resolveCompositeSubModel(
         oneOfSchema,
         modelContext,
@@ -720,6 +724,10 @@ class ModelImporter {
 
     final resolvedModels = <DiscriminatedModel>{};
     for (final anyOfSchema in alternatives) {
+      if (_isNullOnlySchema(anyOfSchema)) {
+        shell.isNullable = true;
+        continue;
+      }
       final model = _resolveCompositeSubModel(
         anyOfSchema,
         modelContext,
@@ -1695,17 +1703,22 @@ class ModelImporter {
       models.add(oneOfModel);
     }
 
-    final resolvedModels = alternatives.map(
-      (oneOfSchema) => (
+    final resolvedModels = <DiscriminatedModel>{};
+    for (final oneOfSchema in alternatives) {
+      if (_isNullOnlySchema(oneOfSchema)) {
+        oneOfModel.isNullable = true;
+        continue;
+      }
+      resolvedModels.add((
         discriminatorValue: _getDiscriminatorValue(
           discriminator: effectiveDiscriminator,
           innerSchema: oneOfSchema,
         ),
         model: _resolveSchemaRef(null, oneOfSchema, modelContext),
-      ),
-    );
+      ));
+    }
 
-    oneOfModel.models = resolvedModels.toSet();
+    oneOfModel.models = resolvedModels;
 
     // Nested composite members enter the global model set after resolution.
     for (final nestedModel in oneOfModel.models) {
@@ -1742,17 +1755,22 @@ class ModelImporter {
       models.add(anyOfModel);
     }
 
-    final resolvedModels = alternatives.map(
-      (anyOfSchema) => (
+    final resolvedModels = <DiscriminatedModel>{};
+    for (final anyOfSchema in alternatives) {
+      if (_isNullOnlySchema(anyOfSchema)) {
+        anyOfModel.isNullable = true;
+        continue;
+      }
+      resolvedModels.add((
         discriminatorValue: _getDiscriminatorValue(
           discriminator: effectiveDiscriminator,
           innerSchema: anyOfSchema,
         ),
         model: _resolveSchemaRef(null, anyOfSchema, modelContext),
-      ),
-    );
+      ));
+    }
 
-    anyOfModel.models = resolvedModels.toSet();
+    anyOfModel.models = resolvedModels;
 
     return anyOfModel;
   }
@@ -1821,6 +1839,24 @@ class ModelImporter {
     }
 
     return null;
+  }
+
+  /// Returns true if [schema] permits only the JSON literal `null`,
+  /// i.e. its type — possibly behind `$ref`s — is exactly `"null"`.
+  bool _isNullOnlySchema(Schema schema) {
+    var current = schema;
+    final seenRefs = <String>{};
+    while (current.ref != null) {
+      if (!seenRefs.add(current.ref!)) {
+        return false;
+      }
+      final resolved = _resolveSchemaToSchema(current);
+      if (resolved == null) {
+        return false;
+      }
+      current = resolved;
+    }
+    return current.type.isNotEmpty && current.type.every((t) => t == 'null');
   }
 
   Schema? _resolveSchemaToSchema(Schema schema) {
