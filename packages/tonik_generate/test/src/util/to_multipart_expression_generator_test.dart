@@ -9144,6 +9144,170 @@ void main() {
       );
     });
 
+    test(
+      'non-exploded space-delimited string list with headers wraps the '
+      'encoded value in MultipartFile.fromString',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'tags',
+              model: ListModel(
+                content: StringModel(context: testContext),
+                context: testContext,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          multipartEncoding: _multipartEncoding(model, {
+            'tags': PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.spaceDelimited,
+              explode: false,
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              allowReserved: null,
+            ),
+          }),
+          examples: const [],
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+          void test() {
+            final _$formData = FormData();
+            final _$tagsHeaders = <String, List<String>>{};
+            _$tagsHeaders[r'X-Custom'] = [tagsCustom.toSimple(explode: false, allowEmpty: true)];
+            for (final item in body.tags.toSpaceDelimited(explode: false, allowEmpty: true, alreadyEncoded: true, percentEncodeDelimiter: false)) {
+              _$formData.files.add(MapEntry(r'tags', MultipartFile.fromString(item, headers: _$tagsHeaders)));
+            }
+            return _$formData;
+          }
+        '''),
+          ),
+        );
+      },
+    );
+
+    test(
+      'non-exploded pipe-delimited DateTime list with headers maps items and '
+      'wraps the encoded value in MultipartFile.fromString',
+      () {
+        final model = ClassModel(
+          name: 'TestForm',
+          isDeprecated: false,
+          properties: [
+            Property(
+              name: 'dates',
+              model: ListModel(
+                content: DateTimeModel(context: testContext),
+                context: testContext,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: testContext,
+          examples: const [],
+        );
+
+        final content = RequestContent(
+          model: model,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          multipartEncoding: _multipartEncoding(model, {
+            'dates': PartEncoding(
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              style: EncodingStyle.pipeDelimited,
+              explode: false,
+              headers: {
+                'X-Custom': ResponseHeaderObject(
+                  name: 'X-Custom',
+                  context: testContext,
+                  description: null,
+                  explode: false,
+                  model: StringModel(context: testContext),
+                  isRequired: true,
+                  isDeprecated: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              allowReserved: null,
+            ),
+          }),
+          examples: const [],
+        );
+
+        final result = buildMultipartBodyStatements(
+          content,
+          'body',
+          nameManager,
+          'test_package',
+        );
+
+        final code = emitStatements(result);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+          void test() {
+            final _$formData = FormData();
+            final _$datesHeaders = <String, List<String>>{};
+            _$datesHeaders[r'X-Custom'] = [datesCustom.toSimple(explode: false, allowEmpty: true)];
+            for (final item in body.dates.map((item) => item.toTimeZonedIso8601String()).toList().toPipeDelimited(explode: false, allowEmpty: true, alreadyEncoded: true)) {
+              _$formData.files.add(MapEntry(r'dates', MultipartFile.fromString(item, headers: _$datesHeaders)));
+            }
+            return _$formData;
+          }
+        '''),
+          ),
+        );
+      },
+    );
+
     test('exploded binary list with headers passes headers to '
         'MultipartFile.fromBytes', () {
       final model = ClassModel(
@@ -9727,8 +9891,7 @@ void main() {
     );
 
     test(
-      'non-exploded DateTime list with headers uses item directly '
-      'after encoder stringifies',
+      'non-exploded DateTime list with headers sends one mapped encoded part',
       () {
         final model = ClassModel(
           name: 'TestForm',

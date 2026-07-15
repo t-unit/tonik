@@ -114,6 +114,26 @@ void main() {
       expect(success.response.headers['x-has-tags']?.first, 'false');
       expect(success.response.headers['x-param-tags']?.first, '');
     });
+
+    test('serializes an empty array as one empty multipart field', () async {
+      const form = FormNonExplodedForm(tags: []);
+
+      final response = await api.postFormNonExploded(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+      final formData = success.response.requestOptions.data as FormData;
+      final tagEntries = formData.fields
+          .where((entry) => entry.key == 'tags')
+          .toList();
+
+      expect(tagEntries, hasLength(1));
+      expect(tagEntries.single.value, '');
+      expect(formData.files.where((entry) => entry.key == 'tags'), isEmpty);
+      expect(success.response.headers['x-has-tags']?.first, 'true');
+      expect(success.response.headers['x-param-tags']?.first, '');
+    });
   });
 
   group('OAS 3.1 array with no encoding specified', () {

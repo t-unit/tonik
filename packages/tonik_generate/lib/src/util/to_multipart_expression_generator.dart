@@ -882,9 +882,8 @@ Code _buildNonExplodedListAddition(
     );
   }
 
-  // Form-style, non-exploded arrays encode to one comma-joined String. That
-  // scalar is one multipart part; unlike the delimited helpers above, it must
-  // not be used as the iterable of a generated for-in loop.
+  // Unlike delimited encoders, non-exploded form encoding returns a scalar
+  // String, so it represents one multipart part rather than an iterable.
   final valueExpr = listExpr.property('uriEncode').call([], {
     'allowEmpty': literalTrue,
     'alreadyEncoded': literalTrue,
@@ -1028,6 +1027,8 @@ Expression _complexItemExpr(
 }
 
 /// Builds the string-list input used by non-exploded array encoders.
+///
+/// When [needsMapping] is false, [itemExpr] is ignored.
 Expression _buildStringListExpr(
   String accessor,
   Expression itemExpr, {
