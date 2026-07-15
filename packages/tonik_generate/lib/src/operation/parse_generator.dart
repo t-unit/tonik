@@ -680,7 +680,7 @@ class ParseGenerator {
           .firstWhere((entry) => entry.value == norm.header)
           .key;
 
-      if (norm.property.model is NeverModel) {
+      if (norm.property.model.resolved is NeverModel) {
         neverHeaders.add(rawHeaderName);
         continue;
       }

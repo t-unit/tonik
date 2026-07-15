@@ -398,7 +398,7 @@ void main() {
     });
 
     test('never values are unsupported', () {
-      final plan = encodePlan(NeverModel(context: context));
+      final plan = encodePlan(NeverModel(context: context, isNullable: false));
 
       expect(plan, isA<UnsupportedFlatEncodePlan>());
     });
@@ -539,7 +539,7 @@ void main() {
     });
 
     test('never is unsupported', () {
-      final plan = decodePlan(NeverModel(context: context));
+      final plan = decodePlan(NeverModel(context: context, isNullable: false));
 
       expect(plan, isA<UnsupportedFlatDecodePlan>());
     });

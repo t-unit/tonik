@@ -44,6 +44,40 @@ void main() {
       );
     });
 
+    test('generates typedef for NeverModel', () {
+      final model = AliasModel(
+        name: 'Forbidden',
+        model: NeverModel(context: context, isNullable: false),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final typedef = generator.generateAliasTypedef(model);
+
+      expect(
+        typedef.accept(emitter).toString().trim(),
+        'typedef Forbidden = Never;',
+      );
+    });
+
+    test('generates nullable typedef for nullable NeverModel', () {
+      final model = AliasModel(
+        name: 'Nothing',
+        model: NeverModel(context: context, isNullable: true),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final typedef = generator.generateAliasTypedef(model);
+
+      expect(
+        typedef.accept(emitter).toString().trim(),
+        'typedef Nothing = Never?;',
+      );
+    });
+
     test('generates typedef for list types', () {
       final model = AliasModel(
         name: 'UserIds',

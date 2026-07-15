@@ -141,4 +141,14 @@ void main() {
       );
     });
   });
+
+  group('NeverModel', () {
+    test('isEffectivelyNullable returns isNullable value', () {
+      final nullableNever = NeverModel(context: context, isNullable: true);
+      final nonNullableNever = NeverModel(context: context, isNullable: false);
+
+      expect(nullableNever.isEffectivelyNullable, isTrue);
+      expect(nonNullableNever.isEffectivelyNullable, isFalse);
+    });
+  });
 }

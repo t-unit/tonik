@@ -3620,7 +3620,10 @@ void wrap() {
         name: 'NeverFilter',
         models: {
           (discriminatorValue: null, model: classModel),
-          (discriminatorValue: null, model: NeverModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: NeverModel(context: context, isNullable: false),
+          ),
         },
         context: context,
         examples: const [],

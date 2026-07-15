@@ -193,6 +193,26 @@ void main() {
         },
       );
 
+      test('returns Never TypeReference for NeverModel', () {
+        final model = NeverModel(context: context, isNullable: false);
+
+        final result = typeReference(model, nameManager, package);
+
+        expect(result.symbol, 'Never');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isFalse);
+      });
+
+      test('returns Never? TypeReference for nullable NeverModel', () {
+        final model = NeverModel(context: context, isNullable: true);
+
+        final result = typeReference(model, nameManager, package);
+
+        expect(result.symbol, 'Never');
+        expect(result.url, 'dart:core');
+        expect(result.isNullable, isTrue);
+      });
+
       test('returns TonikFile TypeReference for Base64Model', () {
         final model = Base64Model(context: context);
 

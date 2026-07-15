@@ -651,7 +651,7 @@ void main() {
         properties: [
           Property(
             name: 'impossible',
-            model: NeverModel(context: testContext),
+            model: NeverModel(context: testContext, isNullable: false),
             isRequired: true,
             isNullable: false,
             isDeprecated: false,
@@ -713,7 +713,7 @@ void main() {
           properties: [
             Property(
               name: r'$total',
-              model: NeverModel(context: testContext),
+              model: NeverModel(context: testContext, isNullable: false),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,

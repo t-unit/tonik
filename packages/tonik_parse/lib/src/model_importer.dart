@@ -109,7 +109,7 @@ class ModelImporter {
     if (schema.isBooleanSchema != null) {
       final model = schema.isBooleanSchema!
           ? AnyModel(context: context)
-          : NeverModel(context: context);
+          : NeverModel(context: context, isNullable: false);
       final aliasModel = AliasModel(
         name: name,
         model: model,
@@ -176,6 +176,21 @@ class ModelImporter {
 
     final hasNullType = schema.type.contains('null');
     final types = schema.type.where((t) => t != 'null').toList();
+
+    if (hasNullType && types.isEmpty) {
+      final aliasModel = AliasModel(
+        name: name,
+        model: NeverModel(context: context, isNullable: true),
+        context: context,
+        description: schema.description,
+        isDeprecated: schema.isDeprecated ?? false,
+        defaultValue: schema.rawDefault,
+        examples: const [],
+      );
+      _logModelAdded(aliasModel);
+      models.add(aliasModel);
+      return;
+    }
 
     if (types.length > 1) {
       // Multi-type becomes OneOfModel — create shell.
@@ -415,6 +430,12 @@ class ModelImporter {
 
     final hasNullType = schema.type.contains('null');
     final types = schema.type.where((t) => t != 'null').toList();
+
+    if (hasNullType && types.isEmpty) {
+      // Already fully populated in pass 1.
+      applyExamples(existingModel, examples);
+      return;
+    }
 
     if (types.length > 1) {
       _populateMultiTypeShell(
@@ -1393,7 +1414,7 @@ class ModelImporter {
     if (schema.isBooleanSchema != null) {
       return schema.isBooleanSchema!
           ? AnyModel(context: context)
-          : NeverModel(context: context);
+          : NeverModel(context: context, isNullable: false);
     }
 
     if (schema.allOf != null) {
@@ -1411,6 +1432,10 @@ class ModelImporter {
     // OpenAPI 3.1 null types become Tonik nullability.
     final hasNullType = schema.type.contains('null');
     final types = schema.type.where((t) => t != 'null').toList();
+
+    if (hasNullType && types.isEmpty) {
+      return NeverModel(context: context, isNullable: true);
+    }
 
     if (types.length > 1) {
       return _parseMultiType(types, schema, hasNullType, context, name);

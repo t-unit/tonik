@@ -149,6 +149,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/OneOfBase64OrString'
 
+  /standalone-null/echo:
+    get:
+      operationId: getStandaloneNull
+      tags:
+        - composition
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Null-Header:
+              schema:
+                $ref: '#/components/schemas/NullType'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullType'
+
 components:
   schemas:
     Class1:
@@ -971,3 +988,24 @@ components:
           $ref: '#/components/schemas/OneOfWithNullRef'
         anyOfValue:
           $ref: '#/components/schemas/AnyOfWithNull'
+
+    StandaloneNullHolder:
+      type: object
+      required:
+        - viaRef
+        - inline
+        - nullList
+        - nullMap
+      properties:
+        viaRef:
+          $ref: '#/components/schemas/NullType'
+        inline:
+          type: "null"
+        nullList:
+          type: array
+          items:
+            type: "null"
+        nullMap:
+          type: object
+          additionalProperties:
+            type: "null"

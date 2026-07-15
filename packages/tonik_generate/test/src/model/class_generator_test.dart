@@ -91,7 +91,7 @@ void main() {
           Property(
             name: 'corner',
             model: ListModel(
-              content: NeverModel(context: context),
+              content: NeverModel(context: context, isNullable: false),
               context: context,
               examples: const [],
             ),

@@ -177,11 +177,13 @@ BuiltExpression _buildSerializationExpression(
 
   switch (model) {
     case NeverModel():
-      return BuiltExpression.simple(
-        generateEncodingExceptionExpression(
-          'Cannot encode NeverModel - this type does not permit any value.',
-        ),
+      final throwExpr = generateEncodingExceptionExpression(
+        'Cannot encode NeverModel - this type does not permit any value.',
       );
+      final body = useNullAware
+          ? receiver.equalTo(literalNull).conditional(literalNull, throwExpr)
+          : throwExpr;
+      return BuiltExpression.simple(body);
     case DateTimeModel():
       return BuiltExpression.simple(callMethod('toTimeZonedIso8601String'));
     case DecimalModel():

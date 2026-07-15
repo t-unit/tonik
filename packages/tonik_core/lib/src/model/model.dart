@@ -32,6 +32,7 @@ sealed class Model {
     AllOfModel(:final isNullable) => isNullable,
     OneOfModel(:final isNullable) => isNullable,
     AnyOfModel(:final isNullable) => isNullable,
+    NeverModel(:final isNullable) => isNullable,
     _ => false,
   };
 
@@ -600,7 +601,9 @@ class AnyModel extends Model {
 }
 
 class NeverModel extends Model {
-  NeverModel({required super.context});
+  NeverModel({required super.context, required this.isNullable});
+
+  final bool isNullable;
 
   @override
   EncodingShape get encodingShape => EncodingShape.simple;

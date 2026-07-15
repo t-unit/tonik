@@ -331,7 +331,7 @@ void main() {
         final parameter = createParameter(
           name: 'neverParam',
           rawName: 'neverParam',
-          model: NeverModel(context: context),
+          model: NeverModel(context: context, isNullable: false),
           explode: false,
           allowEmpty: true,
         );
@@ -432,7 +432,7 @@ void main() {
             name: 'neverListParam',
             rawName: 'neverListParam',
             model: ListModel(
-              content: NeverModel(context: context),
+              content: NeverModel(context: context, isNullable: false),
               context: context,
               examples: const [],
             ),
