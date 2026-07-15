@@ -18,6 +18,32 @@ void main() {
     });
 
     test(
+      'form allowReserved preserves map keys and values when collapsed',
+      () async {
+        final adapter = _CapturingAdapter();
+        final result = await EncodePureMapFormAllowReservedCollapsed(
+          _capturingDio(adapter),
+        ).call(values: const {'a:b': 'c:d'});
+
+        expect(result, isA<TonikSuccess<void>>());
+        expect(adapter.requestOptions!.uri.query, 'values=a:b,c:d');
+      },
+    );
+
+    test(
+      'form allowReserved preserves map keys and values when exploded',
+      () async {
+        final adapter = _CapturingAdapter();
+        final result = await EncodePureMapFormAllowReservedExploded(
+          _capturingDio(adapter),
+        ).call(values: const {'a:b': 'c:d'});
+
+        expect(result, isA<TonikSuccess<void>>());
+        expect(adapter.requestOptions!.uri.query, 'a:b=c:d');
+      },
+    );
+
+    test(
       'deepObject omits null while preserving empty and scalar values',
       () async {
         final adapter = _CapturingAdapter();

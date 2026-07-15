@@ -51,6 +51,40 @@ paths:
       responses:
         '204':
           description: Encoded
+  /pure-map-form-allow-reserved-collapsed:
+    get:
+      operationId: encodePureMapFormAllowReservedCollapsed
+      tags:
+        - additional-properties
+      parameters:
+        - name: values
+          in: query
+          required: true
+          style: form
+          explode: false
+          allowReserved: true
+          schema:
+            $ref: '#/components/schemas/StringMap'
+      responses:
+        '204':
+          description: Encoded
+  /pure-map-form-allow-reserved-exploded:
+    get:
+      operationId: encodePureMapFormAllowReservedExploded
+      tags:
+        - additional-properties
+      parameters:
+        - name: values
+          in: query
+          required: true
+          style: form
+          explode: true
+          allowReserved: true
+          schema:
+            $ref: '#/components/schemas/StringMap'
+      responses:
+        '204':
+          description: Encoded
   /pure-map-deep-object:
     get:
       operationId: encodePureMapDeepObject

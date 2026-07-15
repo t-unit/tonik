@@ -261,27 +261,38 @@ void main() {
       );
     });
 
-    test('applies an object-level override to values while component-encoding '
-        'keys when exploded', () {
-      expect(
-        <String, PropertyValue>{
-          'a/1': const PropertyValue.scalar('a/b'),
-          'tags': const PropertyValue.array(['a/b']),
-        }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
-        const <ParameterEntry>[
-          (name: 'a%2F1', value: 'a/b'),
-          (name: 'tags', value: 'a/b'),
-        ],
-      );
-    });
+    test(
+      'applies an object-level override to keys and values when exploded',
+      () {
+        expect(
+          <String, PropertyValue>{
+            'a:b': const PropertyValue.scalar('c:d'),
+          }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
+          const <ParameterEntry>[
+            (name: 'a:b', value: 'c:d'),
+          ],
+        );
+      },
+    );
 
-    test('applies an object-level override to values while component-encoding '
-        'keys when collapsed', () {
+    test(
+      'applies an object-level override to keys and values when collapsed',
+      () {
+        expect(
+          <String, PropertyValue>{
+            'a:b': const PropertyValue.scalar('c:d'),
+          }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+          const <ParameterEntry>[(name: 'p', value: 'a:b,c:d')],
+        );
+      },
+    );
+
+    test('component-encodes keys and values when allowReserved is false', () {
       expect(
         <String, PropertyValue>{
-          'k/1': const PropertyValue.scalar('a/b'),
-        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
-        const <ParameterEntry>[(name: 'p', value: 'k%2F1,a/b')],
+          'a:b': const PropertyValue.scalar('c:d'),
+        }.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'a%3Ab,c%3Ad')],
       );
     });
 
@@ -416,14 +427,15 @@ void main() {
     test('throws on an empty exploded array descriptor when allowEmpty is '
         'false', () {
       expect(
-        () => <String, PropertyValue>{
-          'tags': const PropertyValue.array([]),
-        }.toForm(
-          'p',
-          explode: true,
-          allowEmpty: false,
-          fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
-        ),
+        () =>
+            <String, PropertyValue>{
+              'tags': const PropertyValue.array([]),
+            }.toForm(
+              'p',
+              explode: true,
+              allowEmpty: false,
+              fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+            ),
         throwsA(isA<EmptyValueException>()),
       );
     });
