@@ -264,6 +264,16 @@ switch (path) {
         }
         break
 
+    case '/multipart31/form-non-exploded':
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Tags', formParams.containsKey('tags').toString()
+            withHeader 'X-Param-Tags', (formParams['tags'] ?: '')
+            withContent '{"success":true,"message":"form-non-exploded received"}'
+        }
+        break
+
     case '/multipart31/default-explode':
         // Repeated fields: formParams['values'] returns the last value.
         // The test verifies the full set of fields client-side via FormData.

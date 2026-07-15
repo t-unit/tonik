@@ -667,13 +667,13 @@ Code _buildListFieldAddition(
 
   final explode = propertyEncoding?.explode ?? true;
 
-  // When headers are present, text items must be sent as
-  // MultipartFile.fromString so the headers can be attached.
-  if (headerVarName != null) {
-    final fileItemExpr = refer('MultipartFile', 'package:dio/dio.dart')
-        .property('fromString')
-        .call([itemExpr], {'headers': refer(headerVarName)});
-    if (explode) {
+  if (explode) {
+    // When headers are present, text items must be sent as
+    // MultipartFile.fromString so the headers can be attached.
+    if (headerVarName != null) {
+      final fileItemExpr = refer('MultipartFile', 'package:dio/dio.dart')
+          .property('fromString')
+          .call([itemExpr], {'headers': refer(headerVarName)});
       return _buildListForLoop(
         rawName,
         refer(accessor),
@@ -681,26 +681,7 @@ Code _buildListFieldAddition(
         isFile: true,
       );
     }
-    final encoderExpr = _buildEncoderExpr(
-      accessor,
-      itemExpr,
-      needsMapping: !isIdentity,
-      style: style,
-    );
-    // After the encoder, items are already strings.
-    final encodedFileItemExpr = refer('MultipartFile', 'package:dio/dio.dart')
-        .property('fromString')
-        .call([refer('item')], {'headers': refer(headerVarName)});
-    return _buildListForLoop(
-      rawName,
-      encoderExpr,
-      encodedFileItemExpr,
-      isFile: true,
-    );
-  }
 
-  if (explode) {
-    // explode: true — for-loop adding each item as a separate field.
     return _buildListForLoop(
       rawName,
       refer(accessor),
@@ -709,17 +690,13 @@ Code _buildListFieldAddition(
     );
   }
 
-  final encoderExpr = _buildEncoderExpr(
+  return _buildNonExplodedListAddition(
+    rawName,
     accessor,
     itemExpr,
     needsMapping: !isIdentity,
     style: style,
-  );
-  return _buildListForLoop(
-    rawName,
-    encoderExpr,
-    refer('item'),
-    isFile: false,
+    headerVarName: headerVarName,
   );
 }
 
@@ -865,6 +842,68 @@ Code _buildListForLoop(
   ]);
 }
 
+Code _buildNonExplodedListAddition(
+  String rawName,
+  String accessor,
+  Expression itemExpr, {
+  required bool needsMapping,
+  required EncodingStyle? style,
+  String? headerVarName,
+}) {
+  final listExpr = _buildStringListExpr(
+    accessor,
+    itemExpr,
+    needsMapping: needsMapping,
+  );
+
+  if (style == EncodingStyle.spaceDelimited ||
+      style == EncodingStyle.pipeDelimited) {
+    final encoderMethod = style == EncodingStyle.spaceDelimited
+        ? 'toSpaceDelimited'
+        : 'toPipeDelimited';
+    final namedArgs = <String, Expression>{
+      'explode': literalFalse,
+      'allowEmpty': literalTrue,
+      'alreadyEncoded': literalTrue,
+      if (style == EncodingStyle.spaceDelimited)
+        'percentEncodeDelimiter': literalFalse,
+    };
+    final iterableExpr = listExpr.property(encoderMethod).call([], namedArgs);
+    final itemValue = headerVarName == null
+        ? refer('item')
+        : refer('MultipartFile', 'package:dio/dio.dart')
+              .property('fromString')
+              .call([refer('item')], {'headers': refer(headerVarName)});
+    return _buildListForLoop(
+      rawName,
+      iterableExpr,
+      itemValue,
+      isFile: headerVarName != null,
+    );
+  }
+
+  // Form-style, non-exploded arrays encode to one comma-joined String. That
+  // scalar is one multipart part; unlike the delimited helpers above, it must
+  // not be used as the iterable of a generated for-in loop.
+  final valueExpr = listExpr.property('uriEncode').call([], {
+    'allowEmpty': literalTrue,
+    'alreadyEncoded': literalTrue,
+  });
+  final value = headerVarName == null
+      ? valueExpr
+      : refer('MultipartFile', 'package:dio/dio.dart')
+            .property('fromString')
+            .call([valueExpr], {'headers': refer(headerVarName)});
+  final target = headerVarName == null ? 'fields' : 'files';
+
+  return refer(r'_$formData').property(target).property('add').call([
+    refer('MapEntry', 'dart:core').call([
+      specLiteralString(rawName),
+      value,
+    ]),
+  ]).statement;
+}
+
 /// Builds a for-loop for binary list items, embedding a switch on the
 /// sealed `TonikFile` type inside each iteration.
 Code _buildBinaryListForLoop(
@@ -988,20 +1027,14 @@ Expression _complexItemExpr(
   ], namedArgs);
 }
 
-/// Builds an [Expression] for the encoder call for explode: false arrays.
-///
-/// Maps items to strings via [itemExpr], then calls the appropriate style
-/// encoder. Set [needsMapping] to false when [itemExpr] is identity
-/// (i.e. the item is already a string).
-Expression _buildEncoderExpr(
+/// Builds the string-list input used by non-exploded array encoders.
+Expression _buildStringListExpr(
   String accessor,
   Expression itemExpr, {
   required bool needsMapping,
-  EncodingStyle? style,
 }) {
-  Expression listExpr;
   if (needsMapping) {
-    listExpr = refer(accessor)
+    return refer(accessor)
         .property('map')
         .call([
           Method(
@@ -1013,31 +1046,8 @@ Expression _buildEncoderExpr(
         ])
         .property('toList')
         .call([]);
-  } else {
-    listExpr = refer(accessor);
   }
-
-  final encoderMethod = switch (style) {
-    EncodingStyle.spaceDelimited => 'toSpaceDelimited',
-    EncodingStyle.pipeDelimited => 'toPipeDelimited',
-    _ => 'uriEncode',
-  };
-
-  final isDelimited =
-      style == EncodingStyle.spaceDelimited ||
-      style == EncodingStyle.pipeDelimited;
-
-  final namedArgs = <String, Expression>{
-    if (isDelimited) 'explode': literalFalse,
-    'allowEmpty': literalTrue,
-    'alreadyEncoded': literalTrue,
-  };
-
-  if (style == EncodingStyle.spaceDelimited) {
-    namedArgs['percentEncodeDelimiter'] = literalFalse;
-  }
-
-  return listExpr.property(encoderMethod).call([], namedArgs);
+  return refer(accessor);
 }
 
 Code _buildDeepObjectFileAddition(
@@ -1351,14 +1361,16 @@ Code _buildUrlEncodedObjectFileAddition(
   return Block.of([
     declareFinal(entriesVarName)
         .assign(
-          refer(accessor).property('toForm').call(
-            [specLiteralString(rawName)],
-            {
-              'explode': literalTrue,
-              'allowEmpty': literalTrue,
-              'useQueryComponent': literalTrue,
-            },
-          ),
+          refer(accessor)
+              .property('toForm')
+              .call(
+                [specLiteralString(rawName)],
+                {
+                  'explode': literalTrue,
+                  'allowEmpty': literalTrue,
+                  'useQueryComponent': literalTrue,
+                },
+              ),
         )
         .statement,
     refer(r'_$formData').property('files').property('add').call([
@@ -1399,7 +1411,8 @@ Code _buildRawStylePartsAddition(
     refer(r'_$formData').property('files').property('add').call([
       refer('MapEntry', 'dart:core').call([
         refer(r'_$part').property('name'),
-        refer('MultipartFile', 'package:dio/dio.dart').property('fromString')
+        refer('MultipartFile', 'package:dio/dio.dart')
+            .property('fromString')
             .call(
               [refer(r'_$part').property('value')],
               {if (headerVarName != null) 'headers': refer(headerVarName)},

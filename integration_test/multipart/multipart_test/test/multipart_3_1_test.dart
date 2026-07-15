@@ -78,6 +78,44 @@ void main() {
     });
   });
 
+  group('OAS 3.1 form encoding with explode=false', () {
+    test('serializes an array as one comma-joined multipart field', () async {
+      const form = FormNonExplodedForm(tags: ['a', 'b', 'c']);
+
+      final response = await api.postFormNonExploded(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+      final formData = success.response.requestOptions.data as FormData;
+      final tagEntries = formData.fields
+          .where((entry) => entry.key == 'tags')
+          .toList();
+
+      expect(tagEntries, hasLength(1));
+      expect(tagEntries.single.value, 'a,b,c');
+      expect(formData.files.where((entry) => entry.key == 'tags'), isEmpty);
+      expect(success.response.headers['x-has-tags']?.first, 'true');
+      expect(success.response.headers['x-param-tags']?.first, 'a,b,c');
+    });
+
+    test('omits the optional array when it is null', () async {
+      const form = FormNonExplodedForm();
+
+      final response = await api.postFormNonExploded(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+      final formData = success.response.requestOptions.data as FormData;
+
+      expect(formData.fields.where((entry) => entry.key == 'tags'), isEmpty);
+      expect(formData.files.where((entry) => entry.key == 'tags'), isEmpty);
+      expect(success.response.headers['x-has-tags']?.first, 'false');
+      expect(success.response.headers['x-param-tags']?.first, '');
+    });
+  });
+
   group('OAS 3.1 array with no encoding specified', () {
     test(
       'serializes array as repeated form fields when no encoding is set',

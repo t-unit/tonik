@@ -42,6 +42,33 @@ paths:
               schema:
                 $ref: '#/components/schemas/GenericResponse'
 
+  /multipart31/form-non-exploded:
+    post:
+      operationId: postFormNonExploded
+      tags:
+        - multipart31
+      summary: Post an array with form style and explode=false
+      description: >-
+        Verifies OAS 3.1 serializes an optional array as one comma-joined
+        multipart field when style is form and explode is false.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FormNonExplodedForm'
+            encoding:
+              tags:
+                style: form
+                explode: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
   /multipart31/default-explode:
     post:
       operationId: postDefaultExplode
@@ -294,6 +321,15 @@ components:
           items:
             type: string
           description: Array to be serialized with pipe-delimited style
+
+    FormNonExplodedForm:
+      type: object
+      properties:
+        tags:
+          type: array
+          items:
+            type: string
+          description: Optional array serialized as one comma-joined field
 
     DefaultExplodeForm:
       type: object
