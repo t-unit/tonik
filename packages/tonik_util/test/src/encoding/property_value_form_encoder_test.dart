@@ -287,6 +287,60 @@ void main() {
       },
     );
 
+    test('keeps query delimiters encoded in keys when exploded', () {
+      expect(
+        <String, PropertyValue>{
+          'a=b&c': const PropertyValue.scalar('d:e'),
+        }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[
+          (name: 'a%3Db%26c', value: 'd:e'),
+        ],
+      );
+    });
+
+    test('keeps query delimiters encoded in keys when collapsed', () {
+      expect(
+        <String, PropertyValue>{
+          'a=b&c': const PropertyValue.scalar('d:e'),
+        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: 'a%3Db%26c,d:e')],
+      );
+    });
+
+    test('uses the object-level policy for a key when a field descriptor '
+        'overrides its value', () {
+      expect(
+        <String, PropertyValue>{
+          'a:b': const PropertyValue.scalar('c:d'),
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+          fieldEncodings: const {'a:b': FormFieldEncoding()},
+        ),
+        const <ParameterEntry>[(name: 'a:b', value: 'c%3Ad')],
+      );
+    });
+
+    test('keeps reserved characters in collapsed array keys and values', () {
+      expect(
+        <String, PropertyValue>{
+          'k:1': const PropertyValue.array(['a:b', 'c:d']),
+        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: 'k:1,a:b,c:d')],
+      );
+    });
+
+    test('keeps a key comma literal when collapsing with allowReserved', () {
+      expect(
+        <String, PropertyValue>{
+          'a,b': const PropertyValue.scalar('c:d'),
+        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: 'a,b,c:d')],
+      );
+    });
+
     test('component-encodes keys and values when allowReserved is false', () {
       expect(
         <String, PropertyValue>{
