@@ -591,7 +591,7 @@ void main() {
     test('NeverModel returns null', () {
       final result = buildFormEntriesValueExpression(
         refer('value'),
-        NeverModel(context: context),
+        NeverModel(context: context, isNullable: false),
         paramName: literalString('p'),
         explode: literalBool(true),
         allowEmpty: literalBool(true),
@@ -639,7 +639,7 @@ void main() {
       Base64Model(context: context),
       BinaryModel(context: context),
       AnyModel(context: context),
-      NeverModel(context: context),
+      NeverModel(context: context, isNullable: false),
       EnumModel<String>(
         values: const {},
         isNullable: false,
@@ -770,7 +770,7 @@ void main() {
           context: context,
           examples: const [],
         ),
-        NeverModel(context: context),
+        NeverModel(context: context, isNullable: false),
       ];
 
       for (final model in complex) {

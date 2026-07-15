@@ -1527,7 +1527,7 @@ void main() {
     test('generates throw JsonDecodingException for NeverModel', () {
       final result = buildFromJsonValueExpression(
         'value',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         nameManager: nameManager,
         package: 'my_package',
       ).accept(emitter).toString();
@@ -1540,7 +1540,7 @@ void main() {
     test('generates null check before throw for nullable NeverModel', () {
       final result = buildFromJsonValueExpression(
         'value',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         nameManager: nameManager,
         package: 'my_package',
         isNullable: true,
@@ -1551,10 +1551,23 @@ void main() {
       );
     });
 
+    test('generates null check before throw for nullable NeverModel model', () {
+      final result = buildFromJsonValueExpression(
+        'value',
+        model: NeverModel(context: context, isNullable: true),
+        nameManager: nameManager,
+        package: 'my_package',
+      ).accept(emitter).toString();
+      expect(
+        result,
+        '''value == null ? null : throw  _i1.JsonDecodingException('Cannot decode NeverModel - this type does not permit any value.')''',
+      );
+    });
+
     test('generates throw for AliasModel wrapping NeverModel', () {
       final aliasModel = AliasModel(
         name: 'ForbiddenAlias',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
         defaultValue: null,
@@ -1573,7 +1586,7 @@ void main() {
 
     test('decodes List of NeverModel before rejecting elements', () {
       final listModel = ListModel(
-        content: NeverModel(context: context),
+        content: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
       );
@@ -1589,11 +1602,30 @@ void main() {
       );
     });
 
+    test('decodes List of nullable NeverModel elements to null', () {
+      final listModel = ListModel(
+        content: NeverModel(context: context, isNullable: true),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final result = buildFromJsonValueExpression(
+        'value',
+        model: listModel,
+        nameManager: nameManager,
+        package: 'my_package',
+      ).accept(emitter).toString();
+      expect(
+        result,
+        '''value.decodeJsonList<Object?>().map((e) => e == null ? null : throw  _i1.JsonDecodingException('Cannot decode List<NeverModel> - this type does not permit any value.')).toList()''',
+      );
+    });
+
     test(
       'generates null check for List of NeverModel when caller marks nullable',
       () {
         final listModel = ListModel(
-          content: NeverModel(context: context),
+          content: NeverModel(context: context, isNullable: false),
           context: context,
           examples: const [],
         );
@@ -1615,7 +1647,7 @@ void main() {
       'generates null check for ListModel(isNullable: true) of NeverModel',
       () {
         final listModel = ListModel(
-          content: NeverModel(context: context),
+          content: NeverModel(context: context, isNullable: false),
           isNullable: true,
           context: context,
           examples: const [],
@@ -1781,7 +1813,7 @@ void main() {
       'under useImmutableCollections',
       () {
         final listModel = ListModel(
-          content: NeverModel(context: context),
+          content: NeverModel(context: context, isNullable: false),
           isNullable: true,
           context: context,
           examples: const [],
@@ -1804,7 +1836,7 @@ void main() {
       'under useImmutableCollections',
       () {
         final listModel = ListModel(
-          content: NeverModel(context: context),
+          content: NeverModel(context: context, isNullable: false),
           context: context,
           examples: const [],
         );
@@ -1857,7 +1889,7 @@ void main() {
         expect(
           buildFromJsonValueExpression(
             r'_$raw',
-            model: NeverModel(context: context),
+            model: NeverModel(context: context, isNullable: false),
             nameManager: nameManager,
             package: 'my_package',
             isNullable: true,

@@ -788,7 +788,7 @@ void main() {
       test('generates throw for required NeverModel', () {
         final expression = buildFromFormValueExpression(
           refer("values['neverField']"),
-          model: NeverModel(context: context),
+          model: NeverModel(context: context, isNullable: false),
           isRequired: true,
           nameManager: nameManager,
           package: 'test_package',
@@ -806,7 +806,7 @@ void main() {
       test('generates null check before throw for optional NeverModel', () {
         final expression = buildFromFormValueExpression(
           refer("values['neverField']"),
-          model: NeverModel(context: context),
+          model: NeverModel(context: context, isNullable: false),
           isRequired: false,
           nameManager: nameManager,
           package: 'test_package',
@@ -828,7 +828,7 @@ void main() {
         final expression = buildFromFormValueExpression(
           refer('formString'),
           model: ListModel(
-            content: NeverModel(context: context),
+            content: NeverModel(context: context, isNullable: false),
             context: context,
             examples: const [],
           ),
@@ -850,7 +850,7 @@ void main() {
           final expression = buildFromFormValueExpression(
             refer('formString'),
             model: ListModel(
-              content: NeverModel(context: context),
+              content: NeverModel(context: context, isNullable: false),
               isNullable: true,
               context: context,
               examples: const [],
@@ -872,7 +872,7 @@ void main() {
         final expression = buildFromFormValueExpression(
           refer('formString'),
           model: ListModel(
-            content: NeverModel(context: context),
+            content: NeverModel(context: context, isNullable: false),
             context: context,
             examples: const [],
           ),
@@ -897,7 +897,7 @@ void main() {
             model: ListModel(
               content: AliasModel(
                 name: 'ForbiddenAlias',
-                model: NeverModel(context: context),
+                model: NeverModel(context: context, isNullable: false),
                 context: context,
                 examples: const [],
                 defaultValue: null,

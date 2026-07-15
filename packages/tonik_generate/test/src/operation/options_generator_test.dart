@@ -1785,7 +1785,7 @@ void main() {
         isRequired: true,
         isDeprecated: false,
         explode: false,
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         encoding: CookieParameterEncoding.form,
         context: context,
         examples: const [],

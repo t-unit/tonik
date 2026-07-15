@@ -148,7 +148,7 @@ void main() {
         name: 'neverParam',
         rawName: 'neverParam',
         description: 'Never parameter',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         encoding: PathParameterEncoding.simple,
         explode: false,
         allowEmptyValue: false,
@@ -504,7 +504,7 @@ void main() {
         emit(
           buildToSimpleHeaderParameterExpression(
             'neverHeader',
-            header(NeverModel(context: context)),
+            header(NeverModel(context: context, isNullable: false)),
           ),
         ),
         '''throw  EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
@@ -599,7 +599,7 @@ void main() {
     });
 
     test('serializes never model as exception', () {
-      final model = NeverModel(context: context);
+      final model = NeverModel(context: context, isNullable: false);
       expect(
         emit(
           buildSimpleValueExpression(
@@ -1862,7 +1862,7 @@ void main() {
 
     test('NeverModel returns never-typed reason', () {
       expectThrowReason(
-        NeverModel(context: context),
+        NeverModel(context: context, isNullable: false),
         label: 'NeverModel',
         containsText: 'never-typed',
       );
@@ -1879,7 +1879,7 @@ void main() {
     test('ListModel<NeverModel> returns unsupported elements reason', () {
       expectThrowReason(
         ListModel(
-          content: NeverModel(context: context),
+          content: NeverModel(context: context, isNullable: false),
           context: context,
           examples: const [],
         ),
@@ -1940,7 +1940,7 @@ void main() {
       expectThrowReason(
         AliasModel(
           name: 'NA',
-          model: NeverModel(context: context),
+          model: NeverModel(context: context, isNullable: false),
           context: context,
           examples: const [],
           defaultValue: null,
@@ -1957,7 +1957,7 @@ void main() {
           name: 'NA2',
           model: AliasModel(
             name: 'NA1',
-            model: NeverModel(context: context),
+            model: NeverModel(context: context, isNullable: false),
             context: context,
             examples: const [],
             defaultValue: null,
@@ -2055,7 +2055,7 @@ void main() {
         ListModel(
           content: AliasModel(
             name: 'NA',
-            model: NeverModel(context: context),
+            model: NeverModel(context: context, isNullable: false),
             context: context,
             examples: const [],
             defaultValue: null,

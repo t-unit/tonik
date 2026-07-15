@@ -3359,7 +3359,10 @@ bool operator ==(Object other) {
         isDeprecated: false,
         name: 'Value',
         models: {
-          (discriminatorValue: null, model: NeverModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: NeverModel(context: context, isNullable: false),
+          ),
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,
@@ -3383,7 +3386,10 @@ bool operator ==(Object other) {
         isDeprecated: false,
         name: 'Value',
         models: {
-          (discriminatorValue: null, model: NeverModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: NeverModel(context: context, isNullable: false),
+          ),
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,
@@ -3411,7 +3417,10 @@ bool operator ==(Object other) {
         isDeprecated: false,
         name: 'Value',
         models: {
-          (discriminatorValue: null, model: NeverModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: NeverModel(context: context, isNullable: false),
+          ),
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,
@@ -3439,7 +3448,10 @@ bool operator ==(Object other) {
         isDeprecated: false,
         name: 'Value',
         models: {
-          (discriminatorValue: null, model: NeverModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: NeverModel(context: context, isNullable: false),
+          ),
           (discriminatorValue: null, model: StringModel(context: context)),
           (discriminatorValue: null, model: IntegerModel(context: context)),
         },
@@ -3475,7 +3487,10 @@ bool operator ==(Object other) {
         isDeprecated: false,
         name: 'Value',
         models: {
-          (discriminatorValue: null, model: NeverModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: NeverModel(context: context, isNullable: false),
+          ),
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,
@@ -3503,7 +3518,10 @@ bool operator ==(Object other) {
         isDeprecated: false,
         name: 'Value',
         models: {
-          (discriminatorValue: null, model: NeverModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: NeverModel(context: context, isNullable: false),
+          ),
           (discriminatorValue: null, model: StringModel(context: context)),
         },
         context: context,

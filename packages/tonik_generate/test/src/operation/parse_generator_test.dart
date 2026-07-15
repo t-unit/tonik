@@ -2609,7 +2609,7 @@ DateTime _parseResponse(Response<List<int>> response) {
             description: '',
             isRequired: false,
             isDeprecated: false,
-            model: NeverModel(context: context),
+            model: NeverModel(context: context, isNullable: false),
             explode: false,
             encoding: ResponseHeaderEncoding.simple,
             examples: const [],
@@ -2709,7 +2709,7 @@ DateTime _parseResponse(Response<List<int>> response) {
               description: '',
               isRequired: false,
               isDeprecated: false,
-              model: NeverModel(context: context),
+              model: NeverModel(context: context, isNullable: false),
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
               examples: const [],
@@ -2824,7 +2824,7 @@ DateTime _parseResponse(Response<List<int>> response) {
                 bodies: {
                   ResponseBody(
                     model: ListModel(
-                      content: NeverModel(context: context),
+                      content: NeverModel(context: context, isNullable: false),
                       context: context,
                       examples: const [],
                     ),
@@ -2890,7 +2890,7 @@ List<Never> _parseResponse(Response<List<int>> response) {
               description: '',
               bodies: {
                 ResponseBody(
-                  model: NeverModel(context: context),
+                  model: NeverModel(context: context, isNullable: false),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
@@ -2949,7 +2949,7 @@ Never _parseResponse(Response<List<int>> response) {
                   ResponseBody(
                     model: AliasModel(
                       name: 'NeverAlias',
-                      model: NeverModel(context: context),
+                      model: NeverModel(context: context, isNullable: false),
                       context: context,
                       examples: const [],
                       defaultValue: null,
@@ -3012,7 +3012,7 @@ NeverAlias _parseResponse(Response<List<int>> response) {
                 description: '',
                 bodies: {
                   ResponseBody(
-                    model: NeverModel(context: context),
+                    model: NeverModel(context: context, isNullable: false),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
@@ -3076,7 +3076,7 @@ MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
               description: '',
               isRequired: false,
               isDeprecated: false,
-              model: NeverModel(context: context),
+              model: NeverModel(context: context, isNullable: false),
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
               examples: const [],
@@ -3103,7 +3103,7 @@ MultiNeverBodyOpResponse _parseResponse(Response<List<int>> response) {
                 description: '',
                 bodies: {
                   ResponseBody(
-                    model: NeverModel(context: context),
+                    model: NeverModel(context: context, isNullable: false),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
@@ -3155,7 +3155,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
               description: '',
               isRequired: false,
               isDeprecated: false,
-              model: NeverModel(context: context),
+              model: NeverModel(context: context, isNullable: false),
               explode: false,
               encoding: ResponseHeaderEncoding.simple,
               examples: const [],
@@ -3182,7 +3182,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
                 description: '',
                 bodies: {
                   ResponseBody(
-                    model: NeverModel(context: context),
+                    model: NeverModel(context: context, isNullable: false),
                     rawContentType: 'application/json',
                     contentType: ContentType.json,
                     examples: const [],
@@ -3268,7 +3268,7 @@ MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
                   ResponseBody(
                     model: AliasModel(
                       name: 'NeverFormAlias',
-                      model: NeverModel(context: context),
+                      model: NeverModel(context: context, isNullable: false),
                       context: context,
                       examples: const [],
                       defaultValue: null,
@@ -3332,7 +3332,7 @@ NeverFormAlias _parseResponse(Response<List<int>> response) {
                 description: '',
                 bodies: {
                   ResponseBody(
-                    model: NeverModel(context: context),
+                    model: NeverModel(context: context, isNullable: false),
                     rawContentType: 'application/x-www-form-urlencoded',
                     contentType: ContentType.form,
                     examples: const [],
@@ -3394,7 +3394,7 @@ Never _parseResponse(Response<List<int>> response) {
                 bodies: {
                   ResponseBody(
                     model: ListModel(
-                      content: NeverModel(context: context),
+                      content: NeverModel(context: context, isNullable: false),
                       context: context,
                       examples: const [],
                     ),
@@ -3466,7 +3466,7 @@ List<Never> _parseResponse(Response<List<int>> response) {
                 bodies: {
                   ResponseBody(
                     model: ListModel(
-                      content: NeverModel(context: context),
+                      content: NeverModel(context: context, isNullable: false),
                       isNullable: true,
                       context: context,
                       examples: const [],

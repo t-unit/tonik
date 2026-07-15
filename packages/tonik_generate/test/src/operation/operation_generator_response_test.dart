@@ -213,7 +213,7 @@ void main() {
               description: '',
               bodies: {
                 ResponseBody(
-                  model: NeverModel(context: context),
+                  model: NeverModel(context: context, isNullable: false),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
@@ -342,7 +342,7 @@ Future<TonikResult<Never>> call({CancelToken? cancelToken}) async {
                 ResponseBody(
                   model: AliasModel(
                     isNullable: true,
-                    model: NeverModel(context: context),
+                    model: NeverModel(context: context, isNullable: false),
                     context: context,
                     examples: const [],
                     defaultValue: null,

@@ -484,10 +484,13 @@ BuiltExpression _buildListFromJsonBody(
         'Cannot decode List<NeverModel> - this type does not permit any '
         'value.',
       );
+      final elementExpr = isItemNullable
+          ? refer('e').equalTo(literalNull).conditional(literalNull, throwExpr)
+          : throwExpr;
       final mapFunction = Method(
         (b) => b
           ..requiredParameters.add(Parameter((b) => b..name = 'e'))
-          ..body = throwExpr.code,
+          ..body = elementExpr.code,
       ).closure;
       final listExpr = receiver.property(listDecoder).call(
         [],

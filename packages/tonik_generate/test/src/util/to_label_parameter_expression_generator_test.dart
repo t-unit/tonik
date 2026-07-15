@@ -483,7 +483,7 @@ void main() {
     });
 
     test('generates runtime throw for NeverModel', () {
-      final model = NeverModel(context: context);
+      final model = NeverModel(context: context, isNullable: false);
       final expression = buildLabelParameterExpression(
         refer('value'),
         model,
@@ -499,7 +499,7 @@ void main() {
 
     test('generates runtime throw for List with NeverModel content', () {
       final model = ListModel(
-        content: NeverModel(context: context),
+        content: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
       );

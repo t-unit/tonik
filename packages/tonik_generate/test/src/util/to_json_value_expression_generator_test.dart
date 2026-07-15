@@ -1882,7 +1882,7 @@ void main() {
     test('for NeverModel property throws EncodingException', () {
       final property = Property(
         name: 'forbidden',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         isRequired: true,
         isNullable: false,
         isDeprecated: false,
@@ -1901,10 +1901,10 @@ void main() {
       );
     });
 
-    test('for nullable NeverModel property throws EncodingException', () {
+    test('for nullable NeverModel property encodes null before throwing', () {
       final property = Property(
         name: 'forbidden',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         isRequired: false,
         isNullable: true,
         isDeprecated: false,
@@ -1919,13 +1919,39 @@ void main() {
             nameManager: nameManager,
           ),
         ),
-        '''throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
+        '''forbidden == null ? null : throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
       );
     });
 
+    test(
+      'for NeverModel property with nullable model encodes null '
+      'before throwing',
+      () {
+        final property = Property(
+          name: 'forbidden',
+          model: NeverModel(context: context, isNullable: true),
+          isRequired: true,
+          isNullable: false,
+          isDeprecated: false,
+          examples: const [],
+          defaultValue: null,
+        );
+        expect(
+          scopedEmit(
+            buildToJsonPropertyExpression(
+              'forbidden',
+              property,
+              nameManager: nameManager,
+            ),
+          ),
+          '''forbidden == null ? null : throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')''',
+        );
+      },
+    );
+
     test('for List of NeverModel property throws EncodingException', () {
       final listModel = ListModel(
-        content: NeverModel(context: context),
+        content: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
       );
@@ -1950,10 +1976,38 @@ void main() {
       );
     });
 
+    test('for List of nullable NeverModel property encodes null elements', () {
+      final listModel = ListModel(
+        content: NeverModel(context: context, isNullable: true),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final property = Property(
+        name: 'forbiddenList',
+        model: listModel,
+        isRequired: true,
+        isNullable: false,
+        isDeprecated: false,
+        examples: const [],
+        defaultValue: null,
+      );
+      expect(
+        scopedEmit(
+          buildToJsonPropertyExpression(
+            'forbiddenList',
+            property,
+            nameManager: nameManager,
+          ),
+        ),
+        '''forbiddenList.map((e) => e == null ? null : throw  _i1.EncodingException('Cannot encode NeverModel - this type does not permit any value.')).toList()''',
+      );
+    });
+
     test('for AliasModel wrapping NeverModel throws EncodingException', () {
       final aliasModel = AliasModel(
         name: 'ForbiddenAlias',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
         defaultValue: null,
@@ -1986,7 +2040,7 @@ void main() {
         name: 'forbidden',
         rawName: 'forbidden',
         description: 'Test path parameter',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         encoding: PathParameterEncoding.simple,
         explode: false,
         allowEmptyValue: false,
@@ -2015,7 +2069,7 @@ void main() {
         name: 'forbidden',
         rawName: 'forbidden',
         description: 'Test query parameter',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         encoding: QueryParameterEncoding.form,
         explode: false,
         allowEmptyValue: false,

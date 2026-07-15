@@ -843,7 +843,7 @@ void main() {
         expect(
           buildSimpleValueExpression(
             value,
-            model: NeverModel(context: context),
+            model: NeverModel(context: context, isNullable: false),
             isRequired: true,
             nameManager: nameManager,
             package: 'my_package',
@@ -858,7 +858,7 @@ void main() {
         expect(
           buildSimpleValueExpression(
             value,
-            model: NeverModel(context: context),
+            model: NeverModel(context: context, isNullable: false),
             isRequired: false,
             nameManager: nameManager,
             package: 'my_package',
@@ -874,7 +874,7 @@ void main() {
           buildSimpleValueExpression(
             value,
             model: ListModel(
-              content: NeverModel(context: context),
+              content: NeverModel(context: context, isNullable: false),
               context: context,
               examples: const [],
             ),
@@ -893,7 +893,7 @@ void main() {
           buildSimpleValueExpression(
             value,
             model: ListModel(
-              content: NeverModel(context: context),
+              content: NeverModel(context: context, isNullable: false),
               context: context,
               examples: const [],
             ),

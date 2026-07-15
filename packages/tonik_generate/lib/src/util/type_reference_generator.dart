@@ -124,11 +124,11 @@ TypeReference typeReference(
         ..url = 'package:tonik_util/tonik_util.dart'
         ..isNullable = isNullableOverride,
     ),
-    NeverModel _ => TypeReference(
+    final NeverModel m => TypeReference(
       (b) => b
         ..symbol = 'Never'
         ..url = 'dart:core'
-        ..isNullable = isNullableOverride,
+        ..isNullable = isNullableOverride || m.isNullable,
     ),
     AnyModel _ => TypeReference(
       (b) => b

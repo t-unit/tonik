@@ -740,7 +740,7 @@ void main() {
     test('NeverModel body throws an encoding exception', () {
       final result = buildToFormValueExpression(
         'body',
-        NeverModel(context: context),
+        NeverModel(context: context, isNullable: false),
         useQueryComponent: true,
       );
 

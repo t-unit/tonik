@@ -971,3 +971,24 @@ components:
           $ref: '#/components/schemas/OneOfWithNullRef'
         anyOfValue:
           $ref: '#/components/schemas/AnyOfWithNull'
+
+    StandaloneNullHolder:
+      type: object
+      required:
+        - viaRef
+        - inline
+        - nullList
+        - nullMap
+      properties:
+        viaRef:
+          $ref: '#/components/schemas/NullType'
+        inline:
+          type: "null"
+        nullList:
+          type: array
+          items:
+            type: "null"
+        nullMap:
+          type: object
+          additionalProperties:
+            type: "null"

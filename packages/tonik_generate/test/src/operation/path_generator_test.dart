@@ -3255,7 +3255,7 @@ void main() {
         isDeprecated: false,
         allowEmptyValue: false,
         explode: false,
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         encoding: PathParameterEncoding.simple,
         context: context,
         examples: const [],
@@ -3351,7 +3351,7 @@ void main() {
         'without concatenation', () {
       final listModel = ListModel(
         context: context,
-        content: NeverModel(context: context),
+        content: NeverModel(context: context, isNullable: false),
         examples: const [],
       );
 
@@ -3465,7 +3465,7 @@ void main() {
         'unwrapping at depth 1', () {
       final aliasModel = AliasModel(
         name: 'NeverAlias',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
         defaultValue: null,
@@ -3533,7 +3533,7 @@ void main() {
         'throw statement unwrapping at depth 2', () {
       final innerAlias = AliasModel(
         name: 'NeverInner',
-        model: NeverModel(context: context),
+        model: NeverModel(context: context, isNullable: false),
         context: context,
         examples: const [],
         defaultValue: null,

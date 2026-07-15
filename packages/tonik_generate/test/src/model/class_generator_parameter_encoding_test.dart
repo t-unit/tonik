@@ -1479,7 +1479,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
             Property(
               name: 'forbidden',
-              model: NeverModel(context: context),
+              model: NeverModel(context: context, isNullable: false),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
@@ -1523,7 +1523,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             ),
             Property(
               name: 'forbidden',
-              model: NeverModel(context: context),
+              model: NeverModel(context: context, isNullable: false),
               isRequired: true,
               isNullable: false,
               isDeprecated: false,
