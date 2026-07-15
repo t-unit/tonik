@@ -39,9 +39,11 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
   ///
   /// When the map is exploded, per-property [FormFieldEncoding.explode]
   /// controls array assembly and [FormFieldEncoding.allowReserved] applies to
-  /// values only; keys are always component-encoded. In collapse mode
-  /// (object-level `explode` false) [fieldEncodings] is ignored and arrays are
-  /// always comma-joined.
+  /// values only. The object-level [allowReserved] applies to keys and is the
+  /// fallback for values without a field encoding. In collapse mode
+  /// (object-level `explode` false) [fieldEncodings] is ignored,
+  /// [allowReserved] applies to both keys and values, and arrays are always
+  /// comma-joined.
   List<ParameterEntry> toForm(
     String paramName, {
     required bool explode,
@@ -80,7 +82,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
       final encodedKey = _encode(
         name,
         useQueryComponent: useQueryComponent,
-        allowReserved: false,
+        allowReserved: allowReserved,
       );
       final encoding = fieldEncodings[name];
       final explodeArray = encoding?.explode ?? false;
@@ -148,7 +150,7 @@ extension PropertyValueFormEncoder on Map<String, PropertyValue> {
           _encode(
             entry.key,
             useQueryComponent: useQueryComponent,
-            allowReserved: false,
+            allowReserved: allowReserved,
           ),
         )
         ..add(

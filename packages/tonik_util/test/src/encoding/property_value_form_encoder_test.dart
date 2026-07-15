@@ -261,27 +261,92 @@ void main() {
       );
     });
 
-    test('applies an object-level override to values while component-encoding '
-        'keys when exploded', () {
+    test(
+      'applies an object-level override to keys and values when exploded',
+      () {
+        expect(
+          <String, PropertyValue>{
+            'a:b': const PropertyValue.scalar('c:d'),
+          }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
+          const <ParameterEntry>[
+            (name: 'a:b', value: 'c:d'),
+          ],
+        );
+      },
+    );
+
+    test(
+      'applies an object-level override to keys and values when collapsed',
+      () {
+        expect(
+          <String, PropertyValue>{
+            'a:b': const PropertyValue.scalar('c:d'),
+          }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+          const <ParameterEntry>[(name: 'p', value: 'a:b,c:d')],
+        );
+      },
+    );
+
+    test('keeps query delimiters encoded in keys when exploded', () {
       expect(
         <String, PropertyValue>{
-          'a/1': const PropertyValue.scalar('a/b'),
-          'tags': const PropertyValue.array(['a/b']),
+          'a=b&c': const PropertyValue.scalar('d:e'),
         }.toForm('p', explode: true, allowEmpty: true, allowReserved: true),
         const <ParameterEntry>[
-          (name: 'a%2F1', value: 'a/b'),
-          (name: 'tags', value: 'a/b'),
+          (name: 'a%3Db%26c', value: 'd:e'),
         ],
       );
     });
 
-    test('applies an object-level override to values while component-encoding '
-        'keys when collapsed', () {
+    test('keeps query delimiters encoded in keys when collapsed', () {
       expect(
         <String, PropertyValue>{
-          'k/1': const PropertyValue.scalar('a/b'),
+          'a=b&c': const PropertyValue.scalar('d:e'),
         }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
-        const <ParameterEntry>[(name: 'p', value: 'k%2F1,a/b')],
+        const <ParameterEntry>[(name: 'p', value: 'a%3Db%26c,d:e')],
+      );
+    });
+
+    test('uses the object-level policy for a key when a field descriptor '
+        'overrides its value', () {
+      expect(
+        <String, PropertyValue>{
+          'a:b': const PropertyValue.scalar('c:d'),
+        }.toForm(
+          'p',
+          explode: true,
+          allowEmpty: true,
+          allowReserved: true,
+          fieldEncodings: const {'a:b': FormFieldEncoding()},
+        ),
+        const <ParameterEntry>[(name: 'a:b', value: 'c%3Ad')],
+      );
+    });
+
+    test('keeps reserved characters in collapsed array keys and values', () {
+      expect(
+        <String, PropertyValue>{
+          'k:1': const PropertyValue.array(['a:b', 'c:d']),
+        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: 'k:1,a:b,c:d')],
+      );
+    });
+
+    test('keeps a key comma literal when collapsing with allowReserved', () {
+      expect(
+        <String, PropertyValue>{
+          'a,b': const PropertyValue.scalar('c:d'),
+        }.toForm('p', explode: false, allowEmpty: true, allowReserved: true),
+        const <ParameterEntry>[(name: 'p', value: 'a,b,c:d')],
+      );
+    });
+
+    test('component-encodes keys and values when allowReserved is false', () {
+      expect(
+        <String, PropertyValue>{
+          'a:b': const PropertyValue.scalar('c:d'),
+        }.toForm('p', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'p', value: 'a%3Ab,c%3Ad')],
       );
     });
 
@@ -416,14 +481,15 @@ void main() {
     test('throws on an empty exploded array descriptor when allowEmpty is '
         'false', () {
       expect(
-        () => <String, PropertyValue>{
-          'tags': const PropertyValue.array([]),
-        }.toForm(
-          'p',
-          explode: true,
-          allowEmpty: false,
-          fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
-        ),
+        () =>
+            <String, PropertyValue>{
+              'tags': const PropertyValue.array([]),
+            }.toForm(
+              'p',
+              explode: true,
+              allowEmpty: false,
+              fieldEncodings: const {'tags': FormFieldEncoding(explode: true)},
+            ),
         throwsA(isA<EmptyValueException>()),
       );
     });

@@ -56,8 +56,9 @@ abstract interface class FormEncodable {
   /// When [allowEmpty] is false, empty values throw an exception.
   /// When [useQueryComponent] is true, uses '+' for spaces
   /// (application/x-www-form-urlencoded encoding).
-  /// When [allowReserved] is true, reserved characters in values are kept
-  /// literal except the form delimiters `& = +`.
+  /// When [allowReserved] is true, reserved characters in encoded data,
+  /// including object property names and values, are kept literal except the
+  /// form delimiters `& = +`.
   /// [fieldEncodings], keyed by raw property name, lets individual object
   /// properties override [allowReserved]; other encoders ignore it.
   List<ParameterEntry> toForm(
