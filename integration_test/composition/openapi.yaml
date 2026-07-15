@@ -149,6 +149,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/OneOfBase64OrString'
 
+  /standalone-null/echo:
+    get:
+      operationId: getStandaloneNull
+      tags:
+        - composition
+      responses:
+        '200':
+          description: OK
+          headers:
+            X-Null-Header:
+              schema:
+                $ref: '#/components/schemas/NullType'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NullType'
+
 components:
   schemas:
     Class1:

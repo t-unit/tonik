@@ -308,24 +308,21 @@ Future<TonikResult<Never>> call({CancelToken? cancelToken}) async {
       },
     );
 
-    // `isNeverParseReturn` also guards against `Never?` defensively. The
-    // current `tonik_parse` package does not produce OpenAPI input that
-    // yields a `Never?` parse-response type, but the core model layer
-    // permits the shape (e.g. an anonymous AliasModel with `isNullable: true`
-    // wrapping NeverModel renders as `Never?` via the anonymous-alias branch
-    // in typeReference). The guard prevents the unassigned try/catch branch
-    // from being emitted should such a model ever reach the generator.
+    // `isNeverParseReturn` also guards against `Never?`, the shape an inline
+    // `{type: "null"}` response schema imports as. It can legitimately
+    // complete normally with `null`, so the unassigned try/catch branch must
+    // not be emitted.
     test(
-      'nullable anonymous-alias Never response uses assigned-var shape',
+      'nullable Never response body uses assigned-var shape',
       () {
         final operation = Operation(
-          operationId: 'nullableNeverAliasBodyOp',
+          operationId: 'nullableNeverBodyOp',
           context: context,
           summary: '',
           description: '',
           tags: const {},
           isDeprecated: false,
-          path: '/nullable-never-alias-body',
+          path: '/nullable-never-body',
           method: HttpMethod.get,
           headers: const {},
           queryParameters: const {},
@@ -340,13 +337,7 @@ Future<TonikResult<Never>> call({CancelToken? cancelToken}) async {
               description: '',
               bodies: {
                 ResponseBody(
-                  model: AliasModel(
-                    isNullable: true,
-                    model: NeverModel(context: context, isNullable: false),
-                    context: context,
-                    examples: const [],
-                    defaultValue: null,
-                  ),
+                  model: NeverModel(context: context, isNullable: true),
                   rawContentType: 'application/json',
                   contentType: ContentType.json,
                   examples: const [],
