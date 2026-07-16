@@ -39,24 +39,21 @@ class OffsetDateTime implements DateTime {
     required String originalInput,
   }) {
     final offsetString = timezoneMatch.group(0)!;
-    final datetimeString = input.substring(
-      0,
-      input.length - offsetString.length,
-    );
-
     final offset = _parseTimezoneOffset(offsetString);
 
-    final DateTime localDateTime;
     try {
-      localDateTime = DateTime.parse(datetimeString);
+      final utcDateTime = DateTime.parse(input).toUtc();
+      return OffsetDateTime._fromUtc(
+        utcDateTime,
+        offset: offset,
+        timeZoneName: _generateTimeZoneName(offset),
+      );
     } on FormatException {
       throw InvalidFormatException(
         value: originalInput,
         format: 'ISO8601 datetime format',
       );
     }
-
-    return OffsetDateTime.from(localDateTime, offset: offset);
   }
 
   /// Parses an ISO8601 datetime string with timezone support.
@@ -169,17 +166,17 @@ class OffsetDateTime implements DateTime {
 
   /// Converts a local DateTime with an offset to UTC DateTime.
   static DateTime _toUtcDateTime(DateTime localDateTime, Duration offset) {
-    final utcMoment = localDateTime.subtract(offset);
-    return DateTime.utc(
-      utcMoment.year,
-      utcMoment.month,
-      utcMoment.day,
-      utcMoment.hour,
-      utcMoment.minute,
-      utcMoment.second,
-      utcMoment.millisecond,
-      utcMoment.microsecond,
+    final localFieldsAsUtc = DateTime.utc(
+      localDateTime.year,
+      localDateTime.month,
+      localDateTime.day,
+      localDateTime.hour,
+      localDateTime.minute,
+      localDateTime.second,
+      localDateTime.millisecond,
+      localDateTime.microsecond,
     );
+    return localFieldsAsUtc.subtract(offset);
   }
 
   /// Generates a timezone name from an offset.
@@ -333,7 +330,7 @@ class OffsetDateTime implements DateTime {
       final offH = _twoDigits(offsetHours);
       final offM = _twoDigits(offsetMinutes);
 
-      return '$y-$m-$d$sep$h:$min:$sec.$ms$us$offsetSign$offH$offM';
+      return '$y-$m-$d$sep$h:$min:$sec.$ms$us$offsetSign$offH:$offM';
     }
   }
 

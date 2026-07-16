@@ -52,6 +52,13 @@ jobs:
       - name: Run tests with coverage
         run: melos run coverage-ci
 
+      - name: Run fixed-offset tests in a DST timezone
+        if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
+        working-directory: packages/tonik_util
+        env:
+          TZ: Europe/Berlin
+        run: dart test test/src/offset_date_time_test.dart
+
       - name: Upload coverage to Codecov
         if: matrix.sdk == 'stable' && matrix.os == 'ubuntu-latest'
         uses: codecov/codecov-action@v7

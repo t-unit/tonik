@@ -39,6 +39,22 @@ void main() {
       expect(offsetDateTime.timeZoneName, 'UTC');
       expect(offsetDateTime.isUtc, isTrue);
     });
+
+    test('should not use host DST rules when applying a fixed offset', () {
+      final offsetDateTime = OffsetDateTime.from(
+        DateTime(2025, 3, 29, 17),
+        offset: const Duration(hours: -10),
+      );
+
+      expect(
+        offsetDateTime.microsecondsSinceEpoch,
+        DateTime.utc(2025, 3, 30, 3).microsecondsSinceEpoch,
+      );
+      expect(
+        offsetDateTime.toTimeZonedIso8601String(),
+        '2025-03-29T17:00:00-10:00',
+      );
+    });
   });
 
   group('timezone name generation', () {
@@ -437,8 +453,8 @@ void main() {
       );
       final isoString = offsetDateTime.toIso8601String();
       final toString = offsetDateTime.toString();
-      expect(isoString, '2023-01-15T12:30:45.123+0530');
-      expect(toString, '2023-01-15 12:30:45.123+0530');
+      expect(isoString, '2023-01-15T12:30:45.123+05:30');
+      expect(toString, '2023-01-15 12:30:45.123+05:30');
     });
 
     test('should format negative offset correctly', () {
@@ -447,7 +463,7 @@ void main() {
         offset: const Duration(hours: -8),
       );
       final isoString = offsetDateTime.toIso8601String();
-      expect(isoString, '2023-01-15T12:30:45.123-0800');
+      expect(isoString, '2023-01-15T12:30:45.123-08:00');
     });
 
     test('should handle microseconds in string representation', () {
@@ -456,7 +472,7 @@ void main() {
         offset: const Duration(hours: 2),
       );
       final isoString = offsetDateTime.toIso8601String();
-      expect(isoString, '2023-01-15T12:30:45.123456+0200');
+      expect(isoString, '2023-01-15T12:30:45.123456+02:00');
     });
   });
 
@@ -732,6 +748,18 @@ void main() {
         expect(result.timeZoneOffset.inHours, -7);
         expect(result.millisecond, 123);
         expect(result.microsecond, 456);
+      });
+
+      test('should preserve the instant when crossing host DST', () {
+        const input = '2025-03-29T17:00:00-10:00';
+        final result = OffsetDateTime.parse(input);
+
+        expect(
+          result.microsecondsSinceEpoch,
+          DateTime.utc(2025, 3, 30, 3).microsecondsSinceEpoch,
+        );
+        expect(result.timeZoneOffset, const Duration(hours: -10));
+        expect(result.toTimeZonedIso8601String(), input);
       });
 
       test('should accept lowercase t separator with offset and colon', () {
