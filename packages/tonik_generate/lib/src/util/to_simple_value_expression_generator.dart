@@ -368,7 +368,12 @@ Expression _handleListExpression(
 
     AnyModel() => callToSimpleOnList(receiver),
     Base64Model() => mappedList(
-      refer('e').property('toBase64String').call([]),
+      isContentNullable
+          ? refer('e')
+                .nullSafeProperty('toBase64String')
+                .call([])
+                .ifNullThen(literalString(''))
+          : refer('e').property('toBase64String').call([]),
     ).property('toSimple').call([], {
       ...toSimpleArgs,
       'alreadyEncoded': literalBool(true),

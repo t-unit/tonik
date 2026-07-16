@@ -1111,5 +1111,47 @@ void main() {
         collapseWhitespace(format(expected)),
       );
     });
+
+    test('null-guards each element for List<Base64Model?>', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildSimpleParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      const expected = '''
+        test() {
+          final result = value
+              .map((e) => e?.toBase64String() ?? '')
+              .toList()
+              .toSimple(
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
   });
 }

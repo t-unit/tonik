@@ -1023,6 +1023,41 @@ void main() {
         ),
       );
     });
+
+    test('null-guards each element for list of nullable Base64Model', () {
+      final parameter = PathParameterObject(
+        name: 'files',
+        rawName: 'files',
+        description: 'List of base64 files',
+        model: ListModel(
+          context: context,
+          content: Base64Model(context: context),
+          isContentNullable: true,
+          examples: const [],
+        ),
+        encoding: PathParameterEncoding.label,
+        explode: false,
+        allowEmptyValue: false,
+        isRequired: true,
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+      final result = emit(
+        buildToLabelPathParameterExpression('files', parameter),
+      );
+      expect(
+        collapseWhitespace(result),
+        collapseWhitespace(
+          [
+            "files.map((e) => e?.toBase64String() ?? '').toList()",
+            '.toLabel(explode: false, ',
+            'allowEmpty: false, alreadyEncoded: true, )',
+          ].join(),
+        ),
+      );
+    });
   });
 
   group('nullable model support', () {

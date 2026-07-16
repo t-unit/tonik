@@ -54,6 +54,31 @@ void main() {
     });
   });
 
+  group('Simple style - Arrays', () {
+    test(
+      'nullable-base64 array base64-encodes elements and empties null',
+      () async {
+        final api = buildSimpleApi();
+        final response = await api.testSimpleArrayNullableBase64(
+          values: const [
+            TonikFileBytes([1, 2, 3]),
+            null,
+            TonikFileBytes([4, 5, 6]),
+          ],
+        );
+
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
+
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/simple/array/nullable-base64/AQID,,BAUG',
+        );
+      },
+    );
+  });
+
   group('Simple style - Special character property names', () {
     test(
       'special keys (explode=false) encodes keys with URI encoding',

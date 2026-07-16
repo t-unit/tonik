@@ -280,7 +280,13 @@ Expression _buildListMatrixExpression(
                   ..requiredParameters.add(
                     Parameter((b) => b..name = 'e'),
                   )
-                  ..body = refer('e').property('toBase64String').call([]).code,
+                  ..body = isContentNullable
+                      ? refer('e')
+                            .nullSafeProperty('toBase64String')
+                            .call([])
+                            .ifNullThen(literalString(''))
+                            .code
+                      : refer('e').property('toBase64String').call([]).code,
               ).closure,
             ],
             {},
