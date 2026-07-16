@@ -116,6 +116,29 @@ void main() {
       },
     );
 
+    test(
+      'nullable-base64 array base64-encodes elements and empties null',
+      () async {
+        final api = buildLabelApi();
+        final response = await api.testLabelArrayNullableBase64(
+          values: const [
+            TonikFileBytes([1, 2, 3]),
+            null,
+            TonikFileBytes([4, 5, 6]),
+          ],
+        );
+
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
+
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/label/array/nullable-base64/.AQID,,BAUG',
+        );
+      },
+    );
+
     test('string array (explode=false) encodes as .val1,val2,val3', () async {
       final api = buildLabelApi();
       final response = await api.testLabelArrayString(

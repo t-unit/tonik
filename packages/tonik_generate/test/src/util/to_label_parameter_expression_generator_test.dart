@@ -268,6 +268,31 @@ void main() {
       );
     });
 
+    test('null-guards each element for List<Base64Model?>', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildLabelParameterExpression(
+        refer('value'),
+        model,
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final generated = format('final result = ${expression.accept(emitter)};');
+      const expected = '''
+        final result = value.map((e) => e?.toBase64String() ?? '').toList().toLabel(explode: explode, allowEmpty: allowEmpty, alreadyEncoded: true);
+      ''';
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
     test('generates map and toLabel call for List<Enum>', () {
       final enumModel = EnumModel(
         isDeprecated: false,

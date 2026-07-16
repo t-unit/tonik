@@ -1370,6 +1370,81 @@ paths:
               schema:
                 $ref: '#/components/schemas/EchoResponse'
 
+  /label/array/nullable-base64/{values}:
+    get:
+      operationId: testLabelArrayNullableBase64
+      tags: [label]
+      summary: Label-style nullable-base64 array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: label
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+              nullable: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /matrix/array/nullable-base64/{values}:
+    get:
+      operationId: testMatrixArrayNullableBase64
+      tags: [matrix]
+      summary: Matrix-style nullable-base64 array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: matrix
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+              nullable: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
+  /simple/array/nullable-base64/{values}:
+    get:
+      operationId: testSimpleArrayNullableBase64
+      tags: [simple]
+      summary: Simple-style nullable-base64 array path parameter (explode=false)
+      parameters:
+        - name: values
+          in: path
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: array
+            items:
+              type: string
+              format: byte
+              nullable: true
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EchoResponse'
+
   # =============================================================================
   # SIMPLE STYLE - LITERAL SUFFIX AFTER THROW-PRODUCING PARAMETERS
   # =============================================================================

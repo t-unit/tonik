@@ -116,6 +116,29 @@ void main() {
       },
     );
 
+    test(
+      'nullable-base64 array base64-encodes elements and empties null',
+      () async {
+        final api = buildMatrixApi();
+        final response = await api.testMatrixArrayNullableBase64(
+          values: const [
+            TonikFileBytes([1, 2, 3]),
+            null,
+            TonikFileBytes([4, 5, 6]),
+          ],
+        );
+
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
+
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/matrix/array/nullable-base64/;values=AQID,,BAUG',
+        );
+      },
+    );
+
     test('string array (explode=false) encodes as ;param=v1,v2,v3', () async {
       final api = buildMatrixApi();
       final response = await api.testMatrixArrayString(
