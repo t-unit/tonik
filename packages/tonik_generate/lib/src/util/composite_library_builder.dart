@@ -1,4 +1,3 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:tonik_core/tonik_core.dart';
@@ -23,7 +22,6 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
   );
 
   final publicClassName = nameManager.modelName(model);
-  final snakeCaseName = publicClassName.toSnakeCase();
 
   final actualClassName = isNullable
       ? nameManager.modelName(
@@ -59,5 +57,5 @@ import 'package:tonik_generate/src/util/format_with_header.dart';
 
   final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
-  return (code: code, filename: '$snakeCaseName.dart');
+  return (code: code, filename: nameManager.modelFileName(model));
 }

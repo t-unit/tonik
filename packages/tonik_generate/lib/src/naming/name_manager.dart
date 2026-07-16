@@ -15,6 +15,10 @@ class NameManager {
 
   final modelNames = <Model, String>{};
 
+  final modelFileNames = <Model, String>{};
+
+  final _usedModelFileNames = <String>{};
+
   final operationNames = <Operation, String>{};
 
   final tagNames = <Tag, String>{};
@@ -111,6 +115,11 @@ class NameManager {
       _logModelName(name, model);
     }
 
+    // File names must be claimed in the same stable order as class names.
+    // Different Dart identifiers can collapse to the same snake_case path
+    // (for example, `$User` and `$$User` both become `_user.dart`).
+    sortedModels.where(_hasGeneratedModelFile).forEach(modelFileName);
+
     for (final response in responses) {
       if (response.hasHeaders || response.bodyCount > 1) {
         final (:baseName, :implementationNames) = responseNames(response);
@@ -144,6 +153,38 @@ class NameManager {
       return generator.generateModelName(model);
     });
   }
+
+  /// Gets a cached, globally unique file name for a generated model.
+  ///
+  /// Class names remain unchanged when their snake_case representations
+  /// collide. Numeric suffixes are applied only to the generated file path.
+  String modelFileName(Model model) {
+    return modelFileNames.putIfAbsent(model, () {
+      final baseName = modelName(model).toSnakeCase();
+      var fileName = '$baseName.dart';
+      var counter = 2;
+
+      while (_usedModelFileNames.contains(fileName)) {
+        fileName = '$baseName$counter.dart';
+        counter++;
+      }
+
+      _usedModelFileNames.add(fileName);
+      return fileName;
+    });
+  }
+
+  bool _hasGeneratedModelFile(Model model) => switch (model) {
+    ClassModel() ||
+    EnumModel() ||
+    AnyOfModel() ||
+    OneOfModel() ||
+    AllOfModel() ||
+    AliasModel() ||
+    ListModel() ||
+    MapModel() => true,
+    _ => false,
+  };
 
   /// Gets a cached or generates a new unique response class
   /// name and implementation names.

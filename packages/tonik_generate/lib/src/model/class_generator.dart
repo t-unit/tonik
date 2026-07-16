@@ -1,4 +1,3 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:logging/logging.dart';
@@ -55,7 +54,6 @@ class ClassGenerator {
       useNullSafetySyntax: true,
     );
 
-    final snakeCaseName = nameManager.modelName(model).toSnakeCase();
     final generatedClasses = generateClasses(model);
 
     final library = Library((b) {
@@ -68,7 +66,7 @@ class ClassGenerator {
 
     final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
-    return (code: code, filename: '$snakeCaseName.dart');
+    return (code: code, filename: nameManager.modelFileName(model));
   }
 
   @visibleForTesting
@@ -1914,5 +1912,4 @@ class ClassGenerator {
         raw: true,
       ).statement,
   );
-
 }

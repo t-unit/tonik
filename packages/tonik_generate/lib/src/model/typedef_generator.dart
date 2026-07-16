@@ -1,4 +1,3 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
@@ -25,13 +24,13 @@ class TypedefGenerator {
   final bool useImmutableCollections;
 
   ({String code, String filename}) generateAlias(AliasModel model) =>
-      _generateFile(generateAliasTypedef(model));
+      _generateFile(generateAliasTypedef(model), model);
 
   ({String code, String filename}) generateList(ListModel model) =>
-      _generateFile(generateListTypedef(model));
+      _generateFile(generateListTypedef(model), model);
 
   ({String code, String filename}) generateMap(MapModel model) =>
-      _generateFile(generateMapTypedef(model));
+      _generateFile(generateMapTypedef(model), model);
 
   @visibleForTesting
   TypeDef generateAliasTypedef(AliasModel model) {
@@ -163,14 +162,16 @@ class TypedefGenerator {
     return walk(start);
   }
 
-  ({String code, String filename}) _generateFile(TypeDef typedef) {
+  ({String code, String filename}) _generateFile(
+    TypeDef typedef,
+    Model model,
+  ) {
     final emitter = DartEmitter(
       allocator: CorePrefixedAllocator(),
       orderDirectives: true,
       useNullSafetySyntax: true,
     );
 
-    final snakeCaseName = typedef.name.toSnakeCase();
     final library = Library((b) => b.body.add(typedef));
 
     final formatter = DartFormatter(
@@ -179,6 +180,6 @@ class TypedefGenerator {
 
     final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
-    return (code: code, filename: '$snakeCaseName.dart');
+    return (code: code, filename: nameManager.modelFileName(model));
   }
 }

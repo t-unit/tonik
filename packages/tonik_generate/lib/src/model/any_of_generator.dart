@@ -1529,11 +1529,7 @@ class AnyOfGenerator {
           AnyOfModel() =>
             refer(
                   nameManager.modelName(modelType),
-                  sourceFileUrl(
-                    package,
-                    'model',
-                    nameManager.modelName(modelType),
-                  ),
+                  modelSourceFileUrl(package, nameManager, modelType),
                 )
                 .property(constructorName)
                 .call(

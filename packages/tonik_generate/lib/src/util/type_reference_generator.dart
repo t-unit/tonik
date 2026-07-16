@@ -61,7 +61,7 @@ TypeReference typeReference(
     final NamedModel m => TypeReference(
       (b) => b
         ..symbol = nameManager.modelName(m)
-        ..url = sourceFileUrl(package, 'model', nameManager.modelName(m))
+        ..url = modelSourceFileUrl(package, nameManager, m)
         ..isNullable = isNullableOverride || ((m is EnumModel) && m.isNullable),
     ),
     StringModel _ => TypeReference(
@@ -139,7 +139,7 @@ TypeReference typeReference(
     final CompositeModel m => TypeReference(
       (b) => b
         ..symbol = nameManager.modelName(m)
-        ..url = sourceFileUrl(package, 'model', nameManager.modelName(m))
+        ..url = modelSourceFileUrl(package, nameManager, m)
         ..isNullable = isNullableOverride,
     ),
   };

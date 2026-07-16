@@ -1,4 +1,3 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
@@ -30,7 +29,6 @@ class EnumGenerator {
     );
 
     final publicEnumName = nameManager.modelName(model);
-    final snakeCaseName = publicEnumName.toSnakeCase();
 
     final library = Library((b) {
       final generated = generateEnum(model, publicEnumName);
@@ -46,7 +44,7 @@ class EnumGenerator {
 
     final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
-    return (code: code, filename: '$snakeCaseName.dart');
+    return (code: code, filename: nameManager.modelFileName(model));
   }
 
   @visibleForTesting
@@ -383,12 +381,13 @@ class EnumGenerator {
                       ..requiredParameters.add(
                         Parameter((pb) => pb..name = 'e'),
                       )
-                      ..body = refer(
-                        'e',
-                      )
-                          .property(_rawValueFieldName)
-                          .equalTo(refer(matchVariable))
-                          .code,
+                      ..body =
+                          refer(
+                                'e',
+                              )
+                              .property(_rawValueFieldName)
+                              .equalTo(refer(matchVariable))
+                              .code,
                   ).closure,
                 ],
                 {'orElse': orElse},

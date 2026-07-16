@@ -172,5 +172,100 @@ void main() {
       );
       expect(generatedFile.existsSync(), isTrue);
     });
+
+    test(
+      r'generates distinct files and imports for $-only name differences',
+      () async {
+        final singleDollarUser = ClassModel(
+          isDeprecated: false,
+          name: r'$User',
+          properties: const [],
+          context: ctx.pushAll(['components', 'schemas', r'$User']),
+          examples: const [],
+        );
+        final doubleDollarUser = ClassModel(
+          isDeprecated: false,
+          name: r'$$User',
+          properties: const [],
+          context: ctx.pushAll(['components', 'schemas', r'$$User']),
+          examples: const [],
+        );
+        final holder = ClassModel(
+          isDeprecated: false,
+          name: 'Holder',
+          properties: [
+            Property(
+              name: 'first',
+              model: singleDollarUser,
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+            Property(
+              name: 'second',
+              model: doubleDollarUser,
+              isRequired: false,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: ctx.pushAll(['components', 'schemas', 'Holder']),
+          examples: const [],
+        );
+        final apiDoc = documentWithModels({
+          singleDollarUser,
+          doubleDollarUser,
+          holder,
+        });
+
+        const packageName = 'test_package';
+        await const Generator().generate(
+          apiDocument: apiDoc,
+          outputDirectory: tempDir.path,
+          package: packageName,
+        );
+
+        final modelDir = path.join(
+          tempDir.path,
+          packageName,
+          'lib',
+          'src',
+          'model',
+        );
+        final generatedFiles = Directory(
+          modelDir,
+        ).listSync().whereType<File>().toList();
+        final singleDollarFile = generatedFiles.singleWhere(
+          (file) => file.readAsStringSync().contains(r'class $User'),
+        );
+        final doubleDollarFile = generatedFiles.singleWhere(
+          (file) => file.readAsStringSync().contains(r'class $$User'),
+        );
+
+        expect(singleDollarFile.path, isNot(doubleDollarFile.path));
+
+        final holderCode = File(
+          path.join(modelDir, 'holder.dart'),
+        ).readAsStringSync();
+        expect(
+          holderCode,
+          contains(
+            'package:$packageName/src/model/'
+            '${path.basename(singleDollarFile.path)}',
+          ),
+        );
+        expect(
+          holderCode,
+          contains(
+            'package:$packageName/src/model/'
+            '${path.basename(doubleDollarFile.path)}',
+          ),
+        );
+      },
+    );
   });
 }

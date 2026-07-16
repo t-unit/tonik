@@ -446,11 +446,7 @@ class OneOfGenerator {
           refer(variantName).call([
             refer(
               nameManager.modelName(m.model),
-              sourceFileUrl(
-                package,
-                'model',
-                nameManager.modelName(m.model),
-              ),
+              modelSourceFileUrl(package, nameManager, m.model),
             ).property('fromJson').call([refer('json')]),
           ]).code,
           const Code(','),
@@ -475,8 +471,7 @@ class OneOfGenerator {
     );
 
     final hasNumberMember = model.models.any(
-      (m) =>
-          m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
+      (m) => m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
     );
 
     final sortedModels = stableModelSorter.sortDiscriminatedModels(
@@ -499,11 +494,14 @@ class OneOfGenerator {
           const Code('if ('),
           refer('json').isA(refer('num', 'dart:core')).code,
           const Code(') {'),
-          refer(variantName).call([
-            refer('json').property('decodeJsonInt').call([], {
-              'context': specLiteralString(className),
-            }),
-          ]).returned.statement,
+          refer(variantName)
+              .call([
+                refer('json').property('decodeJsonInt').call([], {
+                  'context': specLiteralString(className),
+                }),
+              ])
+              .returned
+              .statement,
           const Code('}'),
         ]);
         continue;
@@ -550,7 +548,7 @@ class OneOfGenerator {
         final modelName = nameManager.modelName(modelType);
         decodeArg = refer(
           modelName,
-          sourceFileUrl(package, 'model', modelName),
+          modelSourceFileUrl(package, nameManager, modelType),
         ).property('fromJson').call([refer('json')]);
       }
 
@@ -709,11 +707,7 @@ class OneOfGenerator {
             refer(variantName).call([
               refer(
                     nameManager.modelName(modelType),
-                    sourceFileUrl(
-                      package,
-                      'model',
-                      nameManager.modelName(modelType),
-                    ),
+                    modelSourceFileUrl(package, nameManager, modelType),
                   )
                   .property(constructorName)
                   .call(
@@ -817,11 +811,7 @@ class OneOfGenerator {
         final innerDecode =
             refer(
                   nameManager.modelName(modelType),
-                  sourceFileUrl(
-                    package,
-                    'model',
-                    nameManager.modelName(modelType),
-                  ),
+                  modelSourceFileUrl(package, nameManager, modelType),
                 )
                 .property(constructorName)
                 .call([refer('value')], {'explode': refer('explode')});
