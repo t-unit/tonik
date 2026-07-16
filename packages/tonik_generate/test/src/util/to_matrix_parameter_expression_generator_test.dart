@@ -729,6 +729,50 @@ void main() {
       );
     });
 
+    test('null-guards each element for List<Base64Model?>', () {
+      final model = ListModel(
+        content: Base64Model(context: context),
+        isContentNullable: true,
+        context: context,
+        examples: const [],
+      );
+      final expression = buildMatrixParameterExpression(
+        refer('value'),
+        model,
+        paramName: refer('paramName'),
+        explode: refer('explode'),
+        allowEmpty: refer('allowEmpty'),
+      );
+
+      final method = Method(
+        (b) => b
+          ..name = 'test'
+          ..body = declareFinal(
+            'result',
+          ).assign(expression.expression).statement,
+      );
+
+      final generated = format(method.accept(emitter).toString());
+      final expected = format('''
+        test() {
+          final result = value
+              .map<String>((e) => e?.toBase64String() ?? '')
+              .toList()
+              .toMatrix(
+                paramName,
+                explode: explode,
+                allowEmpty: allowEmpty,
+                alreadyEncoded: true,
+              );
+        }
+      ''');
+
+      expect(
+        collapseWhitespace(generated),
+        collapseWhitespace(expected),
+      );
+    });
+
     test('generates list-of-map encoding for List<Map<String, int>>', () {
       final model = ListModel(
         content: MapModel(

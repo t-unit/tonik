@@ -125,6 +125,13 @@ Expression _buildListLabelExpression(
       ? refer('e').equalTo(literalNull).conditional(literalString(''), encoded)
       : encoded;
 
+  Expression base64Encode() => isContentNullable
+      ? refer('e')
+          .nullSafeProperty('toBase64String')
+          .call([])
+          .ifNullThen(literalString(''))
+      : refer('e').property('toBase64String').call([]);
+
   return switch (contentModel) {
     StringModel() when !isContentNullable => listPropertyAccess.call(
       [],
@@ -209,7 +216,7 @@ Expression _buildListLabelExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer('e').property('toBase64String').call([]).code,
+                ..body = base64Encode().code,
             ).closure,
           ])
           .property('toList')

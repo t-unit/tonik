@@ -43,6 +43,19 @@ Expression _buildToLabelPathParameterExpression(
     final isContentNullable =
         model.isContentNullable || content.isEffectivelyNullable;
 
+    Expression nullGuard(Expression encoded) => isContentNullable
+        ? refer('e')
+            .equalTo(literalNull)
+            .conditional(literalString(''), encoded)
+        : encoded;
+
+    Expression base64Encode() => isContentNullable
+        ? refer('e')
+            .nullSafeProperty('toBase64String')
+            .call([])
+            .ifNullThen(literalString(''))
+        : refer('e').property('toBase64String').call([]);
+
     if (contentModel is StringModel && !isContentNullable) {
       return valueRef.property('toLabel').call([], {
         'explode': explode,
@@ -59,15 +72,11 @@ Expression _buildToLabelPathParameterExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer('e')
-                    .equalTo(literalNull)
-                    .conditional(
-                      literalString(''),
-                      refer('e').property('uriEncode').call([], {
-                        'allowEmpty': allowEmpty,
-                      }),
-                    )
-                    .code,
+                ..body = nullGuard(
+                  refer('e').property('uriEncode').call([], {
+                    'allowEmpty': allowEmpty,
+                  }),
+                ).code,
             ).closure,
           ])
           .property('toList')
@@ -92,7 +101,7 @@ Expression _buildToLabelPathParameterExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer('e').property('toBase64String').call([]).code,
+                ..body = base64Encode().code,
             ).closure,
           ])
           .property('toList')

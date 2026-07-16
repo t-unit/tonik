@@ -1159,6 +1159,48 @@ void main() {
           );
         },
       );
+
+      test('null-guards each element for List<Base64Model?>', () {
+        final model = ListModel(
+          content: Base64Model(context: context),
+          isContentNullable: true,
+          context: context,
+          examples: const [],
+        );
+        final expression = buildSimpleValueExpression(
+          refer('value'),
+          model,
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final method = Method(
+          (b) => b
+            ..name = 'test'
+            ..body = declareFinal(
+              'result',
+            ).assign(expression.expression).statement,
+        );
+
+        final generated = format(method.accept(emitter).toString());
+        final expected = format('''
+          test() {
+            final result = value
+                .map((e) => e?.toBase64String() ?? '')
+                .toList()
+                .toSimple(
+                  explode: false,
+                  allowEmpty: true,
+                  alreadyEncoded: true,
+                );
+          }
+        ''');
+
+        expect(
+          collapseWhitespace(generated),
+          collapseWhitespace(expected),
+        );
+      });
     });
 
     group('List<MapModel>', () {

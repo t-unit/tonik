@@ -291,6 +291,13 @@ Expression _handleListExpression(
       ? refer('e').equalTo(literalNull).conditional(literalString(''), encoded)
       : encoded;
 
+  Expression base64Encode() => isContentNullable
+      ? refer('e')
+          .nullSafeProperty('toBase64String')
+          .call([])
+          .ifNullThen(literalString(''))
+      : refer('e').property('toBase64String').call([]);
+
   Expression mappedList(Expression body) => mapAccess()
       .call([
         Method(
@@ -368,7 +375,7 @@ Expression _handleListExpression(
 
     AnyModel() => callToSimpleOnList(receiver),
     Base64Model() => mappedList(
-      refer('e').property('toBase64String').call([]),
+      base64Encode(),
     ).property('toSimple').call([], {
       ...toSimpleArgs,
       'alreadyEncoded': literalBool(true),
