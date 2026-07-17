@@ -44,18 +44,6 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
   if (map.isEmpty && !allowEmpty) {
     throw const EmptyValueException();
   }
-  if (allowEmpty) {
-    return;
-  }
-  for (final value in map.values) {
-    final isValueEmpty = switch (value) {
-      ScalarPropertyValue(:final value) => value.isEmpty,
-      ArrayPropertyValue(:final values) => values.isEmpty,
-    };
-    if (isValueEmpty) {
-      throw const EmptyValueException();
-    }
-  }
 }
 
 /// Enforces empty-value and URI-escaping rules for object-valued parameters.
@@ -140,13 +128,18 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
       return ';$paramName';
     }
     if (explode) {
-      return entries
-          .map(
-            (e) =>
-                ';${Uri.encodeComponent(e.key)}='
-                '${_encodeValue(e.value, literal: false)}',
-          )
-          .join();
+      // Matrix is an RFC 6570 named operator: empty values expand to the
+      // name alone, without '='.
+      return entries.map((e) {
+        final key = Uri.encodeComponent(e.key);
+        final isValueEmpty = switch (e.value) {
+          ScalarPropertyValue(:final value) => value.isEmpty,
+          ArrayPropertyValue(:final values) => values.isEmpty,
+        };
+        return isValueEmpty
+            ? ';$key'
+            : ';$key=${_encodeValue(e.value, literal: false)}';
+      }).join();
     }
     return ';$paramName=${_collapsedPairs(this, literal: false)}';
   }

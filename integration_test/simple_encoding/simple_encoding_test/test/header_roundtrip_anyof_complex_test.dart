@@ -79,20 +79,25 @@ void main() {
         expect(success.value.xFlexibleObject!.class1!.name, 'hello world');
       });
 
-      test('Class1 with empty name fails at encoding', () async {
+      test('round-trips Class1 with empty name', () async {
         final result = await api.testHeaderRoundtripAnyOfComplex.call(
           flexibleObject: const AnyOfComplex(class1: Class1(name: '')),
         );
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripAnyofComplexGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>>(),
         );
-        final error =
-            result as TonikError<HeadersRoundtripAnyofComplexGet200Response>;
+        final success =
+            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
 
-        expect(error.type, TonikErrorType.encoding);
-        expect(error.response, isNull);
+        expect(
+          success.response.requestOptions.headers['X-Flexible-Object'],
+          'name,',
+        );
+        expect(success.value.xFlexibleObject, isNotNull);
+        expect(success.value.xFlexibleObject!.class1, isNotNull);
+        expect(success.value.xFlexibleObject!.class1!.name, '');
       });
     });
 

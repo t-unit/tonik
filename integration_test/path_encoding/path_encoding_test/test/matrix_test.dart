@@ -221,6 +221,40 @@ void main() {
         '/v1/matrix/object/explode/;name=test;count=5',
       );
     });
+
+    test('object with empty property (explode=false) keeps an empty slot',
+        () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixObject(
+        value: const SimpleObject(name: '', count: 5),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/object/;value=name,,count,5',
+      );
+    });
+
+    test('object with empty property (explode=true) encodes name-only pair',
+        () async {
+      final api = buildMatrixApi();
+      final response = await api.testMatrixObjectExplode(
+        value: const SimpleObject(name: '', count: 5),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/matrix/object/explode/;name;count=5',
+      );
+    });
   });
 
   group('Matrix style - Combined', () {

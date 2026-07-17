@@ -102,22 +102,25 @@ void main() {
         expect(class1.value.name, "O'Brien");
       });
 
-      test('Class1 with empty name fails at encoding', () async {
+      test('round-trips Class1 with empty name', () async {
         final result = await api.testHeaderRoundtripOneOfComplex.call(
           complexUnion: const OneOfComplexClass1(Class1(name: '')),
         );
 
-        // Empty strings throw EmptyValueException during encoding
-        // because allowEmpty is false for headers
         expect(
           result,
-          isA<TonikError<HeadersRoundtripOneofComplexGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response>>(),
         );
-        final error =
-            result as TonikError<HeadersRoundtripOneofComplexGet200Response>;
+        final success =
+            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response>;
 
-        expect(error.type, TonikErrorType.encoding);
-        expect(error.response, isNull);
+        expect(
+          success.response.requestOptions.headers['X-Complex-Union'],
+          'name,',
+        );
+        expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
+        final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
+        expect(class1.value.name, '');
       });
     });
 

@@ -219,6 +219,40 @@ void main() {
       );
     });
 
+    test('object with empty property (explode=false) keeps an empty slot',
+        () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelObject(
+        value: const SimpleObject(name: '', count: 5),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/object/.name,,count,5',
+      );
+    });
+
+    test('object with empty property (explode=true) keeps trailing equals',
+        () async {
+      final api = buildLabelApi();
+      final response = await api.testLabelObjectExplode(
+        value: const SimpleObject(name: '', count: 5),
+      );
+
+      expect(response, isA<TonikSuccess<EchoResponse>>());
+      final success = response as TonikSuccess<EchoResponse>;
+      expect(success.response.statusCode, 200);
+
+      expect(
+        success.response.requestOptions.uri.path,
+        '/v1/label/object/explode/.name=.count=5',
+      );
+    });
+
     test(
       'composite-list property comma-joins elements and escapes reserved '
       'characters once',

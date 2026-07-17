@@ -23,6 +23,15 @@ void main() {
         'formula,x/y?z',
       );
     });
+
+    test('empty scalar beside a filled scalar renders with allowEmpty=false',
+        () {
+      const value = {
+        'color': PropertyValue.scalar(''),
+        'size': PropertyValue.scalar('xl'),
+      };
+      expect(value.toUri(allowEmpty: false), 'color,,size,xl');
+    });
   });
 
   group('PropertyValueStyleEncoders.toSimple', () {
@@ -123,19 +132,31 @@ void main() {
       expect(value.toSimple(explode: true, allowEmpty: true), 'k=');
     });
 
-    test('empty scalar throws with allowEmpty=false', () {
+    test('empty scalar renders with allowEmpty=false', () {
       const value = {'k': PropertyValue.scalar('')};
-      expect(
-        () => value.toSimple(explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(value.toSimple(explode: false, allowEmpty: false), 'k,');
+      expect(value.toSimple(explode: true, allowEmpty: false), 'k=');
     });
 
-    test('empty array throws with allowEmpty=false', () {
+    test('empty array renders empty value with allowEmpty=false', () {
       const value = {'k': PropertyValue.array(<String>[])};
+      expect(value.toSimple(explode: false, allowEmpty: false), 'k,');
+      expect(value.toSimple(explode: true, allowEmpty: false), 'k=');
+    });
+
+    test('empty scalar beside a filled scalar renders with allowEmpty=false',
+        () {
+      const value = {
+        'color': PropertyValue.scalar(''),
+        'size': PropertyValue.scalar('xl'),
+      };
       expect(
-        () => value.toSimple(explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        value.toSimple(explode: false, allowEmpty: false),
+        'color,,size,xl',
+      );
+      expect(
+        value.toSimple(explode: true, allowEmpty: false),
+        'color=,size=xl',
       );
     });
 
@@ -268,19 +289,31 @@ void main() {
       expect(value.toLabel(explode: true, allowEmpty: true), '.k=');
     });
 
-    test('empty scalar throws with allowEmpty=false', () {
+    test('empty scalar renders with allowEmpty=false', () {
       const value = {'k': PropertyValue.scalar('')};
-      expect(
-        () => value.toLabel(explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(value.toLabel(explode: false, allowEmpty: false), '.k,');
+      expect(value.toLabel(explode: true, allowEmpty: false), '.k=');
     });
 
-    test('empty array throws with allowEmpty=false', () {
+    test('empty array renders empty value with allowEmpty=false', () {
       const value = {'k': PropertyValue.array(<String>[])};
+      expect(value.toLabel(explode: false, allowEmpty: false), '.k,');
+      expect(value.toLabel(explode: true, allowEmpty: false), '.k=');
+    });
+
+    test('empty scalar beside a filled scalar renders with allowEmpty=false',
+        () {
+      const value = {
+        'color': PropertyValue.scalar(''),
+        'size': PropertyValue.scalar('xl'),
+      };
       expect(
-        () => value.toLabel(explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        value.toLabel(explode: false, allowEmpty: false),
+        '.color,,size,xl',
+      );
+      expect(
+        value.toLabel(explode: true, allowEmpty: false),
+        '.color=.size=xl',
       );
     });
 
@@ -383,25 +416,40 @@ void main() {
       );
     });
 
-    test('empty scalar renders with allowEmpty=true', () {
+    test('empty scalar renders name-only when exploded with allowEmpty=true',
+        () {
       const value = {'k': PropertyValue.scalar('')};
       expect(value.toMatrix('p', explode: false, allowEmpty: true), ';p=k,');
-      expect(value.toMatrix('p', explode: true, allowEmpty: true), ';k=');
+      expect(value.toMatrix('p', explode: true, allowEmpty: true), ';k');
     });
 
-    test('empty scalar throws with allowEmpty=false', () {
+    test('empty scalar renders name-only when exploded with allowEmpty=false',
+        () {
       const value = {'k': PropertyValue.scalar('')};
-      expect(
-        () => value.toMatrix('p', explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
-      );
+      expect(value.toMatrix('p', explode: false, allowEmpty: false), ';p=k,');
+      expect(value.toMatrix('p', explode: true, allowEmpty: false), ';k');
     });
 
-    test('empty array throws with allowEmpty=false', () {
+    test('empty array renders name-only when exploded with allowEmpty=false',
+        () {
       const value = {'k': PropertyValue.array(<String>[])};
+      expect(value.toMatrix('p', explode: false, allowEmpty: false), ';p=k,');
+      expect(value.toMatrix('p', explode: true, allowEmpty: false), ';k');
+    });
+
+    test('empty scalar beside a filled scalar renders with allowEmpty=false',
+        () {
+      const value = {
+        'color': PropertyValue.scalar(''),
+        'size': PropertyValue.scalar('xl'),
+      };
       expect(
-        () => value.toMatrix('p', explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        value.toMatrix('filter', explode: false, allowEmpty: false),
+        ';filter=color,,size,xl',
+      );
+      expect(
+        value.toMatrix('filter', explode: true, allowEmpty: false),
+        ';color;size=xl',
       );
     });
 
