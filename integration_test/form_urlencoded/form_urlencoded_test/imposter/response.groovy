@@ -75,7 +75,16 @@ switch (path) {
             withContent formBody
         }
         break
-        
+
+    case '/form/map-response':
+        def formBody = 'key=value&other=data'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
     case '/form/empty-null':
         def formBody = 'emptyString=&nullableString=not+empty'
         respond {

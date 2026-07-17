@@ -996,4 +996,162 @@ void main() {
       );
     });
   });
+
+  group('formDecodingPureThrowMessage', () {
+    late Context context;
+
+    setUp(() {
+      context = Context.initial();
+    });
+
+    ClassModel classModel() => ClassModel(
+      name: 'TestClass',
+      properties: const [],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+    );
+
+    MapModel mapModel() => MapModel(
+      valueModel: StringModel(context: context),
+      context: context,
+      examples: const [],
+    );
+
+    test('returns message for MapModel', () {
+      expect(
+        formDecodingPureThrowMessage(mapModel()),
+        'Map types cannot be form-decoded.',
+      );
+    });
+
+    test('returns message for AliasModel resolving to MapModel', () {
+      expect(
+        formDecodingPureThrowMessage(
+          AliasModel(
+            name: 'MapAlias',
+            model: mapModel(),
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ),
+        'Map types cannot be form-decoded.',
+      );
+    });
+
+    test('returns message for NeverModel', () {
+      expect(
+        formDecodingPureThrowMessage(
+          NeverModel(context: context, isNullable: false),
+        ),
+        'Cannot decode NeverModel - this type does not permit any value.',
+      );
+    });
+
+    test('returns message for List of ClassModel', () {
+      expect(
+        formDecodingPureThrowMessage(
+          ListModel(
+            content: classModel(),
+            context: context,
+            examples: const [],
+          ),
+        ),
+        'ClassModel is not supported in lists for form decoding.',
+      );
+    });
+
+    test('returns message for List of AliasModel resolving to ClassModel', () {
+      expect(
+        formDecodingPureThrowMessage(
+          ListModel(
+            content: AliasModel(
+              name: 'ClassAlias',
+              model: classModel(),
+              context: context,
+              examples: const [],
+              defaultValue: null,
+            ),
+            context: context,
+            examples: const [],
+          ),
+        ),
+        'ClassModel is not supported in lists for form decoding.',
+      );
+    });
+
+    test('returns message for nested List', () {
+      expect(
+        formDecodingPureThrowMessage(
+          ListModel(
+            content: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+          ),
+        ),
+        'Nested lists are not supported in form decoding.',
+      );
+    });
+
+    test('returns message for List of MapModel', () {
+      expect(
+        formDecodingPureThrowMessage(
+          ListModel(content: mapModel(), context: context, examples: const []),
+        ),
+        'Unsupported model type for form decoding.',
+      );
+    });
+
+    test('returns null for StringModel', () {
+      expect(
+        formDecodingPureThrowMessage(StringModel(context: context)),
+        isNull,
+      );
+    });
+
+    test('returns null for ClassModel', () {
+      expect(formDecodingPureThrowMessage(classModel()), isNull);
+    });
+
+    test('returns null for List of NeverModel', () {
+      expect(
+        formDecodingPureThrowMessage(
+          ListModel(
+            content: NeverModel(context: context, isNullable: false),
+            context: context,
+            examples: const [],
+          ),
+        ),
+        isNull,
+      );
+    });
+
+    test('returns null for List of EnumModel', () {
+      expect(
+        formDecodingPureThrowMessage(
+          ListModel(
+            content: EnumModel<String>(
+              name: 'Color',
+              values: {
+                const EnumEntry<String>(value: 'red'),
+                const EnumEntry<String>(value: 'green'),
+              },
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              context: context,
+            ),
+            context: context,
+            examples: const [],
+          ),
+        ),
+        isNull,
+      );
+    });
+  });
 }

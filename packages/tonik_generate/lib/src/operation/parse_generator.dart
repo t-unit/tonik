@@ -364,12 +364,11 @@ class ParseGenerator {
   ({List<Code> statements, String? varName}) _createFormBodyDecode(
     ResponseBody responseBody,
   ) {
-    if (_isFormBodyPureThrow(responseBody.model)) {
+    final pureThrowMessage = formDecodingPureThrowMessage(responseBody.model);
+    if (pureThrowMessage != null) {
       return (
         statements: [
-          generateFormDecodingExceptionExpression(
-            _neverPureThrowMessage(responseBody.model),
-          ).statement,
+          generateFormDecodingExceptionExpression(pureThrowMessage).statement,
         ],
         varName: null,
       );
@@ -416,20 +415,6 @@ class ParseGenerator {
         return !nullable;
       case AliasModel():
         return _isJsonBodyPureThrow(model.model, isNullable: nullable);
-      default:
-        return false;
-    }
-  }
-
-  // A bare `NeverModel` collapses to a pure throw regardless of nullability,
-  // because `_$formString` comes from `decodeResponseText` and is typed
-  // `String` (non-null).
-  bool _isFormBodyPureThrow(Model model) {
-    switch (model) {
-      case NeverModel():
-        return true;
-      case AliasModel():
-        return _isFormBodyPureThrow(model.model);
       default:
         return false;
     }

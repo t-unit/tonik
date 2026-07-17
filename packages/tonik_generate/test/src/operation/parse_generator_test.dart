@@ -2570,6 +2570,266 @@ DateTime _parseResponse(Response<List<int>> response) {
           collapseWhitespace(format(expectedMethod)),
         );
       });
+
+      test('generates pure throw for map form response', () {
+        final operation = Operation(
+          operationId: 'formMapOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-map',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: MapModel(
+                    valueModel: StringModel(context: context),
+                    context: context,
+                    examples: const [],
+                  ),
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+Map<String, String> _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+          switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/x-www-form-urlencoded'):
+      throw FormDecodingException('Map types cannot be form-decoded.');
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test(
+        'generates pure throw for AliasModel resolving to map form response',
+        () {
+          final operation = Operation(
+            operationId: 'formAliasMapOp',
+            context: context,
+            summary: '',
+            description: '',
+            tags: const {},
+            isDeprecated: false,
+            path: '/form-alias-map',
+            method: HttpMethod.get,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: {
+              const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+                name: null,
+                context: context,
+                headers: const {},
+                description: '',
+                bodies: {
+                  ResponseBody(
+                    model: AliasModel(
+                      name: 'SessionMeta',
+                      model: MapModel(
+                        valueModel: StringModel(context: context),
+                        context: context,
+                        examples: const [],
+                      ),
+                      context: context,
+                      examples: const [],
+                      defaultValue: null,
+                    ),
+                    rawContentType: 'application/x-www-form-urlencoded',
+                    contentType: ContentType.form,
+                    examples: const [],
+                  ),
+                },
+              ),
+            },
+            securitySchemes: const {},
+          );
+          final method = generator.generateParseResponseMethod(operation);
+          const expectedMethod = r'''
+SessionMeta _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+          switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/x-www-form-urlencoded'):
+      throw FormDecodingException('Map types cannot be form-decoded.');
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+          expect(
+            collapseWhitespace(format(method.accept(emitter).toString())),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test('generates pure throw for list of class form response', () {
+        final classModel = ClassModel(
+          isDeprecated: false,
+          name: 'FormItem',
+          properties: [
+            Property(
+              name: 'name',
+              model: StringModel(context: context),
+              isRequired: true,
+              isNullable: false,
+              isDeprecated: false,
+              examples: const [],
+              defaultValue: null,
+            ),
+          ],
+          context: context,
+          examples: const [],
+        );
+
+        final operation = Operation(
+          operationId: 'formListClassOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-list-class',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: classModel,
+                    context: context,
+                    examples: const [],
+                  ),
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+List<FormItem> _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+          switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/x-www-form-urlencoded'):
+      throw FormDecodingException('ClassModel is not supported in lists for form decoding.');
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('generates pure throw for list of map form response', () {
+        final operation = Operation(
+          operationId: 'formListMapOp',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/form-list-map',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: ListModel(
+                    content: MapModel(
+                      valueModel: StringModel(context: context),
+                      context: context,
+                      examples: const [],
+                    ),
+                    context: context,
+                    examples: const [],
+                  ),
+                  rawContentType: 'application/x-www-form-urlencoded',
+                  contentType: ContentType.form,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+        final method = generator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+List<Map<String, String>> _parseResponse(Response<List<int>> response) {
+  final _$mediaType = extractMediaType(response.headers.value('content-type'));
+          switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/x-www-form-urlencoded'):
+      throw FormDecodingException('Unsupported model type for form decoding.');
+    default:
+      final _$content = response.headers.value('content-type') ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException('Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}');
+  }
+}
+''';
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
     });
 
     group('NeverModel response headers', () {
