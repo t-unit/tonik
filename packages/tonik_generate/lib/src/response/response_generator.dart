@@ -2,7 +2,6 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
@@ -59,7 +58,7 @@ class ResponseGenerator {
 
     final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
-    return (code: code, filename: fileNameForClass(name));
+    return (code: code, filename: nameManager.fileNameForClass(name));
   }
 
   @visibleForTesting
@@ -71,7 +70,7 @@ class ResponseGenerator {
         ..name = name
         ..definition = refer(
           targetName,
-          sourceFileUrl(package, 'response', targetName),
+          sourceFileUrl(package, 'response', targetName, nameManager),
         ),
     );
   }

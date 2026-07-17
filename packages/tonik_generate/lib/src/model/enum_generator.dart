@@ -2,7 +2,6 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
@@ -30,7 +29,7 @@ class EnumGenerator {
     );
 
     final publicEnumName = nameManager.modelName(model);
-    final fileName = fileNameForClass(publicEnumName);
+    final fileName = nameManager.fileNameForClass(publicEnumName);
 
     final library = Library((b) {
       final generated = generateEnum(model, publicEnumName);

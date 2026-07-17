@@ -450,6 +450,7 @@ class OneOfGenerator {
                 package,
                 'model',
                 nameManager.modelName(m.model),
+                nameManager,
               ),
             ).property('fromJson').call([refer('json')]),
           ]).code,
@@ -550,7 +551,7 @@ class OneOfGenerator {
         final modelName = nameManager.modelName(modelType);
         decodeArg = refer(
           modelName,
-          sourceFileUrl(package, 'model', modelName),
+          sourceFileUrl(package, 'model', modelName, nameManager),
         ).property('fromJson').call([refer('json')]);
       }
 
@@ -713,6 +714,7 @@ class OneOfGenerator {
                       package,
                       'model',
                       nameManager.modelName(modelType),
+                      nameManager,
                     ),
                   )
                   .property(constructorName)
@@ -821,6 +823,7 @@ class OneOfGenerator {
                     package,
                     'model',
                     nameManager.modelName(modelType),
+                    nameManager,
                   ),
                 )
                 .property(constructorName)

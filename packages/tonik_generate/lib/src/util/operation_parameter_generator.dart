@@ -38,6 +38,7 @@ List<Parameter> generateParameters({
                 package,
                 'request_body',
                 nameManager.requestBodyNames(requestBody).$1,
+                nameManager,
               )
               ..isNullable = !requestBody.isRequired,
           );

@@ -2,7 +2,6 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/equals_method_generator.dart';
@@ -56,7 +55,7 @@ class RequestBodyGenerator {
 
     final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
-    return (code: code, filename: fileNameForClass(name));
+    return (code: code, filename: nameManager.fileNameForClass(name));
   }
 
   @visibleForTesting
@@ -70,7 +69,7 @@ class RequestBodyGenerator {
         ..name = name
         ..definition = refer(
           targetName,
-          sourceFileUrl(package, 'request_body', targetName),
+          sourceFileUrl(package, 'request_body', targetName, nameManager),
         ),
     );
   }

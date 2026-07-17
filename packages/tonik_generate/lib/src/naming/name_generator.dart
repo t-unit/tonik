@@ -1,6 +1,5 @@
 import 'package:change_case/change_case.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 
 /// A manager for handling unique names in generated Dart code.
@@ -21,6 +20,19 @@ class NameGenerator {
   bool _isTaken(String name) => _usedFileNames.contains(fileNameForClass(name));
 
   void _claim(String name) => _usedFileNames.add(fileNameForClass(name));
+
+  /// Derives the generated file name for [className].
+  ///
+  /// `$` prefixes would otherwise leave a private-looking leading `_`;
+  /// digit-leading names keep it because of the `file_names` lint.
+  String fileNameForClass(String className) {
+    final snake = className.toSnakeCase();
+    final stripped = snake.replaceFirst(RegExp('^_+'), '');
+    if (stripped.isEmpty || RegExp(r'^\d').hasMatch(stripped)) {
+      return '$snake.dart';
+    }
+    return '$stripped.dart';
+  }
 
   /// Generates a unique class name for a model.
   ///

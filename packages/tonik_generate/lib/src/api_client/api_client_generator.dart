@@ -3,7 +3,6 @@ import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
@@ -35,7 +34,7 @@ class ApiClientGenerator {
     List<Server> servers,
   ) {
     final className = nameManager.tagName(tag);
-    final fileName = fileNameForClass(className);
+    final fileName = nameManager.fileNameForClass(className);
 
     final library = Library(
       (b) => b..body.add(generateClass(operations, tag, servers)),
@@ -69,7 +68,12 @@ class ApiClientGenerator {
     final operationFields = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
-      final operationUrl = sourceFileUrl(package, 'operation', operationName);
+      final operationUrl = sourceFileUrl(
+        package,
+        'operation',
+        operationName,
+        nameManager,
+      );
 
       return Field(
         (b) => b
@@ -82,7 +86,12 @@ class ApiClientGenerator {
     final constructorInitializers = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
-      final operationUrl = sourceFileUrl(package, 'operation', operationName);
+      final operationUrl = sourceFileUrl(
+        package,
+        'operation',
+        operationName,
+        nameManager,
+      );
 
       return refer(fieldName)
           .assign(
@@ -105,7 +114,12 @@ class ApiClientGenerator {
                     ..name = 'server'
                     ..type = refer(
                       serverBaseClassName,
-                      sourceFileUrl(package, 'server', serverBaseClassName),
+                      sourceFileUrl(
+                        package,
+                        'server',
+                        serverBaseClassName,
+                        nameManager,
+                      ),
                     ),
                 ),
               )
@@ -150,6 +164,7 @@ class ApiClientGenerator {
       package,
       'operation',
       operationClassName,
+      nameManager,
     );
     final qualifiedDefaults = {
       for (final entry in defaults.byName.entries)

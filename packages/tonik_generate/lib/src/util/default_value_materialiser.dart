@@ -75,7 +75,7 @@ Expression? _materialiseEnumDefault({
       .enumVariantNames(model)
       .valueNames[matchedIndex];
   final enumName = nameManager.modelName(model);
-  final url = sourceFileUrl(package, 'model', enumName);
+  final url = sourceFileUrl(package, 'model', enumName, nameManager);
   return refer('$enumName.$variantName', url);
 }
 

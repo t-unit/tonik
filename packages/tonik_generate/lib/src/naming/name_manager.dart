@@ -58,6 +58,10 @@ class NameManager {
   // Getter (not field) keeps NameManager sendable across isolates.
   Logger get log => Logger('NameManager');
 
+  /// Derives the generated file name for [className].
+  String fileNameForClass(String className) =>
+      generator.fileNameForClass(className);
+
   /// Primes the name generator with all names from the given objects.
   /// This ensures consistent naming across multiple calls.
   void prime({
