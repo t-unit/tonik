@@ -948,11 +948,6 @@ String toSimple({
     _$values.add(_$stringSimple);
   }
   if (_$values.isEmpty) return '';
-  if (_$values.length > 1) {
-    throw EncodingException(
-      r'Ambiguous anyOf simple encoding for SimpleChoice: multiple values provided, anyOf requires exactly one value',
-    );
-  }
   return _$values.first;
 }
       ''';
@@ -1039,11 +1034,6 @@ String toSimple({
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf simple encoding for MixedChoice: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   } else {
     final _$map = <String, PropertyValue>{};
@@ -2367,7 +2357,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
 
       const expectedMethod = r'''
 @override
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (map != null) { throw EncodingException('Map types cannot be form-encoded'); } if (string != null) { final _$stringForm = string!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ); _$entryLists.add(_$stringForm); _$values.add(_$stringForm.map((e) => e.value).join(',')); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for FlexValue: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf form encoding for FlexValue: multiple values provided, anyOf requires exactly one value', ); } return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (map != null) { throw EncodingException('Map types cannot be form-encoded'); } if (string != null) { final _$stringForm = string!.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ); _$entryLists.add(_$stringForm); _$values.add(_$stringForm.map((e) => e.value).join(',')); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for FlexValue: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
 ''';
 
       expect(
@@ -2437,11 +2427,6 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
           }
           if (_$values.isEmpty) {
             return const <ParameterEntry>[];
-          }
-          if (_$values.length > 1) {
-            throw EncodingException(
-              r'Ambiguous anyOf form encoding for FlexValue: multiple values provided, anyOf requires exactly one value',
-            );
           }
           return _$entryLists.first;
         }
@@ -2695,11 +2680,6 @@ Object? toJson() {
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf encoding for EntityChoice: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   }
   if (_$mapValues.isNotEmpty) {
@@ -2910,11 +2890,6 @@ String toSimple({
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf simple encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   } else {
     final _$map = <String, PropertyValue>{};
@@ -2974,7 +2949,7 @@ String toSimple({
 
         const expectedMethod = r'''
 @override
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (tonikFile != null) { final _$tonikFileForm = tonikFile!.toBase64String().toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ); _$entryLists.add(_$tonikFileForm); _$values.add(_$tonikFileForm.map((e) => e.value).join(',')); } if (text != null) { final _$textForm = text!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$textForm); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for AnyOfBase64: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf form encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value', ); } return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (tonikFile != null) { final _$tonikFileForm = tonikFile!.toBase64String().toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, ); _$entryLists.add(_$tonikFileForm); _$values.add(_$tonikFileForm.map((e) => e.value).join(',')); } if (text != null) { final _$textForm = text!.parameterProperties(allowEmpty: allowEmpty); _$mapValues.add(_$textForm); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for AnyOfBase64: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
 ''';
 
         expect(generated.trim(), format(expectedMethod).trim());
@@ -3042,11 +3017,6 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf label encoding for AnyOfBase64: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   } else {
     final _$map = <String, PropertyValue>{};
@@ -3262,11 +3232,6 @@ String toSimple({
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf simple encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   } else {
     final _$map = <String, PropertyValue>{};
@@ -3292,7 +3257,7 @@ String toSimple({
 
       const expected = r'''
 @override
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (object != null) { throw EncodingException( r'AnyModel variant of MixedFilter cannot be form-encoded', ); } if (detailedFilter != null) { final _$detailedFilterForm = detailedFilter!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$detailedFilterForm); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for MixedFilter: mixing simple and complex values', ); } if (_$values.isNotEmpty) { if (_$values.length > 1) { throw EncodingException( r'Ambiguous anyOf form encoding for MixedFilter: multiple values provided, anyOf requires exactly one value', ); } return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
+List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { final _$entryLists = <List<ParameterEntry>>[]; final _$values = <String>{}; final _$mapValues = <Map<String, PropertyValue>>[]; if (object != null) { throw EncodingException( r'AnyModel variant of MixedFilter cannot be form-encoded', ); } if (detailedFilter != null) { final _$detailedFilterForm = detailedFilter!.parameterProperties( allowEmpty: allowEmpty, ); _$mapValues.add(_$detailedFilterForm); } if (_$values.isEmpty && _$mapValues.isEmpty) { return const <ParameterEntry>[]; } if (_$mapValues.isNotEmpty && _$values.isNotEmpty) { throw EncodingException( r'Ambiguous anyOf form encoding for MixedFilter: mixing simple and complex values', ); } if (_$values.isNotEmpty) { return _$entryLists.first; } else { final _$map = <String, PropertyValue>{}; for (final _$m in _$mapValues) { _$map.addAll(_$m); } return _$map.toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); } }
 ''';
 
       expect(generated.trim(), format(expected).trim());
@@ -3326,11 +3291,6 @@ String toLabel({required bool explode, required bool allowEmpty}) {
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf label encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   } else {
     final _$map = <String, PropertyValue>{};
@@ -3380,11 +3340,6 @@ String toMatrix(
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf matrix encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   } else {
     final _$map = <String, PropertyValue>{};
@@ -3464,11 +3419,6 @@ Object? toJson() {
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf encoding for MixedFilter: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   }
   if (_$mapValues.isNotEmpty) {
@@ -3766,11 +3716,6 @@ Object? toJson() {
     );
   }
   if (_$values.isNotEmpty) {
-    if (_$values.length > 1) {
-      throw EncodingException(
-        r'Ambiguous anyOf encoding for OnlyAny: multiple values provided, anyOf requires exactly one value',
-      );
-    }
     return _$values.first;
   }
   if (_$mapValues.isNotEmpty) {
@@ -3860,11 +3805,6 @@ Object? toJson() {
               );
             }
             if (_$values.isNotEmpty) {
-              if (_$values.length > 1) {
-                throw EncodingException(
-                  r'Ambiguous anyOf encoding for TreeAndClassA: multiple values provided, anyOf requires exactly one value',
-                );
-              }
               return _$values.first;
             }
             if (_$mapValues.isNotEmpty) {

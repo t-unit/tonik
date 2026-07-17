@@ -131,6 +131,24 @@ paths:
               schema:
                 $ref: '#/components/schemas/OneOfDateTimeOrString'
 
+  /any-of-date-time-or-string/echo:
+    post:
+      operationId: echoAnyOfDateTimeOrString
+      tags:
+        - composition
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AnyOfDateTimeOrString'
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AnyOfDateTimeOrString'
+
   /one-of-base64-or-string/echo:
     post:
       operationId: echoOneOfBase64OrString
@@ -230,6 +248,12 @@ components:
       oneOf:
         - type: string
           format: byte
+        - type: string
+
+    AnyOfDateTimeOrString:
+      anyOf:
+        - type: string
+          format: date-time
         - type: string
 
     OneOfComplex:

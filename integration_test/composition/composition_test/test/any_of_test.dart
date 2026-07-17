@@ -503,43 +503,34 @@ void main() {
         anyOf = const AnyOfPrimitive(string: 'hello', int: 42);
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), 42);
       });
 
-      test('toForm throws EncodingException', () {
+      test('toForm emits the first variant', () {
         expect(
-          () => anyOf.toForm('p', explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          formValue(anyOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          '42',
         );
       });
 
-      test('toSimple throws EncodingException', () {
+      test('toSimple emits the first variant', () {
+        expect(anyOf.toSimple(explode: true, allowEmpty: true), '42');
+      });
+
+      test('toMatrix emits the first variant', () {
         expect(
-          () => anyOf.toSimple(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toMatrix('paramName', explode: false, allowEmpty: true),
+          ';paramName=42',
         );
       });
 
-      test('toMatrix throws EncodingException', () {
-        expect(
-          () => anyOf.toMatrix('paramName', explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode true', () {
+        expect(anyOf.toLabel(explode: true, allowEmpty: true), '.42');
       });
 
-      test('toLabel - explode true throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
-      });
-
-      test('toLabel - explode false throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode false', () {
+        expect(anyOf.toLabel(explode: false, allowEmpty: true), '.42');
       });
 
       test('currentEncodingShape', () {
@@ -1093,43 +1084,34 @@ void main() {
         anyOf = const AnyOfEnum(enum1: Enum1.value1, enum2: Enum2.two);
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), 'value1');
       });
 
-      test('toForm throws EncodingException', () {
+      test('toForm emits the first variant', () {
         expect(
-          () => anyOf.toForm('p', explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          formValue(anyOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          'value1',
         );
       });
 
-      test('toSimple throws EncodingException', () {
+      test('toSimple emits the first variant', () {
+        expect(anyOf.toSimple(explode: true, allowEmpty: true), 'value1');
+      });
+
+      test('toMatrix emits the first variant', () {
         expect(
-          () => anyOf.toSimple(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+          ';asdf=value1',
         );
       });
 
-      test('toMatrix throws EncodingException', () {
-        expect(
-          () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode true', () {
+        expect(anyOf.toLabel(explode: true, allowEmpty: true), '.value1');
       });
 
-      test('toLabel - explode true throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
-      });
-
-      test('toLabel - explode false throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode false', () {
+        expect(anyOf.toLabel(explode: false, allowEmpty: true), '.value1');
       });
 
       test('currentEncodingShape', () {
@@ -2223,43 +2205,34 @@ void main() {
         );
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), 'value2');
       });
 
-      test('toForm throws EncodingException', () {
+      test('toForm emits the first variant', () {
         expect(
-          () => anyOf.toForm('p', explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          formValue(anyOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          'value2',
         );
       });
 
-      test('toSimple throws EncodingException', () {
+      test('toSimple emits the first variant', () {
+        expect(anyOf.toSimple(explode: true, allowEmpty: true), 'value2');
+      });
+
+      test('toMatrix emits the first variant', () {
         expect(
-          () => anyOf.toSimple(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+          ';asdf=value2',
         );
       });
 
-      test('toMatrix throws EncodingException', () {
-        expect(
-          () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode true', () {
+        expect(anyOf.toLabel(explode: true, allowEmpty: true), '.value2');
       });
 
-      test('toLabel - explode true throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
-      });
-
-      test('toLabel - explode false throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode false', () {
+        expect(anyOf.toLabel(explode: false, allowEmpty: true), '.value2');
       });
 
       test('currentEncodingShape', () {
@@ -3872,46 +3845,34 @@ void main() {
         );
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), [1, 2, 3]);
       });
 
-      test('toForm throws EncodingException', () {
+      test('toForm emits the first variant', () {
         expect(
-          () => formValue(
-            anyOf.toForm('p', explode: true, allowEmpty: true),
-            'p',
-          ),
-          throwsA(isA<EncodingException>()),
+          formValue(anyOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          'p=1&p=2&p=3',
         );
       });
 
-      test('toSimple throws EncodingException', () {
+      test('toSimple emits the first variant', () {
+        expect(anyOf.toSimple(explode: true, allowEmpty: true), '1,2,3');
+      });
+
+      test('toMatrix emits the first variant', () {
         expect(
-          () => anyOf.toSimple(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
+          ';asdf=1;asdf=2;asdf=3',
         );
       });
 
-      test('toMatrix throws EncodingException', () {
-        expect(
-          () => anyOf.toMatrix('asdf', explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode true', () {
+        expect(anyOf.toLabel(explode: true, allowEmpty: true), '.1.2.3');
       });
 
-      test('toLabel - explode true throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
-      });
-
-      test('toLabel - explode false throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode false', () {
+        expect(anyOf.toLabel(explode: false, allowEmpty: true), '.1,2,3');
       });
 
       test('currentEncodingShape', () {
@@ -4195,8 +4156,10 @@ void main() {
         );
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), [
+          {'name': 'test'},
+        ]);
       });
 
       test('toForm throws EncodingException', () {
@@ -4547,8 +4510,8 @@ void main() {
         );
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), false);
       });
 
       test('toForm throws EncodingException', () {
@@ -4862,45 +4825,42 @@ void main() {
         );
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), ['value1', 'value2']);
       });
 
-      test('toForm throws EncodingException', () {
+      test('toForm emits the first variant', () {
         expect(
-          () => formValue(
-            anyOf.toForm('p', explode: true, allowEmpty: true),
-            'p',
-          ),
-          throwsA(isA<EncodingException>()),
+          formValue(anyOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          'p=value1&p=value2',
         );
       });
 
-      test('toSimple throws EncodingException', () {
+      test('toSimple emits the first variant', () {
         expect(
-          () => anyOf.toSimple(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toSimple(explode: true, allowEmpty: true),
+          'value1,value2',
         );
       });
 
-      test('toMatrix throws EncodingException', () {
+      test('toMatrix emits the first variant', () {
         expect(
-          () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+          ';asdf=value1,value2',
         );
       });
 
-      test('toLabel - explode true throws EncodingException', () {
+      test('toLabel emits the first variant - explode true', () {
         expect(
-          () => anyOf.toLabel(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toLabel(explode: true, allowEmpty: true),
+          '.value1.value2',
         );
       });
 
-      test('toLabel - explode false throws EncodingException', () {
+      test('toLabel emits the first variant - explode false', () {
         expect(
-          () => anyOf.toLabel(explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toLabel(explode: false, allowEmpty: true),
+          '.value1,value2',
         );
       });
 
@@ -4919,46 +4879,34 @@ void main() {
         );
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), [1, 2]);
       });
 
-      test('toForm throws EncodingException', () {
+      test('toForm emits the first variant', () {
         expect(
-          () => formValue(
-            anyOf.toForm('p', explode: true, allowEmpty: true),
-            'p',
-          ),
-          throwsA(isA<EncodingException>()),
+          formValue(anyOf.toForm('p', explode: true, allowEmpty: true), 'p'),
+          'p=1&p=2',
         );
       });
 
-      test('toSimple throws EncodingException', () {
+      test('toSimple emits the first variant', () {
+        expect(anyOf.toSimple(explode: true, allowEmpty: true), '1,2');
+      });
+
+      test('toMatrix emits the first variant', () {
         expect(
-          () => anyOf.toSimple(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
+          anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
+          ';asdf=1,2',
         );
       });
 
-      test('toMatrix throws EncodingException', () {
-        expect(
-          () => anyOf.toMatrix('asdf', explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode true', () {
+        expect(anyOf.toLabel(explode: true, allowEmpty: true), '.1.2');
       });
 
-      test('toLabel - explode true throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: true, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
-      });
-
-      test('toLabel - explode false throws EncodingException', () {
-        expect(
-          () => anyOf.toLabel(explode: false, allowEmpty: true),
-          throwsA(isA<EncodingException>()),
-        );
+      test('toLabel emits the first variant - explode false', () {
+        expect(anyOf.toLabel(explode: false, allowEmpty: true), '.1,2');
       });
 
       test('currentEncodingShape', () {
@@ -5182,8 +5130,10 @@ void main() {
         );
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), [
+          ['test', 'test2'],
+        ]);
       });
 
       test('toForm throws EncodingException', () {
@@ -5452,8 +5402,10 @@ void main() {
         );
       });
 
-      test('toJson throws EncodingException', () {
-        expect(anyOf.toJson, throwsA(isA<EncodingException>()));
+      test('toJson emits the first variant', () {
+        expect(anyOf.toJson(), [
+          {'name': 'name', 'extra': 'extra'},
+        ]);
       });
 
       test('toForm throws EncodingException', () {

@@ -210,11 +210,6 @@ void main() {
         }
 
         if (_$values.isNotEmpty) {
-          if (_$values.length > 1) {
-            throw EncodingException(
-              r'Ambiguous anyOf encoding for Payload: multiple values provided, anyOf requires exactly one value',
-            );
-          }
           return _$values.first;
         }
 
@@ -329,11 +324,6 @@ void main() {
         }
 
         if (_$values.isNotEmpty) {
-          if (_$values.length > 1) {
-            throw EncodingException(
-              r'Ambiguous anyOf encoding for PayloadNoDisc: multiple values provided, anyOf requires exactly one value',
-            );
-          }
           return _$values.first;
         }
 
@@ -417,11 +407,6 @@ void main() {
         }
 
         if (_$values.isNotEmpty) {
-          if (_$values.length > 1) {
-            throw EncodingException(
-              r'Ambiguous anyOf encoding for OnlyPrimitives: multiple values provided, anyOf requires exactly one value',
-            );
-          }
           return _$values.first;
         }
 
@@ -521,11 +506,6 @@ void main() {
         }
 
         if (_$values.isNotEmpty) {
-          if (_$values.length > 1) {
-            throw EncodingException(
-              r'Ambiguous anyOf encoding for Mixed: multiple values provided, anyOf requires exactly one value',
-            );
-          }
           return _$values.first;
         }
 

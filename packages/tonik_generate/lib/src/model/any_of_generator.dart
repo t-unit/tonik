@@ -871,14 +871,9 @@ class AnyOfGenerator {
         const Code('}'),
       ])
       ..addAll([
+        // anyOf permits an instance to satisfy several members; emit the
+        // first deterministically rather than treating it as ambiguous.
         const Code(r'if (_$values.isNotEmpty) {'),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf encoding for $className: multiple values provided, '
-          'anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$values.first;'),
         const Code('}'),
       ]);
@@ -1065,13 +1060,6 @@ class AnyOfGenerator {
         ).statement,
         const Code('}'),
         const Code(r'if (_$values.isNotEmpty) {'),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf simple encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$values.first;'),
         const Code('} else {'),
         ...mergeBlocks,
@@ -1080,13 +1068,6 @@ class AnyOfGenerator {
     } else if (needsValues) {
       body.addAll([
         const Code(r"if (_$values.isEmpty) return '';"),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf simple encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$values.first;'),
       ]);
     } else if (needsMapValues) {
@@ -1253,13 +1234,6 @@ class AnyOfGenerator {
         ).statement,
         const Code('}'),
         const Code(r'if (_$values.isNotEmpty) {'),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf form encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$entryLists.first;'),
         const Code('} else {'),
         ...mergeBlocks,
@@ -1270,13 +1244,6 @@ class AnyOfGenerator {
         const Code(r'if (_$values.isEmpty) {return const <'),
         refer('ParameterEntry', 'package:tonik_util/tonik_util.dart').code,
         const Code('>[];}'),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf form encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$entryLists.first;'),
       ]);
     } else if (needsMapValues) {
@@ -2082,13 +2049,6 @@ class AnyOfGenerator {
         ).statement,
         const Code('}'),
         const Code(r'if (_$values.isNotEmpty) {'),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf label encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$values.first;'),
         const Code('} else {'),
         ...mergeBlocks,
@@ -2097,13 +2057,6 @@ class AnyOfGenerator {
     } else if (needsValues) {
       body.addAll([
         const Code(r"if (_$values.isEmpty) return '';"),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf label encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$values.first;'),
       ]);
     } else if (needsMapValues) {
@@ -2252,13 +2205,6 @@ class AnyOfGenerator {
         ).statement,
         const Code('}'),
         const Code(r'if (_$values.isNotEmpty) {'),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf matrix encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$values.first;'),
         const Code('} else {'),
         ...mergeBlocks,
@@ -2267,13 +2213,6 @@ class AnyOfGenerator {
     } else if (needsValues) {
       body.addAll([
         const Code(r"if (_$values.isEmpty) return '';"),
-        const Code(r'if (_$values.length > 1) {'),
-        generateEncodingExceptionExpression(
-          'Ambiguous anyOf matrix encoding for $className: '
-          'multiple values provided, anyOf requires exactly one value',
-          raw: true,
-        ).statement,
-        const Code('}'),
         const Code(r'return _$values.first;'),
       ]);
     } else if (needsMapValues) {
