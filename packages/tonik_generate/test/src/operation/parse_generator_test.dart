@@ -730,11 +730,9 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = User.fromJson(_$json);
               return AnonymousResponse(
                   body: _$body,
-                  xRateLimit: response.headers
-                    .value(r'x-rate-limit')
+                  xRateLimit: (response.headers[r'x-rate-limit']?.join(','))
                     .decodeSimpleNullableInt(context: r'x-rate-limit'),
-                  xExpiresAfter: response.headers
-                    .value(r'x-expires-after')
+                  xExpiresAfter: (response.headers[r'x-expires-after']?.join(','))
                     .decodeSimpleNullableDateTime(context: r'x-expires-after'),
               );
             default:
@@ -857,8 +855,7 @@ String _parseResponse(Response<List<int>> response) {
               return CombinedOpResponse200(
                 body: AnonymousResponse(
                   body: _$body,
-                  xRateLimit: response.headers
-                    .value(r'x-rate-limit')
+                  xRateLimit: (response.headers[r'x-rate-limit']?.join(','))
                     .decodeSimpleNullableInt(context: r'x-rate-limit'),
                 ),
               );
@@ -1301,8 +1298,7 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = User.fromJson(_$json);
               return BaseResponse(
                 body: _$body,
-                xUserId: response.headers
-                    .value(r'x-user-id')
+                xUserId: (response.headers[r'x-user-id']?.join(','))
                     .decodeSimpleString(context: r'x-user-id'),
               );
             default:
@@ -1394,8 +1390,7 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = User.fromJson(_$json);
               return HeaderAliasResponse(
                 body: _$body,
-                xUserId: response.headers
-                    .value(r'x-user-id')
+                xUserId: (response.headers[r'x-user-id']?.join(','))
                     .decodeSimpleString(context: r'x-user-id'),
               );
             default:
@@ -1479,8 +1474,7 @@ String _parseResponse(Response<List<int>> response) {
               final _$body = User.fromJson(_$json);
               return BodyHeaderResponse(
                 body2: _$body,
-                body: response.headers
-                    .value(r'body_')
+                body: (response.headers[r'body_']?.join(','))
                     .decodeSimpleString(context: r'body_'),
               );
             default:
@@ -1571,8 +1565,7 @@ String _parseResponse(Response<List<int>> response) {
           contains(
             collapseWhitespace(r'''
               body2: _$body,
-              body: response.headers
-                  .value(r'body_')
+              body: (response.headers[r'body_']?.join(','))
                   .decodeSimpleString(context: r'body_'),
             '''),
           ),
@@ -1717,8 +1710,7 @@ String _parseResponse(Response<List<int>> response) {
               collapseWhitespace('''
                 return $implementation(
                   body2: _\$body,
-                  body: response.headers
-                      .value(r'body_')
+                  body: (response.headers[r'body_']?.join(','))
                       .decodeSimpleString(context: r'body_'),
                 );
               '''),
@@ -2915,7 +2907,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
           final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
             case (200, r'application/json'):
-              if (response.headers.value(r'X-Never-Header') != null) {
+              if (response.headers[r'X-Never-Header'] != null) {
                 throw SimpleDecodingException(
                   r'NeverModel does not permit any value at X-Never-Header',
                 );
@@ -2924,7 +2916,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
               final _$body = User.fromJson(_$json);
               return AnonymousResponse(
                   body: _$body,
-                  xAnyHeader: response.headers.value(r'X-Any-Header'),
+                  xAnyHeader: (response.headers[r'X-Any-Header']?.join(',')),
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
@@ -3029,7 +3021,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
           final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
             case (200, r'application/json'):
-              if (response.headers.value(r'X-Never-Header') != null) {
+              if (response.headers[r'X-Never-Header'] != null) {
                 throw SimpleDecodingException(
                   r'NeverModel does not permit any value at X-Never-Header',
                 );
@@ -3038,7 +3030,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
               final _$body = User.fromJson(_$json);
               return AnonymousResponse(
                   body: _$body,
-                  xAnyHeader: response.headers.value(r'X-Any-Header'),
+                  xAnyHeader: (response.headers[r'X-Any-Header']?.join(',')),
               );
             default:
               final _$content = response.headers.value('content-type') ?? 'not specified';
@@ -3142,7 +3134,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
           final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
             case (200, r'application/json'):
-              if (response.headers.value(r'X-Never-Header') != null) {
+              if (response.headers[r'X-Never-Header'] != null) {
                 throw SimpleDecodingException(
                   r'NeverModel does not permit any value at X-Never-Header',
                 );
@@ -3620,7 +3612,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
     case (200, r'application/json'):
-      if (response.headers.value(r'X-Never-Header') != null) {
+      if (response.headers[r'X-Never-Header'] != null) {
         throw SimpleDecodingException(
           r'NeverModel does not permit any value at X-Never-Header',
         );
@@ -3713,7 +3705,7 @@ MultiNeverBodyHeaderOpResponse _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
     case (200, r'application/json'):
-      if (response.headers.value(r'X-Never-Header') != null) {
+      if (response.headers[r'X-Never-Header'] != null) {
         throw SimpleDecodingException(
           r'NeverModel does not permit any value at X-Never-Header',
         );
