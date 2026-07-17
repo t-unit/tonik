@@ -1,8 +1,8 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
@@ -170,7 +170,7 @@ class TypedefGenerator {
       useNullSafetySyntax: true,
     );
 
-    final snakeCaseName = typedef.name.toSnakeCase();
+    final fileName = fileNameForClass(typedef.name);
     final library = Library((b) => b.body.add(typedef));
 
     final formatter = DartFormatter(
@@ -179,6 +179,6 @@ class TypedefGenerator {
 
     final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
-    return (code: code, filename: '$snakeCaseName.dart');
+    return (code: code, filename: fileName);
   }
 }

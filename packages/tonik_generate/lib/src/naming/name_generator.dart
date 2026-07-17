@@ -1,5 +1,6 @@
 import 'package:change_case/change_case.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 
 /// A manager for handling unique names in generated Dart code.
@@ -12,7 +13,14 @@ class NameGenerator {
   static const _apiSuffix = 'Api';
   static const _requestBodySuffix = 'RequestBody';
 
-  final _usedNames = <String>{};
+  /// Uniqueness is tracked on the derived file name, not the class name:
+  /// class names differing only in `$` (e.g. `$User` vs `$$User`) map to
+  /// the same file and would silently overwrite each other.
+  final _usedFileNames = <String>{};
+
+  bool _isTaken(String name) => _usedFileNames.contains(fileNameForClass(name));
+
+  void _claim(String name) => _usedFileNames.add(fileNameForClass(name));
 
   /// Generates a unique class name for a model.
   ///
@@ -184,8 +192,8 @@ class NameGenerator {
     final baseName = ensureValidClassName(_sanitizeName(name));
     final nameWithSuffix = '$baseName$_apiSuffix';
 
-    if (!_usedNames.contains(nameWithSuffix)) {
-      _usedNames.add(nameWithSuffix);
+    if (!_isTaken(nameWithSuffix)) {
+      _claim(nameWithSuffix);
       return nameWithSuffix;
     }
 
@@ -430,16 +438,16 @@ class NameGenerator {
   /// → [User, UserResponse, UserResponse2]
   String _makeUnique(String name, String suffix) {
     if (suffix.isEmpty) {
-      if (!_usedNames.contains(name)) {
-        _usedNames.add(name);
+      if (!_isTaken(name)) {
+        _claim(name);
         return name;
       }
 
       final nameWithModel = name.endsWith(_modelSuffix)
           ? name
           : '$name$_modelSuffix';
-      if (!_usedNames.contains(nameWithModel)) {
-        _usedNames.add(nameWithModel);
+      if (!_isTaken(nameWithModel)) {
+        _claim(nameWithModel);
         return nameWithModel;
       }
 
@@ -448,8 +456,8 @@ class NameGenerator {
 
     final nameWithSuffix = name.endsWith(suffix) ? name : '$name$suffix';
 
-    if (!_usedNames.contains(nameWithSuffix)) {
-      _usedNames.add(nameWithSuffix);
+    if (!_isTaken(nameWithSuffix)) {
+      _claim(nameWithSuffix);
       return nameWithSuffix;
     }
 
@@ -459,16 +467,16 @@ class NameGenerator {
   /// Makes a name unique by first trying the name as-is,
   /// then adding the type-specific suffix for conflicts.
   String _makeUniqueWithTypeSuffix(String name, String typeSuffix) {
-    if (!_usedNames.contains(name)) {
-      _usedNames.add(name);
+    if (!_isTaken(name)) {
+      _claim(name);
       return name;
     }
 
     final nameWithTypeSuffix = name.endsWith(typeSuffix)
         ? name
         : '$name$typeSuffix';
-    if (!_usedNames.contains(nameWithTypeSuffix)) {
-      _usedNames.add(nameWithTypeSuffix);
+    if (!_isTaken(nameWithTypeSuffix)) {
+      _claim(nameWithTypeSuffix);
       return nameWithTypeSuffix;
     }
 
@@ -478,16 +486,20 @@ class NameGenerator {
   /// Makes a name unique by first trying the name as-is,
   /// then adding numeric suffixes.
   String _makeUniqueWithNumericSuffix(String name) {
-    if (!_usedNames.contains(name)) {
-      _usedNames.add(name);
+    if (!_isTaken(name)) {
+      _claim(name);
       return name;
     }
     return _addNumberSuffix(name);
   }
 
   String _addNumberSuffix(String baseName) {
-    final picked = _firstFreeSuffix(baseName, _usedNames);
-    _usedNames.add(picked);
+    var counter = 2;
+    while (_isTaken('$baseName$counter')) {
+      counter++;
+    }
+    final picked = '$baseName$counter';
+    _claim(picked);
     return picked;
   }
 
@@ -564,13 +576,10 @@ class NameGenerator {
       resultMap[server] = _makeUniqueWithNumericSuffix('${name}Server');
     }
 
-    final customName = resultMap.values.contains('CustomServer')
-        ? r'CustomServer$'
-        : 'CustomServer';
     return (
       baseName: baseName,
       serverMap: resultMap,
-      customName: _makeUnique(customName, ''),
+      customName: _makeUniqueWithNumericSuffix('CustomServer'),
     );
   }
 
@@ -610,7 +619,7 @@ class NameGenerator {
   /// is appended starting at 2.
   ///
   /// Scoped to a single class body — not the global naming domain owned by
-  /// [_usedNames] — so the caller manages [reservedNames].
+  /// [_usedFileNames] — so the caller manages [reservedNames].
   String generateDefaultMemberName({
     required String propertyName,
     required Set<String> reservedNames,

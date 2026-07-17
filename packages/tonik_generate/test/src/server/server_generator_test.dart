@@ -1,4 +1,3 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
@@ -295,8 +294,7 @@ void main() {
     test('generates file with correct structure', () {
       final result = generator.generate(testServers);
 
-      final names = nameManager.serverNames(testServers);
-      expect(result.filename, '${names.baseName.toSnakeCase()}.dart');
+      expect(result.filename, 'server.dart');
 
       expect(
         result.code,

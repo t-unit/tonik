@@ -1,9 +1,9 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:collection/collection.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
@@ -41,7 +41,7 @@ class ServerGenerator {
 
     final names = nameManager.serverNames(servers);
     final code = formatter.formatWithHeader('${library.accept(emitter)}');
-    return (code: code, filename: '${names.baseName.toSnakeCase()}.dart');
+    return (code: code, filename: fileNameForClass(names.baseName));
   }
 
   /// Generates the classes for testing purposes.

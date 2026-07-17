@@ -1,8 +1,8 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/file_name.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/operation/data_generator.dart';
@@ -66,8 +66,7 @@ class OperationGenerator {
     Operation operation,
   ) {
     final className = nameManager.operationName(operation);
-    final fileNameSnakeCase = className.toSnakeCase();
-    final fileName = '$fileNameSnakeCase.dart';
+    final fileName = fileNameForClass(className);
 
     final library = Library(
       (b) => b..body.add(generateClass(operation, className)),

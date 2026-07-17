@@ -212,6 +212,67 @@ void main() {
         expect(nameGenerator.generateModelName(model), r'$RawUserData');
       });
 
+      test('suffixes names differing only in dollar signs', () {
+        final model1 = ClassModel(
+          isDeprecated: false,
+          name: r'$User',
+          properties: const [],
+          context: Context.initial(),
+          examples: const [],
+        );
+        final model2 = ClassModel(
+          isDeprecated: false,
+          name: r'$$User',
+          properties: const [],
+          context: Context.initial(),
+          examples: const [],
+        );
+
+        expect(nameGenerator.generateModelName(model1), r'$User');
+        expect(nameGenerator.generateModelName(model2), r'$$UserModel');
+      });
+
+      test('suffixes hoisted dollar names differing only in dollar signs', () {
+        final model1 = ClassModel(
+          isDeprecated: false,
+          name: r'Foo$Bar',
+          properties: const [],
+          context: Context.initial(),
+          examples: const [],
+        );
+        final model2 = ClassModel(
+          isDeprecated: false,
+          name: r'$Foo$Bar',
+          properties: const [],
+          context: Context.initial(),
+          examples: const [],
+        );
+
+        expect(nameGenerator.generateModelName(model1), r'$FooBar');
+        expect(nameGenerator.generateModelName(model2), r'$$FooBarModel');
+      });
+
+      test('suffixes a dollar-prefixed name colliding with its plain form',
+          () {
+        final model1 = ClassModel(
+          isDeprecated: false,
+          name: 'User',
+          properties: const [],
+          context: Context.initial(),
+          examples: const [],
+        );
+        final model2 = ClassModel(
+          isDeprecated: false,
+          name: r'$User',
+          properties: const [],
+          context: Context.initial(),
+          examples: const [],
+        );
+
+        expect(nameGenerator.generateModelName(model1), 'User');
+        expect(nameGenerator.generateModelName(model2), r'$UserModel');
+      });
+
       test('combines context path components in PascalCase', () {
         final model = ClassModel(
           isDeprecated: false,
@@ -1320,7 +1381,7 @@ void main() {
       );
 
       test(
-        'uses CustomServer with dollar sign when CustomServer is already taken',
+        'uses numeric suffix when CustomServer is already taken',
         () {
           final generator = NameGenerator();
           final servers = [
@@ -1334,7 +1395,7 @@ void main() {
 
           expect(result.serverMap.length, 1);
           expect(result.serverMap[servers[0]], 'CustomServer');
-          expect(result.customName, r'CustomServer$');
+          expect(result.customName, 'CustomServer2');
           expect(result.baseName, 'Server');
         },
       );

@@ -2,12 +2,13 @@ import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
 import 'package:naming_api/src/api_client/default_api2.dart';
-import 'package:naming_api/src/model/_function.dart';
 import 'package:naming_api/src/model/camel_case_collider.dart';
+import 'package:naming_api/src/model/dollar_holder.dart';
 import 'package:naming_api/src/model/duration.dart' as naming;
 import 'package:naming_api/src/model/enum.dart' as naming;
 import 'package:naming_api/src/model/enum_reserved_names.dart';
 import 'package:naming_api/src/model/error.dart' as naming;
+import 'package:naming_api/src/model/function.dart';
 import 'package:naming_api/src/model/generated_method_collider.dart';
 import 'package:naming_api/src/model/keyword_enum.dart';
 import 'package:naming_api/src/model/keyword_property_names.dart';
@@ -15,6 +16,8 @@ import 'package:naming_api/src/model/multipart_name_collision_form.dart';
 import 'package:naming_api/src/model/object_method_collider.dart';
 import 'package:naming_api/src/model/self_referencer.dart';
 import 'package:naming_api/src/model/simple_result.dart';
+import 'package:naming_api/src/model/user.dart';
+import 'package:naming_api/src/model/user_model.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
 import 'package:naming_api/src/operation/get_hostile_query_names.dart';
 import 'package:naming_api/src/operation/get_param_counter_collision.dart';
@@ -106,6 +109,30 @@ void main() {
 
       expect(restored.name, fn.name);
       expect(restored.arn, fn.arn);
+    });
+  });
+
+  group('schemas differing only in dollar signs', () {
+    test('DollarHolder toJson emits both dollar-named classes', () {
+      const holder = DollarHolder(
+        first: $UserModel(a: 'alpha'),
+        second: $$User(b: 'beta'),
+      );
+
+      expect(holder.toJson(), {
+        'first': {'a': 'alpha'},
+        'second': {'b': 'beta'},
+      });
+    });
+
+    test('DollarHolder fromJson decodes both dollar-named classes', () {
+      final holder = DollarHolder.fromJson(const {
+        'first': {'a': 'alpha'},
+        'second': {'b': 'beta'},
+      });
+
+      expect(holder.first, const $UserModel(a: 'alpha'));
+      expect(holder.second, const $$User(b: 'beta'));
     });
   });
 

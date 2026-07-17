@@ -1,4 +1,4 @@
-import 'package:change_case/change_case.dart';
+import 'package:tonik_generate/src/naming/file_name.dart';
 
 /// Computes the targeted import URL for a generated source file.
 ///
@@ -7,5 +7,5 @@ import 'package:change_case/change_case.dart';
 /// returns a package URL like
 /// `'package:my_api/src/model/my_class.dart'`.
 String sourceFileUrl(String packageName, String category, String className) {
-  return 'package:$packageName/src/$category/${className.toSnakeCase()}.dart';
+  return 'package:$packageName/src/$category/${fileNameForClass(className)}';
 }
