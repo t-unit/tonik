@@ -97,7 +97,7 @@ class ModelImporter {
         context: context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
-        isNullable: schema.isNullable ?? schema.type.contains('null'),
+        isNullable: schema.isNullable ?? schema.hasNullType,
         defaultValue: schema.rawDefault,
         examples: const [],
       );
@@ -174,8 +174,8 @@ class ModelImporter {
       return;
     }
 
-    final hasNullType = schema.type.contains('null');
-    final types = schema.type.where((t) => t != 'null').toList();
+    final hasNullType = schema.hasNullType;
+    final types = schema.nonNullTypes;
 
     if (hasNullType && types.isEmpty) {
       final aliasModel = AliasModel(
@@ -428,8 +428,8 @@ class ModelImporter {
       return;
     }
 
-    final hasNullType = schema.type.contains('null');
-    final types = schema.type.where((t) => t != 'null').toList();
+    final hasNullType = schema.hasNullType;
+    final types = schema.nonNullTypes;
 
     if (hasNullType && types.isEmpty) {
       // Already fully populated in pass 1.
@@ -560,7 +560,7 @@ class ModelImporter {
       shell
         ..description = schema.description
         ..isDeprecated = (schema.isDeprecated ?? false)
-        ..isNullable = (schema.isNullable ?? schema.type.contains('null'));
+        ..isNullable = (schema.isNullable ?? schema.hasNullType);
       return;
     }
 
@@ -568,7 +568,7 @@ class ModelImporter {
       ..model = refModel
       ..description = schema.description
       ..isDeprecated = (schema.isDeprecated ?? false)
-      ..isNullable = (schema.isNullable ?? schema.type.contains('null'));
+      ..isNullable = (schema.isNullable ?? schema.hasNullType);
   }
 
   /// Attaches schema-level [examples] to an already-constructed [model].
@@ -840,7 +840,7 @@ class ModelImporter {
     // Remove the shell so _parseMultiType can create the real model.
     models.remove(shell);
     final oneOfModel = _parseMultiType(
-      schema.type.where((t) => t != 'null').toList(),
+      schema.nonNullTypes,
       schema,
       hasNullType,
       context,
@@ -870,7 +870,7 @@ class ModelImporter {
     if (ap is Schema && !_isEmptySchema(ap)) {
       shell
         ..valueModel = _resolveSchemaRef(null, ap, mapContext)
-        ..isValueNullable = ap.isNullable ?? ap.type.contains('null');
+        ..isValueNullable = ap.isNullable ?? ap.hasNullType;
     } else {
       shell.valueModel = AnyModel(context: mapContext);
     }
@@ -902,7 +902,7 @@ class ModelImporter {
 
     shell
       ..content = _resolveSchemaRef(null, items, modelContext)
-      ..isContentNullable = items.isNullable ?? items.type.contains('null');
+      ..isContentNullable = items.isNullable ?? items.hasNullType;
   }
 
   /// Populates a ClassModel shell.
@@ -930,7 +930,7 @@ class ModelImporter {
     for (final MapEntry(key: propertyName, value: propertySchema)
         in schemaProperties.entries) {
       final isNullable =
-          propertySchema.isNullable ?? propertySchema.type.contains('null');
+          propertySchema.isNullable ?? propertySchema.hasNullType;
       final isDeprecated = propertySchema.isDeprecated ?? false;
       final isReadOnly = propertySchema.isReadOnly ?? false;
       final isWriteOnly = propertySchema.isWriteOnly ?? false;
@@ -1005,7 +1005,7 @@ class ModelImporter {
           context: context,
           description: schema.description,
           isDeprecated: schema.isDeprecated ?? false,
-          isNullable: schema.isNullable ?? schema.type.contains('null'),
+          isNullable: schema.isNullable ?? schema.hasNullType,
           defaultValue: schema.rawDefault,
           examples: exampleImporter.fromSchema(schema),
         );
@@ -1189,7 +1189,7 @@ class ModelImporter {
         context: context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
-        isNullable: schema.isNullable ?? schema.type.contains('null'),
+        isNullable: schema.isNullable ?? schema.hasNullType,
         defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
       );
@@ -1273,7 +1273,7 @@ class ModelImporter {
     return schema.description != null ||
         (schema.isDeprecated ?? false) ||
         (schema.isNullable ?? false) ||
-        schema.type.contains('null') ||
+        schema.hasNullType ||
         schema.rawDefault != null;
   }
 
@@ -1343,7 +1343,7 @@ class ModelImporter {
         context: context,
         description: schema.description,
         isDeprecated: schema.isDeprecated ?? false,
-        isNullable: schema.isNullable ?? schema.type.contains('null'),
+        isNullable: schema.isNullable ?? schema.hasNullType,
         defaultValue: schema.rawDefault,
         examples: exampleImporter.fromSchema(schema),
       );
@@ -1393,7 +1393,7 @@ class ModelImporter {
       context: modelContext,
       description: schema.description,
       isDeprecated: schema.isDeprecated ?? false,
-      isNullable: schema.isNullable ?? schema.type.contains('null'),
+      isNullable: schema.isNullable ?? schema.hasNullType,
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
@@ -1430,8 +1430,8 @@ class ModelImporter {
     }
 
     // OpenAPI 3.1 null types become Tonik nullability.
-    final hasNullType = schema.type.contains('null');
-    final types = schema.type.where((t) => t != 'null').toList();
+    final hasNullType = schema.hasNullType;
+    final types = schema.nonNullTypes;
 
     if (hasNullType && types.isEmpty) {
       return NeverModel(context: context, isNullable: true);
@@ -1448,7 +1448,7 @@ class ModelImporter {
       var isValueNullable = false;
       if (ap is Schema && !_isEmptySchema(ap)) {
         valueModel = _resolveSchemaRef(null, ap, mapContext);
-        isValueNullable = ap.isNullable ?? ap.type.contains('null');
+        isValueNullable = ap.isNullable ?? ap.hasNullType;
       } else {
         valueModel = AnyModel(context: mapContext);
       }
@@ -1650,7 +1650,7 @@ class ModelImporter {
 
     listModel
       ..content = _resolveSchemaRef(null, items, modelContext)
-      ..isContentNullable = items.isNullable ?? items.type.contains('null');
+      ..isContentNullable = items.isNullable ?? items.hasNullType;
 
     return listModel;
   }
@@ -1885,7 +1885,7 @@ class ModelImporter {
       }
       current = resolved;
     }
-    return current.type.isNotEmpty && current.type.every((t) => t == 'null');
+    return current.type.isNotEmpty && current.nonNullTypes.isEmpty;
   }
 
   Schema? _resolveSchemaToSchema(Schema schema) {
@@ -1912,7 +1912,7 @@ class ModelImporter {
     if (ap == false) return const ForbiddenAdditionalProperties();
     if (ap is Schema && !_isEmptySchema(ap)) {
       var valueModel = _resolveSchemaRef(null, ap, context);
-      final isNullable = ap.isNullable ?? ap.type.contains('null');
+      final isNullable = ap.isNullable ?? ap.hasNullType;
       if (isNullable && !valueModel.isEffectivelyNullable) {
         valueModel = AliasModel(
           model: valueModel,
@@ -1963,7 +1963,7 @@ class ModelImporter {
       additionalPropertiesPolicy: _resolveAdditionalProperties(schema, context),
       isNullable:
           schema.isNullable ??
-          (schema.type.contains('object') && schema.type.contains('null')),
+          (schema.type.contains('object') && schema.hasNullType),
       isReadOnly: schema.isReadOnly ?? false,
       isWriteOnly: schema.isWriteOnly ?? false,
       examples: exampleImporter.fromSchema(schema),
@@ -1986,7 +1986,7 @@ class ModelImporter {
     for (final MapEntry(key: propertyName, value: propertySchema)
         in schemaProperties.entries) {
       final isNullable =
-          propertySchema.isNullable ?? propertySchema.type.contains('null');
+          propertySchema.isNullable ?? propertySchema.hasNullType;
       final isDeprecated = propertySchema.isDeprecated ?? false;
       final isReadOnly = propertySchema.isReadOnly ?? false;
       final isWriteOnly = propertySchema.isWriteOnly ?? false;
