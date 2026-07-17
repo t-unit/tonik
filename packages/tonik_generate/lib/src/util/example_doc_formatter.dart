@@ -38,18 +38,28 @@ List<String> formatExamplesAsDocs(List<Example> examples) {
 }
 
 List<String>? _formatExample(Example example) {
-  final hasSummary = example.summary != null && example.summary!.isNotEmpty;
-  final hasDescription =
-      example.description != null && example.description!.isNotEmpty;
-  final hasHeadingContent =
-      example.name != null || hasSummary || hasDescription;
+  // Lone CRs would let text escape the `///` prefix; see formatDocComment.
+  final name = example.name?.replaceAll('\r', '');
+  final summary = switch (example.summary?.replaceAll('\r', '')) {
+    null || '' => null,
+    final s => s,
+  };
+  final description = switch (example.description?.replaceAll('\r', '')) {
+    null || '' => null,
+    final s => s,
+  };
 
-  if (example.value == null && !hasHeadingContent) return null;
+  if (example.value == null &&
+      name == null &&
+      summary == null &&
+      description == null) {
+    return null;
+  }
 
-  final lines = <String>[_heading(example, hasSummary: hasSummary)];
+  final lines = <String>[_heading(name: name, summary: summary)];
 
-  if (hasDescription) {
-    for (final line in example.description!.split('\n')) {
+  if (description != null) {
+    for (final line in description.split('\n')) {
       if (line.isEmpty) {
         lines.add('///');
       } else {
@@ -66,22 +76,28 @@ List<String>? _formatExample(Example example) {
   return lines;
 }
 
-String _heading(Example example, {required bool hasSummary}) {
+String _heading({required String? name, required String? summary}) {
   final buf = StringBuffer('/// **Example**');
-  if (example.name != null) {
-    buf.write(' "${example.name}"');
+  if (name != null) {
+    buf.write(' "$name"');
   }
-  if (hasSummary) {
-    buf.write(' — ${example.summary}');
+  if (summary != null) {
+    buf.write(' — $summary');
   }
   buf.write(':');
   return buf.toString();
 }
 
 List<String> _renderValue(Object? value) {
-  final isString = value is String;
-  final payload = isString ? value : _jsonEncoder.convert(value);
-  final fenceLang = isString ? '' : 'json';
+  final String payload;
+  final String fenceLang;
+  if (value is String) {
+    payload = value.replaceAll('\r', '');
+    fenceLang = '';
+  } else {
+    payload = _jsonEncoder.convert(value);
+    fenceLang = 'json';
+  }
 
   final fenceLen = _maxBacktickRun(payload) + 1;
   final fence = '`' * (fenceLen < 3 ? 3 : fenceLen);

@@ -84,6 +84,19 @@ void main() {
         expect(result.first, '/// **Example** "admin":');
       });
 
+      test('removes carriage returns from name and summary', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: 'ad\rmin',
+            summary: 'an admin\ruser',
+            description: null,
+            value: 1,
+          ),
+        ]);
+
+        expect(result.first, '/// **Example** "admin" — an adminuser:');
+      });
+
       test('passes through markdown-special chars in name and summary', () {
         final result = formatExamplesAsDocs([
           const Example(
@@ -128,6 +141,48 @@ void main() {
             name: null,
             summary: null,
             description: 'line one\nline two',
+            value: 1,
+          ),
+        ]);
+
+        expect(result, [
+          '/// **Example**:',
+          '/// line one',
+          '/// line two',
+          '///',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+      });
+
+      test('removes lone carriage returns within a description line', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: null,
+            summary: null,
+            description: 'line one\rstill line one\nline two',
+            value: 1,
+          ),
+        ]);
+
+        expect(result, [
+          '/// **Example**:',
+          '/// line onestill line one',
+          '/// line two',
+          '///',
+          '/// ```json',
+          '/// 1',
+          '/// ```',
+        ]);
+      });
+
+      test('treats CRLF in description as a single line break', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: null,
+            summary: null,
+            description: 'line one\r\nline two',
             value: 1,
           ),
         ]);
@@ -219,6 +274,24 @@ void main() {
           '/// ```',
           '/// first',
           '/// second',
+          '/// ```',
+        ]);
+      });
+
+      test('removes carriage returns from string values', () {
+        final result = formatExamplesAsDocs([
+          const Example(
+            name: null,
+            summary: null,
+            description: null,
+            value: 'first\rsecond',
+          ),
+        ]);
+
+        expect(result, [
+          '/// **Example**:',
+          '/// ```',
+          '/// firstsecond',
           '/// ```',
         ]);
       });

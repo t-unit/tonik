@@ -273,11 +273,13 @@ components:
 
     BasicObject:
       type: object
+      description: "first line\rsecond line"
       required:
         - name
       properties:
         name:
           type: string
+          description: "name line one\r\nname line two"
 
     # 1g. Property name with single quote on an any-typed property
     # The class needs a mix of simple + mixed encoding shapes to trigger
