@@ -193,6 +193,45 @@ void main() {
         );
       });
 
+      test('decodes large in-range whole-number doubles exactly', () {
+        expect((9.2e18 as Object?).decodeJsonInt(), 9200000000000000000);
+        expect(
+          (-9223372036854775808.0 as Object?).decodeJsonInt(),
+          -9223372036854775808,
+        );
+        expect(
+          (9.2e18 as Object?).decodeJsonNullableInt(),
+          9200000000000000000,
+        );
+      });
+
+      test('throws on whole-number double beyond the int range', () {
+        expect(
+          () => (9223372036854775808.0 as Object?).decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (1e19 as Object?).decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (-1e19 as Object?).decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (1e21 as Object?).decodeJsonInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (9223372036854775808.0 as Object?).decodeJsonNullableInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+        expect(
+          () => (-1e19 as Object?).decodeJsonNullableInt(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      });
+
       test('throws on non-finite double', () {
         expect(
           () => (double.nan as Object?).decodeJsonInt(),
@@ -546,6 +585,23 @@ void main() {
       final json = jsonDecode('[1.5]') as Object?;
       expect(
         () => json.decodeJsonList<int>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws for int list with an integer beyond the int range', () {
+      final json = jsonDecode('[9223372036854775808]') as Object?;
+      expect(
+        () => json.decodeJsonList<int>(),
+        throwsA(isA<InvalidTypeException>()),
+      );
+    });
+
+    test('throws for nullable int list with an integer beyond the int range',
+        () {
+      final json = jsonDecode('[10000000000000000000]') as Object?;
+      expect(
+        () => json.decodeJsonList<int?>(),
         throwsA(isA<InvalidTypeException>()),
       );
     });
