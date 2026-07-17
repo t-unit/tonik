@@ -456,7 +456,6 @@ class ParseGenerator {
       package,
       'response_wrapper',
       wrapperBaseName,
-      nameManager,
     );
     final bodyDecode = _createBodyDecode(response, contentType);
 
@@ -541,12 +540,7 @@ class ParseGenerator {
     responseArgs.addAll(headerResult.supported);
 
     final responseBaseName = nameManager.responseNames(response).baseName;
-    final responseUrl = sourceFileUrl(
-      package,
-      'response',
-      responseBaseName,
-      nameManager,
-    );
+    final responseUrl = sourceFileUrl(package, 'response', responseBaseName);
     final wrapperArgs = <String, Expression>{
       'body': refer(
         contentType != null && response.bodyCount > 1
@@ -617,12 +611,7 @@ class ParseGenerator {
     args.addAll(headerResult.supported);
 
     final responseBaseName = nameManager.responseNames(response).baseName;
-    final responseUrl = sourceFileUrl(
-      package,
-      'response',
-      responseBaseName,
-      nameManager,
-    );
+    final responseUrl = sourceFileUrl(package, 'response', responseBaseName);
     return Block.of([
       ..._generateNeverHeaderChecks(headerResult.neverHeaders),
       if (bodyDecode != null) ...bodyDecode.statements,

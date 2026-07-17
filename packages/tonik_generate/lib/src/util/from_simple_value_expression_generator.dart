@@ -224,9 +224,7 @@ Expression _buildFromSimpleExpression(
   final name = nameManager.modelName(model);
   final explodeParam = {'explode': explode};
 
-  final url = package != null
-      ? sourceFileUrl(package, 'model', name, nameManager)
-      : null;
+  final url = package != null ? sourceFileUrl(package, 'model', name) : null;
 
   return isRequired
       ? refer(name, url).property('fromSimple').call([value], explodeParam)
@@ -449,7 +447,7 @@ Expression _buildClassList(
   final explodeParam = {'explode': explode};
 
   final url = package != null
-      ? sourceFileUrl(package, 'model', className, nameManager)
+      ? sourceFileUrl(package, 'model', className)
       : null;
   final mapFunction = Method(
     (b) => b

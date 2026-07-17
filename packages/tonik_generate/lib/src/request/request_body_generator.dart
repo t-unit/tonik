@@ -69,7 +69,7 @@ class RequestBodyGenerator {
         ..name = name
         ..definition = refer(
           targetName,
-          sourceFileUrl(package, 'request_body', targetName, nameManager),
+          sourceFileUrl(package, 'request_body', targetName),
         ),
     );
   }

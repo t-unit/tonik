@@ -1533,7 +1533,6 @@ class AnyOfGenerator {
                     package,
                     'model',
                     nameManager.modelName(modelType),
-                    nameManager,
                   ),
                 )
                 .property(constructorName)

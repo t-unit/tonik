@@ -68,12 +68,7 @@ class ApiClientGenerator {
     final operationFields = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
-      final operationUrl = sourceFileUrl(
-        package,
-        'operation',
-        operationName,
-        nameManager,
-      );
+      final operationUrl = sourceFileUrl(package, 'operation', operationName);
 
       return Field(
         (b) => b
@@ -86,12 +81,7 @@ class ApiClientGenerator {
     final constructorInitializers = operations.map((operation) {
       final operationName = nameManager.operationName(operation);
       final fieldName = '_${operationName.toCamelCase()}';
-      final operationUrl = sourceFileUrl(
-        package,
-        'operation',
-        operationName,
-        nameManager,
-      );
+      final operationUrl = sourceFileUrl(package, 'operation', operationName);
 
       return refer(fieldName)
           .assign(
@@ -114,12 +104,7 @@ class ApiClientGenerator {
                     ..name = 'server'
                     ..type = refer(
                       serverBaseClassName,
-                      sourceFileUrl(
-                        package,
-                        'server',
-                        serverBaseClassName,
-                        nameManager,
-                      ),
+                      sourceFileUrl(package, 'server', serverBaseClassName),
                     ),
                 ),
               )
@@ -164,7 +149,6 @@ class ApiClientGenerator {
       package,
       'operation',
       operationClassName,
-      nameManager,
     );
     final qualifiedDefaults = {
       for (final entry in defaults.byName.entries)

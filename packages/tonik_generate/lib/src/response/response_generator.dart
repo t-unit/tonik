@@ -70,7 +70,7 @@ class ResponseGenerator {
         ..name = name
         ..definition = refer(
           targetName,
-          sourceFileUrl(package, 'response', targetName, nameManager),
+          sourceFileUrl(package, 'response', targetName),
         ),
     );
   }

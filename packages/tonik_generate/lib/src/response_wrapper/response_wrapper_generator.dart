@@ -95,12 +95,7 @@ class ResponseWrapperGenerator {
             ..modifier = FieldModifier.final$
             ..type = refer(
               responseClassName,
-              sourceFileUrl(
-                package,
-                'response',
-                responseClassName,
-                nameManager,
-              ),
+              sourceFileUrl(package, 'response', responseClassName),
             ),
         );
       }

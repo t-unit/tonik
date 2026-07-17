@@ -5,9 +5,11 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 void main() {
   group('NameGenerator', () {
     late NameGenerator nameGenerator;
+    late Set<String> usedNames;
 
     setUp(() {
       nameGenerator = NameGenerator();
+      usedNames = <String>{};
     });
 
     group('generateClassName', () {
@@ -27,7 +29,7 @@ void main() {
             examples: const [],
           );
           expect(
-            nameGenerator.generateModelName(model),
+            nameGenerator.generateModelName(model, usedNames),
             'PetFindByStatusGetResponses200ContentModel',
           );
         });
@@ -47,7 +49,7 @@ void main() {
             examples: const [],
           );
           expect(
-            nameGenerator.generateModelName(model),
+            nameGenerator.generateModelName(model, usedNames),
             'PetStoreGetResponses404ContentModel',
           );
         });
@@ -67,7 +69,7 @@ void main() {
             examples: const [],
           );
           expect(
-            nameGenerator.generateModelName(model),
+            nameGenerator.generateModelName(model, usedNames),
             r'$20100401AccountsJsonGetResponses200ContentModel',
           );
         });
@@ -93,9 +95,15 @@ void main() {
           );
 
           // First name the oneOf model
-          final oneOfName = nameGenerator.generateModelName(oneOfModel);
+          final oneOfName = nameGenerator.generateModelName(
+            oneOfModel,
+            usedNames,
+          );
           // Then name the inline model
-          final inlineName = nameGenerator.generateModelName(inlineClassModel);
+          final inlineName = nameGenerator.generateModelName(
+            inlineClassModel,
+            usedNames,
+          );
 
           expect(oneOfName, 'Blub');
           expect(inlineName, 'BlubModel');
@@ -119,7 +127,7 @@ void main() {
           );
 
           expect(
-            nameGenerator.generateModelName(enumModel),
+            nameGenerator.generateModelName(enumModel, usedNames),
             'PetFindByTagsParameterModel',
           );
         });
@@ -133,7 +141,10 @@ void main() {
           context: Context.initial(),
           examples: const [],
         );
-        expect(nameGenerator.generateModelName(model), 'UserProfile');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          'UserProfile',
+        );
       });
 
       test('converts name to PascalCase', () {
@@ -144,7 +155,10 @@ void main() {
           context: Context.initial(),
           examples: const [],
         );
-        expect(nameGenerator.generateModelName(model), 'UserProfile');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          'UserProfile',
+        );
       });
 
       test('makes duplicate names unique using Model suffix', () {
@@ -170,9 +184,9 @@ void main() {
           examples: const [],
         );
 
-        final name1 = nameGenerator.generateModelName(model1);
-        final name2 = nameGenerator.generateModelName(model2);
-        final name3 = nameGenerator.generateModelName(model3);
+        final name1 = nameGenerator.generateModelName(model1, usedNames);
+        final name2 = nameGenerator.generateModelName(model2, usedNames);
+        final name3 = nameGenerator.generateModelName(model3, usedNames);
 
         expect(name1, 'User');
         expect(name2, 'UserModel');
@@ -187,7 +201,10 @@ void main() {
           context: Context.initial(),
           examples: const [],
         );
-        expect(nameGenerator.generateModelName(model), 'UserProfile123');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          'UserProfile123',
+        );
       });
 
       test('preserves dollar sign characters', () {
@@ -198,7 +215,10 @@ void main() {
           context: Context.initial(),
           examples: const [],
         );
-        expect(nameGenerator.generateModelName(model), r'$UserProfile');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          r'$UserProfile',
+        );
       });
 
       test('preserves dollar sign in compound names', () {
@@ -209,7 +229,10 @@ void main() {
           context: Context.initial(),
           examples: const [],
         );
-        expect(nameGenerator.generateModelName(model), r'$RawUserData');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          r'$RawUserData',
+        );
       });
 
       test('suffixes names differing only in dollar signs', () {
@@ -228,8 +251,11 @@ void main() {
           examples: const [],
         );
 
-        expect(nameGenerator.generateModelName(model1), r'$User');
-        expect(nameGenerator.generateModelName(model2), r'$$UserModel');
+        expect(nameGenerator.generateModelName(model1, usedNames), r'$User');
+        expect(
+          nameGenerator.generateModelName(model2, usedNames),
+          r'$$UserModel',
+        );
       });
 
       test('suffixes hoisted dollar names differing only in dollar signs', () {
@@ -248,12 +274,14 @@ void main() {
           examples: const [],
         );
 
-        expect(nameGenerator.generateModelName(model1), r'$FooBar');
-        expect(nameGenerator.generateModelName(model2), r'$$FooBarModel');
+        expect(nameGenerator.generateModelName(model1, usedNames), r'$FooBar');
+        expect(
+          nameGenerator.generateModelName(model2, usedNames),
+          r'$$FooBarModel',
+        );
       });
 
-      test('suffixes a dollar-prefixed name colliding with its plain form',
-          () {
+      test('suffixes a dollar-prefixed name colliding with its plain form', () {
         final model1 = ClassModel(
           isDeprecated: false,
           name: 'User',
@@ -269,8 +297,11 @@ void main() {
           examples: const [],
         );
 
-        expect(nameGenerator.generateModelName(model1), 'User');
-        expect(nameGenerator.generateModelName(model2), r'$UserModel');
+        expect(nameGenerator.generateModelName(model1, usedNames), 'User');
+        expect(
+          nameGenerator.generateModelName(model2, usedNames),
+          r'$UserModel',
+        );
       });
 
       test('combines context path components in PascalCase', () {
@@ -281,7 +312,10 @@ void main() {
           examples: const [],
         );
 
-        expect(nameGenerator.generateModelName(model), 'ApiModelsUserModel');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          'ApiModelsUserModel',
+        );
       });
 
       test('converts each path component to PascalCase before joining', () {
@@ -296,7 +330,7 @@ void main() {
         );
 
         expect(
-          nameGenerator.generateModelName(model),
+          nameGenerator.generateModelName(model, usedNames),
           'ApiUserManagementActiveUsersModel',
         );
       });
@@ -310,7 +344,10 @@ void main() {
           examples: const [],
         );
 
-        expect(nameGenerator.generateModelName(model), 'MyClassName');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          'MyClassName',
+        );
       });
 
       test('converts names with leading underscores to PascalCase', () {
@@ -322,7 +359,10 @@ void main() {
           examples: const [],
         );
 
-        expect(nameGenerator.generateModelName(model), 'MyClassName');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          'MyClassName',
+        );
       });
 
       test('uses Anonymous for model without name or context path', () {
@@ -333,7 +373,10 @@ void main() {
           examples: const [],
         );
 
-        expect(nameGenerator.generateModelName(model), 'AnonymousModel');
+        expect(
+          nameGenerator.generateModelName(model, usedNames),
+          'AnonymousModel',
+        );
       });
 
       test('makes anonymous names unique using Model suffix', () {
@@ -356,9 +399,9 @@ void main() {
           examples: const [],
         );
 
-        final name1 = nameGenerator.generateModelName(model1);
-        final name2 = nameGenerator.generateModelName(model2);
-        final name3 = nameGenerator.generateModelName(model3);
+        final name1 = nameGenerator.generateModelName(model1, usedNames);
+        final name2 = nameGenerator.generateModelName(model2, usedNames);
+        final name3 = nameGenerator.generateModelName(model3, usedNames);
 
         expect(name1, 'AnonymousModel');
         expect(name2, 'AnonymousModel2');
@@ -374,7 +417,7 @@ void main() {
             context: Context.initial(),
             examples: const [],
           );
-          expect(nameGenerator.generateModelName(model), 'Model23');
+          expect(nameGenerator.generateModelName(model, usedNames), 'Model23');
         });
 
         test('removes leading numbers', () {
@@ -385,7 +428,7 @@ void main() {
             context: Context.initial(),
             examples: const [],
           );
-          expect(nameGenerator.generateModelName(model), 'Model');
+          expect(nameGenerator.generateModelName(model, usedNames), 'Model');
         });
 
         test('removes leading numbers but preserves internal ones', () {
@@ -396,7 +439,10 @@ void main() {
             context: Context.initial(),
             examples: const [],
           );
-          expect(nameGenerator.generateModelName(model), 'Model12String33');
+          expect(
+            nameGenerator.generateModelName(model, usedNames),
+            'Model12String33',
+          );
         });
 
         test('handles multiple number segments', () {
@@ -407,7 +453,10 @@ void main() {
             context: Context.initial(),
             examples: const [],
           );
-          expect(nameGenerator.generateModelName(model), 'User2Profile3Data4');
+          expect(
+            nameGenerator.generateModelName(model, usedNames),
+            'User2Profile3Data4',
+          );
         });
 
         test('handles names with only numbers', () {
@@ -418,7 +467,10 @@ void main() {
             context: Context.initial(),
             examples: const [],
           );
-          expect(nameGenerator.generateModelName(model), 'Anonymous');
+          expect(
+            nameGenerator.generateModelName(model, usedNames),
+            'Anonymous',
+          );
         });
       });
       group('_sanitizeName', () {
@@ -432,6 +484,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'HelloWorldTest',
           );
@@ -447,6 +500,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'HelloWorld',
           );
@@ -462,6 +516,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'HelloWorldTest123',
           );
@@ -477,6 +532,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'HelloWorldTest',
           );
@@ -492,6 +548,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'MyClassName',
           );
@@ -507,6 +564,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'BillingCreditBalanceTransaction',
           );
@@ -524,6 +582,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'Test',
           );
@@ -538,6 +597,7 @@ void main() {
               context: Context.initial(),
               examples: const [],
             ),
+            usedNames,
           );
 
           expect(
@@ -549,6 +609,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'TestModel',
           );
@@ -564,6 +625,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             )
             ..generateModelName(
               ClassModel(
@@ -573,6 +635,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             );
 
           expect(
@@ -584,6 +647,7 @@ void main() {
                 context: Context.initial(),
                 examples: const [],
               ),
+              usedNames,
             ),
             'TestModel2',
           );
@@ -605,8 +669,8 @@ void main() {
             examples: const [],
           );
 
-          final name1 = nameGenerator.generateModelName(model1);
-          final name2 = nameGenerator.generateModelName(model2);
+          final name1 = nameGenerator.generateModelName(model1, usedNames);
+          final name2 = nameGenerator.generateModelName(model2, usedNames);
 
           expect(name1, 'UserModel');
           expect(name2, 'UserModel2');
@@ -622,7 +686,10 @@ void main() {
             bodies: const {},
             context: Context.initial(),
           );
-          expect(nameGenerator.generateResponseName(response), 'User');
+          expect(
+            nameGenerator.generateResponseName(response, usedNames),
+            'User',
+          );
         });
 
         test('converts name to PascalCase', () {
@@ -633,7 +700,10 @@ void main() {
             bodies: const {},
             context: Context.initial(),
           );
-          expect(nameGenerator.generateResponseName(response), 'UserProfile');
+          expect(
+            nameGenerator.generateResponseName(response, usedNames),
+            'UserProfile',
+          );
         });
 
         test('makes duplicate response names unique using Response suffix', () {
@@ -659,9 +729,18 @@ void main() {
             context: Context.initial(),
           );
 
-          final name1 = nameGenerator.generateResponseName(response1);
-          final name2 = nameGenerator.generateResponseName(response2);
-          final name3 = nameGenerator.generateResponseName(response3);
+          final name1 = nameGenerator.generateResponseName(
+            response1,
+            usedNames,
+          );
+          final name2 = nameGenerator.generateResponseName(
+            response2,
+            usedNames,
+          );
+          final name3 = nameGenerator.generateResponseName(
+            response3,
+            usedNames,
+          );
 
           expect(name1, 'User');
           expect(name2, 'UserResponse');
@@ -677,7 +756,7 @@ void main() {
             context: Context.initial().pushAll(['api', 'models', 'user']),
           );
           expect(
-            nameGenerator.generateResponseName(response),
+            nameGenerator.generateResponseName(response, usedNames),
             'ApiModelsUserResponse',
           );
         });
@@ -691,7 +770,7 @@ void main() {
             context: Context.initial(),
           );
           expect(
-            nameGenerator.generateResponseName(response),
+            nameGenerator.generateResponseName(response, usedNames),
             'AnonymousResponse',
           );
         });
@@ -704,7 +783,10 @@ void main() {
             bodies: const {},
             context: Context.initial(),
           );
-          expect(nameGenerator.generateResponseName(response), 'Model23');
+          expect(
+            nameGenerator.generateResponseName(response, usedNames),
+            'Model23',
+          );
         });
 
         test('handles names that already end with Response', () {
@@ -723,8 +805,14 @@ void main() {
             context: Context.initial(),
           );
 
-          final name1 = nameGenerator.generateResponseName(response1);
-          final name2 = nameGenerator.generateResponseName(response2);
+          final name1 = nameGenerator.generateResponseName(
+            response1,
+            usedNames,
+          );
+          final name2 = nameGenerator.generateResponseName(
+            response2,
+            usedNames,
+          );
 
           expect(name1, 'UserResponse');
           expect(name2, 'UserResponse2');
@@ -746,16 +834,22 @@ void main() {
             context: Context.initial(),
           );
 
-          final modelName = nameGenerator.generateModelName(model);
-          final responseName = nameGenerator.generateResponseName(response);
-          final responseName2 = nameGenerator.generateResponseName(response);
+          final modelName = nameGenerator.generateModelName(model, usedNames);
+          final responseName = nameGenerator.generateResponseName(
+            response,
+            usedNames,
+          );
+          final responseName2 = nameGenerator.generateResponseName(
+            response,
+            usedNames,
+          );
 
           expect(modelName, 'User');
           expect(responseName, 'UserResponse');
           expect(responseName2, 'UserResponse2');
 
           // Verify model names are also unique against response names
-          final modelName2 = nameGenerator.generateModelName(model);
+          final modelName2 = nameGenerator.generateModelName(model, usedNames);
           expect(modelName2, 'UserModel');
         });
       });
@@ -763,26 +857,40 @@ void main() {
       group('generateTagName', () {
         test('generates unique API class names for tags', () {
           final manager = NameGenerator();
-
-          expect(manager.generateTagName(Tag(name: 'pets')), 'PetsApi');
-
-          expect(manager.generateTagName(Tag(name: 'pets')), 'PetsApi2');
+          final usedNames = <String>{};
 
           expect(
-            manager.generateTagName(Tag(name: 'store_inventory')),
+            manager.generateTagName(Tag(name: 'pets'), usedNames),
+            'PetsApi',
+          );
+
+          expect(
+            manager.generateTagName(Tag(name: 'pets'), usedNames),
+            'PetsApi2',
+          );
+
+          expect(
+            manager.generateTagName(Tag(name: 'store_inventory'), usedNames),
             'StoreInventoryApi',
           );
         });
 
         test('handles special characters and numbers in tag names', () {
           final manager = NameGenerator();
-
-          expect(manager.generateTagName(Tag(name: '2pets')), 'PetsApi');
-
-          expect(manager.generateTagName(Tag(name: 'pets-v2')), 'PetsV2Api');
+          final usedNames = <String>{};
 
           expect(
-            manager.generateTagName(Tag(name: '_store_api')),
+            manager.generateTagName(Tag(name: '2pets'), usedNames),
+            'PetsApi',
+          );
+
+          expect(
+            manager.generateTagName(Tag(name: 'pets-v2'), usedNames),
+            'PetsV2Api',
+          );
+
+          expect(
+            manager.generateTagName(Tag(name: '_store_api'), usedNames),
             'StoreApiApi',
           );
         });
@@ -807,7 +915,7 @@ void main() {
         );
 
         final (baseName, subclassNames) = nameGenerator
-            .generateRequestBodyNames(requestBody);
+            .generateRequestBodyNames(requestBody, usedNames);
         expect(baseName, 'User');
         expect(subclassNames, isEmpty);
       });
@@ -837,7 +945,7 @@ void main() {
           );
 
           final (baseName, subclassNames) = nameGenerator
-              .generateRequestBodyNames(requestBody);
+              .generateRequestBodyNames(requestBody, usedNames);
           expect(baseName, 'User');
           expect(subclassNames, {
             'application/json': 'UserJson',
@@ -870,7 +978,7 @@ void main() {
 
         // First call to generate names
         final (baseName1, subclassNames1) = nameGenerator
-            .generateRequestBodyNames(requestBody);
+            .generateRequestBodyNames(requestBody, usedNames);
         expect(baseName1, 'User');
         expect(subclassNames1, {
           'application/json': 'UserJson',
@@ -879,7 +987,7 @@ void main() {
 
         // Second call with same content types should get different names
         final (baseName2, subclassNames2) = nameGenerator
-            .generateRequestBodyNames(requestBody);
+            .generateRequestBodyNames(requestBody, usedNames);
         expect(baseName2, 'UserRequestBody');
         expect(subclassNames2, {
           'application/json': 'UserRequestBodyJson',
@@ -916,7 +1024,7 @@ void main() {
         );
 
         final (baseName, subclassNames) = nameGenerator
-            .generateRequestBodyNames(aliasBody);
+            .generateRequestBodyNames(aliasBody, usedNames);
         expect(baseName, 'UserAlias');
         expect(subclassNames, isEmpty);
       });
@@ -961,7 +1069,11 @@ void main() {
           ),
         };
         final (baseName, subclassNames) = nameGenerator
-            .generateResponseWrapperNames('TestOperation', responses);
+            .generateResponseWrapperNames(
+              'TestOperation',
+              responses,
+              usedNames,
+            );
 
         expect(baseName, 'TestOperationResponse');
         expect(subclassNames.keys, containsAll(responses.keys));
@@ -988,7 +1100,7 @@ void main() {
           );
 
           expect(
-            nameGenerator.generateResponseName(response),
+            nameGenerator.generateResponseName(response, usedNames),
             'GetPetResponse',
           );
 
@@ -1023,7 +1135,7 @@ void main() {
             ),
           };
           final (baseName, subclassNames) = nameGenerator
-              .generateResponseWrapperNames('GetPet', responses);
+              .generateResponseWrapperNames('GetPet', responses, usedNames);
 
           expect(baseName, 'GetPetResponseWrapper');
           expect(subclassNames.keys, containsAll(responses.keys));
@@ -1071,7 +1183,11 @@ void main() {
           ),
         };
         final (baseName, subclassNames) = nameGenerator
-            .generateResponseWrapperNames('TestOperation', responses);
+            .generateResponseWrapperNames(
+              'TestOperation',
+              responses,
+              usedNames,
+            );
 
         expect(baseName, 'TestOperationResponse');
         expect(subclassNames.keys, containsAll(responses.keys));
@@ -1111,7 +1227,11 @@ void main() {
           ),
         };
         final (baseName, subclassNames) = nameGenerator
-            .generateResponseWrapperNames('TestOperation', responses);
+            .generateResponseWrapperNames(
+              'TestOperation',
+              responses,
+              usedNames,
+            );
 
         expect(baseName, 'TestOperationResponse');
         expect(
@@ -1149,7 +1269,10 @@ void main() {
           },
         );
 
-        final baseName = nameGenerator.generateResponseName(response);
+        final baseName = nameGenerator.generateResponseName(
+          response,
+          usedNames,
+        );
         final jsonName = nameGenerator.generateResponseImplementationName(
           baseName,
           ResponseBody(
@@ -1158,6 +1281,7 @@ void main() {
             contentType: ContentType.json,
             examples: const [],
           ),
+          usedNames,
         );
         final xmlName = nameGenerator.generateResponseImplementationName(
           baseName,
@@ -1167,6 +1291,7 @@ void main() {
             contentType: ContentType.json,
             examples: const [],
           ),
+          usedNames,
         );
 
         expect(jsonName, 'UserResponseJson');
@@ -1195,7 +1320,10 @@ void main() {
           },
         );
 
-        final baseName = nameGenerator.generateResponseName(response);
+        final baseName = nameGenerator.generateResponseName(
+          response,
+          usedNames,
+        );
         final name1 = nameGenerator.generateResponseImplementationName(
           baseName,
           ResponseBody(
@@ -1204,6 +1332,7 @@ void main() {
             contentType: ContentType.json,
             examples: const [],
           ),
+          usedNames,
         );
         final name2 = nameGenerator.generateResponseImplementationName(
           baseName,
@@ -1213,6 +1342,7 @@ void main() {
             contentType: ContentType.json,
             examples: const [],
           ),
+          usedNames,
         );
 
         expect(name1, 'UserResponseJson');
@@ -1235,7 +1365,10 @@ void main() {
           },
         );
 
-        final baseName = nameGenerator.generateResponseName(response);
+        final baseName = nameGenerator.generateResponseName(
+          response,
+          usedNames,
+        );
         final name = nameGenerator.generateResponseImplementationName(
           baseName,
           ResponseBody(
@@ -1244,6 +1377,7 @@ void main() {
             contentType: ContentType.json,
             examples: const [],
           ),
+          usedNames,
         );
 
         expect(name, 'UserResponseJsonV2');
@@ -1265,7 +1399,10 @@ void main() {
           },
         );
 
-        final baseName = nameGenerator.generateResponseName(response);
+        final baseName = nameGenerator.generateResponseName(
+          response,
+          usedNames,
+        );
         final name = nameGenerator.generateResponseImplementationName(
           baseName,
           ResponseBody(
@@ -1274,6 +1411,7 @@ void main() {
             contentType: ContentType.json,
             examples: const [],
           ),
+          usedNames,
         );
 
         expect(name, 'UserResponseApplication');
@@ -1283,13 +1421,14 @@ void main() {
     group('Server names', () {
       test('generates names based on subdomain differences', () {
         final generator = NameGenerator();
+        final usedNames = <String>{};
         final servers = [
           const Server(url: 'https://api.example.com'),
           const Server(url: 'https://staging.example.com'),
           const Server(url: 'https://dev.example.com'),
         ];
 
-        final result = generator.generateServerNames(servers);
+        final result = generator.generateServerNames(servers, usedNames);
 
         expect(result.serverMap.length, 3);
         expect(result.serverMap[servers[0]], 'ApiServer');
@@ -1301,6 +1440,7 @@ void main() {
 
       test('generates names based on multi-level subdomain differences', () {
         final generator = NameGenerator();
+        final usedNames = <String>{};
         final servers = [
           const Server(url: 'https://api.dev.example.com'),
           const Server(
@@ -1309,7 +1449,7 @@ void main() {
           const Server(url: 'https://api.prod.example.com'),
         ];
 
-        final result = generator.generateServerNames(servers);
+        final result = generator.generateServerNames(servers, usedNames);
 
         expect(result.serverMap.length, 3);
         expect(result.serverMap[servers[0]], 'ApiDevServer');
@@ -1323,13 +1463,14 @@ void main() {
         'generates names based on host differences when subdomains are equal',
         () {
           final generator = NameGenerator();
+          final usedNames = <String>{};
           final servers = [
             const Server(url: 'https://api.example.com'),
             const Server(url: 'https://api.acme.com'),
             const Server(url: 'https://api.test.com'),
           ];
 
-          final result = generator.generateServerNames(servers);
+          final result = generator.generateServerNames(servers, usedNames);
 
           expect(result.serverMap.length, 3);
           expect(result.serverMap[servers[0]], 'ExampleServer');
@@ -1343,13 +1484,14 @@ void main() {
       test('generates names based on path differences with equal '
           'domains and subdomains', () {
         final generator = NameGenerator();
+        final usedNames = <String>{};
         final servers = [
           const Server(url: 'https://api.example.com/v1'),
           const Server(url: 'https://api.example.com/v2'),
           const Server(url: 'https://api.example.com/beta'),
         ];
 
-        final result = generator.generateServerNames(servers);
+        final result = generator.generateServerNames(servers, usedNames);
 
         expect(result.serverMap.length, 3);
         expect(result.serverMap[servers[0]], 'V1Server');
@@ -1363,13 +1505,14 @@ void main() {
         'adds numeric suffixes as a last resort when all other parts are equal',
         () {
           final generator = NameGenerator();
+          final usedNames = <String>{};
           final servers = [
             const Server(url: 'https://api.example.com', description: 'a'),
             const Server(url: 'https://api.example.com', description: 'b'),
             const Server(url: 'https://api.example.com', description: 'c'),
           ];
 
-          final result = generator.generateServerNames(servers);
+          final result = generator.generateServerNames(servers, usedNames);
 
           expect(result.serverMap.length, 3);
           expect(result.serverMap[servers[0]], 'Server2');
@@ -1384,6 +1527,7 @@ void main() {
         'uses numeric suffix when CustomServer is already taken',
         () {
           final generator = NameGenerator();
+          final usedNames = <String>{};
           final servers = [
             const Server(
               url: 'https://custom.server.com',
@@ -1391,7 +1535,7 @@ void main() {
             ),
           ];
 
-          final result = generator.generateServerNames(servers);
+          final result = generator.generateServerNames(servers, usedNames);
 
           expect(result.serverMap.length, 1);
           expect(result.serverMap[servers[0]], 'CustomServer');
@@ -1402,6 +1546,7 @@ void main() {
 
       test('uses default names on invalid URLs', () {
         final generator = NameGenerator();
+        final usedNames = <String>{};
         final servers = [
           const Server(url: 'This is not a URI'),
           const Server(
@@ -1411,7 +1556,7 @@ void main() {
           const Server(url: 'https://api.example.com/v2'),
         ];
 
-        final result = generator.generateServerNames(servers);
+        final result = generator.generateServerNames(servers, usedNames);
 
         expect(result.serverMap.length, 4);
         expect(result.serverMap[servers[0]], 'Server2');
@@ -1436,7 +1581,7 @@ void main() {
           ]),
           examples: const [],
         );
-        expect(nameGenerator.generateModelName(model), r'$Function');
+        expect(nameGenerator.generateModelName(model, usedNames), r'$Function');
       });
 
       test('escapes lowercase function schema name with dollar prefix', () {
@@ -1453,7 +1598,7 @@ void main() {
         );
         // _sanitizeName('function') → 'Function' (PascalCase)
         // ensureValidClassName('Function') matches exactly → '$Function'
-        expect(nameGenerator.generateModelName(model), r'$Function');
+        expect(nameGenerator.generateModelName(model, usedNames), r'$Function');
       });
 
       test('does not escape PascalCase keyword class names', () {
@@ -1471,7 +1616,7 @@ void main() {
         );
         // _sanitizeName('dynamic') → 'Dynamic' (PascalCase)
         // 'Dynamic' is not in allKeywords (only 'dynamic' is)
-        expect(nameGenerator.generateModelName(model), 'Dynamic');
+        expect(nameGenerator.generateModelName(model, usedNames), 'Dynamic');
       });
 
       test('does not escape non-keyword schema names', () {
@@ -1486,7 +1631,7 @@ void main() {
           ]),
           examples: const [],
         );
-        expect(nameGenerator.generateModelName(model), 'User');
+        expect(nameGenerator.generateModelName(model, usedNames), 'User');
       });
 
       test('does not escape dart:core type names (prefixed imports)', () {
@@ -1503,12 +1648,13 @@ void main() {
             examples: const [],
           );
           expect(
-            nameGenerator.generateModelName(model),
+            nameGenerator.generateModelName(model, usedNames),
             name,
             reason: '$name is valid because dart:core is imported with prefix',
           );
           // Reset the generator for each iteration to avoid uniqueness suffixes
           nameGenerator = NameGenerator();
+          usedNames = <String>{};
         }
       });
     });
@@ -1531,7 +1677,7 @@ void main() {
         );
         // PascalCase 'Switch' is a valid Dart class name
         expect(
-          nameGenerator.generateOperationName(operation),
+          nameGenerator.generateOperationName(operation, usedNames),
           'Switch',
         );
       });
@@ -1553,7 +1699,7 @@ void main() {
         );
         // PascalCase 'Return' is a valid Dart class name
         expect(
-          nameGenerator.generateOperationName(operation),
+          nameGenerator.generateOperationName(operation, usedNames),
           'Return',
         );
       });
@@ -1575,7 +1721,7 @@ void main() {
         );
         // 'Function' is a built-in identifier (stored with capital F)
         expect(
-          nameGenerator.generateOperationName(operation),
+          nameGenerator.generateOperationName(operation, usedNames),
           r'$Function',
         );
       });
@@ -1585,7 +1731,7 @@ void main() {
       test('escapes Function tag name with dollar prefix', () {
         final tag = Tag(name: 'Function');
         expect(
-          nameGenerator.generateTagName(tag),
+          nameGenerator.generateTagName(tag, usedNames),
           r'$FunctionApi',
         );
       });
@@ -1594,7 +1740,7 @@ void main() {
         // 'Default' and 'Switch' are valid Dart class names
         final defaultTag = Tag(name: 'default');
         expect(
-          nameGenerator.generateTagName(defaultTag),
+          nameGenerator.generateTagName(defaultTag, usedNames),
           'DefaultApi',
         );
       });
@@ -1602,25 +1748,25 @@ void main() {
 
     group('fileNameForClass', () {
       test('converts a PascalCase class name to a snake_case file name', () {
-        expect(nameGenerator.fileNameForClass('FooBar'), 'foo_bar.dart');
+        expect(NameGenerator.fileNameForClass('FooBar'), 'foo_bar.dart');
       });
 
       test('maps a dollar-prefixed class name to the same file name as its '
           'plain form', () {
-        expect(nameGenerator.fileNameForClass(r'$User'), 'user.dart');
-        expect(nameGenerator.fileNameForClass('User'), 'user.dart');
+        expect(NameGenerator.fileNameForClass(r'$User'), 'user.dart');
+        expect(NameGenerator.fileNameForClass('User'), 'user.dart');
       });
 
       test('keeps the leading underscore for digit-leading class names', () {
         expect(
-          nameGenerator.fileNameForClass(r'$20100401Test'),
+          NameGenerator.fileNameForClass(r'$20100401Test'),
           '_20100401_test.dart',
         );
       });
 
       test('falls back to the raw snake_case form when stripping would empty '
           'the name', () {
-        expect(nameGenerator.fileNameForClass(r'$'), '_.dart');
+        expect(NameGenerator.fileNameForClass(r'$'), '_.dart');
       });
     });
 

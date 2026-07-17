@@ -194,7 +194,7 @@ BuiltExpression _buildFromJson(
       final className = nameManager.modelName(model);
       final expr = refer(
         className,
-        sourceFileUrl(package, 'model', className, nameManager),
+        sourceFileUrl(package, 'model', className),
       ).property('fromJson').call([receiver]);
       final body = nullable
           ? receiver.equalTo(literalNull).conditional(literalNull, expr)
@@ -204,7 +204,7 @@ BuiltExpression _buildFromJson(
       final className = nameManager.modelName(model);
       final expr = refer(
         className,
-        sourceFileUrl(package, 'model', className, nameManager),
+        sourceFileUrl(package, 'model', className),
       ).property('fromJson').call([receiver]);
       final body = nullable
           ? receiver.equalTo(literalNull).conditional(literalNull, expr)
@@ -396,7 +396,7 @@ BuiltExpression _buildListFromJsonBody(
       final className = nameManager.modelName(unwrappedContent);
       final fromJson = refer(
         className,
-        sourceFileUrl(package, 'model', className, nameManager),
+        sourceFileUrl(package, 'model', className),
       ).property('fromJson');
       final mapFunction = isItemNullable
           ? elementClosure(fromJson.call([refer('e')]))
@@ -640,7 +640,7 @@ BuiltExpression _buildNamedTypedefHelperCall({
 }) {
   final named = model as NamedModel;
   final typedefName = nameManager.modelName(model);
-  final typedefUrl = sourceFileUrl(package, 'model', typedefName, nameManager);
+  final typedefUrl = sourceFileUrl(package, 'model', typedefName);
   final helperName = helperContext.helperName(named, _decodePrefix);
   final receiver = receiverOverride ?? refer(value);
 

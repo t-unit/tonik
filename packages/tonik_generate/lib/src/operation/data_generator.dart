@@ -54,12 +54,7 @@ class DataGenerator {
       final parameterType = TypeReference(
         (b) => b
           ..symbol = requestBodyBaseName
-          ..url = sourceFileUrl(
-            package,
-            'request_body',
-            requestBodyBaseName,
-            nameManager,
-          )
+          ..url = sourceFileUrl(package, 'request_body', requestBodyBaseName)
           ..isNullable = !isRequired,
       );
 
@@ -73,7 +68,6 @@ class DataGenerator {
           package,
           'request_body',
           nameManager.requestBodyNames(requestBody).$1,
-          nameManager,
         );
         switchCases
           ..add(const Code('final '))
