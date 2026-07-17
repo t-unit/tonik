@@ -244,6 +244,79 @@ void main() {
     expect(api.models.contains(oneOfModel), isTrue);
   });
 
+  test('imports top-level schema with unquoted null type as nullable', () {
+    const spec = {
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Name': {
+            'type': ['string', null],
+          },
+        },
+      },
+    };
+
+    final api = Importer().import(spec);
+
+    final model = api.models.firstWhere(
+      (m) => m is NamedModel && m.name == 'Name',
+    );
+    expect(model, isA<AliasModel>());
+    final aliasModel = model as AliasModel;
+    expect(aliasModel.isNullable, isTrue);
+    expect(aliasModel.model, isA<StringModel>());
+  });
+
+  test('imports property with unquoted null type as nullable', () {
+    const spec = {
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Person': {
+            'type': 'object',
+            'properties': {
+              'name': {
+                'type': ['string', null],
+              },
+            },
+          },
+        },
+      },
+    };
+
+    final api = Importer().import(spec);
+
+    final model =
+        api.models.firstWhere(
+              (m) => m is ClassModel && m.name == 'Person',
+            )
+            as ClassModel;
+    final name = model.properties.firstWhere((p) => p.name == 'name');
+    expect(name.model, isA<StringModel>());
+    expect(name.isNullable, isTrue);
+  });
+
+  test('throws FormatException for non-string type array element', () {
+    const spec = {
+      'openapi': '3.1.0',
+      'info': {'title': 'Test API', 'version': '1.0.0'},
+      'paths': <String, dynamic>{},
+      'components': {
+        'schemas': {
+          'Name': {
+            'type': ['string', 123],
+          },
+        },
+      },
+    };
+
+    expect(() => Importer().import(spec), throwsFormatException);
+  });
+
   test('adds nested inline type array OneOfModel to models set', () {
     final api = Importer().import(fileContent);
 
