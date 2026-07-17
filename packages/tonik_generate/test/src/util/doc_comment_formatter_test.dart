@@ -23,6 +23,24 @@ void main() {
       expect(result[2], '/// with three lines');
     });
 
+    test('removes lone carriage returns within the text', () {
+      final result = formatDocComment('first line\rsecond line');
+
+      expect(result, ['/// first linesecond line']);
+    });
+
+    test('treats CRLF line endings as single line breaks', () {
+      final result = formatDocComment('first line\r\nsecond line');
+
+      expect(result, ['/// first line', '/// second line']);
+    });
+
+    test('returns empty list for carriage-return-only string', () {
+      final result = formatDocComment('\r');
+
+      expect(result, isEmpty);
+    });
+
     test('returns empty list for null string', () {
       final result = formatDocComment(null);
 
@@ -116,6 +134,27 @@ void main() {
         '/// Line two',
         '/// Line three',
       ]);
+    });
+
+    test('removes lone carriage returns within the text', () {
+      final result = formatDocCommentWithPrefix('[param] ', 'first\rsecond');
+
+      expect(result, ['/// [param] firstsecond']);
+    });
+
+    test('treats CRLF line endings as single line breaks', () {
+      final result = formatDocCommentWithPrefix(
+        '[param] ',
+        'first line\r\nsecond line',
+      );
+
+      expect(result, ['/// [param] first line', '/// second line']);
+    });
+
+    test('returns empty list for carriage-return-only text', () {
+      final result = formatDocCommentWithPrefix('[param] ', '\r');
+
+      expect(result, isEmpty);
     });
 
     test('returns empty list for null text', () {

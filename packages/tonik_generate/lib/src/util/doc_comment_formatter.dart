@@ -3,12 +3,14 @@
 /// If the string is multiline, each line will be prefixed with '/// '.
 /// Returns an empty list if the input is null or empty.
 List<String> formatDocComment(String? text) {
-  if (text == null || text.isEmpty) {
+  // Dart treats a lone CR as a line terminator, so any CR surviving into a
+  // doc-comment line lets the rest of the text escape the `///` prefix.
+  final normalized = text?.replaceAll('\r', '');
+  if (normalized == null || normalized.isEmpty) {
     return [];
   }
 
-  // Split by newlines and prefix each line with '/// '
-  return text.split('\n').map((line) => '/// $line').toList();
+  return normalized.split('\n').map((line) => '/// $line').toList();
 }
 
 /// Formats a string as a doc comment with a prefix on the first line.
@@ -17,8 +19,9 @@ List<String> formatDocComment(String? text) {
 /// multiline, continuation lines get the `/// ` prefix without [prefix].
 /// Returns an empty list if [text] is null or empty.
 List<String> formatDocCommentWithPrefix(String prefix, String? text) {
-  if (text == null || text.isEmpty) return [];
-  final lines = text.split('\n');
+  final normalized = text?.replaceAll('\r', '');
+  if (normalized == null || normalized.isEmpty) return [];
+  final lines = normalized.split('\n');
   return [
     '/// $prefix${lines.first}',
     for (var i = 1; i < lines.length; i++) '/// ${lines[i]}',
