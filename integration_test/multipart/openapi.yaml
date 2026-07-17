@@ -414,6 +414,32 @@ paths:
                 type: string
                 format: binary
 
+  /multipart/recursive:
+    post:
+      operationId: postRecursiveArray
+      tags:
+        - multipart
+      summary: Post a multipart form with a self-recursive array property
+      description: >-
+        Tests a property whose schema is a self-recursive array (an array
+        whose items are the array itself). Nested arrays are not supported
+        in multipart encoding, so the generated method throws
+        EncodingException when the property is set and succeeds when it is
+        omitted.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RecursiveArrayForm'
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GenericResponse'
+
   /custom/multipart:
     post:
       operationId: postCustomMultipart
@@ -760,6 +786,22 @@ components:
           description: >-
             Optional key-value metadata. This is a Map<String, String> in
             generated code, NOT a model class, so .toJson() must not be called.
+
+    RecursiveList:
+      type: array
+      items:
+        $ref: '#/components/schemas/RecursiveList'
+
+    RecursiveArrayForm:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+          description: A simple text label
+        tree:
+          $ref: '#/components/schemas/RecursiveList'
 
     GenericResponse:
       type: object

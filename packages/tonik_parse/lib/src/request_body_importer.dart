@@ -228,9 +228,13 @@ class RequestBodyImporter {
       if (property.isReadOnly) continue;
 
       final existing = explicitEncoding?[property.name];
-      final defaultContentType = _resolveDefaultContentType(property.model);
+      final defaultContentType = _resolveDefaultContentType(
+        property.model,
+        <core.Model>{},
+      );
       final defaultRawContentType = _resolveDefaultRawContentType(
         property.model,
+        <core.Model>{},
       );
 
       final isStyleBased = existing?.isStyleBased ?? false;
@@ -251,10 +255,16 @@ class RequestBodyImporter {
     return result;
   }
 
-  static core.ContentType _resolveDefaultContentType(core.Model model) {
+  /// A recursive model has no leaf to inspect; only complex structures can
+  /// recurse, so a cycle defaults to JSON.
+  static core.ContentType _resolveDefaultContentType(
+    core.Model model,
+    Set<core.Model> visited,
+  ) {
+    if (!visited.add(model)) return core.ContentType.json;
     return switch (model) {
-      core.AliasModel() => _resolveDefaultContentType(model.resolved),
-      core.ListModel() => _resolveDefaultContentType(model.content),
+      core.AliasModel() => _resolveDefaultContentType(model.resolved, visited),
+      core.ListModel() => _resolveDefaultContentType(model.content, visited),
       core.ClassModel() => core.ContentType.json,
       core.AllOfModel() => core.ContentType.json,
       core.OneOfModel() => core.ContentType.json,
@@ -266,10 +276,16 @@ class RequestBodyImporter {
     };
   }
 
-  static String _resolveDefaultRawContentType(core.Model model) {
+  static String _resolveDefaultRawContentType(
+    core.Model model,
+    Set<core.Model> visited,
+  ) {
+    if (!visited.add(model)) return 'application/json';
     return switch (model) {
-      core.AliasModel() => _resolveDefaultRawContentType(model.resolved),
-      core.ListModel() => _resolveDefaultRawContentType(model.content),
+      core.AliasModel() =>
+        _resolveDefaultRawContentType(model.resolved, visited),
+      core.ListModel() =>
+        _resolveDefaultRawContentType(model.content, visited),
       core.ClassModel() => 'application/json',
       core.AllOfModel() => 'application/json',
       core.OneOfModel() => 'application/json',

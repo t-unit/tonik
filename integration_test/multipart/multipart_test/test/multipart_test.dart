@@ -701,4 +701,41 @@ void main() {
       expect(octetSuccess.body, isA<TonikFile>());
     });
   });
+
+  group('Recursive array', () {
+    test('posts the form when the recursive array field is omitted', () async {
+      const form = RecursiveArrayForm(name: 'root');
+
+      final response = await api.postRecursiveArray(body: form);
+
+      expect(response, isA<TonikSuccess<GenericResponse>>());
+
+      final success = response as TonikSuccess<GenericResponse>;
+      final requestData = success.response.requestOptions.data;
+      expect(requestData, isA<FormData>());
+
+      final formData = requestData as FormData;
+      expect(formData.files.any((e) => e.key == 'name'), isTrue);
+      expect(formData.files.any((e) => e.key == 'tree'), isFalse);
+
+      expect(success.response.headers['x-has-name']?.first, 'true');
+      expect(success.response.headers['x-param-name']?.first, 'root');
+      expect(success.value.success, true);
+    });
+
+    test(
+      'returns encoding error when the recursive array field is set',
+      () async {
+        const form = RecursiveArrayForm(name: 'root', tree: [<Object?>[]]);
+
+        final response = await api.postRecursiveArray(body: form);
+
+        expect(response, isA<TonikError<GenericResponse>>());
+
+        final error = response as TonikError<GenericResponse>;
+        expect(error.type, TonikErrorType.encoding);
+        expect(error.error, isA<EncodingException>());
+      },
+    );
+  });
 }
