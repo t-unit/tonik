@@ -150,6 +150,17 @@ switch (path) {
         }
         break
 
+    case '/multipart/recursive':
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/json'
+            withHeader 'X-Has-Name', formParams.containsKey('name').toString()
+            withHeader 'X-Has-Tree', formParams.containsKey('tree').toString()
+            withHeader 'X-Param-Name', (formParams['name'] ?: '')
+            withContent '{"success":true,"message":"recursive form received"}'
+        }
+        break
+
     case '/custom/multipart':
         def requestContentType = context.request.headers['Content-Type'] ?: 'unknown'
         respond {

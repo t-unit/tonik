@@ -1345,6 +1345,65 @@ void main() {
         expect(encoding.rawContentType, 'text/plain');
       });
 
+      test('self-recursive array property gets application/json default '
+          'and logs warning', () {
+        final logs = <LogRecord>[];
+        final sub = Logger.root.onRecord.listen(logs.add);
+
+        addTearDown(sub.cancel);
+
+        final content = importMultipartContent(
+          multipartSpec(
+            properties: {
+              'tree': {r'$ref': '#/components/schemas/RecursiveList'},
+            },
+            schemas: {
+              'RecursiveList': {
+                'type': 'array',
+                'items': {r'$ref': '#/components/schemas/RecursiveList'},
+              },
+            },
+          ),
+        );
+
+        final encoding = partEncodingFor(content, 'tree')!;
+        expect(encoding.contentType, ContentType.json);
+        expect(encoding.rawContentType, 'application/json');
+        expect(
+          logs.any(
+            (r) => r.level == Level.WARNING && r.message.contains('"tree"'),
+          ),
+          isTrue,
+        );
+      });
+
+      test(
+        'mutually recursive array property gets application/json default',
+        () {
+          final content = importMultipartContent(
+            multipartSpec(
+              properties: {
+                'chain': {r'$ref': '#/components/schemas/LinkA'},
+              },
+              schemas: {
+                'LinkA': {
+                  'type': 'array',
+                  'items': {r'$ref': '#/components/schemas/LinkB'},
+                },
+                'LinkB': {
+                  'type': 'array',
+                  'items': {r'$ref': '#/components/schemas/LinkA'},
+                },
+              },
+            ),
+          );
+
+          final encoding = partEncodingFor(content, 'chain')!;
+          expect(encoding.contentType, ContentType.json);
+          expect(encoding.rawContentType, 'application/json');
+        },
+      );
+
       test('array of AnyModel gets application/json default', () {
         // See AnyModel test above — AnyModel is OAS 3.1 only.
         final content = importMultipartContent(
