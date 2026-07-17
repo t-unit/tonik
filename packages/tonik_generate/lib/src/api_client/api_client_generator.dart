@@ -34,8 +34,7 @@ class ApiClientGenerator {
     List<Server> servers,
   ) {
     final className = nameManager.tagName(tag);
-    final fileNameSnakeCase = className.toSnakeCase();
-    final fileName = '$fileNameSnakeCase.dart';
+    final fileName = nameManager.fileNameForClass(className);
 
     final library = Library(
       (b) => b..body.add(generateClass(operations, tag, servers)),

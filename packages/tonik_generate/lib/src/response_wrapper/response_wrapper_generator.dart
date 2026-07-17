@@ -1,4 +1,3 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
@@ -42,7 +41,7 @@ class ResponseWrapperGenerator {
     );
 
     final code = formatter.formatWithHeader(library.accept(emitter).toString());
-    final filename = '${baseName.toSnakeCase()}.dart';
+    final filename = nameManager.fileNameForClass(baseName);
     return (code: code, filename: filename);
   }
 

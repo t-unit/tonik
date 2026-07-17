@@ -2,7 +2,10 @@ import 'package:change_case/change_case.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 
-/// A manager for handling unique names in generated Dart code.
+/// Naming algorithms for generated Dart code.
+///
+/// Stateless: the claimed-file-name set passed as `usedFileNames` is owned
+/// by the caller (`NameManager` in production).
 class NameGenerator {
   NameGenerator();
 
@@ -12,7 +15,27 @@ class NameGenerator {
   static const _apiSuffix = 'Api';
   static const _requestBodySuffix = 'RequestBody';
 
-  final _usedNames = <String>{};
+  /// Derives the generated file name for [className].
+  ///
+  /// `$` prefixes would otherwise leave a private-looking leading `_`;
+  /// digit-leading names keep it because of the `file_names` lint.
+  static String fileNameForClass(String className) {
+    final snake = className.toSnakeCase();
+    final stripped = snake.replaceFirst(RegExp('^_+'), '');
+    if (stripped.isEmpty || RegExp(r'^\d').hasMatch(stripped)) {
+      return '$snake.dart';
+    }
+    return '$stripped.dart';
+  }
+
+  /// Uniqueness is tracked on the derived file name, not the class name:
+  /// class names differing only in `$` (e.g. `$User` vs `$$User`) map to
+  /// the same file and would silently overwrite each other.
+  static bool _isTaken(String name, Set<String> usedFileNames) =>
+      usedFileNames.contains(fileNameForClass(name));
+
+  static void _claim(String name, Set<String> usedFileNames) =>
+      usedFileNames.add(fileNameForClass(name));
 
   /// Generates a unique class name for a model.
   ///
@@ -30,21 +53,22 @@ class NameGenerator {
     String parentClassName,
     Model model,
     String? discriminatorValue,
+    Set<String> usedFileNames,
   ) {
     if (model is NamedModel && model.name != null && model.name!.isNotEmpty) {
       // No keyword check needed: variant names are always combined with
       // a parent prefix (e.g., 'ResultError'), making them safe.
       final sanitizedName = _sanitizeName(model.name!);
       final variantName = '$parentClassName$sanitizedName';
-      return _makeUnique(variantName, '');
+      return _makeUnique(variantName, '', usedFileNames);
     }
 
     final rawName = discriminatorValue ?? _generateDiscriminatorName(model);
     final variantName = '$parentClassName${rawName.toPascalCase()}';
-    return _makeUnique(variantName, '');
+    return _makeUnique(variantName, '', usedFileNames);
   }
 
-  String generateModelName(Model model) {
+  String generateModelName(Model model, Set<String> usedFileNames) {
     String? name;
     if (model is NamedModel) {
       name = model.nameOverride ?? model.name;
@@ -76,9 +100,9 @@ class NameGenerator {
       if (typeSuffix.isNotEmpty && !baseName.endsWith(typeSuffix)) {
         baseName = '$baseName$typeSuffix';
       }
-      return _makeUnique(baseName, _modelSuffix);
+      return _makeUnique(baseName, _modelSuffix, usedFileNames);
     } else {
-      return _makeUniqueWithTypeSuffix(baseName, _modelSuffix);
+      return _makeUniqueWithTypeSuffix(baseName, _modelSuffix, usedFileNames);
     }
   }
 
@@ -141,7 +165,7 @@ class NameGenerator {
   /// 1. Response's explicit name if available
   /// 2. Combined context path components
   /// 3. 'Anonymous' as fallback
-  String generateResponseName(Response response) {
+  String generateResponseName(Response response, Set<String> usedFileNames) {
     final rawBaseName = _generateBaseName(
       name: response.name,
       context: response.context,
@@ -154,9 +178,13 @@ class NameGenerator {
 
     // Only add Response suffix for anonymous responses
     if (response.name == null || (response.name?.isEmpty ?? false)) {
-      return _makeUnique(baseName, _responseSuffix);
+      return _makeUnique(baseName, _responseSuffix, usedFileNames);
     } else {
-      return _makeUniqueWithTypeSuffix(baseName, _responseSuffix);
+      return _makeUniqueWithTypeSuffix(
+        baseName,
+        _responseSuffix,
+        usedFileNames,
+      );
     }
   }
 
@@ -167,7 +195,7 @@ class NameGenerator {
   /// 2. Operation's operationId if available
   /// 3. Combined context path components
   /// 4. 'Anonymous' as fallback
-  String generateOperationName(Operation operation) {
+  String generateOperationName(Operation operation, Set<String> usedFileNames) {
     final name = operation.nameOverride ?? operation.operationId;
     final baseName = ensureValidClassName(
       _generateBaseName(
@@ -175,21 +203,21 @@ class NameGenerator {
         context: operation.context,
       ),
     );
-    return _makeUniqueWithTypeSuffix(baseName, _operationSuffix);
+    return _makeUniqueWithTypeSuffix(baseName, _operationSuffix, usedFileNames);
   }
 
   /// Generates a unique API class name for a tag.
-  String generateTagName(Tag tag) {
+  String generateTagName(Tag tag, Set<String> usedFileNames) {
     final name = tag.nameOverride ?? tag.name;
     final baseName = ensureValidClassName(_sanitizeName(name));
     final nameWithSuffix = '$baseName$_apiSuffix';
 
-    if (!_usedNames.contains(nameWithSuffix)) {
-      _usedNames.add(nameWithSuffix);
+    if (!_isTaken(nameWithSuffix, usedFileNames)) {
+      _claim(nameWithSuffix, usedFileNames);
       return nameWithSuffix;
     }
 
-    return _addNumberSuffix(nameWithSuffix);
+    return _addNumberSuffix(nameWithSuffix, usedFileNames);
   }
 
   /// Generates a unique request body class name.
@@ -205,6 +233,7 @@ class NameGenerator {
   /// to subclass names.
   (String baseName, Map<String, String> subclassNames) generateRequestBodyNames(
     RequestBody requestBody,
+    Set<String> usedFileNames,
   ) {
     final baseName = _generateBaseName(
       name: requestBody.name,
@@ -214,8 +243,12 @@ class NameGenerator {
     // Only add RequestBody suffix for anonymous request bodies
     final uniqueBaseName =
         requestBody.name == null || (requestBody.name?.isEmpty ?? false)
-        ? _makeUnique(baseName, _requestBodySuffix)
-        : _makeUniqueWithTypeSuffix(baseName, _requestBodySuffix);
+        ? _makeUnique(baseName, _requestBodySuffix, usedFileNames)
+        : _makeUniqueWithTypeSuffix(
+            baseName,
+            _requestBodySuffix,
+            usedFileNames,
+          );
 
     final subclassNames = <String, String>{};
     if (requestBody is RequestBodyObject && requestBody.contentCount > 1) {
@@ -227,6 +260,7 @@ class NameGenerator {
         subclassNames[content.rawContentType] = _makeUnique(
           subclassBaseName,
           '',
+          usedFileNames,
         );
       }
     }
@@ -243,6 +277,7 @@ class NameGenerator {
   generateResponseWrapperNames(
     String operationName,
     Map<ResponseStatus, Response> responses,
+    Set<String> usedFileNames,
   ) {
     String statusSuffix(ResponseStatus status) {
       if (status is ExplicitResponseStatus) {
@@ -263,6 +298,7 @@ class NameGenerator {
     final baseName = _makeUniqueWithTypeSuffix(
       '${operationName}Response',
       'Wrapper',
+      usedFileNames,
     );
 
     final subclassNames = <ResponseStatus, String>{};
@@ -270,7 +306,7 @@ class NameGenerator {
       final status = entry.key;
       final statusSuffixStr = statusSuffix(status);
       final subclassName = '$baseName$statusSuffixStr';
-      subclassNames[status] = _makeUnique(subclassName, '');
+      subclassNames[status] = _makeUnique(subclassName, '', usedFileNames);
     }
     return (baseName, subclassNames);
   }
@@ -286,10 +322,11 @@ class NameGenerator {
   String generateResponseImplementationName(
     String baseName,
     ResponseBody body,
+    Set<String> usedFileNames,
   ) {
     final contentType = body.rawContentType.split('/').lastOrNull;
     if (contentType == null) {
-      return _makeUnique(baseName, '');
+      return _makeUnique(baseName, '', usedFileNames);
     }
 
     // Preserve version suffixes from content types like application/json+v2.
@@ -301,7 +338,7 @@ class NameGenerator {
     final versionSuffix = version != null ? version.toPascalCase() : '';
     final fullSuffix = '$suffix$versionSuffix';
 
-    return _makeUnique(baseName, fullSuffix);
+    return _makeUnique(baseName, fullSuffix, usedFileNames);
   }
 
   /// Generates a base name using the following priority:
@@ -428,66 +465,74 @@ class NameGenerator {
   /// → [User, UserModel, UserModel2]
   /// Example with Response suffix: [User, User]
   /// → [User, UserResponse, UserResponse2]
-  String _makeUnique(String name, String suffix) {
+  String _makeUnique(String name, String suffix, Set<String> usedFileNames) {
     if (suffix.isEmpty) {
-      if (!_usedNames.contains(name)) {
-        _usedNames.add(name);
+      if (!_isTaken(name, usedFileNames)) {
+        _claim(name, usedFileNames);
         return name;
       }
 
       final nameWithModel = name.endsWith(_modelSuffix)
           ? name
           : '$name$_modelSuffix';
-      if (!_usedNames.contains(nameWithModel)) {
-        _usedNames.add(nameWithModel);
+      if (!_isTaken(nameWithModel, usedFileNames)) {
+        _claim(nameWithModel, usedFileNames);
         return nameWithModel;
       }
 
-      return _addNumberSuffix(nameWithModel);
+      return _addNumberSuffix(nameWithModel, usedFileNames);
     }
 
     final nameWithSuffix = name.endsWith(suffix) ? name : '$name$suffix';
 
-    if (!_usedNames.contains(nameWithSuffix)) {
-      _usedNames.add(nameWithSuffix);
+    if (!_isTaken(nameWithSuffix, usedFileNames)) {
+      _claim(nameWithSuffix, usedFileNames);
       return nameWithSuffix;
     }
 
-    return _addNumberSuffix(nameWithSuffix);
+    return _addNumberSuffix(nameWithSuffix, usedFileNames);
   }
 
   /// Makes a name unique by first trying the name as-is,
   /// then adding the type-specific suffix for conflicts.
-  String _makeUniqueWithTypeSuffix(String name, String typeSuffix) {
-    if (!_usedNames.contains(name)) {
-      _usedNames.add(name);
+  String _makeUniqueWithTypeSuffix(
+    String name,
+    String typeSuffix,
+    Set<String> usedFileNames,
+  ) {
+    if (!_isTaken(name, usedFileNames)) {
+      _claim(name, usedFileNames);
       return name;
     }
 
     final nameWithTypeSuffix = name.endsWith(typeSuffix)
         ? name
         : '$name$typeSuffix';
-    if (!_usedNames.contains(nameWithTypeSuffix)) {
-      _usedNames.add(nameWithTypeSuffix);
+    if (!_isTaken(nameWithTypeSuffix, usedFileNames)) {
+      _claim(nameWithTypeSuffix, usedFileNames);
       return nameWithTypeSuffix;
     }
 
-    return _addNumberSuffix(nameWithTypeSuffix);
+    return _addNumberSuffix(nameWithTypeSuffix, usedFileNames);
   }
 
   /// Makes a name unique by first trying the name as-is,
   /// then adding numeric suffixes.
-  String _makeUniqueWithNumericSuffix(String name) {
-    if (!_usedNames.contains(name)) {
-      _usedNames.add(name);
+  String _makeUniqueWithNumericSuffix(String name, Set<String> usedFileNames) {
+    if (!_isTaken(name, usedFileNames)) {
+      _claim(name, usedFileNames);
       return name;
     }
-    return _addNumberSuffix(name);
+    return _addNumberSuffix(name, usedFileNames);
   }
 
-  String _addNumberSuffix(String baseName) {
-    final picked = _firstFreeSuffix(baseName, _usedNames);
-    _usedNames.add(picked);
+  String _addNumberSuffix(String baseName, Set<String> usedFileNames) {
+    var counter = 2;
+    while (_isTaken('$baseName$counter', usedFileNames)) {
+      counter++;
+    }
+    final picked = '$baseName$counter';
+    _claim(picked, usedFileNames);
     return picked;
   }
 
@@ -503,7 +548,7 @@ class NameGenerator {
   ///
   /// Returns a record with the server map and a custom server name.
   ({String baseName, Map<Server, String> serverMap, String customName})
-  generateServerNames(List<Server> servers) {
+  generateServerNames(List<Server> servers, Set<String> usedFileNames) {
     // Try to parse all server URLs
     final parsedUrls = <Uri>[];
     try {
@@ -511,7 +556,7 @@ class NameGenerator {
         parsedUrls.add(Uri.parse(server.url));
       }
     } on Exception {
-      return _generateFallbackServerNames(servers);
+      return _generateFallbackServerNames(servers, usedFileNames);
     }
 
     final subdomains = parsedUrls.map((uri) {
@@ -543,49 +588,59 @@ class NameGenerator {
     final hasDuplicatePaths = paths.toSet().length != paths.length;
 
     if (!hasDuplicateSubdomains) {
-      return _generateServerNames(servers, subdomains);
+      return _generateServerNames(servers, subdomains, usedFileNames);
     } else if (!hasDuplicateHosts) {
-      return _generateServerNames(servers, hosts);
+      return _generateServerNames(servers, hosts, usedFileNames);
     } else if (!hasDuplicatePaths) {
-      return _generateServerNames(servers, paths);
+      return _generateServerNames(servers, paths, usedFileNames);
     } else {
-      return _generateFallbackServerNames(servers);
+      return _generateFallbackServerNames(servers, usedFileNames);
     }
   }
 
   ({String baseName, Map<Server, String> serverMap, String customName})
-  _generateServerNames(List<Server> servers, List<String> uniqueNames) {
-    final baseName = _makeUniqueWithNumericSuffix('Server');
+  _generateServerNames(
+    List<Server> servers,
+    List<String> uniqueNames,
+    Set<String> usedFileNames,
+  ) {
+    final baseName = _makeUniqueWithNumericSuffix('Server', usedFileNames);
 
     final resultMap = <Server, String>{};
     for (var index = 0; index < servers.length; index++) {
       final server = servers[index];
       final name = uniqueNames[index];
-      resultMap[server] = _makeUniqueWithNumericSuffix('${name}Server');
+      resultMap[server] = _makeUniqueWithNumericSuffix(
+        '${name}Server',
+        usedFileNames,
+      );
     }
 
-    final customName = resultMap.values.contains('CustomServer')
-        ? r'CustomServer$'
-        : 'CustomServer';
     return (
       baseName: baseName,
       serverMap: resultMap,
-      customName: _makeUnique(customName, ''),
+      customName: _makeUniqueWithNumericSuffix('CustomServer', usedFileNames),
     );
   }
 
   ({String baseName, Map<Server, String> serverMap, String customName})
-  _generateFallbackServerNames(List<Server> servers) {
-    final baseName = _makeUniqueWithNumericSuffix('Server');
+  _generateFallbackServerNames(
+    List<Server> servers,
+    Set<String> usedFileNames,
+  ) {
+    final baseName = _makeUniqueWithNumericSuffix('Server', usedFileNames);
 
     final resultMap = <Server, String>{};
     for (final server in servers) {
-      resultMap[server] = _makeUniqueWithNumericSuffix('Server');
+      resultMap[server] = _makeUniqueWithNumericSuffix(
+        'Server',
+        usedFileNames,
+      );
     }
     return (
       baseName: baseName,
       serverMap: resultMap,
-      customName: _makeUniqueWithNumericSuffix('CustomServer'),
+      customName: _makeUniqueWithNumericSuffix('CustomServer', usedFileNames),
     );
   }
 
@@ -596,11 +651,12 @@ class NameGenerator {
   String generateServerVariableEnumName(
     String serverName,
     ServerVariable variable,
+    Set<String> usedFileNames,
   ) {
     final variablePart = _sanitizeName(variable.name);
     final baseName = '$serverName$variablePart';
 
-    return _makeUnique(baseName, '');
+    return _makeUnique(baseName, '', usedFileNames);
   }
 
   /// Picks a static-member name for the default value of a class property,
@@ -609,8 +665,8 @@ class NameGenerator {
   /// The candidate is `<propertyName>Default`; on collision a numeric suffix
   /// is appended starting at 2.
   ///
-  /// Scoped to a single class body — not the global naming domain owned by
-  /// [_usedNames] — so the caller manages [reservedNames].
+  /// Scoped to a single class body — not the global `usedFileNames`
+  /// domain — so the caller manages [reservedNames].
   String generateDefaultMemberName({
     required String propertyName,
     required Set<String> reservedNames,

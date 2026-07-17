@@ -876,6 +876,30 @@ void main() {
       expect(result.filename, 'user_profile.dart');
     });
 
+    test('generates distinct filenames for class names differing only in '
+        'dollar signs', () {
+      final model1 = ClassModel(
+        isDeprecated: false,
+        name: r'$User',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+      final model2 = ClassModel(
+        isDeprecated: false,
+        name: r'$$User',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+
+      final result1 = generator.generate(model1);
+      final result2 = generator.generate(model2);
+
+      expect(result1.filename, 'user.dart');
+      expect(result2.filename, 'user_model.dart');
+    });
+
     group('property generation', () {
       test('generates required non-nullable int property', () {
         final model = ClassModel(

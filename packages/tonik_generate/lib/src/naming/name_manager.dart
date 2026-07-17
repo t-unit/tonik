@@ -55,8 +55,16 @@ class NameManager {
   >
   _enumVariantNamesCache = {};
 
+  /// File names already claimed by generated classes. Uniqueness state
+  /// lives here; [NameGenerator] itself is stateless.
+  final _usedFileNames = <String>{};
+
   // Getter (not field) keeps NameManager sendable across isolates.
   Logger get log => Logger('NameManager');
+
+  /// Derives the generated file name for [className].
+  String fileNameForClass(String className) =>
+      NameGenerator.fileNameForClass(className);
 
   /// Primes the name generator with all names from the given objects.
   /// This ensures consistent naming across multiple calls.
@@ -141,7 +149,7 @@ class NameManager {
   /// Gets a cached or generates a new unique class name for a model.
   String modelName(Model model) {
     return modelNames.putIfAbsent(model, () {
-      return generator.generateModelName(model);
+      return generator.generateModelName(model, _usedFileNames);
     });
   }
 
@@ -154,13 +162,17 @@ class NameManager {
     Response response,
   ) {
     return responseAndImplementationNames.putIfAbsent(response, () {
-      final baseName = generator.generateResponseName(response);
+      final baseName = generator.generateResponseName(response, _usedFileNames);
       final implementationNames = <String, String>{};
 
       if (response is ResponseObject && response.bodies.length > 1) {
         for (final body in response.bodies) {
           implementationNames[body.rawContentType] = generator
-              .generateResponseImplementationName(baseName, body);
+              .generateResponseImplementationName(
+                baseName,
+                body,
+                _usedFileNames,
+              );
         }
       }
 
@@ -174,7 +186,7 @@ class NameManager {
   /// For API client method names, use [operationMethodName] instead.
   String operationName(Operation operation) {
     return operationNames.putIfAbsent(operation, () {
-      return generator.generateOperationName(operation);
+      return generator.generateOperationName(operation, _usedFileNames);
     });
   }
 
@@ -192,7 +204,7 @@ class NameManager {
   /// Gets a cached or generates a new unique API class name for a tag.
   String tagName(Tag tag) {
     return tagNames.putIfAbsent(tag, () {
-      return generator.generateTagName(tag);
+      return generator.generateTagName(tag, _usedFileNames);
     });
   }
 
@@ -220,6 +232,7 @@ class NameManager {
         parentClassName,
         model,
         discriminatorValue,
+        _usedFileNames,
       );
     });
   }
@@ -233,7 +246,7 @@ class NameManager {
   ) {
     return requestBodyNameCache.putIfAbsent(
       requestBody,
-      () => generator.generateRequestBodyNames(requestBody),
+      () => generator.generateRequestBodyNames(requestBody, _usedFileNames),
     );
   }
 
@@ -248,6 +261,7 @@ class NameManager {
       () => generator.generateResponseWrapperNames(
         operationName(operation),
         operation.responses,
+        _usedFileNames,
       ),
     );
   }
@@ -275,7 +289,7 @@ class NameManager {
       return serverNamesCache[cacheKey]!;
     }
 
-    final result = generator.generateServerNames(servers);
+    final result = generator.generateServerNames(servers, _usedFileNames);
 
     serverNamesCache[cacheKey] = result;
 
@@ -291,7 +305,11 @@ class NameManager {
   String serverVariableEnumName(String serverName, ServerVariable variable) {
     final cacheKey = (serverName, variable.name);
     return serverVariableEnumNames.putIfAbsent(cacheKey, () {
-      return generator.generateServerVariableEnumName(serverName, variable);
+      return generator.generateServerVariableEnumName(
+        serverName,
+        variable,
+        _usedFileNames,
+      );
     });
   }
 

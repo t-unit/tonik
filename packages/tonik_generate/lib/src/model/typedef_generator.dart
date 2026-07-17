@@ -1,4 +1,3 @@
-import 'package:change_case/change_case.dart';
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:meta/meta.dart';
@@ -170,7 +169,7 @@ class TypedefGenerator {
       useNullSafetySyntax: true,
     );
 
-    final snakeCaseName = typedef.name.toSnakeCase();
+    final fileName = nameManager.fileNameForClass(typedef.name);
     final library = Library((b) => b.body.add(typedef));
 
     final formatter = DartFormatter(
@@ -179,6 +178,6 @@ class TypedefGenerator {
 
     final code = formatter.formatWithHeader(library.accept(emitter).toString());
 
-    return (code: code, filename: '$snakeCaseName.dart');
+    return (code: code, filename: fileName);
   }
 }

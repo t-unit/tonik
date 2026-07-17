@@ -1950,3 +1950,23 @@ components:
           type: string
         self_named_property:
           type: string
+
+    $User:
+      type: object
+      properties:
+        a:
+          type: string
+
+    $$User:
+      type: object
+      properties:
+        b:
+          type: string
+
+    DollarHolder:
+      type: object
+      properties:
+        first:
+          $ref: '#/components/schemas/$User'
+        second:
+          $ref: '#/components/schemas/$$User'
