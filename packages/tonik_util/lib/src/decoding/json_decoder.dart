@@ -135,7 +135,8 @@ extension JsonDecoder on Object? {
   /// `jsonDecode` yields a [double] for numbers written in fractional or
   /// exponent form (e.g. `10.0`, `1e1`); such whole-number doubles denote an
   /// integer and are accepted, matching JSON Schema's `integer` definition.
-  /// Throws [InvalidTypeException] if the value is not a valid int or is null.
+  /// Throws [InvalidTypeException] if the value is not a valid int, is null,
+  /// or exceeds the representable [int] range.
   int decodeJsonInt({String? context}) {
     final value = this;
     if (value is int) {
@@ -144,7 +145,12 @@ extension JsonDecoder on Object? {
     if (value is double &&
         value.isFinite &&
         value == value.truncateToDouble()) {
-      return value.toInt();
+      // int.tryParse rejects values outside the platform's int range, where
+      // double.toInt() would silently saturate.
+      final asInt = int.tryParse(value.toStringAsFixed(0));
+      if (asInt != null) {
+        return asInt;
+      }
     }
     throw InvalidTypeException(
       value: value == null ? 'null' : toString(),
