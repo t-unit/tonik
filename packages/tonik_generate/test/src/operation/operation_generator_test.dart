@@ -1101,6 +1101,151 @@ Future<TonikResult<void>> call({
       );
 
       test(
+        'passes body to _data but not _options for optional multipart body',
+        () {
+          final multipartModel = ClassModel(
+            name: 'UploadForm',
+            isDeprecated: false,
+            properties: [
+              Property(
+                name: 'name',
+                model: StringModel(context: context),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
+            context: context,
+            examples: const [],
+          );
+
+          final requestBody = RequestBodyObject(
+            name: 'upload',
+            context: context,
+            description: null,
+            isRequired: false,
+            content: {
+              RequestContent(
+                model: multipartModel,
+                contentType: ContentType.multipart,
+                rawContentType: 'multipart/form-data',
+                multipartEncoding: _multipartEncoding(multipartModel, {
+                  'name': const PartEncoding(
+                    contentType: ContentType.text,
+                    rawContentType: 'text/plain',
+                    headers: null,
+                    style: EncodingStyle.form,
+                    explode: true,
+                    allowReserved: false,
+                  ),
+                }),
+                examples: const [],
+              ),
+            },
+          );
+
+          final operation = Operation(
+            operationId: 'uploadOptionalForm',
+            context: context,
+            summary: 'Upload optional form',
+            description: 'Upload an optional form',
+            tags: const {},
+            isDeprecated: false,
+            path: '/upload-optional',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+            securitySchemes: const {},
+          );
+
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            cookieParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          const expectedMethod = r'''
+Future<TonikResult<void>> call({
+  UploadForm? body,
+  CancelToken? cancelToken,
+}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
+    _$data = await _data(body: body);
+    _$options = _options();
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  return TonikSuccess(null, _$response);
+}
+''';
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
         'prioritizes body parameter for request body with conflicting names',
         () {
           final requestBody = RequestBodyObject(
