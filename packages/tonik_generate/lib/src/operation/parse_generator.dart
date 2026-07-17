@@ -615,8 +615,7 @@ class ParseGenerator {
     return neverHeaders.map((headerName) {
       final headerValue = refer('response')
           .property('headers')
-          .property('value')
-          .call([specLiteralString(headerName)]);
+          .index(specLiteralString(headerName));
       return Block.of([
         const Code('if ('),
         headerValue.code,
@@ -680,10 +679,14 @@ class ParseGenerator {
         continue;
       }
 
+      // RFC 9110 combined field value: a header repeated across field
+      // lines is equivalent to the comma-joined single-line form.
       final headerValue = refer('response')
           .property('headers')
-          .property('value')
-          .call([specLiteralString(rawHeaderName)]);
+          .index(specLiteralString(rawHeaderName))
+          .nullSafeProperty('join')
+          .call([literalString(',')])
+          .parenthesized;
       final resolvedHeader = norm.header!.resolve();
       final decode = buildSimpleValueExpression(
         headerValue,
