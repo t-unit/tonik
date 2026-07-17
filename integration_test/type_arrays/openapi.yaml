@@ -236,6 +236,8 @@ components:
           type: [string, number, 'null']
         nullableMultiType:
           type: [string, integer, boolean, 'null']
+        unquotedNullable:
+          type: [string, null]
         requiredNullable:
           type: [string, 'null']
       required:

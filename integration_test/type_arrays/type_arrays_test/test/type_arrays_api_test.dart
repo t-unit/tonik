@@ -381,6 +381,7 @@ void main() {
         nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelInt(
           777,
         ),
+        unquotedNullable: 'unquoted-value',
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -396,6 +397,7 @@ void main() {
       expect(requestData['nullableBoolean'], true);
       expect(requestData['nullableStringOrNumber'], 'mixed-string');
       expect(requestData['nullableMultiType'], 777);
+      expect(requestData['unquotedNullable'], 'unquoted-value');
 
       final output = success.value;
       expect(output.requiredNullable, 'required-value');
@@ -422,6 +424,7 @@ void main() {
             .value,
         777,
       );
+      expect(output.unquotedNullable, 'unquoted-value');
     });
 
     test('all fields null', () async {
@@ -444,6 +447,7 @@ void main() {
       expect(requestData['nullableBoolean'], isNull);
       expect(requestData['nullableStringOrNumber'], isNull);
       expect(requestData['nullableMultiType'], isNull);
+      expect(requestData['unquotedNullable'], isNull);
 
       final output = success.value;
       expect(output.requiredNullable, isNull);
@@ -452,6 +456,7 @@ void main() {
       expect(output.nullableBoolean, isNull);
       expect(output.nullableStringOrNumber, isNull);
       expect(output.nullableMultiType, isNull);
+      expect(output.unquotedNullable, isNull);
     });
 
     test('nullableStringOrNumber: string variant', () async {

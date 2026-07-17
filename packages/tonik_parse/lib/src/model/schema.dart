@@ -136,7 +136,7 @@ class Schema {
   }
 
   final String? ref;
-  final List<String> type;
+  final List<String?> type;
   final String? format;
   final List<String>? required;
   final List<dynamic>? enumerated;
@@ -177,6 +177,11 @@ class Schema {
   /// - `null`: Not a boolean schema (standard object schema)
   final bool? isBooleanSchema;
 
+  bool get hasNullType => type.any((t) => t == null || t == 'null');
+
+  List<String> get nonNullTypes =>
+      type.nonNulls.where((t) => t != 'null').toList();
+
   // We ignore externalDocs, xml, title, multipleOf, maximum,
   // exclusiveMaximum, minimum, exclusiveMinimum, maxLength, minLength, pattern,
   // maxItems, minItems, maxProperties, minProperties.
@@ -211,10 +216,19 @@ class _AdditionalPropertiesConverter {
 class _SchemaTypeConverter {
   const _SchemaTypeConverter();
 
-  List<String> fromJson(dynamic json) {
+  List<String?> fromJson(dynamic json) {
     if (json == null) return [];
     if (json is String) return [json];
-    if (json is List) return json.cast<String>();
+    if (json is List) {
+      return [
+        for (final element in json)
+          switch (element) {
+            null => null,
+            final String type => type,
+            _ => throw FormatException('Invalid type value: $json'),
+          },
+      ];
+    }
     throw FormatException('Invalid type value: $json');
   }
 }
