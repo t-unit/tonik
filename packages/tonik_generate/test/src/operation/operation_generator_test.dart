@@ -777,6 +777,123 @@ Future<TonikResult<void>> call({
       );
 
       test(
+        'passes body to _options for optional single content type body',
+        () {
+          final requestBody = RequestBodyObject(
+            name: 'optionalBody',
+            context: context,
+            description: 'An optional single content type body',
+            isRequired: false,
+            content: {
+              RequestContent(
+                model: StringModel(context: context),
+                contentType: ContentType.json,
+                rawContentType: 'application/json',
+                examples: const [],
+              ),
+            },
+          );
+
+          final operation = Operation(
+            operationId: 'operationWithOptionalBody',
+            context: context,
+            summary: 'Operation with optional body',
+            description: 'An operation that has an optional single body',
+            tags: const {},
+            isDeprecated: false,
+            path: '/optional-body',
+            method: HttpMethod.post,
+            headers: const {},
+            queryParameters: const {},
+            pathParameters: const {},
+            cookieParameters: const {},
+            responses: const {},
+            requestBody: requestBody,
+            securitySchemes: const {},
+          );
+
+          const normalizedParams = NormalizedRequestParameters(
+            pathParameters: [],
+            cookieParameters: [],
+            queryParameters: [],
+            headers: [],
+          );
+
+          final method = generator.generateCallMethod(
+            operation,
+            normalizedParams,
+          );
+
+          const expectedMethod = r'''
+Future<TonikResult<void>> call({
+  String? body,
+  CancelToken? cancelToken,
+}) async {
+  late final Uri _$uri;
+  late final Object? _$data;
+  late final Options _$options;
+
+  try {
+    final _$baseUri = Uri.parse(_dio.options.baseUrl);
+    final _$pathResult = _path();
+    final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
+    _$uri = _$baseUri.replace(path: _$newPath);
+    _$data = _data(body: body);
+    _$options = _options(body: body);
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  final Response<List<int>> _$response;
+  try {
+    _$response = await _dio.requestUri<List<int>>(
+      _$uri,
+      data: _$data,
+      options: _$options,
+      cancelToken: cancelToken,
+    );
+  } on DioException catch (exception, stackTrace) {
+    if (exception.type == DioExceptionType.cancel) {
+      return TonikError(
+        exception,
+        stackTrace: stackTrace,
+        type: TonikErrorType.cancelled,
+        response: exception.response,
+      );
+    }
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: exception.response,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+
+  return TonikSuccess(null, _$response);
+}
+''';
+
+          final methodString = format(method.accept(emitter).toString());
+          expect(
+            collapseWhitespace(methodString),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
+      );
+
+      test(
         'generates call method w/ multiple content type request body parameter',
         () {
           final requestBody = RequestBodyObject(

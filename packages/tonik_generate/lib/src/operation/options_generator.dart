@@ -98,7 +98,39 @@ class OptionsGenerator {
       if (singleContent.contentType == ContentType.multipart) {
         return literalNull;
       }
-      return specLiteralString(singleContent.rawContentType);
+      if (requestBody.isRequired) {
+        return specLiteralString(singleContent.rawContentType);
+      }
+
+      // Optional bodies omit the Content-Type header when no body is sent.
+      parameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'body'
+            ..type = typeReference(
+              singleContent.model,
+              nameManager,
+              package,
+              isNullableOverride: true,
+              useImmutableCollections: useImmutableCollections,
+            )
+            ..named = true
+            ..required = false,
+        ),
+      );
+      bodyStatements.add(
+        declareFinal(r'_$contentType')
+            .assign(
+              refer('body')
+                  .equalTo(literalNull)
+                  .conditional(
+                    literalNull,
+                    specLiteralString(singleContent.rawContentType),
+                  ),
+            )
+            .statement,
+      );
+      return refer(r'_$contentType');
     }
 
     final (baseName, subclassNames) = nameManager.requestBodyNames(requestBody);
@@ -549,4 +581,22 @@ class OptionsGenerator {
       ..requiredParameters.add(Parameter((b) => b..name = '_'))
       ..body = literalBool(true).code,
   ).closure;
+}
+
+/// Whether the generated `_options` method needs the request body value to
+/// compute the Content-Type header.
+///
+/// True for multi-content bodies (the Content-Type switches on the runtime
+/// value) and for optional non-multipart single-content bodies (Content-Type
+/// is omitted when no body is sent).
+bool optionsMethodNeedsBody(RequestBody? requestBody) {
+  final content = requestBody?.resolvedContent;
+  if (content == null || content.isEmpty) {
+    return false;
+  }
+  if (requestBody!.contentCount > 1) {
+    return true;
+  }
+  return !requestBody.isRequired &&
+      content.first.contentType != ContentType.multipart;
 }
