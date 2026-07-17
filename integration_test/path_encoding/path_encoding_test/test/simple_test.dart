@@ -119,5 +119,43 @@ void main() {
         );
       },
     );
+
+    test(
+      'object with empty property (explode=false) keeps an empty slot',
+      () async {
+        final api = buildSimpleApi();
+        final response = await api.testSimpleSpecialKeys(
+          value: const SpecialKeyObject(myField: '', aEqualsB: 42),
+        );
+
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
+
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/simple/special-keys/my.field,,a%3Db,42',
+        );
+      },
+    );
+
+    test(
+      'object with empty property (explode=true) keeps trailing equals',
+      () async {
+        final api = buildSimpleApi();
+        final response = await api.testSimpleSpecialKeysExplode(
+          value: const SpecialKeyObject(myField: '', aEqualsB: 42),
+        );
+
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
+
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/simple/special-keys/explode/my.field=,a%3Db=42',
+        );
+      },
+    );
   });
 }
