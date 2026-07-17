@@ -159,6 +159,23 @@ paths:
               schema:
                 $ref: '#/components/schemas/SimpleForm'
 
+  /form/map-response:
+    get:
+      operationId: getMapResponse
+      tags:
+        - form
+      summary: Get map response as form-urlencoded
+      description: Tests response body handling for a free-form object
+      responses:
+        '200':
+          description: Successful response with form-urlencoded map body
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                type: object
+                additionalProperties:
+                  type: string
+
   /form/empty-null:
     post:
       operationId: postEmptyNull

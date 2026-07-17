@@ -32,6 +32,48 @@ BuiltExpression buildFromFormValueExpression(
   );
 }
 
+/// Message of the pure `throw` that [buildFromFormValueExpression] collapses
+/// to for a non-null input value, or null when the built expression
+/// references the value.
+String? formDecodingPureThrowMessage(Model model) => switch (model) {
+  AliasModel() => formDecodingPureThrowMessage(model.model),
+  NeverModel() => _neverFormDecodingMessage,
+  MapModel() => _mapFormDecodingMessage,
+  ListModel() => _listContentPureThrowMessage(model.content),
+  PrimitiveModel() ||
+  EnumModel() ||
+  ClassModel() ||
+  AllOfModel() ||
+  OneOfModel() ||
+  AnyOfModel() ||
+  AnyModel() => null,
+  NamedModel() || CompositeModel() => _unsupportedFormDecodingMessage,
+};
+
+String? _listContentPureThrowMessage(Model content) => switch (content) {
+  AliasModel() => _listContentPureThrowMessage(content.model),
+  ClassModel() => _classInListFormDecodingMessage,
+  ListModel() => _nestedListFormDecodingMessage,
+  PrimitiveModel() ||
+  EnumModel() ||
+  AllOfModel() ||
+  OneOfModel() ||
+  AnyOfModel() ||
+  AnyModel() ||
+  NeverModel() => null,
+  NamedModel() || CompositeModel() => _unsupportedFormDecodingMessage,
+};
+
+const _neverFormDecodingMessage =
+    'Cannot decode NeverModel - this type does not permit any value.';
+const _mapFormDecodingMessage = 'Map types cannot be form-decoded.';
+const _classInListFormDecodingMessage =
+    'ClassModel is not supported in lists for form decoding.';
+const _nestedListFormDecodingMessage =
+    'Nested lists are not supported in form decoding.';
+const _unsupportedFormDecodingMessage =
+    'Unsupported model type for form decoding.';
+
 Expression _buildFromFormValueExpression(
   Expression value, {
   required Model model,
@@ -167,18 +209,18 @@ Expression _buildFromFormValueExpression(
     AnyModel() => value,
 
     MapModel() => generateFormDecodingExceptionExpression(
-      'Map types cannot be form-decoded.',
+      _mapFormDecodingMessage,
     ),
 
     _ => generateFormDecodingExceptionExpression(
-      'Unsupported model type for form decoding.',
+      _unsupportedFormDecodingMessage,
     ),
   };
 }
 
 Expression _buildNeverModelExpression(Expression value, bool isRequired) {
   final throwExpr = generateFormDecodingExceptionExpression(
-    'Cannot decode NeverModel - this type does not permit any value.',
+    _neverFormDecodingMessage,
   );
   return isRequired
       ? throwExpr
@@ -327,7 +369,7 @@ Expression _buildListFromFormExpression(
       contextParam: contextParam,
     ),
     ClassModel() => generateFormDecodingExceptionExpression(
-      'ClassModel is not supported in lists for form decoding.',
+      _classInListFormDecodingMessage,
     ),
     EnumModel() ||
     AllOfModel() ||
@@ -343,7 +385,7 @@ Expression _buildListFromFormExpression(
       explode: explode,
     ),
     ListModel() => generateFormDecodingExceptionExpression(
-      'Nested lists are not supported in form decoding.',
+      _nestedListFormDecodingMessage,
     ),
     AliasModel() => _buildListFromFormExpression(
       value,
@@ -367,7 +409,7 @@ Expression _buildListFromFormExpression(
     ),
     AnyModel() => listDecode,
     NamedModel() || CompositeModel() => generateFormDecodingExceptionExpression(
-      'Unsupported model type for form decoding.',
+      _unsupportedFormDecodingMessage,
     ),
   };
 

@@ -500,6 +500,15 @@ void main() {
       expect(data.name, 'John Doe');
       expect(data.age, 30);
     });
+
+    test('reports decoding error for form-urlencoded map response', () async {
+      final response = await api.getMapResponse();
+
+      expect(response, isA<TonikError<Map<String, String>>>());
+      final error = response as TonikError<Map<String, String>>;
+      expect(error.type, TonikErrorType.decoding);
+      expect(error.error, isA<FormDecodingException>());
+    });
   });
 
   group('Empty and null values', () {
