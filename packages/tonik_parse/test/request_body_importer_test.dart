@@ -1345,7 +1345,13 @@ void main() {
         expect(encoding.rawContentType, 'text/plain');
       });
 
-      test('self-recursive array property gets application/json default', () {
+      test('self-recursive array property gets application/json default '
+          'and logs warning', () {
+        final logs = <LogRecord>[];
+        final sub = Logger.root.onRecord.listen(logs.add);
+
+        addTearDown(sub.cancel);
+
         final content = importMultipartContent(
           multipartSpec(
             properties: {
@@ -1363,6 +1369,12 @@ void main() {
         final encoding = partEncodingFor(content, 'tree')!;
         expect(encoding.contentType, ContentType.json);
         expect(encoding.rawContentType, 'application/json');
+        expect(
+          logs.any(
+            (r) => r.level == Level.WARNING && r.message.contains('"tree"'),
+          ),
+          isTrue,
+        );
       });
 
       test(

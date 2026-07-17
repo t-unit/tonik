@@ -231,6 +231,7 @@ class RequestBodyImporter {
       final defaultContentType = _resolveDefaultContentType(
         property.model,
         <core.Model>{},
+        property.name,
       );
       final defaultRawContentType = _resolveDefaultRawContentType(
         property.model,
@@ -257,14 +258,29 @@ class RequestBodyImporter {
 
   /// A recursive model has no leaf to inspect; only complex structures can
   /// recurse, so a cycle defaults to JSON.
-  static core.ContentType _resolveDefaultContentType(
+  core.ContentType _resolveDefaultContentType(
     core.Model model,
     Set<core.Model> visited,
+    String propertyName,
   ) {
-    if (!visited.add(model)) return core.ContentType.json;
+    if (!visited.add(model)) {
+      log.warning(
+        'Multipart property "$propertyName" has a recursive schema with no '
+        'terminal type. Defaulting part content type to application/json.',
+      );
+      return core.ContentType.json;
+    }
     return switch (model) {
-      core.AliasModel() => _resolveDefaultContentType(model.resolved, visited),
-      core.ListModel() => _resolveDefaultContentType(model.content, visited),
+      core.AliasModel() => _resolveDefaultContentType(
+        model.resolved,
+        visited,
+        propertyName,
+      ),
+      core.ListModel() => _resolveDefaultContentType(
+        model.content,
+        visited,
+        propertyName,
+      ),
       core.ClassModel() => core.ContentType.json,
       core.AllOfModel() => core.ContentType.json,
       core.OneOfModel() => core.ContentType.json,
