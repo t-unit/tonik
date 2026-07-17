@@ -136,9 +136,6 @@ class Schema {
   }
 
   final String? ref;
-
-  /// Declared types, verbatim from the document. Unquoted `null` in a YAML
-  /// type array parses as a null scalar and is kept as a null element.
   final List<String?> type;
   final String? format;
   final List<String>? required;
@@ -180,11 +177,8 @@ class Schema {
   /// - `null`: Not a boolean schema (standard object schema)
   final bool? isBooleanSchema;
 
-  /// Whether the declared types include the `null` type, spelled either as
-  /// the string `'null'` or as an unquoted YAML null scalar.
   bool get hasNullType => type.any((t) => t == null || t == 'null');
 
-  /// Declared types without the `null` type in either spelling.
   List<String> get nonNullTypes =>
       type.nonNulls.where((t) => t != 'null').toList();
 
