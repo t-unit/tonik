@@ -157,7 +157,7 @@ void main() {
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-        Object? toJson() => {};
+        Object? toJson() => <String, Object?>{};
       ''';
 
       expect(

@@ -1002,4 +1002,35 @@ void main() {
       expect(requestBody['force'], isTrue);
     });
   });
+
+  group('AuditedWidget (allOf) - writable composite with readOnly branch', () {
+    test('toJson emits only the writable branch', () {
+      const widget = AuditedWidget(
+        auditedWidgetModel: AuditedWidgetModel(),
+        auditedWidgetModel2: AuditedWidgetModel2(name: 'a1'),
+      );
+
+      final json = widget.toJson()! as Map;
+
+      expect(json, {'name': 'a1'});
+    });
+
+    test('POST /audited sends the writable branch and omits readOnly', () async {
+      final api = buildApi(responseStatus: '200');
+
+      final response = await api.createAudited(
+        body: const AuditedWidget(
+          auditedWidgetModel: AuditedWidgetModel(),
+          auditedWidgetModel2: AuditedWidgetModel2(name: 'a1'),
+        ),
+      );
+
+      final success = response as TonikSuccess<AuditedWidget>;
+      final requestBody =
+          success.response.requestOptions.data as Map<String, dynamic>;
+
+      expect(requestBody['name'], 'a1');
+      expect(requestBody.containsKey('createdAt'), isFalse);
+    });
+  });
 }

@@ -62,6 +62,26 @@ void main() {
       );
     });
 
+    test('generates typed empty map toJson for class with no properties', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'Empty',
+        properties: const [],
+        context: context,
+        examples: const [],
+      );
+
+      const expectedMethod = '''
+        Object? toJson() => <String, Object?>{};
+        ''';
+
+      final generatedClass = generator.generateClass(model);
+      expect(
+        collapseWhitespace(format(generatedClass.accept(emitter).toString())),
+        contains(collapseWhitespace(expectedMethod)),
+      );
+    });
+
     test('generates toJson method for multiple primitive properties', () {
       final model = ClassModel(
         isDeprecated: false,

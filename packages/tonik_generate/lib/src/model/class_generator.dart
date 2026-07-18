@@ -962,17 +962,18 @@ class ClassGenerator {
 
     if (requiredWriteOnlyNonNullable.isEmpty) {
       if (helperPrelude.isEmpty) {
+        // A bare `{}` infers Map<dynamic, dynamic>, which composite guards
+        // reject as not Map<String, Object?>, so type an empty map explicitly.
+        final toJsonBody = mapEntries.isEmpty
+            ? buildEmptyMapStringObject().code
+            : Block.of([const Code('{'), ...mapEntries, const Code('}')]);
         return Method(
           (b) => b
             ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toJson'
             ..returns = refer('Object?', 'dart:core')
             ..lambda = true
-            ..body = Block.of([
-              const Code('{'),
-              ...mapEntries,
-              const Code('}'),
-            ]),
+            ..body = toJsonBody,
         );
       }
       return Method(
@@ -1679,7 +1680,9 @@ class ClassGenerator {
       final defaulted = defaultsByName[normalizedName];
       final isRequired = prop.property.isRequired && !prop.property.isWriteOnly;
       final isNullable =
-          prop.property.isNullable || modelType.isEffectivelyNullable;
+          prop.property.isNullable ||
+          modelType.isEffectivelyNullable ||
+          modelType.resolved is AnyModel;
       final decodeIsRequired = defaulted != null
           ? !isNullable
           : isRequired && !isNullable;
