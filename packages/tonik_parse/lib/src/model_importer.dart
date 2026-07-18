@@ -971,8 +971,20 @@ class ModelImporter {
 
   /// Imports a schema from outside the components.schemas context.
   Model importSchema(Schema schema, Context context) {
-    final model = _resolveSchemaRef(null, schema, context);
+    var model = _resolveSchemaRef(null, schema, context);
     log.fine('Importing schema $model@$context');
+
+    // Inline primitives have no container to carry `nullable: true`, so wrap
+    // them in an anonymous alias — the same shape a $ref to the schema yields.
+    if (model is PrimitiveModel && (schema.isNullable ?? schema.hasNullType)) {
+      model = AliasModel(
+        model: model,
+        context: context,
+        isNullable: true,
+        defaultValue: schema.rawDefault,
+        examples: const [],
+      );
+    }
 
     if (model is! PrimitiveModel &&
         model is! AnyModel &&
