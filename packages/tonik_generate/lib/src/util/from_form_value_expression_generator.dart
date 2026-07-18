@@ -88,7 +88,7 @@ Expression _buildFromFormValueExpression(
   final contextParam = _buildContextParam(contextClass, contextProperty);
 
   return switch (model) {
-    StringModel() =>
+    StringModel() || AnyModel() =>
       value
           .property(
             isRequired ? 'decodeFormString' : 'decodeFormNullableString',
@@ -205,8 +205,6 @@ Expression _buildFromFormValueExpression(
     ),
 
     NeverModel() => _buildNeverModelExpression(value, isRequired),
-
-    AnyModel() => value,
 
     MapModel() => generateFormDecodingExceptionExpression(
       _mapFormDecodingMessage,

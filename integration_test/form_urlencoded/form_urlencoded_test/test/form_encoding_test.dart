@@ -509,6 +509,35 @@ void main() {
       expect(error.type, TonikErrorType.decoding);
       expect(error.error, isA<FormDecodingException>());
     });
+
+    test('percent-decodes untyped additional properties', () async {
+      final response = await api.getUntypedExtrasResponse();
+
+      expect(response, isA<TonikSuccess<UntypedExtrasForm>>());
+      final data = (response as TonikSuccess<UntypedExtrasForm>).value;
+
+      expect(data.userName, 'café');
+      expect(data.additionalProperties['note'], 'café');
+      expect(data.additionalProperties['city'], 'New York');
+    });
+
+    test('re-encodes untyped additional properties without double '
+        'encoding', () async {
+      final response = await api.getUntypedExtrasResponse();
+      final data = (response as TonikSuccess<UntypedExtrasForm>).value;
+
+      final entries = data.toForm(
+        'item',
+        explode: true,
+        allowEmpty: true,
+        useQueryComponent: true,
+      );
+
+      expect(
+        entries.firstWhere((e) => e.name == 'note').value,
+        'caf%C3%A9',
+      );
+    });
   });
 
   group('Empty and null values', () {

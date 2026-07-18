@@ -1341,7 +1341,9 @@ void main() {
     final _$additional = <String, Object?>{};
     for (final _$entry in _$values.entries) {
       if (!_$knownKeys.contains(_$entry.key)) {
-        _$additional[_$entry.key] = _$entry.value;
+        _$additional[_$entry.key] = _$entry.value.decodeFormString(
+          context: r'Config.additionalProperties',
+        );
       }
     }
     return Config(
