@@ -506,6 +506,28 @@ paths:
         '204':
           description: No content
 
+  # Object cookie with an unset optional member
+  /partial-object-cookie:
+    get:
+      operationId: testPartialObjectCookie
+      tags:
+        - cookies
+      summary: Test object cookie with an unset optional member
+      description: Demonstrates that an unset optional object member is omitted from the cookie rather than sent as an empty-valued pair
+      parameters:
+        - name: session
+          in: cookie
+          required: true
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PartialSession'
+      responses:
+        '200':
+          description: OK
+        '204':
+          description: No content
+
   # OneOf cookie
   /oneof-cookie:
     get:
@@ -922,6 +944,16 @@ components:
         id:
           type: integer
         name:
+          type: string
+
+    PartialSession:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: string
+        theme:
           type: string
 
     OneOfIdentifier:

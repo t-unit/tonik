@@ -1240,8 +1240,6 @@ class ClassGenerator {
     return [
       Code('if ($name != null) {'),
       assign(checked),
-      const Code('} else if (allowEmpty) {'),
-      _scalarPropertyAssignment(propertyName, literalString('')),
       const Code('}'),
     ];
   }
@@ -1375,8 +1373,6 @@ class ClassGenerator {
           propertyAssignments
             ..add(Code('if ($name != null) {'))
             ..add(assignmentExpr.statement)
-            ..add(const Code('} else if (allowEmpty) {'))
-            ..add(_scalarPropertyAssignment(propertyName, literalString('')))
             ..add(const Code('}'));
         }
       }
@@ -1446,8 +1442,6 @@ class ClassGenerator {
               {'context': literalString('$className.$propertyName')},
             ),
           ),
-          const Code('} else if (allowEmpty) {'),
-          _scalarPropertyAssignment(propertyName, literalString('')),
           const Code('}'),
         ]);
         continue;
