@@ -107,6 +107,29 @@ paths:
         '204':
           description: OK
 
+  /form-special-names:
+    get:
+      operationId: testFormSpecialNames
+      tags:
+        - query
+      summary: Test form query parameters whose names contain reserved characters
+      parameters:
+        - name: q&a
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+        - name: a=b
+          in: query
+          style: form
+          explode: false
+          schema:
+            type: string
+      responses:
+        '204':
+          description: OK
+
   /form-complex:
     get:
       operationId: testFormComplex
