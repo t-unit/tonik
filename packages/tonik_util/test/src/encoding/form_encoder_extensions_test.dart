@@ -909,4 +909,95 @@ void main() {
       );
     });
   });
+
+  group('parameter name encoding', () {
+    test('string encoder escapes & in the parameter name', () {
+      expect(
+        'hello'.toForm('q&a', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'q%26a', value: 'hello')],
+      );
+    });
+
+    test('string encoder escapes = in the parameter name', () {
+      expect(
+        'v'.toForm('a=b', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'a%3Db', value: 'v')],
+      );
+    });
+
+    test('string encoder leaves an unreserved parameter name unchanged', () {
+      expect(
+        'v'.toForm('limit', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'limit', value: 'v')],
+      );
+    });
+
+    test('int encoder escapes & in the parameter name', () {
+      expect(
+        42.toForm('q&a', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'q%26a', value: '42')],
+      );
+    });
+
+    test('list explode=false escapes the parameter name', () {
+      expect(
+        ['a', 'b'].toForm('q&a', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'q%26a', value: 'a,b')],
+      );
+    });
+
+    test('list explode=true escapes the parameter name on every entry', () {
+      expect(
+        ['a', 'b'].toForm('q&a', explode: true, allowEmpty: true),
+        const <ParameterEntry>[
+          (name: 'q%26a', value: 'a'),
+          (name: 'q%26a', value: 'b'),
+        ],
+      );
+    });
+
+    test('map explode=false escapes the parameter name', () {
+      expect(
+        {'k': 'v'}.toForm('q&a', explode: false, allowEmpty: true),
+        const <ParameterEntry>[(name: 'q%26a', value: 'k,v')],
+      );
+    });
+
+    test('parameter name renders space as + under useQueryComponent', () {
+      expect(
+        'v'.toForm(
+          'user name',
+          explode: false,
+          allowEmpty: true,
+          useQueryComponent: true,
+        ),
+        const <ParameterEntry>[(name: 'user+name', value: 'v')],
+      );
+    });
+
+    test('parameter name still escapes & under allowReserved', () {
+      expect(
+        'v'.toForm(
+          'a&b',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'a%26b', value: 'v')],
+      );
+    });
+
+    test('parameter name keeps other reserved chars literal under '
+        'allowReserved', () {
+      expect(
+        'v'.toForm(
+          'a:b',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        ),
+        const <ParameterEntry>[(name: 'a:b', value: 'v')],
+      );
+    });
+  });
 }
