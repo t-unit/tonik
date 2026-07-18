@@ -5,6 +5,11 @@ import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 
+/// Fast JVM cold-start flags. Each suite spins up a fresh JVM in `setUpAll`,
+/// so start-up latency dominates over peak throughput: C1-only JIT and the
+/// serial collector shave seconds off boot for these short-lived servers.
+const _fastStartJvmArgs = ['-XX:TieredStopAtLevel=1', '-XX:+UseSerialGC'];
+
 /// Manages the lifecycle of an Imposter mock server for integration
 /// tests.
 class ImposterServer {
@@ -38,7 +43,7 @@ class ImposterServer {
   Future<void> start({
     int timeoutSec = 90,
     int maxAttempts = 2,
-    List<String> jvmArgs = const [],
+    List<String> jvmArgs = _fastStartJvmArgs,
   }) async {
     final imposterJar = path.join(
       Directory.current.parent.parent.path,
@@ -187,7 +192,7 @@ class ImposterServer {
 Future<ImposterServer> setupImposterServer({
   int timeoutSec = 90,
   int maxAttempts = 2,
-  List<String> jvmArgs = const [],
+  List<String> jvmArgs = _fastStartJvmArgs,
 }) async {
   final server = ImposterServer();
   await server.start(
