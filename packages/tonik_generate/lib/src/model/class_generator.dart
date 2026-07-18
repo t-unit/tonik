@@ -962,28 +962,18 @@ class ClassGenerator {
 
     if (requiredWriteOnlyNonNullable.isEmpty) {
       if (helperPrelude.isEmpty) {
-        // Type an empty literal explicitly: a bare `{}` infers Map<dynamic,
-        // dynamic>, which composite guards reject as not Map<String, Object?>.
-        final mapOpen = mapEntries.isEmpty
-            ? <Code>[
-                const Code('<'),
-                refer('String', 'dart:core').code,
-                const Code(', '),
-                refer('Object?', 'dart:core').code,
-                const Code('>{'),
-              ]
-            : <Code>[const Code('{')];
+        // A bare `{}` infers Map<dynamic, dynamic>, which composite guards
+        // reject as not Map<String, Object?>, so type an empty map explicitly.
+        final toJsonBody = mapEntries.isEmpty
+            ? buildEmptyMapStringObject().code
+            : Block.of([const Code('{'), ...mapEntries, const Code('}')]);
         return Method(
           (b) => b
             ..annotations.add(refer('override', 'dart:core'))
             ..name = 'toJson'
             ..returns = refer('Object?', 'dart:core')
             ..lambda = true
-            ..body = Block.of([
-              ...mapOpen,
-              ...mapEntries,
-              const Code('}'),
-            ]),
+            ..body = toJsonBody,
         );
       }
       return Method(
