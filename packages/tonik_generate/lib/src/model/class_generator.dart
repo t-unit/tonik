@@ -962,10 +962,8 @@ class ClassGenerator {
 
     if (requiredWriteOnlyNonNullable.isEmpty) {
       if (helperPrelude.isEmpty) {
-        // Only this path can reach a statically empty map (all properties
-        // readOnly, or none). A bare `{}` there infers Map<dynamic, dynamic>,
-        // which composite guards reject as not Map<String, Object?>, so the
-        // empty literal needs an explicit type.
+        // Type an empty literal explicitly: a bare `{}` infers Map<dynamic,
+        // dynamic>, which composite guards reject as not Map<String, Object?>.
         final mapOpen = mapEntries.isEmpty
             ? <Code>[
                 const Code('<'),
