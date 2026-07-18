@@ -900,20 +900,6 @@ class ClassGenerator {
       }
     }
 
-    // An empty literal needs an explicit type or Dart infers Map<dynamic,
-    // dynamic>, which composite guards reject as not Map<String, Object?>.
-    List<Code> openMap({required bool withReturn}) {
-      final prefix = withReturn ? 'return ' : '';
-      if (mapEntries.isNotEmpty) return [Code('$prefix{')];
-      return [
-        Code('$prefix<'),
-        refer('String', 'dart:core').code,
-        const Code(', '),
-        refer('Object?', 'dart:core').code,
-        const Code('>{'),
-      ];
-    }
-
     final toJsonApPolicy = activeApPolicy(model.additionalPropertiesPolicy);
     final apEncodeCodes = <Code>[];
     if (toJsonApPolicy != null) {
@@ -976,6 +962,19 @@ class ClassGenerator {
 
     if (requiredWriteOnlyNonNullable.isEmpty) {
       if (helperPrelude.isEmpty) {
+        // Only this path can reach a statically empty map (all properties
+        // readOnly, or none). A bare `{}` there infers Map<dynamic, dynamic>,
+        // which composite guards reject as not Map<String, Object?>, so the
+        // empty literal needs an explicit type.
+        final mapOpen = mapEntries.isEmpty
+            ? <Code>[
+                const Code('<'),
+                refer('String', 'dart:core').code,
+                const Code(', '),
+                refer('Object?', 'dart:core').code,
+                const Code('>{'),
+              ]
+            : <Code>[const Code('{')];
         return Method(
           (b) => b
             ..annotations.add(refer('override', 'dart:core'))
@@ -983,7 +982,7 @@ class ClassGenerator {
             ..returns = refer('Object?', 'dart:core')
             ..lambda = true
             ..body = Block.of([
-              ...openMap(withReturn: false),
+              ...mapOpen,
               ...mapEntries,
               const Code('}'),
             ]),
@@ -996,7 +995,7 @@ class ClassGenerator {
           ..returns = refer('Object?', 'dart:core')
           ..body = Block.of([
             ...helperPrelude,
-            ...openMap(withReturn: true),
+            const Code('return {'),
             ...mapEntries,
             const Code('};'),
           ]),
@@ -1024,7 +1023,7 @@ class ClassGenerator {
         ..body = Block.of([
           ...helperPrelude,
           ...nullChecks,
-          ...openMap(withReturn: true),
+          const Code('return {'),
           ...mapEntries,
           const Code('};'),
         ]),
