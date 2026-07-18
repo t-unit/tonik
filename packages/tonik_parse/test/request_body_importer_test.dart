@@ -35,6 +35,15 @@ void main() {
             },
           },
         },
+        'NullableInlineBody': {
+          'description': 'A request body with a nullable inline schema',
+          'required': true,
+          'content': {
+            'application/json': {
+              'schema': {'type': 'string', 'nullable': true},
+            },
+          },
+        },
         'ReferenceBody': {
           'description': 'A request body with a reference schema',
           'required': false,
@@ -135,6 +144,18 @@ void main() {
     expect(content?.model, isA<StringModel>());
     expect(content?.rawContentType, 'application/json');
     expect(content?.contentType, ContentType.json);
+  });
+
+  test('imports request body with nullable inline schema', () {
+    final api = Importer().import(fileContent);
+    final nullableInlineBody = api.requestBodies.firstWhereOrNull(
+      (r) => r.name == 'NullableInlineBody',
+    );
+
+    final model =
+        (nullableInlineBody as RequestBodyObject?)?.content.first.model;
+    expect(model?.isEffectivelyNullable, isTrue);
+    expect(model?.resolved, isA<StringModel>());
   });
 
   test('imports request body with reference schema', () {

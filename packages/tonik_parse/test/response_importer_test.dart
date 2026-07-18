@@ -32,6 +32,14 @@ void main() {
             },
           },
         },
+        'NullableInlineBodyResponse': {
+          'description': 'A response with a nullable inline body',
+          'content': {
+            'application/json': {
+              'schema': {'type': 'string', 'nullable': true},
+            },
+          },
+        },
         'ReferenceBodyResponse': {
           'description': 'A response with a reference to a body',
           'content': {
@@ -179,6 +187,18 @@ void main() {
       isA<StringModel>(),
     );
     expect(inlineBodyResponse?.bodies.first.rawContentType, 'application/json');
+  });
+
+  test('imports response with nullable inline body', () {
+    final api = Importer().import(fileContent);
+    final nullableInlineBodyResponse = api.responses.firstWhereOrNull(
+      (r) => r.name == 'NullableInlineBodyResponse',
+    );
+
+    final model =
+        (nullableInlineBodyResponse as ResponseObject?)?.bodies.first.model;
+    expect(model?.isEffectivelyNullable, isTrue);
+    expect(model?.resolved, isA<StringModel>());
   });
 
   test('imports response with reference body', () {

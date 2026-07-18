@@ -53,6 +53,12 @@ void main() {
             },
           },
         },
+        'colorNullable': {
+          'name': 'colorNullable',
+          'in': 'query',
+          'required': true,
+          'schema': {'type': 'string', 'nullable': true},
+        },
         'colorSchema': {
           'name': 'colorSchema',
           'in': 'query',
@@ -88,6 +94,15 @@ void main() {
     expect(parameter.explode, isFalse);
     expect(parameter.model, isA<StringModel>());
     expect(parameter.encoding, QueryParameterEncoding.form);
+  });
+
+  test('imports nullable inline query parameter as nullable model', () {
+    final parameter = queryParameters
+        .whereType<QueryParameterObject>()
+        .firstWhere((p) => p.name == 'colorNullable');
+
+    expect(parameter.model.isEffectivelyNullable, isTrue);
+    expect(parameter.model.resolved, isA<StringModel>());
   });
 
   test('imports space delimited style query parameter', () {
