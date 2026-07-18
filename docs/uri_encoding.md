@@ -153,6 +153,28 @@ Nullable array items are fully supported in **JSON request and response bodies**
 round-trippable, because the parameter styles themselves do not define null elements. If you
 control the API, prefer non-nullable array items for parameters.
 
+## Dot segments (`.` and `..`) in path parameters
+
+Tonik builds request URLs with Dart's `Uri`, which applies RFC 3986
+[`remove_dot_segments`](https://www.rfc-editor.org/rfc/rfc3986#section-5.2.4)
+unconditionally: a `.` segment is dropped, and a `..` segment also removes the
+segment before it. This matters when a path-parameter value **is** a dot
+segment — a `simple` value of `.` or `..`, or a `label` value that expands to one
+(an empty `label` value becomes `.`). The segment is stripped before the request
+is sent, so the client targets a **different resource** than the value describes:
+
+```
+/files/..   ->   /
+/files/.    ->   /files/
+/l/{shade}  with shade="" (label)  ->  /l/
+```
+
+Percent-encoding does not help: `Uri` decodes `%2E` back to `.` before
+normalizing, and a literal dot segment cannot survive a conformant proxy or
+server either — they normalize it the same way. If a real resource name could be
+`.` or `..`, model it in the query string or request body instead, where dots are
+ordinary data.
+
 ## Testing considerations
 
 When asserting the wire format in tests, expect the encodings described above. For example, a

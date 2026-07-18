@@ -18,6 +18,7 @@
   - `patternProperties` for regex-matched property schemas
   - `propertyNames` for property name validation
 - Supporting the `not` keyword
+- Support for non utf8 encodings, for example Content-Type: `text/plain; charset=iso-8859-1`
 
 ## Non-goals
 
