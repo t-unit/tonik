@@ -900,6 +900,20 @@ class ClassGenerator {
       }
     }
 
+    // An empty literal needs an explicit type or Dart infers Map<dynamic,
+    // dynamic>, which composite guards reject as not Map<String, Object?>.
+    List<Code> openMap({required bool withReturn}) {
+      final prefix = withReturn ? 'return ' : '';
+      if (mapEntries.isNotEmpty) return [Code('$prefix{')];
+      return [
+        Code('$prefix<'),
+        refer('String', 'dart:core').code,
+        const Code(', '),
+        refer('Object?', 'dart:core').code,
+        const Code('>{'),
+      ];
+    }
+
     final toJsonApPolicy = activeApPolicy(model.additionalPropertiesPolicy);
     final apEncodeCodes = <Code>[];
     if (toJsonApPolicy != null) {
@@ -969,7 +983,7 @@ class ClassGenerator {
             ..returns = refer('Object?', 'dart:core')
             ..lambda = true
             ..body = Block.of([
-              const Code('{'),
+              ...openMap(withReturn: false),
               ...mapEntries,
               const Code('}'),
             ]),
@@ -982,7 +996,7 @@ class ClassGenerator {
           ..returns = refer('Object?', 'dart:core')
           ..body = Block.of([
             ...helperPrelude,
-            const Code('return {'),
+            ...openMap(withReturn: true),
             ...mapEntries,
             const Code('};'),
           ]),
@@ -1010,7 +1024,7 @@ class ClassGenerator {
         ..body = Block.of([
           ...helperPrelude,
           ...nullChecks,
-          const Code('return {'),
+          ...openMap(withReturn: true),
           ...mapEntries,
           const Code('};'),
         ]),

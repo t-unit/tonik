@@ -228,6 +228,26 @@ paths:
                   status:
                     type: string
 
+  /audited:
+    post:
+      operationId: createAudited
+      tags:
+        - read-write-only
+      summary: Create a widget whose allOf has an all-readOnly branch
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuditedWidget'
+      responses:
+        '200':
+          description: The created widget
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditedWidget'
+
 components:
   schemas:
     User:
@@ -464,3 +484,19 @@ components:
           type: string
         payload:
           type: string
+
+    # Property-level readOnly branch: the composite itself is writable, but its
+    # second branch has only a readOnly property, leaving an empty encoded branch.
+    AuditedWidget:
+      allOf:
+        - type: object
+          required:
+            - name
+          properties:
+            name:
+              type: string
+        - type: object
+          properties:
+            createdAt:
+              type: string
+              readOnly: true
