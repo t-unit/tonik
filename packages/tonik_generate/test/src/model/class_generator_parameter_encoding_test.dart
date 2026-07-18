@@ -111,7 +111,14 @@ void main() {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'id'] = PropertyValue.scalar(id.toString()); if (name != null) { _$result[r'name'] = PropertyValue.scalar(name!); } else if (allowEmpty) { _$result[r'name'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'id'] = PropertyValue.scalar(id.toString());
+  if (name != null) {
+    _$result[r'name'] = PropertyValue.scalar(name!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -143,7 +150,7 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       );
     });
 
-    test('handles allowEmpty parameter for nullable properties', () {
+    test('omits null nullable properties from parameterProperties', () {
       final model = ClassModel(
         isDeprecated: false,
         name: 'Container',
@@ -175,7 +182,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { retur
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (nullableName != null) { _$result[r'nullable_name'] = PropertyValue.scalar(nullableName!); } else if (allowEmpty) { _$result[r'nullable_name'] = PropertyValue.scalar(''); } if (nullableCount != null) { _$result[r'nullable_count'] = PropertyValue.scalar( nullableCount!.toString(), ); } else if (allowEmpty) { _$result[r'nullable_count'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (nullableName != null) {
+    _$result[r'nullable_name'] = PropertyValue.scalar(nullableName!);
+  }
+  if (nullableCount != null) {
+    _$result[r'nullable_count'] = PropertyValue.scalar(
+      nullableCount!.toString(),
+    );
+  }
+  return _$result;
+}
 ''';
 
       expect(
@@ -288,7 +306,19 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (value.currentEncodingShape == EncodingShape.simple) { _$result[r'value'] = PropertyValue.scalar( encodeAnyValueToString(value.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for Container: contains complex types', ); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (value.currentEncodingShape == EncodingShape.simple) {
+    _$result[r'value'] = PropertyValue.scalar(
+      encodeAnyValueToString(value.toJson(), allowEmpty: allowEmpty),
+    );
+  } else {
+    throw EncodingException(
+      r'parameterProperties not supported for Container: contains complex types',
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -353,7 +383,19 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (data.currentEncodingShape == EncodingShape.simple) { _$result[r'data'] = PropertyValue.scalar( encodeAnyValueToString(data.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for FlexibleContainer: contains complex types', ); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (data.currentEncodingShape == EncodingShape.simple) {
+    _$result[r'data'] = PropertyValue.scalar(
+      encodeAnyValueToString(data.toJson(), allowEmpty: allowEmpty),
+    );
+  } else {
+    throw EncodingException(
+      r'parameterProperties not supported for FlexibleContainer: contains complex types',
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -415,7 +457,19 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (combined.currentEncodingShape == EncodingShape.simple) { _$result[r'combined'] = PropertyValue.scalar( encodeAnyValueToString(combined.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for CombinedContainer: contains complex types', ); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (combined.currentEncodingShape == EncodingShape.simple) {
+    _$result[r'combined'] = PropertyValue.scalar(
+      encodeAnyValueToString(combined.toJson(), allowEmpty: allowEmpty),
+    );
+  } else {
+    throw EncodingException(
+      r'parameterProperties not supported for CombinedContainer: contains complex types',
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -459,7 +513,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (count != null) { _$result[r'count'] = PropertyValue.scalar(count!.toString()); } else if (allowEmpty) { _$result[r'count'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'name'] = PropertyValue.scalar(name);
+  if (count != null) {
+    _$result[r'count'] = PropertyValue.scalar(count!.toString());
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -508,7 +569,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
       final classCode = format(generatedClass.accept(emitter).toString());
 
       const expectedMethod = '''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for ComplexContainer: contains complex types', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
+    throw EncodingException(
+      r'parameterProperties not supported for ComplexContainer: contains complex types',
+    );
 ''';
 
       expect(
@@ -572,7 +636,21 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (value != null) { if (value!.currentEncodingShape == EncodingShape.simple) { _$result[r'value'] = PropertyValue.scalar( encodeAnyValueToString(value!.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for Container: contains complex types', ); } } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (value != null) {
+    if (value!.currentEncodingShape == EncodingShape.simple) {
+      _$result[r'value'] = PropertyValue.scalar(
+        encodeAnyValueToString(value!.toJson(), allowEmpty: allowEmpty),
+      );
+    } else {
+      throw EncodingException(
+        r'parameterProperties not supported for Container: contains complex types',
+      );
+    }
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -744,7 +822,44 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (count != null) { _$result[r'count'] = PropertyValue.scalar(count!.toString()); } else if (allowEmpty) { _$result[r'count'] = PropertyValue.scalar(''); } _$result[r'active'] = PropertyValue.scalar(active.toString()); if (data1.currentEncodingShape == EncodingShape.simple) { _$result[r'data1'] = PropertyValue.scalar( encodeAnyValueToString(data1.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for MixedContainer: contains complex types', ); } if (data2 != null) { if (data2!.currentEncodingShape == EncodingShape.simple) { _$result[r'data2'] = PropertyValue.scalar( encodeAnyValueToString(data2!.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for MixedContainer: contains complex types', ); } } if (flexible.currentEncodingShape == EncodingShape.simple) { _$result[r'flexible'] = PropertyValue.scalar( encodeAnyValueToString(flexible.toJson(), allowEmpty: allowEmpty), ); } else { throw EncodingException( r'parameterProperties not supported for MixedContainer: contains complex types', ); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'name'] = PropertyValue.scalar(name);
+  if (count != null) {
+    _$result[r'count'] = PropertyValue.scalar(count!.toString());
+  }
+  _$result[r'active'] = PropertyValue.scalar(active.toString());
+  if (data1.currentEncodingShape == EncodingShape.simple) {
+    _$result[r'data1'] = PropertyValue.scalar(
+      encodeAnyValueToString(data1.toJson(), allowEmpty: allowEmpty),
+    );
+  } else {
+    throw EncodingException(
+      r'parameterProperties not supported for MixedContainer: contains complex types',
+    );
+  }
+  if (data2 != null) {
+    if (data2!.currentEncodingShape == EncodingShape.simple) {
+      _$result[r'data2'] = PropertyValue.scalar(
+        encodeAnyValueToString(data2!.toJson(), allowEmpty: allowEmpty),
+      );
+    } else {
+      throw EncodingException(
+        r'parameterProperties not supported for MixedContainer: contains complex types',
+      );
+    }
+  }
+  if (flexible.currentEncodingShape == EncodingShape.simple) {
+    _$result[r'flexible'] = PropertyValue.scalar(
+      encodeAnyValueToString(flexible.toJson(), allowEmpty: allowEmpty),
+    );
+  } else {
+    throw EncodingException(
+      r'parameterProperties not supported for MixedContainer: contains complex types',
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -789,7 +904,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (tags != null) {
+    _$result[r'tags'] = PropertyValue.array(tags!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -848,7 +969,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (ids != null) { _$result[r'ids'] = PropertyValue.array( ids!.map((e) => e.toString()).toList(), ); } else if (allowEmpty) { _$result[r'ids'] = PropertyValue.scalar(''); } if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (ids != null) {
+    _$result[r'ids'] = PropertyValue.array(
+      ids!.map((e) => e.toString()).toList(),
+    );
+  }
+  if (tags != null) {
+    _$result[r'tags'] = PropertyValue.array(tags!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -894,7 +1026,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'tags'] = PropertyValue.array(tags); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'tags'] = PropertyValue.array(tags);
+  return _$result;
+}
 ''';
 
         expect(
@@ -949,7 +1085,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'id'] = PropertyValue.scalar(id.toString()); if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'id'] = PropertyValue.scalar(id.toString());
+  if (tags != null) {
+    _$result[r'tags'] = PropertyValue.array(tags!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1012,7 +1155,10 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = '''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => throw EncodingException( r'parameterProperties not supported for ComplexListContainer: contains complex types', );
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) =>
+    throw EncodingException(
+      r'parameterProperties not supported for ComplexListContainer: contains complex types',
+    );
 ''';
 
         expect(
@@ -1069,7 +1215,15 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) => thro
         expect(parameterPropertiesMethod, isNotNull);
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (statuses != null) { _$result[r'statuses'] = PropertyValue.array( statuses!.map((e) => e.toJson()).toList(), ); } else if (allowEmpty) { _$result[r'statuses'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (statuses != null) {
+    _$result[r'statuses'] = PropertyValue.array(
+      statuses!.map((e) => e.toJson()).toList(),
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1120,7 +1274,19 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(result.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (items != null) { _$result[r'items'] = PropertyValue.array( items! .map( (e) => encodeAnyValueToString(e.toJson(), allowEmpty: allowEmpty), ) .toList(), ); } else if (allowEmpty) { _$result[r'items'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (items != null) {
+    _$result[r'items'] = PropertyValue.array(
+      items!
+          .map(
+            (e) => encodeAnyValueToString(e.toJson(), allowEmpty: allowEmpty),
+          )
+          .toList(),
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1160,7 +1326,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'tags'] = PropertyValue.array(tags); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'tags'] = PropertyValue.array(tags);
+  return _$result;
+}
 ''';
 
         expect(
@@ -1200,7 +1370,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (tags != null) {
+    _$result[r'tags'] = PropertyValue.array(tags!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1249,7 +1425,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'name'] = PropertyValue.scalar(name);
+  if (tags != null) {
+    _$result[r'tags'] = PropertyValue.array(tags!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1294,7 +1477,12 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); _$result[r'age'] = PropertyValue.scalar(age.toString()); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'name'] = PropertyValue.scalar(name);
+  _$result[r'age'] = PropertyValue.scalar(age.toString());
+  return _$result;
+}
 ''';
 
         expect(
@@ -1415,7 +1603,21 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'ratio'] = PropertyValue.scalar(ratio.toString()); _$result[r'quantity'] = PropertyValue.scalar(quantity.toString()); _$result[r'createdAt'] = PropertyValue.scalar( createdAt.toTimeZonedIso8601String(), ); _$result[r'birthday'] = PropertyValue.scalar(birthday.toString()); _$result[r'price'] = PropertyValue.scalar(price.toString()); _$result[r'link'] = PropertyValue.scalar(link.toString()); _$result[r'status'] = PropertyValue.scalar(status.toJson()); _$result[r'level'] = PropertyValue.scalar(level.toJson().toString()); _$result[r'blob'] = PropertyValue.scalar(blob.toBytes().decodeToString()); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'ratio'] = PropertyValue.scalar(ratio.toString());
+  _$result[r'quantity'] = PropertyValue.scalar(quantity.toString());
+  _$result[r'createdAt'] = PropertyValue.scalar(
+    createdAt.toTimeZonedIso8601String(),
+  );
+  _$result[r'birthday'] = PropertyValue.scalar(birthday.toString());
+  _$result[r'price'] = PropertyValue.scalar(price.toString());
+  _$result[r'link'] = PropertyValue.scalar(link.toString());
+  _$result[r'status'] = PropertyValue.scalar(status.toJson());
+  _$result[r'level'] = PropertyValue.scalar(level.toJson().toString());
+  _$result[r'blob'] = PropertyValue.scalar(blob.toBytes().decodeToString());
+  return _$result;
+}
 ''';
 
         expect(
@@ -1451,7 +1653,15 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (data != null) { _$result[r'data'] = PropertyValue.scalar( encodeUnknownFlatScalar(data!, context: 'DynamicContainer.data'), ); } else if (allowEmpty) { _$result[r'data'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (data != null) {
+    _$result[r'data'] = PropertyValue.scalar(
+      encodeUnknownFlatScalar(data!, context: 'DynamicContainer.data'),
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1495,7 +1705,18 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (data != null) { _$result[r'data'] = PropertyValue.scalar( encodeUnknownFlatScalar(data!, context: 'ForbiddenContainer.data'), ); } else if (allowEmpty) { _$result[r'data'] = PropertyValue.scalar(''); } throw EncodingException( r'Cannot encode NeverModel property forbidden: this type does not permit any value', ); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (data != null) {
+    _$result[r'data'] = PropertyValue.scalar(
+      encodeUnknownFlatScalar(data!, context: 'ForbiddenContainer.data'),
+    );
+  }
+  throw EncodingException(
+    r'Cannot encode NeverModel property forbidden: this type does not permit any value',
+  );
+  return _$result;
+}
 ''';
 
         expect(
@@ -1539,7 +1760,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'label'] = PropertyValue.scalar(label); throw EncodingException( r'Cannot encode NeverModel property forbidden: this type does not permit any value', ); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'label'] = PropertyValue.scalar(label);
+  throw EncodingException(
+    r'Cannot encode NeverModel property forbidden: this type does not permit any value',
+  );
+  return _$result;
+}
 ''';
 
         expect(
@@ -1588,7 +1816,13 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
 
         // Should generate null-aware encoding because the model is nullable
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (description != null) { _$result[r'description'] = PropertyValue.scalar(description!); } else if (allowEmpty) { _$result[r'description'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (description != null) {
+    _$result[r'description'] = PropertyValue.scalar(description!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1653,8 +1887,6 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
             collapseWhitespace(r'''
 if (description != null) {
   _$result[r'description'] = PropertyValue.scalar(description!);
-} else if (allowEmpty) {
-  _$result[r'description'] = PropertyValue.scalar('');
 }'''),
           ),
         );
@@ -1691,7 +1923,13 @@ if (description != null) {
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (items != null) { _$result[r'items'] = PropertyValue.array(items!); } else if (allowEmpty) { _$result[r'items'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (items != null) {
+    _$result[r'items'] = PropertyValue.array(items!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1735,7 +1973,23 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = '''
-List<ParameterEntry> toForm( String paramName, { required bool explode, required bool allowEmpty, bool useQueryComponent = false, bool allowReserved = false, Map<String, FormFieldEncoding> fieldEncodings = const {}, }) { return parameterProperties(allowEmpty: allowEmpty).toForm( paramName, explode: explode, allowEmpty: allowEmpty, useQueryComponent: useQueryComponent, allowReserved: allowReserved, fieldEncodings: fieldEncodings, ); }
+List<ParameterEntry> toForm(
+  String paramName, {
+  required bool explode,
+  required bool allowEmpty,
+  bool useQueryComponent = false,
+  bool allowReserved = false,
+  Map<String, FormFieldEncoding> fieldEncodings = const {},
+}) {
+  return parameterProperties(allowEmpty: allowEmpty).toForm(
+    paramName,
+    explode: explode,
+    allowEmpty: allowEmpty,
+    useQueryComponent: useQueryComponent,
+    allowReserved: allowReserved,
+    fieldEncodings: fieldEncodings,
+  );
+}
 ''';
 
         expect(
@@ -1867,7 +2121,13 @@ List<ParameterEntry> toForm( String paramName, { required bool explode, required
         // Should generate null-aware encoding because the nested alias
         // is nullable
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (label != null) { _$result[r'label'] = PropertyValue.scalar(label!); } else if (allowEmpty) { _$result[r'label'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (label != null) {
+    _$result[r'label'] = PropertyValue.scalar(label!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1902,7 +2162,11 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String()); return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
+  return _$result;
+}
 ''';
 
         expect(
@@ -1937,7 +2201,15 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (signature != null) { _$result[r'signature'] = PropertyValue.scalar( signature!.toBase64String(), ); } else if (allowEmpty) { _$result[r'signature'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (signature != null) {
+    _$result[r'signature'] = PropertyValue.scalar(
+      signature!.toBase64String(),
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -1972,7 +2244,15 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; if (signature != null) { _$result[r'signature'] = PropertyValue.scalar( signature!.toBase64String(), ); } else if (allowEmpty) { _$result[r'signature'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  if (signature != null) {
+    _$result[r'signature'] = PropertyValue.scalar(
+      signature!.toBase64String(),
+    );
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -2011,7 +2291,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'declared'] = PropertyValue.scalar(declared); const _$knownKeys = {r'declared'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Bag', ); } _$result[_$e.key] = PropertyValue.scalar(_$e.value); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'declared'] = PropertyValue.scalar(declared);
+  const _$knownKeys = {r'declared'};
+  for (final _$e in additionalProperties.entries) {
+    if (_$knownKeys.contains(_$e.key)) {
+      throw EncodingException(
+        r'Additional property keys must not collide with declared wire keys of Bag',
+      );
+    }
+    _$result[_$e.key] = PropertyValue.scalar(_$e.value);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -2050,7 +2343,20 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final classCode = format(generatedClass.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Filter', ); } _$result[_$e.key] = PropertyValue.scalar(_$e.value.toBase64String()); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'name'] = PropertyValue.scalar(name);
+  const _$knownKeys = {r'name'};
+  for (final _$e in additionalProperties.entries) {
+    if (_$knownKeys.contains(_$e.key)) {
+      throw EncodingException(
+        r'Additional property keys must not collide with declared wire keys of Filter',
+      );
+    }
+    _$result[_$e.key] = PropertyValue.scalar(_$e.value.toBase64String());
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -2101,7 +2407,14 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final
         final methodCode = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String()); if (tags != null) { _$result[r'tags'] = PropertyValue.array(tags!); } else if (allowEmpty) { _$result[r'tags'] = PropertyValue.scalar(''); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'signature'] = PropertyValue.scalar(signature.toBase64String());
+  if (tags != null) {
+    _$result[r'tags'] = PropertyValue.array(tags!);
+  }
+  return _$result;
+}
 ''';
 
         expect(
@@ -2240,7 +2553,22 @@ Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
         final methodCode = format(method.accept(emitter).toString());
 
         const expectedMethod = r'''
-Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) { final _$result = <String, PropertyValue>{}; _$result[r'name'] = PropertyValue.scalar(name); const _$knownKeys = {r'name'}; for (final _$e in additionalProperties.entries) { if (_$knownKeys.contains(_$e.key)) { throw EncodingException( r'Additional property keys must not collide with declared wire keys of Filter', ); } final _$v = _$e.value; if (_$v == null) continue; _$result[_$e.key] = PropertyValue.scalar(_$v.toBase64String()); } return _$result; }
+Map<String, PropertyValue> parameterProperties({bool allowEmpty = true}) {
+  final _$result = <String, PropertyValue>{};
+  _$result[r'name'] = PropertyValue.scalar(name);
+  const _$knownKeys = {r'name'};
+  for (final _$e in additionalProperties.entries) {
+    if (_$knownKeys.contains(_$e.key)) {
+      throw EncodingException(
+        r'Additional property keys must not collide with declared wire keys of Filter',
+      );
+    }
+    final _$v = _$e.value;
+    if (_$v == null) continue;
+    _$result[_$e.key] = PropertyValue.scalar(_$v.toBase64String());
+  }
+  return _$result;
+}
 ''';
 
         expect(
