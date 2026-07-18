@@ -198,6 +198,61 @@ void main() {
       );
     });
 
+    test('decodes a required any property with the nullable form decoder', () {
+      final model = ClassModel(
+        isDeprecated: false,
+        name: 'FormAny',
+        properties: [
+          Property(
+            name: 'name',
+            model: StringModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+          Property(
+            name: 'anyValue',
+            model: AnyModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        examples: const [],
+      );
+
+      final result = generator.generateClass(model);
+      final generatedCode = format(result.accept(emitter).toString());
+
+      const expectedFromFormMethod = r'''
+        factory FormAny.fromForm(String? value, {required bool explode}) {
+          final _$values = value.decodeObject(
+            explode: explode,
+            explodeSeparator: '&',
+            expectedKeys: {r'name', r'anyValue'},
+            listKeys: {},
+            context: r'FormAny',
+          );
+          return FormAny(
+            name: _$values[r'name'].decodeFormString(context: r'FormAny.name'),
+            anyValue: _$values[r'anyValue'].decodeFormNullableString(
+              context: r'FormAny.anyValue',
+            ),
+          );
+        }
+      ''';
+
+      expect(
+        collapseWhitespace(generatedCode),
+        contains(collapseWhitespace(expectedFromFormMethod)),
+      );
+    });
+
     test(
       'generates fromForm for mixed OneOf that attempts decoding',
       () {
