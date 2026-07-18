@@ -95,6 +95,15 @@ Expression _buildFromFormValueExpression(
           )
           .call([], contextParam),
 
+    // urlencoded carries no type information: an untyped value is a string on
+    // the wire, decoded into the Object? slot (JSON keeps AnyModel raw).
+    AnyModel() =>
+      value
+          .property(
+            isRequired ? 'decodeFormString' : 'decodeFormNullableString',
+          )
+          .call([], contextParam),
+
     IntegerModel() =>
       value
           .property(
@@ -205,8 +214,6 @@ Expression _buildFromFormValueExpression(
     ),
 
     NeverModel() => _buildNeverModelExpression(value, isRequired),
-
-    AnyModel() => value,
 
     MapModel() => generateFormDecodingExceptionExpression(
       _mapFormDecodingMessage,

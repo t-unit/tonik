@@ -176,6 +176,21 @@ paths:
                 additionalProperties:
                   type: string
 
+  /form/untyped-extras-response:
+    get:
+      operationId: getUntypedExtrasResponse
+      tags:
+        - form
+      summary: Get response with untyped additional properties
+      description: Tests decoding of untyped additionalProperties from form body
+      responses:
+        '200':
+          description: Successful response with declared and untyped extras
+          content:
+            application/x-www-form-urlencoded:
+              schema:
+                $ref: '#/components/schemas/UntypedExtrasForm'
+
   /form/empty-null:
     post:
       operationId: postEmptyNull
@@ -764,6 +779,17 @@ components:
           type: integer
           description: Person age
           example: 30
+
+    UntypedExtrasForm:
+      type: object
+      required:
+        - id
+      properties:
+        id:
+          type: integer
+        user_name:
+          type: string
+      additionalProperties: true
 
     SpecialCharsForm:
       type: object

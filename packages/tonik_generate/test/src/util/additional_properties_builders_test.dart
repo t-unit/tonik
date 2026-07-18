@@ -304,6 +304,72 @@ void main() {
       );
     });
 
+    test('untyped values percent-decode through the form decoder', () {
+      final result = buildApFlatCaptureLoop(
+        AdditionalPropertiesPlan(
+          valueModel: AnyModel(context: context),
+          knownWireKeys: const {'name'},
+        ),
+        format: FlatWireFormat.form,
+        sourceMapVar: r'_$values',
+        nameManager: nameManager,
+        package: 'package:example/api.dart',
+        contextClass: 'Order',
+      );
+
+      const expected = r'''
+        void run() {
+          const _$knownKeys = {r'name'};
+          final _$additional = <String, Object?>{};
+          for (final _$entry in _$values.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
+              _$additional[_$entry.key] = _$entry.value.decodeFormString(
+                context: r'Order.additionalProperties',
+              );
+            }
+          }
+        }
+      ''';
+
+      expect(result, isA<CapturingApFlatCapture>());
+      expect(
+        collapseWhitespace(formatCodes(result.codes)),
+        contains(collapseWhitespace(expected)),
+      );
+    });
+
+    test('untyped values stay literal for simple decoding', () {
+      final result = buildApFlatCaptureLoop(
+        AdditionalPropertiesPlan(
+          valueModel: AnyModel(context: context),
+          knownWireKeys: const {'name'},
+        ),
+        format: FlatWireFormat.simple,
+        sourceMapVar: r'_$values',
+        nameManager: nameManager,
+        package: 'package:example/api.dart',
+        contextClass: 'Order',
+      );
+
+      const expected = r'''
+        void run() {
+          const _$knownKeys = {r'name'};
+          final _$additional = <String, Object?>{};
+          for (final _$entry in _$values.entries) {
+            if (!_$knownKeys.contains(_$entry.key)) {
+              _$additional[_$entry.key] = _$entry.value;
+            }
+          }
+        }
+      ''';
+
+      expect(result, isA<CapturingApFlatCapture>());
+      expect(
+        collapseWhitespace(formatCodes(result.codes)),
+        contains(collapseWhitespace(expected)),
+      );
+    });
+
     test('list value models throw on unknown keys because element '
         'boundaries cannot be recovered', () {
       final result = buildApFlatCaptureLoop(

@@ -371,6 +371,47 @@ void main() {
       });
     });
 
+    group('AnyModel', () {
+      test('percent-decodes required value through the form decoder', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['note']"),
+          model: AnyModel(context: context),
+          isRequired: true,
+          nameManager: nameManager,
+          package: 'test_package',
+          contextClass: 'TestClass',
+          contextProperty: 'note',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          "values['note'].decodeFormString(context: r'TestClass.note')",
+        );
+      });
+
+      test('percent-decodes optional value through the form decoder', () {
+        final expression = buildFromFormValueExpression(
+          refer("values['note']"),
+          model: AnyModel(context: context),
+          isRequired: false,
+          nameManager: nameManager,
+          package: 'test_package',
+          contextClass: 'TestClass',
+          contextProperty: 'note',
+        );
+
+        final code = expression.accept(DartEmitter()).toString();
+        expect(
+          code,
+          equals(
+            "values['note'].decodeFormNullableString("
+            "context: r'TestClass.note')",
+          ),
+        );
+      });
+    });
+
     group('context handling', () {
       test('handles context with class only', () {
         final expression = buildFromFormValueExpression(

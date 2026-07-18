@@ -85,6 +85,15 @@ switch (path) {
         }
         break
 
+    case '/form/untyped-extras-response':
+        def formBody = 'id=1&user_name=caf%C3%A9&note=caf%C3%A9&city=New+York'
+        respond {
+            withStatusCode 200
+            withHeader 'Content-Type', 'application/x-www-form-urlencoded'
+            withContent formBody
+        }
+        break
+
     case '/form/empty-null':
         def formBody = 'emptyString=&nullableString=not+empty'
         respond {
