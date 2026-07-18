@@ -860,6 +860,63 @@ void main() {
       },
     );
 
+    test('omits contentType when optional single-content body is null', () {
+      final requestBody = RequestBodyObject(
+        name: 'optionalContent',
+        context: context,
+        description: 'Optional request body with single content type',
+        isRequired: false,
+        content: {
+          RequestContent(
+            model: StringModel(context: context),
+            contentType: ContentType.json,
+            rawContentType: 'application/json',
+            examples: const [],
+          ),
+        },
+      );
+
+      final operation = Operation(
+        operationId: 'operationWithOptionalContent',
+        context: context,
+        summary: 'Operation with optional single content',
+        description: 'An operation with an optional single content type body',
+        tags: const {},
+        isDeprecated: false,
+        path: '/optional-content',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = r'''
+        Options _options({String? body}) {
+          final _$contentType = body == null ? null : r'application/json';
+          final _$headers = <String, dynamic>{};
+          _$headers['Accept'] = r'*/*';
+          return Options(
+            method: 'POST',
+            headers: _$headers,
+            contentType: _$contentType,
+            responseType: ResponseType.bytes,
+            validateStatus: (_) => true,
+          );
+        }
+      ''';
+
+      final method = generator.generateOptionsMethod(operation, [], []);
+      final methodString = format(method.accept(emitter).toString());
+      expect(
+        collapseWhitespace(methodString),
+        collapseWhitespace(expectedMethod),
+      );
+    });
+
     test(
       'sets contentType based on body type when body has multiple contents',
       () {
@@ -4472,6 +4529,68 @@ void main() {
           tags: const {},
           isDeprecated: false,
           path: '/upload',
+          method: HttpMethod.post,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          requestBody: requestBody,
+          securitySchemes: const {},
+        );
+
+        const expectedMethod = r'''
+          Options _options() {
+            final _$headers = <String, dynamic>{};
+            _$headers['Accept'] = r'*/*';
+            return Options(
+              method: 'POST',
+              headers: _$headers,
+              contentType: null,
+              responseType: ResponseType.bytes,
+              validateStatus: (_) => true,
+            );
+          }
+        ''';
+
+        final method = generator.generateOptionsMethod(operation, [], []);
+        final methodString = format(method.accept(emitter).toString());
+        expect(
+          collapseWhitespace(methodString),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('sets contentType to null for optional single multipart body', () {
+        final requestBody = RequestBodyObject(
+          name: 'optionalUploadBody',
+          context: context,
+          description: 'Optional multipart body',
+          isRequired: false,
+          content: {
+            RequestContent(
+              model: ClassModel(
+                name: 'UploadForm',
+                isDeprecated: false,
+                properties: const [],
+                context: context,
+                examples: const [],
+              ),
+              contentType: ContentType.multipart,
+              rawContentType: 'multipart/form-data',
+              examples: const [],
+            ),
+          },
+        );
+
+        final operation = Operation(
+          operationId: 'uploadOptionalFile',
+          context: context,
+          summary: 'Upload optional file',
+          description: 'Upload an optional file',
+          tags: const {},
+          isDeprecated: false,
+          path: '/upload-optional',
           method: HttpMethod.post,
           headers: const {},
           queryParameters: const {},

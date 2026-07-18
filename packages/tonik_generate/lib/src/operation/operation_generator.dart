@@ -269,7 +269,7 @@ class OperationGenerator {
         pathExpr,
         queryExpr,
         hasRequestBody,
-        (operation.requestBody?.contentCount ?? 0) > 1,
+        optionsMethodNeedsBody(operation.requestBody),
         headerArgs,
         cookieArgs,
         pathArgs,
@@ -351,7 +351,7 @@ class OperationGenerator {
     Expression pathExpr,
     Expression queryExpr,
     bool hasRequestBody,
-    bool hasVariableContent,
+    bool optionsNeedsBody,
     Map<String, Expression> headerArgs,
     Map<String, Expression> cookieArgs,
     Map<String, Expression> pathArgs,
@@ -427,7 +427,7 @@ class OperationGenerator {
               refer('_options').call([], {
                 ...headerArgs,
                 ...cookieArgs,
-                if (hasVariableContent) 'body': refer('body'),
+                if (optionsNeedsBody) 'body': refer('body'),
               }),
             )
             .statement,
