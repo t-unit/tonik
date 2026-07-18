@@ -1,0 +1,55 @@
+openapi: 3.0.3
+info:
+  title: Nullable Bodies Test API
+  description: >
+    OpenAPI specification verifying that a `nullable: true` primitive body
+    decodes a JSON `null` successfully, whether the schema is written inline in
+    the media type object or reached through a `$ref`.
+  version: 1.0.0
+  contact:
+    name: Tonik Test Suite
+    url: https://github.com/tonik
+    email: test@example.com
+
+servers:
+  - url: http://localhost:8080
+
+tags:
+  - name: nullable-bodies
+    description: Operations returning nullable primitive bodies
+
+paths:
+  /winner/inline:
+    get:
+      operationId: getWinnerInline
+      tags:
+        - nullable-bodies
+      summary: Current winner name via an inline nullable schema
+      responses:
+        '200':
+          description: The winner name, or null when there is none yet
+          content:
+            application/json:
+              schema:
+                type: string
+                nullable: true
+
+  /winner/ref:
+    get:
+      operationId: getWinnerRef
+      tags:
+        - nullable-bodies
+      summary: Current winner name via a referenced nullable schema
+      responses:
+        '200':
+          description: The winner name, or null when there is none yet
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WinnerName'
+
+components:
+  schemas:
+    WinnerName:
+      type: string
+      nullable: true

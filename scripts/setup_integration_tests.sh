@@ -119,6 +119,7 @@ rm -rf defs/defs_api
 rm -rf server_variables/server_variables_api
 rm -rf cookies/cookies_api
 rm -rf read_write_only/read_write_only_api
+rm -rf nullable_bodies/nullable_bodies_api
 rm -rf multipart/multipart_api
 rm -rf multipart/multipart_3_1_api
 rm -rf adversarial_strings/adversarial_strings_api
@@ -220,6 +221,9 @@ add_dependency_overrides_recursive "cookies/cookies_api"
 $TONIK_BINARY -p read_write_only_api -s read_write_only/openapi.yaml -o read_write_only
 add_dependency_overrides_recursive "read_write_only/read_write_only_api"
 
+$TONIK_BINARY -p nullable_bodies_api -s nullable_bodies/openapi.yaml -o nullable_bodies
+add_dependency_overrides_recursive "nullable_bodies/nullable_bodies_api"
+
 $TONIK_BINARY --config multipart/tonik.yaml
 add_dependency_overrides_recursive "multipart/multipart_api"
 
@@ -298,6 +302,7 @@ echo "Running dart pub get for all generated packages in parallel..."
   cd server_variables/server_variables_api && dart pub get &
   cd cookies/cookies_api && dart pub get &
   cd read_write_only/read_write_only_api && dart pub get &
+  cd nullable_bodies/nullable_bodies_api && dart pub get &
   cd multipart/multipart_api && dart pub get &
   cd multipart/multipart_3_1_api && dart pub get &
   cd adversarial_strings/adversarial_strings_api && dart pub get &
@@ -362,6 +367,7 @@ restore_test_package_overrides "defs/defs_test/pubspec.yaml" "../../../packages/
 restore_test_package_overrides "server_variables/server_variables_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "cookies/cookies_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "read_write_only/read_write_only_test/pubspec.yaml" "../../../packages/tonik_util"
+restore_test_package_overrides "nullable_bodies/nullable_bodies_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "multipart/multipart_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "adversarial_strings/adversarial_strings_test/pubspec.yaml" "../../../packages/tonik_util"
 restore_test_package_overrides "figma/figma_test/pubspec.yaml" "../../../packages/tonik_util"
@@ -405,6 +411,7 @@ echo "Running dart pub get for all test packages in parallel..."
   cd server_variables/server_variables_test && dart pub get &
   cd cookies/cookies_test && dart pub get &
   cd read_write_only/read_write_only_test && dart pub get &
+  cd nullable_bodies/nullable_bodies_test && dart pub get &
   cd multipart/multipart_test && dart pub get &
   cd adversarial_strings/adversarial_strings_test && dart pub get &
   cd figma/figma_test && dart pub get &
