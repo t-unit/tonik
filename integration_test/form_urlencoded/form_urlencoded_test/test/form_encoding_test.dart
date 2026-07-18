@@ -537,6 +537,10 @@ void main() {
         entries.firstWhere((e) => e.name == 'note').value,
         'caf%C3%A9',
       );
+      expect(
+        entries.firstWhere((e) => e.name == 'city').value,
+        'New+York',
+      );
     });
   });
 
