@@ -482,7 +482,7 @@ void main() {
           (response as TonikSuccess<TypesForm>).response.requestOptions.data;
       expect(
         requestData,
-        'stringValue=test&intValue=1&doubleValue=&boolValue=false&dateValue=',
+        'stringValue=test&intValue=1&boolValue=false',
       );
 
       final data = response.value;
@@ -523,7 +523,7 @@ void main() {
           .response
           .requestOptions
           .data;
-      expect(requestData, 'emptyString=&nullableString=');
+      expect(requestData, 'emptyString=');
 
       final data = response.value;
       expect(data.emptyString, isNull);
@@ -540,7 +540,7 @@ void main() {
           .response
           .requestOptions
           .data;
-      expect(requestData, 'emptyString=test+value&nullableString=');
+      expect(requestData, 'emptyString=test+value');
 
       final data = response.value;
       expect(data.emptyString, isNull);
