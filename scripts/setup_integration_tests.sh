@@ -136,136 +136,125 @@ rm -rf immutable_collections/immutable_collections_api
 rm -rf naming/naming_api
 rm -rf recursive_map/recursive_map_api
 
-# Generate API code with automatic dependency overrides for local tonik_util
-# Using compiled binary for much faster generation
-# Generate all API packages first
-$TONIK_BINARY -p additional_properties_api -s additional_properties/openapi.yaml -o additional_properties
+# Generate API code with automatic dependency overrides for local tonik_util.
+# Using the compiled binary for much faster generation. Generations are
+# independent, so run them in bounded-parallel batches (one slot per CPU core)
+# instead of sequentially. Largest specs come first so the long poles overlap
+# rather than serialising at the tail.
+if command -v nproc &> /dev/null; then
+    GEN_JOBS=$(nproc)
+elif command -v sysctl &> /dev/null; then
+    GEN_JOBS=$(sysctl -n hw.ncpu)
+else
+    GEN_JOBS=4
+fi
+echo "Generating API packages in parallel (max $GEN_JOBS jobs)..."
+
+GEN_CMDS=(
+  "$TONIK_BINARY --config cloudflare/tonik.yaml"
+  "$TONIK_BINARY --config github/tonik.yaml"
+  "$TONIK_BINARY --config stripe/tonik.yaml"
+  "$TONIK_BINARY --config shopify/tonik.yaml"
+  "$TONIK_BINARY --config asana/tonik.yaml"
+  "$TONIK_BINARY --config kubernetes/tonik.yaml"
+  "$TONIK_BINARY --config twilio/tonik.yaml"
+  "$TONIK_BINARY --config openai/tonik_full.yaml"
+  "$TONIK_BINARY -p additional_properties_api -s additional_properties/openapi.yaml -o additional_properties"
+  "$TONIK_BINARY -p defaulted_api -s defaulted/openapi.yaml -o defaulted"
+  "$TONIK_BINARY --config petstore/tonik.yaml"
+  "$TONIK_BINARY -p petstore_api -s petstore_config/openapi.yaml -o petstore_config"
+  "$TONIK_BINARY --config petstore_config/tonik_filtering.yaml"
+  "$TONIK_BINARY --config petstore_config/tonik_overrides.yaml"
+  "$TONIK_BINARY --config petstore_config/tonik_deprecation.yaml"
+  "$TONIK_BINARY -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming"
+  "$TONIK_BINARY -p gov_api -s gov/openapi.yaml -o gov"
+  "$TONIK_BINARY -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding"
+  "$TONIK_BINARY -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod"
+  "$TONIK_BINARY -p composition_api -s composition/openapi.yaml -o composition"
+  "$TONIK_BINARY -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters"
+  "$TONIK_BINARY -p allow_reserved_api -s allow_reserved/openapi.yaml -o allow_reserved"
+  "$TONIK_BINARY -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding"
+  "$TONIK_BINARY --config binary_models/tonik.yaml -p binary_models_api -s binary_models/openapi.yaml -o binary_models"
+  "$TONIK_BINARY -p structured_syntax_suffix_api -s structured_syntax_suffix/openapi.yaml -o structured_syntax_suffix"
+  "$TONIK_BINARY --config form_urlencoded/tonik_custom.yaml"
+  "$TONIK_BINARY -p boolean_schemas_api -s boolean_schemas/openapi.yaml -o boolean_schemas"
+  "$TONIK_BINARY -p type_arrays_api -s type_arrays/openapi.yaml -o type_arrays"
+  "$TONIK_BINARY -p medama_api -s medama/openapi.yaml -o medama"
+  "$TONIK_BINARY -p inference_api -s inference/openapi.json -o inference"
+  "$TONIK_BINARY -p ref_siblings_api -s ref_siblings/openapi.yaml -o ref_siblings"
+  "$TONIK_BINARY -p defs_api -s defs/openapi.yaml -o defs"
+  "$TONIK_BINARY -p server_variables_api -s server_variables/openapi.yaml -o server_variables"
+  "$TONIK_BINARY -p cookies_api -s cookies/openapi.yaml -o cookies"
+  "$TONIK_BINARY -p read_write_only_api -s read_write_only/openapi.yaml -o read_write_only"
+  "$TONIK_BINARY --config multipart/tonik.yaml"
+  "$TONIK_BINARY --config multipart/tonik_3_1.yaml"
+  "$TONIK_BINARY -p adversarial_strings_api -s adversarial_strings/openapi.yaml -o adversarial_strings"
+  "$TONIK_BINARY --config figma/tonik.yaml"
+  "$TONIK_BINARY --config totem/tonik.yaml"
+  "$TONIK_BINARY --config immutable_collections/tonik.yaml"
+  "$TONIK_BINARY -p naming_api -s naming/openapi.yaml -o naming"
+  "$TONIK_BINARY -p recursive_map_api -s recursive_map/openapi.yaml -o recursive_map"
+)
+
+gen_pids=()
+for cmd in "${GEN_CMDS[@]}"; do
+    bash -c "$cmd" &
+    gen_pids+=("$!")
+    if [ "${#gen_pids[@]}" -ge "$GEN_JOBS" ]; then
+        for pid in "${gen_pids[@]}"; do
+            wait "$pid" || { echo "Error: API generation failed"; exit 1; }
+        done
+        gen_pids=()
+    fi
+done
+for pid in "${gen_pids[@]}"; do
+    wait "$pid" || { echo "Error: API generation failed"; exit 1; }
+done
+echo "All API packages generated"
+
+# Add local tonik_util dependency overrides to every generated package.
 add_dependency_overrides_recursive "additional_properties/additional_properties_api"
-
-$TONIK_BINARY -p defaulted_api -s defaulted/openapi.yaml -o defaulted
 add_dependency_overrides_recursive "defaulted/defaulted_api"
-
-$TONIK_BINARY --config petstore/tonik.yaml
 add_dependency_overrides_recursive "petstore/petstore_api"
-
-$TONIK_BINARY -p petstore_api -s petstore_config/openapi.yaml -o petstore_config
 add_dependency_overrides_recursive "petstore_config/petstore_api"
-
-$TONIK_BINARY --config petstore_config/tonik_filtering.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_filtering_api"
-
-$TONIK_BINARY --config petstore_config/tonik_overrides.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_overrides_api"
-
-$TONIK_BINARY --config petstore_config/tonik_deprecation.yaml
 add_dependency_overrides_recursive "petstore_config/petstore_deprecation_api"
-
-$TONIK_BINARY -p music_streaming_api -s music_streaming/openapi.yaml -o music_streaming
 add_dependency_overrides_recursive "music_streaming/music_streaming_api"
-
-$TONIK_BINARY -p gov_api -s gov/openapi.yaml -o gov
 add_dependency_overrides_recursive "gov/gov_api"
-
-$TONIK_BINARY -p simple_encoding_api -s simple_encoding/openapi.yaml -o simple_encoding
 add_dependency_overrides_recursive "simple_encoding/simple_encoding_api"
-
-$TONIK_BINARY -p fastify_type_provider_zod_api -s fastify_type_provider_zod/openapi.json -o fastify_type_provider_zod
 add_dependency_overrides_recursive "fastify_type_provider_zod/fastify_type_provider_zod_api"
-
-$TONIK_BINARY -p composition_api -s composition/openapi.yaml -o composition
 add_dependency_overrides_recursive "composition/composition_api"
-
-$TONIK_BINARY -p query_parameters_api -s query_parameters/openapi.yaml -o query_parameters
 add_dependency_overrides_recursive "query_parameters/query_parameters_api"
-
-$TONIK_BINARY -p allow_reserved_api -s allow_reserved/openapi.yaml -o allow_reserved
 add_dependency_overrides_recursive "allow_reserved/allow_reserved_api"
-
-$TONIK_BINARY -p path_encoding_api -s path_encoding/openapi.yaml -o path_encoding
 add_dependency_overrides_recursive "path_encoding/path_encoding_api"
-
-$TONIK_BINARY --config binary_models/tonik.yaml -p binary_models_api -s binary_models/openapi.yaml -o binary_models
 add_dependency_overrides_recursive "binary_models/binary_models_api"
-
-$TONIK_BINARY -p structured_syntax_suffix_api -s structured_syntax_suffix/openapi.yaml -o structured_syntax_suffix
 add_dependency_overrides_recursive "structured_syntax_suffix/structured_syntax_suffix_api"
-
-$TONIK_BINARY --config form_urlencoded/tonik_custom.yaml
 add_dependency_overrides_recursive "form_urlencoded/form_urlencoded_api"
-
-$TONIK_BINARY -p boolean_schemas_api -s boolean_schemas/openapi.yaml -o boolean_schemas
 add_dependency_overrides_recursive "boolean_schemas/boolean_schemas_api"
-
-$TONIK_BINARY -p type_arrays_api -s type_arrays/openapi.yaml -o type_arrays
 add_dependency_overrides_recursive "type_arrays/type_arrays_api"
-
-$TONIK_BINARY -p medama_api -s medama/openapi.yaml -o medama
 add_dependency_overrides_recursive "medama/medama_api"
-
-$TONIK_BINARY -p inference_api -s inference/openapi.json -o inference
 add_dependency_overrides_recursive "inference/inference_api"
-
-$TONIK_BINARY -p ref_siblings_api -s ref_siblings/openapi.yaml -o ref_siblings
 add_dependency_overrides_recursive "ref_siblings/ref_siblings_api"
-
-$TONIK_BINARY -p defs_api -s defs/openapi.yaml -o defs
 add_dependency_overrides_recursive "defs/defs_api"
-
-$TONIK_BINARY -p server_variables_api -s server_variables/openapi.yaml -o server_variables
 add_dependency_overrides_recursive "server_variables/server_variables_api"
-
-$TONIK_BINARY -p cookies_api -s cookies/openapi.yaml -o cookies
 add_dependency_overrides_recursive "cookies/cookies_api"
-
-$TONIK_BINARY -p read_write_only_api -s read_write_only/openapi.yaml -o read_write_only
 add_dependency_overrides_recursive "read_write_only/read_write_only_api"
-
-$TONIK_BINARY --config multipart/tonik.yaml
 add_dependency_overrides_recursive "multipart/multipart_api"
-
-$TONIK_BINARY --config multipart/tonik_3_1.yaml
 add_dependency_overrides_recursive "multipart/multipart_3_1_api"
-
-$TONIK_BINARY -p adversarial_strings_api -s adversarial_strings/openapi.yaml -o adversarial_strings
 add_dependency_overrides_recursive "adversarial_strings/adversarial_strings_api"
-
-$TONIK_BINARY --config figma/tonik.yaml
 add_dependency_overrides_recursive "figma/figma_api"
-
-$TONIK_BINARY --config stripe/tonik.yaml
 add_dependency_overrides_recursive "stripe/stripe_api"
-
-$TONIK_BINARY --config github/tonik.yaml
 add_dependency_overrides_recursive "github/github_api"
-
-$TONIK_BINARY --config openai/tonik_full.yaml
 add_dependency_overrides_recursive "openai/openai_full_api"
-
-$TONIK_BINARY --config asana/tonik.yaml
 add_dependency_overrides_recursive "asana/asana_api"
-
-$TONIK_BINARY --config twilio/tonik.yaml
 add_dependency_overrides_recursive "twilio/twilio_api"
-
-$TONIK_BINARY --config shopify/tonik.yaml
 add_dependency_overrides_recursive "shopify/shopify_api"
-
-$TONIK_BINARY --config kubernetes/tonik.yaml
 add_dependency_overrides_recursive "kubernetes/kubernetes_api"
-
-$TONIK_BINARY --config cloudflare/tonik.yaml
 add_dependency_overrides_recursive "cloudflare/cloudflare_api"
-
-$TONIK_BINARY --config totem/tonik.yaml
 add_dependency_overrides_recursive "totem/totem_api"
-
-$TONIK_BINARY --config immutable_collections/tonik.yaml
 add_dependency_overrides_recursive "immutable_collections/immutable_collections_api"
-
-$TONIK_BINARY -p naming_api -s naming/openapi.yaml -o naming
 add_dependency_overrides_recursive "naming/naming_api"
-
-$TONIK_BINARY -p recursive_map_api -s recursive_map/openapi.yaml -o recursive_map
 add_dependency_overrides_recursive "recursive_map/recursive_map_api"
 
 # Run dart pub get for all generated packages in parallel
