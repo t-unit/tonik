@@ -1786,8 +1786,49 @@ paths:
         '204':
           description: OK
 
+  /form-partial-object:
+    get:
+      operationId: testFormPartialObject
+      tags:
+        - query
+      summary: Test form-style object with unset optional members
+      description: >-
+        Demonstrates that unset optional object members are omitted rather than
+        sent as empty-valued pairs, even when allowEmptyValue is true
+      parameters:
+        - name: filter
+          in: query
+          required: true
+          allowEmptyValue: true
+          style: form
+          explode: true
+          schema:
+            $ref: '#/components/schemas/PartialFilter'
+        - name: sort
+          in: query
+          required: true
+          allowEmptyValue: true
+          style: form
+          explode: false
+          schema:
+            $ref: '#/components/schemas/PartialFilter'
+      responses:
+        '204':
+          description: OK
+
 components:
   schemas:
+    PartialFilter:
+      type: object
+      required:
+        - name
+      properties:
+        name:
+          type: string
+        nickname:
+          type: string
+        age:
+          type: integer
     Filter:
       type: object
       required:
