@@ -1679,9 +1679,6 @@ class ClassGenerator {
       final modelType = prop.property.model;
       final defaulted = defaultsByName[normalizedName];
       final isRequired = prop.property.isRequired && !prop.property.isWriteOnly;
-      // An Any field is Object? and its form encoding omits null, so it must
-      // decode as nullable even when required — otherwise an omitted value
-      // fails the non-nullable decoder.
       final isNullable =
           prop.property.isNullable ||
           modelType.isEffectivelyNullable ||
