@@ -46,6 +46,34 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
   }
 }
 
+List<ParameterEntry> _delimitedEntries(
+  Map<String, PropertyValue> map,
+  String paramName, {
+  required String delimiter,
+  required bool allowEmpty,
+  required bool allowReserved,
+}) {
+  _guardEmpty(map, allowEmpty: allowEmpty);
+  if (map.isEmpty) {
+    return const [];
+  }
+
+  String encode(String value) => encodeUriValue(
+    value,
+    allowReserved: allowReserved,
+    useQueryComponent: false,
+  );
+  String encodeProperty(PropertyValue value) => switch (value) {
+    ScalarPropertyValue(:final value) => encode(value),
+    ArrayPropertyValue(:final values) => values.map(encode).join(delimiter),
+  };
+
+  final flattened = map.entries
+      .expand((e) => [encode(e.key), encodeProperty(e.value)])
+      .join(delimiter);
+  return [(name: paramName, value: flattened)];
+}
+
 /// Enforces empty-value and URI-escaping rules for object-valued parameters.
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   /// Produces alternating key/value tokens with configurable URI escaping.
@@ -165,6 +193,35 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     ];
     return [(name: paramName, value: parts.join(','))];
   }
+
+  /// Flattens the object to a single entry whose alternating key/value tokens
+  /// are joined by a literal `|`, matching tonik's array pipeDelimited
+  /// convention of keeping the delimiter unescaped.
+  List<ParameterEntry> toPipeDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) => _delimitedEntries(
+    this,
+    paramName,
+    delimiter: '|',
+    allowEmpty: allowEmpty,
+    allowReserved: allowReserved,
+  );
+
+  /// Flattens the object to a single entry whose alternating key/value tokens
+  /// are joined by `%20`.
+  List<ParameterEntry> toSpaceDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) => _delimitedEntries(
+    this,
+    paramName,
+    delimiter: '%20',
+    allowEmpty: allowEmpty,
+    allowReserved: allowReserved,
+  );
 
   /// Keeps keys component-encoded when [allowReserved] preserves value bytes.
   /// Throws [EncodingException] for a non-explode call or an array value, and

@@ -908,5 +908,182 @@ void main() {
         );
       });
     });
+
+    group('object parameters', () {
+      ClassModel colorClass() => ClassModel(
+        name: 'Color',
+        properties: const [],
+        isDeprecated: false,
+        context: context,
+        examples: const [],
+      );
+
+      test('pipeDelimited object (non-explode) flattens via '
+          'parameterProperties', () {
+        final parameter = createParameter(
+          name: 'color',
+          rawName: 'color',
+          model: colorClass(),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'color',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  color
+                      .parameterProperties(allowEmpty: true)
+                      .toPipeDelimited(r'color', allowEmpty: true),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('spaceDelimited object (non-explode) flattens via '
+          'parameterProperties', () {
+        final parameter = createParameter(
+          name: 'coord',
+          rawName: 'coord',
+          model: colorClass(),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'coord',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  coord
+                      .parameterProperties(allowEmpty: true)
+                      .toSpaceDelimited(r'coord', allowEmpty: true),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('object threads allowReserved into the flattening call', () {
+        final parameter = createParameter(
+          name: 'color',
+          rawName: 'color',
+          model: colorClass(),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'color',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          allowReserved: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  color
+                      .parameterProperties(allowEmpty: true)
+                      .toPipeDelimited(
+                        r'color',
+                        allowEmpty: true,
+                        allowReserved: true,
+                      ),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('explode object throws the specification-undefined exception', () {
+        final parameter = createParameter(
+          name: 'color',
+          rawName: 'color',
+          model: colorClass(),
+          explode: true,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'color',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          explode: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+              void test() {
+                throw EncodingException(
+                  r'Parameter color: pipeDelimited encoding of objects with explode: true is not defined by the specification',
+                );
+              }
+            '''),
+          ),
+        );
+      });
+    });
+
+    group('unsupported models', () {
+      test('primitive throws the list-and-object-only exception', () {
+        final parameter = createParameter(
+          name: 'name',
+          rawName: 'name',
+          model: StringModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'name',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+              void test() {
+                throw EncodingException(
+                  r'Parameter name: spaceDelimited encoding supports only list and object types',
+                );
+              }
+            '''),
+          ),
+        );
+      });
+    });
   });
 }

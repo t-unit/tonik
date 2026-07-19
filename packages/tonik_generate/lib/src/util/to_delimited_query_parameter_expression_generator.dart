@@ -37,28 +37,82 @@ List<Code> _buildToDelimitedQueryParameterCode(
       ? 'spaceDelimited'
       : 'pipeDelimited';
 
-  if (model is! ListModel) {
-    return [
-      generateEncodingExceptionExpression(
-        'Parameter $parameterName: $encodingName encoding only '
-        'supports list types',
-        raw: true,
-      ).statement,
-    ];
+  if (model is ListModel) {
+    return _buildDelimitedCode(
+      parameterName,
+      model.content,
+      parameter.rawName,
+      encoding: encoding,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
+      encodingName: encodingName,
+      isContentNullable:
+          model.isContentNullable || model.content.isEffectivelyNullable,
+    );
   }
 
-  return _buildDelimitedCode(
-    parameterName,
-    model.content,
-    parameter.rawName,
-    encoding: encoding,
-    explode: explode,
-    allowEmpty: allowEmpty,
-    allowReserved: allowReserved,
-    encodingName: encodingName,
-    isContentNullable:
-        model.isContentNullable || model.content.isEffectivelyNullable,
-  );
+  if (_isObjectModel(model)) {
+    // explode: true on an object is left undefined by the specification.
+    if (explode) {
+      return [
+        generateEncodingExceptionExpression(
+          'Parameter $parameterName: $encodingName encoding of objects with '
+          'explode: true is not defined by the specification',
+          raw: true,
+        ).statement,
+      ];
+    }
+
+    return _buildObjectDelimitedCode(
+      parameterName,
+      parameter.rawName,
+      encoding: encoding,
+      allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
+    );
+  }
+
+  return [
+    generateEncodingExceptionExpression(
+      'Parameter $parameterName: $encodingName encoding supports only '
+      'list and object types',
+      raw: true,
+    ).statement,
+  ];
+}
+
+bool _isObjectModel(Model model) => switch (model.resolved) {
+  ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel() => true,
+  _ => false,
+};
+
+List<Code> _buildObjectDelimitedCode(
+  String parameterName,
+  String rawName, {
+  required QueryParameterEncoding encoding,
+  required bool allowEmpty,
+  required bool allowReserved,
+}) {
+  final methodName = encoding == QueryParameterEncoding.spaceDelimited
+      ? 'toSpaceDelimited'
+      : 'toPipeDelimited';
+
+  final flattened = refer(parameterName)
+      .property('parameterProperties')
+      .call([], {'allowEmpty': literalBool(allowEmpty)})
+      .property(methodName)
+      .call(
+        [specLiteralString(rawName)],
+        {
+          'allowEmpty': literalBool(allowEmpty),
+          if (allowReserved) 'allowReserved': literalBool(true),
+        },
+      );
+
+  return [
+    refer(r'_$entries').property('addAll').call([flattened]).statement,
+  ];
 }
 
 List<Code> _buildDelimitedCode(

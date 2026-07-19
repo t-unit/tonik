@@ -35,7 +35,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -48,7 +48,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -61,7 +61,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -74,7 +74,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -87,7 +87,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -102,7 +102,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -117,7 +117,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -132,7 +132,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -146,13 +146,12 @@ void main() {
         $class: const Class(name: 'test', age: 1),
       );
 
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
       expect(
-        response,
-        isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        success.response.requestOptions.uri.query,
+        'class=name%20test%20age%201',
       );
-      final error = response as TonikError<void>;
-      expect(error.type, TonikErrorType.encoding);
     });
 
     test('classNested', () async {
@@ -168,7 +167,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'nested objects have no flat parameter representation',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -181,7 +180,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -193,13 +192,12 @@ void main() {
         classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
       expect(
-        response,
-        isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        success.response.requestOptions.uri.query,
+        'classAlias=name%20test%20age%201',
       );
-      final error = response as TonikError<void>;
-      expect(error.type, TonikErrorType.encoding);
     });
 
     test('anyOfPrimitive', () async {
@@ -211,7 +209,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -223,13 +221,12 @@ void main() {
         anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
       expect(
-        response,
-        isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        success.response.requestOptions.uri.query,
+        'anyOfComplex=name%20test%20age%201',
       );
-      final error = response as TonikError<void>;
-      expect(error.type, TonikErrorType.encoding);
     });
 
     test('oneOfPrimitive', () async {
@@ -241,7 +238,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -255,13 +252,12 @@ void main() {
         ),
       );
 
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
       expect(
-        response,
-        isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        success.response.requestOptions.uri.query,
+        'oneOfComplex=value%20test%20amount%201',
       );
-      final error = response as TonikError<void>;
-      expect(error.type, TonikErrorType.encoding);
     });
 
     test('allOfPrimitive', () async {
@@ -273,7 +269,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -288,13 +284,12 @@ void main() {
         ),
       );
 
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
       expect(
-        response,
-        isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        success.response.requestOptions.uri.query,
+        'allOfComplex=name%20test%20age%201%20value%20test%20amount%201',
       );
-      final error = response as TonikError<void>;
-      expect(error.type, TonikErrorType.encoding);
     });
   });
 
@@ -308,7 +303,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -327,7 +322,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -342,7 +337,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -357,7 +352,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -372,7 +367,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -387,7 +382,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -402,7 +397,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -419,7 +414,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -434,7 +429,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -452,7 +447,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -668,7 +663,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -683,7 +678,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -698,7 +693,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -733,7 +728,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);
@@ -764,7 +759,7 @@ void main() {
       expect(
         response,
         isA<TonikError<void>>(),
-        reason: 'only lists are supported in spaceDelimited encoding',
+        reason: 'parameter cannot be spaceDelimited-encoded',
       );
       final error = response as TonikError<void>;
       expect(error.type, TonikErrorType.encoding);

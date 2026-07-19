@@ -660,4 +660,93 @@ void main() {
       );
     });
   });
+
+  group('PropertyValueStyleEncoders.toPipeDelimited', () {
+    test('flattens alternating key/value tokens joined by literal pipe', () {
+      const value = {
+        'R': PropertyValue.scalar('100'),
+        'G': PropertyValue.scalar('200'),
+        'B': PropertyValue.scalar('150'),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'R|100|G|200|B|150')],
+      );
+    });
+
+    test('uri-encodes values while keeping the pipe delimiter literal', () {
+      const value = {
+        'note': PropertyValue.scalar('a b'),
+        'op': PropertyValue.scalar('x=y'),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'note|a%20b|op|x%3Dy')],
+      );
+    });
+
+    test('joins array elements with the pipe delimiter', () {
+      const value = {
+        'tags': PropertyValue.array(['a', 'b']),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'tags|a|b')],
+      );
+    });
+
+    test('omits an empty object when allowEmpty=true', () {
+      const value = <String, PropertyValue>{};
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        <ParameterEntry>[],
+      );
+    });
+
+    test('empty object throws with allowEmpty=false', () {
+      const value = <String, PropertyValue>{};
+      expect(
+        () => value.toPipeDelimited('color', allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+  });
+
+  group('PropertyValueStyleEncoders.toSpaceDelimited', () {
+    test('flattens alternating key/value tokens joined by %20', () {
+      const value = {
+        'R': PropertyValue.scalar('100'),
+        'G': PropertyValue.scalar('200'),
+        'B': PropertyValue.scalar('150'),
+      };
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'R%20100%20G%20200%20B%20150')],
+      );
+    });
+
+    test('uri-encodes values while keeping the space delimiter as %20', () {
+      const value = {'op': PropertyValue.scalar('x=y')};
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'op%20x%3Dy')],
+      );
+    });
+
+    test('omits an empty object when allowEmpty=true', () {
+      const value = <String, PropertyValue>{};
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        <ParameterEntry>[],
+      );
+    });
+
+    test('empty object throws with allowEmpty=false', () {
+      const value = <String, PropertyValue>{};
+      expect(
+        () => value.toSpaceDelimited('coord', allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+  });
 }
