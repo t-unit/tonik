@@ -61,7 +61,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard: [openai, cloudflare, rest]
+        shard: [0, 1, 2]
 
     steps:
       - uses: actions/checkout@v7
@@ -79,13 +79,9 @@ jobs:
 
       - name: Analyze generated code
         run: |
-          if [ "${{ matrix.shard }}" = rest ]; then
-            find integration_test -name pubspec.yaml \
-              -not -path 'integration_test/openai/*' \
-              -not -path 'integration_test/cloudflare/*' -print0
-          else
-            find "integration_test/${{ matrix.shard }}" \
-              -name pubspec.yaml -print0
-          fi |
-            xargs -0 -n 1 -P 2 bash -c \
+          find integration_test -name pubspec.yaml -print |
+            sort |
+            awk -v shard=${{ matrix.shard }} \
+              '(NR - 1) % 3 == shard' |
+            xargs -n 1 -P 2 bash -c \
               'cd "$(dirname "$1")" && dart pub get && dart analyze --fatal-infos --fatal-warnings' _
