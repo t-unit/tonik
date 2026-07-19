@@ -53,7 +53,6 @@ List<Code> _buildToDelimitedQueryParameterCode(
   }
 
   if (_isObjectModel(model)) {
-    // explode: true on an object is left undefined by the specification.
     if (explode) {
       return [
         generateEncodingExceptionExpression(

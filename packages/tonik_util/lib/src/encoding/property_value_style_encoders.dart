@@ -65,6 +65,8 @@ List<ParameterEntry> _delimitedEntries(
   );
   String encodeProperty(PropertyValue value) => switch (value) {
     ScalarPropertyValue(:final value) => encode(value),
+    // Array elements collapse into the delimiter stream, indistinguishable
+    // from the key/value tokens, consistent with the form/toUri path.
     ArrayPropertyValue(:final values) => values.map(encode).join(delimiter),
   };
 
@@ -210,7 +212,9 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   );
 
   /// Flattens the object to a single entry whose alternating key/value tokens
-  /// are joined by `%20`.
+  /// are joined by a pre-escaped `%20`, matching tonik's array spaceDelimited
+  /// convention. The delimiter stays pre-escaped so a literal space never
+  /// reaches the query string.
   List<ParameterEntry> toSpaceDelimited(
     String paramName, {
     required bool allowEmpty,
