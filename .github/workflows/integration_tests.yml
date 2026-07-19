@@ -10,20 +10,8 @@ permissions:
   contents: read
 
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        include:
-          - os: ubuntu-latest
-            sdk: stable
-          - os: macos-latest
-            sdk: stable
-          - os: windows-latest
-            sdk: stable
-          - os: ubuntu-latest
-            sdk: beta
-      fail-fast: true
+  generate-integration:
+    runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v7
@@ -31,7 +19,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: ${{ matrix.sdk }}
+          sdk: stable
 
       - name: Cache Dart pub dependencies
         uses: actions/cache@v6
@@ -39,9 +27,9 @@ jobs:
           path: |
             ~/.pub-cache
             ${{ github.workspace }}/.dart_tool
-          key: ${{ runner.os }}-dart-${{ matrix.sdk }}-${{ hashFiles('**/pubspec.yaml') }}
+          key: ${{ runner.os }}-dart-stable-${{ hashFiles('**/pubspec.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-dart-${{ matrix.sdk }}-
+            ${{ runner.os }}-dart-stable-
             ${{ runner.os }}-dart-
 
       - name: Cache Imposter JAR
@@ -56,201 +44,120 @@ jobs:
           dart pub global activate melos
           melos bootstrap
 
-      - name: Setup integration test
+      - name: Generate integration test code
         run: ./scripts/setup_integration_tests.sh
         shell: bash
 
-      - name: Run additional properties integration tests
-        run: |
-          cd integration_test/additional_properties/additional_properties_test
-          dart test --concurrency=2
+      - name: Upload generated code
+        uses: actions/upload-artifact@v7
+        with:
+          name: generated-integration-code
+          path: integration_test/**/*_api/**
+          compression-level: 1
+          retention-days: 1
 
-      - name: Run defaulted integration tests
-        run: |
-          cd integration_test/defaulted/defaulted_test
-          dart test --concurrency=2
+      - name: Upload Imposter JAR
+        uses: actions/upload-artifact@v7
+        with:
+          name: imposter-jar
+          path: integration_test/imposter.jar
+          compression-level: 0
+          retention-days: 1
 
-      - name: Run petstore integration tests
-        run: |
-          cd integration_test/petstore/petstore_test
-          dart test --concurrency=2
+  analyze-generated:
+    needs: generate-integration
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [0, 1, 2]
 
-      - name: Run petstore config integration tests
-        run: |
-          cd integration_test/petstore_config/petstore_test
-          dart test --concurrency=2
+    steps:
+      - uses: actions/checkout@v7
 
-      - name: Run music streaming integration tests
-        run: |
-          cd integration_test/music_streaming/music_streaming_test
-          dart test --concurrency=2
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
 
-      - name: Run gov integration tests
-        run: |
-          cd integration_test/gov/gov_test
-          dart test --concurrency=2
+      - name: Download generated code
+        uses: actions/download-artifact@v8
+        with:
+          name: generated-integration-code
+          path: integration_test
 
-      - name: Run simple encoding integration tests
+      - name: Analyze generated code
         run: |
-          cd integration_test/simple_encoding/simple_encoding_test
-          dart test --concurrency=2
+          find integration_test -name pubspec.yaml -print |
+            sort |
+            awk -v shard=${{ matrix.shard }} \
+              '(NR - 1) % 3 == shard' |
+            xargs -n 1 -P 2 bash -c \
+              'cd "$(dirname "$1")" && dart pub get && dart analyze --fatal-infos --fatal-warnings' _
 
-      - name: Run fastify type provider zod integration tests
-        run: |
-          cd integration_test/fastify_type_provider_zod/fastify_type_provider_zod_test
-          dart test --concurrency=2
+  test:
+    needs: generate-integration
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        sdk: [stable]
+        shard: [0, 1, 2]
+        include:
+          - os: ubuntu-latest
+            sdk: beta
+            shard: 0
+          - os: ubuntu-latest
+            sdk: beta
+            shard: 1
+          - os: ubuntu-latest
+            sdk: beta
+            shard: 2
 
-      - name: Run composition integration tests
-        run: |
-          cd integration_test/composition/composition_test
-          dart test
+    steps:
+      - uses: actions/checkout@v7
 
-      - name: Run boolean schemas integration tests
-        run: |
-          cd integration_test/boolean_schemas/boolean_schemas_test
-          dart test --concurrency=2
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: ${{ matrix.sdk }}
 
-      - name: Run binary models integration tests
-        run: |
-          cd integration_test/binary_models/binary_models_test
-          dart test --concurrency=2
+      - name: Download generated code
+        uses: actions/download-artifact@v8
+        with:
+          name: generated-integration-code
+          path: integration_test
 
-      - name: Run structured syntax suffix integration tests
-        run: |
-          cd integration_test/structured_syntax_suffix/structured_syntax_suffix_test
-          dart test --concurrency=2
+      - name: Download Imposter JAR
+        uses: actions/download-artifact@v8
+        with:
+          name: imposter-jar
+          path: integration_test
 
-      - name: Run form urlencoded integration tests
-        run: |
-          cd integration_test/form_urlencoded/form_urlencoded_test
-          dart test --concurrency=2
+      - name: Cache Dart pub dependencies
+        uses: actions/cache@v6
+        with:
+          path: ~/.pub-cache
+          key: ${{ runner.os }}-dart-${{ matrix.sdk }}-${{ hashFiles('**/pubspec.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-dart-${{ matrix.sdk }}-
+            ${{ runner.os }}-dart-
 
-      - name: Run path encoding integration tests
+      - name: Run integration tests
+        shell: bash
         run: |
-          cd integration_test/path_encoding/path_encoding_test
-          dart test --concurrency=2
+          tests=$(find integration_test -path '*_test/test/*_test.dart' -print |
+            sort |
+            awk -v shard=${{ matrix.shard }} \
+              '(NR - 1) % 3 == shard')
 
-      - name: Run query parameters integration tests
-        run: |
-          cd integration_test/query_parameters/query_parameters_test
-          dart test --concurrency=2
+          printf '%s\n' "$tests" |
+            sed 's#/test/.*#/pubspec.yaml#' |
+            sort -u |
+            xargs -n 1 -P 2 bash -c \
+              'cd "$(dirname "$1")" && dart pub get' _
 
-      - name: Run allow reserved integration tests
-        run: |
-          cd integration_test/allow_reserved/allow_reserved_test
-          dart test --concurrency=2
-
-      - name: Run type arrays integration tests
-        run: |
-          cd integration_test/type_arrays/type_arrays_test
-          dart test --concurrency=2
-
-      - name: Run medama integration tests
-        run: |
-          cd integration_test/medama/medama_test
-          dart test --concurrency=2
-
-      - name: Run inference integration tests
-        run: |
-          cd integration_test/inference/inference_test
-          dart test --concurrency=2
-
-      - name: Run ref siblings integration tests
-        run: |
-          cd integration_test/ref_siblings/ref_siblings_test
-          dart test --concurrency=2
-
-      - name: Run defs integration tests
-        run: |
-          cd integration_test/defs/defs_test
-          dart test
-
-      - name: Run server variables integration tests
-        run: |
-          cd integration_test/server_variables/server_variables_test
-          dart test
-
-      - name: Run read write only integration tests
-        run: |
-          cd integration_test/read_write_only/read_write_only_test
-          dart test --concurrency=2
-
-      - name: Run nullable bodies integration tests
-        run: |
-          cd integration_test/nullable_bodies/nullable_bodies_test
-          dart test --concurrency=2
-
-      - name: Run cookies integration tests
-        run: |
-          cd integration_test/cookies/cookies_test
-          dart test --concurrency=2
-
-      - name: Run adversarial strings integration tests
-        run: |
-          cd integration_test/adversarial_strings/adversarial_strings_test
-          dart test --concurrency=2
-
-      - name: Run multipart integration tests
-        run: |
-          cd integration_test/multipart/multipart_test
-          dart test --concurrency=2
-
-      - name: Run figma integration tests
-        run: |
-          cd integration_test/figma/figma_test
-          dart test --concurrency=2
-
-      - name: Run stripe integration tests
-        run: |
-          cd integration_test/stripe/stripe_test
-          dart test --concurrency=2
-
-      - name: Run github integration tests
-        run: |
-          cd integration_test/github/github_test
-          dart test --concurrency=2
-
-      - name: Run openai integration tests
-        run: |
-          cd integration_test/openai/openai_test
-          dart test --concurrency=2
-
-      - name: Run asana integration tests
-        run: |
-          cd integration_test/asana/asana_test
-          dart test --concurrency=2
-
-      - name: Run twilio integration tests
-        run: |
-          cd integration_test/twilio/twilio_test
-          dart test --concurrency=2
-
-      - name: Run shopify integration tests
-        run: |
-          cd integration_test/shopify/shopify_test
-          dart test --concurrency=2
-
-      - name: Run kubernetes integration tests
-        run: |
-          cd integration_test/kubernetes/kubernetes_test
-          dart test --concurrency=2
-
-      - name: Run cloudflare integration tests
-        run: |
-          cd integration_test/cloudflare/cloudflare_test
-          dart test --concurrency=2
-
-      - name: Run totem integration tests
-        run: |
-          cd integration_test/totem/totem_test
-          dart test --concurrency=2
-
-      - name: Run immutable collections integration tests
-        run: |
-          cd integration_test/immutable_collections/immutable_collections_test
-          dart test --concurrency=2
-
-      - name: Run naming integration tests
-        run: |
-          cd integration_test/naming/naming_test
-          dart test --concurrency=2
+          printf '%s\n' "$tests" |
+            xargs -n 1 -P 2 bash -c \
+              'package="${1%%/test/*}"; cd "$package" && dart test "${1#"$package"/}"' _
