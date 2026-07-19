@@ -2991,5 +2991,95 @@ void main() {
         collapseWhitespace(format(expectedMethod)),
       );
     });
+
+    QueryParameterObject anyDelimitedParam({
+      required QueryParameterEncoding encoding,
+    }) => QueryParameterObject(
+      name: 'data',
+      rawName: 'data',
+      description: null,
+      isRequired: false,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      encoding: encoding,
+      allowReserved: false,
+      model: AnyModel(context: context),
+      context: context,
+      examples: const [],
+      defaultValue: null,
+    );
+
+    test('encodes pipeDelimited AnyModel via encodeAnyToPipeDelimited', () {
+      final queryParam = anyDelimitedParam(
+        encoding: QueryParameterEncoding.pipeDelimited,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({Object? data}) {
+          final _$entries = <ParameterEntry>[];
+          if (data != null) {
+            _$entries.addAll(
+              encodeAnyToPipeDelimited(
+                data,
+                r'data',
+                explode: false,
+                allowEmpty: false,
+              ),
+            );
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'data', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('encodes spaceDelimited AnyModel via encodeAnyToSpaceDelimited', () {
+      final queryParam = anyDelimitedParam(
+        encoding: QueryParameterEncoding.spaceDelimited,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({Object? data}) {
+          final _$entries = <ParameterEntry>[];
+          if (data != null) {
+            _$entries.addAll(
+              encodeAnyToSpaceDelimited(
+                data,
+                r'data',
+                explode: false,
+                allowEmpty: false,
+              ),
+            );
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'data', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
   });
 }

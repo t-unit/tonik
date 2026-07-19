@@ -79,6 +79,24 @@ class TestEncodableModel implements ParameterEncodable {
   }
 
   @override
+  List<ParameterEntry> toPipeDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) {
+    return [(name: paramName, value: 'name|$name|value|$value')];
+  }
+
+  @override
+  List<ParameterEntry> toSpaceDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) {
+    return [(name: paramName, value: 'name%20$name%20value%20$value')];
+  }
+
+  @override
   Object? toJson() => {'name': name, 'value': value};
 }
 
@@ -164,6 +182,30 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
   }) {
     if (allowReserved) {
       return [(name: '$paramName[k]', value: '$rawValue!reserved')];
+    }
+    throw UnimplementedError();
+  }
+
+  @override
+  List<ParameterEntry> toPipeDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) {
+    if (allowReserved) {
+      return [(name: paramName, value: '$rawValue!reserved')];
+    }
+    throw UnimplementedError();
+  }
+
+  @override
+  List<ParameterEntry> toSpaceDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) {
+    if (allowReserved) {
+      return [(name: paramName, value: '$rawValue!reserved')];
     }
     throw UnimplementedError();
   }
@@ -2188,6 +2230,220 @@ void main() {
           );
         },
       );
+    });
+  });
+
+  group('encodeAnyToPipeDelimited', () {
+    group('ParameterEncodable', () {
+      test('delegates to the value toPipeDelimited', () {
+        const model = TestEncodableModel(name: 'test', value: 42);
+        final result = encodeAnyToPipeDelimited(
+          model,
+          'obj',
+          explode: false,
+          allowEmpty: false,
+        );
+        expect(result, [(name: 'obj', value: 'name|test|value|42')]);
+      });
+
+      test('forwards allowReserved to the value toPipeDelimited', () {
+        const model = QueryComponentAwareEncodable('value');
+        final result = encodeAnyToPipeDelimited(
+          model,
+          'obj',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+        expect(result, [(name: 'obj', value: 'value!reserved')]);
+      });
+    });
+
+    group('Map<String, String>', () {
+      test('flattens a map into a single pipe-joined entry', () {
+        final result = encodeAnyToPipeDelimited(
+          {'color': 'red', 'size': 'large'},
+          'filter',
+          explode: false,
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'filter', value: 'color|red|size|large')]);
+      });
+
+      test('omits an empty map when allowEmpty=true', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, String>{},
+          'filter',
+          explode: false,
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+    });
+
+    group('null handling', () {
+      test('encodes null as empty when allowEmpty=true', () {
+        expect(
+          encodeAnyToPipeDelimited(
+            null,
+            'obj',
+            explode: false,
+            allowEmpty: true,
+          ),
+          isEmpty,
+        );
+      });
+
+      test('throws for null when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            null,
+            'obj',
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('unsupported types', () {
+      test('throws for a String value', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            'hello',
+            'obj',
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for an int value', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            42,
+            'obj',
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for an unsupported object type', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            Object(),
+            'obj',
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+    });
+  });
+
+  group('encodeAnyToSpaceDelimited', () {
+    group('ParameterEncodable', () {
+      test('delegates to the value toSpaceDelimited', () {
+        const model = TestEncodableModel(name: 'test', value: 42);
+        final result = encodeAnyToSpaceDelimited(
+          model,
+          'obj',
+          explode: false,
+          allowEmpty: false,
+        );
+        expect(result, [(name: 'obj', value: 'name%20test%20value%2042')]);
+      });
+
+      test('forwards allowReserved to the value toSpaceDelimited', () {
+        const model = QueryComponentAwareEncodable('value');
+        final result = encodeAnyToSpaceDelimited(
+          model,
+          'obj',
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+        expect(result, [(name: 'obj', value: 'value!reserved')]);
+      });
+    });
+
+    group('Map<String, String>', () {
+      test('flattens a map into a single %20-joined entry', () {
+        final result = encodeAnyToSpaceDelimited(
+          {'color': 'red', 'size': 'large'},
+          'filter',
+          explode: false,
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'filter', value: 'color%20red%20size%20large')]);
+      });
+
+      test('omits an empty map when allowEmpty=true', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, String>{},
+          'filter',
+          explode: false,
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+    });
+
+    group('null handling', () {
+      test('encodes null as empty when allowEmpty=true', () {
+        expect(
+          encodeAnyToSpaceDelimited(
+            null,
+            'obj',
+            explode: false,
+            allowEmpty: true,
+          ),
+          isEmpty,
+        );
+      });
+
+      test('throws for null when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            null,
+            'obj',
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('unsupported types', () {
+      test('throws for a String value', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            'hello',
+            'obj',
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for an unsupported object type', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            Object(),
+            'obj',
+            explode: false,
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
     });
   });
 

@@ -55,7 +55,8 @@ List<Code> _buildToDelimitedQueryParameterCode(
         ClassModel() ||
         AllOfModel() ||
         OneOfModel() ||
-        AnyOfModel()
+        AnyOfModel() ||
+        AnyModel()
         when explode => [
       generateEncodingExceptionExpression(
         'Parameter $parameterName: $encodingName encoding of objects with '
@@ -80,6 +81,14 @@ List<Code> _buildToDelimitedQueryParameterCode(
         allowEmpty: allowEmpty,
         allowReserved: allowReserved,
       ),
+    AnyModel() => _buildAnyDelimitedCode(
+      parameterName,
+      parameter.rawName,
+      encoding: encoding,
+      explode: explode,
+      allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
+    ),
     _ => [
       generateEncodingExceptionExpression(
         'Parameter $parameterName: $encodingName encoding supports only '
@@ -157,6 +166,33 @@ List<Code> _buildObjectDelimitedCode(
 
   return [
     refer(r'_$entries').property('addAll').call([flattened]).statement,
+  ];
+}
+
+List<Code> _buildAnyDelimitedCode(
+  String parameterName,
+  String rawName, {
+  required QueryParameterEncoding encoding,
+  required bool explode,
+  required bool allowEmpty,
+  required bool allowReserved,
+}) {
+  final functionName = encoding == QueryParameterEncoding.spaceDelimited
+      ? 'encodeAnyToSpaceDelimited'
+      : 'encodeAnyToPipeDelimited';
+
+  final entries =
+      refer(functionName, 'package:tonik_util/tonik_util.dart').call(
+    [refer(parameterName), specLiteralString(rawName)],
+    {
+      'explode': literalBool(explode),
+      'allowEmpty': literalBool(allowEmpty),
+      if (allowReserved) 'allowReserved': literalBool(true),
+    },
+  );
+
+  return [
+    refer(r'_$entries').property('addAll').call([entries]).statement,
   ];
 }
 

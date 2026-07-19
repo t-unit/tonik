@@ -1525,5 +1525,116 @@ void main() {
         );
       });
     });
+
+    group('any parameters', () {
+      test('pipeDelimited AnyModel dispatches to encodeAnyToPipeDelimited', () {
+        final parameter = createParameter(
+          name: 'data',
+          rawName: 'data',
+          model: AnyModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'data',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  encodeAnyToPipeDelimited(
+                    data,
+                    r'data',
+                    explode: false,
+                    allowEmpty: true,
+                  ),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('spaceDelimited AnyModel dispatches to encodeAnyToSpaceDelimited',
+          () {
+        final parameter = createParameter(
+          name: 'data',
+          rawName: 'data',
+          model: AnyModel(context: context),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'data',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  encodeAnyToSpaceDelimited(
+                    data,
+                    r'data',
+                    explode: false,
+                    allowEmpty: true,
+                  ),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('AnyModel threads allowReserved into encodeAnyToPipeDelimited', () {
+        final parameter = createParameter(
+          name: 'data',
+          rawName: 'data',
+          model: AnyModel(context: context),
+          explode: false,
+          allowEmpty: true,
+          allowReserved: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'data',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          allowReserved: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  encodeAnyToPipeDelimited(
+                    data,
+                    r'data',
+                    explode: false,
+                    allowEmpty: true,
+                    allowReserved: true,
+                  ),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+    });
   });
 }

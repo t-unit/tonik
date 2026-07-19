@@ -268,6 +268,14 @@ List<Parameter> buildDeepObjectEncodingParameters() => [
   buildBoolParameter('allowReserved'),
 ];
 
+/// Encoding parameters for delimited object styles (`toPipeDelimited` /
+/// `toSpaceDelimited`), which carry no `explode`: delimited objects always
+/// collapse into a single entry.
+List<Parameter> buildDelimitedEncodingParameters() => [
+  buildBoolParameter('allowEmpty', required: true),
+  buildBoolParameter('allowReserved'),
+];
+
 /// Parameters for an inline `uriEncode` signature.
 List<Parameter> buildUriEncodeParameters() => [
   buildBoolParameter('allowEmpty', required: true),

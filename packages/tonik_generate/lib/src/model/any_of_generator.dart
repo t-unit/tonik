@@ -295,6 +295,8 @@ class AnyOfGenerator {
             _buildToLabelMethod(actualClassName, model, normalized),
             _buildToMatrixMethod(actualClassName, model, normalized),
             buildToDeepObjectMethod(),
+            buildToPipeDelimitedMethod(),
+            buildToSpaceDelimitedMethod(),
             if (model.isReadOnly)
               buildReadOnlyUriEncodeMethod(encodingExceptionBody)
             else

@@ -7,6 +7,7 @@ import 'package:tonik_util/src/encoding/label_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/matrix_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/string_map_delimited_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/unknown_value_encoding.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
 
@@ -473,6 +474,88 @@ List<ParameterEntry> encodeAnyToDeepObject(
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to deepObject style. '
     'DeepObject only supports objects and Map<String, String>.',
+  );
+}
+
+/// Encodes any value to pipeDelimited style. Used for AnyModel fields.
+///
+/// Handles runtime type detection for values of unknown type. Generated
+/// models implementing [ParameterEncodable] encode themselves;
+/// `Map<String, String>` values use extension methods.
+///
+/// [explode] is accepted for family consistency with the other `encodeAny…`
+/// helpers but is not forwarded: delimited object styles always collapse into
+/// a single entry.
+///
+/// When [allowReserved] is true, reserved characters in keys and values are
+/// kept literal; the flag is forwarded to both branches.
+List<ParameterEntry> encodeAnyToPipeDelimited(
+  Object? value,
+  String paramName, {
+  required bool explode,
+  required bool allowEmpty,
+  bool allowReserved = false,
+}) {
+  if (value == null) {
+    if (!allowEmpty) {
+      throw const EmptyValueException();
+    }
+    return [];
+  }
+  if (value is ParameterEncodable) {
+    return value.toPipeDelimited(
+      paramName,
+      allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
+    );
+  }
+  if (value is Map<String, String>) {
+    return value.toPipeDelimited(
+      paramName,
+      allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
+    );
+  }
+  throw EncodingException(
+    'Cannot encode ${value.runtimeType} to pipeDelimited style. '
+    'pipeDelimited only supports objects and Map<String, String>.',
+  );
+}
+
+/// Encodes any value to spaceDelimited style. Used for AnyModel fields.
+///
+/// Mirrors [encodeAnyToPipeDelimited]; see its documentation for the [explode]
+/// and [allowReserved] semantics.
+List<ParameterEntry> encodeAnyToSpaceDelimited(
+  Object? value,
+  String paramName, {
+  required bool explode,
+  required bool allowEmpty,
+  bool allowReserved = false,
+}) {
+  if (value == null) {
+    if (!allowEmpty) {
+      throw const EmptyValueException();
+    }
+    return [];
+  }
+  if (value is ParameterEncodable) {
+    return value.toSpaceDelimited(
+      paramName,
+      allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
+    );
+  }
+  if (value is Map<String, String>) {
+    return value.toSpaceDelimited(
+      paramName,
+      allowEmpty: allowEmpty,
+      allowReserved: allowReserved,
+    );
+  }
+  throw EncodingException(
+    'Cannot encode ${value.runtimeType} to spaceDelimited style. '
+    'spaceDelimited only supports objects and Map<String, String>.',
   );
 }
 
