@@ -2337,6 +2337,44 @@ void main() {
           throwsA(isA<EncodingException>()),
         );
       });
+
+      test('omits a null item while keeping the rest', () {
+        final result = encodeAnyToPipeDelimited(
+          [null, 'blue'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: 'blue')]);
+      });
+
+      test('preserves an empty-string item', () {
+        final result = encodeAnyToPipeDelimited(
+          ['', 'blue'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: '|blue')]);
+      });
+
+      test('omits an all-null list when allowEmpty=true', () {
+        final result = encodeAnyToPipeDelimited(
+          [null],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an all-null list when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            [null],
+            'p',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
     });
 
     group('Map<String, dynamic>', () {
@@ -2388,6 +2426,44 @@ void main() {
             allowEmpty: true,
           ),
           throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('omits a null member while keeping the rest', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{'R': null, 'G': 200},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'G|200')]);
+      });
+
+      test('preserves an empty-string member', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{'x': ''},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'x|')]);
+      });
+
+      test('omits an all-null map when allowEmpty=true', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{'R': null},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an all-null map when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            <String, dynamic>{'R': null},
+            'color',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
         );
       });
     });
@@ -2538,6 +2614,44 @@ void main() {
           throwsA(isA<EncodingException>()),
         );
       });
+
+      test('omits a null item while keeping the rest', () {
+        final result = encodeAnyToSpaceDelimited(
+          [null, 'blue'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: 'blue')]);
+      });
+
+      test('preserves an empty-string item', () {
+        final result = encodeAnyToSpaceDelimited(
+          ['', 'blue'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: '%20blue')]);
+      });
+
+      test('omits an all-null list when allowEmpty=true', () {
+        final result = encodeAnyToSpaceDelimited(
+          [null],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an all-null list when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            [null],
+            'p',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
     });
 
     group('Map<String, dynamic>', () {
@@ -2580,6 +2694,44 @@ void main() {
             allowEmpty: true,
           ),
           throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('omits a null member while keeping the rest', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, dynamic>{'R': null, 'G': 200},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'G%20200')]);
+      });
+
+      test('preserves an empty-string member', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, dynamic>{'x': ''},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'x%20')]);
+      });
+
+      test('omits an all-null map when allowEmpty=true', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, dynamic>{'R': null},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an all-null map when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            <String, dynamic>{'R': null},
+            'color',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
         );
       });
     });

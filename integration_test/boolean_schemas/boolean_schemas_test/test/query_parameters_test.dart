@@ -124,7 +124,7 @@ void main() {
     );
 
     test(
-      'getQuerySpaceDelimitedAny with list returns TonikError',
+      'getQuerySpaceDelimitedAny with list encodes as space-delimited',
       () async {
         final api = buildApi();
         final result = await api.getQuerySpaceDelimitedAny(
@@ -132,11 +132,34 @@ void main() {
         );
         expect(
           result,
-          isA<TonikError<QuerySpaceDelimitedAnyGet200BodyModel>>(),
+          isA<TonikSuccess<QuerySpaceDelimitedAnyGet200BodyModel>>(),
         );
-        final error =
-            result as TonikError<QuerySpaceDelimitedAnyGet200BodyModel>;
-        expect(error.error, isA<EncodingException>());
+        final success =
+            result as TonikSuccess<QuerySpaceDelimitedAnyGet200BodyModel>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'anyValue=a%20b%20c',
+        );
+      },
+    );
+
+    test(
+      'getQuerySpaceDelimitedAny with map encodes as space-delimited',
+      () async {
+        final api = buildApi();
+        final result = await api.getQuerySpaceDelimitedAny(
+          anyValue: <String, dynamic>{'a': 1, 'b': 2},
+        );
+        expect(
+          result,
+          isA<TonikSuccess<QuerySpaceDelimitedAnyGet200BodyModel>>(),
+        );
+        final success =
+            result as TonikSuccess<QuerySpaceDelimitedAnyGet200BodyModel>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'anyValue=a%201%20b%202',
+        );
       },
     );
 
@@ -191,16 +214,42 @@ void main() {
     );
 
     test(
-      'getQueryPipeDelimitedAny with list returns TonikError',
+      'getQueryPipeDelimitedAny with list encodes as pipe-delimited',
       () async {
         final api = buildApi();
         final result = await api.getQueryPipeDelimitedAny(
           anyValue: ['one', 'two', 'three'],
         );
-        expect(result, isA<TonikError<QueryPipeDelimitedAnyGet200BodyModel>>());
-        final error =
-            result as TonikError<QueryPipeDelimitedAnyGet200BodyModel>;
-        expect(error.error, isA<EncodingException>());
+        expect(
+          result,
+          isA<TonikSuccess<QueryPipeDelimitedAnyGet200BodyModel>>(),
+        );
+        final success =
+            result as TonikSuccess<QueryPipeDelimitedAnyGet200BodyModel>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'anyValue=one%7Ctwo%7Cthree',
+        );
+      },
+    );
+
+    test(
+      'getQueryPipeDelimitedAny with map encodes as pipe-delimited',
+      () async {
+        final api = buildApi();
+        final result = await api.getQueryPipeDelimitedAny(
+          anyValue: <String, dynamic>{'a': 1, 'b': 2},
+        );
+        expect(
+          result,
+          isA<TonikSuccess<QueryPipeDelimitedAnyGet200BodyModel>>(),
+        );
+        final success =
+            result as TonikSuccess<QueryPipeDelimitedAnyGet200BodyModel>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'anyValue=a%7C1%7Cb%7C2',
+        );
       },
     );
 

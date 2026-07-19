@@ -508,12 +508,10 @@ List<ParameterEntry> encodeAnyToPipeDelimited(
     );
   }
   if (value is Map<String, dynamic>) {
-    if (value.isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
-    }
     final flattened = <String, String>{
       for (final entry in value.entries)
-        entry.key: encodeAnyValueToString(entry.value, allowEmpty: true),
+        if (entry.value != null)
+          entry.key: encodeAnyValueToString(entry.value, allowEmpty: true),
     };
     return flattened.toPipeDelimited(
       paramName,
@@ -522,10 +520,11 @@ List<ParameterEntry> encodeAnyToPipeDelimited(
     );
   }
   if (value is List<dynamic>) {
-    if (value.isEmpty && !allowEmpty) {
+    final filtered = value.where((item) => item != null).toList();
+    if (filtered.isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    final joined = value
+    final joined = filtered
         .map((item) => encodeAnyValueToString(item, allowEmpty: true))
         .toList()
         .toPipeDelimited(
@@ -568,12 +567,10 @@ List<ParameterEntry> encodeAnyToSpaceDelimited(
     );
   }
   if (value is Map<String, dynamic>) {
-    if (value.isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
-    }
     final flattened = <String, String>{
       for (final entry in value.entries)
-        entry.key: encodeAnyValueToString(entry.value, allowEmpty: true),
+        if (entry.value != null)
+          entry.key: encodeAnyValueToString(entry.value, allowEmpty: true),
     };
     return flattened.toSpaceDelimited(
       paramName,
@@ -582,10 +579,11 @@ List<ParameterEntry> encodeAnyToSpaceDelimited(
     );
   }
   if (value is List<dynamic>) {
-    if (value.isEmpty && !allowEmpty) {
+    final filtered = value.where((item) => item != null).toList();
+    if (filtered.isEmpty && !allowEmpty) {
       throw const EmptyValueException();
     }
-    final joined = value
+    final joined = filtered
         .map((item) => encodeAnyValueToString(item, allowEmpty: true))
         .toList()
         .toSpaceDelimited(
