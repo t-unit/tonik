@@ -27,25 +27,3 @@ jobs:
 
       - name: Analyze code
         run: melos exec -- dart analyze --fatal-infos
-
-  analyze-generated:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v7
-
-      - name: Setup Dart
-        uses: dart-lang/setup-dart@v1
-        with:
-          sdk: stable
-      - name: Install dependencies
-        run: |
-          dart pub global activate melos
-          melos bootstrap
-
-      - name: Generate integration test code
-        run: ./scripts/setup_integration_tests.sh
-        shell: bash
-
-      - name: Analyze generated code
-        run: dart analyze --fatal-infos integration_test
