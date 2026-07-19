@@ -237,7 +237,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
 
   /// Keeps keys component-encoded when [allowReserved] preserves value bytes.
   /// Throws [EncodingException] for a non-explode call or an array value, and
-  /// [EmptyValueException] on an empty map or value under `allowEmpty: false`.
+  /// [EmptyValueException] on an empty map under `allowEmpty: false`.
   List<ParameterEntry> toDeepObject(
     String paramName, {
     required bool explode,
@@ -258,9 +258,6 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
             'Lists are not supported in this encoding style',
           );
         case ScalarPropertyValue(:final value):
-          if (value.isEmpty && !allowEmpty) {
-            throw const EmptyValueException();
-          }
           result.add((
             name: '$paramName[${Uri.encodeComponent(entry.key)}]',
             value: encodeUriValue(
