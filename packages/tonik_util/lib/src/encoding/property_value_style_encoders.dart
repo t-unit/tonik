@@ -88,13 +88,16 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
       return '';
     }
     if (explode) {
-      return entries
-          .map(
-            (e) =>
-                '${_encodeKey(e.key, literal: literal)}='
-                '${_encodeValue(e.value, literal: literal)}',
-          )
-          .join(',');
+      return entries.map((e) {
+        final key = _encodeKey(e.key, literal: literal);
+        final isValueEmpty = switch (e.value) {
+          ScalarPropertyValue(:final value) => value.isEmpty,
+          ArrayPropertyValue(:final values) => values.isEmpty,
+        };
+        return isValueEmpty
+            ? key
+            : '$key=${_encodeValue(e.value, literal: literal)}';
+      }).join(',');
     }
     return _collapsedPairs(this, literal: literal);
   }
@@ -106,13 +109,16 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
       return '.';
     }
     if (explode) {
-      return entries
-          .map(
-            (e) =>
-                '.${Uri.encodeComponent(e.key)}='
-                '${_encodeValue(e.value, literal: false)}',
-          )
-          .join();
+      return entries.map((e) {
+        final key = Uri.encodeComponent(e.key);
+        final isValueEmpty = switch (e.value) {
+          ScalarPropertyValue(:final value) => value.isEmpty,
+          ArrayPropertyValue(:final values) => values.isEmpty,
+        };
+        return isValueEmpty
+            ? '.$key'
+            : '.$key=${_encodeValue(e.value, literal: false)}';
+      }).join();
     }
     return '.${_collapsedPairs(this, literal: false)}';
   }

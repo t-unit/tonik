@@ -119,10 +119,14 @@ extension LabelStringMapEncoder on Map<String, String> {
     if (explode) {
       return entries.map(
         (entry) {
+          final key = Uri.encodeComponent(entry.key);
+          if (entry.value.isEmpty) {
+            return '.$key';
+          }
           final value = alreadyEncoded
               ? entry.value
               : entry.value.uriEncode(allowEmpty: allowEmpty);
-          return '.${Uri.encodeComponent(entry.key)}=$value';
+          return '.$key=$value';
         },
       ).join();
     } else {

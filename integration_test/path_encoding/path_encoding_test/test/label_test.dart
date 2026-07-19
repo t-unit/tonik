@@ -236,7 +236,7 @@ void main() {
       );
     });
 
-    test('object with empty property (explode=true) keeps trailing equals',
+    test('object with empty property (explode=true) drops the trailing equals',
         () async {
       final api = buildLabelApi();
       final response = await api.testLabelObjectExplode(
@@ -249,7 +249,7 @@ void main() {
 
       expect(
         success.response.requestOptions.uri.path,
-        '/v1/label/object/explode/.name=.count=5',
+        '/v1/label/object/explode/.name.count=5',
       );
     });
 
