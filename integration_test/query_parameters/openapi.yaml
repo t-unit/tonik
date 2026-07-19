@@ -624,10 +624,35 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/PriorityEnum'
+        - name: freeFormMap
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: anyValue
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema: true
+        - name: aliasList
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/TagList'
+        - name: mixedComposite
+          in: query
+          style: spaceDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/StringOrClass'
       responses:
         '204':
           description: OK
-  
+
   /spaceDelimited-complex-explode:
     get:
       operationId: testSpaceDelimitedComplexExplode
@@ -1011,10 +1036,35 @@ paths:
           explode: false
           schema:
             $ref: '#/components/schemas/PriorityEnum'
+        - name: freeFormMap
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            type: object
+            additionalProperties:
+              type: string
+        - name: anyValue
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema: true
+        - name: aliasList
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/TagList'
+        - name: mixedComposite
+          in: query
+          style: pipeDelimited
+          explode: false
+          schema:
+            $ref: '#/components/schemas/StringOrClass'
       responses:
         '204':
           description: OK
-  
+
   /pipeDelimited-complex-explode:
     get:
       operationId: testPipeDelimitedComplexExplode
@@ -1988,3 +2038,11 @@ components:
             oneOf:
               - type: string
               - type: integer
+    TagList:
+      type: array
+      items:
+        type: string
+    StringOrClass:
+      oneOf:
+        - type: string
+        - $ref: '#/components/schemas/Class'

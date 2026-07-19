@@ -765,4 +765,73 @@ void main() {
       expect(error.type, TonikErrorType.encoding);
     });
   });
+
+  group('complex - object shapes', () {
+    test('free-form map flattens key/value pairs', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedComplex(
+        freeFormMap: const {'k1': 'v1', 'k2': 'v2'},
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'freeFormMap=k1%20v1%20k2%20v2',
+      );
+    });
+
+    test('any holding a map flattens key/value pairs', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedComplex(
+        anyValue: const <String, String>{'a': '1', 'b': '2'},
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'anyValue=a%201%20b%202',
+      );
+    });
+
+    test('alias to array encodes identically to an inline array', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedComplex(
+        aliasList: const ['a', 'b', 'c'],
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'aliasList=a%20b%20c',
+      );
+    });
+
+    test('mixed composite object variant flattens', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedComplex(
+        mixedComposite: const StringOrClassClass(Class(name: 'test', age: 1)),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'mixedComposite=name%20test%20age%201',
+      );
+    });
+
+    test('mixed composite string variant has no object encoding', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testSpaceDelimitedComplex(
+        mixedComposite: const StringOrClassString('hello'),
+      );
+
+      expect(response, isA<TonikError<void>>());
+      final error = response as TonikError<void>;
+      expect(error.type, TonikErrorType.encoding);
+    });
+  });
 }
