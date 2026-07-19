@@ -67,6 +67,9 @@ extension LabelBigDecimalEncoder on BigDecimal {
 extension LabelStringListEncoder on List<String> {
   /// Encodes this List value using label style encoding.
   ///
+  /// Empty lists are encoded as `.` regardless of [allowEmpty]. OpenAPI's
+  /// `allowEmptyValue` field does not apply to path parameters.
+  ///
   /// The [alreadyEncoded] parameter indicates whether the list items are
   /// already URI-encoded and should not be encoded again.
   String toLabel({
@@ -74,9 +77,6 @@ extension LabelStringListEncoder on List<String> {
     required bool allowEmpty,
     bool alreadyEncoded = false,
   }) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
-    }
     if (isEmpty) {
       return '.';
     }

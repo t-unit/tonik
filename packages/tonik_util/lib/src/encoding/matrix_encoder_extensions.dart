@@ -105,9 +105,8 @@ extension MatrixStringListEncoder on List<String> {
   /// When [explode] is true, array items are separately encoded.
   /// When false, they are encoded as a single string with comma delimiters.
   ///
-  /// The [allowEmpty] parameter controls whether empty lists are allowed:
-  /// - When `true`, empty lists are encoded as `;paramName`
-  /// - When `false`, empty lists throw an exception
+  /// Empty lists are encoded as `;paramName` regardless of [allowEmpty].
+  /// OpenAPI's `allowEmptyValue` field does not apply to path parameters.
   ///
   /// The [alreadyEncoded] parameter indicates whether the list items are
   /// already URL-encoded. When `true`, items are not re-encoded to prevent
@@ -118,9 +117,6 @@ extension MatrixStringListEncoder on List<String> {
     required bool allowEmpty,
     bool alreadyEncoded = false,
   }) {
-    if (isEmpty && !allowEmpty) {
-      throw const EmptyValueException();
-    }
     if (isEmpty) {
       return ';$paramName';
     }
