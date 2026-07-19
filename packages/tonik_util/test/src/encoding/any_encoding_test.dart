@@ -2417,6 +2417,17 @@ void main() {
         );
       });
 
+      test('throws for an int value', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            42,
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
       test('throws for an unsupported object type', () {
         expect(
           () => encodeAnyToSpaceDelimited(

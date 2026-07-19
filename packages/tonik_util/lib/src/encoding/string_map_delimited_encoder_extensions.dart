@@ -2,18 +2,11 @@ import 'package:tonik_util/src/encoding/encoding_exception.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
 import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
-/// Extensions flattening a `Map<String, String>` into a single delimited entry.
+/// Flattens a `Map<String, String>` into a single delimited [ParameterEntry].
 ///
-/// Both styles collapse the map to one [ParameterEntry] whose value is the
-/// alternating key/value tokens joined by the style delimiter, named by the
-/// caller-supplied parameter name. Map values are always scalars here, so there
-/// are no array-valued-property concerns.
-///
-/// Round-trip safety differs by style. Pipe uses a literal `|` separator while
-/// a `|` inside a value encodes to `%7C`, so the two stay distinct and the
-/// map round-trips. Space uses a pre-escaped `%20` separator, but a space
-/// inside a value also encodes to `%20`, making it indistinguishable from the
-/// separator — space-delimited values cannot round-trip.
+/// A value's `|` encodes to `%7C`, distinct from pipe's literal `|` separator,
+/// so pipeDelimited round-trips; spaceDelimited cannot, as a value's space and
+/// the `%20` separator are identical.
 extension StringMapDelimitedEncoder on Map<String, String> {
   /// Joins the alternating key/value tokens with a literal `|`.
   List<ParameterEntry> toPipeDelimited(

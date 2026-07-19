@@ -196,13 +196,10 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return [(name: paramName, value: parts.join(','))];
   }
 
-  /// Flattens the object to a single entry whose alternating key/value tokens
-  /// are joined by a literal `|`, matching tonik's array pipeDelimited
-  /// convention of keeping the delimiter unescaped.
+  /// Joins the alternating key/value tokens with a literal `|`.
   ///
-  /// Array-valued properties join their elements with the literal `|`, so they
-  /// collapse into the same delimiter stream and cannot be round-tripped; this
-  /// ambiguity is inherent to the style, as with the form path.
+  /// Array-valued properties join their elements with the same `|`, so they
+  /// collapse irreversibly into the delimiter stream, as on the form path.
   List<ParameterEntry> toPipeDelimited(
     String paramName, {
     required bool allowEmpty,
@@ -215,14 +212,10 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     allowReserved: allowReserved,
   );
 
-  /// Flattens the object to a single entry whose alternating key/value tokens
-  /// are joined by a pre-escaped `%20`, matching tonik's array spaceDelimited
-  /// convention. The delimiter stays pre-escaped so a literal space never
-  /// reaches the query string.
+  /// Joins the alternating key/value tokens with a pre-escaped `%20`.
   ///
-  /// A space inside a value, and array-valued properties, collapse into the
-  /// same delimiter stream and cannot be round-tripped; this ambiguity is
-  /// inherent to the style, as with the form path.
+  /// A value's own space also encodes to `%20`, so (like array-valued
+  /// properties) it collapses irreversibly into the delimiter stream.
   List<ParameterEntry> toSpaceDelimited(
     String paramName, {
     required bool allowEmpty,
