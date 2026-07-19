@@ -3023,7 +3023,6 @@ void main() {
               encodeAnyToPipeDelimited(
                 data,
                 r'data',
-                explode: false,
                 allowEmpty: false,
               ),
             );
@@ -3059,7 +3058,6 @@ void main() {
               encodeAnyToSpaceDelimited(
                 data,
                 r'data',
-                explode: false,
                 allowEmpty: false,
               ),
             );

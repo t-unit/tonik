@@ -1321,7 +1321,7 @@ void main() {
             format('''
               void test() {
                 throw EncodingException(
-                  r'pipeDelimited encoding is not supported for Map types with complex values. Parameter "nested" cannot be encoded.',
+                  r'Parameter nested: pipeDelimited encoding does not support Map types with complex values',
                 );
               }
             '''),
@@ -1552,7 +1552,6 @@ void main() {
                   encodeAnyToPipeDelimited(
                     data,
                     r'data',
-                    explode: false,
                     allowEmpty: true,
                   ),
                 );
@@ -1588,7 +1587,6 @@ void main() {
                   encodeAnyToSpaceDelimited(
                     data,
                     r'data',
-                    explode: false,
                     allowEmpty: true,
                   ),
                 );
@@ -1625,10 +1623,40 @@ void main() {
                   encodeAnyToPipeDelimited(
                     data,
                     r'data',
-                    explode: false,
                     allowEmpty: true,
                     allowReserved: true,
                   ),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('explode AnyModel throws the specification-undefined exception', () {
+        final parameter = createParameter(
+          name: 'data',
+          rawName: 'data',
+          model: AnyModel(context: context),
+          explode: true,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'data',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          explode: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+              void test() {
+                throw EncodingException(
+                  r'Parameter data: pipeDelimited encoding of objects with explode: true is not defined by the specification',
                 );
               }
             '''),

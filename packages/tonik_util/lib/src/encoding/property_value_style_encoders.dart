@@ -200,9 +200,9 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   /// are joined by a literal `|`, matching tonik's array pipeDelimited
   /// convention of keeping the delimiter unescaped.
   ///
-  /// A pipe inside a value, and array-valued properties, collapse into the
-  /// same delimiter stream and cannot be round-tripped; this ambiguity is
-  /// inherent to the style, as with the form path.
+  /// Array-valued properties join their elements with the literal `|`, so they
+  /// collapse into the same delimiter stream and cannot be round-tripped; this
+  /// ambiguity is inherent to the style, as with the form path.
   List<ParameterEntry> toPipeDelimited(
     String paramName, {
     required bool allowEmpty,

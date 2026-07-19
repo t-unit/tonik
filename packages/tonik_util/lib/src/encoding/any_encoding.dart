@@ -483,16 +483,11 @@ List<ParameterEntry> encodeAnyToDeepObject(
 /// models implementing [ParameterEncodable] encode themselves;
 /// `Map<String, String>` values use extension methods.
 ///
-/// [explode] is accepted for family consistency with the other `encodeAny…`
-/// helpers but is not forwarded: delimited object styles always collapse into
-/// a single entry.
-///
 /// When [allowReserved] is true, reserved characters in keys and values are
 /// kept literal; the flag is forwarded to both branches.
 List<ParameterEntry> encodeAnyToPipeDelimited(
   Object? value,
   String paramName, {
-  required bool explode,
   required bool allowEmpty,
   bool allowReserved = false,
 }) {
@@ -524,12 +519,11 @@ List<ParameterEntry> encodeAnyToPipeDelimited(
 
 /// Encodes any value to spaceDelimited style. Used for AnyModel fields.
 ///
-/// Mirrors [encodeAnyToPipeDelimited]; see its documentation for the [explode]
-/// and [allowReserved] semantics.
+/// Mirrors [encodeAnyToPipeDelimited]; see its documentation for the
+/// [allowReserved] semantics.
 List<ParameterEntry> encodeAnyToSpaceDelimited(
   Object? value,
   String paramName, {
-  required bool explode,
   required bool allowEmpty,
   bool allowReserved = false,
 }) {

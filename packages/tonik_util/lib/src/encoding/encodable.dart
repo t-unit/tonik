@@ -93,14 +93,9 @@ abstract interface class DeepObjectEncodable {
 }
 
 /// Marker interface for types that support pipe-delimited object encoding.
-///
-/// Unlike [DeepObjectEncodable], delimited object styles have no `explode`
-/// parameter: the object always collapses into a single entry whose
-/// alternating key/value tokens are joined by a literal `|`.
 abstract interface class PipeDelimitedEncodable {
   /// Encodes this value using pipeDelimited style parameter encoding.
   ///
-  /// The [paramName] is the parameter name of the single produced entry.
   /// When [allowEmpty] is false, empty values throw an exception.
   /// When [allowReserved] is true, reserved characters in keys and values are
   /// kept literal; the `|` delimiter is unaffected.
@@ -112,13 +107,9 @@ abstract interface class PipeDelimitedEncodable {
 }
 
 /// Marker interface for types that support space-delimited object encoding.
-///
-/// Like [PipeDelimitedEncodable] but the alternating key/value tokens are
-/// joined by a pre-escaped `%20`.
 abstract interface class SpaceDelimitedEncodable {
   /// Encodes this value using spaceDelimited style parameter encoding.
   ///
-  /// The [paramName] is the parameter name of the single produced entry.
   /// When [allowEmpty] is false, empty values throw an exception.
   /// When [allowReserved] is true, reserved characters in keys and values are
   /// kept literal; the `%20` delimiter is unaffected.

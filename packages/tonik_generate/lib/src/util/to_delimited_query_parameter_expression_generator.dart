@@ -85,7 +85,6 @@ List<Code> _buildToDelimitedQueryParameterCode(
       parameterName,
       parameter.rawName,
       encoding: encoding,
-      explode: explode,
       allowEmpty: allowEmpty,
       allowReserved: allowReserved,
     ),
@@ -133,8 +132,8 @@ List<Code> _buildMapDelimitedCode(
     ],
     UnsupportedMapPropertyValueConversion() => [
       generateEncodingExceptionExpression(
-        '$encodingName encoding is not supported for Map types with '
-        'complex values. Parameter "$rawName" cannot be encoded.',
+        'Parameter $parameterName: $encodingName encoding does not support '
+        'Map types with complex values',
         raw: true,
       ).statement,
     ],
@@ -173,7 +172,6 @@ List<Code> _buildAnyDelimitedCode(
   String parameterName,
   String rawName, {
   required QueryParameterEncoding encoding,
-  required bool explode,
   required bool allowEmpty,
   required bool allowReserved,
 }) {
@@ -185,7 +183,6 @@ List<Code> _buildAnyDelimitedCode(
       refer(functionName, 'package:tonik_util/tonik_util.dart').call(
     [refer(parameterName), specLiteralString(rawName)],
     {
-      'explode': literalBool(explode),
       'allowEmpty': literalBool(allowEmpty),
       if (allowReserved) 'allowReserved': literalBool(true),
     },

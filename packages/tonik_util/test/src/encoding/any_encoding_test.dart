@@ -2240,7 +2240,6 @@ void main() {
         final result = encodeAnyToPipeDelimited(
           model,
           'obj',
-          explode: false,
           allowEmpty: false,
         );
         expect(result, [(name: 'obj', value: 'name|test|value|42')]);
@@ -2251,7 +2250,6 @@ void main() {
         final result = encodeAnyToPipeDelimited(
           model,
           'obj',
-          explode: false,
           allowEmpty: true,
           allowReserved: true,
         );
@@ -2264,7 +2262,6 @@ void main() {
         final result = encodeAnyToPipeDelimited(
           {'color': 'red', 'size': 'large'},
           'filter',
-          explode: false,
           allowEmpty: true,
         );
         expect(result, [(name: 'filter', value: 'color|red|size|large')]);
@@ -2274,7 +2271,6 @@ void main() {
         final result = encodeAnyToPipeDelimited(
           <String, String>{},
           'filter',
-          explode: false,
           allowEmpty: true,
         );
         expect(result, isEmpty);
@@ -2287,7 +2283,6 @@ void main() {
           encodeAnyToPipeDelimited(
             null,
             'obj',
-            explode: false,
             allowEmpty: true,
           ),
           isEmpty,
@@ -2299,7 +2294,6 @@ void main() {
           () => encodeAnyToPipeDelimited(
             null,
             'obj',
-            explode: false,
             allowEmpty: false,
           ),
           throwsA(isA<EmptyValueException>()),
@@ -2313,7 +2307,6 @@ void main() {
           () => encodeAnyToPipeDelimited(
             'hello',
             'obj',
-            explode: false,
             allowEmpty: false,
           ),
           throwsA(isA<EncodingException>()),
@@ -2325,7 +2318,6 @@ void main() {
           () => encodeAnyToPipeDelimited(
             42,
             'obj',
-            explode: false,
             allowEmpty: false,
           ),
           throwsA(isA<EncodingException>()),
@@ -2337,7 +2329,6 @@ void main() {
           () => encodeAnyToPipeDelimited(
             Object(),
             'obj',
-            explode: false,
             allowEmpty: false,
           ),
           throwsA(isA<EncodingException>()),
@@ -2353,7 +2344,6 @@ void main() {
         final result = encodeAnyToSpaceDelimited(
           model,
           'obj',
-          explode: false,
           allowEmpty: false,
         );
         expect(result, [(name: 'obj', value: 'name%20test%20value%2042')]);
@@ -2364,7 +2354,6 @@ void main() {
         final result = encodeAnyToSpaceDelimited(
           model,
           'obj',
-          explode: false,
           allowEmpty: true,
           allowReserved: true,
         );
@@ -2377,7 +2366,6 @@ void main() {
         final result = encodeAnyToSpaceDelimited(
           {'color': 'red', 'size': 'large'},
           'filter',
-          explode: false,
           allowEmpty: true,
         );
         expect(result, [(name: 'filter', value: 'color%20red%20size%20large')]);
@@ -2387,7 +2375,6 @@ void main() {
         final result = encodeAnyToSpaceDelimited(
           <String, String>{},
           'filter',
-          explode: false,
           allowEmpty: true,
         );
         expect(result, isEmpty);
@@ -2400,7 +2387,6 @@ void main() {
           encodeAnyToSpaceDelimited(
             null,
             'obj',
-            explode: false,
             allowEmpty: true,
           ),
           isEmpty,
@@ -2412,7 +2398,6 @@ void main() {
           () => encodeAnyToSpaceDelimited(
             null,
             'obj',
-            explode: false,
             allowEmpty: false,
           ),
           throwsA(isA<EmptyValueException>()),
@@ -2426,7 +2411,6 @@ void main() {
           () => encodeAnyToSpaceDelimited(
             'hello',
             'obj',
-            explode: false,
             allowEmpty: false,
           ),
           throwsA(isA<EncodingException>()),
@@ -2438,7 +2422,6 @@ void main() {
           () => encodeAnyToSpaceDelimited(
             Object(),
             'obj',
-            explode: false,
             allowEmpty: false,
           ),
           throwsA(isA<EncodingException>()),
