@@ -88,8 +88,6 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
       return '';
     }
     if (explode) {
-      // Simple uses ifemp="": an empty member expands to the name alone,
-      // without '='. Only form-style '?'/'&' keep the '='.
       return entries.map((e) {
         final key = _encodeKey(e.key, literal: literal);
         final isValueEmpty = switch (e.value) {

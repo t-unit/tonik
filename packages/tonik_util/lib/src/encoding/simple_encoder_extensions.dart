@@ -146,8 +146,6 @@ extension SimpleStringMapEncoder on Map<String, String> {
       if (isEmpty) {
         return '';
       }
-      // Simple uses ifemp="": an empty member expands to the name alone,
-      // without '='. Only form-style '?'/'&' keep the '='.
       return entries.map((e) {
         final key = literal ? e.key : Uri.encodeComponent(e.key);
         if (e.value.isEmpty) {
