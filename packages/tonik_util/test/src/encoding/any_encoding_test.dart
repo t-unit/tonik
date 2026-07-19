@@ -79,6 +79,24 @@ class TestEncodableModel implements ParameterEncodable {
   }
 
   @override
+  List<ParameterEntry> toPipeDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) {
+    return [(name: paramName, value: 'name|$name|value|$value')];
+  }
+
+  @override
+  List<ParameterEntry> toSpaceDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) {
+    return [(name: paramName, value: 'name%20$name%20value%20$value')];
+  }
+
+  @override
   Object? toJson() => {'name': name, 'value': value};
 }
 
@@ -164,6 +182,30 @@ class QueryComponentAwareEncodable implements ParameterEncodable {
   }) {
     if (allowReserved) {
       return [(name: '$paramName[k]', value: '$rawValue!reserved')];
+    }
+    throw UnimplementedError();
+  }
+
+  @override
+  List<ParameterEntry> toPipeDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) {
+    if (allowReserved) {
+      return [(name: paramName, value: '$rawValue!reserved')];
+    }
+    throw UnimplementedError();
+  }
+
+  @override
+  List<ParameterEntry> toSpaceDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) {
+    if (allowReserved) {
+      return [(name: paramName, value: '$rawValue!reserved')];
     }
     throw UnimplementedError();
   }
@@ -2188,6 +2230,569 @@ void main() {
           );
         },
       );
+    });
+  });
+
+  group('encodeAnyToPipeDelimited', () {
+    group('ParameterEncodable', () {
+      test('delegates to the value toPipeDelimited', () {
+        const model = TestEncodableModel(name: 'test', value: 42);
+        final result = encodeAnyToPipeDelimited(
+          model,
+          'obj',
+          allowEmpty: false,
+        );
+        expect(result, [(name: 'obj', value: 'name|test|value|42')]);
+      });
+
+      test('forwards allowReserved to the value toPipeDelimited', () {
+        const model = QueryComponentAwareEncodable('value');
+        final result = encodeAnyToPipeDelimited(
+          model,
+          'obj',
+          allowEmpty: true,
+          allowReserved: true,
+        );
+        expect(result, [(name: 'obj', value: 'value!reserved')]);
+      });
+    });
+
+    group('Map<String, String>', () {
+      test('flattens a map into a single pipe-joined entry', () {
+        final result = encodeAnyToPipeDelimited(
+          {'color': 'red', 'size': 'large'},
+          'filter',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'filter', value: 'color|red|size|large')]);
+      });
+
+      test('omits an empty map when allowEmpty=true', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, String>{},
+          'filter',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+    });
+
+    group('List<dynamic>', () {
+      test('joins string elements with a literal pipe', () {
+        final result = encodeAnyToPipeDelimited(
+          ['blue', 'black', 'brown'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: 'blue|black|brown')]);
+      });
+
+      test('joins numeric elements with a literal pipe', () {
+        final result = encodeAnyToPipeDelimited(
+          [1, 2, 3],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: '1|2|3')]);
+      });
+
+      test('uri-encodes elements while keeping the pipe delimiter literal', () {
+        final result = encodeAnyToPipeDelimited(
+          ['a b', 'c'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: 'a%20b|c')]);
+      });
+
+      test('omits an empty list when allowEmpty=true', () {
+        final result = encodeAnyToPipeDelimited(
+          <dynamic>[],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an empty list when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            <dynamic>[],
+            'p',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for a nested list element', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            [
+              [1, 2],
+            ],
+            'p',
+            allowEmpty: true,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('omits a null item while keeping the rest', () {
+        final result = encodeAnyToPipeDelimited(
+          [null, 'blue'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: 'blue')]);
+      });
+
+      test('preserves an empty-string item', () {
+        final result = encodeAnyToPipeDelimited(
+          ['', 'blue'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: '|blue')]);
+      });
+
+      test('omits an all-null list when allowEmpty=true', () {
+        final result = encodeAnyToPipeDelimited(
+          [null],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an all-null list when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            [null],
+            'p',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('Map<String, dynamic>', () {
+      test('flattens numeric values into a pipe-joined entry', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{'R': 100, 'G': 200, 'B': 150},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'R|100|G|200|B|150')]);
+      });
+
+      test('uri-encodes values while keeping the pipe delimiter literal', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{'note': 'a b'},
+          'q',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'q', value: 'note|a%20b')]);
+      });
+
+      test('omits an empty map when allowEmpty=true', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an empty map when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            <String, dynamic>{},
+            'color',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for a nested list value', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            <String, dynamic>{
+              'x': [1, 2],
+            },
+            'color',
+            allowEmpty: true,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('omits a null member while keeping the rest', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{'R': null, 'G': 200},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'G|200')]);
+      });
+
+      test('preserves an empty-string member', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{'x': ''},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'x|')]);
+      });
+
+      test('omits an all-null map when allowEmpty=true', () {
+        final result = encodeAnyToPipeDelimited(
+          <String, dynamic>{'R': null},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an all-null map when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            <String, dynamic>{'R': null},
+            'color',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('null handling', () {
+      test('encodes null as empty when allowEmpty=true', () {
+        expect(
+          encodeAnyToPipeDelimited(
+            null,
+            'obj',
+            allowEmpty: true,
+          ),
+          isEmpty,
+        );
+      });
+
+      test('throws for null when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            null,
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('unsupported types', () {
+      test('throws for a String value', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            'hello',
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for an int value', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            42,
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for an unsupported object type', () {
+        expect(
+          () => encodeAnyToPipeDelimited(
+            Object(),
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+    });
+  });
+
+  group('encodeAnyToSpaceDelimited', () {
+    group('ParameterEncodable', () {
+      test('delegates to the value toSpaceDelimited', () {
+        const model = TestEncodableModel(name: 'test', value: 42);
+        final result = encodeAnyToSpaceDelimited(
+          model,
+          'obj',
+          allowEmpty: false,
+        );
+        expect(result, [(name: 'obj', value: 'name%20test%20value%2042')]);
+      });
+
+      test('forwards allowReserved to the value toSpaceDelimited', () {
+        const model = QueryComponentAwareEncodable('value');
+        final result = encodeAnyToSpaceDelimited(
+          model,
+          'obj',
+          allowEmpty: true,
+          allowReserved: true,
+        );
+        expect(result, [(name: 'obj', value: 'value!reserved')]);
+      });
+    });
+
+    group('Map<String, String>', () {
+      test('flattens a map into a single %20-joined entry', () {
+        final result = encodeAnyToSpaceDelimited(
+          {'color': 'red', 'size': 'large'},
+          'filter',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'filter', value: 'color%20red%20size%20large')]);
+      });
+
+      test('omits an empty map when allowEmpty=true', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, String>{},
+          'filter',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+    });
+
+    group('List<dynamic>', () {
+      test('joins string elements with a pre-escaped %20', () {
+        final result = encodeAnyToSpaceDelimited(
+          ['blue', 'black', 'brown'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: 'blue%20black%20brown')]);
+      });
+
+      test('omits an empty list when allowEmpty=true', () {
+        final result = encodeAnyToSpaceDelimited(
+          <dynamic>[],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an empty list when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            <dynamic>[],
+            'p',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for a nested list element', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            [
+              [1, 2],
+            ],
+            'p',
+            allowEmpty: true,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('omits a null item while keeping the rest', () {
+        final result = encodeAnyToSpaceDelimited(
+          [null, 'blue'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: 'blue')]);
+      });
+
+      test('preserves an empty-string item', () {
+        final result = encodeAnyToSpaceDelimited(
+          ['', 'blue'],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'p', value: '%20blue')]);
+      });
+
+      test('omits an all-null list when allowEmpty=true', () {
+        final result = encodeAnyToSpaceDelimited(
+          [null],
+          'p',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an all-null list when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            [null],
+            'p',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('Map<String, dynamic>', () {
+      test('flattens numeric values into a %20-joined entry', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, dynamic>{'R': 100, 'G': 200, 'B': 150},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'R%20100%20G%20200%20B%20150')]);
+      });
+
+      test('omits an empty map when allowEmpty=true', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, dynamic>{},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an empty map when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            <String, dynamic>{},
+            'color',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+
+      test('throws for a nested map value', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            <String, dynamic>{
+              'x': <String, dynamic>{'y': 1},
+            },
+            'color',
+            allowEmpty: true,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('omits a null member while keeping the rest', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, dynamic>{'R': null, 'G': 200},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'G%20200')]);
+      });
+
+      test('preserves an empty-string member', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, dynamic>{'x': ''},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, [(name: 'color', value: 'x%20')]);
+      });
+
+      test('omits an all-null map when allowEmpty=true', () {
+        final result = encodeAnyToSpaceDelimited(
+          <String, dynamic>{'R': null},
+          'color',
+          allowEmpty: true,
+        );
+        expect(result, isEmpty);
+      });
+
+      test('throws for an all-null map when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            <String, dynamic>{'R': null},
+            'color',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('null handling', () {
+      test('encodes null as empty when allowEmpty=true', () {
+        expect(
+          encodeAnyToSpaceDelimited(
+            null,
+            'obj',
+            allowEmpty: true,
+          ),
+          isEmpty,
+        );
+      });
+
+      test('throws for null when allowEmpty=false', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            null,
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EmptyValueException>()),
+        );
+      });
+    });
+
+    group('unsupported types', () {
+      test('throws for a String value', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            'hello',
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for an int value', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            42,
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
+
+      test('throws for an unsupported object type', () {
+        expect(
+          () => encodeAnyToSpaceDelimited(
+            Object(),
+            'obj',
+            allowEmpty: false,
+          ),
+          throwsA(isA<EncodingException>()),
+        );
+      });
     });
   });
 

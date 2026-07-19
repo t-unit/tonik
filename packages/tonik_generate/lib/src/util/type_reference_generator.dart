@@ -268,6 +268,11 @@ List<Parameter> buildDeepObjectEncodingParameters() => [
   buildBoolParameter('allowReserved'),
 ];
 
+List<Parameter> buildDelimitedEncodingParameters() => [
+  buildBoolParameter('allowEmpty', required: true),
+  buildBoolParameter('allowReserved'),
+];
+
 /// Parameters for an inline `uriEncode` signature.
 List<Parameter> buildUriEncodeParameters() => [
   buildBoolParameter('allowEmpty', required: true),

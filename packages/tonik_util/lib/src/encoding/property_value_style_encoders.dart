@@ -46,6 +46,36 @@ void _guardEmpty(Map<String, PropertyValue> map, {required bool allowEmpty}) {
   }
 }
 
+List<ParameterEntry> _delimitedEntries(
+  Map<String, PropertyValue> map,
+  String paramName, {
+  required String delimiter,
+  required bool allowEmpty,
+  required bool allowReserved,
+}) {
+  _guardEmpty(map, allowEmpty: allowEmpty);
+  if (map.isEmpty) {
+    return const [];
+  }
+
+  String encode(String value) => encodeUriValue(
+    value,
+    allowReserved: allowReserved,
+    useQueryComponent: false,
+  );
+  String encodeProperty(PropertyValue value) => switch (value) {
+    ScalarPropertyValue(:final value) => encode(value),
+    // Array elements collapse into the delimiter stream, indistinguishable
+    // from the key/value tokens, consistent with the form/toUri path.
+    ArrayPropertyValue(:final values) => values.map(encode).join(delimiter),
+  };
+
+  final flattened = map.entries
+      .expand((e) => [encode(e.key), encodeProperty(e.value)])
+      .join(delimiter);
+  return [(name: paramName, value: flattened)];
+}
+
 /// Enforces empty-value and URI-escaping rules for object-valued parameters.
 extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
   /// Produces alternating key/value tokens with configurable URI escaping.
@@ -172,9 +202,42 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return [(name: paramName, value: parts.join(','))];
   }
 
+  /// Joins the alternating key/value tokens with a `|`.
+  ///
+  /// On the wire the `|` is percent-encoded to `%7C`, identical to a `|`
+  /// inside a value, so keys, values, and array elements all collapse
+  /// irreversibly into the delimiter stream.
+  List<ParameterEntry> toPipeDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) => _delimitedEntries(
+    this,
+    paramName,
+    delimiter: '|',
+    allowEmpty: allowEmpty,
+    allowReserved: allowReserved,
+  );
+
+  /// Joins the alternating key/value tokens with a pre-escaped `%20`.
+  ///
+  /// A value's own space also encodes to `%20`, so keys, values, and array
+  /// elements all collapse irreversibly into the delimiter stream.
+  List<ParameterEntry> toSpaceDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  }) => _delimitedEntries(
+    this,
+    paramName,
+    delimiter: '%20',
+    allowEmpty: allowEmpty,
+    allowReserved: allowReserved,
+  );
+
   /// Keeps keys component-encoded when [allowReserved] preserves value bytes.
   /// Throws [EncodingException] for a non-explode call or an array value, and
-  /// [EmptyValueException] on an empty map or value under `allowEmpty: false`.
+  /// [EmptyValueException] on an empty map under `allowEmpty: false`.
   List<ParameterEntry> toDeepObject(
     String paramName, {
     required bool explode,
@@ -195,9 +258,6 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
             'Lists are not supported in this encoding style',
           );
         case ScalarPropertyValue(:final value):
-          if (value.isEmpty && !allowEmpty) {
-            throw const EmptyValueException();
-          }
           result.add((
             name: '$paramName[${Uri.encodeComponent(entry.key)}]',
             value: encodeUriValue(

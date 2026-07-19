@@ -188,6 +188,14 @@ class OneOfGenerator {
             else
               buildToDeepObjectMethod(),
             if (useThrowBody)
+              buildReadOnlyToPipeDelimitedMethod(throwBody)
+            else
+              buildToPipeDelimitedMethod(),
+            if (useThrowBody)
+              buildReadOnlyToSpaceDelimitedMethod(throwBody)
+            else
+              buildToSpaceDelimitedMethod(),
+            if (useThrowBody)
               buildReadOnlyUriEncodeMethod(throwBody)
             else
               _generateUriEncodeMethod(className, model, variantNames),

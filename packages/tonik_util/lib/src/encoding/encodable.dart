@@ -92,6 +92,34 @@ abstract interface class DeepObjectEncodable {
   });
 }
 
+/// Marker interface for types that support pipe-delimited object encoding.
+abstract interface class PipeDelimitedEncodable {
+  /// Encodes this value using pipeDelimited style parameter encoding.
+  ///
+  /// When [allowEmpty] is false, empty values throw an exception.
+  /// When [allowReserved] is true, reserved characters in keys and values are
+  /// kept literal; the `|` delimiter is unaffected.
+  List<ParameterEntry> toPipeDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  });
+}
+
+/// Marker interface for types that support space-delimited object encoding.
+abstract interface class SpaceDelimitedEncodable {
+  /// Encodes this value using spaceDelimited style parameter encoding.
+  ///
+  /// When [allowEmpty] is false, empty values throw an exception.
+  /// When [allowReserved] is true, reserved characters in keys and values are
+  /// kept literal; the `%20` delimiter is unaffected.
+  List<ParameterEntry> toSpaceDelimited(
+    String paramName, {
+    required bool allowEmpty,
+    bool allowReserved = false,
+  });
+}
+
 /// Marker interface for types that support JSON encoding.
 abstract interface class JsonEncodable {
   /// Converts this value to a JSON-compatible representation.
@@ -131,4 +159,6 @@ abstract interface class ParameterEncodable
         SimpleEncodable,
         FormEncodable,
         DeepObjectEncodable,
+        PipeDelimitedEncodable,
+        SpaceDelimitedEncodable,
         JsonEncodable {}

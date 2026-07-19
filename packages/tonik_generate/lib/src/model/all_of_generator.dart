@@ -263,6 +263,14 @@ class AllOfGenerator {
             else
               buildToDeepObjectMethod(),
             if (model.isReadOnly)
+              buildReadOnlyToPipeDelimitedMethod(encodingExceptionBody)
+            else
+              buildToPipeDelimitedMethod(),
+            if (model.isReadOnly)
+              buildReadOnlyToSpaceDelimitedMethod(encodingExceptionBody)
+            else
+              buildToSpaceDelimitedMethod(),
+            if (model.isReadOnly)
               buildReadOnlyUriEncodeMethod(encodingExceptionBody)
             else
               _buildUriEncodeMethod(
