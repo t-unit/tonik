@@ -120,8 +120,6 @@ extension LabelStringMapEncoder on Map<String, String> {
       return entries.map(
         (entry) {
           final key = Uri.encodeComponent(entry.key);
-          // Label uses ifemp="": an empty member expands to the name alone,
-          // without '='. Only form-style '?'/'&' keep the '='.
           if (entry.value.isEmpty) {
             return '.$key';
           }
