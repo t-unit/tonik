@@ -126,22 +126,25 @@ void main() {
       );
     });
 
-    test('empty scalar renders with allowEmpty=true', () {
+    test('empty scalar renders name-only when exploded with allowEmpty=true',
+        () {
       const value = {'k': PropertyValue.scalar('')};
       expect(value.toSimple(explode: false, allowEmpty: true), 'k,');
-      expect(value.toSimple(explode: true, allowEmpty: true), 'k=');
+      expect(value.toSimple(explode: true, allowEmpty: true), 'k');
     });
 
-    test('empty scalar renders with allowEmpty=false', () {
+    test('empty scalar renders name-only when exploded with allowEmpty=false',
+        () {
       const value = {'k': PropertyValue.scalar('')};
       expect(value.toSimple(explode: false, allowEmpty: false), 'k,');
-      expect(value.toSimple(explode: true, allowEmpty: false), 'k=');
+      expect(value.toSimple(explode: true, allowEmpty: false), 'k');
     });
 
-    test('empty array renders empty value with allowEmpty=false', () {
+    test('empty array renders name-only when exploded with allowEmpty=false',
+        () {
       const value = {'k': PropertyValue.array(<String>[])};
       expect(value.toSimple(explode: false, allowEmpty: false), 'k,');
-      expect(value.toSimple(explode: true, allowEmpty: false), 'k=');
+      expect(value.toSimple(explode: true, allowEmpty: false), 'k');
     });
 
     test('empty scalar beside a filled scalar renders with allowEmpty=false',
@@ -156,14 +159,15 @@ void main() {
       );
       expect(
         value.toSimple(explode: true, allowEmpty: false),
-        'color=,size=xl',
+        'color,size=xl',
       );
     });
 
-    test('empty array renders empty value with allowEmpty=true', () {
+    test('empty array renders name-only when exploded with allowEmpty=true',
+        () {
       const value = {'k': PropertyValue.array(<String>[])};
       expect(value.toSimple(explode: false, allowEmpty: true), 'k,');
-      expect(value.toSimple(explode: true, allowEmpty: true), 'k=');
+      expect(value.toSimple(explode: true, allowEmpty: true), 'k');
     });
 
     test('single empty-string element is not an empty array and never throws',

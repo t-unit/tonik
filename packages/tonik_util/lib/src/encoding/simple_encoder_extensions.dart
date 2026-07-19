@@ -146,16 +146,18 @@ extension SimpleStringMapEncoder on Map<String, String> {
       if (isEmpty) {
         return '';
       }
-      if (literal) {
-        return entries.map((e) => '${e.key}=${e.value}').join(',');
-      }
-      return entries
-          .map(
-            (e) =>
-                '${Uri.encodeComponent(e.key)}='
-                '${alreadyEncoded ? e.value : Uri.encodeComponent(e.value)}',
-          )
-          .join(',');
+      // Simple uses ifemp="": an empty member expands to the name alone,
+      // without '='. Only form-style '?'/'&' keep the '='.
+      return entries.map((e) {
+        final key = literal ? e.key : Uri.encodeComponent(e.key);
+        if (e.value.isEmpty) {
+          return key;
+        }
+        final value = literal
+            ? e.value
+            : (alreadyEncoded ? e.value : Uri.encodeComponent(e.value));
+        return '$key=$value';
+      }).join(',');
     } else {
       // explode=false: use uriEncode for key,value pairs
       return uriEncode(
