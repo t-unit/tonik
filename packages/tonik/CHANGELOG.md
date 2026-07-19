@@ -1,3 +1,10 @@
+## 0.9.0
+
+ - **DOCS**: rewrite and rename the URI encoding doc for allowReserved support.
+
+
+For full changes across all packages, see the [complete changelog](https://github.com/t-unit/tonik/blob/main/CHANGELOG.md).
+
 ## 0.8.0
 
  - **REFACTOR**(generate): simplify workerCount semantics and tighten worker pool.

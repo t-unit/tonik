@@ -1,3 +1,48 @@
+## 0.9.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: clarify empty-value divergence and drop dead parameter.
+ - **REFACTOR**: harden form ParameterEntry encoding after review.
+ - **REFACTOR**: give literal its own branch in the string-list encoder.
+ - **FIX**: accept integer-valued JSON numbers in double and int lists.
+ - **FIX**: omit empty array query parameters instead of throwing.
+ - **FIX**: expand empty-string matrix params as name without value.
+ - **FIX**: serialize empty-string primitive query params instead of throwing.
+ - **FIX**: thread useQueryComponent through composite list form arms.
+ - **FIX**: accept RFC 3339 lowercase 't' date-time separator.
+ - **FIX**: accept whole-number double JSON values for integer fields.
+ - **FIX**: encode empty form object property values.
+ - **FIX**: omit empty arrays from form bodies.
+ - **FIX**: preserve nullability of array items so null elements decode.
+ - **FIX**: base64-encode byte parameters before percent-encoding.
+ - **FIX**: omit empty list value for any-typed form query parameters.
+ - **FIX**: mirror the object path for per-property form-body names, lists, and maps.
+ - **FIX**: throw InvalidFormatException on offset-path parse errors and report original input.
+ - **FIX**: keep binary delimited encoders non-throwing on empty decoded value and clarify docs.
+ - **FEAT**: extend literal destination argument to collection encoders.
+ - **FEAT**: add literal destination argument to scalar encoders.
+ - **FEAT**: add reserved-preserving encoder and allowReserved flag to scalar encoders.
+ - **FEAT**: add tagged-map simple/label/matrix/deepObject encoders.
+ - **FEAT**: thread allowReserved through List and Map form encoders.
+ - **FEAT**: thread allowReserved through delimited, deepObject and AnyModel value encoders.
+ - **FEAT**: honor allowReserved for urlencoded form request-body properties.
+ - **FEAT**: encode form-style parameters as ParameterEntry lists.
+ - **FEAT**: add PropertyValue tagged type and form encoder.
+ - **DOCS**: honor allowReserved for form-body array properties in docs and tests.
+ - **DOCS**: scope the style-encoder parity note to the string styles.
+ - **DOCS**: trim style-encoder comments to terse WHY.
+ - **DOCS**: correct literal override doc on numeric scalar encoders.
+ - **DOCS**: trim verbose comments to non-obvious WHY only.
+ - **DOCS**: tighten header-literal comments to terse why-not-what.
+ - **DOCS**: trim encodeAnyToFormEntries comment to accurate rationale.
+ - **BREAKING** **FIX**: emit additionalProperties and honor allOf allowReserved in urlencoded form bodies.
+ - **BREAKING** **FIX**: percent-encode object property keys in form explode:false encoding.
+ - **BREAKING** **FIX**: explode form-urlencoded body array properties by default.
+ - **BREAKING** **FIX**: stop percent-decoding simple response header values.
+ - **BREAKING** **FEAT**: serialize composite request headers literally.
+ - **BREAKING** **FEAT**: honor allowReserved for object, enum and composition query parameters.
+
 ## 0.8.0
 
  - **FIX**(generate): refine media-type docs, dedupe warning, and tests.

@@ -1,3 +1,20 @@
+## 0.9.0
+
+> Note: This release has breaking changes.
+
+ - **REFACTOR**: warn when a non-object form-urlencoded body carries encoding.
+ - **REFACTOR**: resolve form and multipart body encoding by property identity.
+ - **REFACTOR**: carry nullable list items / map values as a container flag.
+ - **FIX**: apply base64 transform for contentEncoding: base64 strings.
+ - **FIX**: surface cyclic parameter reference as ArgumentError and cover unresolvable-ref passthrough.
+ - **FIX**: override path-item parameters with operation-level ones by (name, location).
+ - **FIX**: do not capture encoding headers for urlencoded form bodies.
+ - **FIX**: preserve nullability of array items so null elements decode.
+ - **FIX**: recognize +json structured-syntax-suffix media types as JSON.
+ - **FEAT**: import encoding object for urlencoded form request bodies.
+ - **DOCS**: trim per-property encoding doc comments to terse WHY.
+ - **BREAKING** **FIX**: emit additionalProperties and honor allOf allowReserved in urlencoded form bodies.
+
 ## 0.8.0
 
  - **REFACTOR**(tonik_core): tighten AliasModel default contract.

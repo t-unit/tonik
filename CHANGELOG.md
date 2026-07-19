@@ -3,6 +3,148 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## 2026-07-19
+
+### Changes
+
+---
+
+Packages with breaking changes:
+
+ - [`tonik_util` - `v0.9.0`](#tonik_util---v090)
+ - [`tonik_parse` - `v0.9.0`](#tonik_parse---v090)
+ - [`tonik_generate` - `v0.9.0`](#tonik_generate---v090)
+
+Packages with other changes:
+
+ - [`tonik_core` - `v0.9.0`](#tonik_core---v090)
+ - [`tonik` - `v0.9.0`](#tonik---v090)
+
+---
+
+#### `tonik_util` - `v0.9.0`
+
+ - **REFACTOR**: clarify empty-value divergence and drop dead parameter.
+ - **REFACTOR**: harden form ParameterEntry encoding after review.
+ - **REFACTOR**: give literal its own branch in the string-list encoder.
+ - **FIX**: accept integer-valued JSON numbers in double and int lists.
+ - **FIX**: omit empty array query parameters instead of throwing.
+ - **FIX**: expand empty-string matrix params as name without value.
+ - **FIX**: serialize empty-string primitive query params instead of throwing.
+ - **FIX**: thread useQueryComponent through composite list form arms.
+ - **FIX**: accept RFC 3339 lowercase 't' date-time separator.
+ - **FIX**: accept whole-number double JSON values for integer fields.
+ - **FIX**: encode empty form object property values.
+ - **FIX**: omit empty arrays from form bodies.
+ - **FIX**: preserve nullability of array items so null elements decode.
+ - **FIX**: base64-encode byte parameters before percent-encoding.
+ - **FIX**: omit empty list value for any-typed form query parameters.
+ - **FIX**: mirror the object path for per-property form-body names, lists, and maps.
+ - **FIX**: throw InvalidFormatException on offset-path parse errors and report original input.
+ - **FIX**: keep binary delimited encoders non-throwing on empty decoded value and clarify docs.
+ - **FEAT**: extend literal destination argument to collection encoders.
+ - **FEAT**: add literal destination argument to scalar encoders.
+ - **FEAT**: add reserved-preserving encoder and allowReserved flag to scalar encoders.
+ - **FEAT**: add tagged-map simple/label/matrix/deepObject encoders.
+ - **FEAT**: thread allowReserved through List and Map form encoders.
+ - **FEAT**: thread allowReserved through delimited, deepObject and AnyModel value encoders.
+ - **FEAT**: honor allowReserved for urlencoded form request-body properties.
+ - **FEAT**: encode form-style parameters as ParameterEntry lists.
+ - **FEAT**: add PropertyValue tagged type and form encoder.
+ - **DOCS**: honor allowReserved for form-body array properties in docs and tests.
+ - **DOCS**: scope the style-encoder parity note to the string styles.
+ - **DOCS**: trim style-encoder comments to terse WHY.
+ - **DOCS**: correct literal override doc on numeric scalar encoders.
+ - **DOCS**: trim verbose comments to non-obvious WHY only.
+ - **DOCS**: tighten header-literal comments to terse why-not-what.
+ - **DOCS**: trim encodeAnyToFormEntries comment to accurate rationale.
+ - **BREAKING** **FIX**: emit additionalProperties and honor allOf allowReserved in urlencoded form bodies.
+ - **BREAKING** **FIX**: percent-encode object property keys in form explode:false encoding.
+ - **BREAKING** **FIX**: explode form-urlencoded body array properties by default.
+ - **BREAKING** **FIX**: stop percent-decoding simple response header values.
+ - **BREAKING** **FEAT**: serialize composite request headers literally.
+ - **BREAKING** **FEAT**: honor allowReserved for object, enum and composition query parameters.
+
+#### `tonik_parse` - `v0.9.0`
+
+ - **REFACTOR**: warn when a non-object form-urlencoded body carries encoding.
+ - **REFACTOR**: resolve form and multipart body encoding by property identity.
+ - **REFACTOR**: carry nullable list items / map values as a container flag.
+ - **FIX**: apply base64 transform for contentEncoding: base64 strings.
+ - **FIX**: surface cyclic parameter reference as ArgumentError and cover unresolvable-ref passthrough.
+ - **FIX**: override path-item parameters with operation-level ones by (name, location).
+ - **FIX**: do not capture encoding headers for urlencoded form bodies.
+ - **FIX**: preserve nullability of array items so null elements decode.
+ - **FIX**: recognize +json structured-syntax-suffix media types as JSON.
+ - **FEAT**: import encoding object for urlencoded form request bodies.
+ - **DOCS**: trim per-property encoding doc comments to terse WHY.
+ - **BREAKING** **FIX**: emit additionalProperties and honor allOf allowReserved in urlencoded form bodies.
+
+#### `tonik_generate` - `v0.9.0`
+
+ - **REFACTOR**: order response statuses via Comparable; drop integration test.
+ - **REFACTOR**: harden form ParameterEntry encoding after review.
+ - **REFACTOR**: make ResponseStatus.compareTo a total order.
+ - **REFACTOR**: reshape parameterProperties to a tagged raw-value map.
+ - **REFACTOR**: extract shared raw-string expression builder.
+ - **REFACTOR**: restore raw-string enum decoding error messages.
+ - **REFACTOR**: drop explanatory comment on primitive oneOf integer guard.
+ - **REFACTOR**: warn when a non-object form-urlencoded body carries encoding.
+ - **REFACTOR**: resolve form and multipart body encoding by property identity.
+ - **REFACTOR**: share one form-entry wire joiner across query, cookie, body.
+ - **REFACTOR**: carry nullable list items / map values as a container flag.
+ - **FIX**: mirror the object path for per-property form-body names, lists, and maps.
+ - **FIX**: emit valid binary raw-string conversion and strengthen alias test.
+ - **FIX**: decode whole-number JSON double to integer variant in primitive oneOf.
+ - **FIX**: thread useQueryComponent through composite list form arms.
+ - **FIX**: omit empty list value for any-typed form query parameters.
+ - **FIX**: mirror the object path for per-property form-body field names and free-form values.
+ - **FIX**: base64-encode byte parameters before percent-encoding.
+ - **FIX**: encode delimited query array spaces as %20 for non-string items.
+ - **FIX**: emit null-aware decoder for nullable date/decimal/uri array items.
+ - **FIX**: encode nullable array items in parameter serialization.
+ - **FIX**: preserve nullability of array items so null elements decode.
+ - **FIX**: order response switch arms by status specificity.
+ - **FEAT**: honor allowReserved for urlencoded form request-body properties.
+ - **FEAT**: import encoding object for urlencoded form request bodies.
+ - **FEAT**: honor allowReserved for delimited and deepObject query parameters.
+ - **FEAT**: encode form-style parameters as ParameterEntry lists.
+ - **FEAT**: honor allowReserved for form-style query parameters.
+ - **DOCS**: honor allowReserved for form-body array properties in docs and tests.
+ - **DOCS**: trim per-property encoding doc comments to terse WHY.
+ - **DOCS**: scope the raw-list builder comment to scalar content.
+ - **DOCS**: refine allowReserved coverage notes and pin object form deferral.
+ - **DOCS**: defer allowReserved pass-through set to the encoded-characters table.
+ - **DOCS**: keep allowReserved limitations user-facing and tighten coverage notes.
+ - **DOCS**: scope allowReserved array coverage and pin form-deferral tests.
+ - **DOCS**: tighten header-literal comments to terse why-not-what.
+ - **DOCS**: trim raw string comments.
+ - **DOCS**: trim verbose comments to non-obvious WHY only.
+ - **BREAKING** **FIX**: decode nullable-element string list headers with null empties.
+ - **BREAKING** **FIX**: emit additionalProperties and honor allOf allowReserved in urlencoded form bodies.
+ - **BREAKING** **FIX**: explode form-urlencoded body array properties by default.
+ - **BREAKING** **FIX**: accept whole-number-double JSON in integer enum fromJson.
+ - **BREAKING** **FIX**: single-encode composite list elements in object properties.
+ - **BREAKING** **FEAT**: serialize primitive request headers literally.
+ - **BREAKING** **FEAT**: serialize composite request headers literally.
+ - **BREAKING** **FEAT**: honor allowReserved for object, enum and composition query parameters.
+
+#### `tonik_core` - `v0.9.0`
+
+ - **REFACTOR**: warn when a non-object form-urlencoded body carries encoding.
+ - **REFACTOR**: resolve form and multipart body encoding by property identity.
+ - **REFACTOR**: carry nullable list items / map values as a container flag.
+ - **REFACTOR**: make ResponseStatus.compareTo a total order.
+ - **REFACTOR**: order response statuses via Comparable; drop integration test.
+ - **FEAT**: import encoding object for urlencoded form request bodies.
+ - **DOCS**: trim per-property encoding doc comments to terse WHY.
+ - **DOCS**: drop restating doc comments from RequestBody getters.
+
+#### `tonik` - `v0.9.0`
+
+ - **DOCS**: rewrite and rename the URI encoding doc for allowReserved support.
+
+
 ## 2026-06-17
 
 ### Changes

@@ -1,3 +1,14 @@
+## 0.9.0
+
+ - **REFACTOR**: warn when a non-object form-urlencoded body carries encoding.
+ - **REFACTOR**: resolve form and multipart body encoding by property identity.
+ - **REFACTOR**: carry nullable list items / map values as a container flag.
+ - **REFACTOR**: make ResponseStatus.compareTo a total order.
+ - **REFACTOR**: order response statuses via Comparable; drop integration test.
+ - **FEAT**: import encoding object for urlencoded form request bodies.
+ - **DOCS**: trim per-property encoding doc comments to terse WHY.
+ - **DOCS**: drop restating doc comments from RequestBody getters.
+
 ## 0.8.0
 
  - **REFACTOR**(generate): simplify workerCount semantics and tighten worker pool.
