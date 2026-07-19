@@ -1055,7 +1055,7 @@ void main() {
     });
 
     group('unsupported models', () {
-      test('primitive throws the list-and-object-only exception', () {
+      test('primitive throws the array-and-object-only exception', () {
         final parameter = createParameter(
           name: 'name',
           rawName: 'name',
@@ -1077,7 +1077,447 @@ void main() {
             format('''
               void test() {
                 throw EncodingException(
-                  r'Parameter name: spaceDelimited encoding supports only list and object types',
+                  r'Parameter name: spaceDelimited encoding supports only array and object types',
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('enum throws the array-and-object-only exception', () {
+        final parameter = createParameter(
+          name: 'status',
+          rawName: 'status',
+          model: EnumModel<String>(
+            isDeprecated: false,
+            context: context,
+            values: {
+              const EnumEntry(value: 'active'),
+              const EnumEntry(value: 'inactive'),
+            },
+            isNullable: false,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'status',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+              void test() {
+                throw EncodingException(
+                  r'Parameter status: pipeDelimited encoding supports only array and object types',
+                );
+              }
+            '''),
+          ),
+        );
+      });
+    });
+
+    group('alias resolving to list', () {
+      test('spaceDelimited alias to string list emits the list path', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: AliasModel(
+            name: 'TagList',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in tags.toSpaceDelimited(
+                  explode: false,
+                  allowEmpty: true,
+                )) {
+                  _$entries.add((name: r'tags', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('pipeDelimited alias to string list emits the list path', () {
+        final parameter = createParameter(
+          name: 'tags',
+          rawName: 'tags',
+          model: AliasModel(
+            name: 'TagList',
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+            defaultValue: null,
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'tags',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                for (final value in tags.toPipeDelimited(
+                  explode: false,
+                  allowEmpty: true,
+                )) {
+                  _$entries.add((name: r'tags', value: value));
+                }
+              }
+            '''),
+          ),
+        );
+      });
+    });
+
+    group('map parameters', () {
+      test('spaceDelimited Map<String, String> flattens via '
+          'buildMapPropertyValueConversion', () {
+        final parameter = createParameter(
+          name: 'filter',
+          rawName: 'filter',
+          model: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'filter',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  filter
+                      .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
+                      .toSpaceDelimited(r'filter', allowEmpty: true),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('pipeDelimited Map<String, int> flattens via '
+          'buildMapPropertyValueConversion', () {
+        final parameter = createParameter(
+          name: 'counts',
+          rawName: 'counts',
+          model: MapModel(
+            valueModel: IntegerModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'counts',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  counts
+                      .map((k, v) => MapEntry(k, PropertyValue.scalar(v.toString())))
+                      .toPipeDelimited(r'counts', allowEmpty: true),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('map with complex value type throws the unsupported-complex-value '
+          'exception', () {
+        final parameter = createParameter(
+          name: 'nested',
+          rawName: 'nested',
+          model: MapModel(
+            valueModel: ClassModel(
+              name: 'Inner',
+              properties: const [],
+              isDeprecated: false,
+              context: context,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+          ),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'nested',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+              void test() {
+                throw EncodingException(
+                  r'pipeDelimited encoding is not supported for Map types with complex values. Parameter "nested" cannot be encoded.',
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('explode map throws the specification-undefined exception', () {
+        final parameter = createParameter(
+          name: 'filter',
+          rawName: 'filter',
+          model: MapModel(
+            valueModel: StringModel(context: context),
+            context: context,
+            examples: const [],
+          ),
+          explode: true,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'filter',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+          explode: true,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format('''
+              void test() {
+                throw EncodingException(
+                  r'Parameter filter: pipeDelimited encoding of objects with explode: true is not defined by the specification',
+                );
+              }
+            '''),
+          ),
+        );
+      });
+    });
+
+    group('composite parameters', () {
+      OneOfModel allSimpleOneOf() => OneOfModel(
+        name: 'SimpleVariant',
+        isDeprecated: false,
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (discriminatorValue: null, model: IntegerModel(context: context)),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      OneOfModel allComplexOneOf() => OneOfModel(
+        name: 'ComplexVariant',
+        isDeprecated: false,
+        models: {
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'ClassA',
+              properties: const [],
+              isDeprecated: false,
+              context: context,
+              examples: const [],
+            ),
+          ),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'ClassB',
+              properties: const [],
+              isDeprecated: false,
+              context: context,
+              examples: const [],
+            ),
+          ),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      OneOfModel mixedOneOf() => OneOfModel(
+        name: 'MixedVariant',
+        isDeprecated: false,
+        models: {
+          (discriminatorValue: null, model: StringModel(context: context)),
+          (
+            discriminatorValue: null,
+            model: ClassModel(
+              name: 'ClassA',
+              properties: const [],
+              isDeprecated: false,
+              context: context,
+              examples: const [],
+            ),
+          ),
+        },
+        context: context,
+        examples: const [],
+      );
+
+      test('all-simple oneOf flattens via parameterProperties '
+          '(pipeDelimited)', () {
+        final parameter = createParameter(
+          name: 'variant',
+          rawName: 'variant',
+          model: allSimpleOneOf(),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'variant',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  variant
+                      .parameterProperties(allowEmpty: true)
+                      .toPipeDelimited(r'variant', allowEmpty: true),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('all-complex oneOf flattens via parameterProperties '
+          '(pipeDelimited)', () {
+        final parameter = createParameter(
+          name: 'variant',
+          rawName: 'variant',
+          model: allComplexOneOf(),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'variant',
+          parameter,
+          encoding: QueryParameterEncoding.pipeDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  variant
+                      .parameterProperties(allowEmpty: true)
+                      .toPipeDelimited(r'variant', allowEmpty: true),
+                );
+              }
+            '''),
+          ),
+        );
+      });
+
+      test('mixed oneOf flattens via parameterProperties '
+          '(spaceDelimited)', () {
+        final parameter = createParameter(
+          name: 'variant',
+          rawName: 'variant',
+          model: mixedOneOf(),
+          explode: false,
+          allowEmpty: true,
+        );
+
+        final codes = buildToDelimitedQueryParameterCode(
+          'variant',
+          parameter,
+          encoding: QueryParameterEncoding.spaceDelimited,
+        );
+
+        final code = emitStatements(codes);
+        expect(
+          collapseWhitespace(code),
+          collapseWhitespace(
+            format(r'''
+              void test() {
+                _$entries.addAll(
+                  variant
+                      .parameterProperties(allowEmpty: true)
+                      .toSpaceDelimited(r'variant', allowEmpty: true),
                 );
               }
             '''),

@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 BuiltStatements buildToDelimitedQueryParameterCode(
@@ -32,15 +33,15 @@ List<Code> _buildToDelimitedQueryParameterCode(
   bool allowEmpty = true,
   bool allowReserved = false,
 }) {
-  final model = parameter.model;
+  final resolved = parameter.model.resolved;
   final encodingName = encoding == QueryParameterEncoding.spaceDelimited
       ? 'spaceDelimited'
       : 'pipeDelimited';
 
-  if (model is ListModel) {
-    return _buildDelimitedCode(
+  return switch (resolved) {
+    ListModel() => _buildDelimitedCode(
       parameterName,
-      model.content,
+      resolved.content,
       parameter.rawName,
       encoding: encoding,
       explode: explode,
@@ -48,43 +49,88 @@ List<Code> _buildToDelimitedQueryParameterCode(
       allowReserved: allowReserved,
       encodingName: encodingName,
       isContentNullable:
-          model.isContentNullable || model.content.isEffectivelyNullable,
-    );
-  }
-
-  if (_isObjectModel(model)) {
-    if (explode) {
-      return [
-        generateEncodingExceptionExpression(
-          'Parameter $parameterName: $encodingName encoding of objects with '
-          'explode: true is not defined by the specification',
-          raw: true,
-        ).statement,
-      ];
-    }
-
-    return _buildObjectDelimitedCode(
+          resolved.isContentNullable || resolved.content.isEffectivelyNullable,
+    ),
+    MapModel() ||
+        ClassModel() ||
+        AllOfModel() ||
+        OneOfModel() ||
+        AnyOfModel()
+        when explode => [
+      generateEncodingExceptionExpression(
+        'Parameter $parameterName: $encodingName encoding of objects with '
+        'explode: true is not defined by the specification',
+        raw: true,
+      ).statement,
+    ],
+    MapModel() => _buildMapDelimitedCode(
       parameterName,
       parameter.rawName,
+      resolved,
       encoding: encoding,
+      encodingName: encodingName,
       allowEmpty: allowEmpty,
       allowReserved: allowReserved,
-    );
-  }
-
-  return [
-    generateEncodingExceptionExpression(
-      'Parameter $parameterName: $encodingName encoding supports only '
-      'list and object types',
-      raw: true,
-    ).statement,
-  ];
+    ),
+    ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel() =>
+      _buildObjectDelimitedCode(
+        parameterName,
+        parameter.rawName,
+        encoding: encoding,
+        allowEmpty: allowEmpty,
+        allowReserved: allowReserved,
+      ),
+    _ => [
+      generateEncodingExceptionExpression(
+        'Parameter $parameterName: $encodingName encoding supports only '
+        'array and object types',
+        raw: true,
+      ).statement,
+    ],
+  };
 }
 
-bool _isObjectModel(Model model) => switch (model.resolved) {
-  ClassModel() || AllOfModel() || OneOfModel() || AnyOfModel() => true,
-  _ => false,
-};
+List<Code> _buildMapDelimitedCode(
+  String parameterName,
+  String rawName,
+  MapModel model, {
+  required QueryParameterEncoding encoding,
+  required String encodingName,
+  required bool allowEmpty,
+  required bool allowReserved,
+}) {
+  final methodName = encoding == QueryParameterEncoding.spaceDelimited
+      ? 'toSpaceDelimited'
+      : 'toPipeDelimited';
+
+  final conversion = buildMapPropertyValueConversion(
+    refer(parameterName),
+    model,
+    isNullable: false,
+    context: rawName,
+  );
+
+  return switch (conversion) {
+    SupportedMapPropertyValueConversion(:final expression) => [
+      refer(r'_$entries').property('addAll').call([
+        expression.property(methodName).call(
+          [specLiteralString(rawName)],
+          {
+            'allowEmpty': literalBool(allowEmpty),
+            if (allowReserved) 'allowReserved': literalBool(true),
+          },
+        ),
+      ]).statement,
+    ],
+    UnsupportedMapPropertyValueConversion() => [
+      generateEncodingExceptionExpression(
+        '$encodingName encoding is not supported for Map types with '
+        'complex values. Parameter "$rawName" cannot be encoded.',
+        raw: true,
+      ).statement,
+    ],
+  };
+}
 
 List<Code> _buildObjectDelimitedCode(
   String parameterName,

@@ -1553,7 +1553,7 @@ void main() {
           String? _queryParameters({required String name}) {
             final _$entries = <ParameterEntry>[];
             throw EncodingException(
-              r'Parameter name: spaceDelimited encoding supports only list and object types',
+              r'Parameter name: spaceDelimited encoding supports only array and object types',
             );
             if (_$entries.isEmpty) {
               return null;
@@ -2068,7 +2068,7 @@ void main() {
         String? _queryParameters({required String $class}) {
           final _$entries = <ParameterEntry>[];
           throw EncodingException(
-            r'Parameter $class: spaceDelimited encoding supports only list and object types',
+            r'Parameter $class: spaceDelimited encoding supports only array and object types',
           );
           if (_$entries.isEmpty) {
             return null;
