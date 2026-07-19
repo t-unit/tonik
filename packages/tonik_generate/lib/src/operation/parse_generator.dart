@@ -331,7 +331,15 @@ class ParseGenerator {
               refer(
                 'decodeResponseText',
                 'package:tonik_util/tonik_util.dart',
-              ).call([refer('response.data')]),
+              ).call(
+                [refer('response.data')],
+                {
+                  'contentType': refer('response')
+                      .property('headers')
+                      .property('value')
+                      .call([literalString('content-type')]),
+                },
+              ),
             )
             .statement,
       ],

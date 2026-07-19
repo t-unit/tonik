@@ -1928,7 +1928,10 @@ String _parseResponse(Response<List<int>> response) {
   final _$mediaType = extractMediaType(response.headers.value('content-type'));
           switch ((response.statusCode, _$mediaType)) {
     case (200, r'text/plain'):
-      final _$body = decodeResponseText(response.data);
+      final _$body = decodeResponseText(
+        response.data,
+        contentType: response.headers.value('content-type'),
+      );
       return _$body;
     default:
       final _$content = response.headers.value('content-type') ?? 'not specified';
@@ -2295,7 +2298,10 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
       final _$body = _$json.decodeJsonString();
       return AnonymousResponseJson(body: _$body);
     case (200, r'text/plain'):
-      final _$body = decodeResponseText(response.data);
+      final _$body = decodeResponseText(
+        response.data,
+        contentType: response.headers.value('content-type'),
+      );
       return AnonymousResponsePlain(body: _$body);
     case (200, r'application/octet-stream'):
       final _$body = TonikFileBytes(decodeResponseBytes(response.data));

@@ -115,6 +115,259 @@ void main() {
         expect(result, isA<String>());
         expect(result.length, 10000);
       });
+
+      test('uses UTF-8 when Content-Type has no charset', () {
+        final bytes = utf8.encode('Grüße 👋');
+
+        expect(
+          decodeResponseText(bytes, contentType: 'text/plain'),
+          'Grüße 👋',
+        );
+      });
+
+      test('parses quoted charset case-insensitively', () {
+        final bytes = utf8.encode('Grüße 👋');
+
+        expect(
+          decodeResponseText(
+            bytes,
+            contentType: 'Text/Plain; Charset="UTF-8"',
+          ),
+          'Grüße 👋',
+        );
+      });
+
+      test('accepts the common utf8 alias', () {
+        final bytes = utf8.encode('Grüße 👋');
+
+        expect(
+          decodeResponseText(
+            bytes,
+            contentType: 'text/plain; charset=utf8',
+          ),
+          'Grüße 👋',
+        );
+      });
+
+      test('decodes ISO-8859-1', () {
+        const bytes = [0x63, 0x61, 0x66, 0xe9];
+
+        expect(
+          decodeResponseText(
+            bytes,
+            contentType: 'text/plain; charset=iso-8859-1',
+          ),
+          'café',
+        );
+      });
+
+      test('decodes Windows-1252 distinctly from ISO-8859-1', () {
+        const bytes = [
+          0x93,
+          0x54,
+          0x6f,
+          0x6e,
+          0x69,
+          0x6b,
+          0x94,
+          0x20,
+          0x80,
+        ];
+
+        expect(
+          decodeResponseText(
+            bytes,
+            contentType: 'text/plain; charset=windows-1252',
+          ),
+          '“Tonik” €',
+        );
+      });
+
+      test('decodes Windows-1251', () {
+        const bytes = [0xcf, 0xf0, 0xe8, 0xe2, 0xe5, 0xf2];
+
+        expect(
+          decodeResponseText(
+            bytes,
+            contentType: 'text/plain; charset=windows-1251',
+          ),
+          'Привет',
+        );
+      });
+
+      test('decodes Shift_JIS', () {
+        const bytes = [0x93, 0xfa, 0x96, 0x7b];
+
+        expect(
+          decodeResponseText(
+            bytes,
+            contentType: 'text/plain; charset=shift_jis',
+          ),
+          '日本',
+        );
+      });
+
+      test('decodes GBK', () {
+        const bytes = [0xd6, 0xd0, 0xce, 0xc4];
+
+        expect(
+          decodeResponseText(
+            bytes,
+            contentType: 'text/plain; charset=gbk',
+          ),
+          '中文',
+        );
+      });
+
+      test('honors explicit UTF-16 endianness without a BOM', () {
+        const littleEndian = [0x48, 0x00, 0x69, 0x00, 0x20, 0x00, 0xac, 0x20];
+        const bigEndian = [0x00, 0x48, 0x00, 0x69, 0x00, 0x20, 0x20, 0xac];
+
+        expect(
+          decodeResponseText(
+            littleEndian,
+            contentType: 'text/plain; charset=utf-16le',
+          ),
+          'Hi €',
+        );
+        expect(
+          decodeResponseText(
+            bigEndian,
+            contentType: 'text/plain; charset=utf-16be',
+          ),
+          'Hi €',
+        );
+      });
+
+      test('honors explicit UTF-32 endianness without a BOM', () {
+        const littleEndian = [
+          0x48,
+          0x00,
+          0x00,
+          0x00,
+          0x69,
+          0x00,
+          0x00,
+          0x00,
+          0x20,
+          0x00,
+          0x00,
+          0x00,
+          0xac,
+          0x20,
+          0x00,
+          0x00,
+        ];
+        const bigEndian = [
+          0x00,
+          0x00,
+          0x00,
+          0x48,
+          0x00,
+          0x00,
+          0x00,
+          0x69,
+          0x00,
+          0x00,
+          0x00,
+          0x20,
+          0x00,
+          0x00,
+          0x20,
+          0xac,
+        ];
+
+        expect(
+          decodeResponseText(
+            littleEndian,
+            contentType: 'text/plain; charset=utf-32le',
+          ),
+          'Hi €',
+        );
+        expect(
+          decodeResponseText(
+            bigEndian,
+            contentType: 'text/plain; charset=utf-32be',
+          ),
+          'Hi €',
+        );
+      });
+
+      test('throws for unsupported charset', () {
+        expect(
+          () => decodeResponseText(
+            const [0x66, 0x6f, 0x6f],
+            contentType: 'text/plain; charset=made-up',
+          ),
+          throwsA(
+            isA<ResponseDecodingException>().having(
+              (error) => error.message,
+              'message',
+              contains('Unsupported response charset: "made-up"'),
+            ),
+          ),
+        );
+      });
+
+      test('wraps malformed encoded bytes', () {
+        expect(
+          () => decodeResponseText(
+            const [0x81],
+            contentType: 'text/plain; charset=windows-1252',
+          ),
+          throwsA(
+            isA<ResponseDecodingException>().having(
+              (error) => error.message,
+              'message',
+              contains('Failed to decode response body'),
+            ),
+          ),
+        );
+      });
+
+      test('throws for malformed Content-Type', () {
+        expect(
+          () => decodeResponseText(
+            const [0x66, 0x6f, 0x6f],
+            contentType: 'text/plain; charset',
+          ),
+          throwsA(
+            isA<ResponseDecodingException>().having(
+              (error) => error.message,
+              'message',
+              contains('Invalid response Content-Type header'),
+            ),
+          ),
+        );
+      });
+
+      test('does not treat GB18030 as GBK', () {
+        expect(
+          () => decodeResponseText(
+            const [0x66, 0x6f, 0x6f],
+            contentType: 'text/plain; charset=gb18030',
+          ),
+          throwsA(isA<ResponseDecodingException>()),
+        );
+      });
+
+      test('does not use the broken EUC-KR decoder', () {
+        for (final charsetName in ['euc-kr', 'cp949']) {
+          expect(
+            () => decodeResponseText(
+              const [0xc7, 0xd1, 0xb1, 0xb9],
+              contentType: 'text/plain; charset=$charsetName',
+            ),
+            throwsA(
+              isA<ResponseDecodingException>().having(
+                (error) => error.message,
+                'message',
+                contains('Unsupported response charset: "$charsetName"'),
+              ),
+            ),
+          );
+        }
+      });
     });
 
     group('type validation', () {
