@@ -140,7 +140,7 @@ void main() {
     );
 
     test(
-      'object with empty property (explode=true) keeps trailing equals',
+      'object with empty property (explode=true) drops the trailing equals',
       () async {
         final api = buildSimpleApi();
         final response = await api.testSimpleSpecialKeysExplode(
@@ -153,7 +153,7 @@ void main() {
 
         expect(
           success.response.requestOptions.uri.path,
-          '/v1/simple/special-keys/explode/my.field=,a%3Db=42',
+          '/v1/simple/special-keys/explode/my.field,a%3Db=42',
         );
       },
     );

@@ -910,7 +910,7 @@ void main() {
         const value = {'': 'empty_key', 'empty_value': ''};
         expect(
           value.toSimple(explode: true, allowEmpty: true),
-          '=empty_key,empty_value=',
+          '=empty_key,empty_value',
         );
       });
 
@@ -1232,7 +1232,7 @@ void main() {
             allowEmpty: true,
             alreadyEncoded: true,
           ),
-          'key1=,key2=value',
+          'key1,key2=value',
         );
       });
 
