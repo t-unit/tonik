@@ -134,11 +134,13 @@ For responses classified as text, Tonik also honors the runtime `charset`
 parameter. UTF-8 remains the default when the parameter is absent. Supported
 encodings include ASCII, ISO-8859-1 through ISO-8859-11 and ISO-8859-13 through
 ISO-8859-16, Windows-874 and Windows-1250 through Windows-1258, Shift_JIS,
-EUC-JP, EUC-KR, GBK, and UTF-16/UTF-32. Charset names and aliases are resolved
+EUC-JP, GBK, and UTF-16/UTF-32. Charset names and aliases are resolved
 by [`package:charset`](https://pub.dev/packages/charset). Unknown charsets fail
 with a `ResponseDecodingException` instead of silently falling back to UTF-8.
 GB18030 is not accepted because the dependency only provides a GBK codec for
-that label. JSON responses remain UTF-8, as required by the JSON specification.
+that label. EUC-KR is also rejected because the dependency's decoder produces
+incorrect Unicode. JSON responses remain UTF-8, as required by the JSON
+specification.
 
 Error types on `TonikError`: `encoding`, `decoding`, `network`, `cancelled`, `other`.
 

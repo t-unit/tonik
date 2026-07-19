@@ -350,6 +350,24 @@ void main() {
           throwsA(isA<ResponseDecodingException>()),
         );
       });
+
+      test('does not use the broken EUC-KR decoder', () {
+        for (final charsetName in ['euc-kr', 'cp949']) {
+          expect(
+            () => decodeResponseText(
+              const [0xc7, 0xd1, 0xb1, 0xb9],
+              contentType: 'text/plain; charset=$charsetName',
+            ),
+            throwsA(
+              isA<ResponseDecodingException>().having(
+                (error) => error.message,
+                'message',
+                contains('Unsupported response charset: "$charsetName"'),
+              ),
+            ),
+          );
+        }
+      });
     });
 
     group('type validation', () {

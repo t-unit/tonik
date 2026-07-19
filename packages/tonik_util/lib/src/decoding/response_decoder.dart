@@ -83,6 +83,11 @@ String _decodeUsingNamedCharset(
       'Unsupported response charset: "$charsetName".',
     );
   }
+  if (identical(encoding, charset.eucKr)) {
+    throw ResponseDecodingException(
+      'Unsupported response charset: "$charsetName".',
+    );
+  }
 
   if (identical(encoding, utf8)) {
     return utf8.decode(bytes, allowMalformed: true);
