@@ -28,7 +28,7 @@ jobs:
       - name: Analyze code
         run: melos exec -- dart analyze --fatal-infos
 
-  analyze-generated:
+  generate-integration:
     runs-on: ubuntu-latest
 
     steps:
@@ -47,8 +47,45 @@ jobs:
         run: ./scripts/setup_integration_tests.sh
         shell: bash
 
+      - name: Upload generated code
+        uses: actions/upload-artifact@v7
+        with:
+          name: generated-integration-code
+          path: integration_test/**/*_api/**
+          compression-level: 1
+          retention-days: 1
+
+  analyze-generated:
+    needs: generate-integration
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [openai, cloudflare, rest]
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Dart
+        uses: dart-lang/setup-dart@v1
+        with:
+          sdk: stable
+
+      - name: Download generated code
+        uses: actions/download-artifact@v8
+        with:
+          name: generated-integration-code
+          path: integration_test
+
       - name: Analyze generated code
         run: |
-          find integration_test -name pubspec.yaml -print0 |
+          if [ "${{ matrix.shard }}" = rest ]; then
+            find integration_test -name pubspec.yaml \
+              -not -path 'integration_test/openai/*' \
+              -not -path 'integration_test/cloudflare/*' -print0
+          else
+            find "integration_test/${{ matrix.shard }}" \
+              -name pubspec.yaml -print0
+          fi |
             xargs -0 -n 1 -P 2 bash -c \
-              'cd "$(dirname "$1")" && dart analyze --fatal-infos --fatal-warnings' _
+              'cd "$(dirname "$1")" && dart pub get && dart analyze --fatal-infos --fatal-warnings' _
