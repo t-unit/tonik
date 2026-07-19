@@ -6,7 +6,9 @@ import 'package:tonik_util/src/encoding/form_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/label_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/matrix_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/parameter_entry.dart';
+import 'package:tonik_util/src/encoding/pipe_delimited_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/simple_encoder_extensions.dart';
+import 'package:tonik_util/src/encoding/space_delimited_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/string_map_delimited_encoder_extensions.dart';
 import 'package:tonik_util/src/encoding/unknown_value_encoding.dart';
 import 'package:tonik_util/src/encoding/uri_encoder_extensions.dart';
@@ -479,12 +481,13 @@ List<ParameterEntry> encodeAnyToDeepObject(
 
 /// Encodes any value to pipeDelimited style. Used for AnyModel fields.
 ///
-/// Handles runtime type detection for values of unknown type. Generated
-/// models implementing [ParameterEncodable] encode themselves;
-/// `Map<String, String>` values use extension methods.
+/// pipeDelimited supports both arrays and flat objects. Generated models
+/// implementing [ParameterEncodable] encode themselves; flat maps and lists
+/// are flattened into a single `|`-joined entry via the extension methods,
+/// which URI-encode each token. Nested collections are rejected.
 ///
 /// When [allowReserved] is true, reserved characters in keys and values are
-/// kept literal; the flag is forwarded to both branches.
+/// kept literal; the flag is forwarded to every branch.
 List<ParameterEntry> encodeAnyToPipeDelimited(
   Object? value,
   String paramName, {
@@ -504,23 +507,47 @@ List<ParameterEntry> encodeAnyToPipeDelimited(
       allowReserved: allowReserved,
     );
   }
-  if (value is Map<String, String>) {
-    return value.toPipeDelimited(
+  if (value is Map<String, dynamic>) {
+    if (value.isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final flattened = <String, String>{
+      for (final entry in value.entries)
+        entry.key: encodeAnyValueToString(entry.value, allowEmpty: true),
+    };
+    return flattened.toPipeDelimited(
       paramName,
       allowEmpty: allowEmpty,
       allowReserved: allowReserved,
     );
   }
+  if (value is List<dynamic>) {
+    if (value.isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final joined = value
+        .map((item) => encodeAnyValueToString(item, allowEmpty: true))
+        .toList()
+        .toPipeDelimited(
+          explode: false,
+          allowEmpty: allowEmpty,
+          allowReserved: allowReserved,
+        );
+    if (joined.isEmpty) {
+      return const [];
+    }
+    return [(name: paramName, value: joined.single)];
+  }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to pipeDelimited style. '
-    'pipeDelimited only supports objects and Map<String, String>.',
+    'pipeDelimited only supports objects and arrays.',
   );
 }
 
 /// Encodes any value to spaceDelimited style. Used for AnyModel fields.
 ///
-/// Mirrors [encodeAnyToPipeDelimited]; see its documentation for the
-/// [allowReserved] semantics.
+/// Mirrors [encodeAnyToPipeDelimited]; the `%20` delimiter is the only
+/// difference. See its documentation for the [allowReserved] semantics.
 List<ParameterEntry> encodeAnyToSpaceDelimited(
   Object? value,
   String paramName, {
@@ -540,16 +567,40 @@ List<ParameterEntry> encodeAnyToSpaceDelimited(
       allowReserved: allowReserved,
     );
   }
-  if (value is Map<String, String>) {
-    return value.toSpaceDelimited(
+  if (value is Map<String, dynamic>) {
+    if (value.isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final flattened = <String, String>{
+      for (final entry in value.entries)
+        entry.key: encodeAnyValueToString(entry.value, allowEmpty: true),
+    };
+    return flattened.toSpaceDelimited(
       paramName,
       allowEmpty: allowEmpty,
       allowReserved: allowReserved,
     );
   }
+  if (value is List<dynamic>) {
+    if (value.isEmpty && !allowEmpty) {
+      throw const EmptyValueException();
+    }
+    final joined = value
+        .map((item) => encodeAnyValueToString(item, allowEmpty: true))
+        .toList()
+        .toSpaceDelimited(
+          explode: false,
+          allowEmpty: allowEmpty,
+          allowReserved: allowReserved,
+        );
+    if (joined.isEmpty) {
+      return const [];
+    }
+    return [(name: paramName, value: joined.single)];
+  }
   throw EncodingException(
     'Cannot encode ${value.runtimeType} to spaceDelimited style. '
-    'spaceDelimited only supports objects and Map<String, String>.',
+    'spaceDelimited only supports objects and arrays.',
   );
 }
 

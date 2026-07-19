@@ -196,10 +196,11 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
     return [(name: paramName, value: parts.join(','))];
   }
 
-  /// Joins the alternating key/value tokens with a literal `|`.
+  /// Joins the alternating key/value tokens with a `|`.
   ///
-  /// Array-valued properties join their elements with the same `|`, so they
-  /// collapse irreversibly into the delimiter stream, as on the form path.
+  /// On the wire the `|` is percent-encoded to `%7C`, identical to a `|`
+  /// inside a value, so keys, values, and array elements all collapse
+  /// irreversibly into the delimiter stream.
   List<ParameterEntry> toPipeDelimited(
     String paramName, {
     required bool allowEmpty,
@@ -214,8 +215,8 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
 
   /// Joins the alternating key/value tokens with a pre-escaped `%20`.
   ///
-  /// A value's own space also encodes to `%20`, so (like array-valued
-  /// properties) it collapses irreversibly into the delimiter stream.
+  /// A value's own space also encodes to `%20`, so keys, values, and array
+  /// elements all collapse irreversibly into the delimiter stream.
   List<ParameterEntry> toSpaceDelimited(
     String paramName, {
     required bool allowEmpty,

@@ -4,9 +4,9 @@ import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
 /// Flattens a `Map<String, String>` into a single delimited [ParameterEntry].
 ///
-/// A value's `|` encodes to `%7C`, distinct from pipe's literal `|` separator,
-/// so pipeDelimited round-trips; spaceDelimited cannot, as a value's space and
-/// the `%20` separator are identical.
+/// On the wire both delimiters are percent-encoded (`|` as `%7C`, space as
+/// `%20`), so a delimiter character inside a value is indistinguishable from
+/// the structural delimiter for both styles — neither round-trips.
 extension StringMapDelimitedEncoder on Map<String, String> {
   /// Joins the alternating key/value tokens with a literal `|`.
   List<ParameterEntry> toPipeDelimited(

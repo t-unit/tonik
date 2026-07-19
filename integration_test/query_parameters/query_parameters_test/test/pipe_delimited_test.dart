@@ -795,6 +795,34 @@ void main() {
       );
     });
 
+    test('any holding a list joins elements', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testPipeDelimitedComplex(
+        anyValue: const ['blue', 'black', 'brown'],
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'anyValue=blue%7Cblack%7Cbrown',
+      );
+    });
+
+    test('any holding a dynamic map flattens numeric values', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testPipeDelimitedComplex(
+        anyValue: const <String, dynamic>{'R': 100, 'G': 200, 'B': 150},
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'anyValue=R%7C100%7CG%7C200%7CB%7C150',
+      );
+    });
+
     test('alias to array encodes identically to an inline array', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex(
