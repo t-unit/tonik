@@ -283,22 +283,25 @@ void main() {
       );
     });
 
-    test('empty scalar renders with allowEmpty=true', () {
+    test('empty scalar renders name-only when exploded with allowEmpty=true',
+        () {
       const value = {'k': PropertyValue.scalar('')};
       expect(value.toLabel(explode: false, allowEmpty: true), '.k,');
-      expect(value.toLabel(explode: true, allowEmpty: true), '.k=');
+      expect(value.toLabel(explode: true, allowEmpty: true), '.k');
     });
 
-    test('empty scalar renders with allowEmpty=false', () {
+    test('empty scalar renders name-only when exploded with allowEmpty=false',
+        () {
       const value = {'k': PropertyValue.scalar('')};
       expect(value.toLabel(explode: false, allowEmpty: false), '.k,');
-      expect(value.toLabel(explode: true, allowEmpty: false), '.k=');
+      expect(value.toLabel(explode: true, allowEmpty: false), '.k');
     });
 
-    test('empty array renders empty value with allowEmpty=false', () {
+    test('empty array renders name-only when exploded with allowEmpty=false',
+        () {
       const value = {'k': PropertyValue.array(<String>[])};
       expect(value.toLabel(explode: false, allowEmpty: false), '.k,');
-      expect(value.toLabel(explode: true, allowEmpty: false), '.k=');
+      expect(value.toLabel(explode: true, allowEmpty: false), '.k');
     });
 
     test('empty scalar beside a filled scalar renders with allowEmpty=false',
@@ -313,7 +316,7 @@ void main() {
       );
       expect(
         value.toLabel(explode: true, allowEmpty: false),
-        '.color=.size=xl',
+        '.color.size=xl',
       );
     });
 

@@ -119,10 +119,16 @@ extension LabelStringMapEncoder on Map<String, String> {
     if (explode) {
       return entries.map(
         (entry) {
+          final key = Uri.encodeComponent(entry.key);
+          // Label uses ifemp="": an empty member expands to the name alone,
+          // without '='. Only form-style '?'/'&' keep the '='.
+          if (entry.value.isEmpty) {
+            return '.$key';
+          }
           final value = alreadyEncoded
               ? entry.value
               : entry.value.uriEncode(allowEmpty: allowEmpty);
-          return '.${Uri.encodeComponent(entry.key)}=$value';
+          return '.$key=$value';
         },
       ).join();
     } else {
