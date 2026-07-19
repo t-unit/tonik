@@ -170,17 +170,9 @@ jobs:
       - name: Run integration tests
         shell: bash
         run: |
-          tests=$(find integration_test -path '*_test/test/*_test.dart' -print |
+          find integration_test -path '*_test/pubspec.yaml' -print |
             sort |
             awk -v shard=${{ matrix.shard }} \
-              '(NR - 1) % 3 == shard')
-
-          printf '%s\n' "$tests" |
-            sed 's#/test/.*#/pubspec.yaml#' |
-            sort -u |
+              '(NR - 1) % 3 == shard' |
             xargs -n 1 -P 2 bash -c \
-              'cd "$(dirname "$1")" && dart pub get' _
-
-          printf '%s\n' "$tests" |
-            xargs -n 1 -P 2 bash -c \
-              'package="${1%%/test/*}"; cd "$package" && dart test "${1#"$package"/}"' _
+              'cd "$(dirname "$1")" && dart pub get && dart test --concurrency=2' _
