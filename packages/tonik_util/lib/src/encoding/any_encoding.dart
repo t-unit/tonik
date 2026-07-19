@@ -481,13 +481,8 @@ List<ParameterEntry> encodeAnyToDeepObject(
 
 /// Encodes any value to pipeDelimited style. Used for AnyModel fields.
 ///
-/// pipeDelimited supports both arrays and flat objects. Generated models
-/// implementing [ParameterEncodable] encode themselves; flat maps and lists
-/// are flattened into a single `|`-joined entry via the extension methods,
-/// which URI-encode each token. Nested collections are rejected.
-///
 /// When [allowReserved] is true, reserved characters in keys and values are
-/// kept literal; the flag is forwarded to every branch.
+/// kept literal.
 List<ParameterEntry> encodeAnyToPipeDelimited(
   Object? value,
   String paramName, {
