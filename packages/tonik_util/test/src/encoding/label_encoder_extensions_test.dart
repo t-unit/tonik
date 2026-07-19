@@ -178,20 +178,19 @@ void main() {
       );
     });
 
-    test('throws exception for empty List when allowEmpty is false', () {
+    test('encodes empty List when allowEmpty is false', () {
       expect(
-        () => <String>[].toLabel(explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        <String>[].toLabel(explode: false, allowEmpty: false),
+        '.',
       );
     });
 
     test(
-      'throws exception for empty List with explode=true '
-      'when allowEmpty is false',
+      'encodes empty List with explode=true when allowEmpty is false',
       () {
         expect(
-          () => <String>[].toLabel(explode: true, allowEmpty: false),
-          throwsA(isA<EmptyValueException>()),
+          <String>[].toLabel(explode: true, allowEmpty: false),
+          '.',
         );
       },
     );

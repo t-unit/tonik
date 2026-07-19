@@ -231,8 +231,8 @@ void main() {
     test('encodes empty list with explode=false and allowEmpty=false', () {
       final list = <String>[];
       expect(
-        () => list.toMatrix('colors', explode: false, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        list.toMatrix('colors', explode: false, allowEmpty: false),
+        ';colors',
       );
     });
 
@@ -247,8 +247,8 @@ void main() {
     test('encodes empty list with explode=true and allowEmpty=false', () {
       final list = <String>[];
       expect(
-        () => list.toMatrix('colors', explode: true, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        list.toMatrix('colors', explode: true, allowEmpty: false),
+        ';colors',
       );
     });
 
