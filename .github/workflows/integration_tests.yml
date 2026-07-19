@@ -11,7 +11,19 @@ permissions:
 
 jobs:
   generate-integration:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: true
+      matrix:
+        include:
+          - os: ubuntu-latest
+            sdk: stable
+          - os: macos-latest
+            sdk: stable
+          - os: windows-latest
+            sdk: stable
+          - os: ubuntu-latest
+            sdk: beta
 
     steps:
       - uses: actions/checkout@v7
@@ -19,7 +31,7 @@ jobs:
       - name: Setup Dart
         uses: dart-lang/setup-dart@v1
         with:
-          sdk: stable
+          sdk: ${{ matrix.sdk }}
 
       - name: Cache Dart pub dependencies
         uses: actions/cache@v6
@@ -27,9 +39,9 @@ jobs:
           path: |
             ~/.pub-cache
             ${{ github.workspace }}/.dart_tool
-          key: ${{ runner.os }}-dart-stable-${{ hashFiles('**/pubspec.yaml') }}
+          key: ${{ runner.os }}-dart-${{ matrix.sdk }}-${{ hashFiles('**/pubspec.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-dart-stable-
+            ${{ runner.os }}-dart-${{ matrix.sdk }}-
             ${{ runner.os }}-dart-
 
       - name: Cache Imposter JAR
@@ -51,7 +63,7 @@ jobs:
       - name: Upload generated code
         uses: actions/upload-artifact@v7
         with:
-          name: generated-integration-code
+          name: generated-integration-code-${{ matrix.os }}-${{ matrix.sdk }}
           path: integration_test/**/*_api/**
           compression-level: 1
           retention-days: 1
@@ -59,7 +71,7 @@ jobs:
       - name: Upload Imposter JAR
         uses: actions/upload-artifact@v7
         with:
-          name: imposter-jar
+          name: imposter-jar-${{ matrix.os }}-${{ matrix.sdk }}
           path: integration_test/imposter.jar
           compression-level: 0
           retention-days: 1
@@ -83,7 +95,7 @@ jobs:
       - name: Download generated code
         uses: actions/download-artifact@v8
         with:
-          name: generated-integration-code
+          name: generated-integration-code-ubuntu-latest-stable
           path: integration_test
 
       - name: Analyze generated code
@@ -126,13 +138,13 @@ jobs:
       - name: Download generated code
         uses: actions/download-artifact@v8
         with:
-          name: generated-integration-code
+          name: generated-integration-code-${{ matrix.os }}-${{ matrix.sdk }}
           path: integration_test
 
       - name: Download Imposter JAR
         uses: actions/download-artifact@v8
         with:
-          name: imposter-jar
+          name: imposter-jar-${{ matrix.os }}-${{ matrix.sdk }}
           path: integration_test
 
       - name: Cache Dart pub dependencies
