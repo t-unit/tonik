@@ -695,6 +695,27 @@ void main() {
       );
     });
 
+    test('percent-encodes a pipe inside an array element, join stays literal',
+        () {
+      const value = {
+        'tags': PropertyValue.array(['a|b', 'c']),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'tags|a%7Cb|c')],
+      );
+    });
+
+    test('empty array-valued property yields a trailing pipe token', () {
+      const value = {
+        'tags': PropertyValue.array(<String>[]),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'tags|')],
+      );
+    });
+
     test('percent-encodes reserved key and value chars without allowReserved',
         () {
       const value = {'a/b': PropertyValue.scalar('a/b:c')};
@@ -766,6 +787,26 @@ void main() {
       expect(
         value.toSpaceDelimited('coord', allowEmpty: true),
         [(name: 'coord', value: 'tags%20a%20b')],
+      );
+    });
+
+    test('percent-encodes a space inside an array element, join stays %20', () {
+      const value = {
+        'tags': PropertyValue.array(['a b', 'c']),
+      };
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'tags%20a%20b%20c')],
+      );
+    });
+
+    test('empty array-valued property yields a trailing %20 token', () {
+      const value = {
+        'tags': PropertyValue.array(<String>[]),
+      };
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'tags%20')],
       );
     });
 
