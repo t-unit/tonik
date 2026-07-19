@@ -60,12 +60,18 @@ jobs:
         run: ./scripts/setup_integration_tests.sh
         shell: bash
 
+      - name: Archive generated code
+        shell: bash
+        run: |
+          tar -czf generated-integration-code.tar.gz \
+            $(find integration_test -type d -name '*_api' -print)
+
       - name: Upload generated code
         uses: actions/upload-artifact@v7
         with:
           name: generated-integration-code-${{ matrix.os }}-${{ matrix.sdk }}
-          path: integration_test/**/*_api/**
-          compression-level: 1
+          path: generated-integration-code.tar.gz
+          compression-level: 0
           retention-days: 1
 
       - name: Upload Imposter JAR
@@ -96,7 +102,9 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: generated-integration-code-ubuntu-latest-stable
-          path: integration_test
+
+      - name: Extract generated code
+        run: tar -xzf generated-integration-code.tar.gz
 
       - name: Analyze generated code
         run: |
@@ -111,7 +119,7 @@ jobs:
     needs: generate-integration
     runs-on: ${{ matrix.os }}
     strategy:
-      fail-fast: true
+      fail-fast: false
       matrix:
         os: [ubuntu-latest, macos-latest, windows-latest]
         sdk: [stable]
@@ -139,7 +147,10 @@ jobs:
         uses: actions/download-artifact@v8
         with:
           name: generated-integration-code-${{ matrix.os }}-${{ matrix.sdk }}
-          path: integration_test
+
+      - name: Extract generated code
+        run: tar -xzf generated-integration-code.tar.gz
+        shell: bash
 
       - name: Download Imposter JAR
         uses: actions/download-artifact@v8
