@@ -48,4 +48,7 @@ jobs:
         shell: bash
 
       - name: Analyze generated code
-        run: dart analyze --fatal-infos integration_test
+        run: |
+          find integration_test -name pubspec.yaml -print0 |
+            xargs -0 -n 1 -P 2 bash -c \
+              'cd "$(dirname "$1")" && dart analyze --fatal-infos --fatal-warnings' _
