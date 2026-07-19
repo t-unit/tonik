@@ -8,6 +8,7 @@ import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
 import 'package:tonik_generate/src/util/additional_properties_builders.dart';
 import 'package:tonik_generate/src/util/additional_properties_helpers.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
+import 'package:tonik_generate/src/util/composite_guard_builders.dart';
 import 'package:tonik_generate/src/util/copy_with_method_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/default_resolution.dart';
@@ -271,6 +272,8 @@ class ClassGenerator {
           _buildToLabelMethod(),
           _buildToMatrixMethod(),
           _buildToDeepObjectMethod(),
+          buildToPipeDelimitedMethod(),
+          buildToSpaceDelimitedMethod(),
           _buildUriEncodeMethod(className),
         ]);
 

@@ -667,4 +667,195 @@ void main() {
       );
     });
   });
+
+  group('PropertyValueStyleEncoders.toPipeDelimited', () {
+    test('flattens alternating key/value tokens joined by literal pipe', () {
+      const value = {
+        'R': PropertyValue.scalar('100'),
+        'G': PropertyValue.scalar('200'),
+        'B': PropertyValue.scalar('150'),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'R|100|G|200|B|150')],
+      );
+    });
+
+    test('uri-encodes values while keeping the pipe delimiter literal', () {
+      const value = {
+        'note': PropertyValue.scalar('a b'),
+        'op': PropertyValue.scalar('x=y'),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'note|a%20b|op|x%3Dy')],
+      );
+    });
+
+    test('joins array elements with the pipe delimiter', () {
+      const value = {
+        'tags': PropertyValue.array(['a', 'b']),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'tags|a|b')],
+      );
+    });
+
+    test('percent-encodes a pipe inside an array element, join stays literal',
+        () {
+      const value = {
+        'tags': PropertyValue.array(['a|b', 'c']),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'tags|a%7Cb|c')],
+      );
+    });
+
+    test('empty array-valued property yields a trailing pipe token', () {
+      const value = {
+        'tags': PropertyValue.array(<String>[]),
+      };
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'tags|')],
+      );
+    });
+
+    test('percent-encodes reserved key and value chars without allowReserved',
+        () {
+      const value = {'a/b': PropertyValue.scalar('a/b:c')};
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'a%2Fb|a%2Fb%3Ac')],
+      );
+    });
+
+    test('keeps reserved key and value chars literal with allowReserved', () {
+      const value = {'a/b': PropertyValue.scalar('a/b:c')};
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true, allowReserved: true),
+        [(name: 'color', value: 'a/b|a/b:c')],
+      );
+    });
+
+    test('percent-encodes a pipe inside a value, keeping the delimiter literal',
+        () {
+      const value = {'a': PropertyValue.scalar('x|y')};
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        [(name: 'color', value: 'a|x%7Cy')],
+      );
+    });
+
+    test('omits an empty object when allowEmpty=true', () {
+      const value = <String, PropertyValue>{};
+      expect(
+        value.toPipeDelimited('color', allowEmpty: true),
+        <ParameterEntry>[],
+      );
+    });
+
+    test('empty object throws with allowEmpty=false', () {
+      const value = <String, PropertyValue>{};
+      expect(
+        () => value.toPipeDelimited('color', allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+  });
+
+  group('PropertyValueStyleEncoders.toSpaceDelimited', () {
+    test('flattens alternating key/value tokens joined by %20', () {
+      const value = {
+        'R': PropertyValue.scalar('100'),
+        'G': PropertyValue.scalar('200'),
+        'B': PropertyValue.scalar('150'),
+      };
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'R%20100%20G%20200%20B%20150')],
+      );
+    });
+
+    test('uri-encodes values while keeping the space delimiter as %20', () {
+      const value = {'op': PropertyValue.scalar('x=y')};
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'op%20x%3Dy')],
+      );
+    });
+
+    test('joins array elements with the space delimiter', () {
+      const value = {
+        'tags': PropertyValue.array(['a', 'b']),
+      };
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'tags%20a%20b')],
+      );
+    });
+
+    test('percent-encodes a space inside an array element, join stays %20', () {
+      const value = {
+        'tags': PropertyValue.array(['a b', 'c']),
+      };
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'tags%20a%20b%20c')],
+      );
+    });
+
+    test('empty array-valued property yields a trailing %20 token', () {
+      const value = {
+        'tags': PropertyValue.array(<String>[]),
+      };
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'tags%20')],
+      );
+    });
+
+    test('percent-encodes reserved key and value chars without allowReserved',
+        () {
+      const value = {'a/b': PropertyValue.scalar('a/b:c')};
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'a%2Fb%20a%2Fb%3Ac')],
+      );
+    });
+
+    test('keeps reserved key and value chars literal with allowReserved', () {
+      const value = {'a/b': PropertyValue.scalar('a/b:c')};
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true, allowReserved: true),
+        [(name: 'coord', value: 'a/b%20a/b:c')],
+      );
+    });
+
+    test('a space inside a value becomes %20, matching the delimiter', () {
+      const value = {'a': PropertyValue.scalar('x y')};
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        [(name: 'coord', value: 'a%20x%20y')],
+      );
+    });
+
+    test('omits an empty object when allowEmpty=true', () {
+      const value = <String, PropertyValue>{};
+      expect(
+        value.toSpaceDelimited('coord', allowEmpty: true),
+        <ParameterEntry>[],
+      );
+    });
+
+    test('empty object throws with allowEmpty=false', () {
+      const value = <String, PropertyValue>{};
+      expect(
+        () => value.toSpaceDelimited('coord', allowEmpty: false),
+        throwsA(isA<EmptyValueException>()),
+      );
+    });
+  });
 }

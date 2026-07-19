@@ -194,6 +194,144 @@ void main() {
       );
     });
 
+    test('encodes pipeDelimited object query parameter via '
+        'parameterProperties', () {
+      final queryParam = QueryParameterObject(
+        name: 'color',
+        rawName: 'color',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: true,
+        explode: false,
+        encoding: QueryParameterEncoding.pipeDelimited,
+        allowReserved: false,
+        model: ClassModel(
+          isDeprecated: false,
+          context: context,
+          properties: const [],
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final operation = Operation(
+        operationId: 'listColors',
+        context: context,
+        summary: 'List colors',
+        description: 'Lists colors',
+        tags: const {},
+        isDeprecated: false,
+        path: '/colors',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({required AnonymousModel color}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            color.parameterProperties(allowEmpty: true).toPipeDelimited(r'color', allowEmpty: true),
+          );
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: 'color', parameter: queryParam),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('encodes spaceDelimited object query parameter via '
+        'parameterProperties', () {
+      final queryParam = QueryParameterObject(
+        name: 'coord',
+        rawName: 'coord',
+        description: null,
+        isRequired: true,
+        isDeprecated: false,
+        allowEmptyValue: true,
+        explode: false,
+        encoding: QueryParameterEncoding.spaceDelimited,
+        allowReserved: false,
+        model: ClassModel(
+          isDeprecated: false,
+          context: context,
+          properties: const [],
+          examples: const [],
+        ),
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final operation = Operation(
+        operationId: 'listCoords',
+        context: context,
+        summary: 'List coords',
+        description: 'Lists coords',
+        tags: const {},
+        isDeprecated: false,
+        path: '/coords',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({required AnonymousModel coord}) {
+          final _$entries = <ParameterEntry>[];
+          _$entries.addAll(
+            coord.parameterProperties(allowEmpty: true).toSpaceDelimited(r'coord', allowEmpty: true),
+          );
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final queryParameters =
+          <({String normalizedName, QueryParameterObject parameter})>[
+            (normalizedName: 'coord', parameter: queryParam),
+          ];
+
+      final method = generator.generateQueryParametersMethod(
+        operation,
+        queryParameters,
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
     test('encodes query parameters with deepObject style', () {
       final queryParam = QueryParameterObject(
         name: 'filter',
@@ -1415,7 +1553,7 @@ void main() {
           String? _queryParameters({required String name}) {
             final _$entries = <ParameterEntry>[];
             throw EncodingException(
-              r'Parameter name: spaceDelimited encoding only supports list types',
+              r'Parameter name: spaceDelimited encoding supports only array and object types',
             );
             if (_$entries.isEmpty) {
               return null;
@@ -1930,7 +2068,7 @@ void main() {
         String? _queryParameters({required String $class}) {
           final _$entries = <ParameterEntry>[];
           throw EncodingException(
-            r'Parameter $class: spaceDelimited encoding only supports list types',
+            r'Parameter $class: spaceDelimited encoding supports only array and object types',
           );
           if (_$entries.isEmpty) {
             return null;
@@ -2832,6 +2970,94 @@ void main() {
                 data,
                 r'data',
                 explode: true,
+                allowEmpty: false,
+              ),
+            );
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'data', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    QueryParameterObject anyDelimitedParam({
+      required QueryParameterEncoding encoding,
+    }) => QueryParameterObject(
+      name: 'data',
+      rawName: 'data',
+      description: null,
+      isRequired: false,
+      isDeprecated: false,
+      allowEmptyValue: false,
+      explode: false,
+      encoding: encoding,
+      allowReserved: false,
+      model: AnyModel(context: context),
+      context: context,
+      examples: const [],
+      defaultValue: null,
+    );
+
+    test('encodes pipeDelimited AnyModel via encodeAnyToPipeDelimited', () {
+      final queryParam = anyDelimitedParam(
+        encoding: QueryParameterEncoding.pipeDelimited,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({Object? data}) {
+          final _$entries = <ParameterEntry>[];
+          if (data != null) {
+            _$entries.addAll(
+              encodeAnyToPipeDelimited(
+                data,
+                r'data',
+                allowEmpty: false,
+              ),
+            );
+          }
+          if (_$entries.isEmpty) {
+            return null;
+          }
+          return _$entries.map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}').join('&');
+        }
+      ''';
+
+      final method = generator.generateQueryParametersMethod(
+        buildOperation(queryParam),
+        [(normalizedName: 'data', parameter: queryParam)],
+      );
+
+      expect(
+        collapseWhitespace(format(method.accept(emitter).toString())),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('encodes spaceDelimited AnyModel via encodeAnyToSpaceDelimited', () {
+      final queryParam = anyDelimitedParam(
+        encoding: QueryParameterEncoding.spaceDelimited,
+      );
+
+      const expectedMethod = r'''
+        String? _queryParameters({Object? data}) {
+          final _$entries = <ParameterEntry>[];
+          if (data != null) {
+            _$entries.addAll(
+              encodeAnyToSpaceDelimited(
+                data,
+                r'data',
                 allowEmpty: false,
               ),
             );

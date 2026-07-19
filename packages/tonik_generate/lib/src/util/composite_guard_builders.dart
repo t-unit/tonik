@@ -153,6 +153,76 @@ Method buildReadOnlyToDeepObjectMethod(Code exceptionBody) {
   );
 }
 
+/// Builds a read-only delimited method ([methodName]) that throws.
+Method _buildReadOnlyToDelimitedMethod(String methodName, Code exceptionBody) {
+  return Method(
+    (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
+      ..name = methodName
+      ..returns = buildParameterEntryListType()
+      ..requiredParameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'paramName'
+            ..type = refer('String', 'dart:core'),
+        ),
+      )
+      ..optionalParameters.addAll(buildDelimitedEncodingParameters())
+      ..lambda = true
+      ..body = exceptionBody,
+  );
+}
+
+/// Builds a read-only `toPipeDelimited` method that throws.
+Method buildReadOnlyToPipeDelimitedMethod(Code exceptionBody) =>
+    _buildReadOnlyToDelimitedMethod('toPipeDelimited', exceptionBody);
+
+/// Builds a read-only `toSpaceDelimited` method that throws.
+Method buildReadOnlyToSpaceDelimitedMethod(Code exceptionBody) =>
+    _buildReadOnlyToDelimitedMethod('toSpaceDelimited', exceptionBody);
+
+/// Builds a delimited method ([methodName]) delegating to
+/// `parameterProperties`.
+Method _buildToDelimitedMethod(String methodName) {
+  return Method(
+    (b) => b
+      ..annotations.add(refer('override', 'dart:core'))
+      ..name = methodName
+      ..returns = buildParameterEntryListType()
+      ..requiredParameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'paramName'
+            ..type = refer('String', 'dart:core'),
+        ),
+      )
+      ..optionalParameters.addAll(buildDelimitedEncodingParameters())
+      ..body = Block.of([
+        refer('parameterProperties')
+            .call([], {'allowEmpty': refer('allowEmpty')})
+            .property(methodName)
+            .call(
+              [refer('paramName')],
+              {
+                'allowEmpty': refer('allowEmpty'),
+                'allowReserved': refer('allowReserved'),
+              },
+            )
+            .returned
+            .statement,
+      ]),
+  );
+}
+
+/// Builds the `toPipeDelimited` method that delegates to `parameterProperties`.
+Method buildToPipeDelimitedMethod() =>
+    _buildToDelimitedMethod('toPipeDelimited');
+
+/// Builds the `toSpaceDelimited` method that delegates to
+/// `parameterProperties`.
+Method buildToSpaceDelimitedMethod() =>
+    _buildToDelimitedMethod('toSpaceDelimited');
+
 /// Builds a write-only `fromJson` factory constructor that throws.
 Constructor buildWriteOnlyFromJsonConstructor(String className) {
   return Constructor(
