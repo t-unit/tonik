@@ -659,11 +659,26 @@ void main() {
       );
     });
 
-    test('empty scalar throws with allowEmpty=false', () {
+    test('empty scalar renders empty value with allowEmpty=false', () {
       const value = {'k': PropertyValue.scalar('')};
       expect(
-        () => value.toDeepObject('p', explode: true, allowEmpty: false),
-        throwsA(isA<EmptyValueException>()),
+        value.toDeepObject('p', explode: true, allowEmpty: false),
+        [(name: 'p[k]', value: '')],
+      );
+    });
+
+    test('empty scalar beside a filled scalar renders with allowEmpty=false',
+        () {
+      const value = {
+        'empty': PropertyValue.scalar(''),
+        'filled': PropertyValue.scalar('x'),
+      };
+      expect(
+        value.toDeepObject('p', explode: true, allowEmpty: false),
+        [
+          (name: 'p[empty]', value: ''),
+          (name: 'p[filled]', value: 'x'),
+        ],
       );
     });
   });

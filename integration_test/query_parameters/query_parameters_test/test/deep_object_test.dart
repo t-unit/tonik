@@ -326,6 +326,20 @@ void main() {
       );
     });
 
+    test('class with an empty scalar member', () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testDeepObjectComplexExplode(
+        $class: const Class(name: '', age: 1),
+      );
+
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'class%5Bname%5D=&class%5Bage%5D=1',
+      );
+    });
+
     test('classNested', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testDeepObjectComplexExplode(
