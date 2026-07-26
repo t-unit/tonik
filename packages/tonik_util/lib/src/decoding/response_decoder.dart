@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:charset/charset.dart' as charset;
-import 'package:dio/dio.dart';
+import 'package:http_parser/http_parser.dart';
 import 'package:tonik_util/src/decoding/decoding_exception.dart';
 
 /// Decodes raw response bytes as JSON.
@@ -113,9 +113,9 @@ String _normalizeCharsetName(String charsetName) {
 String? _extractCharset(String? contentType) {
   if (contentType == null || contentType.trim().isEmpty) return null;
 
-  final DioMediaType mediaType;
+  final MediaType mediaType;
   try {
-    mediaType = DioMediaType.parse(contentType);
+    mediaType = MediaType.parse(contentType);
   } on FormatException catch (error) {
     throw ResponseDecodingException(
       'Invalid response Content-Type header "$contentType": $error',
