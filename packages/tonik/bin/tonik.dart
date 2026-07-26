@@ -2,6 +2,8 @@ import 'dart:io';
 
 import 'package:args/args.dart';
 import 'package:logging/logging.dart';
+import 'package:tonik/src/config/cli_config.dart';
+import 'package:tonik/src/config/cli_parser.dart';
 import 'package:tonik/src/config/config_loader.dart';
 import 'package:tonik/src/config/log_level.dart';
 import 'package:tonik/src/openapi_loader.dart';
@@ -11,60 +13,6 @@ import 'package:tonik_parse/tonik_parse.dart';
 
 const issueUrl = 'https://github.com/t-unit/tonik/issues';
 
-ArgParser buildParser() {
-  return ArgParser()
-    ..addFlag(
-      'help',
-      abbr: 'h',
-      negatable: false,
-      help: 'Print this usage information.',
-    )
-    ..addOption(
-      'config',
-      abbr: 'c',
-      help: 'Path to configuration file (defaults to tonik.yaml).',
-      valueHelp: 'path',
-    )
-    ..addOption(
-      'output-dir',
-      abbr: 'o',
-      help: 'Directory where generated project will be placed.',
-      valueHelp: 'path',
-    )
-    ..addOption(
-      'package-name',
-      abbr: 'p',
-      help: 'Name of the package to generate.',
-      valueHelp: 'name',
-    )
-    ..addOption(
-      'spec',
-      help: 'Path to OpenAPI document.',
-      abbr: 's',
-      valueHelp: 'path',
-    )
-    ..addOption(
-      'log-level',
-      help: 'Set the logging level (verbose, info, warn, silent).',
-      allowed: ['verbose', 'info', 'warn', 'silent'],
-    )
-    ..addFlag(
-      'immutable-collections',
-      help:
-          'Use IList/IMap from fast_immutable_collections '
-          'instead of List/Map.',
-      negatable: false,
-    )
-    ..addOption(
-      'workers',
-      help:
-          'Number of worker isolates for parallel model file generation. '
-          '0 (default) auto-sizes to (numberOfProcessors - 1) clamped '
-          'to 1..16; 1 forces serial; >= 2 sets the worker count.',
-      valueHelp: 'n',
-    );
-}
-
 void printUsage(ArgParser argParser) {
   print('Usage: tonik <flags> [arguments]');
   print(argParser.usage);
@@ -72,41 +20,30 @@ void printUsage(ArgParser argParser) {
 
 final Logger logger = Logger('tonik');
 
-int? _parseWorkerCountOrExit(String? raw, {required String source}) {
-  if (raw == null || raw.isEmpty) return null;
-  final parsed = int.tryParse(raw);
-  if (parsed == null || parsed < 0) {
-    stderr.writeln('Error: invalid value "$raw" for $source.');
+CliConfig _mergeConfigOrExit(ArgResults arguments, CliConfig fileConfig) {
+  try {
+    return mergeCliConfig(
+      arguments: arguments,
+      fileConfig: fileConfig,
+      environmentWorkerCount: Platform.environment['TONIK_WORKERS'],
+    );
+  } on FormatException catch (formatException) {
+    stderr.writeln('Error: ${formatException.message}');
     exit(128);
   }
-  return parsed;
 }
 
 Future<void> main(List<String> arguments) async {
-  final argParser = buildParser();
-  String? logLevelArg;
-  String? packageNameArg;
-  String? openApiPathArg;
-  String? outputDirArg;
-  String? configPathArg;
-  var immutableCollectionsArg = false;
-  String? workersArg;
+  final argParser = buildCliParser();
+  late ArgResults results;
 
   try {
-    final results = argParser.parse(arguments);
+    results = argParser.parse(arguments);
 
     if (results.flag('help')) {
       printUsage(argParser);
       return;
     }
-
-    logLevelArg = results['log-level'] as String?;
-    packageNameArg = results['package-name'] as String?;
-    openApiPathArg = results['spec'] as String?;
-    outputDirArg = results['output-dir'] as String?;
-    configPathArg = results['config'] as String?;
-    immutableCollectionsArg = results.flag('immutable-collections');
-    workersArg = results['workers'] as String?;
   } on FormatException catch (formatException) {
     print(formatException.message);
     printUsage(argParser);
@@ -116,45 +53,10 @@ Future<void> main(List<String> arguments) async {
     exit(128);
   }
 
-  final cliLogLevel = switch (logLevelArg) {
-    null => null,
-    'verbose' => LogLevel.verbose,
-    'info' => LogLevel.info,
-    'warn' => LogLevel.warn,
-    'silent' => LogLevel.silent,
-    _ => () {
-      print(
-        'Error: Invalid log level "$logLevelArg". '
-        'Must be one of: verbose, info, warn, silent',
-      );
-      exit(128);
-    }(),
-  };
-
-  final configPath = configPathArg ?? 'tonik.yaml';
+  final configPath = results.option('config') ?? 'tonik.yaml';
   final fileConfig = ConfigLoader.load(configPath);
 
-  final cliWorkerCount = _parseWorkerCountOrExit(
-    workersArg,
-    source: '--workers',
-  );
-  // File's `0` is unset for precedence purposes (the documented default).
-  final envWorkerCount =
-      cliWorkerCount != null || fileConfig.workerCount != 0
-      ? null
-      : _parseWorkerCountOrExit(
-          Platform.environment['TONIK_WORKERS'],
-          source: 'TONIK_WORKERS',
-        );
-
-  final mergedConfig = fileConfig.merge(
-    spec: openApiPathArg,
-    outputDir: outputDirArg,
-    packageName: packageNameArg,
-    logLevel: cliLogLevel,
-    useImmutableCollections: immutableCollectionsArg ? true : null,
-    workerCount: cliWorkerCount ?? envWorkerCount,
-  );
+  final mergedConfig = _mergeConfigOrExit(results, fileConfig);
 
   final packageName = mergedConfig.packageName;
   final openApiPath = mergedConfig.spec;

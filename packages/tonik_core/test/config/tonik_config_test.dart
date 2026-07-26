@@ -12,7 +12,45 @@ void main() {
       expect(config.filter, const FilterConfig());
       expect(config.deprecated, const DeprecatedConfig());
       expect(config.enums, const EnumConfig());
+      expect(config.transport, const TransportConfig());
+      expect(config.transport.backend, TransportBackend.dio);
       expect(config.useImmutableCollections, isFalse);
+    });
+
+    test('stores transport configuration', () {
+      const config = TonikConfig(
+        transport: TransportConfig(backend: TransportBackend.http),
+      );
+
+      expect(config.transport.backend, TransportBackend.http);
+    });
+
+    test('equality and hashCode include transport configuration', () {
+      const httpConfig = TonikConfig(
+        transport: TransportConfig(backend: TransportBackend.http),
+      );
+      const sameHttpConfig = TonikConfig(
+        transport: TransportConfig(backend: TransportBackend.http),
+      );
+      const dioConfig = TonikConfig();
+
+      expect(httpConfig, sameHttpConfig);
+      expect(httpConfig.hashCode, sameHttpConfig.hashCode);
+      expect(httpConfig == dioConfig, isFalse);
+      expect(httpConfig.hashCode, isNot(dioConfig.hashCode));
+    });
+
+    test('toString includes transport configuration', () {
+      const config = TonikConfig(
+        transport: TransportConfig(backend: TransportBackend.http),
+      );
+
+      expect(
+        config.toString(),
+        contains(
+          'transport: TransportConfig{backend: TransportBackend.http}',
+        ),
+      );
     });
 
     test('stores contentMediaTypes configuration', () {

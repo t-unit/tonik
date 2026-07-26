@@ -1,9 +1,10 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+import 'package:tonik/src/config/cli_config.dart';
+import 'package:tonik/src/config/cli_parser.dart';
 import 'package:tonik/src/config/config_loader.dart';
 import 'package:tonik/src/config/log_level.dart';
-import 'package:tonik/src/config/tonik_config.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 /// Helper to create a minimal ApiDocument for testing.
@@ -186,6 +187,22 @@ logLevel: verbose
 
         expect(merged.spec, './spec.yaml');
         expect(merged.logLevel, LogLevel.silent);
+      });
+
+      test('CLI --backend overrides YAML transport.backend', () {
+        File('tonik.yaml').writeAsStringSync('''
+transport:
+  backend: dio
+''');
+
+        final fileConfig = ConfigLoader.load('tonik.yaml');
+        final arguments = buildCliParser().parse(['--backend', 'http']);
+        final merged = mergeCliConfig(
+          arguments: arguments,
+          fileConfig: fileConfig,
+        );
+
+        expect(merged.transport.backend, TransportBackend.http);
       });
 
       test('merges all CLI args when provided', () {
