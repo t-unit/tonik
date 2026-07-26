@@ -29,11 +29,20 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FormMultiContentRequestPost200Response, Response<Object?>>>(),
+        isA<
+          TonikSuccess<
+            FormMultiContentRequestPost200Response,
+            Response<Object?>
+          >
+        >(),
       );
 
       final contentType =
-          (response as TonikSuccess<FormMultiContentRequestPost200Response, Response<Object?>>)
+          (response
+                  as TonikSuccess<
+                    FormMultiContentRequestPost200Response,
+                    Response<Object?>
+                  >)
               .response
               .requestOptions
               .headers['content-type'];
@@ -61,10 +70,19 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FormMultiContentResponseGet200Response, Response<Object?>>>(),
+        isA<
+          TonikSuccess<
+            FormMultiContentResponseGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final data =
-          (response as TonikSuccess<FormMultiContentResponseGet200Response, Response<Object?>>)
+          (response
+                  as TonikSuccess<
+                    FormMultiContentResponseGet200Response,
+                    Response<Object?>
+                  >)
               .value;
       expect(
         data,
@@ -96,11 +114,17 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FormMultiContentBothPost200Response, Response<Object?>>>(),
+        isA<
+          TonikSuccess<FormMultiContentBothPost200Response, Response<Object?>>
+        >(),
       );
 
       final contentType =
-          (response as TonikSuccess<FormMultiContentBothPost200Response, Response<Object?>>)
+          (response
+                  as TonikSuccess<
+                    FormMultiContentBothPost200Response,
+                    Response<Object?>
+                  >)
               .response
               .requestOptions
               .headers['content-type'];

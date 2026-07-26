@@ -48,11 +48,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response, Response<Object?>>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripNestedOneofInAllofGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripNestedOneofInAllofGet200Response, Response<Object?>>;
+                as TonikError<
+                  HeadersRoundtripNestedOneofInAllofGet200Response,
+                  Response<Object?>
+                >;
 
         expect(error.type, TonikErrorType.encoding);
         expect(error.response, isNull);
@@ -68,11 +76,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response, Response<Object?>>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripNestedOneofInAllofGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripNestedOneofInAllofGet200Response, Response<Object?>>;
+                as TonikError<
+                  HeadersRoundtripNestedOneofInAllofGet200Response,
+                  Response<Object?>
+                >;
 
         expect(error.type, TonikErrorType.encoding);
         expect(error.response, isNull);
@@ -88,11 +104,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response, Response<Object?>>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripNestedOneofInAllofGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripNestedOneofInAllofGet200Response, Response<Object?>>;
+                as TonikError<
+                  HeadersRoundtripNestedOneofInAllofGet200Response,
+                  Response<Object?>
+                >;
 
         expect(error.type, TonikErrorType.encoding);
       });
@@ -107,14 +131,18 @@ void main() {
           expect(
             result,
             isA<
-              TonikSuccess<HeadersRoundtripNestedOneofInAllofGet200Response, Response<Object?>>
+              TonikSuccess<
+                HeadersRoundtripNestedOneofInAllofGet200Response,
+                Response<Object?>
+              >
             >(),
           );
           final success =
               result
                   as TonikSuccess<
-                    HeadersRoundtripNestedOneofInAllofGet200Response
-                  , Response<Object?>>;
+                    HeadersRoundtripNestedOneofInAllofGet200Response,
+                    Response<Object?>
+                  >;
           expect(
             success.response.requestOptions.headers['X-Nested-Value'],
             isNull,

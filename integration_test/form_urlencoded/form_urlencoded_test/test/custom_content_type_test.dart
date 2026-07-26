@@ -25,7 +25,9 @@ void main() {
       expect(response, isA<TonikSuccess<CustomForm, Response<Object?>>>());
 
       final requestOptions =
-          (response as TonikSuccess<CustomForm, Response<Object?>>).response.requestOptions;
+          (response as TonikSuccess<CustomForm, Response<Object?>>)
+              .response
+              .requestOptions;
       final contentType = requestOptions.headers['content-type'];
       expect(contentType, 'application/vnd.custom-form');
 
@@ -45,7 +47,10 @@ void main() {
       expect(response, isA<TonikSuccess<CustomForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<CustomForm, Response<Object?>>).response.requestOptions.data;
+          (response as TonikSuccess<CustomForm, Response<Object?>>)
+              .response
+              .requestOptions
+              .data;
       expect(requestData, 'field1=first+second+third&field2=50');
 
       final data = response.value;

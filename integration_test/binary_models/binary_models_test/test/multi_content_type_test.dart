@@ -34,9 +34,18 @@ void main() {
 
       final result = await filesApi.getMultiContentType(format: 'json');
 
-      expect(result, isA<TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>>());
+      expect(
+        result,
+        isA<
+          TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>
+        >(),
+      );
       final success =
-          result as TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>;
+          result
+              as TonikSuccess<
+                BinaryMultiContentTypeGet200Response,
+                Response<Object?>
+              >;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<BinaryMultiContentTypeGet200ResponseJson>());
@@ -54,9 +63,18 @@ void main() {
 
       final result = await filesApi.getMultiContentType(format: 'binary');
 
-      expect(result, isA<TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>>());
+      expect(
+        result,
+        isA<
+          TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>
+        >(),
+      );
       final success =
-          result as TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>;
+          result
+              as TonikSuccess<
+                BinaryMultiContentTypeGet200Response,
+                Response<Object?>
+              >;
 
       expect(success.response.statusCode, 200);
       expect(
@@ -78,8 +96,18 @@ void main() {
 
       final result = await filesApi.getBinaryWithHeaders(id: 'test-file');
 
-      expect(result, isA<TonikSuccess<BinaryWithHeadersIdGet200Response, Response<Object?>>>());
-      final success = result as TonikSuccess<BinaryWithHeadersIdGet200Response, Response<Object?>>;
+      expect(
+        result,
+        isA<
+          TonikSuccess<BinaryWithHeadersIdGet200Response, Response<Object?>>
+        >(),
+      );
+      final success =
+          result
+              as TonikSuccess<
+                BinaryWithHeadersIdGet200Response,
+                Response<Object?>
+              >;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<BinaryWithHeadersIdGet200Response>());

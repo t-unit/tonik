@@ -68,7 +68,10 @@ void main() {
       );
 
       expect(result, isA<TonikError<void, Response<Object?>>>());
-      expect((result as TonikError<void, Response<Object?>>).type, TonikErrorType.encoding);
+      expect(
+        (result as TonikError<void, Response<Object?>>).type,
+        TonikErrorType.encoding,
+      );
       expect(adapter.requestOptions, isNull);
     });
   });

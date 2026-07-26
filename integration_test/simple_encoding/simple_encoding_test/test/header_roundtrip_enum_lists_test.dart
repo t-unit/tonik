@@ -38,10 +38,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -63,10 +72,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['x-status-list'],
@@ -92,10 +110,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['x-status-list'],
@@ -119,10 +146,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -144,10 +180,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['x-priority-list'],
@@ -174,10 +219,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['x-priority-list'],
@@ -203,10 +257,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['x-status-list'],
@@ -237,10 +300,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(success.value.xStatusList, isNull);
         expect(success.value.xPriorityList, [PriorityEnum.one]);
@@ -254,10 +326,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(success.value.xStatusList, [StatusEnum.inactive]);
         expect(success.value.xPriorityList, isNull);
@@ -269,10 +350,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsEnumsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(success.value.xStatusList, isNull);
         expect(success.value.xPriorityList, isNull);
@@ -303,7 +393,11 @@ void main() {
         final response = await injected.testHeaderRoundtripEnumLists();
 
         final success =
-            response as TonikSuccess<HeadersRoundtripListsEnumsGet200Response, Response<Object?>>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripListsEnumsGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xStatusList, [
           StatusEnum.active,
           StatusEnum.pending,

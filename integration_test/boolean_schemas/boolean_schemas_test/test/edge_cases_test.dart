@@ -108,7 +108,8 @@ void main() {
         );
 
         final result = await api.echoJsonAny(body: original);
-        final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+        final success =
+            result as TonikSuccess<ObjectWithAny, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(
           success.response.requestOptions.data,

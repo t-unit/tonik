@@ -33,7 +33,12 @@ void main() {
       final api = buildApi('null');
       final result = await api.getStandaloneNull();
 
-      final success = result as TonikSuccess<StandaloneNullEchoGet200Response, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                StandaloneNullEchoGet200Response,
+                Response<Object?>
+              >;
       expect(success.value.body, isNull);
       expect(success.value.xNullHeader, isNull);
     });

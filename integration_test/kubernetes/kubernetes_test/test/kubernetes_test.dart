@@ -38,8 +38,13 @@ void main() {
 
       final result = await api.listCoreV1Namespace();
 
-      expect(result, isA<TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>>(),
+      );
+      final success =
+          result
+              as TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<ListCoreV1NamespaceResponse200>());
 
@@ -52,8 +57,13 @@ void main() {
 
       final result = await api.listCoreV1Namespace();
 
-      expect(result, isA<TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>>(),
+      );
+      final success =
+          result
+              as TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>;
       expect(success.response.statusCode, 401);
       expect(success.value, isA<ListCoreV1NamespaceResponse401>());
     });
@@ -69,10 +79,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListCoreV1ConfigMapForAllNamespacesResponse, Response<Object?>>>(),
+        isA<
+          TonikSuccess<
+            ListCoreV1ConfigMapForAllNamespacesResponse,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<ListCoreV1ConfigMapForAllNamespacesResponse, Response<Object?>>;
+          result
+              as TonikSuccess<
+                ListCoreV1ConfigMapForAllNamespacesResponse,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -90,10 +109,16 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListCoreV1PodForAllNamespacesResponse, Response<Object?>>>(),
+        isA<
+          TonikSuccess<ListCoreV1PodForAllNamespacesResponse, Response<Object?>>
+        >(),
       );
       final success =
-          result as TonikSuccess<ListCoreV1PodForAllNamespacesResponse, Response<Object?>>;
+          result
+              as TonikSuccess<
+                ListCoreV1PodForAllNamespacesResponse,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -111,10 +136,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListCoreV1ServiceForAllNamespacesResponse, Response<Object?>>>(),
+        isA<
+          TonikSuccess<
+            ListCoreV1ServiceForAllNamespacesResponse,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<ListCoreV1ServiceForAllNamespacesResponse, Response<Object?>>;
+          result
+              as TonikSuccess<
+                ListCoreV1ServiceForAllNamespacesResponse,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -134,10 +168,16 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListCoreV1NamespacedConfigMapResponse, Response<Object?>>>(),
+        isA<
+          TonikSuccess<ListCoreV1NamespacedConfigMapResponse, Response<Object?>>
+        >(),
       );
       final success =
-          result as TonikSuccess<ListCoreV1NamespacedConfigMapResponse, Response<Object?>>;
+          result
+              as TonikSuccess<
+                ListCoreV1NamespacedConfigMapResponse,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -153,10 +193,16 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListCoreV1NamespacedConfigMapResponse, Response<Object?>>>(),
+        isA<
+          TonikSuccess<ListCoreV1NamespacedConfigMapResponse, Response<Object?>>
+        >(),
       );
       final success =
-          result as TonikSuccess<ListCoreV1NamespacedConfigMapResponse, Response<Object?>>;
+          result
+              as TonikSuccess<
+                ListCoreV1NamespacedConfigMapResponse,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 401);
     });
   });

@@ -67,7 +67,8 @@ void main() {
       final result = await api.metaget();
 
       expect(result, isA<TonikSuccess<MetagetResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<MetagetResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<MetagetResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<MetagetResponse200>());
 
@@ -84,8 +85,12 @@ void main() {
 
       final result = await op();
 
-      expect(result, isA<TonikSuccess<RateLimitgetResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<RateLimitgetResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<RateLimitgetResponse, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<RateLimitgetResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RateLimitgetResponse200>());
 
@@ -98,8 +103,12 @@ void main() {
 
       final result = await op();
 
-      expect(result, isA<TonikSuccess<RateLimitgetResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<RateLimitgetResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<RateLimitgetResponse, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<RateLimitgetResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<RateLimitgetResponse404>());
     });
@@ -113,8 +122,12 @@ void main() {
 
       final result = await op(username: 'octocat');
 
-      expect(result, isA<TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<UsersgetByUsernameResponse200>());
 
@@ -127,8 +140,12 @@ void main() {
 
       final result = await op(username: 'nonexistent');
 
-      expect(result, isA<TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<UsersgetByUsernameResponse404>());
     });
@@ -153,7 +170,8 @@ void main() {
       final result = await op(owner: 'nonexistent', repo: 'nonexistent');
 
       expect(result, isA<TonikSuccess<ReposgetResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<ReposgetResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<ReposgetResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<ReposgetResponse404>());
     });
@@ -168,7 +186,10 @@ void main() {
 
       final result = await op(owner: 'octocat', repo: 'hello-world');
 
-      expect(result, isA<TonikSuccess<IssueslistForRepoResponse, Response<Object?>>>());
+      expect(
+        result,
+        isA<TonikSuccess<IssueslistForRepoResponse, Response<Object?>>>(),
+      );
     });
 
     test('issueslist_for_repo 404', () async {
@@ -176,8 +197,12 @@ void main() {
 
       final result = await op(owner: 'nonexistent', repo: 'nonexistent');
 
-      expect(result, isA<TonikSuccess<IssueslistForRepoResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<IssueslistForRepoResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<IssueslistForRepoResponse, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<IssueslistForRepoResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<IssueslistForRepoResponse404>());
     });
@@ -209,7 +234,8 @@ void main() {
       );
 
       expect(result, isA<TonikSuccess<IssuesgetResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<IssuesgetResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<IssuesgetResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<IssuesgetResponse404>());
     });

@@ -43,10 +43,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
@@ -66,10 +75,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
 
         // Header field-values are transmitted literally: the space survives.
         expect(
@@ -90,10 +108,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
@@ -111,10 +138,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
@@ -134,10 +170,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
@@ -155,10 +200,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'number,0',
@@ -175,10 +229,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'number,-123',
@@ -195,10 +258,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
           'number,9999999',
@@ -215,10 +287,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofComplexGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Complex-Union'],
@@ -252,7 +333,11 @@ void main() {
         final result = await injected.testHeaderRoundtripOneOfComplex.call();
 
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofComplexGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofComplexGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, 'x%2Fy 50%');
