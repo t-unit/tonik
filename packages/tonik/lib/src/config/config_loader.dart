@@ -1,7 +1,7 @@
 import 'dart:io';
 
+import 'package:tonik/src/config/cli_config.dart';
 import 'package:tonik/src/config/log_level.dart';
-import 'package:tonik/src/config/tonik_config.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:yaml/yaml.dart';
 
@@ -53,6 +53,7 @@ extension ConfigLoader on CliConfig {
       filter: _parseFilter(yaml['filter']),
       deprecated: _parseDeprecated(yaml['deprecated']),
       enums: _parseEnums(yaml['enums']),
+      transport: _parseTransport(yaml['transport']),
       useImmutableCollections: _parseBool(
         yaml['immutableCollections'],
         'immutableCollections',
@@ -70,6 +71,36 @@ extension ConfigLoader on CliConfig {
     }
     return value;
   }
+
+  static TransportConfig _parseTransport(dynamic value) {
+    if (value == null) {
+      return const TransportConfig();
+    }
+    if (value is! YamlMap) {
+      throw _invalidTransportBackend();
+    }
+
+    final backend = value['backend'];
+    if (backend == null) {
+      return const TransportConfig();
+    }
+    if (backend is! String) {
+      throw _invalidTransportBackend();
+    }
+
+    return TransportConfig(
+      backend: switch (backend) {
+        'dio' => TransportBackend.dio,
+        'http' => TransportBackend.http,
+        _ => throw _invalidTransportBackend(),
+      },
+    );
+  }
+
+  static ConfigLoaderException _invalidTransportBackend() =>
+      ConfigLoaderException(
+        'Invalid config: "transport.backend" must be one of: dio, http',
+      );
 
   static String? _parseString(dynamic value, String fieldName) {
     if (value == null) return null;
@@ -333,6 +364,7 @@ extension ConfigLoader on CliConfig {
     String? outputDir,
     String? packageName,
     LogLevel? logLevel,
+    TransportBackend? backend,
     bool? useImmutableCollections,
     int? workerCount,
   }) {
@@ -347,6 +379,9 @@ extension ConfigLoader on CliConfig {
       filter: filter,
       deprecated: this.deprecated,
       enums: enums,
+      transport: backend == null
+          ? transport
+          : TransportConfig(backend: backend),
       useImmutableCollections:
           useImmutableCollections ?? this.useImmutableCollections,
       workerCount: workerCount ?? this.workerCount,

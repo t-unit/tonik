@@ -1,9 +1,9 @@
 import 'dart:io';
 
 import 'package:test/test.dart';
+import 'package:tonik/src/config/cli_config.dart';
 import 'package:tonik/src/config/config_loader.dart';
 import 'package:tonik/src/config/log_level.dart';
-import 'package:tonik/src/config/tonik_config.dart';
 import 'package:tonik_core/tonik_core.dart';
 
 void main() {
@@ -140,6 +140,117 @@ packageName: partial_api
         expect(config.filter, const FilterConfig());
         expect(config.deprecated, const DeprecatedConfig());
         expect(config.enums, const EnumConfig());
+        expect(config.transport, const TransportConfig());
+      });
+
+      group('transport', () {
+        test('defaults to Dio when transport is missing', () {
+          File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+spec: ./api.yaml
+''');
+
+          final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+          expect(config.transport.backend, TransportBackend.dio);
+        });
+
+        test('defaults to Dio when transport is empty', () {
+          File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+transport: {}
+''');
+
+          final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+          expect(config.transport.backend, TransportBackend.dio);
+        });
+
+        test('defaults to Dio when transport.backend is null', () {
+          File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+transport:
+  backend:
+''');
+
+          final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+          expect(config.transport.backend, TransportBackend.dio);
+        });
+
+        test('loads explicit Dio backend', () {
+          File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+transport:
+  backend: dio
+''');
+
+          final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+          expect(config.transport.backend, TransportBackend.dio);
+        });
+
+        test('loads explicit http backend', () {
+          File('${tempDir.path}/tonik.yaml').writeAsStringSync('''
+transport:
+  backend: http
+''');
+
+          final config = ConfigLoader.load('${tempDir.path}/tonik.yaml');
+
+          expect(config.transport.backend, TransportBackend.http);
+        });
+
+        for (final invalidCase in <({String name, String yaml})>[
+          (name: 'scalar transport', yaml: 'transport: dio'),
+          (
+            name: 'list transport',
+            yaml: '''
+transport:
+  - dio
+''',
+          ),
+          (
+            name: 'non-string backend',
+            yaml: '''
+transport:
+  backend: 42
+''',
+          ),
+          (
+            name: 'unknown backend',
+            yaml: '''
+transport:
+  backend: fetch
+''',
+          ),
+          (
+            name: 'case-variant backend',
+            yaml: '''
+transport:
+  backend: Dio
+''',
+          ),
+        ]) {
+          test('rejects ${invalidCase.name} with accepted values', () {
+            File(
+              '${tempDir.path}/tonik.yaml',
+            ).writeAsStringSync(invalidCase.yaml);
+
+            expect(
+              () => ConfigLoader.load('${tempDir.path}/tonik.yaml'),
+              throwsA(
+                isA<ConfigLoaderException>()
+                    .having(
+                      (error) => error.message,
+                      'message',
+                      contains('transport.backend'),
+                    )
+                    .having(
+                      (error) => error.message,
+                      'message',
+                      contains('dio, http'),
+                    ),
+              ),
+            );
+          });
+        }
       });
 
       test('loads config with only nameOverrides', () {
@@ -724,6 +835,28 @@ nameOverrides:
         expect(merged.workerCount, 8);
       });
 
+      test('CLI transport backend overrides config value', () {
+        const config = CliConfig(
+          transport: TransportConfig(backend: TransportBackend.http),
+        );
+
+        final merged = config.merge(
+          backend: TransportBackend.dio,
+        );
+
+        expect(merged.transport.backend, TransportBackend.dio);
+      });
+
+      test('null CLI backend preserves config value', () {
+        const config = CliConfig(
+          transport: TransportConfig(backend: TransportBackend.http),
+        );
+
+        final merged = config.merge();
+
+        expect(merged.transport.backend, TransportBackend.http);
+      });
+
       test('merge preserves non-CLI config properties', () {
         const config = CliConfig(
           spec: './config-spec.yaml',
@@ -773,6 +906,16 @@ nameOverrides:
         final tonikConfig = config.toTonikConfig();
         expect(tonikConfig.workerCount, 4);
       });
+
+      test('passes transport to TonikConfig', () {
+        const config = CliConfig(
+          transport: TransportConfig(backend: TransportBackend.http),
+        );
+
+        final tonikConfig = config.toTonikConfig();
+
+        expect(tonikConfig.transport.backend, TransportBackend.http);
+      });
     });
 
     group('CliConfig toString, equality, hashCode', () {
@@ -792,6 +935,27 @@ nameOverrides:
         const b = CliConfig(useImmutableCollections: true);
         expect(a == b, isTrue);
         expect(a.hashCode, b.hashCode);
+      });
+
+      test('transport participates in toString, equality, and hashCode', () {
+        const httpConfig = CliConfig(
+          transport: TransportConfig(backend: TransportBackend.http),
+        );
+        const sameHttpConfig = CliConfig(
+          transport: TransportConfig(backend: TransportBackend.http),
+        );
+        const dioConfig = CliConfig();
+
+        expect(
+          httpConfig.toString(),
+          contains(
+            'transport: TransportConfig{backend: TransportBackend.http}',
+          ),
+        );
+        expect(httpConfig, sameHttpConfig);
+        expect(httpConfig.hashCode, sameHttpConfig.hashCode);
+        expect(httpConfig == dioConfig, isFalse);
+        expect(httpConfig.hashCode, isNot(dioConfig.hashCode));
       });
     });
 

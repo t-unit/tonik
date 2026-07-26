@@ -55,6 +55,12 @@ class Generator {
     TonikConfig config = const TonikConfig(),
     @visibleForTesting ModelWorkerPool Function()? workerPoolFactory,
   }) async {
+    if (config.transport.backend == TransportBackend.http) {
+      throw UnsupportedError(
+        'The http transport backend is not supported yet.',
+      );
+    }
+
     final useImmutableCollections = config.useImmutableCollections;
 
     final nameGenerator = NameGenerator();

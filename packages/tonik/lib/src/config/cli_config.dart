@@ -16,10 +16,14 @@ class CliConfig {
     this.logLevel,
     this.nameOverrides = const NameOverridesConfig(),
     this.contentTypes = const {},
+    this.contentMediaTypes = const {},
     this.filter = const FilterConfig(),
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
-  });
+    this.transport = const TransportConfig(),
+    this.useImmutableCollections = false,
+    this.workerCount = 0,
+  }) : assert(workerCount >= 0, 'workerCount must be non-negative');
 
   /// Path to the OpenAPI specification file.
   final String? spec;
@@ -37,28 +41,49 @@ class CliConfig {
   /// Custom content type mappings: `contentType -> serializationFormat`.
   final Map<String, ContentType> contentTypes;
 
+  /// Schema-level contentMediaType mappings for encoded content.
+  final Map<String, SchemaContentType> contentMediaTypes;
+
   final FilterConfig filter;
 
   final DeprecatedConfig deprecated;
 
   final EnumConfig enums;
 
+  final TransportConfig transport;
+
+  /// When `true`, generated code uses `IList<T>` and `IMap<String, V>` from
+  /// `package:fast_immutable_collections` instead of `List<T>` and
+  /// `Map<String, V>` for public-facing model types.
+  final bool useImmutableCollections;
+
+  final int workerCount;
+
   TonikConfig toTonikConfig() => TonikConfig(
     nameOverrides: nameOverrides,
     contentTypes: contentTypes,
+    contentMediaTypes: contentMediaTypes,
     filter: filter,
     deprecated: deprecated,
     enums: enums,
+    transport: transport,
+    useImmutableCollections: useImmutableCollections,
+    workerCount: workerCount,
   );
 
-  static const _mapEquality = MapEquality<String, ContentType>();
+  static const _contentTypeEquality = MapEquality<String, ContentType>();
+  static const _schemaContentTypeEquality =
+      MapEquality<String, SchemaContentType>();
 
   @override
   String toString() =>
       'CliConfig{spec: $spec, outputDir: $outputDir, '
       'packageName: $packageName, logLevel: $logLevel, '
       'nameOverrides: $nameOverrides, contentTypes: $contentTypes, '
-      'filter: $filter, deprecated: $deprecated, enums: $enums}';
+      'contentMediaTypes: $contentMediaTypes, filter: $filter, '
+      'deprecated: $deprecated, enums: $enums, transport: $transport, '
+      'useImmutableCollections: $useImmutableCollections, '
+      'workerCount: $workerCount}';
 
   @override
   bool operator ==(Object other) =>
@@ -70,10 +95,17 @@ class CliConfig {
           packageName == other.packageName &&
           logLevel == other.logLevel &&
           nameOverrides == other.nameOverrides &&
-          _mapEquality.equals(contentTypes, other.contentTypes) &&
+          _contentTypeEquality.equals(contentTypes, other.contentTypes) &&
+          _schemaContentTypeEquality.equals(
+            contentMediaTypes,
+            other.contentMediaTypes,
+          ) &&
           filter == other.filter &&
           deprecated == other.deprecated &&
-          enums == other.enums;
+          enums == other.enums &&
+          transport == other.transport &&
+          useImmutableCollections == other.useImmutableCollections &&
+          workerCount == other.workerCount;
 
   @override
   int get hashCode => Object.hash(
@@ -82,9 +114,13 @@ class CliConfig {
     packageName,
     logLevel,
     nameOverrides,
-    _mapEquality.hash(contentTypes),
+    _contentTypeEquality.hash(contentTypes),
+    _schemaContentTypeEquality.hash(contentMediaTypes),
     filter,
     deprecated,
     enums,
+    transport,
+    useImmutableCollections,
+    workerCount,
   );
 }
