@@ -79,8 +79,6 @@ void main() {
         ),
       );
 
-      // createItem returns TonikResult<Item, Response<Object?>> directly
-      // for its single response.
       expect(result, isA<TonikSuccess<Item, Response<Object?>>>());
       final success = result as TonikSuccess<Item, Response<Object?>>;
       expect(success.response.statusCode, 201);
@@ -108,8 +106,6 @@ void main() {
         ),
       );
 
-      // createNested returns TonikResult<NestedList, Response<Object?>>
-      // directly.
       expect(result, isA<TonikSuccess<NestedList, Response<Object?>>>());
       final success = result as TonikSuccess<NestedList, Response<Object?>>;
       expect(success.response.statusCode, 200);
