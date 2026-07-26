@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -27,22 +29,24 @@ void main() {
   }
 
   group('form object with byte property', () {
-    test('base64-encodes byte property then percent-encodes on the wire',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormByteObject(
-        filter: const Filter(
-          signature: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF]),
-        ),
-      );
+    test(
+      'base64-encodes byte property then percent-encodes on the wire',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormByteObject(
+          filter: const Filter(
+            signature: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF]),
+          ),
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'signature=3q2%2B7w%3D%3D',
-      );
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'signature=3q2%2B7w%3D%3D',
+        );
+      },
+    );
 
     test('sends an empty string property as a named empty value', () async {
       final api = buildQueryApi(responseStatus: '204');

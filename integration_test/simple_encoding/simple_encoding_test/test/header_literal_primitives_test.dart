@@ -19,8 +19,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': '200', ...rawHeaders},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': '200', ...rawHeaders},
+            ),
           ),
         ),
       ),
@@ -34,8 +36,7 @@ void main() {
         final response = await api.testHeaderRoundtripPrimitives(string: value);
 
         final success =
-            response
-                as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
+            response as TonikSuccess<HeadersRoundtripPrimitivesGet200Response>;
         expect(success.response.requestOptions.headers['x-string'], value);
       });
     }
@@ -107,8 +108,8 @@ void main() {
       expect(
         success.response.requestOptions.uri.path,
         '/v1/primitive/1/1.0/1/a%20b%2Fc%25d/true/'
-            '1970-01-01T00%3A00%3A00.000Z/2000-01-01/1/'
-            'https%3A%2F%2Fexample.com/active',
+        '1970-01-01T00%3A00%3A00.000Z/2000-01-01/1/'
+        'https%3A%2F%2Fexample.com/active',
       );
     });
   });
@@ -140,8 +141,7 @@ void main() {
           isA<TonikError<HeadersRoundtripPrimitivesGet200Response>>(),
         );
         final error =
-            response
-                as TonikError<HeadersRoundtripPrimitivesGet200Response>;
+            response as TonikError<HeadersRoundtripPrimitivesGet200Response>;
         // Rejection is transport-provided (Dio refuses control chars), not
         // a Tonik guard.
         expect(error.type, TonikErrorType.network);

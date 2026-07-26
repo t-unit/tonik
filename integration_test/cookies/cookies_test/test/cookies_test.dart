@@ -19,8 +19,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -532,16 +534,18 @@ void main() {
       expect(getCookieHeader(response), 'session=id,42');
     });
 
-    test('keeps a defined empty-string member as a named empty value',
-        () async {
-      final api = buildCookiesApi(responseStatus: '204');
-      final response = await api.testPartialObjectCookie(
-        session: const PartialSession(id: '42', theme: ''),
-      );
+    test(
+      'keeps a defined empty-string member as a named empty value',
+      () async {
+        final api = buildCookiesApi(responseStatus: '204');
+        final response = await api.testPartialObjectCookie(
+          session: const PartialSession(id: '42', theme: ''),
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      expect(getCookieHeader(response), 'session=id,42,theme,');
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        expect(getCookieHeader(response), 'session=id,42,theme,');
+      },
+    );
   });
 
   group('composition cookies', () {

@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Winner': nullBody ? 'null' : 'alice'},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Winner': nullBody ? 'null' : 'alice'},
+            ),
           ),
         ),
       ),

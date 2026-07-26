@@ -11,6 +11,7 @@ void main() {
   late DartEmitter emitter;
   late List<Server> testServers;
   late List<Class> generatedClasses;
+  late Class dioAdapter;
   late Class baseClass;
 
   setUp(() {
@@ -33,7 +34,60 @@ void main() {
     ];
 
     generatedClasses = generator.generateClasses(testServers);
+    dioAdapter = generator.generateDioAdapter();
     baseClass = generatedClasses.first;
+  });
+
+  group('ServerGenerator Dio adapter', () {
+    test('generates a private adapter in the server library', () {
+      expect(dioAdapter.name, '_DioClientAdapter');
+
+      final baseUrlField = dioAdapter.fields.firstWhere(
+        (f) => f.name == 'baseUrl',
+      );
+      expect(baseUrlField.type?.accept(emitter).toString(), 'String');
+      expect(baseUrlField.modifier, FieldModifier.final$);
+
+      final serverConfigField = dioAdapter.fields.firstWhere(
+        (f) => f.name == 'serverConfig',
+      );
+      expect(
+        serverConfigField.type?.accept(emitter).toString(),
+        'ServerConfig<Dio>',
+      );
+      expect(serverConfigField.modifier, FieldModifier.final$);
+
+      final dioField = dioAdapter.fields.firstWhere(
+        (f) => f.name == r'_$dio',
+      );
+      expect(dioField.type?.accept(emitter).toString(), 'Dio?');
+    });
+
+    test('generates lazy, validating, cached resolution', () {
+      final dioGetter = dioAdapter.methods.firstWhere((m) => m.name == 'dio');
+
+      const expectedBody = r'''
+        final cachedDio = _$dio;
+        if (cachedDio != null) {
+          return cachedDio;
+        }
+
+        final client = serverConfig.client;
+        final clientFactory = serverConfig.clientFactory;
+        if (client != null && clientFactory != null) {
+          throw ArgumentError('ServerConfig.client and ServerConfig.clientFactory cannot both be provided.');
+        }
+
+        final resolvedDio = client ?? clientFactory?.call() ?? Dio() ;
+        resolvedDio.options.baseUrl = baseUrl;
+        return _$dio = resolvedDio;
+      ''';
+
+      expect(
+        collapseWhitespace(dioGetter.body!.accept(emitter).toString()),
+        collapseWhitespace(expectedBody),
+      );
+    });
   });
 
   group('ServerGenerator base class', () {
@@ -55,13 +109,18 @@ void main() {
       );
       expect(
         serverConfigField.type?.accept(emitter).toString(),
-        'ServerConfig',
+        'ServerConfig<Dio>',
       );
       expect(serverConfigField.modifier, FieldModifier.final$);
 
-      final dioField = fields.firstWhere((f) => f.name == r'_$dio');
-      expect(dioField.type?.accept(emitter).toString(), 'Dio?');
-      expect(dioField.modifier, isNot(FieldModifier.final$));
+      final adapterField = fields.firstWhere(
+        (f) => f.name == r'_$dioAdapter',
+      );
+      expect(
+        adapterField.type?.accept(emitter).toString(),
+        '_DioClientAdapter',
+      );
+      expect(adapterField.modifier, FieldModifier.final$);
     });
 
     test('generates constructor with named parameters', () {
@@ -86,11 +145,13 @@ void main() {
       final dioGetter = baseClass.methods.firstWhere((m) => m.name == 'dio');
       expect(dioGetter.type, MethodType.getter);
       expect(dioGetter.returns?.accept(emitter).toString(), 'Dio');
+      expect(dioGetter.lambda, isTrue);
 
       final bodyCode = dioGetter.body!.accept(emitter).toString();
-      expect(bodyCode, contains(r'if (_$dio == null)'));
-      expect(bodyCode, contains('serverConfig.configureDio'));
-      expect(bodyCode, contains(r'return _$dio!'));
+      expect(
+        collapseWhitespace(bodyCode),
+        collapseWhitespace(r'_$dioAdapter.dio'),
+      );
     });
   });
 
@@ -307,6 +368,9 @@ void main() {
         result.code,
         contains("import 'package:tonik_util/tonik_util.dart'"),
       );
+      expect(result.code, contains('class _DioClientAdapter'));
+      expect(result.code, isNot(contains('class ServerConfig')));
+      expect(result.code, isNot(contains('typedef ServerConfig')));
     });
   });
 

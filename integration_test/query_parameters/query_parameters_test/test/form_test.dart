@@ -19,8 +19,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -153,27 +155,29 @@ void main() {
       );
     });
 
-    test('reservedKeys percent-encodes property keys, commas stay literal',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormComplex(
-        reservedKeys: const ReservedKeys(
-          firstName: 'Jane',
-          lastName: 'Doe',
-          ab: 'v1',
-          cAmpersandD: 'v2',
-          pPercentQ20: 'v3',
-        ),
-      );
+    test(
+      'reservedKeys percent-encodes property keys, commas stay literal',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormComplex(
+          reservedKeys: const ReservedKeys(
+            firstName: 'Jane',
+            lastName: 'Doe',
+            ab: 'v1',
+            cAmpersandD: 'v2',
+            pPercentQ20: 'v3',
+          ),
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'reservedKeys=first%20name,Jane,last%20name,Doe,a%2Cb,v1,c%26d,v2,'
-        'p%2520q,v3',
-      );
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'reservedKeys=first%20name,Jane,last%20name,Doe,a%2Cb,v1,c%26d,v2,'
+          'p%2520q,v3',
+        );
+      },
+    );
 
     test('classNested', () async {
       final api = buildQueryApi(responseStatus: '204');
@@ -524,19 +528,21 @@ void main() {
       );
     });
 
-    test('nullable string escapes special chars and encodes null as empty',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormList(
-        listNullableString: ['hello world', 'foo/bar', null],
-      );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'listNullableString=hello%20world,foo%2Fbar,',
-      );
-    });
+    test(
+      'nullable string escapes special chars and encodes null as empty',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormList(
+          listNullableString: ['hello world', 'foo/bar', null],
+        );
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'listNullableString=hello%20world,foo%2Fbar,',
+        );
+      },
+    );
 
     test('nullable integer encodes null element as empty', () async {
       final api = buildQueryApi(responseStatus: '204');
@@ -618,20 +624,22 @@ void main() {
       expect(error.type, TonikErrorType.encoding);
     });
 
-    test('nullable string escapes special chars and encodes null as empty',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormListExplode(
-        listNullableString: ['hello world', 'foo/bar', null],
-      );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'listNullableString=hello%20world&listNullableString=foo%2Fbar'
-        '&listNullableString=',
-      );
-    });
+    test(
+      'nullable string escapes special chars and encodes null as empty',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormListExplode(
+          listNullableString: ['hello world', 'foo/bar', null],
+        );
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'listNullableString=hello%20world&listNullableString=foo%2Fbar'
+          '&listNullableString=',
+        );
+      },
+    );
 
     test('nullable integer encodes null element as empty', () async {
       final api = buildQueryApi(responseStatus: '204');
@@ -690,15 +698,17 @@ void main() {
       expect(success.response.requestOptions.uri.query, 'nullableString=test');
     });
 
-    test('nullableString with empty string sends an empty value, not omitted',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormPrimitive(nullableString: '');
+    test(
+      'nullableString with empty string sends an empty value, not omitted',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormPrimitive(nullableString: '');
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(success.response.requestOptions.uri.query, 'nullableString=');
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.requestOptions.uri.query, 'nullableString=');
+      },
+    );
 
     test('nullableString with null', () async {
       final api = buildQueryApi(responseStatus: '204');

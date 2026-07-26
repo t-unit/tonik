@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -130,8 +132,7 @@ void main() {
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
                 >;
-        final object =
-            success.value.xDynamicValue!.flexibleValue!.simpleObject;
+        final object = success.value.xDynamicValue!.flexibleValue!.simpleObject;
         expect(object?.name, 'test-object');
         expect(object?.value, 100);
       });
@@ -270,47 +271,52 @@ void main() {
         expect(error.type, TonikErrorType.encoding);
       });
 
-      test('two complex variants merge into one property map and decode back',
-          () async {
-        // Both variants share one merged property map, so either decodes
-        // from it.
-        const company = CompanyEntity(
-          $type: CompanyEntityTypeModel.company,
-          companyName: 'Acme',
-        );
-        final input = DynamicCompositeValue(
-          entityType: const EntityTypeCompanyEntity(company),
-          compositeEntity: CompositeEntity(
-            baseEntity: const BaseEntity(name: 'id'),
-            timestampMixin: TimestampMixin(
-              createdAt: DateTime.utc(2024),
-              updatedAt: DateTime.utc(2024),
+      test(
+        'two complex variants merge into one property map and decode back',
+        () async {
+          // Both variants share one merged property map, so either decodes
+          // from it.
+          const company = CompanyEntity(
+            $type: CompanyEntityTypeModel.company,
+            companyName: 'Acme',
+          );
+          final input = DynamicCompositeValue(
+            entityType: const EntityTypeCompanyEntity(company),
+            compositeEntity: CompositeEntity(
+              baseEntity: const BaseEntity(name: 'id'),
+              timestampMixin: TimestampMixin(
+                createdAt: DateTime.utc(2024),
+                updatedAt: DateTime.utc(2024),
+              ),
+              compositeEntityModel: const CompositeEntityModel(
+                specificField: 'name',
+              ),
             ),
-            compositeEntityModel: const CompositeEntityModel(
-              specificField: 'name',
-            ),
-          ),
-        );
+          );
 
-        final result = await api.testHeaderRoundtripDynamicComposite(
-          dynamicValue: input,
-        );
+          final result = await api.testHeaderRoundtripDynamicComposite(
+            dynamicValue: input,
+          );
 
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
-        final value = success.value.xDynamicValue!;
-        final entity = value.entityType;
-        expect(entity, isA<EntityTypeCompanyEntity>());
-        expect((entity! as EntityTypeCompanyEntity).value.companyName, 'Acme');
-        expect(value.compositeEntity?.baseEntity.name, 'id');
-        expect(
-          value.compositeEntity?.compositeEntityModel.specificField,
-          'name',
-        );
-      });
+          final success =
+              result
+                  as TonikSuccess<
+                    HeadersRoundtripComplexDynamicCompositeGet200Response
+                  >;
+          final value = success.value.xDynamicValue!;
+          final entity = value.entityType;
+          expect(entity, isA<EntityTypeCompanyEntity>());
+          expect(
+            (entity! as EntityTypeCompanyEntity).value.companyName,
+            'Acme',
+          );
+          expect(value.compositeEntity?.baseEntity.name, 'id');
+          expect(
+            value.compositeEntity?.compositeEntityModel.specificField,
+            'name',
+          );
+        },
+      );
     });
 
     group('server-originated response', () {
@@ -322,11 +328,13 @@ void main() {
           CustomServer(
             baseUrl: baseUrl,
             serverConfig: ServerConfig(
-              baseOptions: BaseOptions(
-                headers: {
-                  'X-Response-Status': '200',
-                  'X-Dynamic-Value': 'name,x%2Fy 50%,value,9',
-                },
+              clientFactory: () => Dio(
+                BaseOptions(
+                  headers: {
+                    'X-Response-Status': '200',
+                    'X-Dynamic-Value': 'name,x%2Fy 50%,value,9',
+                  },
+                ),
               ),
             ),
           ),

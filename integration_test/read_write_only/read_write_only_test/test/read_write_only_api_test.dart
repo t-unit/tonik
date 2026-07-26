@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -1015,22 +1017,25 @@ void main() {
       expect(json, {'name': 'a1'});
     });
 
-    test('POST /audited sends the writable branch and omits readOnly', () async {
-      final api = buildApi(responseStatus: '200');
+    test(
+      'POST /audited sends the writable branch and omits readOnly',
+      () async {
+        final api = buildApi(responseStatus: '200');
 
-      final response = await api.createAudited(
-        body: const AuditedWidget(
-          auditedWidgetModel: AuditedWidgetModel(),
-          auditedWidgetModel2: AuditedWidgetModel2(name: 'a1'),
-        ),
-      );
+        final response = await api.createAudited(
+          body: const AuditedWidget(
+            auditedWidgetModel: AuditedWidgetModel(),
+            auditedWidgetModel2: AuditedWidgetModel2(name: 'a1'),
+          ),
+        );
 
-      final success = response as TonikSuccess<AuditedWidget>;
-      final requestBody =
-          success.response.requestOptions.data as Map<String, dynamic>;
+        final success = response as TonikSuccess<AuditedWidget>;
+        final requestBody =
+            success.response.requestOptions.data as Map<String, dynamic>;
 
-      expect(requestBody['name'], 'a1');
-      expect(requestBody.containsKey('createdAt'), isFalse);
-    });
+        expect(requestBody['name'], 'a1');
+        expect(requestBody.containsKey('createdAt'), isFalse);
+      },
+    );
   });
 }

@@ -140,7 +140,7 @@ void main() {
         class RegionalServer extends Server {
           RegionalServer({
             this.region = RegionalServerRegion.usEast,
-            super.serverConfig = const ServerConfig(),
+            super.serverConfig = const ServerConfig<Dio>(),
           }) : super(
             baseUrl: r'https://regional.example.com/' '${region.value}',
           );
@@ -212,7 +212,7 @@ void main() {
         class EnvironmentServer extends Server {
           EnvironmentServer({
             this.env = r'prod',
-            super.serverConfig = const ServerConfig(),
+            super.serverConfig = const ServerConfig<Dio>(),
           }) : super(baseUrl: r'https://environment.example.com/' '${env}');
 
           final String env;
@@ -317,7 +317,7 @@ void main() {
           ConfigurableServer({
             this.host = r'localhost',
             this.port = ConfigurableServerPort.eightThousandEighty,
-            super.serverConfig = const ServerConfig(),
+            super.serverConfig = const ServerConfig<Dio>(),
           }) : super(
             baseUrl: r'https://configurable.example.com/' '${host}' r':' '${port.value}' r'/api',
           );
@@ -361,7 +361,7 @@ void main() {
         class RegionalServer extends Server {
           RegionalServer({
             required this.region,
-            super.serverConfig = const ServerConfig(),
+            super.serverConfig = const ServerConfig<Dio>(),
           }) : super(
             baseUrl: r'https://regional.example.com/' '${region.value}',
           );
@@ -425,7 +425,7 @@ void main() {
           MixedServer({
             required this.region,
             this.port = MixedServerPort.fourHundredFortyThree,
-            super.serverConfig = const ServerConfig(),
+            super.serverConfig = const ServerConfig<Dio>(),
           }) : super(
             baseUrl: r'https://mixed.example.com/' '${region.value}' r':' '${port.value}',
           );

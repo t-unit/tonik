@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -27,22 +29,24 @@ void main() {
   }
 
   group('anyOf byte member', () {
-    test('base64-encodes byte member then percent-encodes on the wire',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormByteComposite(
-        anyOfByte: const [
-          AnyOfByte(tonikFile: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF])),
-        ],
-      );
+    test(
+      'base64-encodes byte member then percent-encodes on the wire',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormByteComposite(
+          anyOfByte: const [
+            AnyOfByte(tonikFile: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF])),
+          ],
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'anyOfByte=3q2%2B7w%3D%3D',
-      );
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'anyOfByte=3q2%2B7w%3D%3D',
+        );
+      },
+    );
 
     test('decoder round-trips the encoder output', () {
       const value = AnyOfByte(
@@ -61,22 +65,24 @@ void main() {
   });
 
   group('oneOf byte member', () {
-    test('base64-encodes byte member then percent-encodes on the wire',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormByteComposite(
-        oneOfByte: const <OneOfByte>[
-          OneOfByteBase64(TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF])),
-        ],
-      );
+    test(
+      'base64-encodes byte member then percent-encodes on the wire',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormByteComposite(
+          oneOfByte: const <OneOfByte>[
+            OneOfByteBase64(TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF])),
+          ],
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'oneOfByte=3q2%2B7w%3D%3D',
-      );
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'oneOfByte=3q2%2B7w%3D%3D',
+        );
+      },
+    );
 
     test('decoder round-trips the encoder output', () {
       const value = OneOfByteBase64(TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF]));
@@ -97,22 +103,24 @@ void main() {
   });
 
   group('allOf byte member', () {
-    test('base64-encodes byte member then percent-encodes on the wire',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormByteComposite(
-        allOfByte: const [
-          AllOfByte(tonikFile: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF])),
-        ],
-      );
+    test(
+      'base64-encodes byte member then percent-encodes on the wire',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormByteComposite(
+          allOfByte: const [
+            AllOfByte(tonikFile: TonikFileBytes([0xDE, 0xAD, 0xBE, 0xEF])),
+          ],
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'allOfByte=3q2%2B7w%3D%3D',
-      );
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'allOfByte=3q2%2B7w%3D%3D',
+        );
+      },
+    );
 
     test('decoder round-trips the encoder output', () {
       const value = AllOfByte(

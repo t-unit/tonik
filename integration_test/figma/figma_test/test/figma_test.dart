@@ -20,8 +20,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -33,8 +35,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -46,8 +50,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -59,8 +65,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -74,8 +82,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -89,8 +99,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -787,8 +799,10 @@ void main() {
         CustomServer(
           baseUrl: baseUrl,
           serverConfig: ServerConfig(
-            baseOptions: BaseOptions(
-              headers: {'X-Response-Status': '200'},
+            clientFactory: () => Dio(
+              BaseOptions(
+                headers: {'X-Response-Status': '200'},
+              ),
             ),
           ),
         ),
@@ -810,8 +824,10 @@ void main() {
         CustomServer(
           baseUrl: baseUrl,
           serverConfig: ServerConfig(
-            baseOptions: BaseOptions(
-              headers: {'X-Response-Status': '403'},
+            clientFactory: () => Dio(
+              BaseOptions(
+                headers: {'X-Response-Status': '403'},
+              ),
             ),
           ),
         ),
@@ -830,8 +846,10 @@ void main() {
         CustomServer(
           baseUrl: baseUrl,
           serverConfig: ServerConfig(
-            baseOptions: BaseOptions(
-              headers: {'X-Response-Status': '404'},
+            clientFactory: () => Dio(
+              BaseOptions(
+                headers: {'X-Response-Status': '404'},
+              ),
             ),
           ),
         ),

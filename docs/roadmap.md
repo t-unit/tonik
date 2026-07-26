@@ -44,7 +44,7 @@
 - Example Object `externalValue` URL fetching - external example resolution requires network access at build time; only inline `value` examples are supported
 
 **Other:**
-- Direct security/authentication code generation - authentication must be handled through ServerConfig interceptors (see [Authentication Guide](authentication.md))
+- Direct security/authentication code generation - authentication must be handled through a `ServerConfig<Dio>` client factory (see [Authentication Guide](authentication.md))
 - Code generation for [webhooks](https://spec.openapis.org/oas/v3.1.0.html#oasWebhooks) - server→client callbacks, not relevant for client libs
 - Callback Objects - server→client callbacks, same as webhooks
 - Link Objects - HATEOAS navigation metadata, rarely used in practice

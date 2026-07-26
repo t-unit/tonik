@@ -17,7 +17,7 @@ void main() {
     return MatrixApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(baseOptions: BaseOptions()),
+        serverConfig: ServerConfig(clientFactory: () => Dio(BaseOptions())),
       ),
     );
   }
@@ -222,39 +222,43 @@ void main() {
       );
     });
 
-    test('object with empty property (explode=false) keeps an empty slot',
-        () async {
-      final api = buildMatrixApi();
-      final response = await api.testMatrixObject(
-        value: const SimpleObject(name: '', count: 5),
-      );
+    test(
+      'object with empty property (explode=false) keeps an empty slot',
+      () async {
+        final api = buildMatrixApi();
+        final response = await api.testMatrixObject(
+          value: const SimpleObject(name: '', count: 5),
+        );
 
-      expect(response, isA<TonikSuccess<EchoResponse>>());
-      final success = response as TonikSuccess<EchoResponse>;
-      expect(success.response.statusCode, 200);
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
 
-      expect(
-        success.response.requestOptions.uri.path,
-        '/v1/matrix/object/;value=name,,count,5',
-      );
-    });
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/matrix/object/;value=name,,count,5',
+        );
+      },
+    );
 
-    test('object with empty property (explode=true) encodes name-only pair',
-        () async {
-      final api = buildMatrixApi();
-      final response = await api.testMatrixObjectExplode(
-        value: const SimpleObject(name: '', count: 5),
-      );
+    test(
+      'object with empty property (explode=true) encodes name-only pair',
+      () async {
+        final api = buildMatrixApi();
+        final response = await api.testMatrixObjectExplode(
+          value: const SimpleObject(name: '', count: 5),
+        );
 
-      expect(response, isA<TonikSuccess<EchoResponse>>());
-      final success = response as TonikSuccess<EchoResponse>;
-      expect(success.response.statusCode, 200);
+        expect(response, isA<TonikSuccess<EchoResponse>>());
+        final success = response as TonikSuccess<EchoResponse>;
+        expect(success.response.statusCode, 200);
 
-      expect(
-        success.response.requestOptions.uri.path,
-        '/v1/matrix/object/explode/;name;count=5',
-      );
-    });
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/matrix/object/explode/;name;count=5',
+        );
+      },
+    );
   });
 
   group('Matrix style - Combined', () {

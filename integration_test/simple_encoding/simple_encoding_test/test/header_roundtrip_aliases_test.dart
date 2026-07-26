@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -106,21 +108,25 @@ void main() {
         expect(success.value.xUserName, userName);
       });
 
-      test('sends empty string as an empty header, decoded back as null',
-          () async {
-        const userName = '';
+      test(
+        'sends empty string as an empty header, decoded back as null',
+        () async {
+          const userName = '';
 
-        final result = await api.testHeaderRoundtripAliases(userName: userName);
+          final result = await api.testHeaderRoundtripAliases(
+            userName: userName,
+          );
 
-        expect(
-          result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
-        );
-        final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.response.requestOptions.headers['X-User-Name'], '');
-        expect(success.value.xUserName, isNull);
-      });
+          expect(
+            result,
+            isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          );
+          final success =
+              result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+          expect(success.response.requestOptions.headers['X-User-Name'], '');
+          expect(success.value.xUserName, isNull);
+        },
+      );
 
       test('roundtrips UserName with special characters', () async {
         const userName = 'user@example.com';
@@ -136,18 +142,22 @@ void main() {
         expect(success.value.xUserName, isNotNull);
       });
 
-      test('UserName with non-ASCII characters cannot be sent literally',
-          () async {
-        // HTTP forbids non-ASCII header octets, so the transport rejects it.
-        const userName = 'José García';
+      test(
+        'UserName with non-ASCII characters cannot be sent literally',
+        () async {
+          // HTTP forbids non-ASCII header octets, so the transport rejects it.
+          const userName = 'José García';
 
-        final result = await api.testHeaderRoundtripAliases(userName: userName);
+          final result = await api.testHeaderRoundtripAliases(
+            userName: userName,
+          );
 
-        expect(
-          result,
-          isA<TonikError<HeadersRoundtripAliasesGet200Response>>(),
-        );
-      });
+          expect(
+            result,
+            isA<TonikError<HeadersRoundtripAliasesGet200Response>>(),
+          );
+        },
+      );
     });
 
     group('Timestamp (alias for DateTime)', () {

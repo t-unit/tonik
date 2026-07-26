@@ -18,28 +18,31 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(headers: {'X-Response-Status': '200'}),
+          clientFactory: () =>
+              Dio(BaseOptions(headers: {'X-Response-Status': '200'})),
         ),
       ),
     );
   }
 
   group('Simple path nullable array', () {
-    test('string array escapes special chars and encodes null as empty',
-        () async {
-      final api = buildApi();
-      final response = await api.testSimplePathNullableStringArray(
-        values: ['hello world', 'foo/bar', null],
-      );
+    test(
+      'string array escapes special chars and encodes null as empty',
+      () async {
+        final api = buildApi();
+        final response = await api.testSimplePathNullableStringArray(
+          values: ['hello world', 'foo/bar', null],
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(success.response.statusCode, 200);
-      expect(
-        success.response.requestOptions.uri.path,
-        '/v1/simple/array/nullable-string/hello%20world,foo%2Fbar,',
-      );
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(success.response.statusCode, 200);
+        expect(
+          success.response.requestOptions.uri.path,
+          '/v1/simple/array/nullable-string/hello%20world,foo%2Fbar,',
+        );
+      },
+    );
 
     test('integer array encodes null element as empty', () async {
       final api = buildApi();

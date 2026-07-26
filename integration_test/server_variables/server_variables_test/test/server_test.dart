@@ -1,5 +1,7 @@
+import 'package:dio/dio.dart';
 import 'package:server_variables_api/server_variables_api.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   group('Static server', () {
@@ -172,6 +174,65 @@ void main() {
       expect(Server5(), isA<Server>());
       expect(Server6(zone: Server6Zone.usEast), isA<Server>());
       expect(CustomServer(baseUrl: 'https://test.com'), isA<Server>());
+    });
+  });
+
+  group('Dio client resolution', () {
+    test('borrows an injected Dio lazily and preserves its identity', () {
+      const injectedBaseUrl = 'https://injected.example.com';
+      const serverBaseUrl = 'https://server.example.com';
+      final injected = Dio(BaseOptions(baseUrl: injectedBaseUrl));
+      final server = CustomServer(
+        baseUrl: serverBaseUrl,
+        serverConfig: ServerConfig<Dio>(client: injected),
+      );
+
+      expect(injected.options.baseUrl, injectedBaseUrl);
+
+      final resolved = server.dio;
+
+      expect(resolved, same(injected));
+      expect(resolved.options.baseUrl, serverBaseUrl);
+      expect(server.dio, same(resolved));
+    });
+
+    test(
+      'invokes a Dio factory lazily once and applies the server URL last',
+      () {
+        const factoryBaseUrl = 'https://factory.example.com';
+        const serverBaseUrl = 'https://server.example.com';
+        var factoryCalls = 0;
+        late Dio created;
+        final server = CustomServer(
+          baseUrl: serverBaseUrl,
+          serverConfig: ServerConfig<Dio>(
+            clientFactory: () {
+              factoryCalls++;
+              return created = Dio(BaseOptions(baseUrl: factoryBaseUrl));
+            },
+          ),
+        );
+
+        expect(factoryCalls, 0);
+
+        final resolved = server.dio;
+
+        expect(factoryCalls, 1);
+        expect(resolved, same(created));
+        expect(resolved.options.baseUrl, serverBaseUrl);
+        expect(server.dio, same(resolved));
+        expect(factoryCalls, 1);
+      },
+    );
+
+    test('creates one default Dio lazily and applies the server URL', () {
+      const serverBaseUrl = 'https://server.example.com';
+      final server = CustomServer(baseUrl: serverBaseUrl);
+
+      final resolved = server.dio;
+
+      expect(resolved.options.baseUrl, serverBaseUrl);
+      expect(server.dio, same(resolved));
     });
   });
 }

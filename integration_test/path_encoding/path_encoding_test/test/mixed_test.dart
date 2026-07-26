@@ -17,7 +17,7 @@ void main() {
     return LabelApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(baseOptions: BaseOptions()),
+        serverConfig: ServerConfig(clientFactory: () => Dio(BaseOptions())),
       ),
     );
   }

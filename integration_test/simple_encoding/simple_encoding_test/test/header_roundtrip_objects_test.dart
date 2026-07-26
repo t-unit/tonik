@@ -19,8 +19,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -342,24 +344,26 @@ void main() {
     });
 
     group('delimiter collision', () {
-      test('a comma inside an object value cannot round-trip: it is '
-          'transmitted literally and decode reads it as a new key/value',
-          () async {
-        // Literal encoding doesn't escape the `,` delimiter, so an in-value
-        // comma can't round-trip.
-        final api = buildApi(responseStatus: '200');
-        final response = await api.testHeaderRoundtripObjects(
-          simpleObject: const SimpleObject(name: 'a,b', value: 5),
-        );
+      test(
+        'a comma inside an object value cannot round-trip: it is '
+        'transmitted literally and decode reads it as a new key/value',
+        () async {
+          // Literal encoding doesn't escape the `,` delimiter, so an in-value
+          // comma can't round-trip.
+          final api = buildApi(responseStatus: '200');
+          final response = await api.testHeaderRoundtripObjects(
+            simpleObject: const SimpleObject(name: 'a,b', value: 5),
+          );
 
-        final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
-        expect(
-          success.response.requestOptions.headers['X-Simple-Object'],
-          'name,a,b,value,5',
-        );
-        expect(success.value.xSimpleObject?.name, 'a');
-      });
+          final success =
+              response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+          expect(
+            success.response.requestOptions.headers['X-Simple-Object'],
+            'name,a,b,value,5',
+          );
+          expect(success.value.xSimpleObject?.name, 'a');
+        },
+      );
     });
 
     group('server-originated composite response', () {
@@ -371,11 +375,13 @@ void main() {
           CustomServer(
             baseUrl: baseUrl,
             serverConfig: ServerConfig(
-              baseOptions: BaseOptions(
-                headers: {
-                  'X-Response-Status': '200',
-                  'X-Simple-Object': 'name,x%2Fy 50%,value,9',
-                },
+              clientFactory: () => Dio(
+                BaseOptions(
+                  headers: {
+                    'X-Response-Status': '200',
+                    'X-Simple-Object': 'name,x%2Fy 50%,value,9',
+                  },
+                ),
               ),
             ),
           ),

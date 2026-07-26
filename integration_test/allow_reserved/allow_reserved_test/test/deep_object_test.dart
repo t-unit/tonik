@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -29,8 +31,7 @@ void main() {
   const objectValue = {'k1': 'a/b:c?d@e;f', 'k2': 'g&h=i+j k#l[m]n'};
 
   group('deepObject allowReserved', () {
-    test(
-        'keeps reserved value survivors literal, encodes form delimiters, '
+    test('keeps reserved value survivors literal, encodes form delimiters, '
         'brackets and hash, and leaves the name brackets intact', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testDeepObjectAllowReserved(

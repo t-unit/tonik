@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -27,36 +29,40 @@ void main() {
   }
 
   group('form object with unset optional members and allowEmptyValue', () {
-    test('omits unset optional members from explode and non-explode params',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormPartialObject(
-        filter: const PartialFilter(name: 'alice'),
-        sort: const PartialFilter(name: 'alice'),
-      );
+    test(
+      'omits unset optional members from explode and non-explode params',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormPartialObject(
+          filter: const PartialFilter(name: 'alice'),
+          sort: const PartialFilter(name: 'alice'),
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'name=alice&sort=name,alice',
-      );
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'name=alice&sort=name,alice',
+        );
+      },
+    );
 
-    test('keeps a defined empty-string member as a named empty value',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormPartialObject(
-        filter: const PartialFilter(name: 'alice', nickname: ''),
-        sort: const PartialFilter(name: 'alice', nickname: ''),
-      );
+    test(
+      'keeps a defined empty-string member as a named empty value',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormPartialObject(
+          filter: const PartialFilter(name: 'alice', nickname: ''),
+          sort: const PartialFilter(name: 'alice', nickname: ''),
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'name=alice&nickname=&sort=name,alice,nickname,',
-      );
-    });
+        expect(response, isA<TonikSuccess<void>>());
+        final success = response as TonikSuccess<void>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'name=alice&nickname=&sort=name,alice,nickname,',
+        );
+      },
+    );
   });
 }
