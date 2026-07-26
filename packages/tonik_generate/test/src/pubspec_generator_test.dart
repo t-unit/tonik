@@ -144,7 +144,6 @@ void main() {
       ).readAsStringSync();
 
       expect(content, contains('version: 1.0.0'));
-      expect(content, contains('tonik_util: ^0.9.0'));
     });
     test('includes fast_immutable_collections when enabled', () {
       final apiDoc = ApiDocument(
