@@ -17,9 +17,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -43,10 +45,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>>(),
+        isA<
+          TonikSuccess<
+            HeadersRoundtripAllofPrimitivesGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>;
+          result
+              as TonikSuccess<
+                HeadersRoundtripAllofPrimitivesGet200Response,
+                Response<Object?>
+              >;
 
       expect(
         success.response.requestOptions.headers['X-Merged-Object'],
@@ -70,10 +81,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>>(),
+        isA<
+          TonikSuccess<
+            HeadersRoundtripAllofPrimitivesGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>;
+          result
+              as TonikSuccess<
+                HeadersRoundtripAllofPrimitivesGet200Response,
+                Response<Object?>
+              >;
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel2.id, 'onlyId');
     });
@@ -88,10 +108,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>>(),
+        isA<
+          TonikSuccess<
+            HeadersRoundtripAllofPrimitivesGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>;
+          result
+              as TonikSuccess<
+                HeadersRoundtripAllofPrimitivesGet200Response,
+                Response<Object?>
+              >;
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, 99);
     });
@@ -106,10 +135,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>>(),
+        isA<
+          TonikSuccess<
+            HeadersRoundtripAllofPrimitivesGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>;
+          result
+              as TonikSuccess<
+                HeadersRoundtripAllofPrimitivesGet200Response,
+                Response<Object?>
+              >;
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, -5);
       expect(success.value.xMergedObject!.allOfPrimitiveModel2.id, 'neg');
@@ -123,12 +161,18 @@ void main() {
 
           expect(
             result,
-            isA<TonikSuccess<HeadersRoundtripAllofPrimitivesGet200Response>>(),
+            isA<
+              TonikSuccess<
+                HeadersRoundtripAllofPrimitivesGet200Response,
+                Response<Object?>
+              >
+            >(),
           );
           final success =
               result
                   as TonikSuccess<
-                    HeadersRoundtripAllofPrimitivesGet200Response
+                    HeadersRoundtripAllofPrimitivesGet200Response,
+                    Response<Object?>
                   >;
           expect(
             success.response.requestOptions.headers['X-Merged-Object'],

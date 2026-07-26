@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:form_urlencoded_api/form_urlencoded_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -21,10 +22,12 @@ void main() {
 
       final response = await api.postCustomForm(body: form);
 
-      expect(response, isA<TonikSuccess<CustomForm>>());
+      expect(response, isA<TonikSuccess<CustomForm, Response<Object?>>>());
 
       final requestOptions =
-          (response as TonikSuccess<CustomForm>).response.requestOptions;
+          (response as TonikSuccess<CustomForm, Response<Object?>>)
+              .response
+              .requestOptions;
       final contentType = requestOptions.headers['content-type'];
       expect(contentType, 'application/vnd.custom-form');
 
@@ -41,10 +44,13 @@ void main() {
 
       final response = await api.postCustomForm(body: form);
 
-      expect(response, isA<TonikSuccess<CustomForm>>());
+      expect(response, isA<TonikSuccess<CustomForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<CustomForm>).response.requestOptions.data;
+          (response as TonikSuccess<CustomForm, Response<Object?>>)
+              .response
+              .requestOptions
+              .data;
       expect(requestData, 'field1=first+second+third&field2=50');
 
       final data = response.value;

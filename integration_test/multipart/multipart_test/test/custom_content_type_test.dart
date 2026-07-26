@@ -22,9 +22,10 @@ void main() {
 
       final response = await api.postCustomMultipart(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success =
+          response as TonikSuccess<GenericResponse, Response<Object?>>;
       final requestData = success.response.requestOptions.data;
 
       // The body should be FormData because the custom content type is
@@ -48,9 +49,13 @@ void main() {
 
         final response = await api.postCustomMultipart(body: form);
 
-        expect(response, isA<TonikSuccess<GenericResponse>>());
+        expect(
+          response,
+          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+        );
 
-        final success = response as TonikSuccess<GenericResponse>;
+        final success =
+            response as TonikSuccess<GenericResponse, Response<Object?>>;
 
         // Known limitation: Dio replaces content type with
         // multipart/form-data; boundary=... when body is FormData.

@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:form_urlencoded_api/form_urlencoded_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -28,11 +29,20 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FormMultiContentRequestPost200Response>>(),
+        isA<
+          TonikSuccess<
+            FormMultiContentRequestPost200Response,
+            Response<Object?>
+          >
+        >(),
       );
 
       final contentType =
-          (response as TonikSuccess<FormMultiContentRequestPost200Response>)
+          (response
+                  as TonikSuccess<
+                    FormMultiContentRequestPost200Response,
+                    Response<Object?>
+                  >)
               .response
               .requestOptions
               .headers['content-type'];
@@ -60,10 +70,19 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FormMultiContentResponseGet200Response>>(),
+        isA<
+          TonikSuccess<
+            FormMultiContentResponseGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final data =
-          (response as TonikSuccess<FormMultiContentResponseGet200Response>)
+          (response
+                  as TonikSuccess<
+                    FormMultiContentResponseGet200Response,
+                    Response<Object?>
+                  >)
               .value;
       expect(
         data,
@@ -95,11 +114,17 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FormMultiContentBothPost200Response>>(),
+        isA<
+          TonikSuccess<FormMultiContentBothPost200Response, Response<Object?>>
+        >(),
       );
 
       final contentType =
-          (response as TonikSuccess<FormMultiContentBothPost200Response>)
+          (response
+                  as TonikSuccess<
+                    FormMultiContentBothPost200Response,
+                    Response<Object?>
+                  >)
               .response
               .requestOptions
               .headers['content-type'];

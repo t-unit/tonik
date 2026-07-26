@@ -17,9 +17,11 @@ void main() {
     return UserApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -33,7 +35,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/user',
@@ -45,7 +48,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -54,7 +58,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -65,8 +70,12 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<GetUserResponse>>());
-        final success = response as TonikSuccess<GetUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<GetUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetUserResponse200>());
       });
@@ -76,7 +85,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response200 = success.value as GetUserResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -86,7 +96,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response200 = success.value as GetUserResponse200;
         expect(response200.body.body, isA<UserGet>());
       });
@@ -96,7 +107,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response200 = success.value as GetUserResponse200;
         expect(response200.body.body.username, isA<String>());
       });
@@ -106,7 +118,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response200 = success.value as GetUserResponse200;
         expect(response200.body.body.settings, isA<UserSettings>());
       });
@@ -116,7 +129,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response200 = success.value as GetUserResponse200;
         expect(response200.body.body.dateCreated, isA<int>());
       });
@@ -126,7 +140,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response200 = success.value as GetUserResponse200;
         expect(response200.body.body.dateUpdated, isA<int>());
       });
@@ -138,8 +153,12 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<GetUserResponse>>());
-        final success = response as TonikSuccess<GetUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<GetUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetUserResponse400>());
       });
@@ -149,7 +168,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response400 = success.value as GetUserResponse400;
         expect(response400.body, isA<BadRequestError>());
         expect(
@@ -165,8 +185,12 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<GetUserResponse>>());
-        final success = response as TonikSuccess<GetUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<GetUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetUserResponse401>());
       });
@@ -176,7 +200,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response401 = success.value as GetUserResponse401;
         expect(response401.body, isA<UnauthorisedError>());
         expect(response401.body.body.error.code, isA<int>());
@@ -187,8 +212,12 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<GetUserResponse>>());
-        final success = response as TonikSuccess<GetUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<GetUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetUserResponse404>());
       });
@@ -198,8 +227,12 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<GetUserResponse>>());
-        final success = response as TonikSuccess<GetUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<GetUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetUserResponse500>());
       });
@@ -209,7 +242,8 @@ void main() {
 
         final response = await api.getUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserResponse>;
+        final success =
+            response as TonikSuccess<GetUserResponse, Response<Object?>>;
         final response500 = success.value as GetUserResponse500;
         expect(response500.body, isA<InternalServerError>());
         expect(
@@ -232,7 +266,8 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/user',
@@ -247,7 +282,8 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(success.response.requestOptions.method, 'PATCH');
       });
 
@@ -259,7 +295,8 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(
           success.response.requestOptions.contentType,
           'application/json',
@@ -276,7 +313,8 @@ void main() {
           body: const UserPatch(username: 'newUsername'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['username'], 'newUsername');
@@ -290,7 +328,8 @@ void main() {
           body: const UserPatch(password: 'newPassword'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody.containsKey('username'), isFalse);
@@ -304,7 +343,8 @@ void main() {
           body: const UserPatch(password: 'secureP@ss123!'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['password'], 'secureP@ss123!');
@@ -318,7 +358,8 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody.containsKey('password'), isFalse);
@@ -337,7 +378,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['settings'], isA<Map<String, dynamic>>());
@@ -353,7 +395,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         final settings = requestBody['settings'] as Map<String, dynamic>;
@@ -370,7 +413,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         final settings = requestBody['settings'] as Map<String, dynamic>;
@@ -387,7 +431,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         final settings = requestBody['settings'] as Map<String, dynamic>;
@@ -406,7 +451,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['username'], 'fullUpdate');
@@ -422,7 +468,8 @@ void main() {
           body: const UserPatch(username: 'user+test_123'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['username'], 'user+test_123');
@@ -436,7 +483,8 @@ void main() {
           body: const UserPatch(password: r'p@$$w0rd!#%&*<>"'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['password'], r'p@$$w0rd!#%&*<>"');
@@ -452,8 +500,12 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(response, isA<TonikSuccess<PatchUserResponse>>());
-        final success = response as TonikSuccess<PatchUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<PatchUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(success.value, isA<PatchUserResponse200>());
       });
@@ -466,7 +518,8 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final response200 = success.value as PatchUserResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -479,7 +532,8 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final response200 = success.value as PatchUserResponse200;
         expect(response200.body.body, isA<UserGet>());
       });
@@ -494,8 +548,12 @@ void main() {
           body: const UserPatch(username: 'x'),
         );
 
-        expect(response, isA<TonikSuccess<PatchUserResponse>>());
-        final success = response as TonikSuccess<PatchUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<PatchUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 400);
         expect(success.value, isA<PatchUserResponse400>());
       });
@@ -508,7 +566,8 @@ void main() {
           body: const UserPatch(username: 'x'),
         );
 
-        final success = response as TonikSuccess<PatchUserResponse>;
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         final response400 = success.value as PatchUserResponse400;
         expect(response400.body, isA<BadRequestError>());
         expect(
@@ -527,8 +586,12 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(response, isA<TonikSuccess<PatchUserResponse>>());
-        final success = response as TonikSuccess<PatchUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<PatchUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 401);
         expect(success.value, isA<PatchUserResponse401>());
       });
@@ -541,8 +604,12 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(response, isA<TonikSuccess<PatchUserResponse>>());
-        final success = response as TonikSuccess<PatchUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<PatchUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 403);
         expect(success.value, isA<PatchUserResponse403>());
       });
@@ -555,8 +622,12 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(response, isA<TonikSuccess<PatchUserResponse>>());
-        final success = response as TonikSuccess<PatchUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<PatchUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 404);
         expect(success.value, isA<PatchUserResponse404>());
       });
@@ -569,8 +640,12 @@ void main() {
           body: const UserPatch(username: 'existingUser'),
         );
 
-        expect(response, isA<TonikSuccess<PatchUserResponse>>());
-        final success = response as TonikSuccess<PatchUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<PatchUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 409);
         expect(success.value, isA<PatchUserResponse409>());
       });
@@ -583,8 +658,12 @@ void main() {
           body: const UserPatch(username: 'test'),
         );
 
-        expect(response, isA<TonikSuccess<PatchUserResponse>>());
-        final success = response as TonikSuccess<PatchUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<PatchUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<PatchUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 500);
         expect(success.value, isA<PatchUserResponse500>());
       });
@@ -598,7 +677,8 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/user',
@@ -610,7 +690,8 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(success.response.requestOptions.method, 'DELETE');
       });
 
@@ -619,7 +700,8 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -630,8 +712,12 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<DeleteUserResponse>>());
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<DeleteUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 204);
         expect(success.value, isA<DeleteUserResponse204>());
       });
@@ -641,7 +727,8 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         final responseData = success.response.data as List<int>?;
         expect(responseData == null || responseData.isEmpty, isTrue);
       });
@@ -653,8 +740,12 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<DeleteUserResponse>>());
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<DeleteUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 400);
         expect(success.value, isA<DeleteUserResponse400>());
       });
@@ -664,8 +755,12 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<DeleteUserResponse>>());
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<DeleteUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 401);
         expect(success.value, isA<DeleteUserResponse401>());
       });
@@ -675,8 +770,12 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<DeleteUserResponse>>());
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<DeleteUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 403);
         expect(success.value, isA<DeleteUserResponse403>());
       });
@@ -686,8 +785,12 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<DeleteUserResponse>>());
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<DeleteUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 404);
         expect(success.value, isA<DeleteUserResponse404>());
       });
@@ -697,8 +800,12 @@ void main() {
 
         final response = await api.deleteUser(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<DeleteUserResponse>>());
-        final success = response as TonikSuccess<DeleteUserResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<DeleteUserResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
         expect(success.response.statusCode, 500);
         expect(success.value, isA<DeleteUserResponse500>());
       });
@@ -712,7 +819,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/user/usage',
@@ -724,7 +832,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -733,7 +842,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -744,8 +854,12 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<GetUserUsageResponse>>());
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<GetUserUsageResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetUserUsageResponse200>());
       });
@@ -755,7 +869,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         final response200 = success.value as GetUserUsageResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -765,7 +880,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         final response200 = success.value as GetUserUsageResponse200;
         expect(response200.body.body, isA<UserUsageGet>());
       });
@@ -775,7 +891,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         final response200 = success.value as GetUserUsageResponse200;
         expect(response200.body.body.cpu, isA<UserUsageGetCpuModel>());
       });
@@ -785,7 +902,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         final response200 = success.value as GetUserUsageResponse200;
         expect(response200.body.body.memory, isA<UserUsageGetMemoryModel>());
       });
@@ -795,7 +913,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         final response200 = success.value as GetUserUsageResponse200;
         expect(response200.body.body.disk, isA<UserUsageGetDiskModel>());
       });
@@ -807,8 +926,12 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<GetUserUsageResponse>>());
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<GetUserUsageResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetUserUsageResponse401>());
       });
@@ -818,7 +941,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         final response401 = success.value as GetUserUsageResponse401;
         expect(response401.body, isA<UnauthorisedError>());
         expect(response401.body.body.error.code, isA<int>());
@@ -829,8 +953,12 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        expect(response, isA<TonikSuccess<GetUserUsageResponse>>());
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        expect(
+          response,
+          isA<TonikSuccess<GetUserUsageResponse, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetUserUsageResponse500>());
       });
@@ -840,7 +968,8 @@ void main() {
 
         final response = await api.getUserUsage(meSess: 'test_session');
 
-        final success = response as TonikSuccess<GetUserUsageResponse>;
+        final success =
+            response as TonikSuccess<GetUserUsageResponse, Response<Object?>>;
         final response500 = success.value as GetUserUsageResponse500;
         expect(response500.body, isA<InternalServerError>());
         expect(

@@ -17,9 +17,11 @@ void main() {
     return FilesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -32,9 +34,18 @@ void main() {
 
       final result = await filesApi.getMultiContentType(format: 'json');
 
-      expect(result, isA<TonikSuccess<BinaryMultiContentTypeGet200Response>>());
+      expect(
+        result,
+        isA<
+          TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>
+        >(),
+      );
       final success =
-          result as TonikSuccess<BinaryMultiContentTypeGet200Response>;
+          result
+              as TonikSuccess<
+                BinaryMultiContentTypeGet200Response,
+                Response<Object?>
+              >;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<BinaryMultiContentTypeGet200ResponseJson>());
@@ -52,9 +63,18 @@ void main() {
 
       final result = await filesApi.getMultiContentType(format: 'binary');
 
-      expect(result, isA<TonikSuccess<BinaryMultiContentTypeGet200Response>>());
+      expect(
+        result,
+        isA<
+          TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>
+        >(),
+      );
       final success =
-          result as TonikSuccess<BinaryMultiContentTypeGet200Response>;
+          result
+              as TonikSuccess<
+                BinaryMultiContentTypeGet200Response,
+                Response<Object?>
+              >;
 
       expect(success.response.statusCode, 200);
       expect(
@@ -76,8 +96,18 @@ void main() {
 
       final result = await filesApi.getBinaryWithHeaders(id: 'test-file');
 
-      expect(result, isA<TonikSuccess<BinaryWithHeadersIdGet200Response>>());
-      final success = result as TonikSuccess<BinaryWithHeadersIdGet200Response>;
+      expect(
+        result,
+        isA<
+          TonikSuccess<BinaryWithHeadersIdGet200Response, Response<Object?>>
+        >(),
+      );
+      final success =
+          result
+              as TonikSuccess<
+                BinaryWithHeadersIdGet200Response,
+                Response<Object?>
+              >;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<BinaryWithHeadersIdGet200Response>());

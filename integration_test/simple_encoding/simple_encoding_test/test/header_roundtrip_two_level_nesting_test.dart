@@ -17,9 +17,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -43,10 +45,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripDeepTwoLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripDeepTwoLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfBool;
         expect(decoded.value, true);
@@ -61,10 +72,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripDeepTwoLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripDeepTwoLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfBool;
         expect(decoded.value, false);
@@ -82,10 +102,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripDeepTwoLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripDeepTwoLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelInt>());
@@ -103,10 +132,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripDeepTwoLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripDeepTwoLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelInt>());
@@ -124,10 +162,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripDeepTwoLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripDeepTwoLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelInt>());
@@ -147,10 +194,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripDeepTwoLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripDeepTwoLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelString>());
@@ -168,10 +224,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripDeepTwoLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripDeepTwoLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfOneOf>());
         final decoded = success.value.xTwoLevelOneOf! as TwoLevelOneOfOneOf;
         expect(decoded.value, isA<TwoLevelOneOfModelString>());
@@ -197,10 +262,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+        isA<
+          TonikSuccess<
+            HeadersRoundtripDeepTwoLevelGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+          result
+              as TonikSuccess<
+                HeadersRoundtripDeepTwoLevelGet200Response,
+                Response<Object?>
+              >;
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
       expect(decoded.twoLevelAllOfModel.active, true);
@@ -229,10 +303,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+        isA<
+          TonikSuccess<
+            HeadersRoundtripDeepTwoLevelGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+          result
+              as TonikSuccess<
+                HeadersRoundtripDeepTwoLevelGet200Response,
+                Response<Object?>
+              >;
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
       expect(decoded.twoLevelAllOfModel.active, false);
@@ -261,10 +344,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+        isA<
+          TonikSuccess<
+            HeadersRoundtripDeepTwoLevelGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+          result
+              as TonikSuccess<
+                HeadersRoundtripDeepTwoLevelGet200Response,
+                Response<Object?>
+              >;
       expect(success.value.xTwoLevelAllOf, isNotNull);
       final decoded = success.value.xTwoLevelAllOf!;
       expect(decoded.twoLevelAllOfModel.active, true);
@@ -297,10 +389,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>>(),
+        isA<
+          TonikSuccess<
+            HeadersRoundtripDeepTwoLevelGet200Response,
+            Response<Object?>
+          >
+        >(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripDeepTwoLevelGet200Response>;
+          result
+              as TonikSuccess<
+                HeadersRoundtripDeepTwoLevelGet200Response,
+                Response<Object?>
+              >;
 
       expect(success.value.xTwoLevelOneOf, isA<TwoLevelOneOfBool>());
       expect(

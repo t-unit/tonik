@@ -17,9 +17,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -46,13 +48,17 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<
+              HeadersRoundtripComplexDynamicCompositeGet200Response,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
         expect(
           success.value.xDynamicValue!.flexibleValue!.string,
@@ -72,13 +78,17 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<
+              HeadersRoundtripComplexDynamicCompositeGet200Response,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
         expect(success.value.xDynamicValue!.flexibleValue!.int, 42);
       });
@@ -95,13 +105,17 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<
+              HeadersRoundtripComplexDynamicCompositeGet200Response,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
         expect(success.value.xDynamicValue!.flexibleValue!.bool, isTrue);
       });
@@ -122,16 +136,19 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<
+              HeadersRoundtripComplexDynamicCompositeGet200Response,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
-        final object =
-            success.value.xDynamicValue!.flexibleValue!.simpleObject;
+        final object = success.value.xDynamicValue!.flexibleValue!.simpleObject;
         expect(object?.name, 'test-object');
         expect(object?.value, 100);
       });
@@ -154,13 +171,17 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<
+              HeadersRoundtripComplexDynamicCompositeGet200Response,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
         final entity = success.value.xDynamicValue!.entityType;
         expect(entity, isA<EntityTypeCompanyEntity>());
@@ -187,13 +208,17 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<
+              HeadersRoundtripComplexDynamicCompositeGet200Response,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
         final entity = success.value.xDynamicValue!.entityType;
         expect(entity, isA<EntityTypePersonEntity>());
@@ -225,13 +250,17 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<
+              HeadersRoundtripComplexDynamicCompositeGet200Response,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
         final composite = success.value.xDynamicValue!.compositeEntity;
         expect(composite?.baseEntity.name, 'entity-123');
@@ -259,58 +288,68 @@ void main() {
         expect(
           result,
           isA<
-            TonikError<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikError<
+              HeadersRoundtripComplexDynamicCompositeGet200Response,
+              Response<Object?>
+            >
           >(),
         );
         final error =
             result
                 as TonikError<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
         expect(error.type, TonikErrorType.encoding);
       });
 
-      test('two complex variants merge into one property map and decode back',
-          () async {
-        // Both variants share one merged property map, so either decodes
-        // from it.
-        const company = CompanyEntity(
-          $type: CompanyEntityTypeModel.company,
-          companyName: 'Acme',
-        );
-        final input = DynamicCompositeValue(
-          entityType: const EntityTypeCompanyEntity(company),
-          compositeEntity: CompositeEntity(
-            baseEntity: const BaseEntity(name: 'id'),
-            timestampMixin: TimestampMixin(
-              createdAt: DateTime.utc(2024),
-              updatedAt: DateTime.utc(2024),
+      test(
+        'two complex variants merge into one property map and decode back',
+        () async {
+          // Both variants share one merged property map, so either decodes
+          // from it.
+          const company = CompanyEntity(
+            $type: CompanyEntityTypeModel.company,
+            companyName: 'Acme',
+          );
+          final input = DynamicCompositeValue(
+            entityType: const EntityTypeCompanyEntity(company),
+            compositeEntity: CompositeEntity(
+              baseEntity: const BaseEntity(name: 'id'),
+              timestampMixin: TimestampMixin(
+                createdAt: DateTime.utc(2024),
+                updatedAt: DateTime.utc(2024),
+              ),
+              compositeEntityModel: const CompositeEntityModel(
+                specificField: 'name',
+              ),
             ),
-            compositeEntityModel: const CompositeEntityModel(
-              specificField: 'name',
-            ),
-          ),
-        );
+          );
 
-        final result = await api.testHeaderRoundtripDynamicComposite(
-          dynamicValue: input,
-        );
+          final result = await api.testHeaderRoundtripDynamicComposite(
+            dynamicValue: input,
+          );
 
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
-        final value = success.value.xDynamicValue!;
-        final entity = value.entityType;
-        expect(entity, isA<EntityTypeCompanyEntity>());
-        expect((entity! as EntityTypeCompanyEntity).value.companyName, 'Acme');
-        expect(value.compositeEntity?.baseEntity.name, 'id');
-        expect(
-          value.compositeEntity?.compositeEntityModel.specificField,
-          'name',
-        );
-      });
+          final success =
+              result
+                  as TonikSuccess<
+                    HeadersRoundtripComplexDynamicCompositeGet200Response,
+                    Response<Object?>
+                  >;
+          final value = success.value.xDynamicValue!;
+          final entity = value.entityType;
+          expect(entity, isA<EntityTypeCompanyEntity>());
+          expect(
+            (entity! as EntityTypeCompanyEntity).value.companyName,
+            'Acme',
+          );
+          expect(value.compositeEntity?.baseEntity.name, 'id');
+          expect(
+            value.compositeEntity?.compositeEntityModel.specificField,
+            'name',
+          );
+        },
+      );
     });
 
     group('server-originated response', () {
@@ -321,12 +360,14 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig(
-              baseOptions: BaseOptions(
-                headers: {
-                  'X-Response-Status': '200',
-                  'X-Dynamic-Value': 'name,x%2Fy 50%,value,9',
-                },
+            serverConfig: ServerConfig.clientFactory(
+              () => Dio(
+                BaseOptions(
+                  headers: {
+                    'X-Response-Status': '200',
+                    'X-Dynamic-Value': 'name,x%2Fy 50%,value,9',
+                  },
+                ),
               ),
             ),
           ),
@@ -337,7 +378,8 @@ void main() {
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexDynamicCompositeGet200Response
+                  HeadersRoundtripComplexDynamicCompositeGet200Response,
+                  Response<Object?>
                 >;
         expect(success.value.xDynamicValue, isNotNull);
         expect(success.value.xDynamicValue!.flexibleValue, isNotNull);

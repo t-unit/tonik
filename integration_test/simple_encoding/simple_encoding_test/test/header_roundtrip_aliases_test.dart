@@ -17,9 +17,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -41,10 +43,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserId, userId);
       });
 
@@ -55,10 +66,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserId, userId);
       });
 
@@ -69,10 +89,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserId, userId);
       });
 
@@ -83,10 +112,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserId, userId);
       });
     });
@@ -99,28 +137,50 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserName, userName);
       });
 
-      test('sends empty string as an empty header, decoded back as null',
-          () async {
-        const userName = '';
+      test(
+        'sends empty string as an empty header, decoded back as null',
+        () async {
+          const userName = '';
 
-        final result = await api.testHeaderRoundtripAliases(userName: userName);
+          final result = await api.testHeaderRoundtripAliases(
+            userName: userName,
+          );
 
-        expect(
-          result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
-        );
-        final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
-        expect(success.response.requestOptions.headers['X-User-Name'], '');
-        expect(success.value.xUserName, isNull);
-      });
+          expect(
+            result,
+            isA<
+              TonikSuccess<
+                HeadersRoundtripAliasesGet200Response,
+                Response<Object?>
+              >
+            >(),
+          );
+          final success =
+              result
+                  as TonikSuccess<
+                    HeadersRoundtripAliasesGet200Response,
+                    Response<Object?>
+                  >;
+          expect(success.response.requestOptions.headers['X-User-Name'], '');
+          expect(success.value.xUserName, isNull);
+        },
+      );
 
       test('roundtrips UserName with special characters', () async {
         const userName = 'user@example.com';
@@ -129,25 +189,43 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserName, isNotNull);
       });
 
-      test('UserName with non-ASCII characters cannot be sent literally',
-          () async {
-        // HTTP forbids non-ASCII header octets, so the transport rejects it.
-        const userName = 'José García';
+      test(
+        'UserName with non-ASCII characters cannot be sent literally',
+        () async {
+          // HTTP forbids non-ASCII header octets, so the transport rejects it.
+          const userName = 'José García';
 
-        final result = await api.testHeaderRoundtripAliases(userName: userName);
+          final result = await api.testHeaderRoundtripAliases(
+            userName: userName,
+          );
 
-        expect(
-          result,
-          isA<TonikError<HeadersRoundtripAliasesGet200Response>>(),
-        );
-      });
+          expect(
+            result,
+            isA<
+              TonikError<
+                HeadersRoundtripAliasesGet200Response,
+                Response<Object?>
+              >
+            >(),
+          );
+        },
+      );
     });
 
     group('Timestamp (alias for DateTime)', () {
@@ -160,10 +238,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTimestamp, isNotNull);
       });
 
@@ -176,10 +263,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTimestamp, isNotNull);
       });
 
@@ -192,10 +288,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xTimestamp, isNotNull);
       });
     });
@@ -214,10 +319,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserId, userId);
         expect(success.value.xUserName, userName);
         expect(success.value.xTimestamp, isNotNull);
@@ -228,10 +342,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserId, isNull);
         expect(success.value.xUserName, isNull);
         expect(success.value.xTimestamp, isNull);
@@ -249,10 +372,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripAliasesGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripAliasesGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xUserId, userId);
         expect(success.value.xUserName, isNull);
         expect(success.value.xTimestamp, isNotNull);

@@ -20,9 +20,11 @@ void main() {
     return MixedApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -45,7 +47,8 @@ void main() {
       );
 
       final result = await mixedApi.uploadFileInfo(body: fileInfo);
-      final success = result as TonikSuccess<UploadFileInfoResponse>;
+      final success =
+          result as TonikSuccess<UploadFileInfoResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 201);
       expect(success.value, isA<UploadFileInfoResponse201>());
@@ -78,7 +81,8 @@ void main() {
       const fileInfo = FileInfo(fileName: '', contentType: 'invalid');
 
       final result = await mixedApi.uploadFileInfo(body: fileInfo);
-      final success = result as TonikSuccess<UploadFileInfoResponse>;
+      final success =
+          result as TonikSuccess<UploadFileInfoResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 400);
       expect(success.value, isA<UploadFileInfoResponse400>());
@@ -93,7 +97,9 @@ void main() {
       final mixedApi = buildMixedApi(responseStatus: '200');
 
       final result = await mixedApi.getFileWithMetadata(id: 'file-789');
-      final success = result as TonikSuccess<GetFileWithMetadataResponse>;
+      final success =
+          result
+              as TonikSuccess<GetFileWithMetadataResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetFileWithMetadataResponse200>());
@@ -131,7 +137,9 @@ void main() {
       final mixedApi = buildMixedApi(responseStatus: '404');
 
       final result = await mixedApi.getFileWithMetadata(id: 'nonexistent');
-      final success = result as TonikSuccess<GetFileWithMetadataResponse>;
+      final success =
+          result
+              as TonikSuccess<GetFileWithMetadataResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetFileWithMetadataResponse404>());

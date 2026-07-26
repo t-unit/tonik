@@ -17,9 +17,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -48,12 +50,18 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripComplexMultiLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripComplexMultiLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexMultiLevelGet200Response
+                  HeadersRoundtripComplexMultiLevelGet200Response,
+                  Response<Object?>
                 >;
         expect(success.value.xMultiLevel, isNotNull);
       });
@@ -80,11 +88,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripComplexMultiLevelGet200Response>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripComplexMultiLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripComplexMultiLevelGet200Response>;
+                as TonikError<
+                  HeadersRoundtripComplexMultiLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(error.type, TonikErrorType.encoding);
       });
     });
@@ -110,11 +126,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripComplexMultiLevelGet200Response>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripComplexMultiLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripComplexMultiLevelGet200Response>;
+                as TonikError<
+                  HeadersRoundtripComplexMultiLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(error.type, TonikErrorType.encoding);
       });
     });
@@ -141,11 +165,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripComplexMultiLevelGet200Response>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripComplexMultiLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripComplexMultiLevelGet200Response>;
+                as TonikError<
+                  HeadersRoundtripComplexMultiLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(error.type, TonikErrorType.encoding);
       });
     });
@@ -163,12 +195,18 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripComplexMultiLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripComplexMultiLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexMultiLevelGet200Response
+                  HeadersRoundtripComplexMultiLevelGet200Response,
+                  Response<Object?>
                 >;
         expect(success.value.xMultiLevel, isNotNull);
       });
@@ -189,12 +227,18 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripComplexMultiLevelGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripComplexMultiLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
                 as TonikSuccess<
-                  HeadersRoundtripComplexMultiLevelGet200Response
+                  HeadersRoundtripComplexMultiLevelGet200Response,
+                  Response<Object?>
                 >;
         expect(success.value.xMultiLevel, isNotNull);
       });
@@ -213,11 +257,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripComplexMultiLevelGet200Response>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripComplexMultiLevelGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripComplexMultiLevelGet200Response>;
+                as TonikError<
+                  HeadersRoundtripComplexMultiLevelGet200Response,
+                  Response<Object?>
+                >;
         expect(error.type, TonikErrorType.encoding);
       });
     });

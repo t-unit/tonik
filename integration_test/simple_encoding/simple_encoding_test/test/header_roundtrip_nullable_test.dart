@@ -17,9 +17,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -36,10 +38,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -55,10 +66,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         // Null should not be sent as header
@@ -79,10 +99,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -98,10 +127,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -121,10 +159,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -141,10 +188,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -166,10 +222,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -188,10 +253,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -216,10 +290,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(success.value.xNullableString, 'hello');
@@ -237,10 +320,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(success.value.xNullableString, isNull);
@@ -258,10 +350,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripNullableGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripNullableGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(success.value.xNullableString, 'partial');

@@ -4,7 +4,36 @@ This guide explains how to handle authentication when using Tonik-generated API 
 
 ## Overview
 
-Tonik generates API client classes that work with Server objects. Authentication is configured through `ServerConfig` interceptors, providing clean separation between API logic and authentication concerns.
+Tonik generates API client classes that work with Server objects.
+Authentication is configured on a Dio client supplied through
+`ServerConfig<Dio>`, keeping authentication logic separate from generated API
+code.
+
+Use `clientFactory` for Dio options, interceptors, and adapters:
+
+```dart
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio(
+    BaseOptions(connectTimeout: const Duration(seconds: 10)),
+  )..interceptors.add(AuthInterceptor('your-jwt-token-here')),
+);
+```
+
+The factory is called lazily at most once per server, and the returned Dio is
+cached. The generated server applies its URL after the factory returns, so a
+`BaseOptions.baseUrl` supplied by the factory cannot override the server URL.
+
+You can instead inject an existing Dio:
+
+```dart
+final dio = Dio()..interceptors.add(AuthInterceptor('your-jwt-token-here'));
+final serverConfig = ServerConfig<Dio>.client(dio);
+```
+
+An injected client is borrowed. A factory-created client, or the default Dio
+created when neither option is supplied, is conceptually owned by the generated
+server. Generated servers do not currently close either borrowed or owned
+clients.
 
 ## Basic Authentication Setup
 
@@ -30,8 +59,9 @@ class AuthInterceptor extends Interceptor {
 }
 
 // Setup with ServerConfig
-final serverConfig = ServerConfig(
-  interceptors: [AuthInterceptor('your-jwt-token-here')],
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio()
+    ..interceptors.add(AuthInterceptor('your-jwt-token-here')),
 );
 
 final server = YourServer(serverConfig: serverConfig);
@@ -74,8 +104,9 @@ class _ApiKeyInterceptor extends Interceptor {
 
 // Setup with ServerConfig
 final apiKeyService = ApiKeyService('your-api-key-here');
-final serverConfig = ServerConfig(
-  interceptors: [apiKeyService.createAuthInterceptor()],
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio()
+    ..interceptors.add(apiKeyService.createAuthInterceptor()),
 );
 
 final server = YourServer(serverConfig: serverConfig);
@@ -142,8 +173,9 @@ final oauth2Service = OAuth2Service(
   tokenUrl: 'https://auth.example.com/oauth/token',
 );
 
-final serverConfig = ServerConfig(
-  interceptors: [oauth2Service.createAuthInterceptor()],
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio()
+    ..interceptors.add(oauth2Service.createAuthInterceptor()),
 );
 
 final server = YourServer(serverConfig: serverConfig);
@@ -185,8 +217,13 @@ final tlsService = MutualTlsService(
   '/path/to/client-key.pem',
 );
 
-final serverConfig = ServerConfig(
-  interceptors: [tlsService.createAuthInterceptor()],
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () {
+    final dio = Dio()
+      ..interceptors.add(tlsService.createAuthInterceptor());
+    // Configure dio.httpClientAdapter for the target platform here.
+    return dio;
+  },
 );
 
 final server = YourServer(serverConfig: serverConfig);
@@ -305,8 +342,9 @@ final multiAuthService = MultiAuthService({
   'X-Client-ID': 'your-client-id',
 });
 
-final serverConfig = ServerConfig(
-  interceptors: [multiAuthService.createAuthInterceptor()],
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio()
+    ..interceptors.add(multiAuthService.createAuthInterceptor()),
 );
 
 final server = YourServer(serverConfig: serverConfig);
@@ -329,9 +367,8 @@ You can use this information to:
 ## Best Practices
 
 1. **Create dedicated authentication services** that provide interceptor factories
-2. **Configure authentication through ServerConfig** interceptors
+2. **Configure authentication in a `ServerConfig<Dio>` client factory**
 3. **Keep authentication logic completely separate** from generated API client code
 4. **Handle token refresh** gracefully with retry logic in your service classes
 5. **Consider security scheme information** from the OpenAPI spec for documentation
 6. **Test authentication flows** thoroughly with mocked services
-
