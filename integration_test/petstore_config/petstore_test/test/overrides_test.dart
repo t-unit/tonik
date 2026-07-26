@@ -17,8 +17,8 @@ void main() {
     return CreatureApiApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -63,8 +63,8 @@ void main() {
       final userApi = CustomerApiApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            clientFactory: () => Dio(
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
               BaseOptions(
                 headers: {'X-Response-Status': '200'},
               ),
@@ -106,8 +106,8 @@ void main() {
       final storeApi = ShopApiApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            clientFactory: () => Dio(
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
               BaseOptions(
                 headers: {'X-Response-Status': '200'},
               ),
@@ -293,8 +293,8 @@ void main() {
       final userApi = CustomerApiApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            clientFactory: () => Dio(
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
               BaseOptions(
                 headers: {'X-Response-Status': '200'},
               ),

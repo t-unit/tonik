@@ -75,20 +75,6 @@ class ServerGenerator {
         ..types.add(dioType),
     );
 
-    final argumentError =
-        refer(
-              'ArgumentError',
-              'dart:core',
-            )
-            .newInstance([
-              literalString(
-                'ServerConfig.client and ServerConfig.clientFactory '
-                'cannot both be provided.',
-              ),
-            ])
-            .thrown
-            .statement;
-
     return Class(
       (b) => b
         ..name = '_DioClientAdapter'
@@ -144,12 +130,6 @@ class ServerGenerator {
                 const Code(
                   'final clientFactory = serverConfig.clientFactory;',
                 ),
-                const Code(
-                  'if (client != null && clientFactory != null) {',
-                ),
-                argumentError,
-                const Code('}'),
-                const Code(''),
                 const Code(
                   'final resolvedDio = '
                   'client ?? clientFactory?.call() ?? ',

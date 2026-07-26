@@ -11,8 +11,8 @@ void main() {
     });
 
     test('stores an injected client', () {
-      final client = Object();
-      final config = ServerConfig<Object>(client: client);
+      const client = Object();
+      const config = ServerConfig<Object>.client(client);
 
       expect(config.client, same(client));
       expect(config.clientFactory, isNull);
@@ -22,21 +22,11 @@ void main() {
       final client = Object();
       Object factory() => client;
 
-      final config = ServerConfig<Object>(clientFactory: factory);
+      final config = ServerConfig<Object>.clientFactory(factory);
 
       expect(config.client, isNull);
       expect(config.clientFactory, same(factory));
       expect(config.clientFactory!(), same(client));
-    });
-
-    test('asserts that client and clientFactory are mutually exclusive', () {
-      expect(
-        () => ServerConfig<Object>(
-          client: Object(),
-          clientFactory: Object.new,
-        ),
-        throwsA(isA<AssertionError>()),
-      );
     });
   });
 }

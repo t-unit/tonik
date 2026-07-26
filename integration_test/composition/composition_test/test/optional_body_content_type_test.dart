@@ -17,9 +17,8 @@ void main() {
     return CompositionApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () =>
-              Dio(BaseOptions(headers: {'X-Response-Body': '"hello"'})),
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(BaseOptions(headers: {'X-Response-Body': '"hello"'})),
         ),
       ),
     );
