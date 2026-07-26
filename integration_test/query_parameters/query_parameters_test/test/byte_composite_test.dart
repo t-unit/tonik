@@ -39,8 +39,8 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(
           success.response.requestOptions.uri.query,
           'anyOfByte=3q2%2B7w%3D%3D',
@@ -75,8 +75,8 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(
           success.response.requestOptions.uri.query,
           'oneOfByte=3q2%2B7w%3D%3D',
@@ -113,8 +113,8 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(
           success.response.requestOptions.uri.query,
           'allOfByte=3q2%2B7w%3D%3D',

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:recursive_map_api/recursive_map_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -35,8 +36,8 @@ void main() {
     test('getTree decodes nested JSON via the recursion helper', () async {
       final api = buildApi();
       final result = await api.getTree();
-      expect(result, isA<TonikSuccess<Tree>>());
-      final tree = (result as TonikSuccess<Tree>).value;
+      expect(result, isA<TonikSuccess<Tree, Response<Object?>>>());
+      final tree = (result as TonikSuccess<Tree, Response<Object?>>).value;
 
       final a = tree['a']! as Tree;
       final b = a['b']! as Tree;
@@ -58,9 +59,9 @@ void main() {
 
         final api = buildApi();
         final result = await api.postTree(body: original);
-        expect(result, isA<TonikSuccess<void>>());
+        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-        final response = (result as TonikSuccess<void>).response;
+        final response = (result as TonikSuccess<void, Response<Object?>>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
         expect(echoed, equals(original));
       },
@@ -80,7 +81,7 @@ void main() {
         // at 1000 levels — a successful response confirms that. The deep
         // structural compare is covered by the shallower round-trip tests
         // above; matcher.equals tops out around 100 levels of recursion.
-        expect(result, isA<TonikSuccess<void>>());
+        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
       },
     );
   });
@@ -91,8 +92,8 @@ void main() {
       () async {
         final api = buildApi();
         final result = await api.getForest();
-        expect(result, isA<TonikSuccess<Forest>>());
-        final forest = (result as TonikSuccess<Forest>).value;
+        expect(result, isA<TonikSuccess<Forest, Response<Object?>>>());
+        final forest = (result as TonikSuccess<Forest, Response<Object?>>).value;
 
         expect(forest, hasLength(2));
         final outer0 = forest[0]! as Forest;
@@ -114,9 +115,9 @@ void main() {
 
         final api = buildApi();
         final result = await api.postForest(body: original);
-        expect(result, isA<TonikSuccess<void>>());
+        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-        final response = (result as TonikSuccess<void>).response;
+        final response = (result as TonikSuccess<void, Response<Object?>>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
         expect(echoed, equals(original));
       },
@@ -127,8 +128,8 @@ void main() {
     test('getNode decodes a Node containing a nested Tree subtree', () async {
       final api = buildApi();
       final result = await api.getNode();
-      expect(result, isA<TonikSuccess<Node>>());
-      final node = (result as TonikSuccess<Node>).value;
+      expect(result, isA<TonikSuccess<Node, Response<Object?>>>());
+      final node = (result as TonikSuccess<Node, Response<Object?>>).value;
 
       expect(node.id, 'root');
       final left = node.subtree['left']! as Tree;
@@ -160,9 +161,9 @@ void main() {
 
         final api = buildApi();
         final result = await api.postNode(body: original);
-        expect(result, isA<TonikSuccess<void>>());
+        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-        final response = (result as TonikSuccess<void>).response;
+        final response = (result as TonikSuccess<void, Response<Object?>>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
         expect(echoed, equals(encodedJson));
       },
@@ -173,8 +174,8 @@ void main() {
     test('getAMap decodes an AMap containing a BMap leaf', () async {
       final api = buildApi();
       final result = await api.getAMap();
-      expect(result, isA<TonikSuccess<AMap>>());
-      final root = (result as TonikSuccess<AMap>).value;
+      expect(result, isA<TonikSuccess<AMap, Response<Object?>>>());
+      final root = (result as TonikSuccess<AMap, Response<Object?>>).value;
 
       final b = root['b']! as BMap;
       final a = b['a']! as AMap;
@@ -192,9 +193,9 @@ void main() {
 
       final api = buildApi();
       final result = await api.postAMap(body: original);
-      expect(result, isA<TonikSuccess<void>>());
+      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-      final response = (result as TonikSuccess<void>).response;
+      final response = (result as TonikSuccess<void, Response<Object?>>).response;
       final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
       expect(echoed, equals(original));
     });
@@ -204,8 +205,8 @@ void main() {
       () async {
         final api = buildApi();
         final result = await api.getBMap();
-        expect(result, isA<TonikSuccess<BMap>>());
-        final root = (result as TonikSuccess<BMap>).value;
+        expect(result, isA<TonikSuccess<BMap, Response<Object?>>>());
+        final root = (result as TonikSuccess<BMap, Response<Object?>>).value;
 
         final a = root['a']! as AMap;
         final b = a['b']! as BMap;
@@ -224,9 +225,9 @@ void main() {
 
       final api = buildApi();
       final result = await api.postBMap(body: original);
-      expect(result, isA<TonikSuccess<void>>());
+      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-      final response = (result as TonikSuccess<void>).response;
+      final response = (result as TonikSuccess<void, Response<Object?>>).response;
       final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
       expect(echoed, equals(original));
     });

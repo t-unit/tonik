@@ -164,8 +164,8 @@ void main() {
           cancelToken: CancelToken(),
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.uri.queryParameters['cancelToken'],
@@ -184,8 +184,8 @@ void main() {
           cancelToken: CancelToken(),
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.path,
@@ -204,8 +204,8 @@ void main() {
           cancelToken: CancelToken(),
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.headers['cancelToken'],
@@ -224,8 +224,8 @@ void main() {
           cancelToken: CancelToken(),
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.headers['Cookie'],
@@ -246,8 +246,8 @@ void main() {
           cancelToken: CancelToken(),
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.uri.queryParameters['Cancel-Token'],
@@ -269,8 +269,8 @@ void main() {
           cancelToken: CancelToken(),
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.uri.queryParameters['cancelToken'],

@@ -52,8 +52,8 @@ void main() {
 
         final result = await filesApi.getRawBinary();
 
-        expect(result, isA<TonikSuccess<GetRawBinaryResponse>>());
-        final success = result as TonikSuccess<GetRawBinaryResponse>;
+        expect(result, isA<TonikSuccess<GetRawBinaryResponse, Response<Object?>>>());
+        final success = result as TonikSuccess<GetRawBinaryResponse, Response<Object?>>;
 
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetRawBinaryResponse200>());
@@ -67,7 +67,7 @@ void main() {
         final filesApi = buildFilesApi(responseStatus: '404');
 
         final result = await filesApi.getRawBinary();
-        final success = result as TonikSuccess<GetRawBinaryResponse>;
+        final success = result as TonikSuccess<GetRawBinaryResponse, Response<Object?>>;
 
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetRawBinaryResponse404>());
@@ -97,8 +97,8 @@ void main() {
           body: TonikFileBytes(testData),
         );
 
-        expect(result, isA<TonikSuccess<UploadResponse>>());
-        final success = result as TonikSuccess<UploadResponse>;
+        expect(result, isA<TonikSuccess<UploadResponse, Response<Object?>>>());
+        final success = result as TonikSuccess<UploadResponse, Response<Object?>>;
 
         expect(success.response.statusCode, 201);
         expect(success.value.id, isNotEmpty);
@@ -112,8 +112,8 @@ void main() {
 
         final result = await imagesApi.getImageOas31();
 
-        expect(result, isA<TonikSuccess<TonikFile>>());
-        final success = result as TonikSuccess<TonikFile>;
+        expect(result, isA<TonikSuccess<TonikFile, Response<Object?>>>());
+        final success = result as TonikSuccess<TonikFile, Response<Object?>>;
 
         expect(success.response.statusCode, 200);
         expect(success.value.toBytes().length, greaterThan(0));

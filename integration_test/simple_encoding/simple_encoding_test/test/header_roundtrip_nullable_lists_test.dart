@@ -35,11 +35,11 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsNullableGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripListsNullableGet200Response, Response<Object?>>>(),
         );
         final success =
             response
-                as TonikSuccess<HeadersRoundtripListsNullableGet200Response>;
+                as TonikSuccess<HeadersRoundtripListsNullableGet200Response, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(
           success.response.requestOptions.headers['x-nullable-string-list'],
@@ -58,8 +58,16 @@ void main() {
 
         // The request encodes the null element as an empty string.
         final dioResponse = switch (response) {
-          TonikSuccess(:final response) => response,
-          TonikError(:final response) => response,
+          TonikSuccess<
+            HeadersRoundtripListsNullableGet200Response,
+            Response<Object?>
+          >(:final response) =>
+            response,
+          TonikError<
+            HeadersRoundtripListsNullableGet200Response,
+            Response<Object?>
+          >(:final response) =>
+            response,
         };
         expect(
           dioResponse?.requestOptions.headers['x-nullable-integer-list'],
@@ -71,7 +79,7 @@ void main() {
         // docs/uri_encoding_limitations.md.
         expect(
           response,
-          isA<TonikError<HeadersRoundtripListsNullableGet200Response>>(),
+          isA<TonikError<HeadersRoundtripListsNullableGet200Response, Response<Object?>>>(),
         );
       },
     );
@@ -101,7 +109,7 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<HeadersRoundtripListsNullableGet200Response>;
+                as TonikSuccess<HeadersRoundtripListsNullableGet200Response, Response<Object?>>;
         expect(success.value.xNullableStringList, ['a%2Fb', null, '50%']);
       });
     });

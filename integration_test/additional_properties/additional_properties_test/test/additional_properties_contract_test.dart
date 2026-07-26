@@ -13,7 +13,7 @@ void main() {
         values: const {'gone': null, 'empty': '', 'count': 7},
       );
 
-      expect(result, isA<TonikSuccess<void>>());
+      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
       expect(adapter.requestOptions!.uri.query, 'empty=&count=7');
     });
 
@@ -25,7 +25,7 @@ void main() {
           _capturingDio(adapter),
         ).call(values: const {'a:b': 'c:d'});
 
-        expect(result, isA<TonikSuccess<void>>());
+        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
         expect(adapter.requestOptions!.uri.query, 'values=a:b,c:d');
       },
     );
@@ -38,7 +38,7 @@ void main() {
           _capturingDio(adapter),
         ).call(values: const {'a:b': 'c:d'});
 
-        expect(result, isA<TonikSuccess<void>>());
+        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
         expect(adapter.requestOptions!.uri.query, 'a:b=c:d');
       },
     );
@@ -51,7 +51,7 @@ void main() {
           _capturingDio(adapter),
         ).call(values: const {'gone': null, 'empty': '', 'count': 7});
 
-        expect(result, isA<TonikSuccess<void>>());
+        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
         expect(
           adapter.requestOptions!.uri.query,
           'values%5Bempty%5D=&values%5Bcount%5D=7',
@@ -67,8 +67,8 @@ void main() {
         },
       );
 
-      expect(result, isA<TonikError<void>>());
-      expect((result as TonikError<void>).type, TonikErrorType.encoding);
+      expect(result, isA<TonikError<void, Response<Object?>>>());
+      expect((result as TonikError<void, Response<Object?>>).type, TonikErrorType.encoding);
       expect(adapter.requestOptions, isNull);
     });
   });

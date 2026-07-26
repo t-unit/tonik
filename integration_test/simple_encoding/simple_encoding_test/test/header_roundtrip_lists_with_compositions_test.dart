@@ -52,8 +52,8 @@ void main() {
 
         // Should fail with encoding error since complex lists aren't
         // supported in simple encoding for headers
-        expect(result, isA<TonikError<_R>>());
-        final error = result as TonikError<_R>;
+        expect(result, isA<TonikError<_R, Response<Object?>>>());
+        final error = result as TonikError<_R, Response<Object?>>;
         expect(error.type, TonikErrorType.encoding);
       });
 
@@ -66,8 +66,8 @@ void main() {
         );
 
         // Empty list still causes encoding error due to type checking
-        expect(result, isA<TonikError<_R>>());
-        final error = result as TonikError<_R>;
+        expect(result, isA<TonikError<_R, Response<Object?>>>());
+        final error = result as TonikError<_R, Response<Object?>>;
         expect(error.type, TonikErrorType.encoding);
       });
     });
@@ -83,8 +83,8 @@ void main() {
             anyOfList: anyOfList,
           );
 
-          expect(result, isA<TonikError<_R>>());
-          final error = result as TonikError<_R>;
+          expect(result, isA<TonikError<_R, Response<Object?>>>());
+          final error = result as TonikError<_R, Response<Object?>>;
           expect(error.type, TonikErrorType.decoding);
         },
       );
@@ -99,8 +99,8 @@ void main() {
           anyOfList: anyOfList,
         );
 
-        expect(result, isA<TonikError<_R>>());
-        final error = result as TonikError<_R>;
+        expect(result, isA<TonikError<_R, Response<Object?>>>());
+        final error = result as TonikError<_R, Response<Object?>>;
         expect(error.type, TonikErrorType.encoding);
       });
 
@@ -114,8 +114,8 @@ void main() {
           anyOfList: anyOfList,
         );
 
-        expect(result, isA<TonikError<_R>>());
-        final error = result as TonikError<_R>;
+        expect(result, isA<TonikError<_R, Response<Object?>>>());
+        final error = result as TonikError<_R, Response<Object?>>;
         expect(error.type, TonikErrorType.encoding);
       });
 
@@ -130,8 +130,8 @@ void main() {
           anyOfList: anyOfList,
         );
 
-        expect(result, isA<TonikError<_R>>());
-        final error = result as TonikError<_R>;
+        expect(result, isA<TonikError<_R, Response<Object?>>>());
+        final error = result as TonikError<_R, Response<Object?>>;
         expect(error.type, TonikErrorType.encoding);
       });
     });
@@ -148,8 +148,8 @@ void main() {
             // objectList is null, so no encoding error from that
           );
 
-          expect(result, isA<TonikError<_R>>());
-          final error = result as TonikError<_R>;
+          expect(result, isA<TonikError<_R, Response<Object?>>>());
+          final error = result as TonikError<_R, Response<Object?>>;
           expect(error.type, TonikErrorType.decoding);
         },
       );

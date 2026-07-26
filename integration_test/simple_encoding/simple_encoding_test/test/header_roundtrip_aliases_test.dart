@@ -43,10 +43,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserId, userId);
       });
 
@@ -57,10 +57,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserId, userId);
       });
 
@@ -71,10 +71,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserId, userId);
       });
 
@@ -85,10 +85,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserId, userId);
       });
     });
@@ -101,10 +101,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserName, userName);
       });
 
@@ -119,10 +119,10 @@ void main() {
 
           expect(
             result,
-            isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+            isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
           );
           final success =
-              result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+              result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
           expect(success.response.requestOptions.headers['X-User-Name'], '');
           expect(success.value.xUserName, isNull);
         },
@@ -135,10 +135,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserName, isNotNull);
       });
 
@@ -154,7 +154,7 @@ void main() {
 
           expect(
             result,
-            isA<TonikError<HeadersRoundtripAliasesGet200Response>>(),
+            isA<TonikError<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
           );
         },
       );
@@ -170,10 +170,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xTimestamp, isNotNull);
       });
 
@@ -186,10 +186,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xTimestamp, isNotNull);
       });
 
@@ -202,10 +202,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xTimestamp, isNotNull);
       });
     });
@@ -224,10 +224,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserId, userId);
         expect(success.value.xUserName, userName);
         expect(success.value.xTimestamp, isNotNull);
@@ -238,10 +238,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserId, isNull);
         expect(success.value.xUserName, isNull);
         expect(success.value.xTimestamp, isNull);
@@ -259,10 +259,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAliasesGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAliasesGet200Response, Response<Object?>>;
         expect(success.value.xUserId, userId);
         expect(success.value.xUserName, isNull);
         expect(success.value.xTimestamp, isNotNull);

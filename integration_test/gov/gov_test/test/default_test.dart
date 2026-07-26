@@ -34,8 +34,8 @@ void main() {
 
       final response = await defaultApi.findForms(query: '10-10EZ');
 
-      expect(response, isA<TonikSuccess<FindFormsResponse>>());
-      final success = response as TonikSuccess<FindFormsResponse>;
+      expect(response, isA<TonikSuccess<FindFormsResponse, Response<Object?>>>());
+      final success = response as TonikSuccess<FindFormsResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FindFormsResponse200>());
 
@@ -83,8 +83,8 @@ void main() {
 
       final response = await defaultApi.findForms();
 
-      expect(response, isA<TonikSuccess<FindFormsResponse>>());
-      final success = response as TonikSuccess<FindFormsResponse>;
+      expect(response, isA<TonikSuccess<FindFormsResponse, Response<Object?>>>());
+      final success = response as TonikSuccess<FindFormsResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 401);
       expect(success.value, isA<FindFormsResponse401>());
@@ -101,8 +101,8 @@ void main() {
 
       final response = await defaultApi.findForms();
 
-      expect(response, isA<TonikSuccess<FindFormsResponse>>());
-      final success = response as TonikSuccess<FindFormsResponse>;
+      expect(response, isA<TonikSuccess<FindFormsResponse, Response<Object?>>>());
+      final success = response as TonikSuccess<FindFormsResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 429);
       expect(success.value, isA<FindFormsResponse429>());
@@ -116,7 +116,7 @@ void main() {
 
       final response = await defaultApi.findForms();
 
-      expect(response, isA<TonikError<FindFormsResponse>>());
+      expect(response, isA<TonikError<FindFormsResponse, Response<Object?>>>());
     });
   });
 }

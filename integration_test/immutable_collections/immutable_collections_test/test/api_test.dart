@@ -34,8 +34,8 @@ void main() {
       final api = buildApi(responseStatus: '200');
       final result = await api.getItem(id: 1);
 
-      expect(result, isA<TonikSuccess<GetItemResponse>>());
-      final success = result as TonikSuccess<GetItemResponse>;
+      expect(result, isA<TonikSuccess<GetItemResponse, Response<Object?>>>());
+      final success = result as TonikSuccess<GetItemResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final value = success.value;
@@ -54,8 +54,8 @@ void main() {
       final api = buildApi(responseStatus: '404');
       final result = await api.getItem(id: 999);
 
-      expect(result, isA<TonikSuccess<GetItemResponse>>());
-      final success = result as TonikSuccess<GetItemResponse>;
+      expect(result, isA<TonikSuccess<GetItemResponse, Response<Object?>>>());
+      final success = result as TonikSuccess<GetItemResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetItemResponse404>());
     });
@@ -77,9 +77,9 @@ void main() {
         ),
       );
 
-      // createItem returns TonikResult<Item> directly (single response)
-      expect(result, isA<TonikSuccess<Item>>());
-      final success = result as TonikSuccess<Item>;
+      // createItem returns TonikResult<Item, Response<Object?>> directly (single response)
+      expect(result, isA<TonikSuccess<Item, Response<Object?>>>());
+      final success = result as TonikSuccess<Item, Response<Object?>>;
       expect(success.response.statusCode, 201);
 
       final body = success.value;
@@ -105,9 +105,9 @@ void main() {
         ),
       );
 
-      // createNested returns TonikResult<NestedList> directly
-      expect(result, isA<TonikSuccess<NestedList>>());
-      final success = result as TonikSuccess<NestedList>;
+      // createNested returns TonikResult<NestedList, Response<Object?>> directly
+      expect(result, isA<TonikSuccess<NestedList, Response<Object?>>>());
+      final success = result as TonikSuccess<NestedList, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;

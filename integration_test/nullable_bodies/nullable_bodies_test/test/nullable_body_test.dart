@@ -34,7 +34,7 @@ void main() {
 
       final response = await api.getWinnerInline();
 
-      final success = response as TonikSuccess<String?>;
+      final success = response as TonikSuccess<String?, Response<Object?>>;
       expect(success.value, isNull);
     });
 
@@ -43,7 +43,7 @@ void main() {
 
       final response = await api.getWinnerInline();
 
-      final success = response as TonikSuccess<String?>;
+      final success = response as TonikSuccess<String?, Response<Object?>>;
       expect(success.value, 'alice');
     });
   });
@@ -54,7 +54,7 @@ void main() {
 
       final response = await api.getWinnerRef();
 
-      final success = response as TonikSuccess<String?>;
+      final success = response as TonikSuccess<String?, Response<Object?>>;
       expect(success.value, isNull);
     });
 
@@ -63,7 +63,7 @@ void main() {
 
       final response = await api.getWinnerRef();
 
-      final success = response as TonikSuccess<String?>;
+      final success = response as TonikSuccess<String?, Response<Object?>>;
       expect(success.value, 'alice');
     });
   });

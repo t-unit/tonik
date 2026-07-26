@@ -256,7 +256,7 @@ void main() {
           expect(method.modifier, MethodModifier.async);
           expect(
             method.returns?.accept(emitter).toString(),
-            'Future<TonikResult<void>>',
+            'Future<TonikResult<void,Response<Object?>>>',
           );
         });
 
@@ -266,12 +266,12 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> getUser() async => _getUser();
+            Future<TonikResult<void, Response<Object?>>> getUser() async => _getUser();
           ''';
 
           expect(
             collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         });
 
@@ -347,12 +347,12 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> getUser({required String id}) async => _getUser(id: id);
+            Future<TonikResult<void, Response<Object?>>> getUser({required String id}) async => _getUser(id: id);
           ''';
 
           expect(
             collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         });
       });
@@ -439,12 +439,12 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> getUsers({int? limit, int? offset}) async => _getUsers(limit: limit, offset: offset);
+            Future<TonikResult<void, Response<Object?>>> getUsers({int? limit, int? offset}) async => _getUsers(limit: limit, offset: offset);
           ''';
 
           expect(
             collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         });
       });
@@ -527,14 +527,14 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> createUser({
+            Future<TonikResult<void, Response<Object?>>> createUser({
               required CreateUserRequestBody body,
             }) async => _createUser(body: body);
           ''';
 
           expect(
             collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         });
       });
@@ -604,12 +604,12 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void>> getUser({required String userId}) async => _getUser(userId: userId);
+            Future<TonikResult<void, Response<Object?>>> getUser({required String userId}) async => _getUser(userId: userId);
           ''';
 
           expect(
             collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         });
       });
@@ -1867,9 +1867,13 @@ void main() {
 
       expect(result.filename, 'users_api.dart');
       expect(result.code, contains('class UsersApi'));
+      const expectedMethod = '''
+_i3.Future<_i4.TonikResult<void, _i5.Response<_i3.Object?>>>
+getUser() async => _getUser();
+''';
       expect(
-        result.code,
-        contains('_i3.Future<_i4.TonikResult<void>> getUser()'),
+        collapseWhitespace(result.code),
+        contains(collapseWhitespace(expectedMethod)),
       );
     });
 
@@ -2083,14 +2087,14 @@ void main() {
           );
 
           const expectedMethod = '''
-Future<TonikResult<void>> listThings({
+Future<TonikResult<void, Response<Object?>>> listThings({
   String region = ListThings.regionDefault,
 }) async => _listThings(region: region);
 ''';
 
           expect(
             collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         },
       );
@@ -2155,11 +2159,12 @@ Future<TonikResult<void>> listThings({
             generatedClass.accept(emitter).toString(),
           );
           const expectedMethod =
-              'Future<TonikResult<void>> listThings({DateTime? since}) '
+              'Future<TonikResult<void,Response<Object?>>> '
+              'listThings({DateTime? since}) '
               'async => _listThings(since: since);';
           expect(
             collapseWhitespace(generatedCode),
-            contains(collapseWhitespace(expectedMethod)),
+            contains(collapseWhitespace(format(expectedMethod))),
           );
         },
       );

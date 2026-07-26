@@ -46,7 +46,7 @@ void main() {
           ),
         ),
       );
-      final success = user as TonikSuccess<CreateUserResponse>;
+      final success = user as TonikSuccess<CreateUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<CreateUserResponse200>());
       final responseBody = (success.value as CreateUserResponse200).body;
@@ -70,7 +70,7 @@ void main() {
         body: const UserPostBodyRequestBodyJson(User()),
       );
 
-      final success = user as TonikSuccess<CreateUserResponse>;
+      final success = user as TonikSuccess<CreateUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 321);
       expect(success.value, isA<CreateUserResponseDefault>());
     });
@@ -84,7 +84,7 @@ void main() {
         body: const [User(), User(), User()],
       );
       final success =
-          response as TonikSuccess<CreateUsersWithListInputResponse>;
+          response as TonikSuccess<CreateUsersWithListInputResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<CreateUsersWithListInputResponse200>());
       final responseBody =
@@ -133,7 +133,7 @@ void main() {
       );
 
       final success =
-          response as TonikSuccess<CreateUsersWithListInputResponse>;
+          response as TonikSuccess<CreateUsersWithListInputResponse, Response<Object?>>;
       expect(success.response.statusCode, 321);
       expect(success.value, isA<CreateUsersWithListInputResponseDefault>());
     });
@@ -148,7 +148,7 @@ void main() {
         password: 'test',
       );
 
-      final success = response as TonikSuccess<LoginUserResponse>;
+      final success = response as TonikSuccess<LoginUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<LoginUserResponse200>());
       final responseBody = (success.value as LoginUserResponse200).body;
@@ -164,7 +164,7 @@ void main() {
 
       final response = await userApi.loginUser();
 
-      final success = response as TonikSuccess<LoginUserResponse>;
+      final success = response as TonikSuccess<LoginUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<LoginUserResponse400>());
     });
@@ -174,7 +174,7 @@ void main() {
 
       final response = await userApi.loginUser();
 
-      final success = response as TonikSuccess<LoginUserResponse>;
+      final success = response as TonikSuccess<LoginUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 321);
       expect(success.value, isA<LoginUserResponseDefault>());
     });
@@ -186,7 +186,7 @@ void main() {
 
       final response = await userApi.logoutUser();
 
-      final success = response as TonikSuccess<LogoutUserResponse>;
+      final success = response as TonikSuccess<LogoutUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<LogoutUserResponse200>());
     });
@@ -196,7 +196,7 @@ void main() {
 
       final response = await userApi.logoutUser();
 
-      final success = response as TonikSuccess<LogoutUserResponse>;
+      final success = response as TonikSuccess<LogoutUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 321);
       expect(success.value, isA<LogoutUserResponseDefault>());
     });
@@ -207,7 +207,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '200');
 
       final response = await userApi.getUserByName(username: 'test');
-      final success = response as TonikSuccess<GetUserByNameResponse>;
+      final success = response as TonikSuccess<GetUserByNameResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetUserByNameResponse200>());
       final responseBody = (success.value as GetUserByNameResponse200).body;
@@ -221,7 +221,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '400');
 
       final response = await userApi.getUserByName(username: 'test');
-      final success = response as TonikSuccess<GetUserByNameResponse>;
+      final success = response as TonikSuccess<GetUserByNameResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<GetUserByNameResponse400>());
     });
@@ -230,7 +230,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '404');
 
       final response = await userApi.getUserByName(username: 'test');
-      final success = response as TonikSuccess<GetUserByNameResponse>;
+      final success = response as TonikSuccess<GetUserByNameResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetUserByNameResponse404>());
     });
@@ -239,7 +239,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '855');
 
       final response = await userApi.getUserByName(username: 'test');
-      final success = response as TonikSuccess<GetUserByNameResponse>;
+      final success = response as TonikSuccess<GetUserByNameResponse, Response<Object?>>;
       expect(success.response.statusCode, 855);
       expect(success.value, isA<GetUserByNameResponseDefault>());
     });
@@ -254,7 +254,7 @@ void main() {
         body: const UserUsernamePutBodyRequestBodyJson(User()),
       );
 
-      final success = response as TonikSuccess<UpdateUserResponse>;
+      final success = response as TonikSuccess<UpdateUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<UpdateUserResponse200>());
     });
@@ -277,7 +277,7 @@ void main() {
           ),
         ),
       );
-      final success = response as TonikSuccess<UpdateUserResponse>;
+      final success = response as TonikSuccess<UpdateUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<UpdateUserResponse400>());
     });
@@ -289,7 +289,7 @@ void main() {
         username: 'test',
         body: const UserUsernamePutBodyRequestBodyJson(User(userStatus: 4674)),
       );
-      final success = response as TonikSuccess<UpdateUserResponse>;
+      final success = response as TonikSuccess<UpdateUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
     });
 
@@ -300,7 +300,7 @@ void main() {
         username: 'test',
         body: const UserUsernamePutBodyRequestBodyJson(User()),
       );
-      final success = response as TonikSuccess<UpdateUserResponse>;
+      final success = response as TonikSuccess<UpdateUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 321);
     });
   });
@@ -312,7 +312,7 @@ void main() {
       final response = await userApi.deleteUser(
         username: 'test/asdf/asdf/asdf',
       );
-      final success = response as TonikSuccess<DeleteUserResponse>;
+      final success = response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<DeleteUserResponse200>());
     });
@@ -321,7 +321,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '400');
 
       final response = await userApi.deleteUser(username: 'test');
-      final success = response as TonikSuccess<DeleteUserResponse>;
+      final success = response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<DeleteUserResponse400>());
     });
@@ -330,7 +330,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '404');
 
       final response = await userApi.deleteUser(username: 'test');
-      final success = response as TonikSuccess<DeleteUserResponse>;
+      final success = response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<DeleteUserResponse404>());
     });
@@ -339,7 +339,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '211');
 
       final response = await userApi.deleteUser(username: 'test');
-      final success = response as TonikSuccess<DeleteUserResponse>;
+      final success = response as TonikSuccess<DeleteUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 211);
       expect(success.value, isA<DeleteUserResponseDefault>());
     });

@@ -32,13 +32,13 @@ void main() {
 
     expect(
       result,
-      isA<TonikSuccess<ResponseBodyCollisionHeaderNormalizedGet200Response>>(),
+      isA<TonikSuccess<ResponseBodyCollisionHeaderNormalizedGet200Response, Response<Object?>>>(),
     );
     final value =
         (result
                 as TonikSuccess<
                   ResponseBodyCollisionHeaderNormalizedGet200Response
-                >)
+                , Response<Object?>>)
             .value;
     expect(value.body, 'header-value');
     expect(value.body2.id, 'body-value');

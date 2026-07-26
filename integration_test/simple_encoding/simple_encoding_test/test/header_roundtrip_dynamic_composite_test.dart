@@ -48,14 +48,14 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response, Response<Object?>>
           >(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         expect(
           success.value.xDynamicValue!.flexibleValue!.string,
           'hello',
@@ -74,14 +74,14 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response, Response<Object?>>
           >(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         expect(success.value.xDynamicValue!.flexibleValue!.int, 42);
       });
 
@@ -97,14 +97,14 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response, Response<Object?>>
           >(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         expect(success.value.xDynamicValue!.flexibleValue!.bool, isTrue);
       });
     });
@@ -124,14 +124,14 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response, Response<Object?>>
           >(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         final object = success.value.xDynamicValue!.flexibleValue!.simpleObject;
         expect(object?.name, 'test-object');
         expect(object?.value, 100);
@@ -155,14 +155,14 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response, Response<Object?>>
           >(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         final entity = success.value.xDynamicValue!.entityType;
         expect(entity, isA<EntityTypeCompanyEntity>());
         expect(
@@ -188,14 +188,14 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response, Response<Object?>>
           >(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         final entity = success.value.xDynamicValue!.entityType;
         expect(entity, isA<EntityTypePersonEntity>());
         final decoded = (entity! as EntityTypePersonEntity).value;
@@ -226,14 +226,14 @@ void main() {
         expect(
           result,
           isA<
-            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikSuccess<HeadersRoundtripComplexDynamicCompositeGet200Response, Response<Object?>>
           >(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         final composite = success.value.xDynamicValue!.compositeEntity;
         expect(composite?.baseEntity.name, 'entity-123');
         expect(composite?.compositeEntityModel.specificField, 'Test Entity');
@@ -260,14 +260,14 @@ void main() {
         expect(
           result,
           isA<
-            TonikError<HeadersRoundtripComplexDynamicCompositeGet200Response>
+            TonikError<HeadersRoundtripComplexDynamicCompositeGet200Response, Response<Object?>>
           >(),
         );
         final error =
             result
                 as TonikError<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         expect(error.type, TonikErrorType.encoding);
       });
 
@@ -302,7 +302,7 @@ void main() {
               result
                   as TonikSuccess<
                     HeadersRoundtripComplexDynamicCompositeGet200Response
-                  >;
+                  , Response<Object?>>;
           final value = success.value.xDynamicValue!;
           final entity = value.entityType;
           expect(entity, isA<EntityTypeCompanyEntity>());
@@ -346,7 +346,7 @@ void main() {
             result
                 as TonikSuccess<
                   HeadersRoundtripComplexDynamicCompositeGet200Response
-                >;
+                , Response<Object?>>;
         expect(success.value.xDynamicValue, isNotNull);
         expect(success.value.xDynamicValue!.flexibleValue, isNotNull);
         expect(

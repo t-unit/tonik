@@ -45,11 +45,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
         final decoded =
             success.value.xThreeLevelOneOf! as ThreeLevelOneOfNumber;
@@ -65,11 +65,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
         final decoded =
             success.value.xThreeLevelOneOf! as ThreeLevelOneOfNumber;
@@ -85,11 +85,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
         final decoded =
             success.value.xThreeLevelOneOf! as ThreeLevelOneOfNumber;
@@ -108,11 +108,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
         expect(decoded.value, isA<ThreeLevelOneOfModelBool>());
@@ -130,11 +130,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
         expect(decoded.value, isA<ThreeLevelOneOfModelBool>());
@@ -163,11 +163,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
 
         // Accept either decoding - both are valid interpretations
         expect(
@@ -194,11 +194,11 @@ void main() {
 
           expect(
             result,
-            isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+            isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
           );
           final success =
               result
-                  as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                  as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
 
           // Accept either decoding - both are valid interpretations
           expect(
@@ -226,11 +226,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
         expect(decoded.value, isA<ThreeLevelOneOfModelOneOf>());
@@ -251,11 +251,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
         final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;
         expect(decoded.value, isA<ThreeLevelOneOfModelOneOf>());
@@ -280,11 +280,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(
           success.value.xThreeLevelMixed,
           isA<ThreeLevelMixedOneOfAllOfAnyOfClass1>(),
@@ -306,11 +306,11 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+                as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(
           success.value.xThreeLevelMixed,
           isA<ThreeLevelMixedOneOfAllOfAnyOfClass1>(),
@@ -342,10 +342,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+          isA<TonikError<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
         );
         final error =
-            result as TonikError<HeadersRoundtripDeepThreeLevelGet200Response>;
+            result as TonikError<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
         expect(error.type, TonikErrorType.encoding);
       });
     });
@@ -365,10 +365,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+        isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+          result as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
 
       expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfNumber>());
       final oneOfDecoded =
@@ -400,10 +400,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>>(),
+        isA<TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>>(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response>;
+          result as TonikSuccess<HeadersRoundtripDeepThreeLevelGet200Response, Response<Object?>>;
 
       expect(success.value.xThreeLevelOneOf, isA<ThreeLevelOneOfOneOf>());
       final decoded = success.value.xThreeLevelOneOf! as ThreeLevelOneOfOneOf;

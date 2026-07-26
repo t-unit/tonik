@@ -48,13 +48,13 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response, Response<Object?>>>(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripNestedAllofInOneofGet200Response
-                >;
+                , Response<Object?>>;
 
         final headerValue =
             success.response.requestOptions.headers['X-Nested-Value'] as String;
@@ -82,13 +82,13 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response, Response<Object?>>>(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripNestedAllofInOneofGet200Response
-                >;
+                , Response<Object?>>;
         expect(
           success.value.xNestedValue,
           isA<NestedAllOfInOneOfAllOfComplex>(),
@@ -108,13 +108,13 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response, Response<Object?>>>(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripNestedAllofInOneofGet200Response
-                >;
+                , Response<Object?>>;
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'simple-string',
@@ -133,13 +133,13 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response, Response<Object?>>>(),
         );
         final success =
             result
                 as TonikSuccess<
                   HeadersRoundtripNestedAllofInOneofGet200Response
-                >;
+                , Response<Object?>>;
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'test-value',
@@ -156,14 +156,14 @@ void main() {
           expect(
             result,
             isA<
-              TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response>
+              TonikSuccess<HeadersRoundtripNestedAllofInOneofGet200Response, Response<Object?>>
             >(),
           );
           final success =
               result
                   as TonikSuccess<
                     HeadersRoundtripNestedAllofInOneofGet200Response
-                  >;
+                  , Response<Object?>>;
           expect(
             success.response.requestOptions.headers['X-Nested-Value'],
             isNull,

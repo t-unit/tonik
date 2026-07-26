@@ -37,7 +37,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -54,7 +54,7 @@ void main() {
       const original = ObjectWithAny(name: 'number-test', anyData: 123.45);
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -74,7 +74,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -97,7 +97,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -120,7 +120,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -137,7 +137,7 @@ void main() {
       const original = ObjectWithAny(name: 'null-test', anyData: null);
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -158,7 +158,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -176,7 +176,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -197,7 +197,7 @@ void main() {
       ];
 
       final result = await api.postJsonAnyArray(body: original);
-      final success = result as TonikSuccess<List<Object?>>;
+      final success = result as TonikSuccess<List<Object?>, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -218,7 +218,7 @@ void main() {
       ];
 
       final result = await api.postJsonAnyArray(body: original);
-      final success = result as TonikSuccess<List<Object?>>;
+      final success = result as TonikSuccess<List<Object?>, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -231,7 +231,7 @@ void main() {
       const original = <Object?>[];
 
       final result = await api.postJsonAnyArray(body: original);
-      final success = result as TonikSuccess<List<Object?>>;
+      final success = result as TonikSuccess<List<Object?>, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -243,8 +243,8 @@ void main() {
     test('postPureAny with object', () async {
       final api = buildApi();
       final result = await api.postPureAny(body: {'key': 'value', 'num': 42});
-      expect(result, isA<TonikSuccess<Object?>>());
-      final success = result as TonikSuccess<Object?>;
+      expect(result, isA<TonikSuccess<Object?, Response<Object?>>>());
+      final success = result as TonikSuccess<Object?, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, {'key': 'value', 'num': 42});
     });
@@ -252,8 +252,8 @@ void main() {
     test('postPureAny with array', () async {
       final api = buildApi();
       final result = await api.postPureAny(body: [1, 2, 3]);
-      expect(result, isA<TonikSuccess<Object?>>());
-      final success = result as TonikSuccess<Object?>;
+      expect(result, isA<TonikSuccess<Object?, Response<Object?>>>());
+      final success = result as TonikSuccess<Object?, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, [1, 2, 3]);
     });
@@ -266,8 +266,8 @@ void main() {
           'flag': false,
         },
       );
-      expect(result, isA<TonikSuccess<Object?>>());
-      final success = result as TonikSuccess<Object?>;
+      expect(result, isA<TonikSuccess<Object?, Response<Object?>>>());
+      final success = result as TonikSuccess<Object?, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, {
         'nested': [1, 'two', true],
@@ -280,7 +280,7 @@ void main() {
     test('getResponseAny returns ObjectWithAny', () async {
       final api = buildApi();
       final result = await api.getResponseAny();
-      final success = result as TonikSuccess<ObjectWithAny>;
+      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -291,7 +291,7 @@ void main() {
     test('getResponseAnyArray returns List<Object?>', () async {
       final api = buildApi();
       final result = await api.getResponseAnyArray();
-      final success = result as TonikSuccess<List<Object?>>;
+      final success = result as TonikSuccess<List<Object?>, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;

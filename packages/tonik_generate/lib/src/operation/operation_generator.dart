@@ -243,8 +243,9 @@ class OperationGenerator {
       package,
       useImmutableCollections: useImmutableCollections,
     );
-    final isVoidReturn =
-        resultType.types.isNotEmpty && resultType.types.first.symbol == 'void';
+    final resultValueType = resultType.types.first;
+    final nativeResponseType = resultType.types[1];
+    final isVoidReturn = resultValueType.symbol == 'void';
     // The unassigned try/catch is only safe when `_parseResponse` is
     // statically guaranteed to throw. `Never?` widens to a type that can
     // legitimately complete normally with `null`, so the nullable case
@@ -274,15 +275,27 @@ class OperationGenerator {
         cookieArgs,
         pathArgs,
         queryArgs,
+        resultValueType,
+        nativeResponseType,
       ),
-      _generateResponseStatements(responseVar),
+      _generateResponseStatements(
+        responseVar,
+        resultValueType,
+        nativeResponseType,
+      ),
     ];
 
     final hasResponses = operation.responses.isNotEmpty;
 
     if (hasResponses) {
       if (isNeverParseReturn) {
-        bodyStatements.add(_unassignedParseResponseTryCatch(responseVar));
+        bodyStatements.add(
+          _unassignedParseResponseTryCatch(
+            responseVar,
+            resultValueType,
+            nativeResponseType,
+          ),
+        );
       } else if (!isVoidReturn) {
         bodyStatements
           ..addAll(
@@ -290,29 +303,43 @@ class OperationGenerator {
               responseVar,
               parsedResponseVar,
               responseType,
+              resultValueType,
+              nativeResponseType,
             ),
           )
           ..add(
-            refer('TonikSuccess', 'package:tonik_util/tonik_util.dart')
+            _resultClass(
+                  'TonikSuccess',
+                  resultValueType,
+                  nativeResponseType,
+                )
                 .call([refer(parsedResponseVar), refer(responseVar)])
                 .returned
                 .statement,
           );
       } else {
         bodyStatements
-          ..add(_unassignedParseResponseTryCatch(responseVar))
           ..add(
-            refer(
+            _unassignedParseResponseTryCatch(
+              responseVar,
+              resultValueType,
+              nativeResponseType,
+            ),
+          )
+          ..add(
+            _resultClass(
               'TonikSuccess',
-              'package:tonik_util/tonik_util.dart',
+              resultValueType,
+              nativeResponseType,
             ).call([literalNull, refer(responseVar)]).returned.statement,
           );
       }
     } else {
       bodyStatements.add(
-        refer(
+        _resultClass(
           'TonikSuccess',
-          'package:tonik_util/tonik_util.dart',
+          resultValueType,
+          nativeResponseType,
         ).call([literalNull, refer(responseVar)]).returned.statement,
       );
     }
@@ -356,6 +383,8 @@ class OperationGenerator {
     Map<String, Expression> cookieArgs,
     Map<String, Expression> pathArgs,
     Map<String, Expression> queryArgs,
+    Reference resultValueType,
+    Reference nativeResponseType,
   ) {
     return Block.of([
       declareFinal(
@@ -434,7 +463,7 @@ class OperationGenerator {
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
-        refer('TonikError', 'package:tonik_util/tonik_util.dart')
+        _resultClass('TonikError', resultValueType, nativeResponseType)
             .call(
               [refer('exception')],
               {
@@ -453,7 +482,11 @@ class OperationGenerator {
     ]);
   }
 
-  Code _generateResponseStatements(String responseVar) {
+  Code _generateResponseStatements(
+    String responseVar,
+    Reference resultValueType,
+    Reference nativeResponseType,
+  ) {
     return Block.of([
       const Code('final '),
       TypeReference(
@@ -502,7 +535,7 @@ class OperationGenerator {
             'package:dio/dio.dart',
           ).code,
           const Code(') {'),
-          refer('TonikError', 'package:tonik_util/tonik_util.dart')
+          _resultClass('TonikError', resultValueType, nativeResponseType)
               .call(
                 [refer('exception')],
                 {
@@ -518,7 +551,7 @@ class OperationGenerator {
               .statement,
           const Code('}'),
         ]),
-        refer('TonikError', 'package:tonik_util/tonik_util.dart')
+        _resultClass('TonikError', resultValueType, nativeResponseType)
             .call(
               [refer('exception')],
               {
@@ -535,7 +568,7 @@ class OperationGenerator {
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
-        refer('TonikError', 'package:tonik_util/tonik_util.dart')
+        _resultClass('TonikError', resultValueType, nativeResponseType)
             .call(
               [refer('exception')],
               {
@@ -554,14 +587,18 @@ class OperationGenerator {
     ]);
   }
 
-  Code _unassignedParseResponseTryCatch(String responseVar) {
+  Code _unassignedParseResponseTryCatch(
+    String responseVar,
+    Reference resultValueType,
+    Reference nativeResponseType,
+  ) {
     return Block.of([
       const Code('try {'),
       refer('_parseResponse').call([refer(responseVar)]).statement,
       const Code('} on '),
       refer('Object', 'dart:core').code,
       const Code(' catch (exception, stackTrace) {'),
-      refer('TonikError', 'package:tonik_util/tonik_util.dart')
+      _resultClass('TonikError', resultValueType, nativeResponseType)
           .call(
             [refer('exception')],
             {
@@ -583,6 +620,8 @@ class OperationGenerator {
     String responseVar,
     String parsedResponseVar,
     Reference responseType,
+    Reference resultValueType,
+    Reference nativeResponseType,
   ) {
     return [
       Block.of([
@@ -598,7 +637,7 @@ class OperationGenerator {
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
-        refer('TonikError', 'package:tonik_util/tonik_util.dart')
+        _resultClass('TonikError', resultValueType, nativeResponseType)
             .call(
               [refer('exception')],
               {
@@ -615,5 +654,18 @@ class OperationGenerator {
         const Code('}\n'),
       ]),
     ];
+  }
+
+  Reference _resultClass(
+    String symbol,
+    Reference resultValueType,
+    Reference nativeResponseType,
+  ) {
+    return TypeReference(
+      (b) => b
+        ..symbol = symbol
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.addAll([resultValueType, nativeResponseType]),
+    );
   }
 }

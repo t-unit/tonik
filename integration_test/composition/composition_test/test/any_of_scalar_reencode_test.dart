@@ -33,7 +33,7 @@ void main() {
     final result = await api.echoAnyOfDateTimeOrString(
       body: const AnyOfDateTimeOrString(string: ''),
     );
-    return (result as TonikSuccess<AnyOfDateTimeOrString>).value;
+    return (result as TonikSuccess<AnyOfDateTimeOrString, Response<Object?>>).value;
   }
 
   group('AnyOfDateTimeOrString [date-time, string]', () {

@@ -43,7 +43,7 @@ void main() {
           ),
         ),
       );
-      final success = pet as TonikSuccess<CreatePetResponse>;
+      final success = pet as TonikSuccess<CreatePetResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<CreatePetResponse200>());
     });
@@ -52,7 +52,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.getPetById(animalId: 1);
-      final success = pet as TonikSuccess<GetPetByIdResponse>;
+      final success = pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPetByIdResponse200>());
     });
@@ -61,7 +61,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pets = await petApi.searchPetsByTags(filterTags: ['tag1', 'tag2']);
-      final success = pets as TonikSuccess<SearchPetsByTagsResponse>;
+      final success = pets as TonikSuccess<SearchPetsByTagsResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<SearchPetsByTagsResponse200>());
     });
@@ -70,7 +70,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final result = await petApi.removePet(petId: 1);
-      final success = result as TonikSuccess<RemovePetResponse>;
+      final success = result as TonikSuccess<RemovePetResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RemovePetResponse200>());
     });
@@ -109,7 +109,7 @@ void main() {
           ),
         ),
       );
-      final success = user as TonikSuccess<CreateUserResponse>;
+      final success = user as TonikSuccess<CreateUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<CreateUserResponse200>());
     });
@@ -118,7 +118,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '200');
 
       final user = await userApi.fetchUserByName(username: 'testUser');
-      final success = user as TonikSuccess<FetchUserByNameResponse>;
+      final success = user as TonikSuccess<FetchUserByNameResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FetchUserByNameResponse200>());
     });
@@ -130,7 +130,7 @@ void main() {
         loginName: 'testUser',
         loginPassword: 'password123',
       );
-      final success = result as TonikSuccess<AuthenticateUserResponse>;
+      final success = result as TonikSuccess<AuthenticateUserResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<AuthenticateUserResponse200>());
     });

@@ -50,10 +50,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>>(),
+        isA<TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>>(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
+          result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>;
 
       final headerValue =
           success.response.requestOptions.headers['X-Composite-Entity']
@@ -89,10 +89,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>>(),
+        isA<TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>>(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
+          result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>;
 
       expect(success.value.xCompositeEntity, isNotNull);
       expect(success.value.xCompositeEntity!.baseEntity.name, 'FullEntity');
@@ -120,10 +120,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>>(),
+        isA<TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>>(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
+          result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>;
 
       expect(success.value.xCompositeEntity, isNotNull);
       expect(
@@ -140,10 +140,10 @@ void main() {
 
           expect(
             result,
-            isA<TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>>(),
+            isA<TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>>(),
           );
           final success =
-              result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
+              result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>;
 
           expect(
             success.response.requestOptions.headers['X-Composite-Entity'],
@@ -182,7 +182,7 @@ void main() {
         final result = await injected.testHeaderRoundtripAllOfSimple.call();
 
         final success =
-            result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAllofSimpleGet200Response, Response<Object?>>;
         expect(success.value.xCompositeEntity, isNotNull);
         expect(success.value.xCompositeEntity!.baseEntity.name, 'x%2Fy 50%');
         expect(

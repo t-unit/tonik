@@ -38,8 +38,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<ExampleDto>>());
-    final success = response as TonikSuccess<ExampleDto>;
+    expect(response, isA<TonikSuccess<ExampleDto, Response<Object?>>>());
+    final success = response as TonikSuccess<ExampleDto, Response<Object?>>;
     expect(success.response.statusCode, 200);
 
     final data = success.value;
@@ -62,8 +62,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<ExampleDto>>());
-    final success = response as TonikSuccess<ExampleDto>;
+    expect(response, isA<TonikSuccess<ExampleDto, Response<Object?>>>());
+    final success = response as TonikSuccess<ExampleDto, Response<Object?>>;
     expect(success.response.statusCode, 200);
 
     final data = success.value;

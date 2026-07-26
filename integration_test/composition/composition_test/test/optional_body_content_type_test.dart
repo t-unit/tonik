@@ -28,7 +28,7 @@ void main() {
     test('omits Content-Type when body is not provided', () async {
       final result = await buildApi().echoOneOfPrimitive();
 
-      final success = result as TonikSuccess<OneOfPrimitive>;
+      final success = result as TonikSuccess<OneOfPrimitive, Response<Object?>>;
       expect(success.response.requestOptions.headers['content-type'], isNull);
     });
 
@@ -37,7 +37,7 @@ void main() {
         body: const OneOfPrimitiveString('hello'),
       );
 
-      final success = result as TonikSuccess<OneOfPrimitive>;
+      final success = result as TonikSuccess<OneOfPrimitive, Response<Object?>>;
       expect(
         success.response.requestOptions.headers['content-type'],
         'application/json',

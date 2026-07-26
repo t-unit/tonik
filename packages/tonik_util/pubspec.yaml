@@ -19,7 +19,6 @@ dependencies:
   big_decimal: ^0.7.0
   charset: ^2.0.1
   collection: ^1.19.1
-  dio: ^5.9.0
   http_parser: ^4.1.2
   meta: ^1.17.0
 
