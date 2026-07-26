@@ -18,9 +18,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -33,8 +35,8 @@ void main() {
       flexibleValue: const FlexibleValue(string: 'string'),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -48,8 +50,8 @@ void main() {
       flexibleValue: const FlexibleValue(int: 1),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -65,8 +67,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -90,8 +92,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -107,8 +109,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -126,8 +128,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -154,8 +156,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -178,8 +180,8 @@ void main() {
       $enum: StatusEnum.active,
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -208,8 +210,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -234,8 +236,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,
@@ -255,8 +257,8 @@ void main() {
       ],
     );
 
-    expect(response, isA<TonikError<void>>());
-    final error = response as TonikError<void>;
+    expect(response, isA<TonikError<void, Response<Object?>>>());
+    final error = response as TonikError<void, Response<Object?>>;
     expect(error.error, isA<EncodingException>());
   });
 
@@ -268,8 +270,8 @@ void main() {
       timestamp: DateTime.utc(1970, 1, 1, 14, 30),
     );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.statusCode, 200);
     expect(
       success.response.requestOptions.uri.path,

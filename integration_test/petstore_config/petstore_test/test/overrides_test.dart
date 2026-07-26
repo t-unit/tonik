@@ -17,9 +17,11 @@ void main() {
     return CreatureApiApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -41,7 +43,8 @@ void main() {
           ),
         ),
       );
-      final success = result as TonikSuccess<RegisterAnimalResponse>;
+      final success =
+          result as TonikSuccess<RegisterAnimalResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RegisterAnimalResponse200>());
 
@@ -61,9 +64,11 @@ void main() {
       final userApi = CustomerApiApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            baseOptions: BaseOptions(
-              headers: {'X-Response-Status': '200'},
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
+              BaseOptions(
+                headers: {'X-Response-Status': '200'},
+              ),
             ),
           ),
         ),
@@ -83,7 +88,8 @@ void main() {
           ),
         ),
       );
-      final success = result as TonikSuccess<RegisterCustomerResponse>;
+      final success =
+          result as TonikSuccess<RegisterCustomerResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RegisterCustomerResponse200>());
 
@@ -102,9 +108,11 @@ void main() {
       final storeApi = ShopApiApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            baseOptions: BaseOptions(
-              headers: {'X-Response-Status': '200'},
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
+              BaseOptions(
+                headers: {'X-Response-Status': '200'},
+              ),
             ),
           ),
         ),
@@ -124,7 +132,8 @@ void main() {
           ),
         ),
       );
-      final success = result as TonikSuccess<SubmitPurchaseResponse>;
+      final success =
+          result as TonikSuccess<SubmitPurchaseResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<SubmitPurchaseResponse200>());
 
@@ -151,7 +160,10 @@ void main() {
           ),
         ),
       );
-      expect(result, isA<TonikSuccess<RegisterAnimalResponse>>());
+      expect(
+        result,
+        isA<TonikSuccess<RegisterAnimalResponse, Response<Object?>>>(),
+      );
     });
 
     test('getPetById renamed to fetchAnimalById', () async {
@@ -159,14 +171,20 @@ void main() {
 
       // Parameter also renamed: petId -> animalIdentifier
       final result = await petApi.fetchAnimalById(animalId: 1);
-      expect(result, isA<TonikSuccess<FetchAnimalByIdResponse>>());
+      expect(
+        result,
+        isA<TonikSuccess<FetchAnimalByIdResponse, Response<Object?>>>(),
+      );
     });
 
     test('deletePet renamed to removeAnimal', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
       final result = await petApi.removeAnimal(petId: 1);
-      expect(result, isA<TonikSuccess<RemoveAnimalResponse>>());
+      expect(
+        result,
+        isA<TonikSuccess<RemoveAnimalResponse, Response<Object?>>>(),
+      );
     });
 
     test('findPetsByStatus renamed to queryAnimalsByStatus', () async {
@@ -176,7 +194,7 @@ void main() {
       final result = await petApi.queryAnimalsByStatus();
       expect(
         result,
-        isA<TonikSuccess<QueryAnimalsByStatusResponse>>(),
+        isA<TonikSuccess<QueryAnimalsByStatusResponse, Response<Object?>>>(),
       );
     });
   });
@@ -287,9 +305,11 @@ void main() {
       final userApi = CustomerApiApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            baseOptions: BaseOptions(
-              headers: {'X-Response-Status': '200'},
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
+              BaseOptions(
+                headers: {'X-Response-Status': '200'},
+              ),
             ),
           ),
         ),
@@ -301,7 +321,7 @@ void main() {
         loginName: 'testUser',
         loginPassword: 'password123',
       );
-      expect(result, isA<TonikSuccess<SignInResponse>>());
+      expect(result, isA<TonikSuccess<SignInResponse, Response<Object?>>>());
     });
 
     test('Upload file parameters renamed', () async {
@@ -312,7 +332,10 @@ void main() {
         petId: 1,
         imageMetadata: 'test metadata',
       );
-      expect(result, isA<TonikSuccess<UploadPetImageResponse>>());
+      expect(
+        result,
+        isA<TonikSuccess<UploadPetImageResponse, Response<Object?>>>(),
+      );
     });
   });
 }

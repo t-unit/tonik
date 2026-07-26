@@ -17,9 +17,11 @@ void main() {
     return AnnotationSiblingsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -32,7 +34,8 @@ void main() {
 
       final response = await api.health();
 
-      final success = response as TonikSuccess<HealthGet200BodyModel>;
+      final success =
+          response as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
       expect(success.response.requestOptions.path, '$baseUrl/health');
     });
 
@@ -41,7 +44,8 @@ void main() {
 
       final response = await api.health();
 
-      final success = response as TonikSuccess<HealthGet200BodyModel>;
+      final success =
+          response as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
       expect(success.response.requestOptions.method, 'GET');
     });
   });
@@ -55,7 +59,8 @@ void main() {
           body: const Pet(name: 'Fluffy'),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/annotation/described-pet',
@@ -69,7 +74,8 @@ void main() {
           body: const Pet(name: 'Fluffy'),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(success.response.requestOptions.method, 'POST');
       });
 
@@ -80,7 +86,8 @@ void main() {
           body: const Pet(name: 'Max', age: 5),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -95,7 +102,8 @@ void main() {
           body: const Pet(name: 'Solo'),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -112,8 +120,12 @@ void main() {
           body: const Pet(name: 'Test'),
         );
 
-        expect(response, isA<TonikSuccess<DescribedPetAlias>>());
-        final success = response as TonikSuccess<DescribedPetAlias>;
+        expect(
+          response,
+          isA<TonikSuccess<DescribedPetAlias, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(success.value, isA<Pet>());
       });
@@ -125,7 +137,8 @@ void main() {
           body: const Pet(name: 'Charlie', age: 3),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(success.value.name, 'Charlie');
         expect(success.value.age, 3);
       });
@@ -137,7 +150,8 @@ void main() {
 
         final response = await api.createDescribedPet(body: original);
 
-        final success = response as TonikSuccess<DescribedPetAlias>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(success.value, original);
       });
     });
@@ -157,7 +171,7 @@ void main() {
 
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<LegacyUser>;
+        final success = response as TonikSuccess<LegacyUser, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/annotation/deprecated-user',
@@ -176,7 +190,7 @@ void main() {
 
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<LegacyUser>;
+        final success = response as TonikSuccess<LegacyUser, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -198,10 +212,10 @@ void main() {
 
         // expected to be deprecated
         // ignore: deprecated_member_use
-        expect(response, isA<TonikSuccess<LegacyUser>>());
+        expect(response, isA<TonikSuccess<LegacyUser, Response<Object?>>>());
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<LegacyUser>;
+        final success = response as TonikSuccess<LegacyUser, Response<Object?>>;
         expect(success.value, isA<User>());
       });
 
@@ -217,7 +231,7 @@ void main() {
 
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<LegacyUser>;
+        final success = response as TonikSuccess<LegacyUser, Response<Object?>>;
         expect(success.value, original);
       });
     });
@@ -234,7 +248,7 @@ void main() {
 
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<OldItem>;
+        final success = response as TonikSuccess<OldItem, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/annotation/described-deprecated',
@@ -250,7 +264,7 @@ void main() {
 
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<OldItem>;
+        final success = response as TonikSuccess<OldItem, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -269,10 +283,10 @@ void main() {
 
         // expected to be deprecated
         // ignore: deprecated_member_use
-        expect(response, isA<TonikSuccess<OldItem>>());
+        expect(response, isA<TonikSuccess<OldItem, Response<Object?>>>());
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<OldItem>;
+        final success = response as TonikSuccess<OldItem, Response<Object?>>;
         expect(success.value, isA<Item>());
       });
 
@@ -287,7 +301,7 @@ void main() {
 
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<OldItem>;
+        final success = response as TonikSuccess<OldItem, Response<Object?>>;
         expect(success.value, original);
       });
     });

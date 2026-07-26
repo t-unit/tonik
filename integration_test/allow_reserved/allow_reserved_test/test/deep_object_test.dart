@@ -17,9 +17,11 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -29,16 +31,15 @@ void main() {
   const objectValue = {'k1': 'a/b:c?d@e;f', 'k2': 'g&h=i+j k#l[m]n'};
 
   group('deepObject allowReserved', () {
-    test(
-        'keeps reserved value survivors literal, encodes form delimiters, '
+    test('keeps reserved value survivors literal, encodes form delimiters, '
         'brackets and hash, and leaves the name brackets intact', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testDeepObjectAllowReserved(
         reservedObject: objectValue,
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'reservedObject%5Bk1%5D=a/b:c?d@e;f'
@@ -52,8 +53,8 @@ void main() {
         notReservedObject: objectValue,
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'notReservedObject%5Bk1%5D=a%2Fb%3Ac%3Fd%40e%3Bf'

@@ -17,9 +17,11 @@ void main() {
     return AlbumsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -32,8 +34,12 @@ void main() {
 
       final response = await albumsApi.getAnAlbum(id: '123');
 
-      expect(response, isA<TonikSuccess<GetAnAlbumResponse>>());
-      final success = response as TonikSuccess<GetAnAlbumResponse>;
+      expect(
+        response,
+        isA<TonikSuccess<GetAnAlbumResponse, Response<Object?>>>(),
+      );
+      final success =
+          response as TonikSuccess<GetAnAlbumResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetAnAlbumResponse200>());
 
@@ -201,8 +207,12 @@ void main() {
 
       final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
 
-      expect(response, isA<TonikSuccess<GetAnAlbumResponse>>());
-      final success = response as TonikSuccess<GetAnAlbumResponse>;
+      expect(
+        response,
+        isA<TonikSuccess<GetAnAlbumResponse, Response<Object?>>>(),
+      );
+      final success =
+          response as TonikSuccess<GetAnAlbumResponse, Response<Object?>>;
       expect(success.response.statusCode, 401);
       expect(success.value, isA<GetAnAlbumResponse401>());
 
@@ -218,8 +228,12 @@ void main() {
 
       final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
 
-      expect(response, isA<TonikSuccess<GetAnAlbumResponse>>());
-      final success = response as TonikSuccess<GetAnAlbumResponse>;
+      expect(
+        response,
+        isA<TonikSuccess<GetAnAlbumResponse, Response<Object?>>>(),
+      );
+      final success =
+          response as TonikSuccess<GetAnAlbumResponse, Response<Object?>>;
       expect(success.response.statusCode, 403);
       expect(success.value, isA<GetAnAlbumResponse403>());
 
@@ -235,8 +249,12 @@ void main() {
 
       final response = await albumsApi.getAnAlbum(id: 'abc', market: 'en');
 
-      expect(response, isA<TonikSuccess<GetAnAlbumResponse>>());
-      final success = response as TonikSuccess<GetAnAlbumResponse>;
+      expect(
+        response,
+        isA<TonikSuccess<GetAnAlbumResponse, Response<Object?>>>(),
+      );
+      final success =
+          response as TonikSuccess<GetAnAlbumResponse, Response<Object?>>;
       expect(success.response.statusCode, 429);
       expect(success.value, isA<GetAnAlbumResponse429>());
 

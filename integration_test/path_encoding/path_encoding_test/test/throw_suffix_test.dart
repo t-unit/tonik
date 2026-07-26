@@ -23,17 +23,17 @@ void main() {
     return SimpleApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(baseOptions: BaseOptions()),
+        serverConfig: ServerConfig.clientFactory(() => Dio(BaseOptions())),
       ),
     );
   }
 
   void expectEncodingError(
-    TonikResult<EchoResponse> response, {
+    TonikResult<EchoResponse, Response<Object?>> response, {
     required String parameterName,
   }) {
-    expect(response, isA<TonikError<EchoResponse>>());
-    final error = response as TonikError<EchoResponse>;
+    expect(response, isA<TonikError<EchoResponse, Response<Object?>>>());
+    final error = response as TonikError<EchoResponse, Response<Object?>>;
     expect(error.type, TonikErrorType.encoding);
     expect(error.error, isA<EncodingException>());
     final exception = error.error as EncodingException;

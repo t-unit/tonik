@@ -18,13 +18,26 @@ TypeReference resultTypeForOperation(
   final hasHeaders = response?.hasHeaders ?? false;
   final bodyCount = response?.bodyCount ?? 0;
   final hasMultipleResponses = responses.length > 1;
+  final nativeResponseType = TypeReference(
+    (b) => b
+      ..symbol = 'Response'
+      ..url = 'package:dio/dio.dart'
+      ..types.add(
+        TypeReference(
+          (b) => b
+            ..symbol = 'Object'
+            ..url = 'dart:core'
+            ..isNullable = true,
+        ),
+      ),
+  );
 
   return switch ((hasHeaders, bodyCount, hasMultipleResponses)) {
     (_, _, true) => TypeReference(
       (b) => b
         ..symbol = 'TonikResult'
         ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.add(
+        ..types.addAll([
           refer(
             nameManager.responseWrapperNames(operation).$1,
             sourceFileUrl(
@@ -33,35 +46,40 @@ TypeReference resultTypeForOperation(
               nameManager.responseWrapperNames(operation).$1,
             ),
           ),
-        ),
+          nativeResponseType,
+        ]),
     ),
 
     (false, 0, false) => TypeReference(
       (b) => b
         ..symbol = 'TonikResult'
         ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.add(refer('void')),
+        ..types.addAll([
+          refer('void'),
+          nativeResponseType,
+        ]),
     ),
 
     (false, 1, false) => TypeReference(
       (b) => b
         ..symbol = 'TonikResult'
         ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.add(
+        ..types.addAll([
           typeReference(
             response!.resolved.bodies.first.model,
             nameManager,
             package,
             useImmutableCollections: useImmutableCollections,
           ),
-        ),
+          nativeResponseType,
+        ]),
     ),
 
     (true, _, false) || (false, _, false) => TypeReference(
       (b) => b
         ..symbol = 'TonikResult'
         ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.add(
+        ..types.addAll([
           refer(
             nameManager.responseNames(response!.resolved).baseName,
             sourceFileUrl(
@@ -70,7 +88,8 @@ TypeReference resultTypeForOperation(
               nameManager.responseNames(response.resolved).baseName,
             ),
           ),
-        ),
+          nativeResponseType,
+        ]),
     ),
   };
 }

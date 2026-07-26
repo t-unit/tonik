@@ -17,9 +17,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -46,11 +48,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripNestedOneofInAllofGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>;
+                as TonikError<
+                  HeadersRoundtripNestedOneofInAllofGet200Response,
+                  Response<Object?>
+                >;
 
         expect(error.type, TonikErrorType.encoding);
         expect(error.response, isNull);
@@ -66,11 +76,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripNestedOneofInAllofGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>;
+                as TonikError<
+                  HeadersRoundtripNestedOneofInAllofGet200Response,
+                  Response<Object?>
+                >;
 
         expect(error.type, TonikErrorType.encoding);
         expect(error.response, isNull);
@@ -86,11 +104,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripNestedOneofInAllofGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
             result
-                as TonikError<HeadersRoundtripNestedOneofInAllofGet200Response>;
+                as TonikError<
+                  HeadersRoundtripNestedOneofInAllofGet200Response,
+                  Response<Object?>
+                >;
 
         expect(error.type, TonikErrorType.encoding);
       });
@@ -105,13 +131,17 @@ void main() {
           expect(
             result,
             isA<
-              TonikSuccess<HeadersRoundtripNestedOneofInAllofGet200Response>
+              TonikSuccess<
+                HeadersRoundtripNestedOneofInAllofGet200Response,
+                Response<Object?>
+              >
             >(),
           );
           final success =
               result
                   as TonikSuccess<
-                    HeadersRoundtripNestedOneofInAllofGet200Response
+                    HeadersRoundtripNestedOneofInAllofGet200Response,
+                    Response<Object?>
                   >;
           expect(
             success.response.requestOptions.headers['X-Nested-Value'],

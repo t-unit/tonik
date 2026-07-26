@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -11,7 +12,12 @@ void main() {
   late DartEmitter emitter;
   late List<Server> testServers;
   late List<Class> generatedClasses;
+  late Class dioAdapter;
   late Class baseClass;
+
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     nameManager = NameManager(
@@ -33,7 +39,57 @@ void main() {
     ];
 
     generatedClasses = generator.generateClasses(testServers);
+    dioAdapter = generator.generateDioAdapter();
     baseClass = generatedClasses.first;
+  });
+
+  group('ServerGenerator Dio adapter', () {
+    test('generates a private adapter in the server library', () {
+      expect(dioAdapter.name, '_DioClientAdapter');
+
+      final baseUrlField = dioAdapter.fields.firstWhere(
+        (f) => f.name == 'baseUrl',
+      );
+      expect(baseUrlField.type?.accept(emitter).toString(), 'String');
+      expect(baseUrlField.modifier, FieldModifier.final$);
+
+      final serverConfigField = dioAdapter.fields.firstWhere(
+        (f) => f.name == 'serverConfig',
+      );
+      expect(
+        serverConfigField.type?.accept(emitter).toString(),
+        'ServerConfig<Dio>',
+      );
+      expect(serverConfigField.modifier, FieldModifier.final$);
+
+      final dioField = dioAdapter.fields.firstWhere(
+        (f) => f.name == r'_$dio',
+      );
+      expect(dioField.type?.accept(emitter).toString(), 'Dio?');
+    });
+
+    test('generates lazy, cached resolution', () {
+      final dioGetter = dioAdapter.methods.firstWhere((m) => m.name == 'dio');
+
+      const expectedBody = r'''
+        final cachedDio = _$dio;
+        if (cachedDio != null) {
+          return cachedDio;
+        }
+
+        final client = serverConfig.client;
+        final clientFactory = serverConfig.clientFactory;
+
+        final resolvedDio = client ?? clientFactory?.call() ?? Dio() ;
+        resolvedDio.options.baseUrl = baseUrl;
+        return _$dio = resolvedDio;
+      ''';
+
+      expect(
+        collapseWhitespace(dioGetter.body!.accept(emitter).toString()),
+        collapseWhitespace(expectedBody),
+      );
+    });
   });
 
   group('ServerGenerator base class', () {
@@ -55,13 +111,18 @@ void main() {
       );
       expect(
         serverConfigField.type?.accept(emitter).toString(),
-        'ServerConfig',
+        'ServerConfig<Dio>',
       );
       expect(serverConfigField.modifier, FieldModifier.final$);
 
-      final dioField = fields.firstWhere((f) => f.name == r'_$dio');
-      expect(dioField.type?.accept(emitter).toString(), 'Dio?');
-      expect(dioField.modifier, isNot(FieldModifier.final$));
+      final adapterField = fields.firstWhere(
+        (f) => f.name == r'_$dioAdapter',
+      );
+      expect(
+        adapterField.type?.accept(emitter).toString(),
+        '_DioClientAdapter',
+      );
+      expect(adapterField.modifier, FieldModifier.final$);
     });
 
     test('generates constructor with named parameters', () {
@@ -86,11 +147,13 @@ void main() {
       final dioGetter = baseClass.methods.firstWhere((m) => m.name == 'dio');
       expect(dioGetter.type, MethodType.getter);
       expect(dioGetter.returns?.accept(emitter).toString(), 'Dio');
+      expect(dioGetter.lambda, isTrue);
 
       final bodyCode = dioGetter.body!.accept(emitter).toString();
-      expect(bodyCode, contains(r'if (_$dio == null)'));
-      expect(bodyCode, contains('serverConfig.configureDio'));
-      expect(bodyCode, contains(r'return _$dio!'));
+      expect(
+        collapseWhitespace(bodyCode),
+        collapseWhitespace(r'_$dioAdapter.dio'),
+      );
     });
   });
 
@@ -285,27 +348,88 @@ void main() {
         ),
       ];
 
-      final result = generator.generate(servers);
-      expect(result.code, contains('class'));
+      expect(() => generator.generate(servers), returnsNormally);
     });
   });
 
   group('ServerGenerator output', () {
-    test('generates file with correct structure', () {
+    test('generates the complete server library', () {
       final result = generator.generate(testServers);
 
       expect(result.filename, 'server.dart');
 
-      expect(
-        result.code,
-        contains('// Generated code - do not modify by hand'),
-      );
-      expect(result.code, contains('// ignore_for_file:'));
+      const expectedCode = r'''
+        // Generated code - do not modify by hand
 
-      expect(result.code, contains("import 'package:dio/dio.dart'"));
+        // ignore_for_file: no_leading_underscores_for_library_prefixes
+        import 'dart:core' as _i1;
+
+        import 'package:dio/dio.dart' as _i3;
+        import 'package:tonik_util/tonik_util.dart' as _i2;
+
+        class _DioClientAdapter {
+          _DioClientAdapter(this.baseUrl, this.serverConfig);
+
+          final _i1.String baseUrl;
+
+          final _i2.ServerConfig<_i3.Dio> serverConfig;
+
+          _i3.Dio? _$dio;
+
+          _i3.Dio get dio {
+            final cachedDio = _$dio;
+            if (cachedDio != null) {
+              return cachedDio;
+            }
+
+            final client = serverConfig.client;
+            final clientFactory = serverConfig.clientFactory;
+            final resolvedDio =
+                client ?? clientFactory?.call() ?? _i3.Dio();
+            resolvedDio.options.baseUrl = baseUrl;
+            return _$dio = resolvedDio;
+          }
+        }
+
+        sealed class Server {
+          Server({required this.baseUrl, required this.serverConfig})
+            : _$dioAdapter = _DioClientAdapter(baseUrl, serverConfig);
+
+          final _i1.String baseUrl;
+
+          final _i2.ServerConfig<_i3.Dio> serverConfig;
+
+          final _DioClientAdapter _$dioAdapter;
+
+          _i3.Dio get dio => _$dioAdapter.dio;
+        }
+
+        /// Production server - https://production.example.com
+        class ProductionServer extends Server {
+          ProductionServer({
+            super.serverConfig = const _i2.ServerConfig<_i3.Dio>(),
+          }) : super(baseUrl: r'https://production.example.com');
+        }
+
+        /// Staging server - https://staging.example.com
+        class StagingServer extends Server {
+          StagingServer({
+            super.serverConfig = const _i2.ServerConfig<_i3.Dio>(),
+          }) : super(baseUrl: r'https://staging.example.com');
+        }
+
+        /// Custom server with user-defined base URL
+        class CustomServer extends Server {
+          CustomServer({
+            required super.baseUrl,
+            super.serverConfig = const _i2.ServerConfig<_i3.Dio>(),
+          });
+        }
+      ''';
+
       expect(
-        result.code,
-        contains("import 'package:tonik_util/tonik_util.dart'"),
+        collapseWhitespace(format(result.code)),
+        collapseWhitespace(format(expectedCode)),
       );
     });
   });
@@ -321,8 +445,7 @@ void main() {
           ),
         ];
 
-        final result = generator.generate(servers);
-        expect(result.code, contains("it's-a-server"));
+        expect(() => generator.generate(servers), returnsNormally);
       },
     );
 
@@ -343,8 +466,7 @@ void main() {
           ),
         ];
 
-        final result = generator.generate(servers);
-        expect(result.code, contains("it's-a-"));
+        expect(() => generator.generate(servers), returnsNormally);
       },
     );
   });

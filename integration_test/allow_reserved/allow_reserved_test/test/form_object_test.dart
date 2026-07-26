@@ -17,9 +17,11 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -35,28 +37,30 @@ void main() {
         reservedObject: const ReservedListObject(tags: listValues),
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'reservedObject=tags,a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });
 
-    test('sibling default object list property is fully percent-encoded',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormObjectAllowReserved(
-        notReservedObject: const ReservedListObject(tags: listValues),
-      );
+    test(
+      'sibling default object list property is fully percent-encoded',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormObjectAllowReserved(
+          notReservedObject: const ReservedListObject(tags: listValues),
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'notReservedObject=tags,a%2Fb%3Ac%3Fd%40e%3Bf,'
-        'g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
-      );
-    });
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'notReservedObject=tags,a%2Fb%3Ac%3Fd%40e%3Bf,'
+          'g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
+        );
+      },
+    );
   });
 }

@@ -17,9 +17,11 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -27,20 +29,22 @@ void main() {
   }
 
   group('form allowReserved enum', () {
-    test('keeps reserved survivors literal and encodes the form delimiters',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormAllowReservedEnum(
-        reserved: ReservedChoice.gAmpersandHEqualsIPlusJ,
-      );
+    test(
+      'keeps reserved survivors literal and encodes the form delimiters',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormAllowReservedEnum(
+          reserved: ReservedChoice.gAmpersandHEqualsIPlusJ,
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'reserved=g%26h%3Di%2Bj',
-      );
-    });
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'reserved=g%26h%3Di%2Bj',
+        );
+      },
+    );
 
     test('sibling default enum is fully percent-encoded', () async {
       final api = buildQueryApi(responseStatus: '204');
@@ -48,8 +52,8 @@ void main() {
         notReserved: ReservedChoice.gAmpersandHEqualsIPlusJ,
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'notReserved=g%26h%3Di%2Bj',
@@ -58,23 +62,25 @@ void main() {
   });
 
   group('form allowReserved enum list', () {
-    test('keeps reserved survivors literal and encodes the form delimiters',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormAllowReservedEnumList(
-        reservedList: [
-          ReservedChoice.aSlashBc,
-          ReservedChoice.gAmpersandHEqualsIPlusJ,
-        ],
-      );
+    test(
+      'keeps reserved survivors literal and encodes the form delimiters',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormAllowReservedEnumList(
+          reservedList: [
+            ReservedChoice.aSlashBc,
+            ReservedChoice.gAmpersandHEqualsIPlusJ,
+          ],
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'reservedList=a/b:c,g%26h%3Di%2Bj',
-      );
-    });
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'reservedList=a/b:c,g%26h%3Di%2Bj',
+        );
+      },
+    );
 
     test('sibling default enum list is fully percent-encoded', () async {
       final api = buildQueryApi(responseStatus: '204');
@@ -85,8 +91,8 @@ void main() {
         ],
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'notReservedList=a%2Fb%3Ac,g%26h%3Di%2Bj',

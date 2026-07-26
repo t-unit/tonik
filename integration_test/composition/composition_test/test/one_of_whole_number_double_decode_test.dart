@@ -17,9 +17,11 @@ void main() {
     return CompositionApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Body': responseBody},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Body': responseBody},
+            ),
           ),
         ),
       ),
@@ -32,7 +34,7 @@ void main() {
       final result = await api.echoOneOfPrimitive(
         body: const OneOfPrimitiveInt(0),
       );
-      final success = result as TonikSuccess<OneOfPrimitive>;
+      final success = result as TonikSuccess<OneOfPrimitive, Response<Object?>>;
 
       expect(success.value, const OneOfPrimitiveInt(42));
     });
@@ -42,7 +44,7 @@ void main() {
       final result = await api.echoOneOfPrimitive(
         body: const OneOfPrimitiveInt(0),
       );
-      final success = result as TonikSuccess<OneOfPrimitive>;
+      final success = result as TonikSuccess<OneOfPrimitive, Response<Object?>>;
 
       expect(success.value, const OneOfPrimitiveInt(40));
     });
@@ -52,7 +54,7 @@ void main() {
       final result = await api.echoOneOfPrimitive(
         body: const OneOfPrimitiveInt(0),
       );
-      final success = result as TonikSuccess<OneOfPrimitive>;
+      final success = result as TonikSuccess<OneOfPrimitive, Response<Object?>>;
 
       expect(success.value, const OneOfPrimitiveInt(42));
     });
@@ -62,7 +64,7 @@ void main() {
       final result = await api.echoOneOfPrimitive(
         body: const OneOfPrimitiveInt(0),
       );
-      final success = result as TonikSuccess<OneOfPrimitive>;
+      final success = result as TonikSuccess<OneOfPrimitive, Response<Object?>>;
 
       expect(success.value, const OneOfPrimitiveString('hello'));
     });
@@ -72,7 +74,7 @@ void main() {
       final result = await api.echoOneOfPrimitive(
         body: const OneOfPrimitiveInt(0),
       );
-      final error = result as TonikError<OneOfPrimitive>;
+      final error = result as TonikError<OneOfPrimitive, Response<Object?>>;
 
       expect(error.type, TonikErrorType.decoding);
       expect(error.error, isA<InvalidTypeException>());
@@ -85,7 +87,8 @@ void main() {
       final result = await api.echoOneOfIntegerOrNumber(
         body: const OneOfIntegerOrNumberInt(0),
       );
-      final success = result as TonikSuccess<OneOfIntegerOrNumber>;
+      final success =
+          result as TonikSuccess<OneOfIntegerOrNumber, Response<Object?>>;
 
       expect(success.value, const OneOfIntegerOrNumberNumber(42.0));
     });
@@ -95,21 +98,25 @@ void main() {
       final result = await api.echoOneOfIntegerOrNumber(
         body: const OneOfIntegerOrNumberInt(0),
       );
-      final success = result as TonikSuccess<OneOfIntegerOrNumber>;
+      final success =
+          result as TonikSuccess<OneOfIntegerOrNumber, Response<Object?>>;
 
       expect(success.value, const OneOfIntegerOrNumberInt(42));
     });
 
-    test('fractional double 42.5 decodes to OneOfIntegerOrNumberNumber(42.5)',
-        () async {
-      final api = buildApi('42.5');
-      final result = await api.echoOneOfIntegerOrNumber(
-        body: const OneOfIntegerOrNumberInt(0),
-      );
-      final success = result as TonikSuccess<OneOfIntegerOrNumber>;
+    test(
+      'fractional double 42.5 decodes to OneOfIntegerOrNumberNumber(42.5)',
+      () async {
+        final api = buildApi('42.5');
+        final result = await api.echoOneOfIntegerOrNumber(
+          body: const OneOfIntegerOrNumberInt(0),
+        );
+        final success =
+            result as TonikSuccess<OneOfIntegerOrNumber, Response<Object?>>;
 
-      expect(success.value, const OneOfIntegerOrNumberNumber(42.5));
-    });
+        expect(success.value, const OneOfIntegerOrNumberNumber(42.5));
+      },
+    );
   });
 
   group('OneOfIntegerOrClass1 decodes JSON number to the integer variant', () {
@@ -118,7 +125,8 @@ void main() {
       final result = await api.echoOneOfIntegerOrClass1(
         body: const OneOfIntegerOrClass1Int(0),
       );
-      final success = result as TonikSuccess<OneOfIntegerOrClass1>;
+      final success =
+          result as TonikSuccess<OneOfIntegerOrClass1, Response<Object?>>;
 
       expect(success.value, const OneOfIntegerOrClass1Int(42));
     });
@@ -128,7 +136,8 @@ void main() {
       final result = await api.echoOneOfIntegerOrClass1(
         body: const OneOfIntegerOrClass1Int(0),
       );
-      final success = result as TonikSuccess<OneOfIntegerOrClass1>;
+      final success =
+          result as TonikSuccess<OneOfIntegerOrClass1, Response<Object?>>;
 
       expect(success.value, const OneOfIntegerOrClass1Int(42));
     });
@@ -138,7 +147,8 @@ void main() {
       final result = await api.echoOneOfIntegerOrClass1(
         body: const OneOfIntegerOrClass1Int(0),
       );
-      final success = result as TonikSuccess<OneOfIntegerOrClass1>;
+      final success =
+          result as TonikSuccess<OneOfIntegerOrClass1, Response<Object?>>;
 
       expect(
         success.value,
@@ -151,7 +161,8 @@ void main() {
       final result = await api.echoOneOfIntegerOrClass1(
         body: const OneOfIntegerOrClass1Int(0),
       );
-      final error = result as TonikError<OneOfIntegerOrClass1>;
+      final error =
+          result as TonikError<OneOfIntegerOrClass1, Response<Object?>>;
 
       expect(error.type, TonikErrorType.decoding);
       expect(error.error, isA<InvalidTypeException>());

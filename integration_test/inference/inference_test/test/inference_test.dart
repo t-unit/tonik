@@ -17,9 +17,11 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -44,7 +46,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.path,
@@ -68,7 +71,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.requestOptions.method, 'POST');
       });
@@ -89,7 +93,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.contentType,
@@ -113,7 +118,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -136,7 +142,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -159,7 +166,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -182,7 +190,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -205,7 +214,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -228,7 +238,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -251,7 +262,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -280,7 +292,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -303,7 +316,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -329,7 +343,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -352,7 +367,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -382,7 +398,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -409,7 +426,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -435,7 +453,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -458,7 +477,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -484,7 +504,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -507,7 +528,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -533,7 +555,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -561,7 +584,8 @@ void main() {
           final success =
               response
                   as TonikSuccess<
-                    SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                    SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                    Response<Object?>
                   >;
           final requestBody =
               success.response.requestOptions.data as Map<String, dynamic>;
@@ -585,7 +609,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -618,7 +643,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -649,7 +675,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -676,7 +703,8 @@ void main() {
           final success =
               response
                   as TonikSuccess<
-                    SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                    SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                    Response<Object?>
                   >;
           final requestBody =
               success.response.requestOptions.data as Map<String, dynamic>;
@@ -705,7 +733,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -728,7 +757,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -755,7 +785,8 @@ void main() {
           final success =
               response
                   as TonikSuccess<
-                    SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                    SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                    Response<Object?>
                   >;
           final requestBody =
               success.response.requestOptions.data as Map<String, dynamic>;
@@ -782,7 +813,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -811,7 +843,8 @@ void main() {
           final success =
               response
                   as TonikSuccess<
-                    SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                    SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                    Response<Object?>
                   >;
           final requestBody =
               success.response.requestOptions.data as Map<String, dynamic>;
@@ -835,7 +868,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -858,7 +892,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -882,7 +917,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -908,7 +944,8 @@ void main() {
           final success =
               response
                   as TonikSuccess<
-                    SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                    SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                    Response<Object?>
                   >;
           final requestBody =
               success.response.requestOptions.data as Map<String, dynamic>;
@@ -952,7 +989,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -988,13 +1026,17 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<SendMessageProtoRouteApiV1InferSendMessagePostResponse>
+            TonikSuccess<
+              SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
         expect(
@@ -1019,7 +1061,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final response200 =
             success.value
@@ -1045,13 +1088,17 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<SendMessageProtoRouteApiV1InferSendMessagePostResponse>
+            TonikSuccess<
+              SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 422);
         expect(
@@ -1076,7 +1123,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV1InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV1InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         final response422 =
             success.value
@@ -1104,7 +1152,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV2InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV2InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.path,
@@ -1128,7 +1177,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV2InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV2InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.requestOptions.method, 'POST');
       });
@@ -1149,7 +1199,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV2InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV2InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.contentType,
@@ -1175,13 +1226,17 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<SendMessageProtoRouteApiV2InferSendMessagePostResponse>
+            TonikSuccess<
+              SendMessageProtoRouteApiV2InferSendMessagePostResponse,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV2InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV2InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
         expect(
@@ -1208,13 +1263,17 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<SendMessageProtoRouteApiV2InferSendMessagePostResponse>
+            TonikSuccess<
+              SendMessageProtoRouteApiV2InferSendMessagePostResponse,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  SendMessageProtoRouteApiV2InferSendMessagePostResponse
+                  SendMessageProtoRouteApiV2InferSendMessagePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 422);
         expect(
@@ -1233,7 +1292,9 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success = response as TonikSuccess<List<Map<String, Object?>>>;
+        final success =
+            response
+                as TonikSuccess<List<Map<String, Object?>>, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/api/v1/infer/list_connectors',
@@ -1246,7 +1307,9 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success = response as TonikSuccess<List<Map<String, Object?>>>;
+        final success =
+            response
+                as TonikSuccess<List<Map<String, Object?>>, Response<Object?>>;
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -1256,7 +1319,9 @@ void main() {
         final response = await api
             .listConnectorsProtoRouteApiV1InferListConnectorsGet();
 
-        final success = response as TonikSuccess<List<Map<String, Object?>>>;
+        final success =
+            response
+                as TonikSuccess<List<Map<String, Object?>>, Response<Object?>>;
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -1270,9 +1335,11 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<List<Map<String, Object?>>>>(),
+          isA<TonikSuccess<List<Map<String, Object?>>, Response<Object?>>>(),
         );
-        final success = response as TonikSuccess<List<Map<String, Object?>>>;
+        final success =
+            response
+                as TonikSuccess<List<Map<String, Object?>>, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(
           success.value,
@@ -1290,7 +1357,8 @@ void main() {
         final response = await api
             .getSupportedModelsApiV1InferSupportedModelsGet();
 
-        final success = response as TonikSuccess<List<String>>;
+        final success =
+            response as TonikSuccess<List<String>, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/api/v1/infer/supported_models',
@@ -1303,7 +1371,8 @@ void main() {
         final response = await api
             .getSupportedModelsApiV1InferSupportedModelsGet();
 
-        final success = response as TonikSuccess<List<String>>;
+        final success =
+            response as TonikSuccess<List<String>, Response<Object?>>;
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -1313,7 +1382,8 @@ void main() {
         final response = await api
             .getSupportedModelsApiV1InferSupportedModelsGet();
 
-        final success = response as TonikSuccess<List<String>>;
+        final success =
+            response as TonikSuccess<List<String>, Response<Object?>>;
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -1325,8 +1395,9 @@ void main() {
         final response = await api
             .getSupportedModelsApiV1InferSupportedModelsGet();
 
-        expect(response, isA<TonikSuccess<List<String>>>());
-        final success = response as TonikSuccess<List<String>>;
+        expect(response, isA<TonikSuccess<List<String>, Response<Object?>>>());
+        final success =
+            response as TonikSuccess<List<String>, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(success.value, isA<List<String>>());
       });
@@ -1342,7 +1413,12 @@ void main() {
           body: const {},
         );
 
-        final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
+        final success =
+            response
+                as TonikSuccess<
+                  GetGithubRepositoriesResponse,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/api/v1/github/repositories',
@@ -1356,7 +1432,12 @@ void main() {
           body: const {},
         );
 
-        final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
+        final success =
+            response
+                as TonikSuccess<
+                  GetGithubRepositoriesResponse,
+                  Response<Object?>
+                >;
         expect(success.response.requestOptions.method, 'POST');
       });
 
@@ -1367,7 +1448,12 @@ void main() {
           body: const {},
         );
 
-        final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
+        final success =
+            response
+                as TonikSuccess<
+                  GetGithubRepositoriesResponse,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.contentType,
           'application/json',
@@ -1385,9 +1471,14 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetGithubRepositoriesResponse>>(),
+          isA<TonikSuccess<GetGithubRepositoriesResponse, Response<Object?>>>(),
         );
-        final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
+        final success =
+            response
+                as TonikSuccess<
+                  GetGithubRepositoriesResponse,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
         expect(
           success.value,
@@ -1402,7 +1493,12 @@ void main() {
           body: const {},
         );
 
-        final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
+        final success =
+            response
+                as TonikSuccess<
+                  GetGithubRepositoriesResponse,
+                  Response<Object?>
+                >;
         final response200 = success.value as GetGithubRepositoriesResponse200;
         expect(response200.body, isA<List<String>>());
       });
@@ -1418,9 +1514,14 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetGithubRepositoriesResponse>>(),
+          isA<TonikSuccess<GetGithubRepositoriesResponse, Response<Object?>>>(),
         );
-        final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
+        final success =
+            response
+                as TonikSuccess<
+                  GetGithubRepositoriesResponse,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 422);
         expect(
           success.value,
@@ -1435,7 +1536,12 @@ void main() {
           body: const {},
         );
 
-        final success = response as TonikSuccess<GetGithubRepositoriesResponse>;
+        final success =
+            response
+                as TonikSuccess<
+                  GetGithubRepositoriesResponse,
+                  Response<Object?>
+                >;
         final response422 = success.value as GetGithubRepositoriesResponse422;
         expect(response422.body, isA<HttpValidationError>());
       });
@@ -1455,7 +1561,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.path,
@@ -1474,7 +1581,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.requestOptions.method, 'POST');
       });
@@ -1490,7 +1598,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.contentType,
@@ -1509,7 +1618,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -1530,7 +1640,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -1552,7 +1663,8 @@ void main() {
           final success =
               response
                   as TonikSuccess<
-                    GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                    GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                    Response<Object?>
                   >;
           final requestBody =
               success.response.requestOptions.data as Map<String, dynamic>;
@@ -1574,14 +1686,16 @@ void main() {
           response,
           isA<
             TonikSuccess<
-              GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+              GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+              Response<Object?>
             >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
         expect(
@@ -1601,7 +1715,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                  Response<Object?>
                 >;
         final response200 =
             success.value
@@ -1623,14 +1738,16 @@ void main() {
           response,
           isA<
             TonikSuccess<
-              GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+              GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+              Response<Object?>
             >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse
+                  GetGithubReleaseProtoRouteApiV1GithubReleasePostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 422);
         expect(
@@ -1651,7 +1768,11 @@ void main() {
         );
 
         final success =
-            response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
+            response
+                as TonikSuccess<
+                  GetPrRouteApiV1GithubPrPostResponse,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/api/v1/github/pr',
@@ -1666,7 +1787,11 @@ void main() {
         );
 
         final success =
-            response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
+            response
+                as TonikSuccess<
+                  GetPrRouteApiV1GithubPrPostResponse,
+                  Response<Object?>
+                >;
         expect(success.response.requestOptions.method, 'POST');
       });
 
@@ -1678,7 +1803,11 @@ void main() {
         );
 
         final success =
-            response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
+            response
+                as TonikSuccess<
+                  GetPrRouteApiV1GithubPrPostResponse,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.contentType,
           'application/json',
@@ -1693,7 +1822,11 @@ void main() {
         );
 
         final success =
-            response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
+            response
+                as TonikSuccess<
+                  GetPrRouteApiV1GithubPrPostResponse,
+                  Response<Object?>
+                >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['commit_sha'], 'xyz789commit');
@@ -1709,7 +1842,11 @@ void main() {
           );
 
           final success =
-              response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
+              response
+                  as TonikSuccess<
+                    GetPrRouteApiV1GithubPrPostResponse,
+                    Response<Object?>
+                  >;
           final requestBody =
               success.response.requestOptions.data as Map<String, dynamic>;
           expect(requestBody.containsKey('commit_sha'), isTrue);
@@ -1729,10 +1866,16 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>>(),
+          isA<
+            TonikSuccess<GetPrRouteApiV1GithubPrPostResponse, Response<Object?>>
+          >(),
         );
         final success =
-            response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
+            response
+                as TonikSuccess<
+                  GetPrRouteApiV1GithubPrPostResponse,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetPrRouteApiV1GithubPrPostResponse200>());
       });
@@ -1745,7 +1888,11 @@ void main() {
         );
 
         final success =
-            response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
+            response
+                as TonikSuccess<
+                  GetPrRouteApiV1GithubPrPostResponse,
+                  Response<Object?>
+                >;
         final response200 =
             success.value as GetPrRouteApiV1GithubPrPostResponse200;
         expect(response200.body, isA<List<GithubPr>>());
@@ -1762,10 +1909,16 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>>(),
+          isA<
+            TonikSuccess<GetPrRouteApiV1GithubPrPostResponse, Response<Object?>>
+          >(),
         );
         final success =
-            response as TonikSuccess<GetPrRouteApiV1GithubPrPostResponse>;
+            response
+                as TonikSuccess<
+                  GetPrRouteApiV1GithubPrPostResponse,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 422);
         expect(success.value, isA<GetPrRouteApiV1GithubPrPostResponse422>());
       });
@@ -1784,7 +1937,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetBranchesRouteApiV1GithubBranchListPostResponse
+                  GetBranchesRouteApiV1GithubBranchListPostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.path,
@@ -1802,7 +1956,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetBranchesRouteApiV1GithubBranchListPostResponse
+                  GetBranchesRouteApiV1GithubBranchListPostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.requestOptions.method, 'POST');
       });
@@ -1817,7 +1972,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetBranchesRouteApiV1GithubBranchListPostResponse
+                  GetBranchesRouteApiV1GithubBranchListPostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.contentType,
@@ -1837,13 +1993,17 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<GetBranchesRouteApiV1GithubBranchListPostResponse>
+            TonikSuccess<
+              GetBranchesRouteApiV1GithubBranchListPostResponse,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  GetBranchesRouteApiV1GithubBranchListPostResponse
+                  GetBranchesRouteApiV1GithubBranchListPostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
         expect(
@@ -1862,7 +2022,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetBranchesRouteApiV1GithubBranchListPostResponse
+                  GetBranchesRouteApiV1GithubBranchListPostResponse,
+                  Response<Object?>
                 >;
         final response200 =
             success.value
@@ -1882,13 +2043,17 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<GetBranchesRouteApiV1GithubBranchListPostResponse>
+            TonikSuccess<
+              GetBranchesRouteApiV1GithubBranchListPostResponse,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  GetBranchesRouteApiV1GithubBranchListPostResponse
+                  GetBranchesRouteApiV1GithubBranchListPostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 422);
         expect(
@@ -1914,7 +2079,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/api/v1/newrelic/alert',
@@ -1934,7 +2102,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         expect(success.response.requestOptions.method, 'POST');
       });
 
@@ -1951,7 +2122,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.contentType,
           'application/json',
@@ -1971,7 +2145,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['connector_name'], 'my-newrelic-connector');
@@ -1990,7 +2167,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['violation_id'], 'my-violation-xyz');
@@ -2009,7 +2189,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(requestBody['account_id'], 'my-account-id');
@@ -2028,7 +2211,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
         expect(
@@ -2052,11 +2238,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>>(),
+          isA<
+            TonikSuccess<
+              GetAlertRouteApiV1NewrelicAlertPostResponse,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
         expect(
           success.value,
@@ -2077,7 +2271,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         final response200 =
             success.value as GetAlertRouteApiV1NewrelicAlertPostResponse200;
         expect(response200.body, isA<ApiV1NewrelicAlertPost200BodyModel>());
@@ -2098,11 +2295,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>>(),
+          isA<
+            TonikSuccess<
+              GetAlertRouteApiV1NewrelicAlertPostResponse,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 422);
         expect(
           success.value,
@@ -2123,7 +2328,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<GetAlertRouteApiV1NewrelicAlertPostResponse>;
+                as TonikSuccess<
+                  GetAlertRouteApiV1NewrelicAlertPostResponse,
+                  Response<Object?>
+                >;
         final response422 =
             success.value as GetAlertRouteApiV1NewrelicAlertPostResponse422;
         expect(response422.body, isA<HttpValidationError>());
@@ -2148,7 +2356,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.path,
@@ -2171,7 +2380,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.requestOptions.method, 'POST');
       });
@@ -2191,7 +2401,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         expect(
           success.response.requestOptions.contentType,
@@ -2214,7 +2425,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -2236,7 +2448,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -2258,7 +2471,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -2280,7 +2494,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -2302,7 +2517,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -2329,13 +2545,17 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<GetDatadogAlertRouteApiV1DatadogAlertPostResponse>
+            TonikSuccess<
+              GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
         expect(
@@ -2359,7 +2579,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         final response200 =
             success.value
@@ -2384,13 +2605,17 @@ void main() {
         expect(
           response,
           isA<
-            TonikSuccess<GetDatadogAlertRouteApiV1DatadogAlertPostResponse>
+            TonikSuccess<
+              GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+              Response<Object?>
+            >
           >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 422);
         expect(
@@ -2414,7 +2639,8 @@ void main() {
         final success =
             response
                 as TonikSuccess<
-                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse
+                  GetDatadogAlertRouteApiV1DatadogAlertPostResponse,
+                  Response<Object?>
                 >;
         final response422 =
             success.value

@@ -18,9 +18,11 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -34,10 +36,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -47,10 +49,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -60,10 +62,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -73,10 +75,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -86,10 +88,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -101,10 +103,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -116,10 +118,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -131,10 +133,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -146,8 +148,8 @@ void main() {
         $class: const Class(name: 'test', age: 1),
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'class=name%20test%20age%201',
@@ -166,10 +168,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'nested objects have no flat parameter representation',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -179,10 +181,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -192,8 +194,8 @@ void main() {
         classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'classAlias=name%20test%20age%201',
@@ -208,10 +210,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -221,8 +223,8 @@ void main() {
         anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'anyOfComplex=name%20test%20age%201',
@@ -237,10 +239,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -252,8 +254,8 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'oneOfComplex=value%20test%20amount%201',
@@ -268,10 +270,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -284,8 +286,8 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'allOfComplex=name%20test%20age%201%20value%20test%20amount%201',
@@ -302,10 +304,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -321,10 +323,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -336,10 +338,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -351,10 +353,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -366,10 +368,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -381,10 +383,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -396,10 +398,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -413,10 +415,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -428,10 +430,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -446,10 +448,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -460,8 +462,8 @@ void main() {
       final response = await api.testSpaceDelimitedList(
         listString: ['test', 'test2', 'white space', 'special&&chars'],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listString=test%20test2%20white%20space%20special%26%26chars',
@@ -473,8 +475,8 @@ void main() {
       final response = await api.testSpaceDelimitedList(
         listNullableString: ['a b/c', null, 'd'],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listNullableString=a%20b%2Fc%20%20d',
@@ -489,8 +491,8 @@ void main() {
           const OneOfPrimitiveString('test2'),
         ],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listOneOfPrimitive=white%20space%20test2',
@@ -506,8 +508,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void>>());
-      final error = response as TonikError<void>;
+      expect(response, isA<TonikError<void, Response<Object?>>>());
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -520,8 +522,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void>>());
-      final error = response as TonikError<void>;
+      expect(response, isA<TonikError<void, Response<Object?>>>());
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -534,8 +536,8 @@ void main() {
           const SpaceDelimitedListParametersArrayOneOfModelInt(5),
         ],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listOneOfComplexMixed=3%204%205',
@@ -551,8 +553,8 @@ void main() {
           SpaceDelimitedListParametersArrayModel.lowPriority,
         ],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listEnum=high%20priority%20urgent%20low%20priority',
@@ -564,8 +566,8 @@ void main() {
       final response = await api.testSpaceDelimitedList(
         listString: const [],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(success.response.requestOptions.uri.query, '');
     });
 
@@ -575,8 +577,8 @@ void main() {
         listString: const [],
         listOneOfPrimitive: [const OneOfPrimitiveString('test')],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listOneOfPrimitive=test',
@@ -590,8 +592,8 @@ void main() {
       final response = await api.testSpaceDelimitedListExplode(
         listString: ['test', 'test2'],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listString=test&listString=test2',
@@ -603,8 +605,8 @@ void main() {
       final response = await api.testSpaceDelimitedListExplode(
         listOneOfPrimitive: [const OneOfPrimitiveString('white space')],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listOneOfPrimitive=white%20space',
@@ -620,8 +622,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void>>());
-      final error = response as TonikError<void>;
+      expect(response, isA<TonikError<void, Response<Object?>>>());
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -634,8 +636,8 @@ void main() {
           SpaceDelimitedListExplodeParametersArrayModel.lowPriority,
         ],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'listEnum=high%20priority&listEnum=urgent&listEnum=low%20priority',
@@ -647,8 +649,8 @@ void main() {
       final response = await api.testSpaceDelimitedListExplode(
         listString: const [],
       );
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(success.response.requestOptions.uri.query, '');
     });
   });
@@ -662,10 +664,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -677,10 +679,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -692,10 +694,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -703,8 +705,8 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testSpaceDelimitedPrimitive();
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(success.response.requestOptions.uri.query, '');
     });
 
@@ -712,8 +714,8 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testSpaceDelimitedPrimitive();
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(success.response.requestOptions.uri.query, '');
     });
   });
@@ -727,10 +729,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -738,8 +740,8 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testSpaceDelimitedComplex();
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(success.response.requestOptions.uri.query, '');
     });
 
@@ -758,10 +760,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void>>(),
+        isA<TonikError<void, Response<Object?>>>(),
         reason: 'parameter cannot be spaceDelimited-encoded',
       );
-      final error = response as TonikError<void>;
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -773,8 +775,8 @@ void main() {
         freeFormMap: const {'k1': 'v1', 'k2': 'v2'},
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'freeFormMap=k1%20v1%20k2%20v2',
@@ -787,8 +789,8 @@ void main() {
         aliasList: const ['a', 'b', 'c'],
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'aliasList=a%20b%20c',
@@ -801,8 +803,8 @@ void main() {
         mixedComposite: const StringOrClassClass(Class(name: 'test', age: 1)),
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'mixedComposite=name%20test%20age%201',
@@ -815,8 +817,8 @@ void main() {
         mixedComposite: const StringOrClassString('hello'),
       );
 
-      expect(response, isA<TonikError<void>>());
-      final error = response as TonikError<void>;
+      expect(response, isA<TonikError<void, Response<Object?>>>());
+      final error = response as TonikError<void, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
   });

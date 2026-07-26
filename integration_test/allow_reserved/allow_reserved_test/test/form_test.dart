@@ -17,9 +17,11 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -29,14 +31,13 @@ void main() {
   const value = 'a/b:c?d@e;f,g&h=i+j k#l[m]n';
 
   group('form allowReserved', () {
-    test(
-        'keeps reserved survivors literal and encodes only the form '
+    test('keeps reserved survivors literal and encodes only the form '
         'delimiters, space, and bracket/hash chars', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormAllowReserved(reserved: value);
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'reserved=a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
@@ -47,45 +48,46 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormAllowReserved(notReserved: value);
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'notReserved=a%2Fb%3Ac%3Fd%40e%3Bf%2Cg%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });
 
-    test('reserved and default siblings encode the same value differently',
-        () async {
-      final api = buildQueryApi(responseStatus: '204');
-      final response = await api.testFormAllowReserved(
-        reserved: value,
-        notReserved: value,
-      );
+    test(
+      'reserved and default siblings encode the same value differently',
+      () async {
+        final api = buildQueryApi(responseStatus: '204');
+        final response = await api.testFormAllowReserved(
+          reserved: value,
+          notReserved: value,
+        );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
-      expect(
-        success.response.requestOptions.uri.query,
-        'reserved=a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn'
-        '&notReserved=a%2Fb%3Ac%3Fd%40e%3Bf%2Cg%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
-      );
-    });
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(
+          success.response.requestOptions.uri.query,
+          'reserved=a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn'
+          '&notReserved=a%2Fb%3Ac%3Fd%40e%3Bf%2Cg%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
+        );
+      },
+    );
   });
 
   const listValues = ['a/b:c?d@e;f', 'g&h=i+j k#l[m]n'];
 
   group('form allowReserved list', () {
-    test(
-        'keeps reserved survivors literal and encodes only the form '
+    test('keeps reserved survivors literal and encodes only the form '
         'delimiters, space, and bracket/hash chars', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormAllowReservedList(
         reservedList: listValues,
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'reservedList=a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
@@ -98,8 +100,8 @@ void main() {
         notReservedList: listValues,
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'notReservedList=a%2Fb%3Ac%3Fd%40e%3Bf,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',

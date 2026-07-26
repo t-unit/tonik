@@ -17,9 +17,11 @@ void main() {
     return CompositionApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Body': responseBody},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Body': responseBody},
+            ),
           ),
         ),
       ),
@@ -31,7 +33,7 @@ void main() {
     final result = await api.echoOneOfScalarMix(
       body: const OneOfScalarMixInt(0),
     );
-    return (result as TonikSuccess<OneOfScalarMix>).value;
+    return (result as TonikSuccess<OneOfScalarMix, Response<Object?>>).value;
   }
 
   Future<OneOfDateTimeOrString> decodeDateTimeOrString(
@@ -41,7 +43,8 @@ void main() {
     final result = await api.echoOneOfDateTimeOrString(
       body: const OneOfDateTimeOrStringString(''),
     );
-    return (result as TonikSuccess<OneOfDateTimeOrString>).value;
+    return (result as TonikSuccess<OneOfDateTimeOrString, Response<Object?>>)
+        .value;
   }
 
   Future<OneOfBase64OrString> decodeBase64OrString(String responseBody) async {
@@ -49,7 +52,8 @@ void main() {
     final result = await api.echoOneOfBase64OrString(
       body: const OneOfBase64OrStringString(''),
     );
-    return (result as TonikSuccess<OneOfBase64OrString>).value;
+    return (result as TonikSuccess<OneOfBase64OrString, Response<Object?>>)
+        .value;
   }
 
   group('OneOfScalarMix [integer, double, decimal, string] routes each JSON '

@@ -18,9 +18,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -37,10 +39,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -57,10 +68,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(success.value.xSimpleObject?.name, 'onlyName');
         expect(success.value.xSimpleObject?.value, isNull);
@@ -74,10 +94,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(success.value.xSimpleObject?.name, isNull);
         expect(success.value.xSimpleObject?.value, 123);
@@ -91,10 +120,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.value.xSimpleObject,
@@ -119,10 +157,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         final profile = success.value.xUserProfile;
@@ -158,10 +205,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         final profile = success.value.xUserProfile;
         expect(profile?.id, 42);
@@ -197,10 +253,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         final profile = success.value.xUserProfile;
         expect(profile?.status, StatusEnum.pending);
@@ -225,10 +290,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.value.xSimpleObject,
@@ -255,10 +329,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(success.value.xSimpleObject, isNull);
         expect(success.value.xUserProfile, isNotNull);
@@ -272,10 +355,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(success.value.xSimpleObject, isNotNull);
         expect(success.value.xUserProfile, isNull);
@@ -287,10 +379,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripObjectsGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripObjectsGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
 
         expect(success.value.xSimpleObject, isNull);
         expect(success.value.xUserProfile, isNull);
@@ -307,7 +408,11 @@ void main() {
         );
 
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Simple-Object'],
           'name,a/b c%2Fd 100%,value,7',
@@ -330,7 +435,11 @@ void main() {
         );
 
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
         final wire =
             success.response.requestOptions.headers['X-User-Profile'] as String;
         expect(wire, contains('website,https://example.com/a/b'));
@@ -342,24 +451,30 @@ void main() {
     });
 
     group('delimiter collision', () {
-      test('a comma inside an object value cannot round-trip: it is '
-          'transmitted literally and decode reads it as a new key/value',
-          () async {
-        // Literal encoding doesn't escape the `,` delimiter, so an in-value
-        // comma can't round-trip.
-        final api = buildApi(responseStatus: '200');
-        final response = await api.testHeaderRoundtripObjects(
-          simpleObject: const SimpleObject(name: 'a,b', value: 5),
-        );
+      test(
+        'a comma inside an object value cannot round-trip: it is '
+        'transmitted literally and decode reads it as a new key/value',
+        () async {
+          // Literal encoding doesn't escape the `,` delimiter, so an in-value
+          // comma can't round-trip.
+          final api = buildApi(responseStatus: '200');
+          final response = await api.testHeaderRoundtripObjects(
+            simpleObject: const SimpleObject(name: 'a,b', value: 5),
+          );
 
-        final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
-        expect(
-          success.response.requestOptions.headers['X-Simple-Object'],
-          'name,a,b,value,5',
-        );
-        expect(success.value.xSimpleObject?.name, 'a');
-      });
+          final success =
+              response
+                  as TonikSuccess<
+                    HeadersRoundtripObjectsGet200Response,
+                    Response<Object?>
+                  >;
+          expect(
+            success.response.requestOptions.headers['X-Simple-Object'],
+            'name,a,b,value,5',
+          );
+          expect(success.value.xSimpleObject?.name, 'a');
+        },
+      );
     });
 
     group('server-originated composite response', () {
@@ -370,12 +485,14 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig(
-              baseOptions: BaseOptions(
-                headers: {
-                  'X-Response-Status': '200',
-                  'X-Simple-Object': 'name,x%2Fy 50%,value,9',
-                },
+            serverConfig: ServerConfig.clientFactory(
+              () => Dio(
+                BaseOptions(
+                  headers: {
+                    'X-Response-Status': '200',
+                    'X-Simple-Object': 'name,x%2Fy 50%,value,9',
+                  },
+                ),
               ),
             ),
           ),
@@ -384,7 +501,11 @@ void main() {
         final response = await injected.testHeaderRoundtripObjects();
 
         final success =
-            response as TonikSuccess<HeadersRoundtripObjectsGet200Response>;
+            response
+                as TonikSuccess<
+                  HeadersRoundtripObjectsGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xSimpleObject?.name, 'x%2Fy 50%');
         expect(success.value.xSimpleObject?.value, 9);
       });

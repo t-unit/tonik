@@ -17,9 +17,11 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -36,8 +38,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<ExampleDto>>());
-    final success = response as TonikSuccess<ExampleDto>;
+    expect(response, isA<TonikSuccess<ExampleDto, Response<Object?>>>());
+    final success = response as TonikSuccess<ExampleDto, Response<Object?>>;
     expect(success.response.statusCode, 200);
 
     final data = success.value;
@@ -60,8 +62,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<ExampleDto>>());
-    final success = response as TonikSuccess<ExampleDto>;
+    expect(response, isA<TonikSuccess<ExampleDto, Response<Object?>>>());
+    final success = response as TonikSuccess<ExampleDto, Response<Object?>>;
     expect(success.response.statusCode, 200);
 
     final data = success.value;

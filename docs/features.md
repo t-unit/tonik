@@ -330,7 +330,9 @@ Each operation generates a sealed response class. Every status code and content 
 | `deprecated` | ✅ |
 | Operation-level `security` | ✅ (documented in comments) |
 
-**Security:** Tonik documents security requirements but does not generate authentication code. Use `ServerConfig` interceptors. See [Authentication Guide](authentication.md).
+**Security:** Tonik documents security requirements but does not generate
+authentication code. Configure Dio in a `ServerConfig<Dio>` client factory.
+See [Authentication Guide](authentication.md).
 
 ---
 
@@ -393,5 +395,6 @@ The `tonik_util` package provides runtime types:
 - `Date` - RFC3339 date (YYYY-MM-DD)
 - `OffsetDateTime` - Timezone-aware DateTime
 - `TonikResult`, `TonikSuccess`, `TonikError` - Response handling
-- `ServerConfig` - Dio configuration (interceptors, timeouts, adapters)
+- `ServerConfig<Client>` - backend-neutral injected-client or client-factory
+  configuration
 - Various tooling for encoding and decoding

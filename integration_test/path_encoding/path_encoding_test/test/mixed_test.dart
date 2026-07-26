@@ -17,7 +17,7 @@ void main() {
     return LabelApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(baseOptions: BaseOptions()),
+        serverConfig: ServerConfig.clientFactory(() => Dio(BaseOptions())),
       ),
     );
   }
@@ -30,8 +30,8 @@ void main() {
         matrixValue: 'world',
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse>>());
-      final success = response as TonikSuccess<EchoResponse>;
+      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
+      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       // First param (label): .hello
       // Second param (matrix): ;matrixValue=world

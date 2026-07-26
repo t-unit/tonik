@@ -18,9 +18,11 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -42,12 +44,18 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofDiscriminatedGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response
+                  HeadersRoundtripOneofDiscriminatedGet200Response,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
 
@@ -77,12 +85,18 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofDiscriminatedGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response
+                  HeadersRoundtripOneofDiscriminatedGet200Response,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
 
@@ -109,12 +123,18 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofDiscriminatedGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response
+                  HeadersRoundtripOneofDiscriminatedGet200Response,
+                  Response<Object?>
                 >;
 
         expect(success.value.xEntity, isA<EntityTypePersonEntity>());
@@ -138,12 +158,18 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofDiscriminatedGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response
+                  HeadersRoundtripOneofDiscriminatedGet200Response,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
 
@@ -172,12 +198,18 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofDiscriminatedGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response
+                  HeadersRoundtripOneofDiscriminatedGet200Response,
+                  Response<Object?>
                 >;
         expect(success.response.statusCode, 200);
 
@@ -209,13 +241,17 @@ void main() {
           expect(
             response,
             isA<
-              TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>
+              TonikSuccess<
+                HeadersRoundtripOneofDiscriminatedGet200Response,
+                Response<Object?>
+              >
             >(),
           );
           final success =
               response
                   as TonikSuccess<
-                    HeadersRoundtripOneofDiscriminatedGet200Response
+                    HeadersRoundtripOneofDiscriminatedGet200Response,
+                    Response<Object?>
                   >;
 
           expect(success.value.xEntity, isA<EntityTypeCompanyEntity>());
@@ -251,12 +287,18 @@ void main() {
           // SystemEntity's schema includes a nested 'config' object.
           expect(
             response,
-            isA<TonikError<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+            isA<
+              TonikError<
+                HeadersRoundtripOneofDiscriminatedGet200Response,
+                Response<Object?>
+              >
+            >(),
           );
           final error =
               response
                   as TonikError<
-                    HeadersRoundtripOneofDiscriminatedGet200Response
+                    HeadersRoundtripOneofDiscriminatedGet200Response,
+                    Response<Object?>
                   >;
           expect(error.error, isA<EncodingException>());
         },
@@ -282,12 +324,18 @@ void main() {
           // so simple encoding is not supported for this type.
           expect(
             response,
-            isA<TonikError<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+            isA<
+              TonikError<
+                HeadersRoundtripOneofDiscriminatedGet200Response,
+                Response<Object?>
+              >
+            >(),
           );
           final error =
               response
                   as TonikError<
-                    HeadersRoundtripOneofDiscriminatedGet200Response
+                    HeadersRoundtripOneofDiscriminatedGet200Response,
+                    Response<Object?>
                   >;
           expect(error.error, isA<EncodingException>());
         },
@@ -313,8 +361,8 @@ void main() {
 
         // Simple encoding does not support nested objects.
         // We expect an error for this test.
-        expect(response, isA<TonikError<void>>());
-        final error = response as TonikError<void>;
+        expect(response, isA<TonikError<void, Response<Object?>>>());
+        final error = response as TonikError<void, Response<Object?>>;
         expect(error.error, isA<EncodingException>());
       });
     });
@@ -338,13 +386,17 @@ void main() {
           expect(
             personResponse,
             isA<
-              TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>
+              TonikSuccess<
+                HeadersRoundtripOneofDiscriminatedGet200Response,
+                Response<Object?>
+              >
             >(),
           );
           final personSuccess =
               personResponse
                   as TonikSuccess<
-                    HeadersRoundtripOneofDiscriminatedGet200Response
+                    HeadersRoundtripOneofDiscriminatedGet200Response,
+                    Response<Object?>
                   >;
           expect(personSuccess.value.xEntity, isA<EntityTypePersonEntity>());
 
@@ -361,13 +413,17 @@ void main() {
           expect(
             companyResponse,
             isA<
-              TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>
+              TonikSuccess<
+                HeadersRoundtripOneofDiscriminatedGet200Response,
+                Response<Object?>
+              >
             >(),
           );
           final companySuccess =
               companyResponse
                   as TonikSuccess<
-                    HeadersRoundtripOneofDiscriminatedGet200Response
+                    HeadersRoundtripOneofDiscriminatedGet200Response,
+                    Response<Object?>
                   >;
           expect(companySuccess.value.xEntity, isA<EntityTypeCompanyEntity>());
         },
@@ -391,7 +447,12 @@ void main() {
               );
           expect(
             systemResponse,
-            isA<TonikError<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+            isA<
+              TonikError<
+                HeadersRoundtripOneofDiscriminatedGet200Response,
+                Response<Object?>
+              >
+            >(),
           );
         },
       );
@@ -412,12 +473,18 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofDiscriminatedGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response
+                  HeadersRoundtripOneofDiscriminatedGet200Response,
+                  Response<Object?>
                 >;
 
         // Verify the header contains the discriminator and fields
@@ -445,12 +512,18 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripOneofDiscriminatedGet200Response>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofDiscriminatedGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
                 as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response
+                  HeadersRoundtripOneofDiscriminatedGet200Response,
+                  Response<Object?>
                 >;
 
         // Verify the header contains the discriminator and fields

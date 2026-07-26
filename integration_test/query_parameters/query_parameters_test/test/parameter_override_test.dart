@@ -17,23 +17,27 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
     );
   }
 
-  test('operation-level override emits the status query key exactly once',
-      () async {
-    final api = buildQueryApi(responseStatus: '204');
-    final response = await api.testParameterOverride(status: 'active');
+  test(
+    'operation-level override emits the status query key exactly once',
+    () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testParameterOverride(status: 'active');
 
-    expect(response, isA<TonikSuccess<void>>());
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
 
-    final success = response as TonikSuccess<void>;
-    expect(success.response.requestOptions.uri.query, 'status=active');
-  });
+      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(success.response.requestOptions.uri.query, 'status=active');
+    },
+  );
 }

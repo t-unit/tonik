@@ -17,9 +17,11 @@ void main() {
     return BooleanSchemasApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -36,7 +38,7 @@ void main() {
       );
 
       final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny>;
+      final success = result as TonikSuccess<FormWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -60,8 +62,8 @@ void main() {
 
         final result = await api.echoFormAny(body: original);
 
-        expect(result, isA<TonikError<FormWithAny>>());
-        final error = result as TonikError<FormWithAny>;
+        expect(result, isA<TonikError<FormWithAny, Response<Object?>>>());
+        final error = result as TonikError<FormWithAny, Response<Object?>>;
         expect(error.error, isA<EncodingException>());
         expect(error.type, TonikErrorType.encoding);
       },
@@ -76,7 +78,7 @@ void main() {
       );
 
       final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny>;
+      final success = result as TonikSuccess<FormWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -92,7 +94,7 @@ void main() {
       );
 
       final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny>;
+      final success = result as TonikSuccess<FormWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -108,7 +110,7 @@ void main() {
       );
 
       final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny>;
+      final success = result as TonikSuccess<FormWithAny, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;

@@ -17,9 +17,11 @@ void main() {
     return ImagesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -31,7 +33,8 @@ void main() {
       final imagesApi = buildImagesApi(responseStatus: '200');
 
       final result = await imagesApi.getImage(id: 'test-image');
-      final success = result as TonikSuccess<GetImageResponse>;
+      final success =
+          result as TonikSuccess<GetImageResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetImageResponse200>());
@@ -53,7 +56,8 @@ void main() {
       final imagesApi = buildImagesApi(responseStatus: '404');
 
       final result = await imagesApi.getImage(id: 'nonexistent');
-      final success = result as TonikSuccess<GetImageResponse>;
+      final success =
+          result as TonikSuccess<GetImageResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetImageResponse404>());
