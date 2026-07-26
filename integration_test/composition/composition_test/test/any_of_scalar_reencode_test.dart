@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Body': responseBody},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Body': responseBody},
+            ),
           ),
         ),
       ),
@@ -42,19 +44,23 @@ void main() {
       expect(value.string, '2024-01-15T10:00:00Z');
     });
 
-    test('a canonical timestamp re-encodes to the date-time member rendering',
-        () async {
-      final value = await decode('"2024-01-15T10:00:00Z"');
+    test(
+      'a canonical timestamp re-encodes to the date-time member rendering',
+      () async {
+        final value = await decode('"2024-01-15T10:00:00Z"');
 
-      expect(value.toJson(), '2024-01-15T10:00:00.000Z');
-    });
+        expect(value.toJson(), '2024-01-15T10:00:00.000Z');
+      },
+    );
 
-    test('a fractional-seconds timestamp re-encodes to the same rendering',
-        () async {
-      final value = await decode('"2024-01-15T10:00:00.000Z"');
+    test(
+      'a fractional-seconds timestamp re-encodes to the same rendering',
+      () async {
+        final value = await decode('"2024-01-15T10:00:00.000Z"');
 
-      expect(value.toJson(), '2024-01-15T10:00:00.000Z');
-    });
+        expect(value.toJson(), '2024-01-15T10:00:00.000Z');
+      },
+    );
 
     test('a non-date string decodes to the string member and re-encodes '
         'verbatim', () async {

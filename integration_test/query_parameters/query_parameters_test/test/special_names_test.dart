@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -44,23 +46,25 @@ void main() {
     expect(success.response.requestOptions.uri.query, 'a%3Db=v');
   });
 
-  test('special names keep their pair structure when parsed by a server',
-      () async {
-    final api = buildQueryApi(responseStatus: '204');
-    final response = await api.testFormSpecialNames(
-      qAmpersandA: 'hello',
-      aEqualsB: 'v',
-    );
+  test(
+    'special names keep their pair structure when parsed by a server',
+    () async {
+      final api = buildQueryApi(responseStatus: '204');
+      final response = await api.testFormSpecialNames(
+        qAmpersandA: 'hello',
+        aEqualsB: 'v',
+      );
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
-    expect(
-      success.response.requestOptions.uri.query,
-      'q%26a=hello&a%3Db=v',
-    );
-    expect(
-      Uri.splitQueryString(success.response.requestOptions.uri.query),
-      {'q&a': 'hello', 'a=b': 'v'},
-    );
-  });
+      expect(response, isA<TonikSuccess<void>>());
+      final success = response as TonikSuccess<void>;
+      expect(
+        success.response.requestOptions.uri.query,
+        'q%26a=hello&a%3Db=v',
+      );
+      expect(
+        Uri.splitQueryString(success.response.requestOptions.uri.query),
+        {'q&a': 'hello', 'a=b': 'v'},
+      );
+    },
+  );
 }

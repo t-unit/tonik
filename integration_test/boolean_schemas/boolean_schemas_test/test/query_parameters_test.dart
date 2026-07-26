@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -62,22 +64,24 @@ void main() {
       expect(success.response.statusCode, 200);
     });
 
-    test('getQueryAnyNoExplode percent-encodes object keys, commas literal',
-        () async {
-      final api = buildApi();
-      final result = await api.getQueryAnyNoExplode(
-        anyValue: <String, dynamic>{
-          'first name': 'Jane',
-          'a,b': 'v1',
-          'c&d': 'v2',
-        },
-      );
-      final success = result as TonikSuccess;
-      expect(
-        success.response.requestOptions.uri.query,
-        'anyValue=first%20name,Jane,a%2Cb,v1,c%26d,v2',
-      );
-    });
+    test(
+      'getQueryAnyNoExplode percent-encodes object keys, commas literal',
+      () async {
+        final api = buildApi();
+        final result = await api.getQueryAnyNoExplode(
+          anyValue: <String, dynamic>{
+            'first name': 'Jane',
+            'a,b': 'v1',
+            'c&d': 'v2',
+          },
+        );
+        final success = result as TonikSuccess;
+        expect(
+          success.response.requestOptions.uri.query,
+          'anyValue=first%20name,Jane,a%2Cb,v1,c%26d,v2',
+        );
+      },
+    );
 
     test('getQueryAny with empty list value omits the parameter', () async {
       final api = buildApi();
@@ -86,23 +90,29 @@ void main() {
       expect(success.response.requestOptions.uri.query, '');
     });
 
-    test('getQueryAnyNoExplode with empty list value omits the parameter',
-        () async {
-      final api = buildApi();
-      final result = await api.getQueryAnyNoExplode(
-        anyValue: const <dynamic>[],
-      );
-      final success = result as TonikSuccess;
-      expect(success.response.requestOptions.uri.query, '');
-    });
+    test(
+      'getQueryAnyNoExplode with empty list value omits the parameter',
+      () async {
+        final api = buildApi();
+        final result = await api.getQueryAnyNoExplode(
+          anyValue: const <dynamic>[],
+        );
+        final success = result as TonikSuccess;
+        expect(success.response.requestOptions.uri.query, '');
+      },
+    );
 
-    test('getQueryAny with non-empty list serializes comma-separated',
-        () async {
-      final api = buildApi();
-      final result = await api.getQueryAny(anyValue: <dynamic>['a', 'b', 'c']);
-      final success = result as TonikSuccess;
-      expect(success.response.requestOptions.uri.query, 'anyValue=a,b,c');
-    });
+    test(
+      'getQueryAny with non-empty list serializes comma-separated',
+      () async {
+        final api = buildApi();
+        final result = await api.getQueryAny(
+          anyValue: <dynamic>['a', 'b', 'c'],
+        );
+        final success = result as TonikSuccess;
+        expect(success.response.requestOptions.uri.query, 'anyValue=a,b,c');
+      },
+    );
   });
 
   group('Query parameters - spaceDelimited style', () {

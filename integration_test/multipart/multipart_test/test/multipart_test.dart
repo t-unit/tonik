@@ -203,29 +203,30 @@ void main() {
           CustomServer(
             baseUrl: baseUrl,
             serverConfig: ServerConfig(
-              interceptors: [
-                InterceptorsWrapper(
-                  onRequest: (options, handler) {
-                    final data = options.data;
-                    if (data is FormData) {
-                      // Clone the file to read its content
-                      // without consuming it.
-                      final file = data.files
-                          .firstWhere((e) => e.key == 'categories')
-                          .value;
-                      capturedBody = file.filename;
-                      // Also capture via clone for content inspection.
-                      final clone = file.clone();
-                      clone.finalize().listen(
-                        (chunk) {
-                          capturedBody = String.fromCharCodes(chunk);
-                        },
-                      );
-                    }
-                    handler.next(options);
-                  },
+              clientFactory: () => Dio()
+                ..interceptors.add(
+                  InterceptorsWrapper(
+                    onRequest: (options, handler) {
+                      final data = options.data;
+                      if (data is FormData) {
+                        // Clone the file to read its content
+                        // without consuming it.
+                        final file = data.files
+                            .firstWhere((e) => e.key == 'categories')
+                            .value;
+                        capturedBody = file.filename;
+                        // Also capture via clone for content inspection.
+                        final clone = file.clone();
+                        clone.finalize().listen(
+                          (chunk) {
+                            capturedBody = String.fromCharCodes(chunk);
+                          },
+                        );
+                      }
+                      handler.next(options);
+                    },
+                  ),
                 ),
-              ],
             ),
           ),
         );
@@ -676,8 +677,10 @@ void main() {
         CustomServer(
           baseUrl: baseUrl,
           serverConfig: ServerConfig(
-            baseOptions: BaseOptions(
-              headers: {'X-Want-Binary': 'true'},
+            clientFactory: () => Dio(
+              BaseOptions(
+                headers: {'X-Want-Binary': 'true'},
+              ),
             ),
           ),
         ),

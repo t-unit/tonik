@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Body': responseBody},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Body': responseBody},
+            ),
           ),
         ),
       ),

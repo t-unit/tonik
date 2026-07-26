@@ -24,9 +24,12 @@ class ServerGenerator {
   /// Generates server classes for the given servers.
   ({String code, String filename}) generate(List<Server> servers) {
     final classes = generateClasses(servers);
+    final dioAdapter = generateDioAdapter();
     final enums = generateEnums(servers);
 
-    final library = Library((b) => b..body.addAll([...enums, ...classes]));
+    final library = Library(
+      (b) => b..body.addAll([...enums, dioAdapter, ...classes]),
+    );
 
     final allocator = CorePrefixedAllocator();
     final emitter = DartEmitter(
@@ -59,6 +62,106 @@ class ServerGenerator {
     );
 
     return [baseClass, ...serverClasses, customServerClass];
+  }
+
+  /// Generates the private adapter that resolves Dio for a server.
+  @visibleForTesting
+  Class generateDioAdapter() {
+    final dioType = refer('Dio', 'package:dio/dio.dart');
+    final serverConfigType = TypeReference(
+      (b) => b
+        ..symbol = 'ServerConfig'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.add(dioType),
+    );
+
+    final argumentError =
+        refer(
+              'ArgumentError',
+              'dart:core',
+            )
+            .newInstance([
+              literalString(
+                'ServerConfig.client and ServerConfig.clientFactory '
+                'cannot both be provided.',
+              ),
+            ])
+            .thrown
+            .statement;
+
+    return Class(
+      (b) => b
+        ..name = '_DioClientAdapter'
+        ..fields.addAll([
+          Field(
+            (f) => f
+              ..name = 'baseUrl'
+              ..type = refer('String', 'dart:core')
+              ..modifier = FieldModifier.final$,
+          ),
+          Field(
+            (f) => f
+              ..name = 'serverConfig'
+              ..type = serverConfigType
+              ..modifier = FieldModifier.final$,
+          ),
+          Field(
+            (f) => f
+              ..name = r'_$dio'
+              ..type = refer('Dio?', 'package:dio/dio.dart'),
+          ),
+        ])
+        ..constructors.add(
+          Constructor(
+            (c) => c
+              ..requiredParameters.addAll([
+                Parameter(
+                  (p) => p
+                    ..name = 'baseUrl'
+                    ..toThis = true,
+                ),
+                Parameter(
+                  (p) => p
+                    ..name = 'serverConfig'
+                    ..toThis = true,
+                ),
+              ]),
+          ),
+        )
+        ..methods.add(
+          Method(
+            (m) => m
+              ..name = 'dio'
+              ..type = MethodType.getter
+              ..returns = dioType
+              ..body = Block.of([
+                const Code(r'final cachedDio = _$dio;'),
+                const Code('if (cachedDio != null) {'),
+                const Code('  return cachedDio;'),
+                const Code('}'),
+                const Code(''),
+                const Code('final client = serverConfig.client;'),
+                const Code(
+                  'final clientFactory = serverConfig.clientFactory;',
+                ),
+                const Code(
+                  'if (client != null && clientFactory != null) {',
+                ),
+                argumentError,
+                const Code('}'),
+                const Code(''),
+                const Code(
+                  'final resolvedDio = '
+                  'client ?? clientFactory?.call() ?? ',
+                ),
+                dioType.newInstance([]).code,
+                const Code(';'),
+                const Code('resolvedDio.options.baseUrl = baseUrl;'),
+                const Code(r'return _$dio = resolvedDio;'),
+              ]),
+          ),
+        ),
+    );
   }
 
   /// Generates enums for server variables with constrained values.
@@ -132,7 +235,12 @@ class ServerGenerator {
 
   Class _generateBaseClass(String className) {
     final dioType = refer('Dio', 'package:dio/dio.dart');
-    final dioNullableType = refer('Dio?', 'package:dio/dio.dart');
+    final serverConfigType = TypeReference(
+      (b) => b
+        ..symbol = 'ServerConfig'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.add(dioType),
+    );
 
     return Class(
       (b) => b
@@ -149,16 +257,14 @@ class ServerGenerator {
           Field(
             (f) => f
               ..name = 'serverConfig'
-              ..type = refer(
-                'ServerConfig',
-                'package:tonik_util/tonik_util.dart',
-              )
+              ..type = serverConfigType
               ..modifier = FieldModifier.final$,
           ),
           Field(
             (f) => f
-              ..name = r'_$dio'
-              ..type = dioNullableType,
+              ..name = r'_$dioAdapter'
+              ..type = refer('_DioClientAdapter')
+              ..modifier = FieldModifier.final$,
           ),
         ])
         ..constructors.add(
@@ -179,7 +285,12 @@ class ServerGenerator {
                     ..required = true
                     ..toThis = true,
                 ),
-              ]),
+              ])
+              ..initializers.add(
+                const Code(
+                  r'_$dioAdapter = _DioClientAdapter(baseUrl, serverConfig)',
+                ),
+              ),
           ),
         )
         ..methods.add(
@@ -188,15 +299,8 @@ class ServerGenerator {
               ..name = 'dio'
               ..type = MethodType.getter
               ..returns = dioType
-              ..body = Block.of([
-                const Code(r'if (_$dio == null) {'),
-                Code.scope((a) => '  _\$dio = ${a(dioType)}();'),
-                const Code(
-                  r'  serverConfig.configureDio(_$dio!, baseUrl);',
-                ),
-                const Code('}'),
-                const Code(r'return _$dio!;'),
-              ]),
+              ..lambda = true
+              ..body = const Code(r'_$dioAdapter.dio'),
           ),
         ),
     );
@@ -207,9 +311,11 @@ class ServerGenerator {
     String baseClassName,
     Server server,
   ) {
-    final serverConfigType = refer(
-      'ServerConfig',
-      'package:tonik_util/tonik_util.dart',
+    final serverConfigType = TypeReference(
+      (b) => b
+        ..symbol = 'ServerConfig'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.add(refer('Dio', 'package:dio/dio.dart')),
     );
 
     final hasVariables = server.variables.isNotEmpty;
@@ -254,9 +360,7 @@ class ServerGenerator {
                   (p) => p
                     ..name = 'serverConfig'
                     ..named = true
-                    ..defaultTo = Code.scope(
-                      (a) => 'const ${a(serverConfigType)}()',
-                    )
+                    ..defaultTo = serverConfigType.constInstance([]).code
                     ..toSuper = true,
                 ),
               )
@@ -361,9 +465,7 @@ class ServerGenerator {
         (p) => p
           ..name = 'serverConfig'
           ..named = true
-          ..defaultTo = Code.scope(
-            (a) => 'const ${a(serverConfigType)}()',
-          )
+          ..defaultTo = serverConfigType.constInstance([]).code
           ..toSuper = true,
       ),
     );
@@ -446,9 +548,11 @@ class ServerGenerator {
   }
 
   Class _generateCustomServerClass(String className, String baseClassName) {
-    final serverConfigType = refer(
-      'ServerConfig',
-      'package:tonik_util/tonik_util.dart',
+    final serverConfigType = TypeReference(
+      (b) => b
+        ..symbol = 'ServerConfig'
+        ..url = 'package:tonik_util/tonik_util.dart'
+        ..types.add(refer('Dio', 'package:dio/dio.dart')),
     );
 
     return Class(
@@ -471,9 +575,7 @@ class ServerGenerator {
                   (p) => p
                     ..name = 'serverConfig'
                     ..named = true
-                    ..defaultTo = Code.scope(
-                      (a) => 'const ${a(serverConfigType)}()',
-                    )
+                    ..defaultTo = serverConfigType.constInstance([]).code
                     ..toSuper = true,
                 ),
               ]),

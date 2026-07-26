@@ -18,9 +18,9 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
+          clientFactory: () => Dio(BaseOptions(
             headers: {'X-Response-Status': responseStatus},
-          ),
+          )),
         ),
       ),
     );
@@ -376,8 +376,8 @@ void main() {
         nullableBoolean: true,
         nullableStringOrNumber:
             NullableTypeArraysNullableStringOrNumberOneOfModelString(
-              'mixed-string',
-            ),
+          'mixed-string',
+        ),
         nullableMultiType: NullableTypeArraysNullableMultiTypeOneOfModelInt(
           777,
         ),
@@ -466,8 +466,8 @@ void main() {
         requiredNullable: null,
         nullableStringOrNumber:
             NullableTypeArraysNullableStringOrNumberOneOfModelString(
-              'test-string',
-            ),
+          'test-string',
+        ),
       );
 
       final result = await api.testNullableTypes(body: input);
@@ -644,8 +644,8 @@ void main() {
       const input = CompositionWithTypeArrays(
         simpleTypeArray:
             CompositionWithTypeArraysSimpleTypeArrayOneOfModelString(
-              'simple-string',
-            ),
+          'simple-string',
+        ),
         nullableTypeArray:
             CompositionWithTypeArraysNullableTypeArrayOneOfModelInt(123),
       );

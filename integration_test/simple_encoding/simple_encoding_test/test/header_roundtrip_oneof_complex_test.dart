@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -235,11 +237,13 @@ void main() {
           CustomServer(
             baseUrl: baseUrl,
             serverConfig: ServerConfig(
-              baseOptions: BaseOptions(
-                headers: {
-                  'X-Response-Status': '200',
-                  'X-Complex-Union': 'name,x%2Fy 50%',
-                },
+              clientFactory: () => Dio(
+                BaseOptions(
+                  headers: {
+                    'X-Response-Status': '200',
+                    'X-Complex-Union': 'name,x%2Fy 50%',
+                  },
+                ),
               ),
             ),
           ),

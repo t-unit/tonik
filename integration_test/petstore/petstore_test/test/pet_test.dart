@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -282,23 +284,25 @@ void main() {
   });
 
   group('getPetById', () {
-    test('200 decodes body when Content-Type carries charset parameter',
-        () async {
-      final petApi = buildPetApi(responseStatus: '200');
+    test(
+      '200 decodes body when Content-Type carries charset parameter',
+      () async {
+        final petApi = buildPetApi(responseStatus: '200');
 
-      final pet = await petApi.getPetById(petId: 1);
-      final success = pet as TonikSuccess<GetPetByIdResponse>;
-      expect(success.response.statusCode, 200);
-      expect(success.value, isA<GetPetByIdResponse200>());
-      final responseBody = (success.value as GetPetByIdResponse200).body;
-      expect(responseBody, isA<PetPetIdGet200ResponseJson>());
-      final body = (responseBody as PetPetIdGet200ResponseJson).body;
-      // deprecation is defined by the OpenAPI spec and correct
-      // ignore: deprecated_member_use
-      expect(body, isA<Pet>());
-      expect(body.id, 1);
-      expect(body.name, 'doggie');
-    });
+        final pet = await petApi.getPetById(petId: 1);
+        final success = pet as TonikSuccess<GetPetByIdResponse>;
+        expect(success.response.statusCode, 200);
+        expect(success.value, isA<GetPetByIdResponse200>());
+        final responseBody = (success.value as GetPetByIdResponse200).body;
+        expect(responseBody, isA<PetPetIdGet200ResponseJson>());
+        final body = (responseBody as PetPetIdGet200ResponseJson).body;
+        // deprecation is defined by the OpenAPI spec and correct
+        // ignore: deprecated_member_use
+        expect(body, isA<Pet>());
+        expect(body.id, 1);
+        expect(body.name, 'doggie');
+      },
+    );
 
     test('400', () async {
       final petApi = buildPetApi(responseStatus: '400');

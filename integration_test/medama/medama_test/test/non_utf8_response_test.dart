@@ -30,8 +30,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Charset-Case': responseCharsetCase},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Charset-Case': responseCharsetCase},
+            ),
           ),
         ),
       ),

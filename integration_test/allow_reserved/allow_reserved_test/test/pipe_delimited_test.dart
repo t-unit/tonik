@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
           ),
         ),
       ),
@@ -29,8 +31,7 @@ void main() {
   const listValues = ['a/b:c?d@e;f', 'g&h=i+j k#l[m]n'];
 
   group('pipeDelimited allowReserved', () {
-    test(
-        'keeps reserved survivors literal, encodes form delimiters, brackets '
+    test('keeps reserved survivors literal, encodes form delimiters, brackets '
         'and hash, and leaves the %7C delimiter intact', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedAllowReserved(

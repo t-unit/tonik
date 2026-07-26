@@ -18,8 +18,10 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig(
-          baseOptions: BaseOptions(
-            headers: {'X-Response-Body': responseBody},
+          clientFactory: () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Body': responseBody},
+            ),
           ),
         ),
       ),
@@ -100,16 +102,18 @@ void main() {
       expect(success.value, const OneOfIntegerOrNumberInt(42));
     });
 
-    test('fractional double 42.5 decodes to OneOfIntegerOrNumberNumber(42.5)',
-        () async {
-      final api = buildApi('42.5');
-      final result = await api.echoOneOfIntegerOrNumber(
-        body: const OneOfIntegerOrNumberInt(0),
-      );
-      final success = result as TonikSuccess<OneOfIntegerOrNumber>;
+    test(
+      'fractional double 42.5 decodes to OneOfIntegerOrNumberNumber(42.5)',
+      () async {
+        final api = buildApi('42.5');
+        final result = await api.echoOneOfIntegerOrNumber(
+          body: const OneOfIntegerOrNumberInt(0),
+        );
+        final success = result as TonikSuccess<OneOfIntegerOrNumber>;
 
-      expect(success.value, const OneOfIntegerOrNumberNumber(42.5));
-    });
+        expect(success.value, const OneOfIntegerOrNumberNumber(42.5));
+      },
+    );
   });
 
   group('OneOfIntegerOrClass1 decodes JSON number to the integer variant', () {

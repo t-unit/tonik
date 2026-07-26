@@ -157,7 +157,7 @@ void main() {
       expect(fileContent, contains('sealed class Server'));
       expect(fileContent, contains('class CustomServer'));
 
-      expect(fileContent.split('class').length, 3);
+      expect(fileContent.split('class').length, 4);
     });
   });
 }
