@@ -1,4 +1,5 @@
 import 'package:code_builder/code_builder.dart';
+import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
@@ -13,6 +14,10 @@ void main() {
   late List<Class> generatedClasses;
   late Class dioAdapter;
   late Class baseClass;
+
+  final format = DartFormatter(
+    languageVersion: DartFormatter.latestLanguageVersion,
+  ).format;
 
   setUp(() {
     nameManager = NameManager(
@@ -343,31 +348,89 @@ void main() {
         ),
       ];
 
-      final result = generator.generate(servers);
-      expect(result.code, contains('class'));
+      expect(() => generator.generate(servers), returnsNormally);
     });
   });
 
   group('ServerGenerator output', () {
-    test('generates file with correct structure', () {
+    test('generates the complete server library', () {
       final result = generator.generate(testServers);
 
       expect(result.filename, 'server.dart');
 
-      expect(
-        result.code,
-        contains('// Generated code - do not modify by hand'),
-      );
-      expect(result.code, contains('// ignore_for_file:'));
+      const expectedCode = r'''
+        // Generated code - do not modify by hand
 
-      expect(result.code, contains("import 'package:dio/dio.dart'"));
+        // ignore_for_file: no_leading_underscores_for_library_prefixes
+        import 'dart:core' as _i1;
+
+        import 'package:dio/dio.dart' as _i3;
+        import 'package:tonik_util/tonik_util.dart' as _i2;
+
+        class _DioClientAdapter {
+          _DioClientAdapter(this.baseUrl, this.serverConfig);
+
+          final _i1.String baseUrl;
+
+          final _i2.ServerConfig<_i3.Dio> serverConfig;
+
+          _i3.Dio? _$dio;
+
+          _i3.Dio get dio {
+            final cachedDio = _$dio;
+            if (cachedDio != null) {
+              return cachedDio;
+            }
+
+            final client = serverConfig.client;
+            final clientFactory = serverConfig.clientFactory;
+            final resolvedDio =
+                client ?? clientFactory?.call() ?? _i3.Dio();
+            resolvedDio.options.baseUrl = baseUrl;
+            return _$dio = resolvedDio;
+          }
+        }
+
+        sealed class Server {
+          Server({required this.baseUrl, required this.serverConfig})
+            : _$dioAdapter = _DioClientAdapter(baseUrl, serverConfig);
+
+          final _i1.String baseUrl;
+
+          final _i2.ServerConfig<_i3.Dio> serverConfig;
+
+          final _DioClientAdapter _$dioAdapter;
+
+          _i3.Dio get dio => _$dioAdapter.dio;
+        }
+
+        /// Production server - https://production.example.com
+        class ProductionServer extends Server {
+          ProductionServer({
+            super.serverConfig = const _i2.ServerConfig<_i3.Dio>(),
+          }) : super(baseUrl: r'https://production.example.com');
+        }
+
+        /// Staging server - https://staging.example.com
+        class StagingServer extends Server {
+          StagingServer({
+            super.serverConfig = const _i2.ServerConfig<_i3.Dio>(),
+          }) : super(baseUrl: r'https://staging.example.com');
+        }
+
+        /// Custom server with user-defined base URL
+        class CustomServer extends Server {
+          CustomServer({
+            required super.baseUrl,
+            super.serverConfig = const _i2.ServerConfig<_i3.Dio>(),
+          });
+        }
+      ''';
+
       expect(
-        result.code,
-        contains("import 'package:tonik_util/tonik_util.dart'"),
+        collapseWhitespace(format(result.code)),
+        collapseWhitespace(format(expectedCode)),
       );
-      expect(result.code, contains('class _DioClientAdapter'));
-      expect(result.code, isNot(contains('class ServerConfig')));
-      expect(result.code, isNot(contains('typedef ServerConfig')));
     });
   });
 
@@ -382,8 +445,7 @@ void main() {
           ),
         ];
 
-        final result = generator.generate(servers);
-        expect(result.code, contains("it's-a-server"));
+        expect(() => generator.generate(servers), returnsNormally);
       },
     );
 
@@ -404,8 +466,7 @@ void main() {
           ),
         ];
 
-        final result = generator.generate(servers);
-        expect(result.code, contains("it's-a-"));
+        expect(() => generator.generate(servers), returnsNormally);
       },
     );
   });

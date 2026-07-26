@@ -66,8 +66,8 @@ void main() {
           '1,,2',
         );
 
-        // A null array element has no wire representation in parameter styles, so
-        // the echoed empty element cannot be decoded back to int. See
+        // A null array element has no wire representation in parameter styles,
+        // so the echoed empty element cannot be decoded back to int. See
         // docs/uri_encoding_limitations.md.
         expect(
           response,
