@@ -72,5 +72,4 @@ void main() {
     expect(success.response.statusCode, 200);
     expect(utf8.decode(success.value.toBytes()), 'catch-all wildcard response');
   });
-
 }

@@ -43,7 +43,8 @@ void main() {
           ),
         ),
       );
-      final success = result as TonikSuccess<RegisterAnimalResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<RegisterAnimalResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RegisterAnimalResponse200>());
 
@@ -87,7 +88,8 @@ void main() {
           ),
         ),
       );
-      final success = result as TonikSuccess<RegisterCustomerResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<RegisterCustomerResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RegisterCustomerResponse200>());
 
@@ -130,7 +132,8 @@ void main() {
           ),
         ),
       );
-      final success = result as TonikSuccess<SubmitPurchaseResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<SubmitPurchaseResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<SubmitPurchaseResponse200>());
 
@@ -157,7 +160,10 @@ void main() {
           ),
         ),
       );
-      expect(result, isA<TonikSuccess<RegisterAnimalResponse, Response<Object?>>>());
+      expect(
+        result,
+        isA<TonikSuccess<RegisterAnimalResponse, Response<Object?>>>(),
+      );
     });
 
     test('getPetById renamed to fetchAnimalById', () async {
@@ -165,14 +171,20 @@ void main() {
 
       // Parameter also renamed: petId -> animalIdentifier
       final result = await petApi.fetchAnimalById(animalId: 1);
-      expect(result, isA<TonikSuccess<FetchAnimalByIdResponse, Response<Object?>>>());
+      expect(
+        result,
+        isA<TonikSuccess<FetchAnimalByIdResponse, Response<Object?>>>(),
+      );
     });
 
     test('deletePet renamed to removeAnimal', () async {
       final petApi = buildPetApi(responseStatus: '200');
 
       final result = await petApi.removeAnimal(petId: 1);
-      expect(result, isA<TonikSuccess<RemoveAnimalResponse, Response<Object?>>>());
+      expect(
+        result,
+        isA<TonikSuccess<RemoveAnimalResponse, Response<Object?>>>(),
+      );
     });
 
     test('findPetsByStatus renamed to queryAnimalsByStatus', () async {
@@ -320,7 +332,10 @@ void main() {
         petId: 1,
         imageMetadata: 'test metadata',
       );
-      expect(result, isA<TonikSuccess<UploadPetImageResponse, Response<Object?>>>());
+      expect(
+        result,
+        isA<TonikSuccess<UploadPetImageResponse, Response<Object?>>>(),
+      );
     });
   });
 }

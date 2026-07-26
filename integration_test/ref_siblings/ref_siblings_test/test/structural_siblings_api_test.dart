@@ -43,7 +43,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<ExtendedPet, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedPet, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/structural/extended-pet',
@@ -60,7 +61,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<ExtendedPet, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedPet, Response<Object?>>;
         expect(success.response.requestOptions.method, 'POST');
       });
 
@@ -77,7 +79,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<ExtendedPet, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedPet, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -98,7 +101,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<ExtendedPet, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedPet, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -124,7 +128,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<ExtendedPet, Response<Object?>>>());
-        final success = response as TonikSuccess<ExtendedPet, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedPet, Response<Object?>>;
         expect(success.response.statusCode, 200);
       });
 
@@ -138,7 +143,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<ExtendedPet, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedPet, Response<Object?>>;
         expect(success.value.pet.name, 'Charlie');
         expect(success.value.pet.age, 4);
       });
@@ -156,7 +162,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<ExtendedPet, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedPet, Response<Object?>>;
         expect(success.value.extendedPetModel.nickname, 'Rexy');
         expect(success.value.extendedPetModel.vaccinated, true);
       });
@@ -174,7 +181,8 @@ void main() {
 
         final response = await api.createExtendedPet(body: original);
 
-        final success = response as TonikSuccess<ExtendedPet, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedPet, Response<Object?>>;
         expect(success.value, original);
       });
     });
@@ -194,7 +202,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<ExtendedWithRequired, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedWithRequired, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -216,7 +225,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<ExtendedWithRequired, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedWithRequired, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -238,7 +248,8 @@ void main() {
 
         final response = await api.createExtendedWithRequired(body: original);
 
-        final success = response as TonikSuccess<ExtendedWithRequired, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ExtendedWithRequired, Response<Object?>>;
         expect(success.value.pet.name, 'Rocky');
         expect(
           success.value.extendedWithRequiredModel.microchipId,
@@ -262,7 +273,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<MergedEntity, Response<Object?>>;
+        final success =
+            response as TonikSuccess<MergedEntity, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -285,7 +297,8 @@ void main() {
 
         final response = await api.createMergedEntity(body: original);
 
-        final success = response as TonikSuccess<MergedEntity, Response<Object?>>;
+        final success =
+            response as TonikSuccess<MergedEntity, Response<Object?>>;
         expect(success.value.namedEntity.name, 'Merged');
         expect(
           success.value.timestampedEntity.createdAt,
@@ -314,7 +327,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<TripleMerge, Response<Object?>>;
+        final success =
+            response as TonikSuccess<TripleMerge, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -342,7 +356,8 @@ void main() {
 
         final response = await api.createTripleMerge(body: original);
 
-        final success = response as TonikSuccess<TripleMerge, Response<Object?>>;
+        final success =
+            response as TonikSuccess<TripleMerge, Response<Object?>>;
         expect(success.value, original);
       });
     });

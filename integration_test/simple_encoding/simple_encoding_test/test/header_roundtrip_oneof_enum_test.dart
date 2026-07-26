@@ -43,10 +43,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofEnumGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofEnumGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           'active',
@@ -63,10 +72,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofEnumGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofEnumGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           'inactive',
@@ -83,10 +101,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofEnumGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofEnumGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           'pending',
@@ -103,10 +130,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofEnumGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofEnumGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           'archived',
@@ -125,10 +161,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofEnumGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofEnumGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           '1',
@@ -148,10 +193,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofEnumGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofEnumGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           '2',
@@ -168,10 +222,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofEnumGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  HeadersRoundtripOneofEnumGet200Response,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.headers['X-Enum-Union'],
           '5',
@@ -190,10 +253,19 @@ void main() {
 
           expect(
             result,
-            isA<TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>>(),
+            isA<
+              TonikSuccess<
+                HeadersRoundtripOneofEnumGet200Response,
+                Response<Object?>
+              >
+            >(),
           );
           final success =
-              result as TonikSuccess<HeadersRoundtripOneofEnumGet200Response, Response<Object?>>;
+              result
+                  as TonikSuccess<
+                    HeadersRoundtripOneofEnumGet200Response,
+                    Response<Object?>
+                  >;
           expect(
             success.response.requestOptions.headers['X-Enum-Union'],
             isNull,

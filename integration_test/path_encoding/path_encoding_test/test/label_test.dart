@@ -106,7 +106,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -129,7 +130,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -228,7 +230,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -247,7 +250,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -269,7 +273,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -451,7 +456,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         // my.field is unreserved so not encoded; a=b becomes a%3Db
@@ -471,7 +477,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         // With explode=true, each key=value is dot-prefixed

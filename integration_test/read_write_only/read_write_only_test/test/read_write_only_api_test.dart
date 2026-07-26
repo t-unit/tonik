@@ -567,7 +567,8 @@ void main() {
 
         final response = await api.getSentNotification();
 
-        final success = response as TonikSuccess<ReadOnlyNotification, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ReadOnlyNotification, Response<Object?>>;
         final notification = success.value;
 
         expect(notification, isA<ReadOnlyNotificationNotificationEmail>());
@@ -653,7 +654,11 @@ void main() {
       );
 
       final success =
-          response as TonikSuccess<NotificationsSendPost200BodyModel, Response<Object?>>;
+          response
+              as TonikSuccess<
+                NotificationsSendPost200BodyModel,
+                Response<Object?>
+              >;
       final requestBody =
           success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -728,7 +733,8 @@ void main() {
 
       final response = await api.getServerInfo();
 
-      final success = response as TonikSuccess<ReadOnlyServerInfo, Response<Object?>>;
+      final success =
+          response as TonikSuccess<ReadOnlyServerInfo, Response<Object?>>;
       final info = success.value;
 
       expect(info.serverIdentity?.serverId, 'srv-001');
@@ -801,7 +807,9 @@ void main() {
         ),
       );
 
-      final success = response as TonikSuccess<BulkCommandPost200BodyModel, Response<Object?>>;
+      final success =
+          response
+              as TonikSuccess<BulkCommandPost200BodyModel, Response<Object?>>;
       final requestBody =
           success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -905,7 +913,8 @@ void main() {
 
         final response = await api.getSensorReading();
 
-        final success = response as TonikSuccess<ReadOnlySensorReading, Response<Object?>>;
+        final success =
+            response as TonikSuccess<ReadOnlySensorReading, Response<Object?>>;
         final reading = success.value;
 
         expect(reading.temperatureReading, isNotNull);
@@ -996,7 +1005,9 @@ void main() {
         ),
       );
 
-      final success = response as TonikSuccess<DeviceCommandPost200BodyModel, Response<Object?>>;
+      final success =
+          response
+              as TonikSuccess<DeviceCommandPost200BodyModel, Response<Object?>>;
       final requestBody =
           success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -1029,7 +1040,8 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<AuditedWidget, Response<Object?>>;
+        final success =
+            response as TonikSuccess<AuditedWidget, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 

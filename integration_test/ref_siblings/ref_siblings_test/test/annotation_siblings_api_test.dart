@@ -34,7 +34,8 @@ void main() {
 
       final response = await api.health();
 
-      final success = response as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
+      final success =
+          response as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
       expect(success.response.requestOptions.path, '$baseUrl/health');
     });
 
@@ -43,7 +44,8 @@ void main() {
 
       final response = await api.health();
 
-      final success = response as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
+      final success =
+          response as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
       expect(success.response.requestOptions.method, 'GET');
     });
   });
@@ -57,7 +59,8 @@ void main() {
           body: const Pet(name: 'Fluffy'),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(
           success.response.requestOptions.path,
           '$baseUrl/annotation/described-pet',
@@ -71,7 +74,8 @@ void main() {
           body: const Pet(name: 'Fluffy'),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(success.response.requestOptions.method, 'POST');
       });
 
@@ -82,7 +86,8 @@ void main() {
           body: const Pet(name: 'Max', age: 5),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -97,7 +102,8 @@ void main() {
           body: const Pet(name: 'Solo'),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -114,8 +120,12 @@ void main() {
           body: const Pet(name: 'Test'),
         );
 
-        expect(response, isA<TonikSuccess<DescribedPetAlias, Response<Object?>>>());
-        final success = response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        expect(
+          response,
+          isA<TonikSuccess<DescribedPetAlias, Response<Object?>>>(),
+        );
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(success.value, isA<Pet>());
       });
@@ -127,7 +137,8 @@ void main() {
           body: const Pet(name: 'Charlie', age: 3),
         );
 
-        final success = response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(success.value.name, 'Charlie');
         expect(success.value.age, 3);
       });
@@ -139,7 +150,8 @@ void main() {
 
         final response = await api.createDescribedPet(body: original);
 
-        final success = response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success =
+            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
         expect(success.value, original);
       });
     });

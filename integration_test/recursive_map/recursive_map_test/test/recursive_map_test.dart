@@ -61,7 +61,8 @@ void main() {
         final result = await api.postTree(body: original);
         expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-        final response = (result as TonikSuccess<void, Response<Object?>>).response;
+        final response =
+            (result as TonikSuccess<void, Response<Object?>>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
         expect(echoed, equals(original));
       },
@@ -93,7 +94,8 @@ void main() {
         final api = buildApi();
         final result = await api.getForest();
         expect(result, isA<TonikSuccess<Forest, Response<Object?>>>());
-        final forest = (result as TonikSuccess<Forest, Response<Object?>>).value;
+        final forest =
+            (result as TonikSuccess<Forest, Response<Object?>>).value;
 
         expect(forest, hasLength(2));
         final outer0 = forest[0]! as Forest;
@@ -117,7 +119,8 @@ void main() {
         final result = await api.postForest(body: original);
         expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-        final response = (result as TonikSuccess<void, Response<Object?>>).response;
+        final response =
+            (result as TonikSuccess<void, Response<Object?>>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
         expect(echoed, equals(original));
       },
@@ -163,7 +166,8 @@ void main() {
         final result = await api.postNode(body: original);
         expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-        final response = (result as TonikSuccess<void, Response<Object?>>).response;
+        final response =
+            (result as TonikSuccess<void, Response<Object?>>).response;
         final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
         expect(echoed, equals(encodedJson));
       },
@@ -195,7 +199,8 @@ void main() {
       final result = await api.postAMap(body: original);
       expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-      final response = (result as TonikSuccess<void, Response<Object?>>).response;
+      final response =
+          (result as TonikSuccess<void, Response<Object?>>).response;
       final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
       expect(echoed, equals(original));
     });
@@ -227,7 +232,8 @@ void main() {
       final result = await api.postBMap(body: original);
       expect(result, isA<TonikSuccess<void, Response<Object?>>>());
 
-      final response = (result as TonikSuccess<void, Response<Object?>>).response;
+      final response =
+          (result as TonikSuccess<void, Response<Object?>>).response;
       final echoed = decodeEchoBody(response.headers.map['x-echo-body']);
       expect(echoed, equals(original));
     });

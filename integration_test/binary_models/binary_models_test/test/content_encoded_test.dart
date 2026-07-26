@@ -49,7 +49,12 @@ void main() {
       final result = await contentEncodedApi.uploadContentEncodedData(
         body: contentEncodedData,
       );
-      final success = result as TonikSuccess<UploadContentEncodedDataResponse, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                UploadContentEncodedDataResponse,
+                Response<Object?>
+              >;
 
       expect(success.response.statusCode, 201);
       expect(success.value, isA<UploadContentEncodedDataResponse201>());
@@ -120,7 +125,12 @@ void main() {
       final result = await contentEncodedApi.uploadContentEncodedData(
         body: contentEncodedData,
       );
-      final success = result as TonikSuccess<UploadContentEncodedDataResponse, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                UploadContentEncodedDataResponse,
+                Response<Object?>
+              >;
 
       expect(success.response.statusCode, 400);
       expect(success.value, isA<UploadContentEncodedDataResponse400>());
@@ -137,7 +147,9 @@ void main() {
       final contentEncodedApi = buildContentEncodedApi(responseStatus: '200');
 
       final result = await contentEncodedApi.getContentEncodedData(id: 'abc');
-      final success = result as TonikSuccess<GetContentEncodedDataResponse, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<GetContentEncodedDataResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetContentEncodedDataResponse200>());
@@ -155,7 +167,9 @@ void main() {
       final contentEncodedApi = buildContentEncodedApi(responseStatus: '404');
 
       final result = await contentEncodedApi.getContentEncodedData(id: 'xyz');
-      final success = result as TonikSuccess<GetContentEncodedDataResponse, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<GetContentEncodedDataResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetContentEncodedDataResponse404>());

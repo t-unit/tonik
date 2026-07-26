@@ -47,7 +47,8 @@ void main() {
       );
 
       final result = await base64Api.uploadBase64Data(body: base64Data);
-      final success = result as TonikSuccess<UploadBase64DataResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<UploadBase64DataResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 201);
       expect(success.value, isA<UploadBase64DataResponse201>());
@@ -86,7 +87,8 @@ void main() {
       );
 
       final result = await base64Api.uploadBase64Data(body: base64Data);
-      final success = result as TonikSuccess<UploadBase64DataResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<UploadBase64DataResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 400);
       expect(success.value, isA<UploadBase64DataResponse400>());
@@ -101,7 +103,8 @@ void main() {
       final base64Api = buildBase64Api(responseStatus: '200');
 
       final result = await base64Api.getBase64Data(id: 'data-123');
-      final success = result as TonikSuccess<GetBase64DataResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<GetBase64DataResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetBase64DataResponse200>());
@@ -134,7 +137,8 @@ void main() {
       final base64Api = buildBase64Api(responseStatus: '404');
 
       final result = await base64Api.getBase64Data(id: 'nonexistent');
-      final success = result as TonikSuccess<GetBase64DataResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<GetBase64DataResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetBase64DataResponse404>());

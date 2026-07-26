@@ -32,49 +32,72 @@ void main() {
     test('getHeaderAny with string value', () async {
       final api = buildApi();
       final result = await api.getHeaderAny(anyValue: 'header-test');
-      final success = result as TonikSuccess<HeaderAnyGet200BodyModel, Response<Object?>>;
+      final success =
+          result as TonikSuccess<HeaderAnyGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
     test('getHeaderAny with number value', () async {
       final api = buildApi();
       final result = await api.getHeaderAny(anyValue: 123);
-      final success = result as TonikSuccess<HeaderAnyGet200BodyModel, Response<Object?>>;
+      final success =
+          result as TonikSuccess<HeaderAnyGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
     test('getHeaderAny with boolean value', () async {
       final api = buildApi();
       final result = await api.getHeaderAny(anyValue: true);
-      final success = result as TonikSuccess<HeaderAnyGet200BodyModel, Response<Object?>>;
+      final success =
+          result as TonikSuccess<HeaderAnyGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
     test('getHeaderAnyExplode with simple style and explode', () async {
       final api = buildApi();
       final result = await api.getHeaderAnyExplode(anyValue: 'explode-header');
-      final success = result as TonikSuccess<HeaderAnyExplodeGet200BodyModel, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                HeaderAnyExplodeGet200BodyModel,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
     });
 
     test('getHeaderAnyExplode with number value', () async {
       final api = buildApi();
       final result = await api.getHeaderAnyExplode(anyValue: 456);
-      final success = result as TonikSuccess<HeaderAnyExplodeGet200BodyModel, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                HeaderAnyExplodeGet200BodyModel,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
     });
 
     test('getHeaderAnyExplode with array value', () async {
       final api = buildApi();
       final result = await api.getHeaderAnyExplode(anyValue: [1, 2, 3]);
-      final success = result as TonikSuccess<HeaderAnyExplodeGet200BodyModel, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                HeaderAnyExplodeGet200BodyModel,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
     });
 
     test('getHeaderAnyExplode with object value', () async {
       final api = buildApi();
       final result = await api.getHeaderAnyExplode(anyValue: {'key': 'value'});
-      final success = result as TonikSuccess<HeaderAnyExplodeGet200BodyModel, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                HeaderAnyExplodeGet200BodyModel,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
     });
   });
@@ -83,7 +106,9 @@ void main() {
     test('getResponseHeaders returns headers with any values', () async {
       final api = buildApi();
       final result = await api.getResponseHeaders();
-      final success = result as TonikSuccess<ResponseHeadersGet200Response, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<ResponseHeadersGet200Response, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.response.headers.value('X-Any-Header'), isNotNull);
       final responseData = success.value;
@@ -93,7 +118,9 @@ void main() {
     test('getResponseHeaders includes X-Any-Header', () async {
       final api = buildApi();
       final result = await api.getResponseHeaders();
-      final success = result as TonikSuccess<ResponseHeadersGet200Response, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<ResponseHeadersGet200Response, Response<Object?>>;
 
       final anyHeader = success.response.headers.value('X-Any-Header');
       expect(anyHeader, isNotNull);

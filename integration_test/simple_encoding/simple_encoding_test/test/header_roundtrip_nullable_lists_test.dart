@@ -35,11 +35,19 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsNullableGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripListsNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             response
-                as TonikSuccess<HeadersRoundtripListsNullableGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripListsNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
         expect(
           success.response.requestOptions.headers['x-nullable-string-list'],
@@ -61,12 +69,16 @@ void main() {
           TonikSuccess<
             HeadersRoundtripListsNullableGet200Response,
             Response<Object?>
-          >(:final response) =>
+          >(
+            :final response,
+          ) =>
             response,
           TonikError<
             HeadersRoundtripListsNullableGet200Response,
             Response<Object?>
-          >(:final response) =>
+          >(
+            :final response,
+          ) =>
             response,
         };
         expect(
@@ -79,7 +91,12 @@ void main() {
         // docs/uri_encoding_limitations.md.
         expect(
           response,
-          isA<TonikError<HeadersRoundtripListsNullableGet200Response, Response<Object?>>>(),
+          isA<
+            TonikError<
+              HeadersRoundtripListsNullableGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
       },
     );
@@ -109,7 +126,10 @@ void main() {
 
         final success =
             response
-                as TonikSuccess<HeadersRoundtripListsNullableGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripListsNullableGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xNullableStringList, ['a%2Fb', null, '50%']);
       });
     });

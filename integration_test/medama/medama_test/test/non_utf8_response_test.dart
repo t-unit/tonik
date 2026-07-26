@@ -45,7 +45,8 @@ void main() {
       test('decodes ${testCase.name}', () async {
         final response = await buildEventApi(testCase.id).getEventPing();
 
-        final success = response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
         final response200 = success.value as GetEventPingResponse200;
         expect(success.response.data, _fixtureBytes[testCase.fixture]);
         expect(response200.body.body, testCase.expected);
@@ -58,7 +59,8 @@ void main() {
       test('reports ${testCase.name} as a decoding error', () async {
         final response = await buildEventApi(testCase.id).getEventPing();
 
-        final error = response as TonikError<GetEventPingResponse, Response<Object?>>;
+        final error =
+            response as TonikError<GetEventPingResponse, Response<Object?>>;
         expect(error.type, TonikErrorType.decoding);
         expect(error.response?.data, _fixtureBytes[testCase.fixture]);
         expect(

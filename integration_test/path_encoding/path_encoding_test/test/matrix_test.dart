@@ -106,7 +106,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -129,7 +130,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -164,7 +166,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -231,7 +234,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -250,7 +254,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -432,7 +437,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         // explode=false: ;paramName=k1,v1,k2,v2
@@ -452,7 +458,8 @@ void main() {
         );
 
         expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+        final success =
+            response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         // explode=true: ;k1=v1;k2=v2 — a=b must be encoded as a%3Db

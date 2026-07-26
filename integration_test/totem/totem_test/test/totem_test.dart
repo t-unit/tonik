@@ -68,7 +68,8 @@ void main() {
       );
 
       expect(result, isA<TonikSuccess<PublicUserSchema, Response<Object?>>>());
-      final success = result as TonikSuccess<PublicUserSchema, Response<Object?>>;
+      final success =
+          result as TonikSuccess<PublicUserSchema, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -96,8 +97,13 @@ void main() {
 
       final result = await api.totemSpacesMobileApiMobileApiListSpaces();
 
-      expect(result, isA<TonikSuccess<PagedMobileSpaceDetailSchema, Response<Object?>>>());
-      final success = result as TonikSuccess<PagedMobileSpaceDetailSchema, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<PagedMobileSpaceDetailSchema, Response<Object?>>>(),
+      );
+      final success =
+          result
+              as TonikSuccess<PagedMobileSpaceDetailSchema, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -113,8 +119,12 @@ void main() {
 
       final result = await api.totemBlogMobileApiListPosts();
 
-      expect(result, isA<TonikSuccess<PagedBlogPostListSchema, Response<Object?>>>());
-      final success = result as TonikSuccess<PagedBlogPostListSchema, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<PagedBlogPostListSchema, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<PagedBlogPostListSchema, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -129,9 +139,13 @@ void main() {
         offset: 20,
       );
 
-      expect(result, isA<TonikSuccess<PagedBlogPostListSchema, Response<Object?>>>());
+      expect(
+        result,
+        isA<TonikSuccess<PagedBlogPostListSchema, Response<Object?>>>(),
+      );
 
-      final success = result as TonikSuccess<PagedBlogPostListSchema, Response<Object?>>;
+      final success =
+          result as TonikSuccess<PagedBlogPostListSchema, Response<Object?>>;
       final uri = success.response.requestOptions.uri;
       expect(uri.queryParameters['limit'], '10');
       expect(uri.queryParameters['offset'], '20');

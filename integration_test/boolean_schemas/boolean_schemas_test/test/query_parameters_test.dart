@@ -125,10 +125,16 @@ void main() {
         );
         expect(
           result,
-          isA<TonikError<QuerySpaceDelimitedAnyGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikError<QuerySpaceDelimitedAnyGet200BodyModel, Response<Object?>>
+          >(),
         );
         final error =
-            result as TonikError<QuerySpaceDelimitedAnyGet200BodyModel, Response<Object?>>;
+            result
+                as TonikError<
+                  QuerySpaceDelimitedAnyGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -142,10 +148,19 @@ void main() {
         );
         expect(
           result,
-          isA<TonikSuccess<QuerySpaceDelimitedAnyGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              QuerySpaceDelimitedAnyGet200BodyModel,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<QuerySpaceDelimitedAnyGet200BodyModel, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  QuerySpaceDelimitedAnyGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.uri.query,
           'anyValue=a%20b%20c',
@@ -162,10 +177,19 @@ void main() {
         );
         expect(
           result,
-          isA<TonikSuccess<QuerySpaceDelimitedAnyGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              QuerySpaceDelimitedAnyGet200BodyModel,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<QuerySpaceDelimitedAnyGet200BodyModel, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  QuerySpaceDelimitedAnyGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.uri.query,
           'anyValue=a%201%20b%202',
@@ -182,10 +206,19 @@ void main() {
         );
         expect(
           result,
-          isA<TonikError<QuerySpaceDelimitedAnyExplodeGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikError<
+              QuerySpaceDelimitedAnyExplodeGet200BodyModel,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
-            result as TonikError<QuerySpaceDelimitedAnyExplodeGet200BodyModel, Response<Object?>>;
+            result
+                as TonikError<
+                  QuerySpaceDelimitedAnyExplodeGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -199,10 +232,19 @@ void main() {
         );
         expect(
           result,
-          isA<TonikError<QuerySpaceDelimitedAnyExplodeGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikError<
+              QuerySpaceDelimitedAnyExplodeGet200BodyModel,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
-            result as TonikError<QuerySpaceDelimitedAnyExplodeGet200BodyModel, Response<Object?>>;
+            result
+                as TonikError<
+                  QuerySpaceDelimitedAnyExplodeGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -216,9 +258,18 @@ void main() {
         final result = await api.getQueryPipeDelimitedAny(
           anyValue: 'pipe-delimited',
         );
-        expect(result, isA<TonikError<QueryPipeDelimitedAnyGet200BodyModel, Response<Object?>>>());
+        expect(
+          result,
+          isA<
+            TonikError<QueryPipeDelimitedAnyGet200BodyModel, Response<Object?>>
+          >(),
+        );
         final error =
-            result as TonikError<QueryPipeDelimitedAnyGet200BodyModel, Response<Object?>>;
+            result
+                as TonikError<
+                  QueryPipeDelimitedAnyGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -232,10 +283,19 @@ void main() {
         );
         expect(
           result,
-          isA<TonikSuccess<QueryPipeDelimitedAnyGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              QueryPipeDelimitedAnyGet200BodyModel,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<QueryPipeDelimitedAnyGet200BodyModel, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  QueryPipeDelimitedAnyGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.uri.query,
           'anyValue=one%7Ctwo%7Cthree',
@@ -252,10 +312,19 @@ void main() {
         );
         expect(
           result,
-          isA<TonikSuccess<QueryPipeDelimitedAnyGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              QueryPipeDelimitedAnyGet200BodyModel,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
-            result as TonikSuccess<QueryPipeDelimitedAnyGet200BodyModel, Response<Object?>>;
+            result
+                as TonikSuccess<
+                  QueryPipeDelimitedAnyGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(
           success.response.requestOptions.uri.query,
           'anyValue=a%7C1%7Cb%7C2',
@@ -272,10 +341,19 @@ void main() {
         );
         expect(
           result,
-          isA<TonikError<QueryPipeDelimitedAnyExplodeGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikError<
+              QueryPipeDelimitedAnyExplodeGet200BodyModel,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
-            result as TonikError<QueryPipeDelimitedAnyExplodeGet200BodyModel, Response<Object?>>;
+            result
+                as TonikError<
+                  QueryPipeDelimitedAnyExplodeGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -289,10 +367,19 @@ void main() {
         );
         expect(
           result,
-          isA<TonikError<QueryPipeDelimitedAnyExplodeGet200BodyModel, Response<Object?>>>(),
+          isA<
+            TonikError<
+              QueryPipeDelimitedAnyExplodeGet200BodyModel,
+              Response<Object?>
+            >
+          >(),
         );
         final error =
-            result as TonikError<QueryPipeDelimitedAnyExplodeGet200BodyModel, Response<Object?>>;
+            result
+                as TonikError<
+                  QueryPipeDelimitedAnyExplodeGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -313,8 +400,18 @@ void main() {
       () async {
         final api = buildApi();
         final result = await api.getQueryDeepObjectAny(anyValue: 'deep-object');
-        expect(result, isA<TonikError<QueryDeepObjectAnyGet200BodyModel, Response<Object?>>>());
-        final error = result as TonikError<QueryDeepObjectAnyGet200BodyModel, Response<Object?>>;
+        expect(
+          result,
+          isA<
+            TonikError<QueryDeepObjectAnyGet200BodyModel, Response<Object?>>
+          >(),
+        );
+        final error =
+            result
+                as TonikError<
+                  QueryDeepObjectAnyGet200BodyModel,
+                  Response<Object?>
+                >;
         expect(error.error, isA<EncodingException>());
       },
     );

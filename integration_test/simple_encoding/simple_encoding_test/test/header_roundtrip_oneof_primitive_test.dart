@@ -43,11 +43,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -68,11 +76,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -93,11 +109,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -118,11 +142,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -145,11 +177,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -170,11 +210,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -195,11 +243,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -221,11 +277,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -247,11 +311,19 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>>(),
+          isA<
+            TonikSuccess<
+              HeadersRoundtripOneofPrimitiveGet200Response,
+              Response<Object?>
+            >
+          >(),
         );
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
 
         expect(
           success.response.requestOptions.headers['X-Primitive-Union'],
@@ -287,7 +359,10 @@ void main() {
 
         final success =
             result
-                as TonikSuccess<HeadersRoundtripOneofPrimitiveGet200Response, Response<Object?>>;
+                as TonikSuccess<
+                  HeadersRoundtripOneofPrimitiveGet200Response,
+                  Response<Object?>
+                >;
         expect(success.value.xPrimitiveUnion, isA<OneOfPrimitiveString>());
         expect(
           (success.value.xPrimitiveUnion! as OneOfPrimitiveString).value,

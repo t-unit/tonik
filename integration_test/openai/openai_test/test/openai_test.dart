@@ -33,8 +33,12 @@ void main() {
 
       final result = await op();
 
-      expect(result, isA<TonikSuccess<ListModelsResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<ListModelsResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<ListModelsResponse, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<ListModelsResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -67,8 +71,12 @@ void main() {
 
       final result = await op(model: 'ft:gpt-4o:org:suffix:id');
 
-      expect(result, isA<TonikSuccess<DeleteModelResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<DeleteModelResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<DeleteModelResponse, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<DeleteModelResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -97,8 +105,12 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikSuccess<CreateEmbeddingResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<CreateEmbeddingResponse, Response<Object?>>;
+      expect(
+        result,
+        isA<TonikSuccess<CreateEmbeddingResponse, Response<Object?>>>(),
+      );
+      final success =
+          result as TonikSuccess<CreateEmbeddingResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -124,7 +136,8 @@ void main() {
         result,
         isA<TonikSuccess<CreateModerationResponse, Response<Object?>>>(),
       );
-      final success = result as TonikSuccess<CreateModerationResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<CreateModerationResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -166,7 +179,12 @@ void main() {
         result,
         isA<TonikSuccess<ChatCompletionsPost200Response, Response<Object?>>>(),
       );
-      final success = result as TonikSuccess<ChatCompletionsPost200Response, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                ChatCompletionsPost200Response,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -187,7 +205,8 @@ void main() {
       final result = await op(purpose: 'fine-tune', limit: 10);
 
       expect(result, isA<TonikSuccess<ListFilesResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<ListFilesResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<ListFilesResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -202,7 +221,8 @@ void main() {
       final result = await op();
 
       expect(result, isA<TonikSuccess<ListFilesResponse, Response<Object?>>>());
-      final success = result as TonikSuccess<ListFilesResponse, Response<Object?>>;
+      final success =
+          result as TonikSuccess<ListFilesResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -249,7 +269,12 @@ void main() {
         result,
         isA<TonikSuccess<ListFineTuningJobEventsResponse, Response<Object?>>>(),
       );
-      final success = result as TonikSuccess<ListFineTuningJobEventsResponse, Response<Object?>>;
+      final success =
+          result
+              as TonikSuccess<
+                ListFineTuningJobEventsResponse,
+                Response<Object?>
+              >;
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -272,9 +297,16 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<ListFineTuningJobEventsResponse, Response<Object?>>>(),
+          isA<
+            TonikSuccess<ListFineTuningJobEventsResponse, Response<Object?>>
+          >(),
         );
-        final success = result as TonikSuccess<ListFineTuningJobEventsResponse, Response<Object?>>;
+        final success =
+            result
+                as TonikSuccess<
+                  ListFineTuningJobEventsResponse,
+                  Response<Object?>
+                >;
         expect(success.response.statusCode, 200);
 
         final uri = success.response.requestOptions.uri;

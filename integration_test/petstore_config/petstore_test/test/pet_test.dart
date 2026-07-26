@@ -209,7 +209,8 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.findPetsByStatus();
-      final success = pet as TonikSuccess<FindPetsByStatusResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<FindPetsByStatusResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FindPetsByStatusResponse200>());
       final responseBody = (success.value as FindPetsByStatusResponse200).body;
@@ -228,7 +229,8 @@ void main() {
         // ignore: deprecated_member_use
         petStatus: PetFindByStatusParametersModel.pending,
       );
-      final success = pet as TonikSuccess<FindPetsByStatusResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<FindPetsByStatusResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<FindPetsByStatusResponse400>());
     });
@@ -241,7 +243,8 @@ void main() {
         // ignore: deprecated_member_use
         petStatus: PetFindByStatusParametersModel.sold,
       );
-      final success = pet as TonikSuccess<FindPetsByStatusResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<FindPetsByStatusResponse, Response<Object?>>;
       expect(success.response.statusCode, 321);
       expect(success.value, isA<FindPetsByStatusResponseDefault>());
     });
@@ -252,7 +255,8 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.searchPetsByTags(filterTags: ['tag1', 'tag2']);
-      final success = pet as TonikSuccess<SearchPetsByTagsResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<SearchPetsByTagsResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<SearchPetsByTagsResponse200>());
       final responseBody = (success.value as SearchPetsByTagsResponse200).body;
@@ -267,7 +271,8 @@ void main() {
       final petApi = buildPetApi(responseStatus: '400');
 
       final pet = await petApi.searchPetsByTags();
-      final success = pet as TonikSuccess<SearchPetsByTagsResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<SearchPetsByTagsResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<SearchPetsByTagsResponse400>());
     });
@@ -276,7 +281,8 @@ void main() {
       final petApi = buildPetApi(responseStatus: '321');
 
       final pet = await petApi.searchPetsByTags(filterTags: ['tag1']);
-      final success = pet as TonikSuccess<SearchPetsByTagsResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<SearchPetsByTagsResponse, Response<Object?>>;
       expect(success.response.statusCode, 321);
       expect(success.value, isA<SearchPetsByTagsResponseDefault>());
     });
@@ -287,7 +293,8 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.getPetById(animalId: 1);
-      final success = pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPetByIdResponse200>());
       final responseBody = (success.value as GetPetByIdResponse200).body;
@@ -302,7 +309,8 @@ void main() {
       final petApi = buildPetApi(responseStatus: '400');
 
       final pet = await petApi.getPetById(animalId: 999909);
-      final success = pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<GetPetByIdResponse400>());
     });
@@ -311,7 +319,8 @@ void main() {
       final petApi = buildPetApi(responseStatus: '404');
 
       final pet = await petApi.getPetById(animalId: 123);
-      final success = pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetPetByIdResponse404>());
     });
@@ -320,7 +329,8 @@ void main() {
       final petApi = buildPetApi(responseStatus: '456');
 
       final pet = await petApi.getPetById(animalId: 99489489990);
-      final success = pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
       expect(success.response.statusCode, 456);
       expect(success.value, isA<GetPetByIdResponseDefault>());
     });
@@ -335,7 +345,8 @@ void main() {
         name: 'Fido',
         status: 'available',
       );
-      final success = pet as TonikSuccess<PatchPetFromFormResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<PatchPetFromFormResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PatchPetFromFormResponse200>());
       final responseBody = (success.value as PatchPetFromFormResponse200).body;
@@ -354,7 +365,8 @@ void main() {
         name: 'Fido',
         status: 'test',
       );
-      final success = pet as TonikSuccess<PatchPetFromFormResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<PatchPetFromFormResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<PatchPetFromFormResponse400>());
     });
@@ -367,7 +379,8 @@ void main() {
         name: 'Rex',
         status: 'invalid',
       );
-      final success = pet as TonikSuccess<PatchPetFromFormResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<PatchPetFromFormResponse, Response<Object?>>;
       expect(success.response.statusCode, 987);
       expect(success.value, isA<PatchPetFromFormResponseDefault>());
     });
@@ -412,7 +425,8 @@ void main() {
 
       // Note: request body `application/octet-stream` is currently not supported by Tonik.
 
-      final success = pet as TonikSuccess<UploadPetImageResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<UploadPetImageResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<UploadPetImageResponse200>());
       final responseBody = (success.value as UploadPetImageResponse200).body;
@@ -431,7 +445,8 @@ void main() {
 
       // Note: request body `application/octet-stream` is currently not supported by Tonik.
 
-      final success = pet as TonikSuccess<UploadPetImageResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<UploadPetImageResponse, Response<Object?>>;
       expect(success.response.statusCode, 400);
       expect(success.value, isA<UploadPetImageResponse400>());
     });
@@ -443,7 +458,8 @@ void main() {
 
       // Note: request body `application/octet-stream` is currently not supported by Tonik.
 
-      final success = pet as TonikSuccess<UploadPetImageResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<UploadPetImageResponse, Response<Object?>>;
       expect(success.response.statusCode, 404);
       expect(success.value, isA<UploadPetImageResponse404>());
     });
@@ -458,7 +474,8 @@ void main() {
 
       // Note: request body `application/octet-stream` is currently not supported by Tonik.
 
-      final success = pet as TonikSuccess<UploadPetImageResponse, Response<Object?>>;
+      final success =
+          pet as TonikSuccess<UploadPetImageResponse, Response<Object?>>;
       expect(success.response.statusCode, 987);
       expect(success.value, isA<UploadPetImageResponseDefault>());
     });
