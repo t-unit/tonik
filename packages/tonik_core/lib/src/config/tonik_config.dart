@@ -5,6 +5,7 @@ import 'package:tonik_core/src/config/enum_config.dart';
 import 'package:tonik_core/src/config/filter_config.dart';
 import 'package:tonik_core/src/config/name_overrides_config.dart';
 import 'package:tonik_core/src/config/schema_content_type.dart';
+import 'package:tonik_core/src/config/transport_config.dart';
 import 'package:tonik_core/src/model/content_type.dart';
 
 /// Main configuration for Tonik code generation.
@@ -17,6 +18,7 @@ class TonikConfig {
     this.filter = const FilterConfig(),
     this.deprecated = const DeprecatedConfig(),
     this.enums = const EnumConfig(),
+    this.transport = const TransportConfig(),
     this.useImmutableCollections = false,
     this.workerCount = 0,
   }) : assert(workerCount >= 0, 'workerCount must be non-negative');
@@ -31,6 +33,8 @@ class TonikConfig {
 
   final EnumConfig enums;
 
+  final TransportConfig transport;
+
   /// When `true`, generated code uses `IList<T>` and `IMap<String, V>` from
   /// `package:fast_immutable_collections` instead of `List<T>` and
   /// `Map<String, V>` for public-facing model types.
@@ -44,7 +48,7 @@ class TonikConfig {
   String toString() =>
       'TonikConfig{nameOverrides: $nameOverrides, contentTypes: $contentTypes, '
       'contentMediaTypes: $contentMediaTypes, filter: $filter, '
-      'deprecated: $deprecated, enums: $enums, '
+      'deprecated: $deprecated, enums: $enums, transport: $transport, '
       'useImmutableCollections: $useImmutableCollections, '
       'workerCount: $workerCount}';
 
@@ -64,6 +68,7 @@ class TonikConfig {
             filter == other.filter &&
             deprecated == other.deprecated &&
             enums == other.enums &&
+            transport == other.transport &&
             useImmutableCollections == other.useImmutableCollections &&
             workerCount == other.workerCount;
   }
@@ -79,6 +84,7 @@ class TonikConfig {
       filter,
       deprecated,
       enums,
+      transport,
       useImmutableCollections,
       workerCount,
     );
