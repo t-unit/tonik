@@ -32,8 +32,8 @@ void main() {
     final api = buildQueryApi(responseStatus: '204');
     final response = await api.testFormSpecialNames(qAmpersandA: 'hello');
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.requestOptions.uri.query, 'q%26a=hello');
   });
 
@@ -41,8 +41,8 @@ void main() {
     final api = buildQueryApi(responseStatus: '204');
     final response = await api.testFormSpecialNames(aEqualsB: 'v');
 
-    expect(response, isA<TonikSuccess<void>>());
-    final success = response as TonikSuccess<void>;
+    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+    final success = response as TonikSuccess<void, Response<Object?>>;
     expect(success.response.requestOptions.uri.query, 'a%3Db=v');
   });
 
@@ -55,8 +55,8 @@ void main() {
         aEqualsB: 'v',
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'q%26a=hello&a%3Db=v',

@@ -48,8 +48,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikError<_R>>());
-      final error = result as TonikError<_R>;
+      expect(result, isA<TonikError<_R, Response<Object?>>>());
+      final error = result as TonikError<_R, Response<Object?>>;
       expect(error.type, TonikErrorType.decoding);
     });
 
@@ -63,8 +63,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikSuccess<_R>>());
-      final success = result as TonikSuccess<_R>;
+      expect(result, isA<TonikSuccess<_R, Response<Object?>>>());
+      final success = result as TonikSuccess<_R, Response<Object?>>;
 
       expect(success.value.xListComposite, isNotNull);
       expect(
@@ -81,8 +81,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikSuccess<_R>>());
-      final success = result as TonikSuccess<_R>;
+      expect(result, isA<TonikSuccess<_R, Response<Object?>>>());
+      final success = result as TonikSuccess<_R, Response<Object?>>;
 
       expect(success.value.xListComposite, isNotNull);
       expect(
@@ -102,8 +102,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikError<_R>>());
-      final error = result as TonikError<_R>;
+      expect(result, isA<TonikError<_R, Response<Object?>>>());
+      final error = result as TonikError<_R, Response<Object?>>;
       expect(error.type, TonikErrorType.decoding);
     });
 
@@ -113,8 +113,8 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripAllOfLists.call();
 
-          expect(result, isA<TonikSuccess<_R>>());
-          final success = result as TonikSuccess<_R>;
+          expect(result, isA<TonikSuccess<_R, Response<Object?>>>());
+          final success = result as TonikSuccess<_R, Response<Object?>>;
 
           expect(
             success.response.requestOptions.headers['X-List-Composite'],

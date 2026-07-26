@@ -1,3 +1,4 @@
+import 'package:dio/dio.dart';
 import 'package:form_urlencoded_api/form_urlencoded_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -21,10 +22,10 @@ void main() {
 
       final response = await api.postSimpleForm(body: form);
 
-      expect(response, isA<TonikSuccess<SimpleForm>>());
+      expect(response, isA<TonikSuccess<SimpleForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<SimpleForm>).response.requestOptions.data;
+          (response as TonikSuccess<SimpleForm, Response<Object?>>).response.requestOptions.data;
       expect(requestData, 'name=Test+User&age=25');
 
       final data = response.value;
@@ -37,10 +38,10 @@ void main() {
 
       final response = await api.postSimpleForm(body: form);
 
-      expect(response, isA<TonikSuccess<SimpleForm>>());
+      expect(response, isA<TonikSuccess<SimpleForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<SimpleForm>).response.requestOptions.data;
+          (response as TonikSuccess<SimpleForm, Response<Object?>>).response.requestOptions.data;
       expect(requestData, 'name=First+Last&age=25');
 
       final data = response.value;
@@ -58,9 +59,9 @@ void main() {
 
       final response = await api.postSpecialChars(body: form);
 
-      expect(response, isA<TonikSuccess<SpecialCharsForm>>());
+      expect(response, isA<TonikSuccess<SpecialCharsForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<SpecialCharsForm>)
+      final requestData = (response as TonikSuccess<SpecialCharsForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -78,9 +79,9 @@ void main() {
 
       final response = await api.postSpecialChars(body: form);
 
-      expect(response, isA<TonikSuccess<SpecialCharsForm>>());
+      expect(response, isA<TonikSuccess<SpecialCharsForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<SpecialCharsForm>)
+      final requestData = (response as TonikSuccess<SpecialCharsForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -100,9 +101,9 @@ void main() {
 
       final response = await api.postEchoSpecialChars(body: form);
 
-      expect(response, isA<TonikSuccess<SpecialCharsForm>>());
+      expect(response, isA<TonikSuccess<SpecialCharsForm, Response<Object?>>>());
 
-      final data = (response as TonikSuccess<SpecialCharsForm>).value;
+      final data = (response as TonikSuccess<SpecialCharsForm, Response<Object?>>).value;
       // True roundtrip - what we send must equal what we receive
       expect(data.text, 'a&b=c+d');
       expect(data.url, 'test');
@@ -113,9 +114,9 @@ void main() {
 
       final response = await api.postEchoSpecialChars(body: form);
 
-      expect(response, isA<TonikSuccess<SpecialCharsForm>>());
+      expect(response, isA<TonikSuccess<SpecialCharsForm, Response<Object?>>>());
 
-      final data = (response as TonikSuccess<SpecialCharsForm>).value;
+      final data = (response as TonikSuccess<SpecialCharsForm, Response<Object?>>).value;
       // Percent signs should survive encoding/decoding
       expect(data.text, '50% discount');
       expect(data.url, '100% free');
@@ -129,9 +130,9 @@ void main() {
 
       final response = await api.postEchoSpecialChars(body: form);
 
-      expect(response, isA<TonikSuccess<SpecialCharsForm>>());
+      expect(response, isA<TonikSuccess<SpecialCharsForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<SpecialCharsForm>)
+      final requestData = (response as TonikSuccess<SpecialCharsForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -152,9 +153,9 @@ void main() {
 
       final response = await api.postEchoSpecialChars(body: form);
 
-      expect(response, isA<TonikSuccess<SpecialCharsForm>>());
+      expect(response, isA<TonikSuccess<SpecialCharsForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<SpecialCharsForm>)
+      final requestData = (response as TonikSuccess<SpecialCharsForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -180,9 +181,9 @@ void main() {
 
         final response = await api.postEchoTypes(body: form);
 
-        expect(response, isA<TonikSuccess<TypesForm>>());
+        expect(response, isA<TonikSuccess<TypesForm, Response<Object?>>>());
 
-        final data = (response as TonikSuccess<TypesForm>).value;
+        final data = (response as TonikSuccess<TypesForm, Response<Object?>>).value;
         // All values should roundtrip correctly
         expect(data.stringValue, 'test & verify=true');
         expect(data.intValue, 42);
@@ -203,10 +204,10 @@ void main() {
 
       final response = await api.postEchoTypes(body: form);
 
-      expect(response, isA<TonikSuccess<TypesForm>>());
+      expect(response, isA<TonikSuccess<TypesForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<TypesForm>).response.requestOptions.data;
+          (response as TonikSuccess<TypesForm, Response<Object?>>).response.requestOptions.data;
       // Verify colons in datetime are encoded
       expect(requestData, contains('%3A'));
 
@@ -225,10 +226,10 @@ void main() {
 
       final response = await api.postArrayForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayForm>>());
+      expect(response, isA<TonikSuccess<ArrayForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
+          (response as TonikSuccess<ArrayForm, Response<Object?>>).response.requestOptions.data;
       expect(
         requestData,
         'colors=red&colors=green&colors=blue&numbers=1&numbers=2&numbers=3',
@@ -244,10 +245,10 @@ void main() {
 
       final response = await api.postArrayForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayForm>>());
+      expect(response, isA<TonikSuccess<ArrayForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
+          (response as TonikSuccess<ArrayForm, Response<Object?>>).response.requestOptions.data;
       expect(requestData, '');
 
       final data = response.value;
@@ -259,10 +260,10 @@ void main() {
 
       final response = await api.postArrayForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayForm>>());
+      expect(response, isA<TonikSuccess<ArrayForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<ArrayForm>).response.requestOptions.data;
+          (response as TonikSuccess<ArrayForm, Response<Object?>>).response.requestOptions.data;
       expect(requestData, 'colors=purple');
 
       final data = response.value;
@@ -277,9 +278,9 @@ void main() {
 
       final response = await api.postArrayBodyForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayBodyForm>>());
+      expect(response, isA<TonikSuccess<ArrayBodyForm, Response<Object?>>>());
 
-      final success = response as TonikSuccess<ArrayBodyForm>;
+      final success = response as TonikSuccess<ArrayBodyForm, Response<Object?>>;
       final requestData = success.response.requestOptions.data;
       expect(requestData, 'q=hello&tags=urgent&tags=open');
     });
@@ -289,9 +290,9 @@ void main() {
 
       final response = await api.postArrayCommaElementForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+      expect(response, isA<TonikSuccess<ArrayExplodeForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+      final requestData = (response as TonikSuccess<ArrayExplodeForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -303,9 +304,9 @@ void main() {
 
       final response = await api.postArrayExplodeFalseForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+      expect(response, isA<TonikSuccess<ArrayExplodeForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+      final requestData = (response as TonikSuccess<ArrayExplodeForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -317,9 +318,9 @@ void main() {
 
       final response = await api.postArrayExplodeFalseForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+      expect(response, isA<TonikSuccess<ArrayExplodeForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+      final requestData = (response as TonikSuccess<ArrayExplodeForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -332,9 +333,9 @@ void main() {
 
       final response = await api.postArraySpaceDelimitedForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+      expect(response, isA<TonikSuccess<ArrayExplodeForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+      final requestData = (response as TonikSuccess<ArrayExplodeForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -347,9 +348,9 @@ void main() {
 
       final response = await api.postArrayExplodeTrueForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+      expect(response, isA<TonikSuccess<ArrayExplodeForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+      final requestData = (response as TonikSuccess<ArrayExplodeForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -361,9 +362,9 @@ void main() {
 
       final response = await api.postArrayCommaElementForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+      expect(response, isA<TonikSuccess<ArrayExplodeForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+      final requestData = (response as TonikSuccess<ArrayExplodeForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -378,9 +379,9 @@ void main() {
 
       final response = await api.postArrayCompositeForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayCompositeForm>>());
+      expect(response, isA<TonikSuccess<ArrayCompositeForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<ArrayCompositeForm>)
+      final requestData = (response as TonikSuccess<ArrayCompositeForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -393,9 +394,9 @@ void main() {
 
       final response = await api.postOptionalArrayForm(body: form);
 
-      expect(response, isA<TonikSuccess<OptionalArrayForm>>());
+      expect(response, isA<TonikSuccess<OptionalArrayForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<OptionalArrayForm>)
+      final requestData = (response as TonikSuccess<OptionalArrayForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -408,9 +409,9 @@ void main() {
 
       final response = await api.postArrayCommaElementForm(body: form);
 
-      expect(response, isA<TonikSuccess<ArrayExplodeForm>>());
+      expect(response, isA<TonikSuccess<ArrayExplodeForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<ArrayExplodeForm>)
+      final requestData = (response as TonikSuccess<ArrayExplodeForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -427,9 +428,9 @@ void main() {
 
       final response = await api.postCompositeListForm(body: form);
 
-      expect(response, isA<TonikSuccess<CompositeListForm>>());
+      expect(response, isA<TonikSuccess<CompositeListForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<CompositeListForm>)
+      final requestData = (response as TonikSuccess<CompositeListForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -450,10 +451,10 @@ void main() {
 
       final response = await api.postTypesForm(body: form);
 
-      expect(response, isA<TonikSuccess<TypesForm>>());
+      expect(response, isA<TonikSuccess<TypesForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<TypesForm>).response.requestOptions.data;
+          (response as TonikSuccess<TypesForm, Response<Object?>>).response.requestOptions.data;
       expect(
         requestData,
         '''stringValue=hello+world&intValue=42&doubleValue=3.14&boolValue=true&dateValue=2024-06-20T15%3A45%3A30.000Z''',
@@ -476,10 +477,10 @@ void main() {
 
       final response = await api.postTypesForm(body: form);
 
-      expect(response, isA<TonikSuccess<TypesForm>>());
+      expect(response, isA<TonikSuccess<TypesForm, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<TypesForm>).response.requestOptions.data;
+          (response as TonikSuccess<TypesForm, Response<Object?>>).response.requestOptions.data;
       expect(
         requestData,
         'stringValue=test&intValue=1&boolValue=false',
@@ -494,8 +495,8 @@ void main() {
     test('deserializes form-urlencoded response body', () async {
       final response = await api.getFormResponse();
 
-      expect(response, isA<TonikSuccess<SimpleForm>>());
-      final data = (response as TonikSuccess<SimpleForm>).value;
+      expect(response, isA<TonikSuccess<SimpleForm, Response<Object?>>>());
+      final data = (response as TonikSuccess<SimpleForm, Response<Object?>>).value;
 
       expect(data.name, 'John Doe');
       expect(data.age, 30);
@@ -504,8 +505,8 @@ void main() {
     test('reports decoding error for form-urlencoded map response', () async {
       final response = await api.getMapResponse();
 
-      expect(response, isA<TonikError<Map<String, String>>>());
-      final error = response as TonikError<Map<String, String>>;
+      expect(response, isA<TonikError<Map<String, String>, Response<Object?>>>());
+      final error = response as TonikError<Map<String, String>, Response<Object?>>;
       expect(error.type, TonikErrorType.decoding);
       expect(error.error, isA<FormDecodingException>());
     });
@@ -513,8 +514,8 @@ void main() {
     test('percent-decodes untyped additional properties', () async {
       final response = await api.getUntypedExtrasResponse();
 
-      expect(response, isA<TonikSuccess<UntypedExtrasForm>>());
-      final data = (response as TonikSuccess<UntypedExtrasForm>).value;
+      expect(response, isA<TonikSuccess<UntypedExtrasForm, Response<Object?>>>());
+      final data = (response as TonikSuccess<UntypedExtrasForm, Response<Object?>>).value;
 
       expect(data.userName, 'café');
       expect(data.additionalProperties['note'], 'café');
@@ -524,7 +525,7 @@ void main() {
     test('re-encodes untyped additional properties without double '
         'encoding', () async {
       final response = await api.getUntypedExtrasResponse();
-      final data = (response as TonikSuccess<UntypedExtrasForm>).value;
+      final data = (response as TonikSuccess<UntypedExtrasForm, Response<Object?>>).value;
 
       final entries = data.toForm(
         'item',
@@ -550,9 +551,9 @@ void main() {
 
       final response = await api.postEmptyNull(body: form);
 
-      expect(response, isA<TonikSuccess<EmptyNullForm>>());
+      expect(response, isA<TonikSuccess<EmptyNullForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<EmptyNullForm>)
+      final requestData = (response as TonikSuccess<EmptyNullForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -567,9 +568,9 @@ void main() {
 
       final response = await api.postEmptyNull(body: form);
 
-      expect(response, isA<TonikSuccess<EmptyNullForm>>());
+      expect(response, isA<TonikSuccess<EmptyNullForm, Response<Object?>>>());
 
-      final requestData = (response as TonikSuccess<EmptyNullForm>)
+      final requestData = (response as TonikSuccess<EmptyNullForm, Response<Object?>>)
           .response
           .requestOptions
           .data;
@@ -589,7 +590,7 @@ void main() {
       );
 
       final response = await api.postNestedForm(body: form);
-      expect(response, isA<TonikError<NestedForm>>());
+      expect(response, isA<TonikError<NestedForm, Response<Object?>>>());
     });
   });
 
@@ -597,10 +598,10 @@ void main() {
     test('encodes a top-level string body as a bare value', () async {
       final response = await api.postScalarForm(body: 'hello world');
 
-      expect(response, isA<TonikSuccess<String>>());
+      expect(response, isA<TonikSuccess<String, Response<Object?>>>());
 
       final requestData =
-          (response as TonikSuccess<String>).response.requestOptions.data;
+          (response as TonikSuccess<String, Response<Object?>>).response.requestOptions.data;
       expect(requestData, 'hello+world');
       expect((requestData as String).startsWith('='), isFalse);
     });
@@ -616,9 +617,9 @@ void main() {
 
         final response = await api.postAllowReservedForm(body: form);
 
-        expect(response, isA<TonikSuccess<AllowReservedForm>>());
+        expect(response, isA<TonikSuccess<AllowReservedForm, Response<Object?>>>());
 
-        final requestData = (response as TonikSuccess<AllowReservedForm>)
+        final requestData = (response as TonikSuccess<AllowReservedForm, Response<Object?>>)
             .response
             .requestOptions
             .data;
@@ -638,9 +639,9 @@ void main() {
 
         final response = await api.postAllowReservedMixedForm(body: form);
 
-        expect(response, isA<TonikSuccess<AllowReservedMixedForm>>());
+        expect(response, isA<TonikSuccess<AllowReservedMixedForm, Response<Object?>>>());
 
-        final requestData = (response as TonikSuccess<AllowReservedMixedForm>)
+        final requestData = (response as TonikSuccess<AllowReservedMixedForm, Response<Object?>>)
             .response
             .requestOptions
             .data;
@@ -656,10 +657,10 @@ void main() {
 
         final response = await api.postAllowReservedCollisionForm(body: form);
 
-        expect(response, isA<TonikSuccess<AllowReservedCollisionForm>>());
+        expect(response, isA<TonikSuccess<AllowReservedCollisionForm, Response<Object?>>>());
 
         final requestData =
-            (response as TonikSuccess<AllowReservedCollisionForm>)
+            (response as TonikSuccess<AllowReservedCollisionForm, Response<Object?>>)
                 .response
                 .requestOptions
                 .data;
@@ -677,9 +678,9 @@ void main() {
 
         final response = await api.postAllowReservedArrayForm(body: form);
 
-        expect(response, isA<TonikSuccess<AllowReservedArrayForm>>());
+        expect(response, isA<TonikSuccess<AllowReservedArrayForm, Response<Object?>>>());
 
-        final requestData = (response as TonikSuccess<AllowReservedArrayForm>)
+        final requestData = (response as TonikSuccess<AllowReservedArrayForm, Response<Object?>>)
             .response
             .requestOptions
             .data;
@@ -697,10 +698,10 @@ void main() {
           body: form,
         );
 
-        expect(response, isA<TonikSuccess<AllowReservedArrayFlaggedForm>>());
+        expect(response, isA<TonikSuccess<AllowReservedArrayFlaggedForm, Response<Object?>>>());
 
         final requestData =
-            (response as TonikSuccess<AllowReservedArrayFlaggedForm>)
+            (response as TonikSuccess<AllowReservedArrayFlaggedForm, Response<Object?>>)
                 .response
                 .requestOptions
                 .data;
@@ -718,9 +719,9 @@ void main() {
 
         final response = await api.postAllowReservedEnumForm(body: form);
 
-        expect(response, isA<TonikSuccess<AllowReservedEnumForm>>());
+        expect(response, isA<TonikSuccess<AllowReservedEnumForm, Response<Object?>>>());
 
-        final requestData = (response as TonikSuccess<AllowReservedEnumForm>)
+        final requestData = (response as TonikSuccess<AllowReservedEnumForm, Response<Object?>>)
             .response
             .requestOptions
             .data;
@@ -739,10 +740,10 @@ void main() {
 
         final response = await api.postAllowReservedAdditionalForm(body: form);
 
-        expect(response, isA<TonikSuccess<AllowReservedAdditionalForm>>());
+        expect(response, isA<TonikSuccess<AllowReservedAdditionalForm, Response<Object?>>>());
 
         final requestData =
-            (response as TonikSuccess<AllowReservedAdditionalForm>)
+            (response as TonikSuccess<AllowReservedAdditionalForm, Response<Object?>>)
                 .response
                 .requestOptions
                 .data;
@@ -759,10 +760,10 @@ void main() {
 
         final response = await api.postAllowReservedCompositeForm(body: form);
 
-        expect(response, isA<TonikSuccess<AllowReservedCompositeForm>>());
+        expect(response, isA<TonikSuccess<AllowReservedCompositeForm, Response<Object?>>>());
 
         final requestData =
-            (response as TonikSuccess<AllowReservedCompositeForm>)
+            (response as TonikSuccess<AllowReservedCompositeForm, Response<Object?>>)
                 .response
                 .requestOptions
                 .data;
@@ -777,9 +778,9 @@ void main() {
 
       final response = await api.postSimpleForm(body: form);
 
-      expect(response, isA<TonikSuccess<SimpleForm>>());
+      expect(response, isA<TonikSuccess<SimpleForm, Response<Object?>>>());
 
-      final contentType = (response as TonikSuccess<SimpleForm>)
+      final contentType = (response as TonikSuccess<SimpleForm, Response<Object?>>)
           .response
           .requestOptions
           .headers['content-type'];

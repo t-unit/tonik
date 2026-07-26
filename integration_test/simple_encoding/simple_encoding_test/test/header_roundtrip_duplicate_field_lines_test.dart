@@ -17,10 +17,10 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<HeadersRoundtripListsSimpleGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripListsSimpleGet200Response, Response<Object?>>>(),
         );
         final success =
-            response as TonikSuccess<HeadersRoundtripListsSimpleGet200Response>;
+            response as TonikSuccess<HeadersRoundtripListsSimpleGet200Response, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(success.response.headers['x-string-list'], ['a', 'b']);
         expect(success.value.xStringList, ['a', 'b']);

@@ -98,7 +98,7 @@ void main() {
       final result = await api.uploadContentMediaTypeImage(
         body: imageEncodedData,
       );
-      final success = result as TonikSuccess<UploadResponse>;
+      final success = result as TonikSuccess<UploadResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 201);
       expect(success.value.id, isNotEmpty);
@@ -108,7 +108,7 @@ void main() {
       final api = buildApi(responseStatus: '200');
 
       final result = await api.getContentMediaTypeImage(id: 'img-123');
-      final success = result as TonikSuccess<GetContentMediaTypeImageResponse>;
+      final success = result as TonikSuccess<GetContentMediaTypeImageResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetContentMediaTypeImageResponse200>());
@@ -175,7 +175,7 @@ void main() {
       final result = await api.uploadContentMediaTypeText(
         body: textEncodedData,
       );
-      final success = result as TonikSuccess<UploadResponse>;
+      final success = result as TonikSuccess<UploadResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 201);
       expect(success.value.id, isNotEmpty);
@@ -185,7 +185,7 @@ void main() {
       final api = buildApi(responseStatus: '200');
 
       final result = await api.getContentMediaTypeText(id: 'txt-123');
-      final success = result as TonikSuccess<GetContentMediaTypeTextResponse>;
+      final success = result as TonikSuccess<GetContentMediaTypeTextResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetContentMediaTypeTextResponse200>());
@@ -252,7 +252,7 @@ void main() {
       final result = await api.uploadContentMediaTypeUnconfigured(
         body: unconfiguredData,
       );
-      final success = result as TonikSuccess<UploadResponse>;
+      final success = result as TonikSuccess<UploadResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 201);
       expect(success.value.id, isNotEmpty);
@@ -263,7 +263,7 @@ void main() {
 
       final result = await api.getContentMediaTypeUnconfigured(id: 'unc-123');
       final success =
-          result as TonikSuccess<GetContentMediaTypeUnconfiguredResponse>;
+          result as TonikSuccess<GetContentMediaTypeUnconfiguredResponse, Response<Object?>>;
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetContentMediaTypeUnconfiguredResponse200>());

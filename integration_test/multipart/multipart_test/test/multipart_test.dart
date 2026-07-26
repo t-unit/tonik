@@ -24,9 +24,9 @@ void main() {
 
       final response = await api.postSimpleFields(body: form);
 
-      expect(response, isA<TonikSuccess<SimpleFieldsResponse>>());
+      expect(response, isA<TonikSuccess<SimpleFieldsResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<SimpleFieldsResponse>;
+      final success = response as TonikSuccess<SimpleFieldsResponse, Response<Object?>>;
       final requestData = success.response.requestOptions.data;
       expect(requestData, isA<FormData>());
 
@@ -65,9 +65,9 @@ void main() {
 
       final response = await api.postBinaryUpload(body: form);
 
-      expect(response, isA<TonikSuccess<UploadResponse>>());
+      expect(response, isA<TonikSuccess<UploadResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<UploadResponse>;
+      final success = response as TonikSuccess<UploadResponse, Response<Object?>>;
       final requestData = success.response.requestOptions.data;
       expect(requestData, isA<FormData>());
 
@@ -100,9 +100,9 @@ void main() {
 
         final response = await api.postEnumField(body: form);
 
-        expect(response, isA<TonikSuccess<StatusResponse>>());
+        expect(response, isA<TonikSuccess<StatusResponse, Response<Object?>>>());
 
-        final success = response as TonikSuccess<StatusResponse>;
+        final success = response as TonikSuccess<StatusResponse, Response<Object?>>;
         final formData = success.response.requestOptions.data as FormData;
 
         // Enum fields go to files with explicit Content-Type.
@@ -121,9 +121,9 @@ void main() {
 
       final response = await api.postComplexObject(body: form);
 
-      expect(response, isA<TonikSuccess<ComplexResponse>>());
+      expect(response, isA<TonikSuccess<ComplexResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<ComplexResponse>;
+      final success = response as TonikSuccess<ComplexResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       // Label and profile go to files (scalar with explicit Content-Type,
@@ -158,9 +158,9 @@ void main() {
 
         final response = await api.postArrayFields(body: form);
 
-        expect(response, isA<TonikSuccess<ArrayResponse>>());
+        expect(response, isA<TonikSuccess<ArrayResponse, Response<Object?>>>());
 
-        final success = response as TonikSuccess<ArrayResponse>;
+        final success = response as TonikSuccess<ArrayResponse, Response<Object?>>;
 
         // Per RFC 7578 §4.3 and OAS 3.x default: each array element is sent
         // as a separate form field with the same name (repeated fields),
@@ -261,9 +261,9 @@ void main() {
 
       final response = await api.postMixedRequired(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       // Required field is present in files with explicit Content-Type.
@@ -292,9 +292,9 @@ void main() {
 
       final response = await api.postMixedRequired(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       // All scalar fields go to files with explicit Content-Type.
@@ -314,9 +314,9 @@ void main() {
 
       final response = await api.postEncodingOverride(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       final allKeys = [
@@ -347,9 +347,9 @@ void main() {
 
       final response = await api.postMultipleFiles(body: form);
 
-      expect(response, isA<TonikSuccess<FilesResponse>>());
+      expect(response, isA<TonikSuccess<FilesResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<FilesResponse>;
+      final success = response as TonikSuccess<FilesResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       // Per RFC 7578 §4.3, each file is a separate part with the same name.
@@ -368,8 +368,8 @@ void main() {
 
         // The generator should produce a ResponseDecodingException because
         // decoding multipart/form-data responses is not supported.
-        expect(response, isA<TonikError<SimpleFields>>());
-        final error = response as TonikError<SimpleFields>;
+        expect(response, isA<TonikError<SimpleFields, Response<Object?>>>());
+        final error = response as TonikError<SimpleFields, Response<Object?>>;
         expect(error.error, isA<ResponseDecodingException>());
       },
     );
@@ -392,9 +392,9 @@ void main() {
           fileFileTag: 'tag-value',
         );
 
-        expect(response, isA<TonikSuccess<GenericResponse>>());
+        expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-        final success = response as TonikSuccess<GenericResponse>;
+        final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
 
         // Both fields should be sent as MultipartFile (per-part headers promote
         // text fields from formData.fields to formData.files).
@@ -423,9 +423,9 @@ void main() {
         fileFileHash: 'abc123',
       );
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       // Both parts are still sent even without the optional header.
@@ -452,9 +452,9 @@ void main() {
 
         final response = await api.postByteField(body: form);
 
-        expect(response, isA<TonikSuccess<GenericResponse>>());
+        expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-        final success = response as TonikSuccess<GenericResponse>;
+        final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
         final formData = success.response.requestOptions.data as FormData;
 
         // Both fields go to files.
@@ -490,9 +490,9 @@ void main() {
 
       final response = await api.postAnyOfModel(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       // Binary file should be in files list.
@@ -513,9 +513,9 @@ void main() {
 
       final response = await api.postAnyOfModel(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       expect(formData.files.any((e) => e.key == 'file'), isTrue);
@@ -532,9 +532,9 @@ void main() {
 
       final response = await api.postMapField(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       // Name field present.
@@ -556,9 +556,9 @@ void main() {
 
       final response = await api.postMapField(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
 
       // Metadata field should be absent.
       expect(
@@ -586,9 +586,9 @@ void main() {
 
         final response = await api.postKitchenSink(body: form);
 
-        expect(response, isA<TonikSuccess<GenericResponse>>());
+        expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-        final success = response as TonikSuccess<GenericResponse>;
+        final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
         final formData = success.response.requestOptions.data as FormData;
 
         // Binary file in files.
@@ -631,9 +631,9 @@ void main() {
 
       final response = await api.postKitchenSink(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final formData = success.response.requestOptions.data as FormData;
 
       // Required fields present.
@@ -661,10 +661,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<MultipartMultiResponsePost200Response>>(),
+        isA<TonikSuccess<MultipartMultiResponsePost200Response, Response<Object?>>>(),
       );
       final success =
-          response as TonikSuccess<MultipartMultiResponsePost200Response>;
+          response as TonikSuccess<MultipartMultiResponsePost200Response, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(success.value, isA<MultipartMultiResponsePost200ResponseJson>());
     });
@@ -690,10 +690,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<MultipartMultiResponsePost200Response>>(),
+        isA<TonikSuccess<MultipartMultiResponsePost200Response, Response<Object?>>>(),
       );
       final success =
-          response as TonikSuccess<MultipartMultiResponsePost200Response>;
+          response as TonikSuccess<MultipartMultiResponsePost200Response, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.value,
@@ -711,9 +711,9 @@ void main() {
 
       final response = await api.postRecursiveArray(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse>>());
+      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
 
-      final success = response as TonikSuccess<GenericResponse>;
+      final success = response as TonikSuccess<GenericResponse, Response<Object?>>;
       final requestData = success.response.requestOptions.data;
       expect(requestData, isA<FormData>());
 
@@ -733,9 +733,9 @@ void main() {
 
         final response = await api.postRecursiveArray(body: form);
 
-        expect(response, isA<TonikError<GenericResponse>>());
+        expect(response, isA<TonikError<GenericResponse, Response<Object?>>>());
 
-        final error = response as TonikError<GenericResponse>;
+        final error = response as TonikError<GenericResponse, Response<Object?>>;
         expect(error.type, TonikErrorType.encoding);
         expect(error.error, isA<EncodingException>());
       },

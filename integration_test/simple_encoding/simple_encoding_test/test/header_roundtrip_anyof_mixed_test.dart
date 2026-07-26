@@ -43,10 +43,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>;
         expect(
           success.response.requestOptions.headers['X-Mixed-Value'],
           'hello',
@@ -64,10 +64,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>;
         expect(
           success.response.requestOptions.headers['X-Mixed-Value'],
           '42',
@@ -85,10 +85,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>;
         expect(
           success.response.requestOptions.headers['X-Mixed-Value'],
           'true',
@@ -104,10 +104,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>;
         expect(
           success.response.requestOptions.headers['X-Mixed-Value'],
           'false',
@@ -127,10 +127,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>;
 
         expect(
           success.response.requestOptions.headers['X-Mixed-Value'],
@@ -151,10 +151,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>;
         expect(success.value.xMixedValue, isNotNull);
         expect(success.value.xMixedValue!.simpleObject, isNotNull);
         expect(success.value.xMixedValue!.simpleObject!.name, 'onlyName');
@@ -169,10 +169,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>;
         expect(success.value.xMixedValue, isNotNull);
         expect(success.value.xMixedValue!.simpleObject, isNotNull);
         expect(success.value.xMixedValue!.simpleObject!.value, 99);
@@ -187,10 +187,10 @@ void main() {
 
           expect(
             result,
-            isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>>(),
+            isA<TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>>(),
           );
           final success =
-              result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response>;
+              result as TonikSuccess<HeadersRoundtripAnyofMixedGet200Response, Response<Object?>>;
           expect(
             success.response.requestOptions.headers['X-Mixed-Value'],
             isNull,

@@ -38,8 +38,8 @@ void main() {
           sort: const PartialFilter(name: 'alice'),
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(
           success.response.requestOptions.uri.query,
           'name=alice&sort=name,alice',
@@ -56,8 +56,8 @@ void main() {
           sort: const PartialFilter(name: 'alice', nickname: ''),
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(
           success.response.requestOptions.uri.query,
           'name=alice&nickname=&sort=name,alice,nickname,',

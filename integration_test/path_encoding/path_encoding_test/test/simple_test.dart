@@ -29,8 +29,8 @@ void main() {
         m: const {'k': 'v'},
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse>>());
-      final success = response as TonikSuccess<EchoResponse>;
+      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
+      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
@@ -44,8 +44,8 @@ void main() {
         m: const {'k': 'v'},
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse>>());
-      final success = response as TonikSuccess<EchoResponse>;
+      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
+      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
@@ -67,8 +67,8 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse>>());
-        final success = response as TonikSuccess<EchoResponse>;
+        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
+        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -88,8 +88,8 @@ void main() {
           value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse>>());
-        final success = response as TonikSuccess<EchoResponse>;
+        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
+        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         // explode=false: k1,v1,k2,v2
@@ -108,8 +108,8 @@ void main() {
           value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse>>());
-        final success = response as TonikSuccess<EchoResponse>;
+        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
+        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         // explode=true: k1=v1,k2=v2 — a=b must be encoded as a%3Db
@@ -128,8 +128,8 @@ void main() {
           value: const SpecialKeyObject(myField: '', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse>>());
-        final success = response as TonikSuccess<EchoResponse>;
+        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
+        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(
@@ -147,8 +147,8 @@ void main() {
           value: const SpecialKeyObject(myField: '', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse>>());
-        final success = response as TonikSuccess<EchoResponse>;
+        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
+        final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
         expect(success.response.statusCode, 200);
 
         expect(

@@ -32,21 +32,21 @@ void main() {
     test('getPathAny with string value', () async {
       final api = buildApi();
       final result = await api.getPathAny(anyValue: 'test-value');
-      final success = result as TonikSuccess<PathAnyAnyValueGet200BodyModel>;
+      final success = result as TonikSuccess<PathAnyAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
     test('getPathAny with number value', () async {
       final api = buildApi();
       final result = await api.getPathAny(anyValue: 42);
-      final success = result as TonikSuccess<PathAnyAnyValueGet200BodyModel>;
+      final success = result as TonikSuccess<PathAnyAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
     test('getPathAny with boolean value', () async {
       final api = buildApi();
       final result = await api.getPathAny(anyValue: true);
-      final success = result as TonikSuccess<PathAnyAnyValueGet200BodyModel>;
+      final success = result as TonikSuccess<PathAnyAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
@@ -54,7 +54,7 @@ void main() {
       final api = buildApi();
       final result = await api.getPathAnyExplode(anyValue: 'explode-test');
       final success =
-          result as TonikSuccess<PathAnyExplodeAnyValueGet200BodyModel>;
+          result as TonikSuccess<PathAnyExplodeAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
@@ -62,7 +62,7 @@ void main() {
       final api = buildApi();
       final result = await api.getPathAnyExplode(anyValue: {'key': 'value'});
       final success =
-          result as TonikSuccess<PathAnyExplodeAnyValueGet200BodyModel>;
+          result as TonikSuccess<PathAnyExplodeAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
@@ -70,7 +70,7 @@ void main() {
       final api = buildApi();
       final result = await api.getPathAnyExplode(anyValue: [1, 2, 3]);
       final success =
-          result as TonikSuccess<PathAnyExplodeAnyValueGet200BodyModel>;
+          result as TonikSuccess<PathAnyExplodeAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
   });
@@ -80,7 +80,7 @@ void main() {
       final api = buildApi();
       final result = await api.getPathLabelAny(anyValue: 'label-test');
       final success =
-          result as TonikSuccess<PathLabelAnyAnyValueGet200BodyModel>;
+          result as TonikSuccess<PathLabelAnyAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
@@ -88,7 +88,7 @@ void main() {
       final api = buildApi();
       final result = await api.getPathLabelAny(anyValue: 123);
       final success =
-          result as TonikSuccess<PathLabelAnyAnyValueGet200BodyModel>;
+          result as TonikSuccess<PathLabelAnyAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
@@ -101,10 +101,10 @@ void main() {
       // of reflection in Dart
       expect(
         result,
-        isA<TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel>>(),
+        isA<TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel, Response<Object?>>>(),
       );
       final error =
-          result as TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel>;
+          result as TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -115,10 +115,10 @@ void main() {
       // of reflection in Dart
       expect(
         result,
-        isA<TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel>>(),
+        isA<TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel, Response<Object?>>>(),
       );
       final error =
-          result as TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel>;
+          result as TonikError<PathLabelAnyExplodeAnyValueGet200BodyModel, Response<Object?>>;
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -128,7 +128,7 @@ void main() {
       final api = buildApi();
       final result = await api.getPathMatrixAny(anyValue: 'matrix-test');
       final success =
-          result as TonikSuccess<PathMatrixAnyAnyValueGet200BodyModel>;
+          result as TonikSuccess<PathMatrixAnyAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
@@ -136,7 +136,7 @@ void main() {
       final api = buildApi();
       final result = await api.getPathMatrixAny(anyValue: 999);
       final success =
-          result as TonikSuccess<PathMatrixAnyAnyValueGet200BodyModel>;
+          result as TonikSuccess<PathMatrixAnyAnyValueGet200BodyModel, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
   });
@@ -149,7 +149,7 @@ void main() {
         queryAny: 'query-value',
         headerAny: 'header-value',
       );
-      final success = result as TonikSuccess<CombinedResponse>;
+      final success = result as TonikSuccess<CombinedResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -165,7 +165,7 @@ void main() {
         queryAny: 456,
         headerAny: 789,
       );
-      final success = result as TonikSuccess<CombinedResponse>;
+      final success = result as TonikSuccess<CombinedResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
 
@@ -176,7 +176,7 @@ void main() {
         queryAny: 42,
         headerAny: true,
       );
-      final success = result as TonikSuccess<CombinedResponse>;
+      final success = result as TonikSuccess<CombinedResponse, Response<Object?>>;
       expect(success.response.statusCode, 200);
     });
   });

@@ -34,9 +34,9 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testParameterOverride(status: 'active');
 
-      expect(response, isA<TonikSuccess<void>>());
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
 
-      final success = response as TonikSuccess<void>;
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(success.response.requestOptions.uri.query, 'status=active');
     },
   );

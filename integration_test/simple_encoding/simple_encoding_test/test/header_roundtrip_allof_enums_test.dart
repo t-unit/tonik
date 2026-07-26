@@ -45,10 +45,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>>(),
+        isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>>(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
+          result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>;
 
       final headerValue =
           success.response.requestOptions.headers['X-Enum-Composite'] as String;
@@ -76,10 +76,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>>(),
+        isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>>(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
+          result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>;
 
       expect(success.value.xEnumComposite, isNotNull);
       expect(
@@ -98,10 +98,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>>(),
+        isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>>(),
       );
       final success =
-          result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
+          result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>;
 
       expect(success.value.xEnumComposite, isNotNull);
       expect(
@@ -122,10 +122,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>;
 
         expect(success.value.xEnumComposite, isNotNull);
         expect(
@@ -147,10 +147,10 @@ void main() {
 
           expect(
             result,
-            isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>>(),
+            isA<TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>>(),
           );
           final success =
-              result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response>;
+              result as TonikSuccess<HeadersRoundtripAllofEnumsGet200Response, Response<Object?>>;
 
           expect(
             success.response.requestOptions.headers['X-Enum-Composite'],

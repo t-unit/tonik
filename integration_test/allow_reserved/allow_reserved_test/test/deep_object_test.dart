@@ -38,8 +38,8 @@ void main() {
         reservedObject: objectValue,
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'reservedObject%5Bk1%5D=a/b:c?d@e;f'
@@ -53,8 +53,8 @@ void main() {
         notReservedObject: objectValue,
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'notReservedObject%5Bk1%5D=a%2Fb%3Ac%3Fd%40e%3Bf'

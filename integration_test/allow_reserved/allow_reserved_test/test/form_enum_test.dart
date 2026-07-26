@@ -37,8 +37,8 @@ void main() {
           reserved: ReservedChoice.gAmpersandHEqualsIPlusJ,
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(
           success.response.requestOptions.uri.query,
           'reserved=g%26h%3Di%2Bj',
@@ -52,8 +52,8 @@ void main() {
         notReserved: ReservedChoice.gAmpersandHEqualsIPlusJ,
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'notReserved=g%26h%3Di%2Bj',
@@ -73,8 +73,8 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(
           success.response.requestOptions.uri.query,
           'reservedList=a/b:c,g%26h%3Di%2Bj',
@@ -91,8 +91,8 @@ void main() {
         ],
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(
         success.response.requestOptions.uri.query,
         'notReservedList=a%2Fb%3Ac,g%26h%3Di%2Bj',

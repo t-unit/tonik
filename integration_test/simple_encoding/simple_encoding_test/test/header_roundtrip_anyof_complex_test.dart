@@ -43,10 +43,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>;
 
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
@@ -66,10 +66,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>;
 
         // Header field-values are transmitted literally: the space survives.
         expect(
@@ -88,10 +88,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>;
 
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
@@ -111,10 +111,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>;
 
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
@@ -132,10 +132,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>;
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'number,0',
@@ -152,10 +152,10 @@ void main() {
 
         expect(
           result,
-          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>>(),
+          isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>>(),
         );
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>;
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'number,-99',
@@ -174,11 +174,11 @@ void main() {
 
           expect(
             result,
-            isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>>(),
+            isA<TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>>(),
           );
           final success =
               result
-                  as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
+                  as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>;
           expect(
             success.response.requestOptions.headers['X-Flexible-Object'],
             isNull,
@@ -212,7 +212,7 @@ void main() {
         final result = await injected.testHeaderRoundtripAnyOfComplex.call();
 
         final success =
-            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response>;
+            result as TonikSuccess<HeadersRoundtripAnyofComplexGet200Response, Response<Object?>>;
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class1, isNotNull);
         expect(success.value.xFlexibleObject!.class1!.name, 'x%2Fy 50%');

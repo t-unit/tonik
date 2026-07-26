@@ -33,8 +33,8 @@ void main() {
           values: ['hello world', 'foo/bar', null],
         );
 
-        expect(response, isA<TonikSuccess<void>>());
-        final success = response as TonikSuccess<void>;
+        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+        final success = response as TonikSuccess<void, Response<Object?>>;
         expect(success.response.statusCode, 200);
         expect(
           success.response.requestOptions.uri.path,
@@ -49,8 +49,8 @@ void main() {
         values: [1, null, 2],
       );
 
-      expect(response, isA<TonikSuccess<void>>());
-      final success = response as TonikSuccess<void>;
+      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      final success = response as TonikSuccess<void, Response<Object?>>;
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
