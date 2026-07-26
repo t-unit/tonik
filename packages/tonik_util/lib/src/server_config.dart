@@ -13,10 +13,11 @@ class ServerConfig<Client extends Object> {
   const ServerConfig() : client = null, clientFactory = null;
 
   /// Creates configuration that borrows [client].
-  const ServerConfig.client(this.client) : clientFactory = null;
+  const ServerConfig.client(Client this.client) : clientFactory = null;
 
   /// Creates configuration that lazily invokes [clientFactory].
-  const ServerConfig.clientFactory(this.clientFactory) : client = null;
+  const ServerConfig.clientFactory(Client Function() this.clientFactory)
+    : client = null;
 
   /// A client borrowed by the generated server.
   ///
