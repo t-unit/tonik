@@ -63,7 +63,7 @@ void main() {
       expect(dioField.type?.accept(emitter).toString(), 'Dio?');
     });
 
-    test('generates lazy, validating, cached resolution', () {
+    test('generates lazy, cached resolution', () {
       final dioGetter = dioAdapter.methods.firstWhere((m) => m.name == 'dio');
 
       const expectedBody = r'''
@@ -74,9 +74,6 @@ void main() {
 
         final client = serverConfig.client;
         final clientFactory = serverConfig.clientFactory;
-        if (client != null && clientFactory != null) {
-          throw ArgumentError('ServerConfig.client and ServerConfig.clientFactory cannot both be provided.');
-        }
 
         final resolvedDio = client ?? clientFactory?.call() ?? Dio() ;
         resolvedDio.options.baseUrl = baseUrl;

@@ -19,8 +19,8 @@ void main() {
     return ActivityLogsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -34,8 +34,8 @@ void main() {
     return PaymentsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -49,8 +49,8 @@ void main() {
     return WebhooksApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -64,8 +64,8 @@ void main() {
     return DevResourcesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -81,8 +81,8 @@ void main() {
     return LibraryAnalyticsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -98,8 +98,8 @@ void main() {
     return CommentReactionsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -798,8 +798,8 @@ void main() {
       final api = VariablesApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            clientFactory: () => Dio(
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
               BaseOptions(
                 headers: {'X-Response-Status': '200'},
               ),
@@ -823,8 +823,8 @@ void main() {
       final api = VariablesApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            clientFactory: () => Dio(
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
               BaseOptions(
                 headers: {'X-Response-Status': '403'},
               ),
@@ -845,8 +845,8 @@ void main() {
       final api = VariablesApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            clientFactory: () => Dio(
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
               BaseOptions(
                 headers: {'X-Response-Status': '404'},
               ),

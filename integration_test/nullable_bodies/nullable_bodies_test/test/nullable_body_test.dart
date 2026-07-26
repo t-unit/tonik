@@ -17,8 +17,8 @@ void main() {
     return NullableBodiesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Winner': nullBody ? 'null' : 'alice'},
             ),

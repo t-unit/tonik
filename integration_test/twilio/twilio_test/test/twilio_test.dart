@@ -19,8 +19,8 @@ void main() {
     return Api20100401AccountApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -34,8 +34,8 @@ void main() {
     return Api20100401MessageApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -49,8 +49,8 @@ void main() {
     return Api20100401CallApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -64,8 +64,8 @@ void main() {
     return Api20100401BalanceApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),

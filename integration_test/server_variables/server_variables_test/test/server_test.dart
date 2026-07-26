@@ -184,7 +184,7 @@ void main() {
       final injected = Dio(BaseOptions(baseUrl: injectedBaseUrl));
       final server = CustomServer(
         baseUrl: serverBaseUrl,
-        serverConfig: ServerConfig<Dio>(client: injected),
+        serverConfig: ServerConfig<Dio>.client(injected),
       );
 
       expect(injected.options.baseUrl, injectedBaseUrl);
@@ -205,8 +205,8 @@ void main() {
         late Dio created;
         final server = CustomServer(
           baseUrl: serverBaseUrl,
-          serverConfig: ServerConfig<Dio>(
-            clientFactory: () {
+          serverConfig: ServerConfig<Dio>.clientFactory(
+            () {
               factoryCalls++;
               return created = Dio(BaseOptions(baseUrl: factoryBaseUrl));
             },

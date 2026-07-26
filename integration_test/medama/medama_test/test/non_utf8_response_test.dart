@@ -29,8 +29,8 @@ void main() {
     return EventApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Charset-Case': responseCharsetCase},
             ),

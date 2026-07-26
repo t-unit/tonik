@@ -12,8 +12,8 @@ code.
 Use `clientFactory` for Dio options, interceptors, and adapters:
 
 ```dart
-final serverConfig = ServerConfig<Dio>(
-  clientFactory: () => Dio(
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio(
     BaseOptions(connectTimeout: const Duration(seconds: 10)),
   )..interceptors.add(AuthInterceptor('your-jwt-token-here')),
 );
@@ -27,7 +27,7 @@ You can instead inject an existing Dio:
 
 ```dart
 final dio = Dio()..interceptors.add(AuthInterceptor('your-jwt-token-here'));
-final serverConfig = ServerConfig<Dio>(client: dio);
+final serverConfig = ServerConfig<Dio>.client(dio);
 ```
 
 An injected client is borrowed. A factory-created client, or the default Dio
@@ -59,8 +59,8 @@ class AuthInterceptor extends Interceptor {
 }
 
 // Setup with ServerConfig
-final serverConfig = ServerConfig<Dio>(
-  clientFactory: () => Dio()
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio()
     ..interceptors.add(AuthInterceptor('your-jwt-token-here')),
 );
 
@@ -104,8 +104,8 @@ class _ApiKeyInterceptor extends Interceptor {
 
 // Setup with ServerConfig
 final apiKeyService = ApiKeyService('your-api-key-here');
-final serverConfig = ServerConfig<Dio>(
-  clientFactory: () => Dio()
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio()
     ..interceptors.add(apiKeyService.createAuthInterceptor()),
 );
 
@@ -173,8 +173,8 @@ final oauth2Service = OAuth2Service(
   tokenUrl: 'https://auth.example.com/oauth/token',
 );
 
-final serverConfig = ServerConfig<Dio>(
-  clientFactory: () => Dio()
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio()
     ..interceptors.add(oauth2Service.createAuthInterceptor()),
 );
 
@@ -217,8 +217,8 @@ final tlsService = MutualTlsService(
   '/path/to/client-key.pem',
 );
 
-final serverConfig = ServerConfig<Dio>(
-  clientFactory: () {
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () {
     final dio = Dio()
       ..interceptors.add(tlsService.createAuthInterceptor());
     // Configure dio.httpClientAdapter for the target platform here.
@@ -342,8 +342,8 @@ final multiAuthService = MultiAuthService({
   'X-Client-ID': 'your-client-id',
 });
 
-final serverConfig = ServerConfig<Dio>(
-  clientFactory: () => Dio()
+final serverConfig = ServerConfig<Dio>.clientFactory(
+  () => Dio()
     ..interceptors.add(multiAuthService.createAuthInterceptor()),
 );
 

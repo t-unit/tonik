@@ -23,7 +23,7 @@ void main() {
     return SimpleApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(clientFactory: () => Dio(BaseOptions())),
+        serverConfig: ServerConfig.clientFactory(() => Dio(BaseOptions())),
       ),
     );
   }

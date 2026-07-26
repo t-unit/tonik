@@ -8,12 +8,15 @@ import 'package:meta/meta.dart';
 /// Generated servers currently do not close owned clients either.
 @immutable
 class ServerConfig<Client extends Object> {
-  /// Creates client configuration for a generated server.
-  const ServerConfig({this.client, this.clientFactory})
-    : assert(
-        client == null || clientFactory == null,
-        'client and clientFactory cannot both be provided',
-      );
+  /// Creates configuration that lets the generated server create its default
+  /// client.
+  const ServerConfig() : client = null, clientFactory = null;
+
+  /// Creates configuration that borrows [client].
+  const ServerConfig.client(this.client) : clientFactory = null;
+
+  /// Creates configuration that lazily invokes [clientFactory].
+  const ServerConfig.clientFactory(this.clientFactory) : client = null;
 
   /// A client borrowed by the generated server.
   ///

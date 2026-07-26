@@ -17,8 +17,8 @@ void main() {
     return AnimalsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () => Dio(
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(
             BaseOptions(
               headers: {'X-Response-Status': responseStatus},
             ),
@@ -81,8 +81,8 @@ void main() {
       return AccountsApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            clientFactory: () => Dio(
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
               BaseOptions(
                 headers: {'X-Response-Status': responseStatus},
               ),

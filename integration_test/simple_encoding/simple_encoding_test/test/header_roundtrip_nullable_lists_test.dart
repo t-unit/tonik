@@ -17,9 +17,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig(
-          clientFactory: () =>
-              Dio(BaseOptions(headers: {'X-Response-Status': '200'})),
+        serverConfig: ServerConfig.clientFactory(
+          () => Dio(BaseOptions(headers: {'X-Response-Status': '200'})),
         ),
       ),
     );
@@ -85,8 +84,8 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig(
-              clientFactory: () => Dio(
+            serverConfig: ServerConfig.clientFactory(
+              () => Dio(
                 BaseOptions(
                   headers: {
                     'X-Response-Status': '200',

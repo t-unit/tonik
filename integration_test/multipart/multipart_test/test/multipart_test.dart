@@ -202,8 +202,8 @@ void main() {
         final capturingApi = MultipartApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig(
-              clientFactory: () => Dio()
+            serverConfig: ServerConfig.clientFactory(
+              () => Dio()
                 ..interceptors.add(
                   InterceptorsWrapper(
                     onRequest: (options, handler) {
@@ -676,8 +676,8 @@ void main() {
       final binaryApi = MultipartApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig(
-            clientFactory: () => Dio(
+          serverConfig: ServerConfig.clientFactory(
+            () => Dio(
               BaseOptions(
                 headers: {'X-Want-Binary': 'true'},
               ),
