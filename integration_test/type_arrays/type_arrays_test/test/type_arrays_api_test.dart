@@ -18,9 +18,11 @@ void main() {
       CustomServer(
         baseUrl: baseUrl,
         serverConfig: ServerConfig.clientFactory(
-          () => Dio(BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
-          )),
+          () => Dio(
+            BaseOptions(
+              headers: {'X-Response-Status': responseStatus},
+            ),
+          ),
         ),
       ),
     );
