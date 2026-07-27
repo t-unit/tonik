@@ -214,14 +214,18 @@ Expression _buildListSimpleExpression(
                 ..requiredParameters.add(
                   Parameter((b) => b..name = 'e'),
                 )
-                ..body = refer(
-                  'encodeAnyToSimple',
-                  'package:tonik_util/tonik_util.dart',
-                ).call([refer('e')], _simpleArgs(
-                  explode,
-                  allowEmpty,
-                  literal,
-                )).code,
+                ..body =
+                    refer(
+                      'encodeAnyToSimple',
+                      'package:tonik_util/tonik_util.dart',
+                    ).call(
+                      [refer('e')],
+                      _simpleArgs(
+                        explode,
+                        allowEmpty,
+                        literal,
+                      ),
+                    ).code,
             ).closure,
           ])
           .property('toList')

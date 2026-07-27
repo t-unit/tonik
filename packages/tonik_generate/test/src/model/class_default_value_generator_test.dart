@@ -370,8 +370,7 @@ void main() {
         expect(getter.type, MethodType.getter);
         final routingLogs = logs
             .where(
-              (r) =>
-                  r.level == Level.FINE && r.loggerName == 'ClassGenerator',
+              (r) => r.level == Level.FINE && r.loggerName == 'ClassGenerator',
             )
             .toList();
         expect(routingLogs.map((r) => r.message), [
@@ -380,8 +379,7 @@ void main() {
         expect(
           logs.where(
             (r) =>
-                r.level == Level.WARNING &&
-                r.loggerName == 'DefaultResolution',
+                r.level == Level.WARNING && r.loggerName == 'DefaultResolution',
           ),
           isEmpty,
         );
@@ -416,78 +414,77 @@ factory WithChild.fromJson(Object? json) {
       },
     );
 
-    test('AllOf composite property target with default emits a runtime getter',
-        () {
-      final logs = <LogRecord>[];
-      final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
-      addTearDown(subscription.cancel);
+    test(
+      'AllOf composite property target with default emits a runtime getter',
+      () {
+        final logs = <LogRecord>[];
+        final subscription = Logger('ClassGenerator').onRecord.listen(logs.add);
+        addTearDown(subscription.cancel);
 
-      final model = ClassModel(
-        isDeprecated: false,
-        name: 'WithComposite',
-        properties: [
-          Property(
-            name: 'union',
-            model: AllOfModel(
+        final model = ClassModel(
+          isDeprecated: false,
+          name: 'WithComposite',
+          properties: [
+            Property(
+              name: 'union',
+              model: AllOfModel(
+                isDeprecated: false,
+                name: 'Union',
+                models: const {},
+                context: context,
+                examples: const [],
+              ),
+              isRequired: true,
+              isNullable: false,
               isDeprecated: false,
-              name: 'Union',
-              models: const {},
-              context: context,
               examples: const [],
+              defaultValue: const <String, Object?>{},
             ),
-            isRequired: true,
-            isNullable: false,
-            isDeprecated: false,
-            examples: const [],
-            defaultValue: const <String, Object?>{},
-          ),
-        ],
-        context: context,
-        examples: const [],
-      );
+          ],
+          context: context,
+          examples: const [],
+        );
 
-      final result = generator.generateClass(model);
-      expect(
-        result.fields.where((f) => f.name == 'unionDefault'),
-        isEmpty,
-      );
-      final getter = result.methods.firstWhere(
-        (m) => m.name == 'unionDefault',
-      );
-      expect(getter.static, isTrue);
-      expect(getter.type, MethodType.getter);
-      final routingLogs = logs
-          .where(
+        final result = generator.generateClass(model);
+        expect(
+          result.fields.where((f) => f.name == 'unionDefault'),
+          isEmpty,
+        );
+        final getter = result.methods.firstWhere(
+          (m) => m.name == 'unionDefault',
+        );
+        expect(getter.static, isTrue);
+        expect(getter.type, MethodType.getter);
+        final routingLogs = logs
+            .where(
+              (r) => r.level == Level.FINE && r.loggerName == 'ClassGenerator',
+            )
+            .toList();
+        expect(routingLogs.map((r) => r.message), [
+          'Routing default to runtime fallback for WithComposite.union.',
+        ]);
+        expect(
+          logs.where(
             (r) =>
-                r.level == Level.FINE && r.loggerName == 'ClassGenerator',
-          )
-          .toList();
-      expect(routingLogs.map((r) => r.message), [
-        'Routing default to runtime fallback for WithComposite.union.',
-      ]);
-      expect(
-        logs.where(
-          (r) =>
-              r.level == Level.WARNING &&
-              r.loggerName == 'DefaultResolution',
-        ),
-        isEmpty,
-      );
+                r.level == Level.WARNING && r.loggerName == 'DefaultResolution',
+          ),
+          isEmpty,
+        );
 
-      final generated = format(result.accept(emitter).toString());
-      const expectedGetter =
-          'static Union get unionDefault => '
-          'Union.fromJson(const <String, Object?>{});';
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedGetter)),
-      );
-      const expectedCtor = 'const WithComposite({required this.union});';
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedCtor)),
-      );
-      const expectedFromJson = r'''
+        final generated = format(result.accept(emitter).toString());
+        const expectedGetter =
+            'static Union get unionDefault => '
+            'Union.fromJson(const <String, Object?>{});';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedGetter)),
+        );
+        const expectedCtor = 'const WithComposite({required this.union});';
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedCtor)),
+        );
+        const expectedFromJson = r'''
 factory WithComposite.fromJson(Object? json) {
   final _$map = json.decodeMap(context: r'WithComposite');
   return WithComposite(
@@ -497,11 +494,12 @@ factory WithComposite.fromJson(Object? json) {
   );
 }
 ''';
-      expect(
-        collapseWhitespace(generated),
-        contains(collapseWhitespace(expectedFromJson)),
-      );
-    });
+        expect(
+          collapseWhitespace(generated),
+          contains(collapseWhitespace(expectedFromJson)),
+        );
+      },
+    );
 
     test(
       'nullable + default: null produces no static const',

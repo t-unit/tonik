@@ -149,8 +149,7 @@ void main() {
       final holder =
           api.models.firstWhere(
                 (m) =>
-                    m is NamedModel &&
-                    m.name == 'HolderWithInlineComposites',
+                    m is NamedModel && m.name == 'HolderWithInlineComposites',
               )
               as ClassModel;
 
@@ -189,8 +188,7 @@ void main() {
       final holder =
           api.models.firstWhere(
                 (m) =>
-                    m is NamedModel &&
-                    m.name == 'HolderWithInlineComposites',
+                    m is NamedModel && m.name == 'HolderWithInlineComposites',
               )
               as ClassModel;
 

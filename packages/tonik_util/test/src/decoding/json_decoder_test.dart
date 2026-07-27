@@ -597,14 +597,16 @@ void main() {
       );
     });
 
-    test('throws for nullable int list with an integer beyond the int range',
-        () {
-      final json = jsonDecode('[10000000000000000000]') as Object?;
-      expect(
-        () => json.decodeJsonList<int?>(),
-        throwsA(isA<InvalidTypeException>()),
-      );
-    });
+    test(
+      'throws for nullable int list with an integer beyond the int range',
+      () {
+        final json = jsonDecode('[10000000000000000000]') as Object?;
+        expect(
+          () => json.decodeJsonList<int?>(),
+          throwsA(isA<InvalidTypeException>()),
+        );
+      },
+    );
 
     test('throws for int list with a non-numeric element', () {
       final json = jsonDecode('["x"]') as Object?;

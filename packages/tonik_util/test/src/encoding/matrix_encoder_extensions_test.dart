@@ -37,11 +37,13 @@ void main() {
       );
     });
 
-    test('encodes empty string as name without value regardless of allowEmpty',
-        () {
-      expect(''.toMatrix('name', allowEmpty: true, explode: true), ';name');
-      expect(''.toMatrix('name', allowEmpty: false, explode: true), ';name');
-    });
+    test(
+      'encodes empty string as name without value regardless of allowEmpty',
+      () {
+        expect(''.toMatrix('name', allowEmpty: true, explode: true), ';name');
+        expect(''.toMatrix('name', allowEmpty: false, explode: true), ';name');
+      },
+    );
 
     test('encodes special characters', () {
       expect(

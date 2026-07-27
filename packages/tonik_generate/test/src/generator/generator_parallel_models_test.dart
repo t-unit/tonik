@@ -133,7 +133,8 @@ void main() {
         expect(
           poolCount,
           0,
-          reason: 'below-threshold path must skip the worker pool entirely '
+          reason:
+              'below-threshold path must skip the worker pool entirely '
               'regardless of how many workers the caller requested',
         );
 

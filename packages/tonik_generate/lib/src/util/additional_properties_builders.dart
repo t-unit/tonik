@@ -174,10 +174,9 @@ ApBuilderResult buildApJsonEncode(
   );
 
   codes.add(
-    refer(targetMapVar)
-        .property('addAll')
-        .call([encoded.unsafeRawBody])
-        .statement,
+    refer(
+      targetMapVar,
+    ).property('addAll').call([encoded.unsafeRawBody]).statement,
   );
   return ApBuilderResult(codes: codes, inlineHelpers: encoded.inlineFunctions);
 }
@@ -324,10 +323,9 @@ ApBuilderResult _propertyValueEntriesLoop(
       declareFinal(r'_$v').assign(refer(r'_$e').property('value')).statement,
       const Code(r'if (_$v == null) continue;'),
     ],
-    refer(targetVar)
-        .index(refer(r'_$e').property('key'))
-        .assign(entryValue)
-        .statement,
+    refer(
+      targetVar,
+    ).index(refer(r'_$e').property('key')).assign(entryValue).statement,
     const Code('}'),
   ],
 );

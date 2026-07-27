@@ -57,14 +57,16 @@ void main() {
       expect(never.isNullable, isTrue);
     });
 
-    test('type array form imports as a named alias of a nullable NeverModel',
-        () {
-      final api = Importer().import(fileContent);
-      final model = named(api, 'NothingTypeArray') as AliasModel;
+    test(
+      'type array form imports as a named alias of a nullable NeverModel',
+      () {
+        final api = Importer().import(fileContent);
+        final model = named(api, 'NothingTypeArray') as AliasModel;
 
-      final never = model.model as NeverModel;
-      expect(never.isNullable, isTrue);
-    });
+        final never = model.model as NeverModel;
+        expect(never.isNullable, isTrue);
+      },
+    );
 
     test('is effectively nullable', () {
       final api = Importer().import(fileContent);

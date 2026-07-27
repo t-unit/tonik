@@ -35,8 +35,7 @@ void main() {
     return formatter.format(source);
   }
 
-  String formatBody(String body) =>
-      formatter.format('class _Holder { $body }');
+  String formatBody(String body) => formatter.format('class _Holder { $body }');
 
   group('resolveRuntimeDefault — non-const leaf primitives', () {
     test('DateTime leaf with string default emits decodeJsonDateTime '
@@ -180,7 +179,7 @@ static Pricing get pricingDefault => Pricing.fromJson(
           model: tree,
           rawDefault: const <String, Object?>{},
           containerName: 'Holder',
-            reservedNames: <String>{'tree'},
+          reservedNames: <String>{'tree'},
           nameManager: nameManager,
           package: package,
         );
@@ -214,54 +213,55 @@ static Tree get treeDefault {
       },
     );
 
-    test('recursive class default emits a fromJson call without a cycle guard',
-        () {
-      final recursive = ClassModel(
-        isDeprecated: false,
-        name: 'Node',
-        properties: <Property>[],
-        context: context,
-        examples: const [],
-      );
-      recursive.properties.add(
-        Property(
-          name: 'next',
-          model: recursive,
-          isRequired: false,
-          isNullable: true,
+    test(
+      'recursive class default emits a fromJson call without a cycle guard',
+      () {
+        final recursive = ClassModel(
           isDeprecated: false,
+          name: 'Node',
+          properties: <Property>[],
+          context: context,
           examples: const [],
-          defaultValue: null,
-        ),
-      );
+        );
+        recursive.properties.add(
+          Property(
+            name: 'next',
+            model: recursive,
+            isRequired: false,
+            isNullable: true,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        );
 
-      final result = resolveRuntimeDefault(
-        normalizedName: 'next',
-        specName: 'next',
-        model: recursive,
-        rawDefault: const <String, Object?>{},
-        containerName: 'Holder',
-        reservedNames: <String>{'next'},
-        nameManager: nameManager,
-        package: package,
-      );
+        final result = resolveRuntimeDefault(
+          normalizedName: 'next',
+          specName: 'next',
+          model: recursive,
+          rawDefault: const <String, Object?>{},
+          containerName: 'Holder',
+          reservedNames: <String>{'next'},
+          nameManager: nameManager,
+          package: package,
+        );
 
-      expect(result, isNotNull);
-      expect(result!.type.symbol, 'Node');
-      expect(result.getter.lambda, isTrue);
-      expect(
-        collapseWhitespace(renderGetter(result.getter)),
-        collapseWhitespace(
-          formatBody(
-            '''
+        expect(result, isNotNull);
+        expect(result!.type.symbol, 'Node');
+        expect(result.getter.lambda, isTrue);
+        expect(
+          collapseWhitespace(renderGetter(result.getter)),
+          collapseWhitespace(
+            formatBody(
+              '''
 static Node get nextDefault =>
     Node.fromJson(const <String, Object?>{});
 ''',
+            ),
           ),
-        ),
-      );
-    });
-
+        );
+      },
+    );
   });
 
   group('resolveRuntimeDefault — collections with non-const leaves', () {
@@ -284,7 +284,7 @@ static Node get nextDefault =>
             '2024-06-15T12:00:00Z',
           ],
           containerName: 'Holder',
-            reservedNames: <String>{'windows'},
+          reservedNames: <String>{'windows'},
           nameManager: nameManager,
           package: package,
         );
@@ -324,7 +324,7 @@ static List<DateTime> get windowsDefault =>
           model: dateList,
           rawDefault: const <Object?>['2024-01-01T00:00:00Z'],
           containerName: 'Holder',
-            reservedNames: <String>{'windows'},
+          reservedNames: <String>{'windows'},
           nameManager: nameManager,
           package: package,
           useImmutableCollections: true,
@@ -350,7 +350,6 @@ static IList<DateTime> get windowsDefault => IList(
         );
       },
     );
-
   });
 
   group('resolveRuntimeDefault — isNullableOverride: true', () {
@@ -366,7 +365,7 @@ static IList<DateTime> get windowsDefault => IList(
           model: DateTimeModel(context: context),
           rawDefault: '2024-01-01T00:00:00Z',
           containerName: 'Holder',
-            reservedNames: <String>{'startsAt'},
+          reservedNames: <String>{'startsAt'},
           nameManager: nameManager,
           package: package,
           isNullableOverride: true,
@@ -409,7 +408,7 @@ static DateTime? get startsAtDefault => r'2024-01-01T00:00:00Z'
           model: pricing,
           rawDefault: const <String, Object?>{},
           containerName: 'Holder',
-            reservedNames: <String>{'pricing'},
+          reservedNames: <String>{'pricing'},
           nameManager: nameManager,
           package: package,
           isNullableOverride: true,
@@ -432,7 +431,6 @@ static Pricing? get pricingDefault =>
         );
       },
     );
-
   });
 
   group('resolveRuntimeDefault — EnumModel', () {
@@ -458,7 +456,7 @@ static Pricing? get pricingDefault =>
           model: status,
           rawDefault: 'active',
           containerName: 'Holder',
-            reservedNames: <String>{'status'},
+          reservedNames: <String>{'status'},
           nameManager: nameManager,
           package: package,
           isNullableOverride: true,
@@ -501,24 +499,26 @@ static Status? get statusDefault => Status.fromJson(r'active');
       expect(reserved, {'startsAt'});
     });
 
-    test('name collision against an existing reserved name appends a suffix',
-        () {
-      final reserved = <String>{'startsAt', 'startsAtDefault'};
-      final result = resolveRuntimeDefault(
-        normalizedName: 'startsAt',
-        specName: 'startsAt',
-        model: DateTimeModel(context: context),
-        rawDefault: '2024-01-01T00:00:00Z',
-        containerName: 'Holder',
-        reservedNames: reserved,
-        nameManager: nameManager,
-        package: package,
-      );
+    test(
+      'name collision against an existing reserved name appends a suffix',
+      () {
+        final reserved = <String>{'startsAt', 'startsAtDefault'};
+        final result = resolveRuntimeDefault(
+          normalizedName: 'startsAt',
+          specName: 'startsAt',
+          model: DateTimeModel(context: context),
+          rawDefault: '2024-01-01T00:00:00Z',
+          containerName: 'Holder',
+          reservedNames: reserved,
+          nameManager: nameManager,
+          package: package,
+        );
 
-      expect(result, isNotNull);
-      expect(result!.memberName, 'startsAtDefault2');
-      expect(reserved.contains('startsAtDefault2'), isTrue);
-    });
+        expect(result, isNotNull);
+        expect(result!.memberName, 'startsAtDefault2');
+        expect(reserved.contains('startsAtDefault2'), isTrue);
+      },
+    );
 
     test(
       'implausible default emits without warning — runtime DecodingException',
@@ -535,7 +535,7 @@ static Status? get statusDefault => Status.fromJson(r'active');
           model: DateTimeModel(context: context),
           rawDefault: 42,
           containerName: 'Holder',
-            reservedNames: <String>{'startsAt'},
+          reservedNames: <String>{'startsAt'},
           nameManager: nameManager,
           package: package,
         );

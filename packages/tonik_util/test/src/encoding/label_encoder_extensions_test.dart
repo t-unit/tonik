@@ -258,13 +258,15 @@ void main() {
       );
     });
 
-    test('empty value beside a filled value renders name-only when exploded',
-        () {
-      expect(
-        {'color': '', 'size': 'xl'}.toLabel(explode: true, allowEmpty: true),
-        '.color.size=xl',
-      );
-    });
+    test(
+      'empty value beside a filled value renders name-only when exploded',
+      () {
+        expect(
+          {'color': '', 'size': 'xl'}.toLabel(explode: true, allowEmpty: true),
+          '.color.size=xl',
+        );
+      },
+    );
 
     test('encodes empty object when allowEmpty is true', () {
       expect(

@@ -58,16 +58,18 @@ List<Code> _buildToFormQueryParameterCode(
 
   if (isAnyModelFormValue(model)) {
     final entries =
-        refer('encodeAnyToFormEntries', 'package:tonik_util/tonik_util.dart')
-            .call(
-      [refer(parameterName)],
-      {
-        'name': specLiteralString(rawName),
-        'explode': literalBool(explode),
-        'allowEmpty': literalBool(allowEmpty),
-        if (allowReserved) 'allowReserved': literalBool(true),
-      },
-    );
+        refer(
+          'encodeAnyToFormEntries',
+          'package:tonik_util/tonik_util.dart',
+        ).call(
+          [refer(parameterName)],
+          {
+            'name': specLiteralString(rawName),
+            'explode': literalBool(explode),
+            'allowEmpty': literalBool(allowEmpty),
+            if (allowReserved) 'allowReserved': literalBool(true),
+          },
+        );
     return [
       refer(r'_$entries').property('addAll').call([entries]).statement,
     ];
