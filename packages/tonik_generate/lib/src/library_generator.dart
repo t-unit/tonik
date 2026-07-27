@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/generated_artifact_manifest.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 
 String generateLibraryFile({
@@ -11,9 +10,6 @@ String generateLibraryFile({
   required String package,
   required Iterable<String> publicArtifacts,
 }) {
-  final packageDir = path.join(outputDirectory, package);
-  final libDirPath = path.join(packageDir, 'lib');
-  final libraryFile = File(path.join(libDirPath, '$package.dart'));
   final exports =
       publicArtifacts
           .map(normalizeGeneratedArtifactPath)
@@ -51,9 +47,12 @@ String generateLibraryFile({
     buffer.writeln("export '$export';");
   }
 
-  libraryFile.parent.createSync(recursive: true);
-  libraryFile.writeAsStringSync(buffer.toString());
-  return path.posix.join('lib', '$package.dart');
+  return writeGeneratedArtifact(
+    outputDirectory: outputDirectory,
+    package: package,
+    relativePath: path.posix.join('lib', '$package.dart'),
+    content: buffer.toString(),
+  );
 }
 
 List<String> _formatApiDocumentation(ApiDocument apiDocument) {

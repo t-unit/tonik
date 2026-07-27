@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/request/request_body_generator.dart';
 
 /// Generates and writes request body files to disk.
@@ -18,14 +17,6 @@ class RequestBodyFileGenerator {
     required String package,
   }) {
     log.fine('Writing ${apiDocument.requestBodies.length} request body files');
-
-    final requestBodyDirectory = path.joinAll([
-      outputDirectory,
-      package,
-      'lib',
-      'src',
-      'request_body',
-    ]);
 
     final generatedFiles = <String>[];
     for (final requestBody in apiDocument.requestBodies) {
@@ -45,11 +36,18 @@ class RequestBodyFileGenerator {
       final result = requestBodyGenerator.generate(requestBody);
 
       log.fine('Writing file ${result.filename}');
-      final file = File(path.join(requestBodyDirectory, result.filename));
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(result.code);
       generatedFiles.add(
-        path.posix.join('lib', 'src', 'request_body', result.filename),
+        writeGeneratedArtifact(
+          outputDirectory: outputDirectory,
+          package: package,
+          relativePath: path.posix.join(
+            'lib',
+            'src',
+            'request_body',
+            result.filename,
+          ),
+          content: result.code,
+        ),
       );
     }
     return generatedFiles;
