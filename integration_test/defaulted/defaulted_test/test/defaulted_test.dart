@@ -1,5 +1,3 @@
-// Repository conformance coverage for generated internal operation defaults.
-
 import 'package:defaulted_api/defaulted_api.dart';
 import 'package:defaulted_api/src/operation/get_thing.dart';
 import 'package:defaulted_api/src/operation/list_subscriptions.dart';
