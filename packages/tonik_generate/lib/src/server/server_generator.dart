@@ -6,29 +6,32 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/name_utils.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
-const _baseServerMemberNames = {'baseUrl', 'serverConfig', 'dio'};
-
 /// Generates server classes for API client.
 class ServerGenerator {
   /// Creates a new ServerGenerator.
-  const ServerGenerator({required this.nameManager});
+  const ServerGenerator({
+    required this.nameManager,
+    required this.backendGenerator,
+  });
 
   /// The name manager to use for name generation.
   final NameManager nameManager;
+  final TransportBackendGenerator backendGenerator;
 
   /// Generates server classes for the given servers.
   ({String code, String filename}) generate(List<Server> servers) {
     final classes = generateClasses(servers);
-    final dioAdapter = generateDioAdapter();
+    final clientAdapter = generateClientAdapter();
     final enums = generateEnums(servers);
 
     final library = Library(
-      (b) => b..body.addAll([...enums, dioAdapter, ...classes]),
+      (b) => b..body.addAll([...enums, clientAdapter, ...classes]),
     );
 
     final allocator = CorePrefixedAllocator();
@@ -64,85 +67,9 @@ class ServerGenerator {
     return [baseClass, ...serverClasses, customServerClass];
   }
 
-  /// Generates the private adapter that resolves Dio for a server.
+  /// Generates the selected private adapter that resolves a native client.
   @visibleForTesting
-  Class generateDioAdapter() {
-    final dioType = refer('Dio', 'package:dio/dio.dart');
-    final serverConfigType = TypeReference(
-      (b) => b
-        ..symbol = 'ServerConfig'
-        ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.add(dioType),
-    );
-
-    return Class(
-      (b) => b
-        ..name = '_DioClientAdapter'
-        ..fields.addAll([
-          Field(
-            (f) => f
-              ..name = 'baseUrl'
-              ..type = refer('String', 'dart:core')
-              ..modifier = FieldModifier.final$,
-          ),
-          Field(
-            (f) => f
-              ..name = 'serverConfig'
-              ..type = serverConfigType
-              ..modifier = FieldModifier.final$,
-          ),
-          Field(
-            (f) => f
-              ..name = r'_$dio'
-              ..type = refer('Dio?', 'package:dio/dio.dart'),
-          ),
-        ])
-        ..constructors.add(
-          Constructor(
-            (c) => c
-              ..requiredParameters.addAll([
-                Parameter(
-                  (p) => p
-                    ..name = 'baseUrl'
-                    ..toThis = true,
-                ),
-                Parameter(
-                  (p) => p
-                    ..name = 'serverConfig'
-                    ..toThis = true,
-                ),
-              ]),
-          ),
-        )
-        ..methods.add(
-          Method(
-            (m) => m
-              ..name = 'dio'
-              ..type = MethodType.getter
-              ..returns = dioType
-              ..body = Block.of([
-                const Code(r'final cachedDio = _$dio;'),
-                const Code('if (cachedDio != null) {'),
-                const Code('  return cachedDio;'),
-                const Code('}'),
-                const Code(''),
-                const Code('final client = serverConfig.client;'),
-                const Code(
-                  'final clientFactory = serverConfig.clientFactory;',
-                ),
-                const Code(
-                  'final resolvedDio = '
-                  'client ?? clientFactory?.call() ?? ',
-                ),
-                dioType.newInstance([]).code,
-                const Code(';'),
-                const Code('resolvedDio.options.baseUrl = baseUrl;'),
-                const Code(r'return _$dio = resolvedDio;'),
-              ]),
-          ),
-        ),
-    );
-  }
+  Class generateClientAdapter() => backendGenerator.generateClientAdapter();
 
   /// Generates enums for server variables with constrained values.
   @visibleForTesting
@@ -214,13 +141,8 @@ class ServerGenerator {
   }
 
   Class _generateBaseClass(String className) {
-    final dioType = refer('Dio', 'package:dio/dio.dart');
-    final serverConfigType = TypeReference(
-      (b) => b
-        ..symbol = 'ServerConfig'
-        ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.add(dioType),
-    );
+    final clientType = backendGenerator.nativeClientType;
+    final serverConfigType = backendGenerator.serverConfigType;
 
     return Class(
       (b) => b
@@ -242,8 +164,8 @@ class ServerGenerator {
           ),
           Field(
             (f) => f
-              ..name = r'_$dioAdapter'
-              ..type = refer('_DioClientAdapter')
+              ..name = backendGenerator.clientAdapterFieldName
+              ..type = refer(backendGenerator.clientAdapterName)
               ..modifier = FieldModifier.final$,
           ),
         ])
@@ -267,20 +189,27 @@ class ServerGenerator {
                 ),
               ])
               ..initializers.add(
-                const Code(
-                  r'_$dioAdapter = _DioClientAdapter(baseUrl, serverConfig)',
-                ),
+                refer(backendGenerator.clientAdapterFieldName)
+                    .assign(
+                      refer(backendGenerator.clientAdapterName).call([
+                        refer('baseUrl'),
+                        refer('serverConfig'),
+                      ]),
+                    )
+                    .code,
               ),
           ),
         )
         ..methods.add(
           Method(
             (m) => m
-              ..name = 'dio'
+              ..name = backendGenerator.clientGetterName
               ..type = MethodType.getter
-              ..returns = dioType
+              ..returns = clientType
               ..lambda = true
-              ..body = const Code(r'_$dioAdapter.dio'),
+              ..body = refer(
+                backendGenerator.clientAdapterFieldName,
+              ).property(backendGenerator.clientGetterName).code,
           ),
         ),
     );
@@ -291,12 +220,7 @@ class ServerGenerator {
     String baseClassName,
     Server server,
   ) {
-    final serverConfigType = TypeReference(
-      (b) => b
-        ..symbol = 'ServerConfig'
-        ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.add(refer('Dio', 'package:dio/dio.dart')),
-    );
+    final serverConfigType = backendGenerator.serverConfigType;
 
     final hasVariables = server.variables.isNotEmpty;
 
@@ -369,7 +293,12 @@ class ServerGenerator {
             preserveNumbers: true,
           );
           return (
-            normalizedName: _baseServerMemberNames.contains(normalized)
+            normalizedName:
+                {
+                  'baseUrl',
+                  'serverConfig',
+                  backendGenerator.clientGetterName,
+                }.contains(normalized)
                 ? '\$$normalized'
                 : normalized,
             originalValue: variable,
@@ -528,12 +457,7 @@ class ServerGenerator {
   }
 
   Class _generateCustomServerClass(String className, String baseClassName) {
-    final serverConfigType = TypeReference(
-      (b) => b
-        ..symbol = 'ServerConfig'
-        ..url = 'package:tonik_util/tonik_util.dart'
-        ..types.add(refer('Dio', 'package:dio/dio.dart')),
-    );
+    final serverConfigType = backendGenerator.serverConfigType;
 
     return Class(
       (b) => b
