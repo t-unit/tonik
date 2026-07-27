@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/response/response_generator.dart';
 
 /// Generates and writes response files to disk.
@@ -19,16 +18,11 @@ class ResponseFileGenerator {
   }) {
     log.fine('Writing ${apiDocument.responses.length} response files');
 
-    final responseDirectory = path.joinAll([
-      outputDirectory,
-      package,
-      'lib',
-      'src',
-      'response',
-    ]);
-
-    Directory(responseDirectory).createSync(recursive: true);
-
+    final relativeDirectory = createGeneratedArtifactDirectory(
+      outputDirectory: outputDirectory,
+      package: package,
+      relativePath: path.posix.join('lib', 'src', 'response'),
+    );
     final generatedFiles = <String>[];
     for (final response in apiDocument.responses) {
       // Skip responses with no headers and just one body
@@ -43,11 +37,13 @@ class ResponseFileGenerator {
       final result = responseGenerator.generate(response);
 
       log.fine('Writing file ${result.filename}');
-      final file = File(path.join(responseDirectory, result.filename));
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(result.code);
       generatedFiles.add(
-        path.posix.join('lib', 'src', 'response', result.filename),
+        writeGeneratedArtifact(
+          outputDirectory: outputDirectory,
+          package: package,
+          relativePath: path.posix.join(relativeDirectory, result.filename),
+          content: result.code,
+        ),
       );
     }
     return generatedFiles;

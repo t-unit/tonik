@@ -1,4 +1,9 @@
+// Repository conformance coverage for generated internal operation defaults.
+
 import 'package:defaulted_api/defaulted_api.dart';
+import 'package:defaulted_api/src/operation/get_thing.dart';
+import 'package:defaulted_api/src/operation/list_subscriptions.dart';
+import 'package:defaulted_api/src/operation/list_things.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -368,6 +373,40 @@ void main() {
     });
   });
 
+  group(
+    'operation parameter primitive defaults — internal static const accessors',
+    () {
+      test('query string default is reachable', () {
+        expect(ListThings.regionDefault, 'us');
+      });
+
+      test('required-with-default query integer default is reachable', () {
+        expect(ListThings.pageDefault, 1);
+      });
+
+      test('header integer default is reachable', () {
+        expect(ListThings.retriesDefault, 5);
+      });
+
+      test('cookie boolean default is reachable', () {
+        expect(ListThings.trackingDefault, isFalse);
+      });
+
+      test('path string default is reachable', () {
+        expect(GetThing.idDefault, 'x');
+      });
+    },
+  );
+
+  group(
+    'operation parameter runtime-fallback defaults — internal DateTime getter',
+    () {
+      test('query date-time default is reachable via the runtime getter', () {
+        expect(ListThings.sinceDefault, DateTime.utc(2024));
+      });
+    },
+  );
+
   group('API client methods with no arguments use defaults', () {
     test(
       'omitted query/header/cookie parameters serialise the default values',
@@ -434,6 +473,15 @@ void main() {
       expect(captured!.uri.path, endsWith('/things/custom'));
     });
   });
+
+  group(
+    'operation parameter enum defaults — internal static const accessors',
+    () {
+      test('query enum default is reachable on the operation class', () {
+        expect(ListSubscriptions.statusDefault, Status.active);
+      });
+    },
+  );
 
   group('Subscription — runtime-fallback defaults', () {
     test('non-const leaf default reachable via static getter', () {
@@ -592,18 +640,20 @@ void main() {
       },
     );
 
-    test('toJson omits readOnly field even when set to a non-default value',
-        () {
-      const value = RwoDefaults(
-        readOnlyTag: 'custom-ro',
-        writeOnlyToken: 'custom-wo',
-        plain: 'p',
-      );
-      final encoded = value.toJson()! as Map<String, Object?>;
-      expect(encoded.containsKey('readOnlyTag'), isFalse);
-      expect(encoded['writeOnlyToken'], 'custom-wo');
-      expect(encoded['plain'], 'p');
-    });
+    test(
+      'toJson omits readOnly field even when set to a non-default value',
+      () {
+        const value = RwoDefaults(
+          readOnlyTag: 'custom-ro',
+          writeOnlyToken: 'custom-wo',
+          plain: 'p',
+        );
+        final encoded = value.toJson()! as Map<String, Object?>;
+        expect(encoded.containsKey('readOnlyTag'), isFalse);
+        expect(encoded['writeOnlyToken'], 'custom-wo');
+        expect(encoded['plain'], 'p');
+      },
+    );
 
     test('public static const exposes defaults for all three fields', () {
       expect(RwoDefaults.readOnlyTagDefault, 'ro-tag');
@@ -686,63 +736,67 @@ void main() {
     });
   });
 
-  group('ApDefaults — composite defaults against additionalProperties shapes',
-      () {
-    test(
-      'additionalProperties: true — extras in the spec default populate the '
-      'untyped AP map at runtime',
-      () {
-        final value = ApDefaults.fromJson(const <String, Object?>{});
-        final anyExtras = value.anyExtras!;
-        expect(anyExtras.name, 'n');
-        expect(anyExtras.additionalProperties, <String, Object?>{
-          'extraA': 'value',
-          'extraB': 42,
-        });
-      },
-    );
+  group(
+    'ApDefaults — composite defaults against additionalProperties shapes',
+    () {
+      test(
+        'additionalProperties: true — extras in the spec default populate the '
+        'untyped AP map at runtime',
+        () {
+          final value = ApDefaults.fromJson(const <String, Object?>{});
+          final anyExtras = value.anyExtras!;
+          expect(anyExtras.name, 'n');
+          expect(anyExtras.additionalProperties, <String, Object?>{
+            'extraA': 'value',
+            'extraB': 42,
+          });
+        },
+      );
 
-    test(
-      'additionalProperties typed int — extras in the default decode into the '
-      'typed AP map at runtime',
-      () {
-        final value = ApDefaults.fromJson(const <String, Object?>{});
-        final typedExtras = value.typedExtras!;
-        expect(typedExtras.name, 'n');
-        expect(typedExtras.additionalProperties, <String, int>{'count': 7});
-      },
-    );
+      test(
+        'additionalProperties typed int — extras in the default decode '
+        'into the typed AP map at runtime',
+        () {
+          final value = ApDefaults.fromJson(const <String, Object?>{});
+          final typedExtras = value.typedExtras!;
+          expect(typedExtras.name, 'n');
+          expect(typedExtras.additionalProperties, <String, int>{'count': 7});
+        },
+      );
 
-    test(
-      'additionalProperties: false — extras absent from the class because no '
-      'AP field is generated; round-trip drops them structurally',
-      () {
-        final strict = ApDefaults.strictExtrasDefault;
-        expect(strict.name, 'n');
-        final roundTrip = strict.toJson()! as Map<String, Object?>;
-        expect(roundTrip.containsKey('ignored'), isFalse);
-        expect(roundTrip['name'], 'n');
-      },
-    );
+      test(
+        'additionalProperties: false — extras absent from the class because no '
+        'AP field is generated; round-trip drops them structurally',
+        () {
+          final strict = ApDefaults.strictExtrasDefault;
+          expect(strict.name, 'n');
+          final roundTrip = strict.toJson()! as Map<String, Object?>;
+          expect(roundTrip.containsKey('ignored'), isFalse);
+          expect(roundTrip['name'], 'n');
+        },
+      );
 
-    test(
-      'public static getters expose composite defaults; getter is not cached',
-      () {
-        final a = ApDefaults.anyExtrasDefault;
-        final b = ApDefaults.anyExtrasDefault;
-        expect(identical(a, b), isFalse);
-        expect(a.additionalProperties['extraB'], 42);
-      },
-    );
-  });
+      test(
+        'public static getters expose composite defaults; getter is not cached',
+        () {
+          final a = ApDefaults.anyExtrasDefault;
+          final b = ApDefaults.anyExtrasDefault;
+          expect(identical(a, b), isFalse);
+          expect(a.additionalProperties['extraB'], 42);
+        },
+      );
+    },
+  );
 
   group('AllOfDefaultHolder — allOf default merges across members', () {
-    test('static getter decodes the merged default through the allOf wrapper',
-        () {
-      final merged = AllOfDefaultHolder.mergedDefault;
-      expect(merged.allOfBaseA.a, 'a-val');
-      expect(merged.allOfBaseB.b, 9);
-    });
+    test(
+      'static getter decodes the merged default through the allOf wrapper',
+      () {
+        final merged = AllOfDefaultHolder.mergedDefault;
+        expect(merged.allOfBaseA.a, 'a-val');
+        expect(merged.allOfBaseB.b, 9);
+      },
+    );
 
     test('fromJson with missing key falls through to the merged default', () {
       final value = AllOfDefaultHolder.fromJson(const <String, Object?>{});
@@ -886,8 +940,9 @@ void main() {
       );
 
       test('fromJson with missing key falls through to the default', () {
-        final value =
-            RequiredRuntimeDefault.fromJson(const <String, Object?>{});
+        final value = RequiredRuntimeDefault.fromJson(
+          const <String, Object?>{},
+        );
         expect(value.startsAt, DateTime.utc(2024));
       });
     },

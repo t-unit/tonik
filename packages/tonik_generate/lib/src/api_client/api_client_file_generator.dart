@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 
 class ApiClientFileGenerator {
   ApiClientFileGenerator({required this.apiClientGenerator});
@@ -20,16 +20,11 @@ class ApiClientFileGenerator {
   }) {
     log.fine('Writing API client files');
 
-    final clientDirectory = path.joinAll([
-      outputDirectory,
-      package,
-      'lib',
-      'src',
-      'api_client',
-    ]);
-
-    Directory(clientDirectory).createSync(recursive: true);
-
+    final relativeDirectory = createGeneratedArtifactDirectory(
+      outputDirectory: outputDirectory,
+      package: package,
+      relativePath: path.posix.join('lib', 'src', 'api_client'),
+    );
     final generatedFiles = <String>[];
     final servers = apiDocument.servers.toList();
 
@@ -41,11 +36,13 @@ class ApiClientFileGenerator {
       );
 
       log.fine('Writing file ${result.filename}');
-      final file = File(path.join(clientDirectory, result.filename));
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(result.code);
       generatedFiles.add(
-        path.posix.join('lib', 'src', 'api_client', result.filename),
+        writeGeneratedArtifact(
+          outputDirectory: outputDirectory,
+          package: package,
+          relativePath: path.posix.join(relativeDirectory, result.filename),
+          content: result.code,
+        ),
       );
     }
 
@@ -58,11 +55,13 @@ class ApiClientFileGenerator {
       );
 
       log.fine('Writing file for untagged operations: ${result.filename}');
-      final file = File(path.join(clientDirectory, result.filename));
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(result.code);
       generatedFiles.add(
-        path.posix.join('lib', 'src', 'api_client', result.filename),
+        writeGeneratedArtifact(
+          outputDirectory: outputDirectory,
+          package: package,
+          relativePath: path.posix.join(relativeDirectory, result.filename),
+          content: result.code,
+        ),
       );
     }
     return generatedFiles;
