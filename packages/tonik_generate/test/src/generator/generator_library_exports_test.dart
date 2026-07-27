@@ -1,21 +1,20 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/generator.dart';
+import 'package:tonik_generate/src/library_generator.dart';
 
 const _packageName = 'test_package';
-const _manifestFilename = '.tonik-generated-files.json';
 
 void main() {
-  group('Generator artifact manifest', () {
+  group('Generator library exports', () {
     late Directory tempDir;
     late Context context;
 
     setUp(() {
-      tempDir = Directory.systemTemp.createTempSync('artifact_manifest_');
+      tempDir = Directory.systemTemp.createTempSync('library_exports_');
       context = Context.initial();
     });
 
@@ -55,23 +54,41 @@ void main() {
       },
     );
 
-    test('writes sorted normalized package-relative artifact paths', () async {
+    test('sorts and normalizes in-memory public artifact paths', () {
+      generateLibraryFile(
+        apiDocument: _emptyDocument(),
+        outputDirectory: tempDir.path,
+        package: _packageName,
+        publicArtifacts: [
+          r'lib\src\model\user.dart',
+          'lib/src/api_client/users_api.dart',
+          'lib/src/api_client/users_api.dart',
+        ],
+      );
+
+      expect(_rootExports(tempDir), [
+        'src/api_client/users_api.dart',
+        'src/model/user.dart',
+      ]);
+    });
+
+    test('does not persist generated artifact paths', () async {
       await const Generator().generate(
         apiDocument: _completeDocument(context),
         outputDirectory: tempDir.path,
         package: _packageName,
       );
 
-      final manifest =
-          jsonDecode(_manifestFile(tempDir).readAsStringSync())
-              as Map<String, Object?>;
-      final files = (manifest['files']! as List<Object?>).cast<String>();
-
-      expect(manifest['version'], 1);
-      expect(files, orderedEquals(files.toList()..sort()));
-      expect(files, everyElement(isNot(contains(r'\'))));
-      expect(files, contains('lib/src/operation/get_user.dart'));
-      expect(files, contains('lib/$_packageName.dart'));
+      expect(
+        File(
+          path.join(
+            tempDir.path,
+            _packageName,
+            '.tonik-generated-files.json',
+          ),
+        ).existsSync(),
+        isFalse,
+      );
     });
 
     test('produces byte-identical root exports on repeated runs', () async {
@@ -94,23 +111,13 @@ void main() {
       expect(second, first);
     });
 
-    test('removes stale generated files and preserves unknown files', () async {
-      await const Generator().generate(
-        apiDocument: _completeDocument(context),
-        outputDirectory: tempDir.path,
-        package: _packageName,
-      );
-
+    test('does not export unrelated Dart files', () async {
       final packageDirectory = path.join(tempDir.path, _packageName);
       final unknownFile = File(
         path.join(packageDirectory, 'lib', 'src', 'user_extension.dart'),
-      )..writeAsStringSync('final userExtension = true;\n');
-      final staleBackendFile = File(
-        path.join(packageDirectory, 'lib', 'src', 'transport', 'dio.dart'),
       );
-      staleBackendFile.parent.createSync(recursive: true);
-      staleBackendFile.writeAsStringSync('final dioOnly = true;\n');
-      _addManifestEntry(tempDir, 'lib/src/transport/dio.dart');
+      unknownFile.parent.createSync(recursive: true);
+      unknownFile.writeAsStringSync('final userExtension = true;\n');
 
       await const Generator().generate(
         apiDocument: _emptyDocument(),
@@ -118,13 +125,6 @@ void main() {
         package: _packageName,
       );
 
-      expect(
-        File(
-          path.join(packageDirectory, 'lib', 'src', 'model', 'user.dart'),
-        ).existsSync(),
-        isFalse,
-      );
-      expect(staleBackendFile.existsSync(), isFalse);
       expect(unknownFile.existsSync(), isTrue);
       expect(_rootExports(tempDir), ['src/server/server.dart']);
     });
@@ -142,23 +142,6 @@ List<String> _rootExports(Directory tempDir) {
 File _libraryFile(Directory tempDir) => File(
   path.join(tempDir.path, _packageName, 'lib', '$_packageName.dart'),
 );
-
-File _manifestFile(Directory tempDir) => File(
-  path.join(tempDir.path, _packageName, _manifestFilename),
-);
-
-void _addManifestEntry(Directory tempDir, String entry) {
-  final manifestFile = _manifestFile(tempDir);
-  final manifest =
-      jsonDecode(manifestFile.readAsStringSync()) as Map<String, Object?>;
-  final files = (manifest['files']! as List<Object?>).cast<String>()
-    ..add(entry)
-    ..sort();
-  manifest['files'] = files;
-  manifestFile.writeAsStringSync(
-    '${const JsonEncoder.withIndent('  ').convert(manifest)}\n',
-  );
-}
 
 ApiDocument _completeDocument(Context context) {
   final multiBodyResponse = ResponseObject(

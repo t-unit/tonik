@@ -11,14 +11,13 @@ class OperationFileGenerator {
 
   final log = Logger('OperationFileGenerator');
 
-  List<String> writeFiles({
+  void writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
   }) {
     log.fine('Writing ${apiDocument.operations.length} operation files');
 
-    final generatedFiles = <String>[];
     for (final operation in apiDocument.operations) {
       final name = operationGenerator.nameManager.operationName(operation);
       log.fine('Generating operation $name');
@@ -26,20 +25,17 @@ class OperationFileGenerator {
       final result = operationGenerator.generateCallableOperation(operation);
 
       log.fine('Writing file ${result.filename}');
-      generatedFiles.add(
-        writeGeneratedArtifact(
-          outputDirectory: outputDirectory,
-          package: package,
-          relativePath: path.posix.join(
-            'lib',
-            'src',
-            'operation',
-            result.filename,
-          ),
-          content: result.code,
+      writeGeneratedArtifact(
+        outputDirectory: outputDirectory,
+        package: package,
+        relativePath: path.posix.join(
+          'lib',
+          'src',
+          'operation',
+          result.filename,
         ),
+        content: result.code,
       );
     }
-    return generatedFiles;
   }
 }
