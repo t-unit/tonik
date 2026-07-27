@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/model/all_of_generator.dart';
 import 'package:tonik_generate/src/model/any_of_generator.dart';
 import 'package:tonik_generate/src/model/class_generator.dart';
@@ -29,19 +28,28 @@ class ModelFileGenerator {
 
   final log = Logger('ModelGenerator');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
   }) {
     log.fine('Writing ${apiDocument.models.length} model files');
 
+    final generatedFiles = <String>[];
     for (final model in apiDocument.models) {
-      writeOne(model, outputDirectory: outputDirectory, package: package);
+      final generatedFile = writeOne(
+        model,
+        outputDirectory: outputDirectory,
+        package: package,
+      );
+      if (generatedFile != null) {
+        generatedFiles.add(generatedFile);
+      }
     }
+    return generatedFiles;
   }
 
-  void writeOne(
+  String? writeOne(
     Model model, {
     required String outputDirectory,
     required String package,
@@ -61,22 +69,23 @@ class ModelFileGenerator {
 
     if (result == null) {
       log.fine('Ignoring model: $model');
-      return;
+      return null;
     }
 
     log
       ..fine('Generating model ${classGenerator.nameManager.modelName(model)}')
       ..fine('Writing file ${result.filename}');
 
-    final modelDirectory = path.joinAll([
-      outputDirectory,
-      package,
-      'lib',
-      'src',
-      'model',
-    ]);
-    final file = File(path.join(modelDirectory, result.filename));
-    file.parent.createSync(recursive: true);
-    file.writeAsStringSync(result.code);
+    return writeGeneratedArtifact(
+      outputDirectory: outputDirectory,
+      package: package,
+      relativePath: path.posix.join(
+        'lib',
+        'src',
+        'model',
+        result.filename,
+      ),
+      content: result.code,
+    );
   }
 }

@@ -61,7 +61,7 @@ class ModelWorkerPool {
   /// Equal to [spawnedWorkers] after every [run] returns.
   int get exitedWorkers => _exitedWorkers;
 
-  Future<void> run({
+  Future<List<String>> run({
     required ApiDocument apiDocument,
     required NameManager nameManager,
     required StableModelSorter stableModelSorter,
@@ -79,7 +79,7 @@ class ModelWorkerPool {
     }
 
     final models = apiDocument.models.toList(growable: false);
-    if (models.isEmpty) return;
+    if (models.isEmpty) return const [];
 
     final effectiveWorkerCount = math.min(workerCount, models.length);
 
@@ -102,6 +102,7 @@ class ModelWorkerPool {
     var nextIndex = 0;
     var inflight = 0;
     var acked = 0;
+    final generatedFiles = <String>[];
     var aborted = false;
     var handshakesDone = false;
     Object? capturedSetupError;
@@ -191,6 +192,9 @@ class ModelWorkerPool {
       if (msg is _ModelAck) {
         acked++;
         inflight--;
+        if (msg.generatedFile != null) {
+          generatedFiles.add(msg.generatedFile!);
+        }
         dispatchNext();
         return;
       }
@@ -281,6 +285,8 @@ class ModelWorkerPool {
         'inflight=$inflight, nextIndex=$nextIndex).',
       );
     }
+    generatedFiles.sort();
+    return generatedFiles;
   }
 }
 
@@ -402,12 +408,18 @@ Future<void> _workerEntry(_WorkerInit init) async {
     await for (final msg in inbox) {
       if (msg is _ModelJob) {
         try {
-          modelFileGenerator.writeOne(
+          final generatedFile = modelFileGenerator.writeOne(
             init.models[msg.modelIndex],
             outputDirectory: init.outputDirectory,
             package: init.package,
           );
-          init.mainInbox.send(_ModelAck(init.workerId, msg.modelIndex));
+          init.mainInbox.send(
+            _ModelAck(
+              init.workerId,
+              msg.modelIndex,
+              generatedFile,
+            ),
+          );
         } on Object catch (error, stack) {
           _sendModelError(
             init.mainInbox,
@@ -465,9 +477,10 @@ class _Shutdown {
 }
 
 class _ModelAck {
-  const _ModelAck(this.workerId, this.modelIndex);
+  const _ModelAck(this.workerId, this.modelIndex, this.generatedFile);
   final int workerId;
   final int modelIndex;
+  final String? generatedFile;
 }
 
 /// [error]/[stack] are the originals when sendable, stringified otherwise.

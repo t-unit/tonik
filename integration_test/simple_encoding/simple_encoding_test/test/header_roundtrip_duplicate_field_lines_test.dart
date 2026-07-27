@@ -13,7 +13,13 @@ void main() {
         final dio = Dio(BaseOptions(baseUrl: 'https://example.com/v1'))
           ..httpClientAdapter = _DuplicateFieldLineAdapter();
 
-        final response = await TestHeaderRoundtripSimpleLists(dio).call();
+        final api = SimpleEncodingApi(
+          CustomServer(
+            baseUrl: 'https://example.com/v1',
+            serverConfig: ServerConfig.client(dio),
+          ),
+        );
+        final response = await api.testHeaderRoundtripSimpleLists();
 
         expect(
           response,

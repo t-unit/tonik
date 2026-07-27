@@ -1,8 +1,7 @@
-import 'dart:io';
-
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_generator.dart';
 
 /// Generates and writes response wrapper files to disk.
@@ -12,23 +11,19 @@ class ResponseWrapperFileGenerator {
   final ResponseWrapperGenerator responseWrapperGenerator;
   final log = Logger('ResponseWrapperFileGenerator');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
   }) {
     log.fine('Writing response wrapper files for operations');
 
-    final wrapperDirectory = path.joinAll([
-      outputDirectory,
-      package,
-      'lib',
-      'src',
-      'response_wrapper',
-    ]);
-
-    Directory(wrapperDirectory).createSync(recursive: true);
-
+    final relativeDirectory = createGeneratedArtifactDirectory(
+      outputDirectory: outputDirectory,
+      package: package,
+      relativePath: path.posix.join('lib', 'src', 'response_wrapper'),
+    );
+    final generatedFiles = <String>[];
     for (final operation in apiDocument.operations) {
       // Only generate for operations with two or more statuses
       if (operation.responses.length < 2) {
@@ -42,9 +37,15 @@ class ResponseWrapperFileGenerator {
       final result = responseWrapperGenerator.generate(operation);
 
       log.fine('Writing file ${result.filename}');
-      final file = File(path.join(wrapperDirectory, result.filename));
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        writeGeneratedArtifact(
+          outputDirectory: outputDirectory,
+          package: package,
+          relativePath: path.posix.join(relativeDirectory, result.filename),
+          content: result.code,
+        ),
+      );
     }
+    return generatedFiles;
   }
 }

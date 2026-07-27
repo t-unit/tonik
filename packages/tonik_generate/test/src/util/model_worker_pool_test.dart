@@ -39,7 +39,7 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    Future<void> runPool({
+    Future<List<String>> runPool({
       ApiDocument? doc,
       NameManager? names,
       String? outputDirectory,

@@ -59,6 +59,7 @@ class Generator {
     final backendGenerator = transportBackendGeneratorFor(
       config.transport.backend,
     );
+    final publicArtifacts = <String>{};
 
     final useImmutableCollections = config.useImmutableCollections;
 
@@ -192,23 +193,23 @@ class Generator {
       backendGenerator: backendGenerator,
       useImmutableCollections: useImmutableCollections,
     );
-
     generateAnalysisOptions(
       outputDirectory: outputDirectory,
       package: package,
     );
 
+    final List<String> modelFiles;
     final resolvedWorkerCount = resolveWorkerCount(config.workerCount);
     if (resolvedWorkerCount == 1 ||
         apiDocument.models.length < parallelThreshold) {
-      modelGenerator.writeFiles(
+      modelFiles = modelGenerator.writeFiles(
         apiDocument: apiDocument,
         outputDirectory: outputDirectory,
         package: package,
       );
     } else {
       final pool = (workerPoolFactory ?? ModelWorkerPool.new)();
-      await pool.run(
+      modelFiles = await pool.run(
         apiDocument: apiDocument,
         nameManager: nameManager,
         stableModelSorter: stableModelSorter,
@@ -218,24 +219,28 @@ class Generator {
         workerCount: resolvedWorkerCount,
       );
     }
+    publicArtifacts.addAll(modelFiles);
 
-    requestBodyFileGenerator.writeFiles(
+    final requestBodyFiles = requestBodyFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    publicArtifacts.addAll(requestBodyFiles);
 
-    responseFileGenerator.writeFiles(
+    final responseFiles = responseFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    publicArtifacts.addAll(responseFiles);
 
-    responseWrapperFileGenerator.writeFiles(
+    final responseWrapperFiles = responseWrapperFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    publicArtifacts.addAll(responseWrapperFiles);
 
     operationFileGenerator.writeFiles(
       apiDocument: apiDocument,
@@ -243,23 +248,25 @@ class Generator {
       package: package,
     );
 
-    apiClientFileGenerator.writeFiles(
+    final apiClientFiles = apiClientFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    publicArtifacts.addAll(apiClientFiles);
 
-    serverFileGenerator.writeFiles(
+    final serverFile = serverFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    publicArtifacts.add(serverFile);
 
     generateLibraryFile(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
-      backendGenerator: backendGenerator,
+      publicArtifacts: publicArtifacts,
     );
   }
 }

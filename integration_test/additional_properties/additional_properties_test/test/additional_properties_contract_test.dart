@@ -9,7 +9,7 @@ void main() {
   group('pure-map operation wire encoding', () {
     test('form omits null while preserving empty and scalar values', () async {
       final adapter = _CapturingAdapter();
-      final result = await EncodePureMapForm(_capturingDio(adapter)).call(
+      final result = await _api(adapter).encodePureMapForm(
         values: const {'gone': null, 'empty': '', 'count': 7},
       );
 
@@ -21,9 +21,12 @@ void main() {
       'form allowReserved preserves map keys and values when collapsed',
       () async {
         final adapter = _CapturingAdapter();
-        final result = await EncodePureMapFormAllowReservedCollapsed(
-          _capturingDio(adapter),
-        ).call(values: const {'a:b': 'c:d'});
+        final result =
+            await _api(
+              adapter,
+            ).encodePureMapFormAllowReservedCollapsed(
+              values: const {'a:b': 'c:d'},
+            );
 
         expect(result, isA<TonikSuccess<void, Response<Object?>>>());
         expect(adapter.requestOptions!.uri.query, 'values=a:b,c:d');
@@ -34,9 +37,12 @@ void main() {
       'form allowReserved preserves map keys and values when exploded',
       () async {
         final adapter = _CapturingAdapter();
-        final result = await EncodePureMapFormAllowReservedExploded(
-          _capturingDio(adapter),
-        ).call(values: const {'a:b': 'c:d'});
+        final result =
+            await _api(
+              adapter,
+            ).encodePureMapFormAllowReservedExploded(
+              values: const {'a:b': 'c:d'},
+            );
 
         expect(result, isA<TonikSuccess<void, Response<Object?>>>());
         expect(adapter.requestOptions!.uri.query, 'a:b=c:d');
@@ -47,9 +53,9 @@ void main() {
       'deepObject omits null while preserving empty and scalar values',
       () async {
         final adapter = _CapturingAdapter();
-        final result = await EncodePureMapDeepObject(
-          _capturingDio(adapter),
-        ).call(values: const {'gone': null, 'empty': '', 'count': 7});
+        final result = await _api(adapter).encodePureMapDeepObject(
+          values: const {'gone': null, 'empty': '', 'count': 7},
+        );
 
         expect(result, isA<TonikSuccess<void, Response<Object?>>>());
         expect(
@@ -61,7 +67,7 @@ void main() {
 
     test('form rejects nested values before network I/O', () async {
       final adapter = _CapturingAdapter();
-      final result = await EncodePureMapForm(_capturingDio(adapter)).call(
+      final result = await _api(adapter).encodePureMapForm(
         values: const {
           'nested': {'value': 1},
         },
@@ -566,6 +572,14 @@ void main() {
     });
   });
 }
+
+AdditionalPropertiesApi _api(_CapturingAdapter adapter) =>
+    AdditionalPropertiesApi(
+      CustomServer(
+        baseUrl: 'https://example.com',
+        serverConfig: ServerConfig.client(_capturingDio(adapter)),
+      ),
+    );
 
 Dio _capturingDio(_CapturingAdapter adapter) {
   return Dio(BaseOptions(baseUrl: 'https://example.com'))

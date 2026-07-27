@@ -1,19 +1,9 @@
-import 'dart:io';
-import 'package:path/path.dart' as path;
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 
 void generateAnalysisOptions({
   required String outputDirectory,
   required String package,
 }) {
-  final packageDir = path.join(outputDirectory, package);
-  final analysisOptionsFile = File(
-    path.join(packageDir, 'analysis_options.yaml'),
-  );
-
-  if (!analysisOptionsFile.parent.existsSync()) {
-    analysisOptionsFile.parent.createSync(recursive: true);
-  }
-
   const content = '''
 include: package:lints/recommended.yaml
 
@@ -34,5 +24,10 @@ analyzer:
     unintended_html_in_doc_comment: ignore
 ''';
 
-  analysisOptionsFile.writeAsStringSync(content);
+  writeGeneratedArtifact(
+    outputDirectory: outputDirectory,
+    package: package,
+    relativePath: 'analysis_options.yaml',
+    content: content,
+  );
 }

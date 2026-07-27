@@ -1,6 +1,5 @@
-import 'dart:io';
-import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 
 final _semverRegExp = RegExp(
@@ -39,13 +38,6 @@ void generatePubspec({
   required TransportBackendGenerator backendGenerator,
   bool useImmutableCollections = false,
 }) {
-  final pubspecDir = path.join(outputDirectory, package);
-  final pubspecFile = File(path.join(pubspecDir, 'pubspec.yaml'));
-
-  if (!pubspecFile.parent.existsSync()) {
-    pubspecFile.parent.createSync(recursive: true);
-  }
-
   final version = sanitizeVersion(apiDocument.version);
   final ficDependency = useImmutableCollections
       ? '\n  fast_immutable_collections: ^11.0.0'
@@ -74,5 +66,10 @@ dev_dependencies:
   lints: ^6.0.0
 ''';
 
-  pubspecFile.writeAsStringSync(content);
+  writeGeneratedArtifact(
+    outputDirectory: outputDirectory,
+    package: package,
+    relativePath: 'pubspec.yaml',
+    content: content,
+  );
 }
