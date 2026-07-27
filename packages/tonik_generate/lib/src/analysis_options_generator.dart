@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 
-void generateAnalysisOptions({
+String generateAnalysisOptions({
   required String outputDirectory,
   required String package,
 }) {
@@ -35,4 +35,5 @@ analyzer:
 ''';
 
   analysisOptionsFile.writeAsStringSync(content);
+  return 'analysis_options.yaml';
 }

@@ -29,19 +29,28 @@ class ModelFileGenerator {
 
   final log = Logger('ModelGenerator');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
   }) {
     log.fine('Writing ${apiDocument.models.length} model files');
 
+    final generatedFiles = <String>[];
     for (final model in apiDocument.models) {
-      writeOne(model, outputDirectory: outputDirectory, package: package);
+      final generatedFile = writeOne(
+        model,
+        outputDirectory: outputDirectory,
+        package: package,
+      );
+      if (generatedFile != null) {
+        generatedFiles.add(generatedFile);
+      }
     }
+    return generatedFiles;
   }
 
-  void writeOne(
+  String? writeOne(
     Model model, {
     required String outputDirectory,
     required String package,
@@ -61,7 +70,7 @@ class ModelFileGenerator {
 
     if (result == null) {
       log.fine('Ignoring model: $model');
-      return;
+      return null;
     }
 
     log
@@ -78,5 +87,6 @@ class ModelFileGenerator {
     final file = File(path.join(modelDirectory, result.filename));
     file.parent.createSync(recursive: true);
     file.writeAsStringSync(result.code);
+    return path.posix.join('lib', 'src', 'model', result.filename);
   }
 }

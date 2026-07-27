@@ -13,7 +13,7 @@ class ApiClientFileGenerator {
   /// Tag used for operations without any tags.
   static final defaultTag = Tag(name: 'default');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
@@ -30,6 +30,7 @@ class ApiClientFileGenerator {
 
     Directory(clientDirectory).createSync(recursive: true);
 
+    final generatedFiles = <String>[];
     final servers = apiDocument.servers.toList();
 
     for (final entry in apiDocument.operationsByTag.entries) {
@@ -43,6 +44,9 @@ class ApiClientFileGenerator {
       final file = File(path.join(clientDirectory, result.filename));
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        path.posix.join('lib', 'src', 'api_client', result.filename),
+      );
     }
 
     final untaggedOperations = getUntaggedOperations(apiDocument);
@@ -57,7 +61,11 @@ class ApiClientFileGenerator {
       final file = File(path.join(clientDirectory, result.filename));
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        path.posix.join('lib', 'src', 'api_client', result.filename),
+      );
     }
+    return generatedFiles;
   }
 
   /// Collects all operations from the API document that don't have tags.

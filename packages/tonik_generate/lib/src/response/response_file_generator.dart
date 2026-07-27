@@ -12,7 +12,7 @@ class ResponseFileGenerator {
   final ResponseGenerator responseGenerator;
   final log = Logger('ResponseFileGenerator');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
@@ -29,6 +29,7 @@ class ResponseFileGenerator {
 
     Directory(responseDirectory).createSync(recursive: true);
 
+    final generatedFiles = <String>[];
     for (final response in apiDocument.responses) {
       // Skip responses with no headers and just one body
       if (!response.hasHeaders && response.bodyCount <= 1) {
@@ -45,6 +46,10 @@ class ResponseFileGenerator {
       final file = File(path.join(responseDirectory, result.filename));
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        path.posix.join('lib', 'src', 'response', result.filename),
+      );
     }
+    return generatedFiles;
   }
 }

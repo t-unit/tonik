@@ -1,10 +1,12 @@
 import 'dart:io';
 
 import 'package:meta/meta.dart';
+import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/analysis_options_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_file_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
+import 'package:tonik_generate/src/generated_artifact_manifest.dart';
 import 'package:tonik_generate/src/library_generator.dart';
 import 'package:tonik_generate/src/model/all_of_generator.dart';
 import 'package:tonik_generate/src/model/any_of_generator.dart';
@@ -59,6 +61,10 @@ class Generator {
     final backendGenerator = transportBackendGeneratorFor(
       config.transport.backend,
     );
+    final packageDirectory = path.join(outputDirectory, package);
+    final artifactManifest = GeneratedArtifactManifest.load(packageDirectory);
+    final generatedFiles = <String>{};
+    final publicArtifacts = <String>{};
 
     final useImmutableCollections = config.useImmutableCollections;
 
@@ -185,30 +191,35 @@ class Generator {
       servers: apiDocument.servers,
     );
 
-    generatePubspec(
-      apiDocument: apiDocument,
-      outputDirectory: outputDirectory,
-      package: package,
-      backendGenerator: backendGenerator,
-      useImmutableCollections: useImmutableCollections,
-    );
+    generatedFiles
+      ..add(
+        generatePubspec(
+          apiDocument: apiDocument,
+          outputDirectory: outputDirectory,
+          package: package,
+          backendGenerator: backendGenerator,
+          useImmutableCollections: useImmutableCollections,
+        ),
+      )
+      ..add(
+        generateAnalysisOptions(
+          outputDirectory: outputDirectory,
+          package: package,
+        ),
+      );
 
-    generateAnalysisOptions(
-      outputDirectory: outputDirectory,
-      package: package,
-    );
-
+    final List<String> modelFiles;
     final resolvedWorkerCount = resolveWorkerCount(config.workerCount);
     if (resolvedWorkerCount == 1 ||
         apiDocument.models.length < parallelThreshold) {
-      modelGenerator.writeFiles(
+      modelFiles = modelGenerator.writeFiles(
         apiDocument: apiDocument,
         outputDirectory: outputDirectory,
         package: package,
       );
     } else {
       final pool = (workerPoolFactory ?? ModelWorkerPool.new)();
-      await pool.run(
+      modelFiles = await pool.run(
         apiDocument: apiDocument,
         nameManager: nameManager,
         stableModelSorter: stableModelSorter,
@@ -218,48 +229,65 @@ class Generator {
         workerCount: resolvedWorkerCount,
       );
     }
+    generatedFiles.addAll(modelFiles);
+    publicArtifacts.addAll(modelFiles);
 
-    requestBodyFileGenerator.writeFiles(
+    final requestBodyFiles = requestBodyFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    generatedFiles.addAll(requestBodyFiles);
+    publicArtifacts.addAll(requestBodyFiles);
 
-    responseFileGenerator.writeFiles(
+    final responseFiles = responseFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    generatedFiles.addAll(responseFiles);
+    publicArtifacts.addAll(responseFiles);
 
-    responseWrapperFileGenerator.writeFiles(
+    final responseWrapperFiles = responseWrapperFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    generatedFiles.addAll(responseWrapperFiles);
+    publicArtifacts.addAll(responseWrapperFiles);
 
-    operationFileGenerator.writeFiles(
+    generatedFiles.addAll(
+      operationFileGenerator.writeFiles(
+        apiDocument: apiDocument,
+        outputDirectory: outputDirectory,
+        package: package,
+      ),
+    );
+
+    final apiClientFiles = apiClientFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    generatedFiles.addAll(apiClientFiles);
+    publicArtifacts.addAll(apiClientFiles);
 
-    apiClientFileGenerator.writeFiles(
+    final serverFile = serverFileGenerator.writeFiles(
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
     );
+    generatedFiles.add(serverFile);
+    publicArtifacts.add(serverFile);
 
-    serverFileGenerator.writeFiles(
-      apiDocument: apiDocument,
-      outputDirectory: outputDirectory,
-      package: package,
+    generatedFiles.add(
+      generateLibraryFile(
+        apiDocument: apiDocument,
+        outputDirectory: outputDirectory,
+        package: package,
+        publicArtifacts: publicArtifacts,
+      ),
     );
-
-    generateLibraryFile(
-      apiDocument: apiDocument,
-      outputDirectory: outputDirectory,
-      package: package,
-      backendGenerator: backendGenerator,
-    );
+    artifactManifest.commit(generatedFiles);
   }
 }

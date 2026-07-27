@@ -32,7 +32,7 @@ String sanitizeVersion(String version) {
   return '0.0.1-$sanitized';
 }
 
-void generatePubspec({
+String generatePubspec({
   required ApiDocument apiDocument,
   required String outputDirectory,
   required String package,
@@ -75,4 +75,5 @@ dev_dependencies:
 ''';
 
   pubspecFile.writeAsStringSync(content);
+  return 'pubspec.yaml';
 }

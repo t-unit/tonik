@@ -21,6 +21,13 @@ Dio _newDio({required void Function(RequestOptions) onRequest}) {
   return dio;
 }
 
+DefaultApi _api(Dio dio) => DefaultApi(
+  CustomServer(
+    baseUrl: 'http://localhost',
+    serverConfig: ServerConfig.client(dio),
+  ),
+);
+
 void main() {
   group('DefaultedPrimitives — primitive const defaults', () {
     test('constructor with no args yields all defaults', () {
@@ -361,49 +368,14 @@ void main() {
     });
   });
 
-  group(
-    'operation parameter primitive defaults — public static const accessors',
-    () {
-      test('query string default is reachable', () {
-        expect(ListThings.regionDefault, 'us');
-      });
-
-      test('required-with-default query integer default is reachable', () {
-        expect(ListThings.pageDefault, 1);
-      });
-
-      test('header integer default is reachable', () {
-        expect(ListThings.retriesDefault, 5);
-      });
-
-      test('cookie boolean default is reachable', () {
-        expect(ListThings.trackingDefault, isFalse);
-      });
-
-      test('path string default is reachable', () {
-        expect(GetThing.idDefault, 'x');
-      });
-    },
-  );
-
-  group(
-    'operation parameter runtime-fallback defaults — DateTime via static '
-    'getter',
-    () {
-      test('query date-time default is reachable via the runtime getter', () {
-        expect(ListThings.sinceDefault, DateTime.utc(2024));
-      });
-    },
-  );
-
-  group('operation call() with no arguments uses defaults', () {
+  group('API client methods with no arguments use defaults', () {
     test(
       'omitted query/header/cookie parameters serialise the default values',
       () async {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await ListThings(dio).call();
+        await _api(dio).listThings();
 
         final options = captured!;
         final uri = options.uri;
@@ -425,19 +397,19 @@ void main() {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await GetThing(dio).call();
+        await _api(dio).getThing();
 
         expect(captured!.uri.path, endsWith('/things/x'));
       },
     );
   });
 
-  group('operation call() with explicit args overrides defaults', () {
+  group('API client methods with explicit args override defaults', () {
     test('explicit query/header/cookie values replace the defaults', () async {
       RequestOptions? captured;
       final dio = _newDio(onRequest: (o) => captured = o);
 
-      await ListThings(dio).call(
+      await _api(dio).listThings(
         region: 'eu',
         page: 7,
         retries: 9,
@@ -457,20 +429,11 @@ void main() {
       RequestOptions? captured;
       final dio = _newDio(onRequest: (o) => captured = o);
 
-      await GetThing(dio).call(id: 'custom');
+      await _api(dio).getThing(id: 'custom');
 
       expect(captured!.uri.path, endsWith('/things/custom'));
     });
   });
-
-  group(
-    'operation parameter enum defaults — public static const accessors',
-    () {
-      test('query enum default is reachable on the operation class', () {
-        expect(ListSubscriptions.statusDefault, Status.active);
-      });
-    },
-  );
 
   group('Subscription — runtime-fallback defaults', () {
     test('non-const leaf default reachable via static getter', () {
@@ -516,14 +479,14 @@ void main() {
     });
   });
 
-  group('operation call() — enum query parameter wire encoding', () {
+  group('API client method — enum query parameter wire encoding', () {
     test(
       'omitted enum query parameter serialises the default variant on the wire',
       () async {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await ListSubscriptions(dio).call();
+        await _api(dio).listSubscriptions();
 
         expect(captured!.uri.queryParameters['status'], 'active');
       },
@@ -533,13 +496,13 @@ void main() {
       RequestOptions? captured;
       final dio = _newDio(onRequest: (o) => captured = o);
 
-      await ListSubscriptions(dio).call(status: Status.archived);
+      await _api(dio).listSubscriptions(status: Status.archived);
 
       expect(captured!.uri.queryParameters['status'], 'archived');
     });
   });
 
-  group('operation call() — enum header parameter wire encoding', () {
+  group('API client method — enum header parameter wire encoding', () {
     test(
       'omitted enum header parameter serialises the default variant on the '
       'wire',
@@ -547,7 +510,7 @@ void main() {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await ListSubscriptions(dio).call();
+        await _api(dio).listSubscriptions();
 
         expect(captured!.headers['X-Mode'], 'auto');
       },
@@ -559,9 +522,9 @@ void main() {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await ListSubscriptions(
+        await _api(
           dio,
-        ).call(mode: SubscriptionsParametersModel2.manual);
+        ).listSubscriptions(mode: SubscriptionsParametersModel2.manual);
 
         expect(captured!.headers['X-Mode'], 'manual');
       },

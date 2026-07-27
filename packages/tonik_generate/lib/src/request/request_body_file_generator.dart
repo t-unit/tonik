@@ -12,7 +12,7 @@ class RequestBodyFileGenerator {
   final RequestBodyGenerator requestBodyGenerator;
   final log = Logger('RequestBodyFileGenerator');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
@@ -27,6 +27,7 @@ class RequestBodyFileGenerator {
       'request_body',
     ]);
 
+    final generatedFiles = <String>[];
     for (final requestBody in apiDocument.requestBodies) {
       if (requestBody.contentCount <= 1) {
         log.fine(
@@ -47,6 +48,10 @@ class RequestBodyFileGenerator {
       final file = File(path.join(requestBodyDirectory, result.filename));
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        path.posix.join('lib', 'src', 'request_body', result.filename),
+      );
     }
+    return generatedFiles;
   }
 }
