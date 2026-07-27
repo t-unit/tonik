@@ -12,7 +12,7 @@ class OperationFileGenerator {
 
   final log = Logger('OperationFileGenerator');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
@@ -27,6 +27,7 @@ class OperationFileGenerator {
       'operation',
     ]);
 
+    final generatedFiles = <String>[];
     for (final operation in apiDocument.operations) {
       final name = operationGenerator.nameManager.operationName(operation);
       log.fine('Generating operation $name');
@@ -37,6 +38,10 @@ class OperationFileGenerator {
       final file = File(path.join(operationDirectory, result.filename));
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        path.posix.join('lib', 'src', 'operation', result.filename),
+      );
     }
+    return generatedFiles;
   }
 }

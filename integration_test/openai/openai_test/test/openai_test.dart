@@ -15,12 +15,13 @@ void main() {
 
   // ── Helper ───────────────────────────────────────────────────────────
 
-  /// Creates a [Dio] instance for direct operation usage.
-  Dio buildDio({required String responseStatus}) {
-    return Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        headers: {'X-Response-Status': responseStatus},
+  CustomServer buildServer({required String responseStatus}) {
+    return CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: ServerConfig.clientFactory(
+        () => Dio(
+          BaseOptions(headers: {'X-Response-Status': responseStatus}),
+        ),
       ),
     );
   }
@@ -29,9 +30,9 @@ void main() {
 
   group('ListModels', () {
     test('list_models 200', () async {
-      final op = ListModels(buildDio(responseStatus: '200'));
+      final api = ModelsApi(buildServer(responseStatus: '200'));
 
-      final result = await op();
+      final result = await api.listModels();
 
       expect(
         result,
@@ -50,9 +51,9 @@ void main() {
 
   group('RetrieveModel', () {
     test('retrieve_model 200', () async {
-      final op = RetrieveModel(buildDio(responseStatus: '200'));
+      final api = ModelsApi(buildServer(responseStatus: '200'));
 
-      final result = await op(model: 'gpt-4o');
+      final result = await api.retrieveModel(model: 'gpt-4o');
 
       expect(result, isA<TonikSuccess<Model, Response<Object?>>>());
       final success = result as TonikSuccess<Model, Response<Object?>>;
@@ -67,9 +68,9 @@ void main() {
 
   group('DeleteModel', () {
     test('delete_model 200', () async {
-      final op = DeleteModel(buildDio(responseStatus: '200'));
+      final api = ModelsApi(buildServer(responseStatus: '200'));
 
-      final result = await op(model: 'ft:gpt-4o:org:suffix:id');
+      final result = await api.deleteModel(model: 'ft:gpt-4o:org:suffix:id');
 
       expect(
         result,
@@ -92,9 +93,9 @@ void main() {
 
   group('CreateEmbedding', () {
     test('create_embedding 200', () async {
-      final op = CreateEmbedding(buildDio(responseStatus: '200'));
+      final api = EmbeddingsApi(buildServer(responseStatus: '200'));
 
-      final result = await op(
+      final result = await api.createEmbedding(
         body: const CreateEmbeddingRequest(
           input: CreateEmbeddingRequestInputOneOfModelString(
             'Hello world',
@@ -122,9 +123,9 @@ void main() {
 
   group('CreateModeration', () {
     test('create_moderation 200', () async {
-      final op = CreateModeration(buildDio(responseStatus: '200'));
+      final api = ModerationsApi(buildServer(responseStatus: '200'));
 
-      final result = await op(
+      final result = await api.createModeration(
         body: const CreateModerationRequest(
           input: CreateModerationRequestInputOneOfModelString(
             'Test input',
@@ -149,11 +150,9 @@ void main() {
 
   group('CreateChatCompletion', () {
     test('create_chat_completion 200 json', () async {
-      final op = CreateChatCompletion(
-        buildDio(responseStatus: '200'),
-      );
+      final api = ChatApi(buildServer(responseStatus: '200'));
 
-      final result = await op(
+      final result = await api.createChatCompletion(
         body: const CreateChatCompletionRequest(
           createChatCompletionRequestModel: CreateChatCompletionRequestModel(
             messages: [
@@ -200,9 +199,9 @@ void main() {
 
   group('ListFiles', () {
     test('list_files 200', () async {
-      final op = ListFiles(buildDio(responseStatus: '200'));
+      final api = FilesApi(buildServer(responseStatus: '200'));
 
-      final result = await op(purpose: 'fine-tune', limit: 10);
+      final result = await api.listFiles(purpose: 'fine-tune', limit: 10);
 
       expect(result, isA<TonikSuccess<ListFilesResponse, Response<Object?>>>());
       final success =
@@ -216,9 +215,9 @@ void main() {
     });
 
     test('list_files 200 applies schema default for limit', () async {
-      final op = ListFiles(buildDio(responseStatus: '200'));
+      final api = FilesApi(buildServer(responseStatus: '200'));
 
-      final result = await op();
+      final result = await api.listFiles();
 
       expect(result, isA<TonikSuccess<ListFilesResponse, Response<Object?>>>());
       final success =
@@ -238,9 +237,9 @@ void main() {
 
   group('RetrieveBatch', () {
     test('retrieve_batch 200', () async {
-      final op = RetrieveBatch(buildDio(responseStatus: '200'));
+      final api = BatchApi(buildServer(responseStatus: '200'));
 
-      final result = await op(batchId: 'batch_abc123');
+      final result = await api.retrieveBatch(batchId: 'batch_abc123');
 
       expect(result, isA<TonikSuccess<Batch, Response<Object?>>>());
       final success = result as TonikSuccess<Batch, Response<Object?>>;
@@ -255,11 +254,9 @@ void main() {
 
   group('ListFineTuningEvents', () {
     test('list_fine_tuning_events 200', () async {
-      final op = ListFineTuningEvents(
-        buildDio(responseStatus: '200'),
-      );
+      final api = FineTuningApi(buildServer(responseStatus: '200'));
 
-      final result = await op(
+      final result = await api.listFineTuningEvents(
         fineTuningJobId: 'ftjob-abc123',
         after: 'evt-abc',
         limit: 5,
@@ -289,11 +286,11 @@ void main() {
     test(
       'list_fine_tuning_events 200 applies schema default for limit',
       () async {
-        final op = ListFineTuningEvents(
-          buildDio(responseStatus: '200'),
-        );
+        final api = FineTuningApi(buildServer(responseStatus: '200'));
 
-        final result = await op(fineTuningJobId: 'ftjob-abc123');
+        final result = await api.listFineTuningEvents(
+          fineTuningJobId: 'ftjob-abc123',
+        );
 
         expect(
           result,
@@ -324,11 +321,11 @@ void main() {
 
   group('CancelFineTuningJob', () {
     test('cancel_fine_tuning_job 200', () async {
-      final op = CancelFineTuningJob(
-        buildDio(responseStatus: '200'),
-      );
+      final api = FineTuningApi(buildServer(responseStatus: '200'));
 
-      final result = await op(fineTuningJobId: 'ftjob-abc123');
+      final result = await api.cancelFineTuningJob(
+        fineTuningJobId: 'ftjob-abc123',
+      );
 
       expect(result, isA<TonikSuccess<FineTuningJob, Response<Object?>>>());
       final success = result as TonikSuccess<FineTuningJob, Response<Object?>>;

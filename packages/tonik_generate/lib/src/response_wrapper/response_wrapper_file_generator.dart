@@ -12,7 +12,7 @@ class ResponseWrapperFileGenerator {
   final ResponseWrapperGenerator responseWrapperGenerator;
   final log = Logger('ResponseWrapperFileGenerator');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
@@ -29,6 +29,7 @@ class ResponseWrapperFileGenerator {
 
     Directory(wrapperDirectory).createSync(recursive: true);
 
+    final generatedFiles = <String>[];
     for (final operation in apiDocument.operations) {
       // Only generate for operations with two or more statuses
       if (operation.responses.length < 2) {
@@ -45,6 +46,10 @@ class ResponseWrapperFileGenerator {
       final file = File(path.join(wrapperDirectory, result.filename));
       file.parent.createSync(recursive: true);
       file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        path.posix.join('lib', 'src', 'response_wrapper', result.filename),
+      );
     }
+    return generatedFiles;
   }
 }

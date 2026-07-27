@@ -15,28 +15,15 @@ void main() {
 
   // ── Helper ───────────────────────────────────────────────────────────
 
-  /// Creates a [MetaApi] with the given response status.
-  MetaApi buildMetaApi({required String responseStatus}) {
-    return MetaApi(
-      CustomServer(
-        baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
+  CustomServer buildServer({required String responseStatus}) {
+    return CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: ServerConfig.clientFactory(
+        () => Dio(
+          BaseOptions(
+            headers: {'X-Response-Status': responseStatus},
           ),
         ),
-      ),
-    );
-  }
-
-  /// Creates a [Dio] instance for direct operation usage.
-  Dio buildDio({required String responseStatus}) {
-    return Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        headers: {'X-Response-Status': responseStatus},
       ),
     );
   }
@@ -45,7 +32,7 @@ void main() {
 
   group('Metaroot', () {
     test('metaroot 200', () async {
-      final api = buildMetaApi(responseStatus: '200');
+      final api = MetaApi(buildServer(responseStatus: '200'));
 
       final result = await api.metaroot();
 
@@ -62,7 +49,7 @@ void main() {
 
   group('Metaget', () {
     test('metaget 200', () async {
-      final api = buildMetaApi(responseStatus: '200');
+      final api = MetaApi(buildServer(responseStatus: '200'));
 
       final result = await api.metaget();
 
@@ -81,9 +68,9 @@ void main() {
 
   group('RateLimitget', () {
     test('rate_limitget 200', () async {
-      final op = RateLimitget(buildDio(responseStatus: '200'));
+      final api = RateLimitApi(buildServer(responseStatus: '200'));
 
-      final result = await op();
+      final result = await api.rateLimitget();
 
       expect(
         result,
@@ -99,9 +86,9 @@ void main() {
     });
 
     test('rate_limitget 404', () async {
-      final op = RateLimitget(buildDio(responseStatus: '404'));
+      final api = RateLimitApi(buildServer(responseStatus: '404'));
 
-      final result = await op();
+      final result = await api.rateLimitget();
 
       expect(
         result,
@@ -118,9 +105,9 @@ void main() {
 
   group('UsersgetByUsername', () {
     test('usersget_by_username 200', () async {
-      final op = UsersgetByUsername(buildDio(responseStatus: '200'));
+      final api = UsersApi(buildServer(responseStatus: '200'));
 
-      final result = await op(username: 'octocat');
+      final result = await api.usersgetByUsername(username: 'octocat');
 
       expect(
         result,
@@ -136,9 +123,9 @@ void main() {
     });
 
     test('usersget_by_username 404', () async {
-      final op = UsersgetByUsername(buildDio(responseStatus: '404'));
+      final api = UsersApi(buildServer(responseStatus: '404'));
 
-      final result = await op(username: 'nonexistent');
+      final result = await api.usersgetByUsername(username: 'nonexistent');
 
       expect(
         result,
@@ -157,17 +144,23 @@ void main() {
 
   group('Reposget', () {
     test('reposget 200', () async {
-      final op = Reposget(buildDio(responseStatus: '200'));
+      final api = ReposApi(buildServer(responseStatus: '200'));
 
-      final result = await op(owner: 'octocat', repo: 'hello-world');
+      final result = await api.reposget(
+        owner: 'octocat',
+        repo: 'hello-world',
+      );
 
       expect(result, isA<TonikSuccess<ReposgetResponse, Response<Object?>>>());
     });
 
     test('reposget 404', () async {
-      final op = Reposget(buildDio(responseStatus: '404'));
+      final api = ReposApi(buildServer(responseStatus: '404'));
 
-      final result = await op(owner: 'nonexistent', repo: 'nonexistent');
+      final result = await api.reposget(
+        owner: 'nonexistent',
+        repo: 'nonexistent',
+      );
 
       expect(result, isA<TonikSuccess<ReposgetResponse, Response<Object?>>>());
       final success =
@@ -182,9 +175,12 @@ void main() {
 
   group('IssueslistForRepo', () {
     test('issueslist_for_repo 200', () async {
-      final op = IssueslistForRepo(buildDio(responseStatus: '200'));
+      final api = IssuesApi(buildServer(responseStatus: '200'));
 
-      final result = await op(owner: 'octocat', repo: 'hello-world');
+      final result = await api.issueslistForRepo(
+        owner: 'octocat',
+        repo: 'hello-world',
+      );
 
       expect(
         result,
@@ -193,9 +189,12 @@ void main() {
     });
 
     test('issueslist_for_repo 404', () async {
-      final op = IssueslistForRepo(buildDio(responseStatus: '404'));
+      final api = IssuesApi(buildServer(responseStatus: '404'));
 
-      final result = await op(owner: 'nonexistent', repo: 'nonexistent');
+      final result = await api.issueslistForRepo(
+        owner: 'nonexistent',
+        repo: 'nonexistent',
+      );
 
       expect(
         result,
@@ -213,9 +212,9 @@ void main() {
 
   group('Issuesget', () {
     test('issuesget 200', () async {
-      final op = Issuesget(buildDio(responseStatus: '200'));
+      final api = IssuesApi(buildServer(responseStatus: '200'));
 
-      final result = await op(
+      final result = await api.issuesget(
         owner: 'octocat',
         repo: 'hello-world',
         issueNumber: 1,
@@ -225,9 +224,9 @@ void main() {
     });
 
     test('issuesget 404', () async {
-      final op = Issuesget(buildDio(responseStatus: '404'));
+      final api = IssuesApi(buildServer(responseStatus: '404'));
 
-      final result = await op(
+      final result = await api.issuesget(
         owner: 'nonexistent',
         repo: 'nonexistent',
         issueNumber: 999,

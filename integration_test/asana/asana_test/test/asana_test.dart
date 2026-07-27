@@ -15,12 +15,13 @@ void main() {
 
   // ── Helper ───────────────────────────────────────────────────────────
 
-  /// Creates a [Dio] instance for direct operation usage.
-  Dio buildDio({required String responseStatus}) {
-    return Dio(
-      BaseOptions(
-        baseUrl: baseUrl,
-        headers: {'X-Response-Status': responseStatus},
+  CustomServer buildServer({required String responseStatus}) {
+    return CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: ServerConfig.clientFactory(
+        () => Dio(
+          BaseOptions(headers: {'X-Response-Status': responseStatus}),
+        ),
       ),
     );
   }
@@ -29,9 +30,9 @@ void main() {
 
   group('GetWorkspaces', () {
     test('get_workspaces 200', () async {
-      final op = GetWorkspaces(buildDio(responseStatus: '200'));
+      final api = WorkspacesApi(buildServer(responseStatus: '200'));
 
-      final result = await op();
+      final result = await api.getWorkspaces();
 
       expect(
         result,
@@ -50,9 +51,9 @@ void main() {
     });
 
     test('get_workspaces 401', () async {
-      final op = GetWorkspaces(buildDio(responseStatus: '401'));
+      final api = WorkspacesApi(buildServer(responseStatus: '401'));
 
-      final result = await op();
+      final result = await api.getWorkspaces();
 
       expect(
         result,
@@ -72,9 +73,9 @@ void main() {
 
   group('GetWorkspace', () {
     test('get_workspace 200', () async {
-      final op = GetWorkspace(buildDio(responseStatus: '200'));
+      final api = WorkspacesApi(buildServer(responseStatus: '200'));
 
-      final result = await op(workspaceGid: '12345');
+      final result = await api.getWorkspace(workspaceGid: '12345');
 
       expect(
         result,
@@ -97,9 +98,9 @@ void main() {
 
   group('GetUsers', () {
     test('get_users 200', () async {
-      final op = GetUsers(buildDio(responseStatus: '200'));
+      final api = UsersApi(buildServer(responseStatus: '200'));
 
-      final result = await op(workspace: 'ws-123');
+      final result = await api.getUsers(workspace: 'ws-123');
 
       expect(result, isA<TonikSuccess<GetUsersResponse, Response<Object?>>>());
       final success =
@@ -120,9 +121,9 @@ void main() {
 
   group('GetTask', () {
     test('get_task 200', () async {
-      final op = GetTask(buildDio(responseStatus: '200'));
+      final api = TasksApi(buildServer(responseStatus: '200'));
 
-      final result = await op(taskGid: '11111');
+      final result = await api.getTask(taskGid: '11111');
 
       expect(result, isA<TonikSuccess<GetTaskResponse, Response<Object?>>>());
       final success =
@@ -135,9 +136,9 @@ void main() {
     });
 
     test('get_task 404', () async {
-      final op = GetTask(buildDio(responseStatus: '404'));
+      final api = TasksApi(buildServer(responseStatus: '404'));
 
-      final result = await op(taskGid: 'nonexistent');
+      final result = await api.getTask(taskGid: 'nonexistent');
 
       expect(result, isA<TonikSuccess<GetTaskResponse, Response<Object?>>>());
       final success =
@@ -151,9 +152,9 @@ void main() {
 
   group('GetProject', () {
     test('get_project 200', () async {
-      final op = GetProject(buildDio(responseStatus: '200'));
+      final api = ProjectsApi(buildServer(responseStatus: '200'));
 
-      final result = await op(projectGid: '22222');
+      final result = await api.getProject(projectGid: '22222');
 
       expect(
         result,
@@ -173,11 +174,9 @@ void main() {
 
   group('GetTasksForProject', () {
     test('get_tasks_for_project 200', () async {
-      final op = GetTasksForProject(
-        buildDio(responseStatus: '200'),
-      );
+      final api = TasksApi(buildServer(responseStatus: '200'));
 
-      final result = await op(
+      final result = await api.getTasksForProject(
         projectGid: '22222',
         limit: 10,
       );
@@ -204,9 +203,9 @@ void main() {
 
   group('CreateTask', () {
     test('create_task 201', () async {
-      final op = CreateTask(buildDio(responseStatus: '201'));
+      final api = TasksApi(buildServer(responseStatus: '201'));
 
-      final result = await op(
+      final result = await api.createTask(
         body: const TasksPostBodyBodyModel(
           data: TaskRequest(
             taskBase: TaskBase(
@@ -241,11 +240,9 @@ void main() {
 
   group('CreateProjectForWorkspace', () {
     test('create_project_for_workspace 201', () async {
-      final op = CreateProjectForWorkspace(
-        buildDio(responseStatus: '201'),
-      );
+      final api = ProjectsApi(buildServer(responseStatus: '201'));
 
-      final result = await op(
+      final result = await api.createProjectForWorkspace(
         workspaceGid: '12345',
         body: const WorkspacesWorkspaceGidProjectsPostBodyBodyModel(
           data: ProjectRequest(
@@ -290,9 +287,9 @@ void main() {
 
   group('UpdateTask', () {
     test('update_task 200', () async {
-      final op = UpdateTask(buildDio(responseStatus: '200'));
+      final api = TasksApi(buildServer(responseStatus: '200'));
 
-      final result = await op(
+      final result = await api.updateTask(
         taskGid: '11111',
         body: const TasksTaskGidPutBodyBodyModel(
           data: TaskRequest(
@@ -332,9 +329,9 @@ void main() {
 
   group('DeleteTask', () {
     test('delete_task 200', () async {
-      final op = DeleteTask(buildDio(responseStatus: '200'));
+      final api = TasksApi(buildServer(responseStatus: '200'));
 
-      final result = await op(taskGid: '11111');
+      final result = await api.deleteTask(taskGid: '11111');
 
       expect(
         result,

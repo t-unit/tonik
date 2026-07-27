@@ -11,7 +11,7 @@ class ServerFileGenerator {
   final ServerGenerator serverGenerator;
 
   /// Writes server files to the specified output directory.
-  void writeFiles({
+  String writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
@@ -32,5 +32,6 @@ class ServerFileGenerator {
     final file = File(filePath);
     file.parent.createSync(recursive: true);
     file.writeAsStringSync(result.code);
+    return path.posix.join('lib', 'src', 'server', result.filename);
   }
 }
