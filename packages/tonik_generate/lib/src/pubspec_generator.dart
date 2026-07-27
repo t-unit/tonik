@@ -31,7 +31,7 @@ String sanitizeVersion(String version) {
   return '0.0.1-$sanitized';
 }
 
-String generatePubspec({
+void generatePubspec({
   required ApiDocument apiDocument,
   required String outputDirectory,
   required String package,
@@ -66,7 +66,7 @@ dev_dependencies:
   lints: ^6.0.0
 ''';
 
-  return writeGeneratedArtifact(
+  writeGeneratedArtifact(
     outputDirectory: outputDirectory,
     package: package,
     relativePath: 'pubspec.yaml',

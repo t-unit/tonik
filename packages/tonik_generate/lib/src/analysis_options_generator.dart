@@ -1,6 +1,6 @@
 import 'package:tonik_generate/src/generated_artifact_writer.dart';
 
-String generateAnalysisOptions({
+void generateAnalysisOptions({
   required String outputDirectory,
   required String package,
 }) {
@@ -24,7 +24,7 @@ analyzer:
     unintended_html_in_doc_comment: ignore
 ''';
 
-  return writeGeneratedArtifact(
+  writeGeneratedArtifact(
     outputDirectory: outputDirectory,
     package: package,
     relativePath: 'analysis_options.yaml',

@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:path/path.dart' as path;
-import 'package:tonik_generate/src/generated_artifact_manifest.dart';
 
 String createGeneratedArtifactDirectory({
   required String outputDirectory,
@@ -32,6 +31,21 @@ String writeGeneratedArtifact({
   file.parent.createSync(recursive: true);
   file.writeAsStringSync(content);
   return artifactPath.relative;
+}
+
+String normalizeGeneratedArtifactPath(String artifactPath) {
+  final normalized = path.posix.normalize(artifactPath.replaceAll(r'\', '/'));
+  if (normalized.isEmpty ||
+      normalized == '.' ||
+      path.posix.isAbsolute(normalized) ||
+      normalized == '..' ||
+      normalized.startsWith('../') ||
+      RegExp('^[A-Za-z]:/').hasMatch(normalized)) {
+    throw FormatException(
+      'Generated artifact path must stay within the package: $artifactPath',
+    );
+  }
+  return normalized;
 }
 
 ({String absolute, String relative}) _resolveGeneratedArtifactPath({

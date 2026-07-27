@@ -1,12 +1,10 @@
 import 'dart:io';
 
 import 'package:meta/meta.dart';
-import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/analysis_options_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_file_generator.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
-import 'package:tonik_generate/src/generated_artifact_manifest.dart';
 import 'package:tonik_generate/src/library_generator.dart';
 import 'package:tonik_generate/src/model/all_of_generator.dart';
 import 'package:tonik_generate/src/model/any_of_generator.dart';
@@ -61,9 +59,6 @@ class Generator {
     final backendGenerator = transportBackendGeneratorFor(
       config.transport.backend,
     );
-    final packageDirectory = path.join(outputDirectory, package);
-    final artifactManifest = GeneratedArtifactManifest.load(packageDirectory);
-    final generatedFiles = <String>{};
     final publicArtifacts = <String>{};
 
     final useImmutableCollections = config.useImmutableCollections;
@@ -191,22 +186,17 @@ class Generator {
       servers: apiDocument.servers,
     );
 
-    generatedFiles
-      ..add(
-        generatePubspec(
-          apiDocument: apiDocument,
-          outputDirectory: outputDirectory,
-          package: package,
-          backendGenerator: backendGenerator,
-          useImmutableCollections: useImmutableCollections,
-        ),
-      )
-      ..add(
-        generateAnalysisOptions(
-          outputDirectory: outputDirectory,
-          package: package,
-        ),
-      );
+    generatePubspec(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
+      backendGenerator: backendGenerator,
+      useImmutableCollections: useImmutableCollections,
+    );
+    generateAnalysisOptions(
+      outputDirectory: outputDirectory,
+      package: package,
+    );
 
     final List<String> modelFiles;
     final resolvedWorkerCount = resolveWorkerCount(config.workerCount);
@@ -229,7 +219,6 @@ class Generator {
         workerCount: resolvedWorkerCount,
       );
     }
-    generatedFiles.addAll(modelFiles);
     publicArtifacts.addAll(modelFiles);
 
     final requestBodyFiles = requestBodyFileGenerator.writeFiles(
@@ -237,7 +226,6 @@ class Generator {
       outputDirectory: outputDirectory,
       package: package,
     );
-    generatedFiles.addAll(requestBodyFiles);
     publicArtifacts.addAll(requestBodyFiles);
 
     final responseFiles = responseFileGenerator.writeFiles(
@@ -245,7 +233,6 @@ class Generator {
       outputDirectory: outputDirectory,
       package: package,
     );
-    generatedFiles.addAll(responseFiles);
     publicArtifacts.addAll(responseFiles);
 
     final responseWrapperFiles = responseWrapperFileGenerator.writeFiles(
@@ -253,15 +240,12 @@ class Generator {
       outputDirectory: outputDirectory,
       package: package,
     );
-    generatedFiles.addAll(responseWrapperFiles);
     publicArtifacts.addAll(responseWrapperFiles);
 
-    generatedFiles.addAll(
-      operationFileGenerator.writeFiles(
-        apiDocument: apiDocument,
-        outputDirectory: outputDirectory,
-        package: package,
-      ),
+    operationFileGenerator.writeFiles(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
     );
 
     final apiClientFiles = apiClientFileGenerator.writeFiles(
@@ -269,7 +253,6 @@ class Generator {
       outputDirectory: outputDirectory,
       package: package,
     );
-    generatedFiles.addAll(apiClientFiles);
     publicArtifacts.addAll(apiClientFiles);
 
     final serverFile = serverFileGenerator.writeFiles(
@@ -277,17 +260,13 @@ class Generator {
       outputDirectory: outputDirectory,
       package: package,
     );
-    generatedFiles.add(serverFile);
     publicArtifacts.add(serverFile);
 
-    generatedFiles.add(
-      generateLibraryFile(
-        apiDocument: apiDocument,
-        outputDirectory: outputDirectory,
-        package: package,
-        publicArtifacts: publicArtifacts,
-      ),
+    generateLibraryFile(
+      apiDocument: apiDocument,
+      outputDirectory: outputDirectory,
+      package: package,
+      publicArtifacts: publicArtifacts,
     );
-    artifactManifest.commit(generatedFiles);
   }
 }
