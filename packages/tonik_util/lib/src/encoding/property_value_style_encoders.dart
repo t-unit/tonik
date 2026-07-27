@@ -5,24 +5,26 @@ import 'package:tonik_util/src/encoding/uri_value_encoder.dart';
 
 String _encodeValue(PropertyValue value, {required bool literal}) =>
     switch (value) {
-      ScalarPropertyValue(:final value) => literal
-          ? value
-          : encodeUriValue(
-              value,
-              allowReserved: false,
-              useQueryComponent: false,
-            ),
-      ArrayPropertyValue(:final values) => values
-          .map(
-            (element) => literal
-                ? element
-                : encodeUriValue(
-                    element,
-                    allowReserved: false,
-                    useQueryComponent: false,
-                  ),
-          )
-          .join(','),
+      ScalarPropertyValue(:final value) =>
+        literal
+            ? value
+            : encodeUriValue(
+                value,
+                allowReserved: false,
+                useQueryComponent: false,
+              ),
+      ArrayPropertyValue(:final values) =>
+        values
+            .map(
+              (element) => literal
+                  ? element
+                  : encodeUriValue(
+                      element,
+                      allowReserved: false,
+                      useQueryComponent: false,
+                    ),
+            )
+            .join(','),
     };
 
 String _encodeKey(String key, {required bool literal}) =>
@@ -118,16 +120,18 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
       return '';
     }
     if (explode) {
-      return entries.map((e) {
-        final key = _encodeKey(e.key, literal: literal);
-        final isValueEmpty = switch (e.value) {
-          ScalarPropertyValue(:final value) => value.isEmpty,
-          ArrayPropertyValue(:final values) => values.isEmpty,
-        };
-        return isValueEmpty
-            ? key
-            : '$key=${_encodeValue(e.value, literal: literal)}';
-      }).join(',');
+      return entries
+          .map((e) {
+            final key = _encodeKey(e.key, literal: literal);
+            final isValueEmpty = switch (e.value) {
+              ScalarPropertyValue(:final value) => value.isEmpty,
+              ArrayPropertyValue(:final values) => values.isEmpty,
+            };
+            return isValueEmpty
+                ? key
+                : '$key=${_encodeValue(e.value, literal: literal)}';
+          })
+          .join(',');
     }
     return _collapsedPairs(this, literal: literal);
   }
@@ -192,8 +196,7 @@ extension PropertyValueStyleEncoders on Map<String, PropertyValue> {
 
     if (explode) {
       return [
-        for (final entry in entries)
-          (name: entry.key, value: raw(entry.value)),
+        for (final entry in entries) (name: entry.key, value: raw(entry.value)),
       ];
     }
     final parts = <String>[

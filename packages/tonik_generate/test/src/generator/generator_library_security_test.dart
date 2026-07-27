@@ -20,88 +20,89 @@ void main() {
     });
 
     test(
-        'includes security schemes information in library documentation',
-        () async {
-      final models = <Model>{
-        ClassModel(
-          isDeprecated: false,
-          name: 'User',
-          properties: const [],
-          context: ctx,
-          examples: const [],
-        ),
-      };
-
-      final apiDoc = ApiDocument(
-        title: 'Pet Store API',
-        version: '1.0.0',
-        description: 'A sample Pet Store API',
-        models: models,
-        responseHeaders: const {},
-        requestHeaders: const {},
-        servers: const {},
-        operations: {
-          Operation(
-            operationId: 'getPet',
-            context: ctx,
-            summary: 'Get pet',
-            description: 'Get pet by ID',
-            tags: {Tag(name: 'pets')},
+      'includes security schemes information in library documentation',
+      () async {
+        final models = <Model>{
+          ClassModel(
             isDeprecated: false,
-            path: '/pets/{id}',
-            method: HttpMethod.get,
-            headers: const {},
-            queryParameters: const {},
-            pathParameters: const {},
-            cookieParameters: const {},
-            responses: const {},
-            securitySchemes: const {
-              ApiKeySecurityScheme(
-                type: SecuritySchemeType.apiKey,
-                description: 'API Key authentication',
-                location: ApiKeyLocation.header,
-              ),
-              HttpSecurityScheme(
-                type: SecuritySchemeType.http,
-                description: 'Bearer token authentication',
-                scheme: 'bearer',
-                bearerFormat: 'JWT',
-              ),
-            },
+            name: 'User',
+            properties: const [],
+            context: ctx,
+            examples: const [],
           ),
-        },
-        responses: const {},
-        queryParameters: const {},
-        pathParameters: const {},
-        cookieParameters: const {},
-        requestBodies: const {},
-      );
+        };
 
-      const packageName = 'petstore_api';
-      await const Generator().generate(
-        apiDocument: apiDoc,
-        outputDirectory: tempDir.path,
-        package: packageName,
-      );
+        final apiDoc = ApiDocument(
+          title: 'Pet Store API',
+          version: '1.0.0',
+          description: 'A sample Pet Store API',
+          models: models,
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: {
+            Operation(
+              operationId: 'getPet',
+              context: ctx,
+              summary: 'Get pet',
+              description: 'Get pet by ID',
+              tags: {Tag(name: 'pets')},
+              isDeprecated: false,
+              path: '/pets/{id}',
+              method: HttpMethod.get,
+              headers: const {},
+              queryParameters: const {},
+              pathParameters: const {},
+              cookieParameters: const {},
+              responses: const {},
+              securitySchemes: const {
+                ApiKeySecurityScheme(
+                  type: SecuritySchemeType.apiKey,
+                  description: 'API Key authentication',
+                  location: ApiKeyLocation.header,
+                ),
+                HttpSecurityScheme(
+                  type: SecuritySchemeType.http,
+                  description: 'Bearer token authentication',
+                  scheme: 'bearer',
+                  bearerFormat: 'JWT',
+                ),
+              },
+            ),
+          },
+          responses: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: const {},
+        );
 
-      final libraryFile = File(
-        path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
-      );
-      expect(libraryFile.existsSync(), isTrue);
+        const packageName = 'petstore_api';
+        await const Generator().generate(
+          apiDocument: apiDoc,
+          outputDirectory: tempDir.path,
+          package: packageName,
+        );
 
-      final content = libraryFile.readAsStringSync();
+        final libraryFile = File(
+          path.join(tempDir.path, packageName, 'lib', '$packageName.dart'),
+        );
+        expect(libraryFile.existsSync(), isTrue);
 
-      // Check that security schemes are documented
-      expect(content, contains('/// Security Schemes:'));
-      expect(
-        content,
-        contains('/// - API Key (header): API Key authentication'),
-      );
-      expect(
-        content,
-        contains('/// - HTTP Bearer: Bearer token authentication'),
-      );
-    });
+        final content = libraryFile.readAsStringSync();
+
+        // Check that security schemes are documented
+        expect(content, contains('/// Security Schemes:'));
+        expect(
+          content,
+          contains('/// - API Key (header): API Key authentication'),
+        );
+        expect(
+          content,
+          contains('/// - HTTP Bearer: Bearer token authentication'),
+        );
+      },
+    );
 
     test('includes OAuth2 security scheme information', () async {
       final models = <Model>{

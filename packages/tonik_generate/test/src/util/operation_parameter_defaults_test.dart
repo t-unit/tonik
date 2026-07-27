@@ -445,9 +445,7 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['since']?.memberName, 'sinceDefault');
         expect(result.byName['since']?.isRuntime, isTrue);
-        final routingLogs = logs
-            .where((r) => r.level == Level.FINE)
-            .toList();
+        final routingLogs = logs.where((r) => r.level == Level.FINE).toList();
         expect(routingLogs.map((r) => r.message), [
           'Routing default to runtime fallback for Op.since.',
         ]);
@@ -504,9 +502,7 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['region']?.memberName, 'regionDefault');
         expect(result.byName['region']?.isRuntime, isTrue);
-        final routingLogs = logs
-            .where((r) => r.level == Level.FINE)
-            .toList();
+        final routingLogs = logs.where((r) => r.level == Level.FINE).toList();
         expect(routingLogs.map((r) => r.message), [
           'Routing default to runtime fallback for Op.region.',
         ]);
@@ -575,8 +571,7 @@ void main() {
         expect(
           logs.where(
             (r) =>
-                r.level == Level.WARNING &&
-                r.loggerName == 'DefaultResolution',
+                r.level == Level.WARNING && r.loggerName == 'DefaultResolution',
           ),
           isEmpty,
         );
@@ -633,9 +628,7 @@ void main() {
         expect(result.getters, hasLength(1));
         expect(result.byName['region']?.memberName, 'regionDefault');
         expect(result.byName['region']?.isRuntime, isTrue);
-        final routingLogs = logs
-            .where((r) => r.level == Level.FINE)
-            .toList();
+        final routingLogs = logs.where((r) => r.level == Level.FINE).toList();
         expect(routingLogs.map((r) => r.message), [
           'Routing default to runtime fallback for Op.region.',
         ]);
@@ -1193,6 +1186,7 @@ void main() {
           'call',
           'body',
           'cancelToken',
+          'cancellation',
           'region',
         ]),
       );
@@ -1212,7 +1206,10 @@ void main() {
       );
 
       expect(names.contains('body'), isFalse);
-      expect(names, containsAll(<String>['cancelToken', 'call']));
+      expect(
+        names,
+        containsAll(<String>['cancelToken', 'cancellation', 'call']),
+      );
     });
   });
 

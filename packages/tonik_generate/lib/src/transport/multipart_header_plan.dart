@@ -82,8 +82,7 @@ List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
     reservedNames: operationReservedParameterNames(hasRequestBody: true),
   );
   final usedNames = <String>{
-    'body',
-    'cancelToken',
+    ...operationReservedParameterNames(hasRequestBody: true),
     ...normalized.pathParameters.map((p) => p.normalizedName),
     ...normalized.queryParameters.map((p) => p.normalizedName),
     ...normalized.headers.map((p) => p.normalizedName),

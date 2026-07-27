@@ -718,13 +718,15 @@ void main() {
       final built = buildToLabelPathParameterExpression('tags', parameter);
       expect(
         collapseWhitespace(methodBody(built)),
-        collapseWhitespace(format('''
+        collapseWhitespace(
+          format('''
           test() {
             final result = tags
                 .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
                 .toLabel(explode: false, allowEmpty: false);
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -754,7 +756,8 @@ void main() {
         );
         expect(
           collapseWhitespace(result),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = counts
                   .map(
@@ -762,7 +765,8 @@ void main() {
                   )
                   .toLabel(explode: false, allowEmpty: false);
             }
-          ''')),
+          '''),
+          ),
         );
       },
     );
@@ -921,7 +925,8 @@ void main() {
         );
         expect(
           collapseWhitespace(result),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = items
                   .map(
@@ -939,7 +944,8 @@ void main() {
                     alreadyEncoded: true,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       },
     );

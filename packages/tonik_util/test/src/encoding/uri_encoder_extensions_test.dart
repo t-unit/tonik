@@ -393,8 +393,9 @@ void main() {
       expect(3.14.uriEncode(allowEmpty: true, allowReserved: true), '3.14');
       expect(true.uriEncode(allowEmpty: true, allowReserved: true), 'true');
       expect(
-        BigDecimal.parse('123.456')
-            .uriEncode(allowEmpty: true, allowReserved: true),
+        BigDecimal.parse(
+          '123.456',
+        ).uriEncode(allowEmpty: true, allowReserved: true),
         '123.456',
       );
     });
@@ -417,17 +418,20 @@ void main() {
       );
     });
 
-    test('list alreadyEncoded short-circuit is identical with/without flag', () {
-      const items = ['a:b', 'c&d'];
-      final without = items.uriEncode(allowEmpty: true, alreadyEncoded: true);
-      final with_ = items.uriEncode(
-        allowEmpty: true,
-        alreadyEncoded: true,
-        allowReserved: true,
-      );
-      expect(without, 'a:b,c&d');
-      expect(with_, without);
-    });
+    test(
+      'list alreadyEncoded short-circuit is identical with/without flag',
+      () {
+        const items = ['a:b', 'c&d'];
+        final without = items.uriEncode(allowEmpty: true, alreadyEncoded: true);
+        final with_ = items.uriEncode(
+          allowEmpty: true,
+          alreadyEncoded: true,
+          allowReserved: true,
+        );
+        expect(without, 'a:b,c&d');
+        expect(with_, without);
+      },
+    );
 
     test('map keeps reserved chars literal but encodes & = + in keys and '
         'values', () {

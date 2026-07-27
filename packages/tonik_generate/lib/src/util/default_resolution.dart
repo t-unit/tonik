@@ -253,16 +253,13 @@ bool _isJsonEncodable(Object? value) => switch (value) {
 // for an otherwise-supported target.
 bool _isRealDrop(Model model, Object? rawDefault) {
   final resolved = model.resolved;
-  if (resolved is PrimitiveModel &&
-      _isMaterialiserSupportedPrimitive(model)) {
+  if (resolved is PrimitiveModel && _isMaterialiserSupportedPrimitive(model)) {
     return true;
   }
   if (resolved is EnumModel && !_enumValueIsMember(resolved, rawDefault)) {
     return true;
   }
-  if ((resolved is ListModel ||
-          resolved is MapModel ||
-          resolved is AnyModel) &&
+  if ((resolved is ListModel || resolved is MapModel || resolved is AnyModel) &&
       _isCollectionShapeMismatch(resolved, rawDefault)) {
     return true;
   }

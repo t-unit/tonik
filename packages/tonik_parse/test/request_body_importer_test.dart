@@ -2275,8 +2275,7 @@ void main() {
       );
       expect(
         logs.any(
-          (r) =>
-              r.level == Level.WARNING && r.message.contains('nonExistent'),
+          (r) => r.level == Level.WARNING && r.message.contains('nonExistent'),
         ),
         isTrue,
       );

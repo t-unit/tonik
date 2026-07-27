@@ -4497,29 +4497,30 @@ bool operator ==(Object other) {
       );
     });
 
-    test('integer+double+decimal+string dispatches numerics then a try-each',
-        () {
-      final model = OneOfModel(
-        isDeprecated: false,
-        name: 'Value',
-        models: {
-          (discriminatorValue: null, model: IntegerModel(context: context)),
-          (discriminatorValue: null, model: DoubleModel(context: context)),
-          (discriminatorValue: null, model: DecimalModel(context: context)),
-          (discriminatorValue: null, model: StringModel(context: context)),
-        },
-        context: context,
-        examples: const [],
-      );
+    test(
+      'integer+double+decimal+string dispatches numerics then a try-each',
+      () {
+        final model = OneOfModel(
+          isDeprecated: false,
+          name: 'Value',
+          models: {
+            (discriminatorValue: null, model: IntegerModel(context: context)),
+            (discriminatorValue: null, model: DoubleModel(context: context)),
+            (discriminatorValue: null, model: DecimalModel(context: context)),
+            (discriminatorValue: null, model: StringModel(context: context)),
+          },
+          context: context,
+          examples: const [],
+        );
 
-      final classes = generator.generateClasses(model);
-      final baseClass = classes.firstWhere((c) => c.name == 'Value');
-      final generated = format(baseClass.accept(emitter).toString());
+        final classes = generator.generateClasses(model);
+        final baseClass = classes.firstWhere((c) => c.name == 'Value');
+        final generated = format(baseClass.accept(emitter).toString());
 
-      expect(
-        collapseWhitespace(generated),
-        contains(
-          collapseWhitespace('''
+        expect(
+          collapseWhitespace(generated),
+          contains(
+            collapseWhitespace('''
             factory Value.fromJson(Object? json) {
               if (json is double) {
                 return ValueDouble(json);
@@ -4538,9 +4539,10 @@ bool operator ==(Object other) {
               throw JsonDecodingException(r'Invalid JSON for Value');
             }
           '''),
-        ),
-      );
-    });
+          ),
+        );
+      },
+    );
 
     test('date-time+string decodes both through the ordered try-each', () {
       final model = OneOfModel(

@@ -31,15 +31,17 @@ Expression? buildFormEntriesValueExpression(
     bool alreadyEncoded = false,
     bool reserved = false,
     Expression? objectFieldEncodings,
-  }) => target.property('toForm').call(
-    [paramName],
-    {
-      ...toFormArgs,
-      if (alreadyEncoded) 'alreadyEncoded': literalBool(true),
-      if (reserved) 'allowReserved': literalBool(true),
-      'fieldEncodings': ?objectFieldEncodings,
-    },
-  );
+  }) => target
+      .property('toForm')
+      .call(
+        [paramName],
+        {
+          ...toFormArgs,
+          if (alreadyEncoded) 'alreadyEncoded': literalBool(true),
+          if (reserved) 'allowReserved': literalBool(true),
+          'fieldEncodings': ?objectFieldEncodings,
+        },
+      );
 
   switch (model) {
     case StringModel():
@@ -190,9 +192,7 @@ Expression? _buildEncodedElementsList(
   ).expression;
 
   final elementEncode = isContentNullable
-      ? refer('e')
-            .equalTo(literalNull)
-            .conditional(literalString(''), element)
+      ? refer('e').equalTo(literalNull).conditional(literalString(''), element)
       : element;
 
   return receiver
