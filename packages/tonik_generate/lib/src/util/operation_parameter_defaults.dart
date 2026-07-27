@@ -172,8 +172,7 @@ Set<String> initialOperationDefaultReservedNames({
   required bool hasRequestBody,
 }) => <String>{
   'call',
-  if (hasRequestBody) 'body',
-  'cancelToken',
+  ...operationReservedParameterNames(hasRequestBody: hasRequestBody),
   for (final p in normalizedParams.pathParameters) p.normalizedName,
   for (final p in normalizedParams.queryParameters) p.normalizedName,
   for (final p in normalizedParams.headers) p.normalizedName,

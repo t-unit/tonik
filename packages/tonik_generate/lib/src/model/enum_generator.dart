@@ -382,12 +382,13 @@ class EnumGenerator {
                       ..requiredParameters.add(
                         Parameter((pb) => pb..name = 'e'),
                       )
-                      ..body = refer(
-                        'e',
-                      )
-                          .property(_rawValueFieldName)
-                          .equalTo(refer(matchVariable))
-                          .code,
+                      ..body =
+                          refer(
+                                'e',
+                              )
+                              .property(_rawValueFieldName)
+                              .equalTo(refer(matchVariable))
+                              .code,
                   ).closure,
                 ],
                 {'orElse': orElse},

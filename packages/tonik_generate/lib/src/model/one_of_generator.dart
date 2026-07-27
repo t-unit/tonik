@@ -483,8 +483,7 @@ class OneOfGenerator {
     );
 
     final hasNumberMember = model.models.any(
-      (m) =>
-          m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
+      (m) => m.model.resolved is DoubleModel || m.model.resolved is NumberModel,
     );
 
     final sortedModels = stableModelSorter.sortDiscriminatedModels(
@@ -507,11 +506,14 @@ class OneOfGenerator {
           const Code('if ('),
           refer('json').isA(refer('num', 'dart:core')).code,
           const Code(') {'),
-          refer(variantName).call([
-            refer('json').property('decodeJsonInt').call([], {
-              'context': specLiteralString(className),
-            }),
-          ]).returned.statement,
+          refer(variantName)
+              .call([
+                refer('json').property('decodeJsonInt').call([], {
+                  'context': specLiteralString(className),
+                }),
+              ])
+              .returned
+              .statement,
           const Code('}'),
         ]);
         continue;

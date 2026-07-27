@@ -3964,8 +3964,8 @@ class Holder {
             },
             context: context,
             additionalPropertiesPolicy: AllowedAdditionalProperties(
-            valueModel: AnyModel(context: context),
-          ),
+              valueModel: AnyModel(context: context),
+            ),
             examples: const [],
           );
 

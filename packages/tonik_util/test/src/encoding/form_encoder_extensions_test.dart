@@ -405,7 +405,8 @@ void main() {
         const <ParameterEntry>[
           (
             name: 'p',
-            value: 'first%20name,Jane,last%20name,Doe,a%2Cb,v1,c%26d,v2,'
+            value:
+                'first%20name,Jane,last%20name,Doe,a%2Cb,v1,c%26d,v2,'
                 'p%2520q,v3',
           ),
         ],

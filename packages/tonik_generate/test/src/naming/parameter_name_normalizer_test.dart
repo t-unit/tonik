@@ -488,6 +488,21 @@ void main() {
       ]);
     });
 
+    test('reserves cancellation for query parameters', () {
+      final result = normalizeRequestParameters(
+        pathParameters: {},
+        queryParameters: {createQueryParameter('cancellation')},
+        headers: {},
+        reservedNames: operationReservedParameterNames(
+          hasRequestBody: false,
+        ),
+      );
+
+      expect(result.queryParameters.map((r) => r.normalizedName).toList(), [
+        'cancellationQuery',
+      ]);
+    });
+
     test('reserves cancelToken for path parameters', () {
       final result = normalizeRequestParameters(
         pathParameters: {createPathParameter('cancelToken')},
@@ -611,17 +626,17 @@ void main() {
   });
 
   group('operationReservedParameterNames', () {
-    test('always reserves cancelToken when there is no request body', () {
+    test('always reserves cancellation names without a request body', () {
       expect(
         operationReservedParameterNames(hasRequestBody: false),
-        {'cancelToken'},
+        {'cancelToken', 'cancellation'},
       );
     });
 
-    test('reserves both body and cancelToken when there is a request body', () {
+    test('also reserves body when there is a request body', () {
       expect(
         operationReservedParameterNames(hasRequestBody: true),
-        {'body', 'cancelToken'},
+        {'body', 'cancelToken', 'cancellation'},
       );
     });
   });

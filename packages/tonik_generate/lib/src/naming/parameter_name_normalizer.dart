@@ -8,12 +8,15 @@ const _cookieSuffix = 'Cookie';
 const _defaultParameterPrefix = 'parameter';
 
 /// `cancelToken` is reserved because the generated `call(...)` method
-/// always declares a built-in `CancelToken? cancelToken` parameter.
+/// currently declares a built-in `CancelToken? cancelToken` parameter.
+/// `cancellation` is reserved for the portable cancellation parameter that
+/// replaces it in the coordinated transport migration.
 /// `body` is reserved only when a request body exists, since `call(...)`
 /// then also declares a `body` parameter.
 Set<String> operationReservedParameterNames({required bool hasRequestBody}) => {
   if (hasRequestBody) 'body',
   'cancelToken',
+  'cancellation',
 };
 
 /// Result of normalizing request parameters.

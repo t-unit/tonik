@@ -298,10 +298,11 @@ class RequestBodyImporter {
   ) {
     if (!visited.add(model)) return 'application/json';
     return switch (model) {
-      core.AliasModel() =>
-        _resolveDefaultRawContentType(model.resolved, visited),
-      core.ListModel() =>
-        _resolveDefaultRawContentType(model.content, visited),
+      core.AliasModel() => _resolveDefaultRawContentType(
+        model.resolved,
+        visited,
+      ),
+      core.ListModel() => _resolveDefaultRawContentType(model.content, visited),
       core.ClassModel() => 'application/json',
       core.AllOfModel() => 'application/json',
       core.OneOfModel() => 'application/json',

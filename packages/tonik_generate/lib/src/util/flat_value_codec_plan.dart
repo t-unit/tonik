@@ -179,9 +179,7 @@ FlatEncodePlan _buildArrayEncodePlan(
   final content = model.content.resolved;
   final isContentNullable =
       model.isContentNullable || model.content.isEffectivelyNullable;
-  final listExpr = useImmutableCollections
-      ? value.property('unlock')
-      : value;
+  final listExpr = useImmutableCollections ? value.property('unlock') : value;
 
   Expression nullGuard(Expression raw) => isContentNullable
       ? refer('e').equalTo(literalNull).conditional(literalString(''), raw)

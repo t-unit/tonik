@@ -19,130 +19,132 @@ void main() {
       tempDir.deleteSync(recursive: true);
     });
 
-    test('generates request body file (multi-content) and response files',
-        () async {
-      final multiBodyRequest = RequestBodyObject(
-        name: 'MultiBody',
-        context: ctx,
-        description: 'multiple',
-        isRequired: true,
-        content: {
-          RequestContent(
-            model: StringModel(context: ctx),
-            contentType: ContentType.json,
-            rawContentType: 'application/json',
-            examples: const [],
-          ),
-          RequestContent(
-            model: StringModel(context: ctx),
-            contentType: ContentType.json,
-            rawContentType: 'application/problem+json',
-            examples: const [],
-          ),
-        },
-      );
+    test(
+      'generates request body file (multi-content) and response files',
+      () async {
+        final multiBodyRequest = RequestBodyObject(
+          name: 'MultiBody',
+          context: ctx,
+          description: 'multiple',
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: ctx),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+            RequestContent(
+              model: StringModel(context: ctx),
+              contentType: ContentType.json,
+              rawContentType: 'application/problem+json',
+              examples: const [],
+            ),
+          },
+        );
 
-      final multiBodyResponse = ResponseObject(
-        name: 'MultiBodyResponse',
-        context: ctx,
-        description: 'multiple',
-        bodies: {
-          ResponseBody(
-            model: StringModel(context: ctx),
-            rawContentType: 'application/json',
-            contentType: ContentType.json,
-            examples: const [],
-          ),
-          ResponseBody(
-            model: StringModel(context: ctx),
-            rawContentType: 'application/problem+json',
-            contentType: ContentType.json,
-            examples: const [],
-          ),
-        },
-        headers: const {},
-      );
+        final multiBodyResponse = ResponseObject(
+          name: 'MultiBodyResponse',
+          context: ctx,
+          description: 'multiple',
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: ctx),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+            ResponseBody(
+              model: StringModel(context: ctx),
+              rawContentType: 'application/problem+json',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+          },
+          headers: const {},
+        );
 
-      final headersResponse = ResponseObject(
-        name: 'HeaderResponse',
-        context: ctx,
-        description: 'headers',
-        bodies: {
-          ResponseBody(
-            model: StringModel(context: ctx),
-            rawContentType: 'application/json',
-            contentType: ContentType.json,
-            examples: const [],
-          ),
-        },
-        headers: {
-          'X-Rate-Limit': ResponseHeaderObject(
-            name: 'X-Rate-Limit',
-            context: ctx,
-            description: 'rate',
-            model: IntegerModel(context: ctx),
-            isRequired: true,
-            isDeprecated: false,
-            explode: false,
-            encoding: ResponseHeaderEncoding.simple,
-            examples: const [],
-          ),
-        },
-      );
+        final headersResponse = ResponseObject(
+          name: 'HeaderResponse',
+          context: ctx,
+          description: 'headers',
+          bodies: {
+            ResponseBody(
+              model: StringModel(context: ctx),
+              rawContentType: 'application/json',
+              contentType: ContentType.json,
+              examples: const [],
+            ),
+          },
+          headers: {
+            'X-Rate-Limit': ResponseHeaderObject(
+              name: 'X-Rate-Limit',
+              context: ctx,
+              description: 'rate',
+              model: IntegerModel(context: ctx),
+              isRequired: true,
+              isDeprecated: false,
+              explode: false,
+              encoding: ResponseHeaderEncoding.simple,
+              examples: const [],
+            ),
+          },
+        );
 
-      final apiDoc = ApiDocument(
-        title: 'Test',
-        version: '0.0.1',
-        description: 'Test',
-        models: const {},
-        responseHeaders: const {},
-        requestHeaders: const {},
-        servers: const {},
-        operations: const {},
-        responses: {multiBodyResponse, headersResponse},
-        queryParameters: const {},
-        pathParameters: const {},
-        cookieParameters: const {},
-        requestBodies: {multiBodyRequest},
-      );
+        final apiDoc = ApiDocument(
+          title: 'Test',
+          version: '0.0.1',
+          description: 'Test',
+          models: const {},
+          responseHeaders: const {},
+          requestHeaders: const {},
+          servers: const {},
+          operations: const {},
+          responses: {multiBodyResponse, headersResponse},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          requestBodies: {multiBodyRequest},
+        );
 
-      const packageName = 'test_package';
-      await const Generator().generate(
-        apiDocument: apiDoc,
-        outputDirectory: tempDir.path,
-        package: packageName,
-      );
+        const packageName = 'test_package';
+        await const Generator().generate(
+          apiDocument: apiDoc,
+          outputDirectory: tempDir.path,
+          package: packageName,
+        );
 
-      final requestDir = path.join(
-        tempDir.path,
-        packageName,
-        'lib',
-        'src',
-        'request_body',
-      );
-      expect(Directory(requestDir).existsSync(), isTrue);
+        final requestDir = path.join(
+          tempDir.path,
+          packageName,
+          'lib',
+          'src',
+          'request_body',
+        );
+        expect(Directory(requestDir).existsSync(), isTrue);
 
-      expect(
-        File(path.join(requestDir, 'multi_body.dart')).existsSync(),
-        isTrue,
-      );
+        expect(
+          File(path.join(requestDir, 'multi_body.dart')).existsSync(),
+          isTrue,
+        );
 
-      final responseDir = path.join(
-        tempDir.path,
-        packageName,
-        'lib',
-        'src',
-        'response',
-      );
-      expect(Directory(responseDir).existsSync(), isTrue);
-      expect(
-        File(path.join(responseDir, 'multi_body_response.dart')).existsSync(),
-        isTrue,
-      );
-      expect(
-        File(path.join(responseDir, 'header_response.dart')).existsSync(),
-        isTrue,
-      );
-    });
+        final responseDir = path.join(
+          tempDir.path,
+          packageName,
+          'lib',
+          'src',
+          'response',
+        );
+        expect(Directory(responseDir).existsSync(), isTrue);
+        expect(
+          File(path.join(responseDir, 'multi_body_response.dart')).existsSync(),
+          isTrue,
+        );
+        expect(
+          File(path.join(responseDir, 'header_response.dart')).existsSync(),
+          isTrue,
+        );
+      },
+    );
   });
 }

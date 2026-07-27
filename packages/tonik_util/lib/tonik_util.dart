@@ -32,5 +32,6 @@ export 'src/encoding/uri_encoder_extensions.dart';
 export 'src/encoding_shape.dart';
 export 'src/offset_date_time.dart';
 export 'src/server_config.dart';
+export 'src/tonik_cancellation.dart';
 export 'src/tonik_file/tonik_file.dart';
 export 'src/tonik_result.dart';

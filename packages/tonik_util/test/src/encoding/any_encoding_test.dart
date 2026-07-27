@@ -1117,20 +1117,22 @@ void main() {
         );
       });
 
-      test('default literal=false remains byte-identical for nested map/list',
-          () {
-        expect(
-          encodeAnyToSimple(
-            <String, dynamic>{
-              'tags': <dynamic>['a%2Fb', 'c d'],
-              'path': 'x/y%2Fz',
-            },
-            explode: false,
-            allowEmpty: true,
-          ),
-          'tags,a%252Fb,c%20d,path,x%2Fy%252Fz',
-        );
-      });
+      test(
+        'default literal=false remains byte-identical for nested map/list',
+        () {
+          expect(
+            encodeAnyToSimple(
+              <String, dynamic>{
+                'tags': <dynamic>['a%2Fb', 'c d'],
+                'path': 'x/y%2Fz',
+              },
+              explode: false,
+              allowEmpty: true,
+            ),
+            'tags,a%252Fb,c%20d,path,x%2Fy%252Fz',
+          );
+        },
+      );
     });
   });
 

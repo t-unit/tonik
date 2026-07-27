@@ -1913,5 +1913,4 @@ class ClassGenerator {
         raw: true,
       ).statement,
   );
-
 }
