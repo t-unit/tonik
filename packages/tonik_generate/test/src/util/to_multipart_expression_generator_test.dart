@@ -4,8 +4,8 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/dio/dio_multipart_generator.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
-import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
 
 void main() {
   late NameManager nameManager;

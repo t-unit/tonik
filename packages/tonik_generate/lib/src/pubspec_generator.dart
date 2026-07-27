@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 
 final _semverRegExp = RegExp(
   r'^\d+\.\d+\.\d+'
@@ -35,6 +36,7 @@ void generatePubspec({
   required ApiDocument apiDocument,
   required String outputDirectory,
   required String package,
+  required TransportBackendGenerator backendGenerator,
   bool useImmutableCollections = false,
 }) {
   final pubspecDir = path.join(outputDirectory, package);
@@ -48,6 +50,11 @@ void generatePubspec({
   final ficDependency = useImmutableCollections
       ? '\n  fast_immutable_collections: ^11.0.0'
       : '';
+  final transportDependencies = backendGenerator.dependencies
+      .map(
+        (dependency) => '  ${dependency.name}: ${dependency.versionConstraint}',
+      )
+      .join('\n');
   final content =
       '''
 name: $package
@@ -59,7 +66,7 @@ environment:
 dependencies:
   big_decimal: ^0.7.0
   collection: ^1.17.0
-  dio: ^5.8.0+1$ficDependency
+$transportDependencies$ficDependency
   meta: ^1.16.0
   tonik_util: ^0.9.0
 

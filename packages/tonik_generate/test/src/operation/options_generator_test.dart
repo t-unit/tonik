@@ -4,10 +4,10 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/operation/options_generator.dart';
+import 'package:tonik_generate/src/transport/dio/dio_options_generator.dart';
 
 void main() {
-  late OptionsGenerator generator;
+  late DioOptionsGenerator generator;
   late Context context;
   late DartEmitter emitter;
   late NameManager nameManager;
@@ -23,7 +23,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    generator = OptionsGenerator(
+    generator = DioOptionsGenerator(
       nameManager: nameManager,
       package: 'api',
     );
@@ -1573,7 +1573,8 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        collapseWhitespace(format(r'''
+        collapseWhitespace(
+          format(r'''
           Options _options({required Map<String, String> labels}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -1596,7 +1597,8 @@ void main() {
               validateStatus: (_) => true,
             );
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -1651,7 +1653,8 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        collapseWhitespace(format(r'''
+        collapseWhitespace(
+          format(r'''
           Options _options({required Map<String, int> prefs}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -1676,7 +1679,8 @@ void main() {
               validateStatus: (_) => true,
             );
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -1731,7 +1735,8 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        collapseWhitespace(format(r'''
+        collapseWhitespace(
+          format(r'''
           Options _options({Map<String, int>? settings}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -1759,7 +1764,8 @@ void main() {
               validateStatus: (_) => true,
             );
           }
-        ''')),
+        '''),
+        ),
       );
     });
 
@@ -1812,7 +1818,8 @@ void main() {
       final methodString = format(method.accept(emitter).toString());
       expect(
         collapseWhitespace(methodString),
-        collapseWhitespace(format(r'''
+        collapseWhitespace(
+          format(r'''
           Options _options({required Map<String, Nested> data}) {
             final _$headers = <String, dynamic>{};
             _$headers['Accept'] = r'*/*';
@@ -1830,7 +1837,8 @@ void main() {
               validateStatus: (_) => true,
             );
           }
-        ''')),
+        '''),
+        ),
       );
     });
 

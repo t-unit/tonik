@@ -5,6 +5,7 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 import 'package:tonik_generate/src/util/example_doc_formatter.dart';
@@ -20,12 +21,14 @@ class ApiClientGenerator {
     required this.nameManager,
     required this.package,
     required this.defaultsCache,
+    required this.backendGenerator,
     this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
   final OperationDefaultsCache defaultsCache;
+  final TransportBackendGenerator backendGenerator;
   final bool useImmutableCollections;
 
   ({String code, String filename}) generate(
@@ -85,7 +88,9 @@ class ApiClientGenerator {
 
       return refer(fieldName)
           .assign(
-            refer(operationName, operationUrl).call([refer('server.dio')]),
+            refer(operationName, operationUrl).call([
+              refer('server').property(backendGenerator.clientGetterName),
+            ]),
           )
           .code;
     }).toList();
@@ -169,6 +174,7 @@ class ApiClientGenerator {
       operation,
       nameManager,
       package,
+      backendGenerator,
       useImmutableCollections: useImmutableCollections,
     );
     final operationFieldName =

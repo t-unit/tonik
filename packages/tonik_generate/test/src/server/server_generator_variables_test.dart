@@ -5,6 +5,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/server/server_generator.dart';
+import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 
 void main() {
   late ServerGenerator generator;
@@ -20,7 +21,10 @@ void main() {
       generator: NameGenerator(),
       stableModelSorter: StableModelSorter(),
     );
-    generator = ServerGenerator(nameManager: nameManager);
+    generator = ServerGenerator(
+      nameManager: nameManager,
+      backendGenerator: const DioBackendGenerator(),
+    );
     emitter = DartEmitter(useNullSafetySyntax: true);
   });
 
