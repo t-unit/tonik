@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:collection/collection.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/source_file_url.dart';
 import 'package:tonik_generate/src/util/type_reference_generator.dart';
 
@@ -10,7 +11,8 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 TypeReference resultTypeForOperation(
   Operation operation,
   NameManager nameManager,
-  String package, {
+  String package,
+  TransportBackendGenerator backendGenerator, {
   bool useImmutableCollections = false,
 }) {
   final responses = operation.responses;
@@ -18,20 +20,7 @@ TypeReference resultTypeForOperation(
   final hasHeaders = response?.hasHeaders ?? false;
   final bodyCount = response?.bodyCount ?? 0;
   final hasMultipleResponses = responses.length > 1;
-  final nativeResponseType = TypeReference(
-    (b) => b
-      ..symbol = 'Response'
-      ..url = 'package:dio/dio.dart'
-      ..types.add(
-        TypeReference(
-          (b) => b
-            ..symbol = 'Object'
-            ..url = 'dart:core'
-            ..isNullable = true,
-        ),
-      ),
-  );
-
+  final nativeResponseType = backendGenerator.nativeResponseType;
   return switch ((hasHeaders, bodyCount, hasMultipleResponses)) {
     (_, _, true) => TypeReference(
       (b) => b

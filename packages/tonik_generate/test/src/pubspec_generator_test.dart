@@ -4,6 +4,8 @@ import 'package:path/path.dart' as path;
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/pubspec_generator.dart';
+import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
+import 'package:tonik_generate/src/transport/http_backend_generator.dart';
 
 void main() {
   group('sanitizeVersion', () {
@@ -107,6 +109,7 @@ void main() {
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
       );
 
       final content = File(
@@ -137,6 +140,7 @@ void main() {
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
       );
 
       final content = File(
@@ -166,6 +170,7 @@ void main() {
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
         useImmutableCollections: true,
       );
 
@@ -197,6 +202,7 @@ void main() {
         apiDocument: apiDoc,
         outputDirectory: tempDir.path,
         package: 'test_pkg',
+        backendGenerator: const DioBackendGenerator(),
       );
 
       final content = File(
@@ -204,6 +210,48 @@ void main() {
       ).readAsStringSync();
 
       expect(content, isNot(contains('fast_immutable_collections')));
+    });
+
+    test('writes exactly the selected transport dependency', () {
+      final apiDoc = ApiDocument(
+        title: 'Test API',
+        version: '1.0.0',
+        models: const {},
+        responseHeaders: const {},
+        requestHeaders: const {},
+        servers: const {},
+        operations: const {},
+        responses: const <Response>{},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        requestBodies: const {},
+      );
+
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'dio_pkg',
+        backendGenerator: const DioBackendGenerator(),
+      );
+      generatePubspec(
+        apiDocument: apiDoc,
+        outputDirectory: tempDir.path,
+        package: 'http_pkg',
+        backendGenerator: const HttpBackendGenerator(),
+      );
+
+      final dio = File(
+        path.join(tempDir.path, 'dio_pkg', 'pubspec.yaml'),
+      ).readAsStringSync();
+      final http = File(
+        path.join(tempDir.path, 'http_pkg', 'pubspec.yaml'),
+      ).readAsStringSync();
+
+      expect(dio, contains('dio: ^5.8.0+1'));
+      expect(dio, isNot(contains('http:')));
+      expect(http, contains('http: ^1.6.0'));
+      expect(http, isNot(contains('dio:')));
     });
   });
 }

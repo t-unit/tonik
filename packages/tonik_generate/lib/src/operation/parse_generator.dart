@@ -2,6 +2,7 @@ import 'package:code_builder/code_builder.dart';
 import 'package:logging/logging.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/from_form_value_expression_generator.dart';
@@ -18,11 +19,13 @@ class ParseGenerator {
   const ParseGenerator({
     required this.nameManager,
     required this.package,
+    required this.backendGenerator,
     this.useImmutableCollections = false,
   });
 
   final NameManager nameManager;
   final String package;
+  final TransportBackendGenerator backendGenerator;
   final bool useImmutableCollections;
 
   static final log = Logger('ParseGenerator');
@@ -34,6 +37,7 @@ class ParseGenerator {
       operation,
       nameManager,
       package,
+      backendGenerator,
       useImmutableCollections: useImmutableCollections,
     ).types.first;
     final cases = <Code>[];
@@ -66,6 +70,13 @@ class ParseGenerator {
       }
     }
 
+    final responseExpression = refer('response');
+    final contentTypeExpression = backendGenerator.responseContentType(
+      responseExpression,
+    );
+    final statusCodeExpression = backendGenerator.responseStatusCode(
+      responseExpression,
+    );
     final switchCases = <Code>[
       Block.of([
         const Code(r'final _$mediaType = '),
@@ -73,11 +84,15 @@ class ParseGenerator {
           'extractMediaType',
           'package:tonik_util/tonik_util.dart',
         ).code,
-        const Code("(response.headers.value('content-type'));"),
+        const Code('('),
+        contentTypeExpression.code,
+        const Code(');'),
       ]),
-      const Code(
-        r'switch ((response.statusCode, _$mediaType)) {',
-      ),
+      Block.of([
+        const Code('switch (('),
+        statusCodeExpression.code,
+        const Code(r', _$mediaType)) {'),
+      ]),
       ...cases,
     ];
 
@@ -88,12 +103,17 @@ class ParseGenerator {
       switchCases.add(
         Block.of([
           const Code('default:'),
-          const Code(
-            r"final _$content = response.headers.value('content-type') "
-            "?? 'not specified';",
-          ),
+          Block.of([
+            const Code(r'final _$content = '),
+            contentTypeExpression.code,
+            const Code(" ?? 'not specified';"),
+          ]),
           const Code(r"final _$matched = _$mediaType ?? 'none';"),
-          const Code(r'final _$status = response.statusCode;'),
+          Block.of([
+            const Code(r'final _$status = '),
+            statusCodeExpression.code,
+            const Code(';'),
+          ]),
           generateResponseDecodingExceptionExpression(
             'Unexpected content type: '
             r'${_$content}'
@@ -118,19 +138,7 @@ class ParseGenerator {
           Parameter(
             (b) => b
               ..name = 'response'
-              ..type = TypeReference(
-                (b) => b
-                  ..symbol = 'Response'
-                  ..url = 'package:dio/dio.dart'
-                  ..types.add(
-                    TypeReference(
-                      (b) => b
-                        ..symbol = 'List'
-                        ..url = 'dart:core'
-                        ..types.add(refer('int', 'dart:core')),
-                    ),
-                  ),
-              ),
+              ..type = backendGenerator.operationResponseType,
           ),
         )
         ..lambda = false
@@ -298,7 +306,7 @@ class ParseGenerator {
               'decodeResponseJson',
               'package:tonik_util/tonik_util.dart',
             ).call(
-              [refer('response.data')],
+              [backendGenerator.responseBodyBytes(refer('response'))],
               {},
               [refer('Object?', 'dart:core')],
             ),
@@ -332,12 +340,11 @@ class ParseGenerator {
                 'decodeResponseText',
                 'package:tonik_util/tonik_util.dart',
               ).call(
-                [refer('response.data')],
+                [backendGenerator.responseBodyBytes(refer('response'))],
                 {
-                  'contentType': refer('response')
-                      .property('headers')
-                      .property('value')
-                      .call([literalString('content-type')]),
+                  'contentType': backendGenerator.responseContentType(
+                    refer('response'),
+                  ),
                 },
               ),
             )
@@ -360,7 +367,9 @@ class ParseGenerator {
                 refer(
                   'decodeResponseBytes',
                   'package:tonik_util/tonik_util.dart',
-                ).call([refer('response.data')]),
+                ).call([
+                  backendGenerator.responseBodyBytes(refer('response')),
+                ]),
               ]),
             )
             .statement,
@@ -392,7 +401,7 @@ class ParseGenerator {
             refer(
               'decodeResponseText',
               'package:tonik_util/tonik_util.dart',
-            ).call([refer('response.data')]),
+            ).call([backendGenerator.responseBodyBytes(refer('response'))]),
           )
           .statement,
     );
@@ -621,9 +630,10 @@ class ParseGenerator {
 
   List<Code> _generateNeverHeaderChecks(List<String> neverHeaders) {
     return neverHeaders.map((headerName) {
-      final headerValue = refer('response')
-          .property('headers')
-          .index(specLiteralString(headerName));
+      final headerValue = backendGenerator.responseHeaderValues(
+        refer('response'),
+        headerName,
+      );
       return Block.of([
         const Code('if ('),
         headerValue.code,
@@ -689,9 +699,8 @@ class ParseGenerator {
 
       // RFC 9110 combined field value: a header repeated across field
       // lines is equivalent to the comma-joined single-line form.
-      final headerValue = refer('response')
-          .property('headers')
-          .index(specLiteralString(rawHeaderName))
+      final headerValue = backendGenerator
+          .responseHeaderValues(refer('response'), rawHeaderName)
           .nullSafeProperty('join')
           .call([literalString(',')])
           .parenthesized;

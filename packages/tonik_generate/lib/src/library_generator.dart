@@ -1,12 +1,14 @@
 import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 
 void generateLibraryFile({
   required ApiDocument apiDocument,
   required String outputDirectory,
   required String package,
+  required TransportBackendGenerator backendGenerator,
 }) {
   final packageDir = path.join(outputDirectory, package);
   final libDirPath = path.join(packageDir, 'lib');

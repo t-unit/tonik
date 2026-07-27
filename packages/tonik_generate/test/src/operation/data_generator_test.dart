@@ -4,10 +4,10 @@ import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/operation/data_generator.dart';
+import 'package:tonik_generate/src/transport/dio/dio_data_generator.dart';
 
 void main() {
-  late DataGenerator generator;
+  late DioDataGenerator generator;
   late NameManager nameManager;
   late Context testContext;
   late DartEmitter emitter;
@@ -18,7 +18,7 @@ void main() {
       generator: NameGenerator(),
       stableModelSorter: StableModelSorter(),
     );
-    generator = DataGenerator(
+    generator = DioDataGenerator(
       nameManager: nameManager,
       package: 'test_package',
     );

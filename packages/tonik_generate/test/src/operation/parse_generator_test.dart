@@ -6,6 +6,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/parse_generator.dart';
+import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 
 void main() {
@@ -30,7 +31,11 @@ void main() {
         generator: nameGenerator,
         stableModelSorter: StableModelSorter(),
       );
-      generator = ParseGenerator(nameManager: nameManager, package: package);
+      generator = ParseGenerator(
+        nameManager: nameManager,
+        package: package,
+        backendGenerator: const DioBackendGenerator(),
+      );
 
       context = Context.initial();
       emitter = DartEmitter(useNullSafetySyntax: true);
@@ -2827,7 +2832,6 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
           collapseWhitespace(format(expectedMethod)),
         );
       });
-
     });
 
     group('NeverModel response headers', () {
@@ -2940,8 +2944,7 @@ List<Map<String, String>> _parseResponse(Response<List<int>> response) {
         );
       });
 
-      test('generates runtime check for NeverModel header behind an alias',
-          () {
+      test('generates runtime check for NeverModel header behind an alias', () {
         final classModel = ClassModel(
           isDeprecated: false,
           name: 'User',
@@ -4796,6 +4799,7 @@ AnonymousResponse _parseResponse(Response<List<int>> response) {
         immutableGenerator = ParseGenerator(
           nameManager: nameManager,
           package: package,
+          backendGenerator: const DioBackendGenerator(),
           useImmutableCollections: true,
         );
       });

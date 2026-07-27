@@ -11,8 +11,8 @@ import 'package:tonik_generate/src/util/type_reference_generator.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 /// Generator for creating options method for operations.
-class OptionsGenerator {
-  const OptionsGenerator({
+class DioOptionsGenerator {
+  const DioOptionsGenerator({
     required this.nameManager,
     required this.package,
     this.useImmutableCollections = false,
@@ -581,22 +581,4 @@ class OptionsGenerator {
       ..requiredParameters.add(Parameter((b) => b..name = '_'))
       ..body = literalBool(true).code,
   ).closure;
-}
-
-/// Whether the generated `_options` method needs the request body value to
-/// compute the Content-Type header.
-///
-/// True for multi-content bodies (the Content-Type switches on the runtime
-/// value) and for optional non-multipart single-content bodies (Content-Type
-/// is omitted when no body is sent).
-bool optionsMethodNeedsBody(RequestBody? requestBody) {
-  final content = requestBody?.resolvedContent;
-  if (content == null || content.isEmpty) {
-    return false;
-  }
-  if (requestBody!.contentCount > 1) {
-    return true;
-  }
-  return !requestBody.isRequired &&
-      content.first.contentType != ContentType.multipart;
 }
