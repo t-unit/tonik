@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/server/server_file_generator.dart';
 import 'package:tonik_generate/src/server/server_generator.dart';
+import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
 
 void main() {
   group('ServerFileGenerator', () {
@@ -22,6 +23,7 @@ void main() {
       );
       final serverGenerator = ServerGenerator(
         nameManager: nameManager,
+        backendGenerator: const DioBackendGenerator(),
       );
       generator = ServerFileGenerator(
         serverGenerator: serverGenerator,

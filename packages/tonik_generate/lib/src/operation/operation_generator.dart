@@ -4,17 +4,18 @@ import 'package:meta/meta.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
-import 'package:tonik_generate/src/operation/data_generator.dart';
-import 'package:tonik_generate/src/operation/options_generator.dart';
 import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/operation/path_generator.dart';
 import 'package:tonik_generate/src/operation/query_generator.dart';
+import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_plan.dart';
+import 'package:tonik_generate/src/transport/operation_request_planner.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 import 'package:tonik_generate/src/util/format_with_header.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 import 'package:tonik_generate/src/util/response_type_generator.dart';
-import 'package:tonik_generate/src/util/to_multipart_expression_generator.dart';
 
 /// Generator for creating callable operation classes
 /// from Operation definitions.
@@ -23,13 +24,9 @@ class OperationGenerator {
     required this.nameManager,
     required this.package,
     required this.defaultsCache,
+    required this.backendGenerator,
     this.useImmutableCollections = false,
-  }) : _optionsGenerator = OptionsGenerator(
-         nameManager: nameManager,
-         package: package,
-         useImmutableCollections: useImmutableCollections,
-       ),
-       _queryParametersGenerator = QueryGenerator(
+  }) : _queryParametersGenerator = QueryGenerator(
          nameManager: nameManager,
          package: package,
          useImmutableCollections: useImmutableCollections,
@@ -39,27 +36,23 @@ class OperationGenerator {
          package: package,
          useImmutableCollections: useImmutableCollections,
        ),
-       _dataGenerator = DataGenerator(
-         nameManager: nameManager,
-         package: package,
-         useImmutableCollections: useImmutableCollections,
-       ),
        _parseGenerator = ParseGenerator(
          nameManager: nameManager,
          package: package,
+         backendGenerator: backendGenerator,
          useImmutableCollections: useImmutableCollections,
        );
 
   final NameManager nameManager;
   final String package;
   final OperationDefaultsCache defaultsCache;
+  final TransportBackendGenerator backendGenerator;
   final bool useImmutableCollections;
 
-  final OptionsGenerator _optionsGenerator;
   final QueryGenerator _queryParametersGenerator;
   final PathGenerator _pathGenerator;
-  final DataGenerator _dataGenerator;
   final ParseGenerator _parseGenerator;
+  static const _requestPlanner = OperationRequestPlanner();
 
   ({String code, String filename}) generateCallableOperation(
     Operation operation,
@@ -128,9 +121,9 @@ class OperationGenerator {
           ..fields.add(
             Field(
               (b) => b
-                ..name = '_dio'
+                ..name = backendGenerator.clientFieldName
                 ..modifier = FieldModifier.final$
-                ..type = refer('Dio', 'package:dio/dio.dart'),
+                ..type = backendGenerator.nativeClientType,
             ),
           )
           ..fields.addAll(defaults.fields);
@@ -150,7 +143,7 @@ class OperationGenerator {
                 ..requiredParameters.add(
                   Parameter(
                     (b) => b
-                      ..name = '_dio'
+                      ..name = backendGenerator.clientFieldName
                       ..toThis = true,
                   ),
                 ),
@@ -167,16 +160,24 @@ class OperationGenerator {
               operation,
               normalizedParams.pathParameters,
             ),
-            _dataGenerator.generateDataMethod(operation),
+            backendGenerator.generateBodyMethod(
+              operation: operation,
+              nameManager: nameManager,
+              package: package,
+              useImmutableCollections: useImmutableCollections,
+            ),
             if (operation.queryParameters.isNotEmpty)
               _queryParametersGenerator.generateQueryParametersMethod(
                 operation,
                 normalizedParams.queryParameters,
               ),
-            _optionsGenerator.generateOptionsMethod(
-              operation,
-              normalizedParams.headers,
-              normalizedParams.cookieParameters,
+            backendGenerator.generateOptionsMethod(
+              operation: operation,
+              nameManager: nameManager,
+              package: package,
+              useImmutableCollections: useImmutableCollections,
+              headers: normalizedParams.headers,
+              cookies: normalizedParams.cookieParameters,
             ),
             if (operation.responses.isNotEmpty)
               _parseGenerator.generateParseResponseMethod(operation),
@@ -205,30 +206,22 @@ class OperationGenerator {
     final queryArgs = <String, Expression>{};
     final headerArgs = <String, Expression>{};
     final cookieArgs = <String, Expression>{};
-    final dataArgs = <String, Expression>{};
+    final requestPlan = _requestPlanner.plan(operation, normalizedParams);
 
-    if (hasRequestBody) {
-      dataArgs['body'] = refer('body');
+    for (final pathParam in requestPlan.pathParameters) {
+      pathArgs[pathParam.normalizedName] = pathParam.value;
     }
 
-    for (final pathParam in normalizedParams.pathParameters) {
-      pathArgs[pathParam.normalizedName] = refer(pathParam.normalizedName);
+    for (final queryParam in requestPlan.queryParameters) {
+      queryArgs[queryParam.normalizedName] = queryParam.value;
     }
 
-    for (final queryParam in normalizedParams.queryParameters) {
-      queryArgs[queryParam.normalizedName] = refer(queryParam.normalizedName);
+    for (final headerParam in requestPlan.headers) {
+      headerArgs[headerParam.normalizedName] = headerParam.value;
     }
 
-    for (final headerParam in normalizedParams.headers) {
-      headerArgs[headerParam.normalizedName] = refer(
-        headerParam.normalizedName,
-      );
-    }
-
-    for (final cookieParam in normalizedParams.cookieParameters) {
-      cookieArgs[cookieParam.normalizedName] = refer(
-        cookieParam.normalizedName,
-      );
+    for (final cookieParam in requestPlan.cookies) {
+      cookieArgs[cookieParam.normalizedName] = cookieParam.value;
     }
 
     final pathExpr = pathArgs.isEmpty
@@ -241,6 +234,7 @@ class OperationGenerator {
       operation,
       nameManager,
       package,
+      backendGenerator,
       useImmutableCollections: useImmutableCollections,
     );
     final resultValueType = resultType.types.first;
@@ -267,10 +261,11 @@ class OperationGenerator {
     final bodyStatements = <Code>[
       _generateRequestStatements(
         operation,
+        requestPlan,
         pathExpr,
         queryExpr,
         hasRequestBody,
-        optionsMethodNeedsBody(operation.requestBody),
+        requestContentTypeNeedsBodyValue(operation.requestBody),
         headerArgs,
         cookieArgs,
         pathArgs,
@@ -278,10 +273,10 @@ class OperationGenerator {
         resultValueType,
         nativeResponseType,
       ),
-      _generateResponseStatements(
-        responseVar,
-        resultValueType,
-        nativeResponseType,
+      backendGenerator.generateDispatchStatements(
+        plan: requestPlan,
+        responseVariable: responseVar,
+        resultValueType: resultValueType,
       ),
     ];
 
@@ -344,19 +339,6 @@ class OperationGenerator {
       );
     }
 
-    final cancelTokenParam = Parameter(
-      (b) => b
-        ..name = 'cancelToken'
-        ..type = TypeReference(
-          (b) => b
-            ..symbol = 'CancelToken'
-            ..url = 'package:dio/dio.dart'
-            ..isNullable = true,
-        )
-        ..named = true
-        ..required = false,
-    );
-
     return Method(
       (b) => b
         ..name = 'call'
@@ -366,7 +348,10 @@ class OperationGenerator {
             ..url = 'dart:core'
             ..types.add(resultType),
         )
-        ..optionalParameters.addAll([...parameters, cancelTokenParam])
+        ..optionalParameters.addAll([
+          ...parameters,
+          backendGenerator.cancellationParameter,
+        ])
         ..modifier = MethodModifier.async
         ..lambda = false
         ..body = Block((b) => b..statements.addAll(bodyStatements)),
@@ -375,6 +360,7 @@ class OperationGenerator {
 
   Code _generateRequestStatements(
     Operation operation,
+    OperationRequestPlan requestPlan,
     Expression pathExpr,
     Expression queryExpr,
     bool hasRequestBody,
@@ -399,7 +385,7 @@ class OperationGenerator {
       ).statement,
       declareFinal(
         r'_$options',
-        type: refer('Options', 'package:dio/dio.dart'),
+        type: backendGenerator.requestOptionsType,
         late: true,
       ).statement,
       Block.of([
@@ -407,7 +393,7 @@ class OperationGenerator {
         declareFinal(r'_$baseUri')
             .assign(
               refer('Uri', 'dart:core').property('parse').call([
-                refer('_dio').property('options').property('baseUrl'),
+                backendGenerator.baseUrlExpression,
               ]),
             )
             .statement,
@@ -430,11 +416,7 @@ class OperationGenerator {
             .statement,
         refer(r'_$data').assign(
           () {
-            final isDataAsync =
-                hasRequestBody &&
-                operation.requestBody!.resolvedContent.any(
-                  (c) => c.contentType == ContentType.multipart,
-                );
+            final isDataAsync = _bodyRequiresAsyncLowering(requestPlan.body);
             final dataCall = refer('_data').call([], {
               if (hasRequestBody) 'body': refer('body'),
               if (hasRequestBody)
@@ -482,110 +464,13 @@ class OperationGenerator {
     ]);
   }
 
-  Code _generateResponseStatements(
-    String responseVar,
-    Reference resultValueType,
-    Reference nativeResponseType,
-  ) {
-    return Block.of([
-      const Code('final '),
-      TypeReference(
-        (b) => b
-          ..symbol = 'Response'
-          ..url = 'package:dio/dio.dart'
-          ..types.add(
-            TypeReference(
-              (b) => b
-                ..symbol = 'List'
-                ..url = 'dart:core'
-                ..types.add(refer('int', 'dart:core')),
-            ),
-          ),
-      ).code,
-      Code(' $responseVar;'),
-      Block.of([
-        const Code('try {'),
-        refer(responseVar)
-            .assign(
-              refer('_dio').property('requestUri').call(
-                [refer(r'_$uri')],
-                {
-                  'data': refer(r'_$data'),
-                  'options': refer(r'_$options'),
-                  'cancelToken': refer('cancelToken'),
-                },
-                [
-                  TypeReference(
-                    (b) => b
-                      ..symbol = 'List'
-                      ..url = 'dart:core'
-                      ..types.add(refer('int', 'dart:core')),
-                  ),
-                ],
-              ).awaited,
-            )
-            .statement,
-        const Code('} on '),
-        refer('DioException', 'package:dio/dio.dart').code,
-        const Code(' catch (exception, stackTrace) {'),
-        Block.of([
-          const Code('if (exception.type == '),
-          refer(
-            'DioExceptionType.cancel',
-            'package:dio/dio.dart',
-          ).code,
-          const Code(') {'),
-          _resultClass('TonikError', resultValueType, nativeResponseType)
-              .call(
-                [refer('exception')],
-                {
-                  'stackTrace': refer('stackTrace'),
-                  'type': refer(
-                    'TonikErrorType.cancelled',
-                    'package:tonik_util/tonik_util.dart',
-                  ),
-                  'response': refer('exception').property('response'),
-                },
-              )
-              .returned
-              .statement,
-          const Code('}'),
-        ]),
-        _resultClass('TonikError', resultValueType, nativeResponseType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': refer(
-                  'TonikErrorType.network',
-                  'package:tonik_util/tonik_util.dart',
-                ),
-                'response': refer('exception').property('response'),
-              },
-            )
-            .returned
-            .statement,
-        const Code('} on '),
-        refer('Object', 'dart:core').code,
-        const Code(' catch (exception, stackTrace) {'),
-        _resultClass('TonikError', resultValueType, nativeResponseType)
-            .call(
-              [refer('exception')],
-              {
-                'stackTrace': refer('stackTrace'),
-                'type': refer(
-                  'TonikErrorType.network',
-                  'package:tonik_util/tonik_util.dart',
-                ),
-                'response': literalNull,
-              },
-            )
-            .returned
-            .statement,
-        const Code('}\n'),
-      ]),
-    ]);
-  }
+  bool _bodyRequiresAsyncLowering(RequestBodyPlan body) => switch (body) {
+    MultipartBodyPlan() => true,
+    BodySelectionPlan(:final variants) => variants.any(
+      (variant) => variant is MultipartBodyPlan,
+    ),
+    _ => false,
+  };
 
   Code _unassignedParseResponseTryCatch(
     String responseVar,

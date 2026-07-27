@@ -1,14 +1,14 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
-import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
 import 'package:tonik_generate/src/naming/property_name_normalizer.dart';
+import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/util/built_expression.dart';
 import 'package:tonik_generate/src/util/exception_code_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
 import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
 
-/// Returns FormData construction statements; caller adds `return formData;`.
+/// Lowers a multipart request plan to Dio FormData construction statements.
 BuiltStatements buildMultipartBodyStatements(
   RequestContent content,
   String bodyAccessor,
@@ -528,68 +528,11 @@ Code _buildBinaryFileAddition(
   final isDefaultContentType =
       rawContentType == null || rawContentType == 'application/octet-stream';
 
-  final headersArg = headerVarName != null ? 'headers: $headerVarName, ' : '';
-
-  return Code.scope(
-    (allocate) {
-      final tonikFileBytes = allocate(
-        TypeReference(
-          (b) => b
-            ..symbol = 'TonikFileBytes'
-            ..url = 'package:tonik_util/tonik_util.dart',
-        ),
-      );
-      final tonikFilePath = allocate(
-        TypeReference(
-          (b) => b
-            ..symbol = 'TonikFilePath'
-            ..url = 'package:tonik_util/tonik_util.dart',
-        ),
-      );
-      final multipartFile = allocate(
-        TypeReference(
-          (b) => b
-            ..symbol = 'MultipartFile'
-            ..url = 'package:dio/dio.dart',
-        ),
-      );
-      final mapEntry = allocate(
-        TypeReference(
-          (b) => b
-            ..symbol = 'MapEntry'
-            ..url = 'dart:core',
-        ),
-      );
-
-      final contentTypeArg = isDefaultContentType
-          ? ''
-          : () {
-              final dioMediaType = allocate(
-                TypeReference(
-                  (b) => b
-                    ..symbol = 'DioMediaType'
-                    ..url = 'package:dio/dio.dart',
-                ),
-              );
-              final ct = specLiteralStringCode(rawContentType);
-              return 'contentType: $dioMediaType.parse($ct), ';
-            }();
-
-      final escapedName = specLiteralStringCode(rawName);
-      return '''
-switch ($accessor) {
-  case $tonikFileBytes(:final bytes, :final fileName):
-    _\$formData.files.add($mapEntry(
-      $escapedName,
-      $multipartFile.fromBytes(bytes, filename: fileName ?? $escapedName, $contentTypeArg$headersArg),
-    ));
-  case $tonikFilePath(:final path, :final fileName):
-    _\$formData.files.add($mapEntry(
-      $escapedName,
-      await $multipartFile.fromFile(path, filename: fileName ?? $escapedName, $contentTypeArg$headersArg),
-    ));
-}''';
-    },
+  return _binaryFileSwitch(
+    refer(accessor),
+    rawName,
+    rawContentType: isDefaultContentType ? null : rawContentType,
+    headerVarName: headerVarName,
   );
 }
 
@@ -956,48 +899,66 @@ Expression _itemToStringExpr(
 ///
 /// Generates a switch on the sealed TonikFile type.
 Code _binaryItemExpr(String rawName, {String? headerVarName}) {
-  final headersArg = headerVarName != null ? 'headers: $headerVarName, ' : '';
-
-  return Code.scope(
-    (allocate) {
-      final tonikFileBytes = allocate(
-        TypeReference(
-          (b) => b
-            ..symbol = 'TonikFileBytes'
-            ..url = 'package:tonik_util/tonik_util.dart',
-        ),
-      );
-      final tonikFilePath = allocate(
-        TypeReference(
-          (b) => b
-            ..symbol = 'TonikFilePath'
-            ..url = 'package:tonik_util/tonik_util.dart',
-        ),
-      );
-      final multipartFile = allocate(
-        TypeReference(
-          (b) => b
-            ..symbol = 'MultipartFile'
-            ..url = 'package:dio/dio.dart',
-        ),
-      );
-      final mapEntry = allocate(
-        TypeReference(
-          (b) => b
-            ..symbol = 'MapEntry'
-            ..url = 'dart:core',
-        ),
-      );
-      final escapedName = specLiteralStringCode(rawName);
-      return '''
-switch (item) {
-  case $tonikFileBytes(:final bytes, :final fileName):
-    _\$formData.files.add($mapEntry($escapedName, $multipartFile.fromBytes(bytes, filename: fileName ?? $escapedName, $headersArg)));
-  case $tonikFilePath(:final path, :final fileName):
-    _\$formData.files.add($mapEntry($escapedName, await $multipartFile.fromFile(path, filename: fileName ?? $escapedName, $headersArg)));
-}''';
-    },
+  return _binaryFileSwitch(
+    refer('item'),
+    rawName,
+    headerVarName: headerVarName,
   );
+}
+
+Code _binaryFileSwitch(
+  Expression file,
+  String rawName, {
+  String? rawContentType,
+  String? headerVarName,
+}) {
+  final multipartFile = refer('MultipartFile', 'package:dio/dio.dart');
+  final fileArguments = <String, Expression>{
+    'filename': refer('fileName').ifNullThen(specLiteralString(rawName)),
+    if (rawContentType != null)
+      'contentType': refer(
+        'DioMediaType',
+        'package:dio/dio.dart',
+      ).property('parse').call([specLiteralString(rawContentType)]),
+    if (headerVarName != null) 'headers': refer(headerVarName),
+  };
+
+  Code addFile(Expression value) =>
+      refer(r'_$formData').property('files').property('add').call([
+        refer('MapEntry', 'dart:core').call([
+          specLiteralString(rawName),
+          value,
+        ]),
+      ]).statement;
+
+  return Block.of([
+    const Code('switch ('),
+    file.code,
+    const Code(') {\n'),
+    const Code('case '),
+    refer(
+      'TonikFileBytes',
+      'package:tonik_util/tonik_util.dart',
+    ).code,
+    const Code('(:final bytes, :final fileName):\n'),
+    addFile(
+      multipartFile.property('fromBytes').call([
+        refer('bytes'),
+      ], fileArguments),
+    ),
+    const Code('case '),
+    refer(
+      'TonikFilePath',
+      'package:tonik_util/tonik_util.dart',
+    ).code,
+    const Code('(:final path, :final fileName):\n'),
+    addFile(
+      multipartFile.property('fromFile').call([
+        refer('path'),
+      ], fileArguments).awaited,
+    ),
+    const Code('}\n'),
+  ]);
 }
 
 /// Returns an [Expression] for a complex object item in a for-loop.
@@ -1422,122 +1383,4 @@ Code _buildRawStylePartsAddition(
     ]).statement,
     const Code('}'),
   ]);
-}
-
-typedef MultipartHeaderParamInfo = ({
-  RequestContent content,
-  String name,
-  String normalizedPropertyName,
-  String rawHeaderName,
-  Model model,
-  bool isRequired,
-  bool isDeprecated,
-});
-
-List<MultipartHeaderParamInfo> extractMultipartHeaderParamInfo(
-  RequestContent content, {
-  Set<String> reservedNames = const {},
-}) {
-  final encoding = content.multipartEncoding;
-  if (encoding == null) return const [];
-
-  final model = content.model.resolved;
-  if (model is! ClassModel) return const [];
-
-  final writeProperties = model.properties.where((p) => !p.isReadOnly).toList();
-  final normalizedProps = normalizeProperties(writeProperties);
-
-  final result = <MultipartHeaderParamInfo>[];
-  final usedNames = reservedNames.map((name) => name.toLowerCase()).toSet();
-
-  for (final (:normalizedName, :property) in normalizedProps) {
-    final propertyEncoding = encoding[property];
-    final headers = propertyEncoding?.headers;
-    if (headers == null || headers.isEmpty) continue;
-
-    final isPropertyOptional = !property.isRequired || property.isNullable;
-
-    for (final entry in headers.entries) {
-      final rawHeaderName = entry.key;
-      final header = entry.value.resolve(name: rawHeaderName);
-      final isRequired = !isPropertyOptional && header.isRequired;
-
-      final baseName = normalizeMultipartHeaderName(
-        normalizedName,
-        rawHeaderName,
-      );
-      final paramName = _uniqueMultipartHeaderParameterName(
-        baseName,
-        usedNames,
-      );
-
-      result.add((
-        content: content,
-        name: paramName,
-        normalizedPropertyName: normalizedName,
-        rawHeaderName: rawHeaderName,
-        model: header.model,
-        isRequired: isRequired,
-        isDeprecated: header.isDeprecated,
-      ));
-    }
-  }
-
-  return result;
-}
-
-/// Extracts all per-part header parameters using names scoped to one operation.
-List<MultipartHeaderParamInfo> extractOperationMultipartHeaderParamInfo(
-  Operation operation,
-) {
-  final hasRequestBody =
-      operation.requestBody?.resolvedContent.isNotEmpty ?? false;
-  if (!hasRequestBody) return const [];
-
-  final normalized = normalizeRequestParameters(
-    pathParameters: operation.pathParameters.map((p) => p.resolve()).toSet(),
-    queryParameters: operation.queryParameters.map((p) => p.resolve()).toSet(),
-    headers: operation.headers.map((p) => p.resolve()).toSet(),
-    cookieParameters: operation.cookieParameters
-        .map((p) => p.resolve())
-        .toSet(),
-    reservedNames: operationReservedParameterNames(hasRequestBody: true),
-  );
-  final usedNames = <String>{
-    'body',
-    'cancelToken',
-    ...normalized.pathParameters.map((p) => p.normalizedName),
-    ...normalized.queryParameters.map((p) => p.normalizedName),
-    ...normalized.headers.map((p) => p.normalizedName),
-    ...normalized.cookieParameters.map((p) => p.normalizedName),
-  };
-  final result = <MultipartHeaderParamInfo>[];
-
-  for (final content in operation.requestBody!.resolvedContent) {
-    if (content.contentType != ContentType.multipart) continue;
-    final parameters = extractMultipartHeaderParamInfo(
-      content,
-      reservedNames: usedNames,
-    );
-    result.addAll(parameters);
-    usedNames.addAll(parameters.map((parameter) => parameter.name));
-  }
-
-  return result;
-}
-
-String _uniqueMultipartHeaderParameterName(
-  String baseName,
-  Set<String> usedNames,
-) {
-  if (usedNames.add(baseName.toLowerCase())) return baseName;
-
-  final suffixedBase = '${baseName}PartHeader';
-  var candidate = suffixedBase;
-  var counter = 2;
-  while (!usedNames.add(candidate.toLowerCase())) {
-    candidate = '$suffixedBase$counter';
-    counter++;
-  }
-  return candidate;
 }

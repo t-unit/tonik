@@ -26,6 +26,7 @@ import 'package:tonik_generate/src/response_wrapper/response_wrapper_file_genera
 import 'package:tonik_generate/src/response_wrapper/response_wrapper_generator.dart';
 import 'package:tonik_generate/src/server/server_file_generator.dart';
 import 'package:tonik_generate/src/server/server_generator.dart';
+import 'package:tonik_generate/src/transport/transport_backend_generator_factory.dart';
 import 'package:tonik_generate/src/util/model_worker_pool.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
@@ -55,11 +56,9 @@ class Generator {
     TonikConfig config = const TonikConfig(),
     @visibleForTesting ModelWorkerPool Function()? workerPoolFactory,
   }) async {
-    if (config.transport.backend == TransportBackend.http) {
-      throw UnsupportedError(
-        'The http transport backend is not supported yet.',
-      );
-    }
+    final backendGenerator = transportBackendGeneratorFor(
+      config.transport.backend,
+    );
 
     final useImmutableCollections = config.useImmutableCollections;
 
@@ -118,6 +117,7 @@ class Generator {
       nameManager: nameManager,
       package: package,
       defaultsCache: defaultsCache,
+      backendGenerator: backendGenerator,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -159,6 +159,7 @@ class Generator {
       nameManager: nameManager,
       package: package,
       defaultsCache: defaultsCache,
+      backendGenerator: backendGenerator,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -168,6 +169,7 @@ class Generator {
 
     final serverGenerator = ServerGenerator(
       nameManager: nameManager,
+      backendGenerator: backendGenerator,
     );
 
     final serverFileGenerator = ServerFileGenerator(
@@ -187,6 +189,7 @@ class Generator {
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
+      backendGenerator: backendGenerator,
       useImmutableCollections: useImmutableCollections,
     );
 
@@ -256,6 +259,7 @@ class Generator {
       apiDocument: apiDocument,
       outputDirectory: outputDirectory,
       package: package,
+      backendGenerator: backendGenerator,
     );
   }
 }

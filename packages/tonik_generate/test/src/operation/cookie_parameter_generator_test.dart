@@ -5,11 +5,11 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/naming/parameter_name_normalizer.dart';
-import 'package:tonik_generate/src/operation/options_generator.dart';
+import 'package:tonik_generate/src/transport/dio/dio_options_generator.dart';
 import 'package:tonik_generate/src/util/operation_parameter_generator.dart';
 
 void main() {
-  late OptionsGenerator optionsGenerator;
+  late DioOptionsGenerator optionsGenerator;
   late Context context;
   late DartEmitter emitter;
   late NameManager nameManager;
@@ -25,7 +25,7 @@ void main() {
       generator: nameGenerator,
       stableModelSorter: StableModelSorter(),
     );
-    optionsGenerator = OptionsGenerator(
+    optionsGenerator = DioOptionsGenerator(
       nameManager: nameManager,
       package: 'api',
     );
