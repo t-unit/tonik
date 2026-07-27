@@ -108,8 +108,10 @@ void main() {
       _prime(hooked, apiDoc).armed = true;
 
       try {
-        await runPool(names: hooked, workerCount: 1)
-            .timeout(const Duration(seconds: 15));
+        await runPool(
+          names: hooked,
+          workerCount: 1,
+        ).timeout(const Duration(seconds: 15));
         fail('expected ModelWorkerAsyncError');
       } on TimeoutException {
         fail('pool silently hung on uncaught async worker error');
@@ -118,22 +120,26 @@ void main() {
       }
     });
 
-    test('aborts (does not hang) when worker throws non-sendable error',
-        () async {
-      final hooked = _HookedNameManager(sorter)
-        ..onLookup = () => throw _PortBearingError(ReceivePort());
-      _prime(hooked, apiDoc).armed = true;
+    test(
+      'aborts (does not hang) when worker throws non-sendable error',
+      () async {
+        final hooked = _HookedNameManager(sorter)
+          ..onLookup = () => throw _PortBearingError(ReceivePort());
+        _prime(hooked, apiDoc).armed = true;
 
-      try {
-        await runPool(names: hooked, workerCount: 1)
-            .timeout(const Duration(seconds: 15));
-        fail('expected the non-sendable error to surface');
-      } on TimeoutException {
-        fail('pool silently hung on non-sendable worker error');
-      } on NonSendableWorkerError catch (e) {
-        expect(e.originalTypeName, contains('_PortBearingError'));
-      }
-    });
+        try {
+          await runPool(
+            names: hooked,
+            workerCount: 1,
+          ).timeout(const Duration(seconds: 15));
+          fail('expected the non-sendable error to surface');
+        } on TimeoutException {
+          fail('pool silently hung on non-sendable worker error');
+        } on NonSendableWorkerError catch (e) {
+          expect(e.originalTypeName, contains('_PortBearingError'));
+        }
+      },
+    );
 
     test('aborts when worker setup throws before handshake', () async {
       final hooked = _HookedNameManager(sorter)
@@ -141,8 +147,10 @@ void main() {
       _prime(hooked, apiDoc).armed = true;
 
       await expectLater(
-        runPool(names: hooked, workerCount: 1)
-            .timeout(const Duration(seconds: 15)),
+        runPool(
+          names: hooked,
+          workerCount: 1,
+        ).timeout(const Duration(seconds: 15)),
         throwsA(isA<StateError>()),
       );
     });
@@ -407,7 +415,10 @@ ApiDocument _allSubtypeDocument(Context ctx) {
       AllOfModel(
         isDeprecated: false,
         name: 'Combined',
-        models: {StringModel(context: ctx), IntegerModel(context: ctx)},
+        models: {
+          StringModel(context: ctx),
+          IntegerModel(context: ctx),
+        },
         context: ctx,
         examples: const [],
       ),

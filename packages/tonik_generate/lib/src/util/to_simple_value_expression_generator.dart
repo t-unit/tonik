@@ -302,22 +302,23 @@ Expression _handleListExpression(
       .property('toList')
       .call([]);
 
-  Expression mappedSerialize({required bool asLiteral}) => mappedList(
-    nullGuard(
-      _buildSimpleSerializationExpression(
-        refer('e'),
-        contentModel,
-        isNullable: false,
-        explode: explode,
-        allowEmpty: allowEmpty,
-        literal: asLiteral,
-      ),
-    ),
-  ).property('toSimple').call([], {
-    'explode': literalBool(explode),
-    'allowEmpty': literalBool(allowEmpty),
-    if (asLiteral) 'literal': literalBool(true),
-  });
+  Expression mappedSerialize({required bool asLiteral}) =>
+      mappedList(
+        nullGuard(
+          _buildSimpleSerializationExpression(
+            refer('e'),
+            contentModel,
+            isNullable: false,
+            explode: explode,
+            allowEmpty: allowEmpty,
+            literal: asLiteral,
+          ),
+        ),
+      ).property('toSimple').call([], {
+        'explode': literalBool(explode),
+        'allowEmpty': literalBool(allowEmpty),
+        if (asLiteral) 'literal': literalBool(true),
+      });
 
   return switch (contentModel) {
     NeverModel() => generateEncodingExceptionExpression(
@@ -347,8 +348,10 @@ Expression _handleListExpression(
         'alreadyEncoded': literalBool(true),
       }),
 
-    DateTimeModel() || DecimalModel() || UriModel() || DateModel() =>
-      mappedSerialize(asLiteral: literal),
+    DateTimeModel() ||
+    DecimalModel() ||
+    UriModel() ||
+    DateModel() => mappedSerialize(asLiteral: literal),
 
     EnumModel() ||
     ClassModel() ||
@@ -367,17 +370,18 @@ Expression _handleListExpression(
     ),
 
     AnyModel() => callToSimpleOnList(receiver),
-    Base64Model() => mappedList(
-      isContentNullable
-          ? refer('e')
-                .nullSafeProperty('toBase64String')
-                .call([])
-                .ifNullThen(literalString(''))
-          : refer('e').property('toBase64String').call([]),
-    ).property('toSimple').call([], {
-      ...toSimpleArgs,
-      'alreadyEncoded': literalBool(true),
-    }),
+    Base64Model() =>
+      mappedList(
+        isContentNullable
+            ? refer('e')
+                  .nullSafeProperty('toBase64String')
+                  .call([])
+                  .ifNullThen(literalString(''))
+            : refer('e').property('toBase64String').call([]),
+      ).property('toSimple').call([], {
+        ...toSimpleArgs,
+        'alreadyEncoded': literalBool(true),
+      }),
 
     MapModel() => _buildListMapContentSimpleExpression(
       receiver,

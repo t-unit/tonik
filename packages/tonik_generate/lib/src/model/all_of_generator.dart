@@ -1423,7 +1423,7 @@ class AllOfGenerator {
             (p) =>
                 p.property.model.resolved is ListModel &&
                 (p.property.model.resolved as ListModel).hasSimpleContent,
-      );
+          );
 
       if (allComplexAreSimpleLists) {
         final valueCollectionCode = <Code>[
@@ -1960,7 +1960,7 @@ class AllOfGenerator {
             (p) =>
                 p.property.model.resolved is ListModel &&
                 (p.property.model.resolved as ListModel).hasSimpleContent,
-      );
+          );
 
       if (allComplexAreSimpleLists) {
         final valueCollectionCode = <Code>[
@@ -2194,7 +2194,7 @@ class AllOfGenerator {
             (p) =>
                 p.property.model.resolved is ListModel &&
                 (p.property.model.resolved as ListModel).hasSimpleContent,
-      );
+          );
 
       if (allComplexAreSimpleLists) {
         final valueCollectionCode = <Code>[

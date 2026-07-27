@@ -424,7 +424,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = filter
                   .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
@@ -434,7 +435,8 @@ void main() {
                     allowEmpty: false,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -460,7 +462,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = filter
                   .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
@@ -470,7 +473,8 @@ void main() {
                     allowEmpty: true,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -495,7 +499,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = counts
                   .map(
@@ -507,7 +512,8 @@ void main() {
                     allowEmpty: false,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -532,7 +538,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = flags
                   .map(
@@ -544,7 +551,8 @@ void main() {
                     allowEmpty: false,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -579,7 +587,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = statuses
                   .map(
@@ -591,7 +600,8 @@ void main() {
                     allowEmpty: false,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -616,7 +626,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = Map.fromEntries(
                 meta.entries
@@ -638,7 +649,8 @@ void main() {
                 allowEmpty: false,
               );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -669,13 +681,15 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = throw EncodingException(
                 r'deepObject encoding is not supported for Map types with complex values. Parameter "nested" cannot be encoded.',
               );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -704,13 +718,15 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = throw EncodingException(
                 r'deepObject encoding is not supported for Map types with complex values. Parameter "tags" cannot be encoded.',
               );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -741,7 +757,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = aliasedMap
                   .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
@@ -751,7 +768,8 @@ void main() {
                     allowEmpty: false,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -782,7 +800,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = aliasedCounts
                   .map(
@@ -794,7 +813,8 @@ void main() {
                     allowEmpty: false,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
     });
@@ -823,7 +843,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = filter
                   .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
@@ -834,7 +855,8 @@ void main() {
                     allowReserved: true,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -859,7 +881,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = filter
                   .map((k, v) => MapEntry(k, PropertyValue.scalar(v)))
@@ -869,7 +892,8 @@ void main() {
                     allowEmpty: false,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 
@@ -896,7 +920,8 @@ void main() {
         final code = methodBody(result);
         expect(
           collapseWhitespace(code),
-          collapseWhitespace(format('''
+          collapseWhitespace(
+            format('''
             test() {
               final result = counts
                   .map(
@@ -909,7 +934,8 @@ void main() {
                     allowReserved: true,
                   );
             }
-          ''')),
+          '''),
+          ),
         );
       });
 

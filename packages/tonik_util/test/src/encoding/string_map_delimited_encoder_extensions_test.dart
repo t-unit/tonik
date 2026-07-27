@@ -19,23 +19,27 @@ void main() {
       );
     });
 
-    test('percent-encodes a pipe inside a value, keeping the delimiter literal',
-        () {
-      const value = {'a': 'x|y'};
-      expect(
-        value.toPipeDelimited('color', allowEmpty: true),
-        [(name: 'color', value: 'a|x%7Cy')],
-      );
-    });
+    test(
+      'percent-encodes a pipe inside a value, keeping the delimiter literal',
+      () {
+        const value = {'a': 'x|y'};
+        expect(
+          value.toPipeDelimited('color', allowEmpty: true),
+          [(name: 'color', value: 'a|x%7Cy')],
+        );
+      },
+    );
 
-    test('percent-encodes reserved key and value chars without allowReserved',
-        () {
-      const value = {'a/b': 'a/b:c'};
-      expect(
-        value.toPipeDelimited('color', allowEmpty: true),
-        [(name: 'color', value: 'a%2Fb|a%2Fb%3Ac')],
-      );
-    });
+    test(
+      'percent-encodes reserved key and value chars without allowReserved',
+      () {
+        const value = {'a/b': 'a/b:c'};
+        expect(
+          value.toPipeDelimited('color', allowEmpty: true),
+          [(name: 'color', value: 'a%2Fb|a%2Fb%3Ac')],
+        );
+      },
+    );
 
     test('keeps reserved key and value chars literal with allowReserved', () {
       const value = {'a/b': 'a/b:c'};
@@ -79,14 +83,16 @@ void main() {
       );
     });
 
-    test('percent-encodes reserved key and value chars without allowReserved',
-        () {
-      const value = {'a/b': 'a/b:c'};
-      expect(
-        value.toSpaceDelimited('coord', allowEmpty: true),
-        [(name: 'coord', value: 'a%2Fb%20a%2Fb%3Ac')],
-      );
-    });
+    test(
+      'percent-encodes reserved key and value chars without allowReserved',
+      () {
+        const value = {'a/b': 'a/b:c'};
+        expect(
+          value.toSpaceDelimited('coord', allowEmpty: true),
+          [(name: 'coord', value: 'a%2Fb%20a%2Fb%3Ac')],
+        );
+      },
+    );
 
     test('keeps reserved key and value chars literal with allowReserved', () {
       const value = {'a/b': 'a/b:c'};

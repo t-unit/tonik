@@ -789,42 +789,43 @@ void main() {
         },
       );
 
-      test('enum list threads allowReserved into each item uriEncode when set',
-          () {
-        final parameter = createParameter(
-          name: 'priorities',
-          rawName: 'priorities',
-          model: ListModel(
-            content: EnumModel<String>(
-              isDeprecated: false,
+      test(
+        'enum list threads allowReserved into each item uriEncode when set',
+        () {
+          final parameter = createParameter(
+            name: 'priorities',
+            rawName: 'priorities',
+            model: ListModel(
+              content: EnumModel<String>(
+                isDeprecated: false,
+                context: context,
+                values: {
+                  const EnumEntry(value: 'high priority'),
+                  const EnumEntry(value: 'low priority'),
+                },
+                isNullable: false,
+                examples: const [],
+              ),
               context: context,
-              values: {
-                const EnumEntry(value: 'high priority'),
-                const EnumEntry(value: 'low priority'),
-              },
-              isNullable: false,
               examples: const [],
             ),
-            context: context,
-            examples: const [],
-          ),
-          explode: false,
-          allowEmpty: true,
-          allowReserved: true,
-        );
+            explode: false,
+            allowEmpty: true,
+            allowReserved: true,
+          );
 
-        final codes = buildToDelimitedQueryParameterCode(
-          'priorities',
-          parameter,
-          encoding: QueryParameterEncoding.spaceDelimited,
-          allowReserved: true,
-        );
+          final codes = buildToDelimitedQueryParameterCode(
+            'priorities',
+            parameter,
+            encoding: QueryParameterEncoding.spaceDelimited,
+            allowReserved: true,
+          );
 
-        final code = emitStatements(codes);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+          final code = emitStatements(codes);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
               void test() {
                 for (final value in priorities
                     .map((e) => e.uriEncode(allowEmpty: true, allowReserved: true))
@@ -838,9 +839,10 @@ void main() {
                 }
               }
             '''),
-          ),
-        );
-      });
+            ),
+          );
+        },
+      );
 
       test('composition list threads allowReserved into each item uriEncode '
           'when set', () {
@@ -1561,27 +1563,28 @@ void main() {
         );
       });
 
-      test('spaceDelimited AnyModel dispatches to encodeAnyToSpaceDelimited',
-          () {
-        final parameter = createParameter(
-          name: 'data',
-          rawName: 'data',
-          model: AnyModel(context: context),
-          explode: false,
-          allowEmpty: true,
-        );
+      test(
+        'spaceDelimited AnyModel dispatches to encodeAnyToSpaceDelimited',
+        () {
+          final parameter = createParameter(
+            name: 'data',
+            rawName: 'data',
+            model: AnyModel(context: context),
+            explode: false,
+            allowEmpty: true,
+          );
 
-        final codes = buildToDelimitedQueryParameterCode(
-          'data',
-          parameter,
-          encoding: QueryParameterEncoding.spaceDelimited,
-        );
+          final codes = buildToDelimitedQueryParameterCode(
+            'data',
+            parameter,
+            encoding: QueryParameterEncoding.spaceDelimited,
+          );
 
-        final code = emitStatements(codes);
-        expect(
-          collapseWhitespace(code),
-          collapseWhitespace(
-            format(r'''
+          final code = emitStatements(codes);
+          expect(
+            collapseWhitespace(code),
+            collapseWhitespace(
+              format(r'''
               void test() {
                 _$entries.addAll(
                   encodeAnyToSpaceDelimited(
@@ -1592,9 +1595,10 @@ void main() {
                 );
               }
             '''),
-          ),
-        );
-      });
+            ),
+          );
+        },
+      );
 
       test('AnyModel threads allowReserved into encodeAnyToPipeDelimited', () {
         final parameter = createParameter(

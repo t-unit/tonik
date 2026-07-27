@@ -1295,7 +1295,11 @@ void main() {
   group('literal', () {
     test('string is returned byte-for-byte unchanged', () {
       expect(
-        'a b%,/:&=+%2F'.toSimple(explode: false, allowEmpty: true, literal: true),
+        'a b%,/:&=+%2F'.toSimple(
+          explode: false,
+          allowEmpty: true,
+          literal: true,
+        ),
         'a b%,/:&=+%2F',
       );
     });
@@ -1496,11 +1500,13 @@ void main() {
 
     test('binary returns UTF-8 conversion without a URI-encoding pass', () {
       expect(
-        utf8.encode('a b/:').toSimple(
-          explode: false,
-          allowEmpty: true,
-          literal: true,
-        ),
+        utf8
+            .encode('a b/:')
+            .toSimple(
+              explode: false,
+              allowEmpty: true,
+              literal: true,
+            ),
         'a b/:',
       );
     });

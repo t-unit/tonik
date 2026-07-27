@@ -368,17 +368,19 @@ void main() {
         expect((null as String?).decodeSimpleNullableStringList(), isNull);
       });
 
-      test('decodeSimpleStringNullableList keeps members raw and empty to null',
-          () {
-        expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringNullableList(), [
-          'foo',
-          'bar%2Cbaz',
-          null,
-          'qux',
-        ]);
-        expect('foo%2Cbar'.decodeSimpleStringNullableList(), ['foo%2Cbar']);
-        expect(''.decodeSimpleStringNullableList(), isEmpty);
-      });
+      test(
+        'decodeSimpleStringNullableList keeps members raw and empty to null',
+        () {
+          expect('foo,bar%2Cbaz,,qux'.decodeSimpleStringNullableList(), [
+            'foo',
+            'bar%2Cbaz',
+            null,
+            'qux',
+          ]);
+          expect('foo%2Cbar'.decodeSimpleStringNullableList(), ['foo%2Cbar']);
+          expect(''.decodeSimpleStringNullableList(), isEmpty);
+        },
+      );
 
       test('decodeSimpleNullableStringNullableList keeps members raw', () {
         expect(
