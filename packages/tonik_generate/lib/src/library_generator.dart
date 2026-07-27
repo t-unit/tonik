@@ -1,33 +1,30 @@
-import 'dart:io';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
-import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/util/doc_comment_formatter.dart';
 
 void generateLibraryFile({
   required ApiDocument apiDocument,
   required String outputDirectory,
   required String package,
-  required TransportBackendGenerator backendGenerator,
+  required Iterable<String> publicArtifacts,
 }) {
-  final packageDir = path.join(outputDirectory, package);
-  final libDirPath = path.join(packageDir, 'lib');
-  final libDir = Directory(libDirPath);
-  final libraryFile = File(path.join(libDirPath, '$package.dart'));
-  final srcDir = Directory(path.join(libDirPath, 'src'));
-
-  final srcFiles = <String>[];
-  if (srcDir.existsSync()) {
-    srcFiles.addAll(
-      srcDir
-          .listSync(recursive: true)
-          .where((entity) => entity is File && entity.path.endsWith('.dart'))
-          .map((file) {
-            final relativePath = path.relative(file.path, from: srcDir.path);
-            return 'src/$relativePath';
-          }),
-    );
-  }
+  final exports =
+      publicArtifacts
+          .map(normalizeGeneratedArtifactPath)
+          .map((artifact) {
+            if (!artifact.startsWith('lib/')) {
+              throw ArgumentError.value(
+                artifact,
+                'publicArtifacts',
+                'must be inside lib',
+              );
+            }
+            return artifact.substring('lib/'.length);
+          })
+          .toSet()
+          .toList()
+        ..sort();
 
   final docComments = _formatApiDocumentation(apiDocument);
 
@@ -45,15 +42,16 @@ void generateLibraryFile({
     ..writeln('library;')
     ..writeln();
 
-  for (final file in srcFiles) {
-    final normalizedPath = file.replaceAll(r'\', '/');
-    buffer.writeln("export '$normalizedPath';");
+  for (final export in exports) {
+    buffer.writeln("export '$export';");
   }
 
-  if (!libDir.existsSync()) {
-    libDir.createSync(recursive: true);
-  }
-  libraryFile.writeAsStringSync(buffer.toString());
+  writeGeneratedArtifact(
+    outputDirectory: outputDirectory,
+    package: package,
+    relativePath: path.posix.join('lib', '$package.dart'),
+    content: buffer.toString(),
+  );
 }
 
 List<String> _formatApiDocumentation(ApiDocument apiDocument) {

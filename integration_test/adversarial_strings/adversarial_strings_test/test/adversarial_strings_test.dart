@@ -6,6 +6,7 @@ import 'package:adversarial_strings_api/adversarial_strings_api.dart';
 import 'package:big_decimal/big_decimal.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   group('static server URL with single quote', () {
@@ -283,9 +284,8 @@ void main() {
   group('root JSON string request bodies', () {
     test('alias body is sent as a quoted JSON string', () async {
       final adapter = _CapturingAdapter();
-      final dio = _capturingDio(adapter);
 
-      await SendRootAlias(dio).call(body: 'alias-body');
+      await _api(adapter).sendRootAlias(body: 'alias-body');
 
       expect(adapter.capturedBodyAsString, '"alias-body"');
       expect(jsonDecode(adapter.capturedBodyAsString), 'alias-body');
@@ -293,9 +293,8 @@ void main() {
 
     test('oneOf string variant is sent as a quoted JSON string', () async {
       final adapter = _CapturingAdapter();
-      final dio = _capturingDio(adapter);
 
-      await SendRootOneOf(dio).call(
+      await _api(adapter).sendRootOneOf(
         body: const RootStringOneOfString('one-of-body'),
       );
 
@@ -305,9 +304,8 @@ void main() {
 
     test('oneOf integer variant is sent as a JSON number', () async {
       final adapter = _CapturingAdapter();
-      final dio = _capturingDio(adapter);
 
-      await SendRootOneOf(dio).call(
+      await _api(adapter).sendRootOneOf(
         body: const RootStringOneOfInt(7),
       );
 
@@ -317,9 +315,8 @@ void main() {
 
     test('oneOf bool variant is sent as a JSON boolean', () async {
       final adapter = _CapturingAdapter();
-      final dio = _capturingDio(adapter);
 
-      await SendRootOneOf(dio).call(
+      await _api(adapter).sendRootOneOf(
         body: const RootStringOneOfBool(true),
       );
 
@@ -329,9 +326,8 @@ void main() {
 
     test('anyOf string variant is sent as a quoted JSON string', () async {
       final adapter = _CapturingAdapter();
-      final dio = _capturingDio(adapter);
 
-      await SendRootAnyOf(dio).call(
+      await _api(adapter).sendRootAnyOf(
         body: const RootStringAnyOf(string: 'any-of-body'),
       );
 
@@ -341,9 +337,8 @@ void main() {
 
     test('anyOf bool variant is sent as a JSON boolean', () async {
       final adapter = _CapturingAdapter();
-      final dio = _capturingDio(adapter);
 
-      await SendRootAnyOf(dio).call(
+      await _api(adapter).sendRootAnyOf(
         body: const RootStringAnyOf(bool: true),
       );
 
@@ -353,9 +348,8 @@ void main() {
 
     test('oneOf decimal variant is sent as a quoted JSON string', () async {
       final adapter = _CapturingAdapter();
-      final dio = _capturingDio(adapter);
 
-      await SendRootDecimalOneOf(dio).call(
+      await _api(adapter).sendRootDecimalOneOf(
         body: RootDecimalOneOfDecimal(BigDecimal.parse('12.34')),
       );
 
@@ -385,6 +379,13 @@ void main() {
     });
   });
 }
+
+AdversarialApi _api(_CapturingAdapter adapter) => AdversarialApi(
+  CustomServer(
+    baseUrl: 'https://example.com',
+    serverConfig: ServerConfig.client(_capturingDio(adapter)),
+  ),
+);
 
 Dio _capturingDio(_CapturingAdapter adapter) {
   return Dio(BaseOptions(baseUrl: 'https://example.com'))

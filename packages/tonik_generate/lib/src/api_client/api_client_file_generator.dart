@@ -1,8 +1,8 @@
-import 'dart:io';
 import 'package:logging/logging.dart';
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/api_client/api_client_generator.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 
 class ApiClientFileGenerator {
   ApiClientFileGenerator({required this.apiClientGenerator});
@@ -13,23 +13,19 @@ class ApiClientFileGenerator {
   /// Tag used for operations without any tags.
   static final defaultTag = Tag(name: 'default');
 
-  void writeFiles({
+  List<String> writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
   }) {
     log.fine('Writing API client files');
 
-    final clientDirectory = path.joinAll([
-      outputDirectory,
-      package,
-      'lib',
-      'src',
-      'api_client',
-    ]);
-
-    Directory(clientDirectory).createSync(recursive: true);
-
+    final relativeDirectory = createGeneratedArtifactDirectory(
+      outputDirectory: outputDirectory,
+      package: package,
+      relativePath: path.posix.join('lib', 'src', 'api_client'),
+    );
+    final generatedFiles = <String>[];
     final servers = apiDocument.servers.toList();
 
     for (final entry in apiDocument.operationsByTag.entries) {
@@ -40,9 +36,14 @@ class ApiClientFileGenerator {
       );
 
       log.fine('Writing file ${result.filename}');
-      final file = File(path.join(clientDirectory, result.filename));
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        writeGeneratedArtifact(
+          outputDirectory: outputDirectory,
+          package: package,
+          relativePath: path.posix.join(relativeDirectory, result.filename),
+          content: result.code,
+        ),
+      );
     }
 
     final untaggedOperations = getUntaggedOperations(apiDocument);
@@ -54,10 +55,16 @@ class ApiClientFileGenerator {
       );
 
       log.fine('Writing file for untagged operations: ${result.filename}');
-      final file = File(path.join(clientDirectory, result.filename));
-      file.parent.createSync(recursive: true);
-      file.writeAsStringSync(result.code);
+      generatedFiles.add(
+        writeGeneratedArtifact(
+          outputDirectory: outputDirectory,
+          package: package,
+          relativePath: path.posix.join(relativeDirectory, result.filename),
+          content: result.code,
+        ),
+      );
     }
+    return generatedFiles;
   }
 
   /// Collects all operations from the API document that don't have tags.

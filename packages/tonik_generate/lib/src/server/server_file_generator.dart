@@ -1,7 +1,6 @@
-import 'dart:io';
-
 import 'package:path/path.dart' as path;
 import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/generated_artifact_writer.dart';
 import 'package:tonik_generate/src/server/server_generator.dart';
 
 /// Generates server class files.
@@ -11,26 +10,25 @@ class ServerFileGenerator {
   final ServerGenerator serverGenerator;
 
   /// Writes server files to the specified output directory.
-  void writeFiles({
+  String writeFiles({
     required ApiDocument apiDocument,
     required String outputDirectory,
     required String package,
   }) {
     // Always generate the servers file, even if no servers are defined
     // because we need the base and custom classes
-    final serverDirPath = path.join(
-      outputDirectory,
-      package,
-      'lib',
-      'src',
-      'server',
-    );
-
     final result = serverGenerator.generate(apiDocument.servers.toList());
 
-    final filePath = path.join(serverDirPath, result.filename);
-    final file = File(filePath);
-    file.parent.createSync(recursive: true);
-    file.writeAsStringSync(result.code);
+    return writeGeneratedArtifact(
+      outputDirectory: outputDirectory,
+      package: package,
+      relativePath: path.posix.join(
+        'lib',
+        'src',
+        'server',
+        result.filename,
+      ),
+      content: result.code,
+    );
   }
 }

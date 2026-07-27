@@ -1,4 +1,7 @@
 import 'package:defaulted_api/defaulted_api.dart';
+import 'package:defaulted_api/src/operation/get_thing.dart';
+import 'package:defaulted_api/src/operation/list_subscriptions.dart';
+import 'package:defaulted_api/src/operation/list_things.dart';
 import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -20,6 +23,13 @@ Dio _newDio({required void Function(RequestOptions) onRequest}) {
   );
   return dio;
 }
+
+DefaultApi _api(Dio dio) => DefaultApi(
+  CustomServer(
+    baseUrl: 'http://localhost',
+    serverConfig: ServerConfig.client(dio),
+  ),
+);
 
 void main() {
   group('DefaultedPrimitives — primitive const defaults', () {
@@ -362,7 +372,7 @@ void main() {
   });
 
   group(
-    'operation parameter primitive defaults — public static const accessors',
+    'operation parameter primitive defaults — internal static const accessors',
     () {
       test('query string default is reachable', () {
         expect(ListThings.regionDefault, 'us');
@@ -387,8 +397,7 @@ void main() {
   );
 
   group(
-    'operation parameter runtime-fallback defaults — DateTime via static '
-    'getter',
+    'operation parameter runtime-fallback defaults — internal DateTime getter',
     () {
       test('query date-time default is reachable via the runtime getter', () {
         expect(ListThings.sinceDefault, DateTime.utc(2024));
@@ -396,14 +405,14 @@ void main() {
     },
   );
 
-  group('operation call() with no arguments uses defaults', () {
+  group('API client methods with no arguments use defaults', () {
     test(
       'omitted query/header/cookie parameters serialise the default values',
       () async {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await ListThings(dio).call();
+        await _api(dio).listThings();
 
         final options = captured!;
         final uri = options.uri;
@@ -425,19 +434,19 @@ void main() {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await GetThing(dio).call();
+        await _api(dio).getThing();
 
         expect(captured!.uri.path, endsWith('/things/x'));
       },
     );
   });
 
-  group('operation call() with explicit args overrides defaults', () {
+  group('API client methods with explicit args override defaults', () {
     test('explicit query/header/cookie values replace the defaults', () async {
       RequestOptions? captured;
       final dio = _newDio(onRequest: (o) => captured = o);
 
-      await ListThings(dio).call(
+      await _api(dio).listThings(
         region: 'eu',
         page: 7,
         retries: 9,
@@ -457,14 +466,14 @@ void main() {
       RequestOptions? captured;
       final dio = _newDio(onRequest: (o) => captured = o);
 
-      await GetThing(dio).call(id: 'custom');
+      await _api(dio).getThing(id: 'custom');
 
       expect(captured!.uri.path, endsWith('/things/custom'));
     });
   });
 
   group(
-    'operation parameter enum defaults — public static const accessors',
+    'operation parameter enum defaults — internal static const accessors',
     () {
       test('query enum default is reachable on the operation class', () {
         expect(ListSubscriptions.statusDefault, Status.active);
@@ -516,14 +525,14 @@ void main() {
     });
   });
 
-  group('operation call() — enum query parameter wire encoding', () {
+  group('API client method — enum query parameter wire encoding', () {
     test(
       'omitted enum query parameter serialises the default variant on the wire',
       () async {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await ListSubscriptions(dio).call();
+        await _api(dio).listSubscriptions();
 
         expect(captured!.uri.queryParameters['status'], 'active');
       },
@@ -533,13 +542,13 @@ void main() {
       RequestOptions? captured;
       final dio = _newDio(onRequest: (o) => captured = o);
 
-      await ListSubscriptions(dio).call(status: Status.archived);
+      await _api(dio).listSubscriptions(status: Status.archived);
 
       expect(captured!.uri.queryParameters['status'], 'archived');
     });
   });
 
-  group('operation call() — enum header parameter wire encoding', () {
+  group('API client method — enum header parameter wire encoding', () {
     test(
       'omitted enum header parameter serialises the default variant on the '
       'wire',
@@ -547,7 +556,7 @@ void main() {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await ListSubscriptions(dio).call();
+        await _api(dio).listSubscriptions();
 
         expect(captured!.headers['X-Mode'], 'auto');
       },
@@ -559,9 +568,9 @@ void main() {
         RequestOptions? captured;
         final dio = _newDio(onRequest: (o) => captured = o);
 
-        await ListSubscriptions(
+        await _api(
           dio,
-        ).call(mode: SubscriptionsParametersModel2.manual);
+        ).listSubscriptions(mode: SubscriptionsParametersModel2.manual);
 
         expect(captured!.headers['X-Mode'], 'manual');
       },
@@ -629,18 +638,20 @@ void main() {
       },
     );
 
-    test('toJson omits readOnly field even when set to a non-default value',
-        () {
-      const value = RwoDefaults(
-        readOnlyTag: 'custom-ro',
-        writeOnlyToken: 'custom-wo',
-        plain: 'p',
-      );
-      final encoded = value.toJson()! as Map<String, Object?>;
-      expect(encoded.containsKey('readOnlyTag'), isFalse);
-      expect(encoded['writeOnlyToken'], 'custom-wo');
-      expect(encoded['plain'], 'p');
-    });
+    test(
+      'toJson omits readOnly field even when set to a non-default value',
+      () {
+        const value = RwoDefaults(
+          readOnlyTag: 'custom-ro',
+          writeOnlyToken: 'custom-wo',
+          plain: 'p',
+        );
+        final encoded = value.toJson()! as Map<String, Object?>;
+        expect(encoded.containsKey('readOnlyTag'), isFalse);
+        expect(encoded['writeOnlyToken'], 'custom-wo');
+        expect(encoded['plain'], 'p');
+      },
+    );
 
     test('public static const exposes defaults for all three fields', () {
       expect(RwoDefaults.readOnlyTagDefault, 'ro-tag');
@@ -723,63 +734,67 @@ void main() {
     });
   });
 
-  group('ApDefaults — composite defaults against additionalProperties shapes',
-      () {
-    test(
-      'additionalProperties: true — extras in the spec default populate the '
-      'untyped AP map at runtime',
-      () {
-        final value = ApDefaults.fromJson(const <String, Object?>{});
-        final anyExtras = value.anyExtras!;
-        expect(anyExtras.name, 'n');
-        expect(anyExtras.additionalProperties, <String, Object?>{
-          'extraA': 'value',
-          'extraB': 42,
-        });
-      },
-    );
+  group(
+    'ApDefaults — composite defaults against additionalProperties shapes',
+    () {
+      test(
+        'additionalProperties: true — extras in the spec default populate the '
+        'untyped AP map at runtime',
+        () {
+          final value = ApDefaults.fromJson(const <String, Object?>{});
+          final anyExtras = value.anyExtras!;
+          expect(anyExtras.name, 'n');
+          expect(anyExtras.additionalProperties, <String, Object?>{
+            'extraA': 'value',
+            'extraB': 42,
+          });
+        },
+      );
 
-    test(
-      'additionalProperties typed int — extras in the default decode into the '
-      'typed AP map at runtime',
-      () {
-        final value = ApDefaults.fromJson(const <String, Object?>{});
-        final typedExtras = value.typedExtras!;
-        expect(typedExtras.name, 'n');
-        expect(typedExtras.additionalProperties, <String, int>{'count': 7});
-      },
-    );
+      test(
+        'additionalProperties typed int — extras in the default decode '
+        'into the typed AP map at runtime',
+        () {
+          final value = ApDefaults.fromJson(const <String, Object?>{});
+          final typedExtras = value.typedExtras!;
+          expect(typedExtras.name, 'n');
+          expect(typedExtras.additionalProperties, <String, int>{'count': 7});
+        },
+      );
 
-    test(
-      'additionalProperties: false — extras absent from the class because no '
-      'AP field is generated; round-trip drops them structurally',
-      () {
-        final strict = ApDefaults.strictExtrasDefault;
-        expect(strict.name, 'n');
-        final roundTrip = strict.toJson()! as Map<String, Object?>;
-        expect(roundTrip.containsKey('ignored'), isFalse);
-        expect(roundTrip['name'], 'n');
-      },
-    );
+      test(
+        'additionalProperties: false — extras absent from the class because no '
+        'AP field is generated; round-trip drops them structurally',
+        () {
+          final strict = ApDefaults.strictExtrasDefault;
+          expect(strict.name, 'n');
+          final roundTrip = strict.toJson()! as Map<String, Object?>;
+          expect(roundTrip.containsKey('ignored'), isFalse);
+          expect(roundTrip['name'], 'n');
+        },
+      );
 
-    test(
-      'public static getters expose composite defaults; getter is not cached',
-      () {
-        final a = ApDefaults.anyExtrasDefault;
-        final b = ApDefaults.anyExtrasDefault;
-        expect(identical(a, b), isFalse);
-        expect(a.additionalProperties['extraB'], 42);
-      },
-    );
-  });
+      test(
+        'public static getters expose composite defaults; getter is not cached',
+        () {
+          final a = ApDefaults.anyExtrasDefault;
+          final b = ApDefaults.anyExtrasDefault;
+          expect(identical(a, b), isFalse);
+          expect(a.additionalProperties['extraB'], 42);
+        },
+      );
+    },
+  );
 
   group('AllOfDefaultHolder — allOf default merges across members', () {
-    test('static getter decodes the merged default through the allOf wrapper',
-        () {
-      final merged = AllOfDefaultHolder.mergedDefault;
-      expect(merged.allOfBaseA.a, 'a-val');
-      expect(merged.allOfBaseB.b, 9);
-    });
+    test(
+      'static getter decodes the merged default through the allOf wrapper',
+      () {
+        final merged = AllOfDefaultHolder.mergedDefault;
+        expect(merged.allOfBaseA.a, 'a-val');
+        expect(merged.allOfBaseB.b, 9);
+      },
+    );
 
     test('fromJson with missing key falls through to the merged default', () {
       final value = AllOfDefaultHolder.fromJson(const <String, Object?>{});
@@ -923,8 +938,9 @@ void main() {
       );
 
       test('fromJson with missing key falls through to the default', () {
-        final value =
-            RequiredRuntimeDefault.fromJson(const <String, Object?>{});
+        final value = RequiredRuntimeDefault.fromJson(
+          const <String, Object?>{},
+        );
         expect(value.startsAt, DateTime.utc(2024));
       });
     },
