@@ -9,13 +9,10 @@ const _defaultParameterPrefix = 'parameter';
 
 /// `cancellation` is reserved because the generated `call(...)` method
 /// declares a built-in `TonikCancellation? cancellation` parameter.
-/// The legacy `cancelToken` name remains reserved so regenerating an existing
-/// API does not unexpectedly rename an OpenAPI parameter at the same time.
 /// `body` is reserved only when a request body exists, since `call(...)`
 /// then also declares a `body` parameter.
 Set<String> operationReservedParameterNames({required bool hasRequestBody}) => {
   if (hasRequestBody) 'body',
-  'cancelToken',
   'cancellation',
 };
 

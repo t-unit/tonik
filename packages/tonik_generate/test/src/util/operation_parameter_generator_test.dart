@@ -1711,8 +1711,8 @@ void main() {
     );
   });
 
-  group('cancelToken parameter name collision', () {
-    test('adds Query suffix to query parameter named cancelToken', () {
+  group('OpenAPI cancelToken parameters', () {
+    test('preserves a query parameter named cancelToken', () {
       final queryParam = QueryParameterObject(
         name: null,
         rawName: 'cancelToken',
@@ -1751,8 +1751,7 @@ void main() {
       );
 
       final paramNames = parameters.map((p) => p.name).toList();
-      expect(paramNames, contains('cancelTokenQuery'));
-      expect(paramNames, isNot(contains('cancelToken')));
+      expect(paramNames, contains('cancelToken'));
       expect(
         paramNames.toSet().length,
         paramNames.length,
@@ -1760,7 +1759,7 @@ void main() {
       );
     });
 
-    test('adds Path suffix to path parameter named cancelToken', () {
+    test('preserves a path parameter named cancelToken', () {
       final pathParam = PathParameterObject(
         name: null,
         rawName: 'cancelToken',
@@ -1798,8 +1797,7 @@ void main() {
       );
 
       final paramNames = parameters.map((p) => p.name).toList();
-      expect(paramNames, contains('cancelTokenPath'));
-      expect(paramNames, isNot(contains('cancelToken')));
+      expect(paramNames, contains('cancelToken'));
       expect(
         paramNames.toSet().length,
         paramNames.length,
@@ -1807,7 +1805,7 @@ void main() {
       );
     });
 
-    test('adds Header suffix to header parameter named cancelToken', () {
+    test('preserves a header parameter named cancelToken', () {
       final headerParam = RequestHeaderObject(
         name: null,
         rawName: 'cancelToken',
@@ -1845,8 +1843,7 @@ void main() {
       );
 
       final paramNames = parameters.map((p) => p.name).toList();
-      expect(paramNames, contains('cancelTokenHeader'));
-      expect(paramNames, isNot(contains('cancelToken')));
+      expect(paramNames, contains('cancelToken'));
       expect(
         paramNames.toSet().length,
         paramNames.length,
@@ -1854,7 +1851,7 @@ void main() {
       );
     });
 
-    test('adds Cookie suffix to cookie parameter named cancelToken', () {
+    test('preserves a cookie parameter named cancelToken', () {
       final cookieParam = CookieParameterObject(
         name: null,
         rawName: 'cancelToken',
@@ -1891,8 +1888,7 @@ void main() {
       );
 
       final paramNames = parameters.map((p) => p.name).toList();
-      expect(paramNames, contains('cancelTokenCookie'));
-      expect(paramNames, isNot(contains('cancelToken')));
+      expect(paramNames, contains('cancelToken'));
       expect(
         paramNames.toSet().length,
         paramNames.length,
@@ -1901,7 +1897,7 @@ void main() {
     });
 
     test(
-      'renames query parameter named cancelToken even when '
+      'preserves a query parameter named cancelToken when '
       'request body is present',
       () {
         final queryParam = QueryParameterObject(
@@ -1965,8 +1961,7 @@ void main() {
 
         final paramNames = parameters.map((p) => p.name).toList();
         expect(paramNames, contains('body'));
-        expect(paramNames, contains('cancelTokenQuery'));
-        expect(paramNames, isNot(contains('cancelToken')));
+        expect(paramNames, contains('cancelToken'));
         expect(
           paramNames.toSet().length,
           paramNames.length,
@@ -1976,8 +1971,7 @@ void main() {
     );
 
     test(
-      'does not rename query parameter named token (no collision with '
-      'cancelToken)',
+      'preserves an unrelated query parameter named token',
       () {
         final queryParam = QueryParameterObject(
           name: null,

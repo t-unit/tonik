@@ -1100,8 +1100,7 @@ void main() {
       });
 
       test(
-        'parameter doc reference uses renamed identifier on cancelToken '
-        'collision',
+        'parameter doc reference preserves an OpenAPI cancelToken identifier',
         () {
           final operation = Operation(
             operationId: 'getA',
@@ -1145,11 +1144,7 @@ void main() {
 
           expect(
             method.docs,
-            contains('/// [cancelTokenQuery] Caller-supplied cancel token id'),
-          );
-          expect(
-            method.docs.any((d) => d.startsWith('/// [cancelToken] ')),
-            isFalse,
+            contains('/// [cancelToken] Caller-supplied cancel token id'),
           );
         },
       );

@@ -2430,7 +2430,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
       );
 
       test(
-        'renames query parameter colliding with built-in cancelToken',
+        'preserves an OpenAPI query parameter named cancelToken',
         () {
           final queryParam = QueryParameterObject(
             name: 'cancelToken',
@@ -2465,7 +2465,7 @@ Future<TonikResult<void, Response<Object?>>> call({TonikCancellation? cancellati
 
           const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
-  required String cancelTokenQuery,
+  required String cancelToken,
   TonikCancellation? cancellation,
 }) async {
   late final Uri _$uri;
@@ -2478,7 +2478,7 @@ Future<TonikResult<void, Response<Object?>>> call({
     final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
     _$uri = _$baseUri.replace(
       path: _$newPath,
-      query: _queryParameters(cancelTokenQuery: cancelTokenQuery),
+      query: _queryParameters(cancelToken: cancelToken),
     );
     _$data = _data();
     _$options = _options();
@@ -2564,7 +2564,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           final paramNames = method.optionalParameters
               .map((p) => p.name)
               .toList();
-          expect(paramNames, ['cancelTokenQuery', 'cancellation']);
+          expect(paramNames, ['cancelToken', 'cancellation']);
 
           final methodString = format(method.accept(emitter).toString());
           expect(
@@ -2575,7 +2575,7 @@ Future<TonikResult<void, Response<Object?>>> call({
       );
 
       test(
-        'renames query parameter colliding with built-in cancelToken when '
+        'preserves an OpenAPI query parameter named cancelToken when '
         'request body is also present',
         () {
           final requestBody = RequestBodyObject(
@@ -2628,7 +2628,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
   required String body,
-  required String cancelTokenQuery,
+  required String cancelToken,
   TonikCancellation? cancellation,
 }) async {
   late final Uri _$uri;
@@ -2641,7 +2641,7 @@ Future<TonikResult<void, Response<Object?>>> call({
     final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
     _$uri = _$baseUri.replace(
       path: _$newPath,
-      query: _queryParameters(cancelTokenQuery: cancelTokenQuery),
+      query: _queryParameters(cancelToken: cancelToken),
     );
     _$data = _data(body: body);
     _$options = _options();
@@ -2727,7 +2727,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           final paramNames = method.optionalParameters
               .map((p) => p.name)
               .toList();
-          expect(paramNames, ['body', 'cancelTokenQuery', 'cancellation']);
+          expect(paramNames, ['body', 'cancelToken', 'cancellation']);
 
           final methodString = format(method.accept(emitter).toString());
           expect(
@@ -2738,7 +2738,7 @@ Future<TonikResult<void, Response<Object?>>> call({
       );
 
       test(
-        'renames path parameter colliding with built-in cancelToken',
+        'preserves an OpenAPI path parameter named cancelToken',
         () {
           final pathParam = PathParameterObject(
             name: 'cancelToken',
@@ -2772,7 +2772,7 @@ Future<TonikResult<void, Response<Object?>>> call({
 
           const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
-  required String cancelTokenPath,
+  required String cancelToken,
   TonikCancellation? cancellation,
 }) async {
   late final Uri _$uri;
@@ -2781,7 +2781,7 @@ Future<TonikResult<void, Response<Object?>>> call({
 
   try {
     final _$baseUri = Uri.parse(_baseUrl);
-    final _$pathResult = _path(cancelTokenPath: cancelTokenPath);
+    final _$pathResult = _path(cancelToken: cancelToken);
     final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
     _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
@@ -2868,7 +2868,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           final paramNames = method.optionalParameters
               .map((p) => p.name)
               .toList();
-          expect(paramNames, ['cancelTokenPath', 'cancellation']);
+          expect(paramNames, ['cancelToken', 'cancellation']);
 
           final methodString = format(method.accept(emitter).toString());
           expect(
@@ -2879,7 +2879,7 @@ Future<TonikResult<void, Response<Object?>>> call({
       );
 
       test(
-        'renames header parameter colliding with built-in cancelToken',
+        'preserves an OpenAPI header parameter named cancelToken',
         () {
           final header = RequestHeaderObject(
             name: 'cancelToken',
@@ -2913,7 +2913,7 @@ Future<TonikResult<void, Response<Object?>>> call({
 
           const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
-  required String cancelTokenHeader,
+  required String cancelToken,
   TonikCancellation? cancellation,
 }) async {
   late final Uri _$uri;
@@ -2926,7 +2926,7 @@ Future<TonikResult<void, Response<Object?>>> call({
     final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
     _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
-    _$options = _options(cancelTokenHeader: cancelTokenHeader);
+    _$options = _options(cancelToken: cancelToken);
   } on Object catch (exception, stackTrace) {
     return TonikError<void, Response<Object?>>(
       exception,
@@ -3009,7 +3009,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           final paramNames = method.optionalParameters
               .map((p) => p.name)
               .toList();
-          expect(paramNames, ['cancelTokenHeader', 'cancellation']);
+          expect(paramNames, ['cancelToken', 'cancellation']);
 
           final methodString = format(method.accept(emitter).toString());
           expect(
@@ -3020,7 +3020,7 @@ Future<TonikResult<void, Response<Object?>>> call({
       );
 
       test(
-        'renames cookie parameter colliding with built-in cancelToken',
+        'preserves an OpenAPI cookie parameter named cancelToken',
         () {
           final cookie = CookieParameterObject(
             name: 'cancelToken',
@@ -3053,7 +3053,7 @@ Future<TonikResult<void, Response<Object?>>> call({
 
           const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
-  required String cancelTokenCookie,
+  required String cancelToken,
   TonikCancellation? cancellation,
 }) async {
   late final Uri _$uri;
@@ -3066,7 +3066,7 @@ Future<TonikResult<void, Response<Object?>>> call({
     final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
     _$uri = _$baseUri.replace(path: _$newPath);
     _$data = _data();
-    _$options = _options(cancelTokenCookie: cancelTokenCookie);
+    _$options = _options(cancelToken: cancelToken);
   } on Object catch (exception, stackTrace) {
     return TonikError<void, Response<Object?>>(
       exception,
@@ -3149,7 +3149,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           final paramNames = method.optionalParameters
               .map((p) => p.name)
               .toList();
-          expect(paramNames, ['cancelTokenCookie', 'cancellation']);
+          expect(paramNames, ['cancelToken', 'cancellation']);
 
           final methodString = format(method.accept(emitter).toString());
           expect(
@@ -3160,7 +3160,7 @@ Future<TonikResult<void, Response<Object?>>> call({
       );
 
       test(
-        'renames query parameter that sanitizes to cancelToken',
+        'preserves a query parameter that sanitizes to cancelToken',
         () {
           final queryParam = QueryParameterObject(
             name: 'Cancel-Token',
@@ -3195,7 +3195,7 @@ Future<TonikResult<void, Response<Object?>>> call({
 
           const expectedMethod = r'''
 Future<TonikResult<void, Response<Object?>>> call({
-  required String cancelTokenQuery,
+  required String cancelToken,
   TonikCancellation? cancellation,
 }) async {
   late final Uri _$uri;
@@ -3208,7 +3208,7 @@ Future<TonikResult<void, Response<Object?>>> call({
     final _$newPath = _$baseUri.path.endsWith('/') ? '${_$baseUri.path.substring(0, _$baseUri.path.length - 1)}/${_$pathResult.join('/')}' : '${_$baseUri.path}/${_$pathResult.join('/')}';
     _$uri = _$baseUri.replace(
       path: _$newPath,
-      query: _queryParameters(cancelTokenQuery: cancelTokenQuery),
+      query: _queryParameters(cancelToken: cancelToken),
     );
     _$data = _data();
     _$options = _options();
@@ -3294,7 +3294,7 @@ Future<TonikResult<void, Response<Object?>>> call({
           final paramNames = method.optionalParameters
               .map((p) => p.name)
               .toList();
-          expect(paramNames, ['cancelTokenQuery', 'cancellation']);
+          expect(paramNames, ['cancelToken', 'cancellation']);
 
           final methodString = format(method.accept(emitter).toString());
           expect(
