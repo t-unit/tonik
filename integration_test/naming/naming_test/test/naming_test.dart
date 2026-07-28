@@ -133,14 +133,14 @@ void main() {
     });
   });
 
-  group('cancelToken parameter collision', () {
+  group('OpenAPI cancelToken parameters', () {
     test(
-      'API method accepts cancelTokenQuery and portable cancellation',
+      'API method accepts cancelToken and portable cancellation',
       () async {
         final dio = _successfulDio();
         final api = _apiForDio(dio, 'http://localhost');
         final response = await api.getWithCancelTokenQuery(
-          cancelTokenQuery: 'myToken',
+          cancelToken: 'myToken',
           cancellation: TonikCancellation(),
         );
 
@@ -155,12 +155,12 @@ void main() {
     );
 
     test(
-      'API method sends cancelTokenPath and threads portable cancellation',
+      'API method sends cancelToken path and threads portable cancellation',
       () async {
         final dio = _successfulDio();
         final api = _apiForDio(dio, 'http://localhost');
         final response = await api.getWithCancelTokenPath(
-          cancelTokenPath: 'myToken',
+          cancelToken: 'myToken',
           cancellation: TonikCancellation(),
         );
 
@@ -175,12 +175,12 @@ void main() {
     );
 
     test(
-      'API method sends cancelTokenHeader and threads portable cancellation',
+      'API method sends cancelToken header and threads portable cancellation',
       () async {
         final dio = _successfulDio();
         final api = _apiForDio(dio, 'http://localhost');
         final response = await api.getWithCancelTokenHeader(
-          cancelTokenHeader: 'myToken',
+          cancelToken: 'myToken',
           cancellation: TonikCancellation(),
         );
 
@@ -195,12 +195,12 @@ void main() {
     );
 
     test(
-      'API method sends cancelTokenCookie and threads portable cancellation',
+      'API method sends cancelToken cookie and threads portable cancellation',
       () async {
         final dio = _successfulDio();
         final api = _apiForDio(dio, 'http://localhost');
         final response = await api.getWithCancelTokenCookie(
-          cancelTokenCookie: 'myToken',
+          cancelToken: 'myToken',
           cancellation: TonikCancellation(),
         );
 
@@ -220,7 +220,7 @@ void main() {
         final dio = _successfulDio();
         final api = _apiForDio(dio, 'http://localhost');
         final response = await api.getWithCancelTokenSanitized(
-          cancelTokenQuery: 'myToken',
+          cancelToken: 'myToken',
           cancellation: TonikCancellation(),
         );
 
@@ -241,7 +241,7 @@ void main() {
         final api = _apiForDio(dio, 'http://localhost');
         final response = await api.postWithCancelTokenAndBody(
           body: const SimpleResult(id: 'test'),
-          cancelTokenQuery: 'myToken',
+          cancelToken: 'myToken',
           cancellation: TonikCancellation(),
         );
 
