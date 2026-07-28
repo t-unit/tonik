@@ -1186,6 +1186,7 @@ void main() {
           'call',
           'body',
           'cancelToken',
+          'cancellation',
           'region',
         ]),
       );
@@ -1205,7 +1206,10 @@ void main() {
       );
 
       expect(names.contains('body'), isFalse);
-      expect(names, containsAll(<String>['cancelToken', 'call']));
+      expect(
+        names,
+        containsAll(<String>['cancelToken', 'cancellation', 'call']),
+      );
     });
   });
 
