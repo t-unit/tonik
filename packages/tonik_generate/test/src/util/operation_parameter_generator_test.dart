@@ -996,6 +996,88 @@ void main() {
       );
     });
 
+    test('multipart header parameter does not collide with cancellation', () {
+      final model = ClassModel(
+        name: 'UploadForm',
+        properties: [
+          Property(
+            name: 'c',
+            model: BinaryModel(context: context),
+            isRequired: true,
+            isNullable: false,
+            isDeprecated: false,
+            examples: const [],
+            defaultValue: null,
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final requestBody = RequestBodyObject(
+        name: 'uploadBody',
+        context: context,
+        description: null,
+        isRequired: true,
+        content: {
+          RequestContent(
+            model: model,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            multipartEncoding: _multipartEncoding(model, {
+              'c': PartEncoding(
+                contentType: ContentType.bytes,
+                rawContentType: 'application/octet-stream',
+                headers: {
+                  'ancellation': ResponseHeaderObject(
+                    name: 'ancellation',
+                    context: context,
+                    description: null,
+                    explode: false,
+                    model: StringModel(context: context),
+                    isRequired: true,
+                    isDeprecated: false,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            }),
+            examples: const [],
+          ),
+        },
+      );
+      final operation = Operation(
+        operationId: 'upload',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/upload',
+        method: HttpMethod.post,
+        headers: const {},
+        queryParameters: const {},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        requestBody: requestBody,
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
+
+      expect(parameters.map((parameter) => parameter.name).toList(), [
+        'body',
+        'cAncellationPartHeader',
+      ]);
+    });
+
     test('multipart headers remain unique after repeated normalization '
         'collisions', () {
       final model = ClassModel(
@@ -1938,6 +2020,51 @@ void main() {
         expect(parameters.first.name, 'token');
       },
     );
+  });
+
+  group('cancellation parameter name collision', () {
+    test('adds Query suffix to a query parameter named cancellation', () {
+      final queryParam = QueryParameterObject(
+        name: null,
+        rawName: 'cancellation',
+        description: null,
+        isRequired: false,
+        isDeprecated: false,
+        allowEmptyValue: false,
+        allowReserved: false,
+        explode: false,
+        model: StringModel(context: context),
+        encoding: QueryParameterEncoding.form,
+        context: context,
+        examples: const [],
+        defaultValue: null,
+      );
+
+      final operation = Operation(
+        operationId: 'getWithCancellationQuery',
+        context: context,
+        tags: const {},
+        isDeprecated: false,
+        path: '/test',
+        method: HttpMethod.get,
+        headers: const {},
+        queryParameters: {queryParam},
+        pathParameters: const {},
+        cookieParameters: const {},
+        responses: const {},
+        securitySchemes: const {},
+      );
+
+      final parameters = generateParameters(
+        operation: operation,
+        nameManager: nameManager,
+        package: 'api',
+      );
+
+      expect(parameters.map((parameter) => parameter.name).toList(), [
+        'cancellationQuery',
+      ]);
+    });
   });
 
   group('generateParameters — defaultsByName', () {
