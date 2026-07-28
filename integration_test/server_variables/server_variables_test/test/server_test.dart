@@ -257,10 +257,9 @@ void main() {
       final server = CustomServer(
         baseUrl: serverBaseUrl,
         serverConfig: ServerConfig<Dio>.clientFactory(() {
-          created = Dio(options)
+          return created = (Dio(options)
             ..interceptors.add(interceptor)
-            ..httpClientAdapter = adapter;
-          return created;
+            ..httpClientAdapter = adapter);
         }),
       );
 
@@ -289,15 +288,13 @@ void main() {
   group('Dio client lifecycle', () {
     test('close before use does not resolve a factory', () {
       var factoryCalls = 0;
-      final server = CustomServer(
-        baseUrl: 'https://server.example.com',
-        serverConfig: ServerConfig<Dio>.clientFactory(() {
-          factoryCalls++;
-          return Dio();
-        }),
-      );
-
-      server
+      CustomServer(
+          baseUrl: 'https://server.example.com',
+          serverConfig: ServerConfig<Dio>.clientFactory(() {
+            factoryCalls++;
+            return Dio();
+          }),
+        )
         ..close()
         ..close();
 
