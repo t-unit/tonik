@@ -200,7 +200,7 @@ class ServerGenerator {
               ),
           ),
         )
-        ..methods.add(
+        ..methods.addAll([
           Method(
             (m) => m
               ..name = backendGenerator.clientGetterName
@@ -211,7 +211,16 @@ class ServerGenerator {
                 backendGenerator.clientAdapterFieldName,
               ).property(backendGenerator.clientGetterName).code,
           ),
-        ),
+          Method(
+            (m) => m
+              ..name = 'close'
+              ..returns = refer('void')
+              ..lambda = true
+              ..body = refer(
+                backendGenerator.clientAdapterFieldName,
+              ).property('close').call([]).code,
+          ),
+        ]),
     );
   }
 
@@ -298,6 +307,7 @@ class ServerGenerator {
                   'baseUrl',
                   'serverConfig',
                   backendGenerator.clientGetterName,
+                  'close',
                 }.contains(normalized)
                 ? '\$$normalized'
                 : normalized,

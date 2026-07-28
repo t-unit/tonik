@@ -76,6 +76,10 @@ void main() {
       final dioGetter = dioAdapter.methods.firstWhere((m) => m.name == 'dio');
 
       const expectedBody = r'''
+        if (_$isClosed) {
+          throw _$closedError;
+        }
+
         final cachedDio = _$dio;
         if (cachedDio != null) {
           return cachedDio;
@@ -85,6 +89,7 @@ void main() {
         final clientFactory = serverConfig.clientFactory;
 
         final resolvedDio = client ?? clientFactory?.call() ?? Dio() ;
+        _$ownsDio = client == null;
         resolvedDio.options.baseUrl = baseUrl;
         return _$dio = resolvedDio;
       ''';
@@ -157,6 +162,17 @@ void main() {
       expect(
         collapseWhitespace(bodyCode),
         collapseWhitespace(r'_$dioAdapter.dio'),
+      );
+    });
+
+    test('generates idempotent adapter-backed close', () {
+      final close = baseClass.methods.firstWhere((m) => m.name == 'close');
+
+      expect(close.returns?.accept(emitter).toString(), 'void');
+      expect(close.lambda, isTrue);
+      expect(
+        collapseWhitespace(close.body!.accept(emitter).toString()),
+        collapseWhitespace(r'_$dioAdapter.close()'),
       );
     });
   });
@@ -380,7 +396,19 @@ void main() {
 
           _i3.Dio? _$dio;
 
+          _i1.bool _$ownsDio = false;
+
+          _i1.bool _$isClosed = false;
+
+          final _i1.StateError _$closedError = _i1.StateError(
+            'Cannot access Dio after the server has been closed.',
+          );
+
           _i3.Dio get dio {
+            if (_$isClosed) {
+              throw _$closedError;
+            }
+
             final cachedDio = _$dio;
             if (cachedDio != null) {
               return cachedDio;
@@ -390,8 +418,20 @@ void main() {
             final clientFactory = serverConfig.clientFactory;
             final resolvedDio =
                 client ?? clientFactory?.call() ?? _i3.Dio();
+            _$ownsDio = client == null;
             resolvedDio.options.baseUrl = baseUrl;
             return _$dio = resolvedDio;
+          }
+
+          void close() {
+            if (_$isClosed) {
+              return;
+            }
+
+            _$isClosed = true;
+            if (_$ownsDio) {
+              _$dio?.close();
+            }
           }
         }
 
@@ -406,6 +446,8 @@ void main() {
           final _DioClientAdapter _$dioAdapter;
 
           _i3.Dio get dio => _$dioAdapter.dio;
+
+          void close() => _$dioAdapter.close();
         }
 
         /// Production server - https://production.example.com
