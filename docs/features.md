@@ -146,16 +146,18 @@ Error types on `TonikError`: `encoding`, `decoding`, `network`, `cancelled`, `ot
 
 ### Request Cancellation
 
-Every generated operation accepts an optional `CancelToken` parameter, letting you cancel in-flight requests:
+Every generated API method accepts an optional backend-neutral
+`TonikCancellation`, letting you cancel in-flight requests without exposing
+the selected HTTP client:
 
 ```dart
-final cancelToken = CancelToken();
+final cancellation = TonikCancellation();
 
 // Start the request
-final future = api.getUsers(cancelToken: cancelToken);
+final future = api.getUsers(cancellation: cancellation);
 
 // Cancel it (e.g. when the user navigates away)
-cancelToken.cancel();
+cancellation.cancel();
 
 final result = await future;
 switch (result) {
@@ -168,7 +170,14 @@ switch (result) {
 }
 ```
 
-Cancelled requests return `TonikError` with `type: TonikErrorType.cancelled`, distinct from network errors.
+Cancelled requests return `TonikError` with
+`type: TonikErrorType.cancelled`, distinct from network errors.
+
+Generated servers own clients that they create themselves, either by default or
+through a configured factory. Call `server.close()` when the server is no
+longer needed; closing is safe to repeat and does not create a client that was
+never used. Explicitly injected clients remain caller-owned and are not closed
+by the generated server.
 
 ---
 

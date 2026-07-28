@@ -40,8 +40,6 @@ abstract interface class TransportBackendGenerator {
 
   Reference get requestOptionsType;
 
-  Expression get baseUrlExpression;
-
   Parameter get cancellationParameter;
 
   Expression responseStatusCode(Expression response);
@@ -61,7 +59,9 @@ abstract interface class TransportBackendGenerator {
 
   String get clientGetterName;
 
-  String get clientFieldName;
+  String get clientAccessorFieldName;
+
+  Reference get nativeClientAccessorType;
 
   String get clientAdapterName;
 
