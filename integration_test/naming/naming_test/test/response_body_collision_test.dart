@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
-import 'package:naming_api/src/operation/get_response_with_normalized_body_header.dart';
+import 'package:naming_api/src/api_client/default_api2.dart';
 import 'package:naming_api/src/response/response_body_collision_header_normalized_get200_response.dart';
+import 'package:naming_api/src/server/server.dart';
 import 'package:test/test.dart';
 import 'package:tonik_util/tonik_util.dart';
 
@@ -26,9 +27,14 @@ void main() {
         },
       ),
     );
-    final operation = GetResponseWithNormalizedBodyHeader(dio);
+    final api = DefaultApi2(
+      CustomServer(
+        baseUrl: 'http://localhost',
+        serverConfig: ServerConfig<Dio>.client(dio),
+      ),
+    );
 
-    final result = await operation.call();
+    final result = await api.getResponseWithNormalizedBodyHeader();
 
     expect(
       result,

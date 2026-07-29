@@ -19,31 +19,11 @@ import 'package:naming_api/src/model/simple_result.dart';
 import 'package:naming_api/src/model/user.dart';
 import 'package:naming_api/src/model/user_model.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
-import 'package:naming_api/src/operation/get_hostile_query_names.dart';
-import 'package:naming_api/src/operation/get_param_counter_collision.dart';
-import 'package:naming_api/src/operation/get_param_suffix_collision.dart';
-import 'package:naming_api/src/operation/get_with_call_query.dart';
-import 'package:naming_api/src/operation/get_with_cancel_token_cookie.dart';
-import 'package:naming_api/src/operation/get_with_cancel_token_header.dart';
-import 'package:naming_api/src/operation/get_with_cancel_token_path.dart';
-import 'package:naming_api/src/operation/get_with_cancel_token_query.dart';
-import 'package:naming_api/src/operation/get_with_cancel_token_sanitized.dart';
-import 'package:naming_api/src/operation/post_multipart_name_collisions.dart';
-import 'package:naming_api/src/operation/post_with_cancel_token_and_body.dart';
 import 'package:naming_api/src/server/server.dart';
 import 'package:test/test.dart';
-import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
-  late ImposterServer imposterServer;
-  late String baseUrl;
-
-  setUpAll(() async {
-    imposterServer = await setupImposterServer();
-    baseUrl = 'http://localhost:${imposterServer.port}';
-  });
-
   group('keyword operationId method names', () {
     test('API client has escaped keyword method names', () {
       // The fact that DefaultApi2 compiles proves operationIds like
@@ -153,15 +133,15 @@ void main() {
     });
   });
 
-  group('cancelToken parameter collision', () {
+  group('OpenAPI cancelToken parameters', () {
     test(
-      'GetWithCancelTokenQuery call() accepts cancelTokenQuery and '
-      'built-in cancelToken',
+      'API method accepts cancelToken and portable cancellation',
       () async {
-        final op = GetWithCancelTokenQuery(Dio(BaseOptions(baseUrl: baseUrl)));
-        final response = await op.call(
-          cancelTokenQuery: 'myToken',
-          cancelToken: CancelToken(),
+        final dio = _successfulDio();
+        final api = _apiForDio(dio, 'http://localhost');
+        final response = await api.getWithCancelTokenQuery(
+          cancelToken: 'myToken',
+          cancellation: TonikCancellation(),
         );
 
         expect(response, isA<TonikSuccess<void, Response<Object?>>>());
@@ -175,13 +155,13 @@ void main() {
     );
 
     test(
-      'GetWithCancelTokenPath call() sends cancelTokenPath as path segment '
-      'and threads built-in cancelToken through to Dio',
+      'API method sends cancelToken path and threads portable cancellation',
       () async {
-        final op = GetWithCancelTokenPath(Dio(BaseOptions(baseUrl: baseUrl)));
-        final response = await op.call(
-          cancelTokenPath: 'myToken',
-          cancelToken: CancelToken(),
+        final dio = _successfulDio();
+        final api = _apiForDio(dio, 'http://localhost');
+        final response = await api.getWithCancelTokenPath(
+          cancelToken: 'myToken',
+          cancellation: TonikCancellation(),
         );
 
         expect(response, isA<TonikSuccess<void, Response<Object?>>>());
@@ -195,13 +175,13 @@ void main() {
     );
 
     test(
-      'GetWithCancelTokenHeader call() sends cancelTokenHeader as request '
-      'header and threads built-in cancelToken through to Dio',
+      'API method sends cancelToken header and threads portable cancellation',
       () async {
-        final op = GetWithCancelTokenHeader(Dio(BaseOptions(baseUrl: baseUrl)));
-        final response = await op.call(
-          cancelTokenHeader: 'myToken',
-          cancelToken: CancelToken(),
+        final dio = _successfulDio();
+        final api = _apiForDio(dio, 'http://localhost');
+        final response = await api.getWithCancelTokenHeader(
+          cancelToken: 'myToken',
+          cancellation: TonikCancellation(),
         );
 
         expect(response, isA<TonikSuccess<void, Response<Object?>>>());
@@ -215,13 +195,13 @@ void main() {
     );
 
     test(
-      'GetWithCancelTokenCookie call() sends cancelTokenCookie as Cookie '
-      'header and threads built-in cancelToken through to Dio',
+      'API method sends cancelToken cookie and threads portable cancellation',
       () async {
-        final op = GetWithCancelTokenCookie(Dio(BaseOptions(baseUrl: baseUrl)));
-        final response = await op.call(
-          cancelTokenCookie: 'myToken',
-          cancelToken: CancelToken(),
+        final dio = _successfulDio();
+        final api = _apiForDio(dio, 'http://localhost');
+        final response = await api.getWithCancelTokenCookie(
+          cancelToken: 'myToken',
+          cancellation: TonikCancellation(),
         );
 
         expect(response, isA<TonikSuccess<void, Response<Object?>>>());
@@ -235,15 +215,13 @@ void main() {
     );
 
     test(
-      'GetWithCancelTokenSanitized call() sends cancelTokenQuery under '
-      'wire key Cancel-Token and threads built-in cancelToken through to Dio',
+      'API method preserves sanitized cancel token wire names',
       () async {
-        final op = GetWithCancelTokenSanitized(
-          Dio(BaseOptions(baseUrl: baseUrl)),
-        );
-        final response = await op.call(
-          cancelTokenQuery: 'myToken',
-          cancelToken: CancelToken(),
+        final dio = _successfulDio();
+        final api = _apiForDio(dio, 'http://localhost');
+        final response = await api.getWithCancelTokenSanitized(
+          cancelToken: 'myToken',
+          cancellation: TonikCancellation(),
         );
 
         expect(response, isA<TonikSuccess<void, Response<Object?>>>());
@@ -257,16 +235,14 @@ void main() {
     );
 
     test(
-      'PostWithCancelTokenAndBody call() sends cancelTokenQuery as query '
-      'param, body as JSON, and threads built-in cancelToken through to Dio',
+      'API method sends colliding query and body with portable cancellation',
       () async {
-        final op = PostWithCancelTokenAndBody(
-          Dio(BaseOptions(baseUrl: baseUrl)),
-        );
-        final response = await op.call(
+        final dio = _successfulDio();
+        final api = _apiForDio(dio, 'http://localhost');
+        final response = await api.postWithCancelTokenAndBody(
           body: const SimpleResult(id: 'test'),
-          cancelTokenQuery: 'myToken',
-          cancelToken: CancelToken(),
+          cancelToken: 'myToken',
+          cancellation: TonikCancellation(),
         );
 
         expect(response, isA<TonikSuccess<void, Response<Object?>>>());
@@ -361,7 +337,9 @@ void main() {
         ),
       );
 
-      await GetWithCallQuery(dio).call($call: 'invoke');
+      await _apiForDio(dio, 'http://localhost').getWithCallQuery(
+        $call: 'invoke',
+      );
 
       expect(capturedUri?.queryParameters, {'call': 'invoke'});
     });
@@ -454,11 +432,11 @@ void main() {
           ),
         );
 
-        final operation = GetParamCounterCollision(dio);
+        final api = _apiForDio(dio, 'http://localhost');
 
         // The named-arg call site IS the compile-time check on Dart names:
         // if any of the four were renamed, this wouldn't compile.
-        await operation.call(
+        await api.getParamCounterCollision(
           tokenPath: 'P',
           tokenQuery: 'A',
           tokenQuery2: 'B',
@@ -526,9 +504,9 @@ void main() {
             ),
           );
 
-          final operation = GetParamSuffixCollision(dio);
+          final api = _apiForDio(dio, 'http://localhost');
 
-          await operation.call(
+          await api.getParamSuffixCollision(
             idPath2: 'P',
             idQuery: 42,
             idPath: true,
@@ -583,7 +561,7 @@ void main() {
         ),
       );
 
-      await GetHostileQueryNames(dio).call(
+      await _apiForDio(dio, 'http://localhost').getHostileQueryNames(
         parameter: 'love',
         parameter2: 'cache-buster',
         expand: 'customer',
@@ -638,7 +616,7 @@ void main() {
         ),
       );
 
-      await PostMultipartNameCollisions(dio).call(
+      await _apiForDio(dio, 'http://localhost').postMultipartNameCollisions(
         body: MultipartNameCollisionForm(
           file: TonikFileBytes(Uint8List.fromList([1, 2, 3])),
         ),
@@ -661,4 +639,29 @@ void main() {
       });
     });
   });
+}
+
+DefaultApi2 _apiForDio(Dio dio, String baseUrl) {
+  return DefaultApi2(
+    CustomServer(
+      baseUrl: baseUrl,
+      serverConfig: ServerConfig<Dio>.client(dio),
+    ),
+  );
+}
+
+Dio _successfulDio() => Dio()..httpClientAdapter = _SuccessAdapter();
+
+class _SuccessAdapter implements HttpClientAdapter {
+  @override
+  Future<ResponseBody> fetch(
+    RequestOptions options,
+    Stream<Uint8List>? requestStream,
+    Future<void>? cancelFuture,
+  ) async {
+    return ResponseBody.fromString('', 200);
+  }
+
+  @override
+  void close({bool force = false}) {}
 }

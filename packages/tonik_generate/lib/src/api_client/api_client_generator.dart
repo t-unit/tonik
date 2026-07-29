@@ -89,7 +89,14 @@ class ApiClientGenerator {
       return refer(fieldName)
           .assign(
             refer(operationName, operationUrl).call([
-              refer('server').property(backendGenerator.clientGetterName),
+              refer('server').property('baseUrl'),
+              Method(
+                (b) => b
+                  ..lambda = true
+                  ..body = refer(
+                    'server',
+                  ).property(backendGenerator.clientGetterName).code,
+              ).closure,
             ]),
           )
           .code;
@@ -180,11 +187,16 @@ class ApiClientGenerator {
     final operationFieldName =
         '_${nameManager.operationName(operation).toCamelCase()}';
 
+    final cancellationParameter = backendGenerator.cancellationParameter;
     final requiredParams = parameters.where((p) => p.required).toList();
-    final optionalParams = parameters.where((p) => !p.required).toList();
+    final optionalParams = [
+      ...parameters.where((p) => !p.required),
+      cancellationParameter,
+    ];
 
     final paramMap = {
       for (final param in parameters) param.name: refer(param.name),
+      cancellationParameter.name: refer(cancellationParameter.name),
     };
 
     final docs = formatDocComments([operation.summary, operation.description]);

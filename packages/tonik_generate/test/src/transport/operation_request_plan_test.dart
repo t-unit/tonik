@@ -234,6 +234,10 @@ void main() {
         expect(plan.methodName, _methodNames[method]);
         expect(plan.body, isA<AbsentBodyPlan>());
         expect(plan.response.expectsBytes, isTrue);
+        expect(
+          plan.cancellation.accept(DartEmitter()).toString(),
+          'cancellation',
+        );
       }
     });
 
