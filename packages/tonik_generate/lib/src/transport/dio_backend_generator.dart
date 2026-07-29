@@ -109,6 +109,12 @@ final class DioBackendGenerator implements TransportBackendGenerator {
   String get clientAdapterFieldName => r'_$dioAdapter';
 
   @override
+  List<Expression> clientAdapterConstructorArguments({
+    required Expression baseUrl,
+    required Expression serverConfig,
+  }) => [baseUrl, serverConfig];
+
+  @override
   Method generateBodyMethod({
     required Operation operation,
     required NameManager nameManager,

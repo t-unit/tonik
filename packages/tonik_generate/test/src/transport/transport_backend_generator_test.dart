@@ -37,16 +37,12 @@ void main() {
       expect(backend.dependencies, [
         const DependencyDescriptor(name: 'http', versionConstraint: '^1.6.0'),
       ]);
-      expect(
-        backend.generateClientAdapter,
-        throwsA(
-          isA<UnsupportedError>().having(
-            (error) => error.message,
-            'message',
-            contains('http'),
-          ),
-        ),
-      );
+      expect(backend.nativeClientType.symbol, 'Client');
+      expect(backend.nativeClientType.url, 'package:http/http.dart');
+      expect(backend.nativeResponseType.symbol, 'Response');
+      expect(backend.nativeResponseType.url, 'package:http/http.dart');
+      expect(backend.nativeResponseType.types, isEmpty);
+      expect(backend.generateClientAdapter().name, '_HttpClientAdapter');
     });
   });
 }

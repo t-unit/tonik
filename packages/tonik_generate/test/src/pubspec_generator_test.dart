@@ -250,8 +250,10 @@ void main() {
 
       expect(dio, contains('dio: ^5.8.0+1'));
       expect(dio, isNot(contains('http:')));
+      expect(dio, isNot(contains('dio_web_adapter:')));
       expect(http, contains('http: ^1.6.0'));
       expect(http, isNot(contains('dio:')));
+      expect(http, isNot(contains('dio_web_adapter:')));
     });
   });
 }

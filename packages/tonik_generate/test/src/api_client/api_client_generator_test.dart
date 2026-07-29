@@ -6,6 +6,7 @@ import 'package:tonik_generate/src/api_client/api_client_generator.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
+import 'package:tonik_generate/src/transport/http_backend_generator.dart';
 import 'package:tonik_generate/src/util/operation_parameter_defaults.dart';
 
 void main() {
@@ -156,6 +157,45 @@ void main() {
         expect(
           initializerCode,
           '_getUser = GetUser(server.baseUrl, () => server.dio, )',
+        );
+      });
+
+      test('captures the http client getter without resolving it', () {
+        final httpGenerator = ApiClientGenerator(
+          nameManager: nameManager,
+          package: 'test_package',
+          backendGenerator: const HttpBackendGenerator(),
+          defaultsCache: OperationDefaultsCache(
+            nameManager: nameManager,
+            package: 'test_package',
+          ),
+        );
+        final operation = Operation(
+          operationId: 'getUser',
+          context: testContext,
+          tags: {Tag(name: 'users')},
+          isDeprecated: false,
+          path: '/users/{id}',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: const {},
+          securitySchemes: const {},
+        );
+
+        final generatedClass = httpGenerator.generateClass(
+          {operation},
+          Tag(name: 'users'),
+          testServers,
+        );
+        final initializer =
+            generatedClass.constructors.single.initializers.single;
+
+        expect(
+          initializer.accept(emitter).toString(),
+          '_getUser = GetUser(server.baseUrl, () => server.client, )',
         );
       });
 
