@@ -35,13 +35,17 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   );
 
   @override
-  Expression get baseUrlExpression => throw UnsupportedError(
-    'The http transport backend is not supported yet.',
-  );
-
-  @override
-  Parameter get cancellationParameter => throw UnsupportedError(
-    'The http transport backend is not supported yet.',
+  Parameter get cancellationParameter => Parameter(
+    (b) => b
+      ..name = 'cancellation'
+      ..type = TypeReference(
+        (b) => b
+          ..symbol = 'TonikCancellation'
+          ..url = 'package:tonik_util/tonik_util.dart'
+          ..isNullable = true,
+      )
+      ..named = true
+      ..required = false,
   );
 
   @override
@@ -77,7 +81,12 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   String get clientGetterName => 'client';
 
   @override
-  String get clientFieldName => '_client';
+  String get clientAccessorFieldName => '_client';
+
+  @override
+  Reference get nativeClientAccessorType => FunctionType(
+    (b) => b..returnType = nativeClientType,
+  );
 
   @override
   String get clientAdapterName => '_HttpClientAdapter';

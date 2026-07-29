@@ -626,12 +626,13 @@ void main() {
     test('does not shadow members of the generated base server', () {
       final servers = [
         const Server(
-          url: 'https://{baseUrl}.{serverConfig}.example.com/{dio}',
+          url: 'https://{baseUrl}.{serverConfig}.example.com/{dio}/{close}',
           description: 'Inherited member collision server',
           variables: [
             ServerVariable(name: 'baseUrl', defaultValue: 'base'),
             ServerVariable(name: 'serverConfig', defaultValue: 'config'),
             ServerVariable(name: 'dio', defaultValue: 'client'),
+            ServerVariable(name: 'close', defaultValue: 'shutdown'),
           ],
         ),
       ];
@@ -642,11 +643,12 @@ void main() {
           .map((parameter) => parameter.name)
           .toList();
 
-      expect(fieldNames, [r'$baseUrl', r'$serverConfig', r'$dio']);
+      expect(fieldNames, [r'$baseUrl', r'$serverConfig', r'$dio', r'$close']);
       expect(parameterNames, [
         r'$baseUrl',
         r'$serverConfig',
         r'$dio',
+        r'$close',
         'serverConfig',
       ]);
     });

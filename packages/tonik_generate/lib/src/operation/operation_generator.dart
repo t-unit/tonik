@@ -118,14 +118,20 @@ class OperationGenerator {
       (b) {
         b
           ..name = className
-          ..fields.add(
+          ..fields.addAll([
             Field(
               (b) => b
-                ..name = backendGenerator.clientFieldName
+                ..name = '_baseUrl'
                 ..modifier = FieldModifier.final$
-                ..type = backendGenerator.nativeClientType,
+                ..type = refer('String', 'dart:core'),
             ),
-          )
+            Field(
+              (b) => b
+                ..name = backendGenerator.clientAccessorFieldName
+                ..modifier = FieldModifier.final$
+                ..type = backendGenerator.nativeClientAccessorType,
+            ),
+          ])
           ..fields.addAll(defaults.fields);
 
         if (operation.isDeprecated) {
@@ -140,13 +146,18 @@ class OperationGenerator {
           ..constructors.add(
             Constructor(
               (b) => b
-                ..requiredParameters.add(
+                ..requiredParameters.addAll([
                   Parameter(
                     (b) => b
-                      ..name = backendGenerator.clientFieldName
+                      ..name = '_baseUrl'
                       ..toThis = true,
                   ),
-                ),
+                  Parameter(
+                    (b) => b
+                      ..name = backendGenerator.clientAccessorFieldName
+                      ..toThis = true,
+                  ),
+                ]),
             ),
           )
           ..methods.addAll([
@@ -393,7 +404,7 @@ class OperationGenerator {
         declareFinal(r'_$baseUri')
             .assign(
               refer('Uri', 'dart:core').property('parse').call([
-                backendGenerator.baseUrlExpression,
+                refer('_baseUrl'),
               ]),
             )
             .statement,

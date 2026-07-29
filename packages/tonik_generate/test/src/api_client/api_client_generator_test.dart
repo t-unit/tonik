@@ -92,7 +92,20 @@ void main() {
             .toString();
         expect(
           initializerCode,
-          '_getUser = GetUser(server.dio)',
+          '_getUser = GetUser(server.baseUrl, () => server.dio, )',
+        );
+
+        final method = generatedClass.methods.single;
+        expect(method.optionalParameters, hasLength(1));
+        final cancellation = method.optionalParameters.single;
+        expect(cancellation.name, 'cancellation');
+        expect(
+          cancellation.type?.accept(emitter).toString(),
+          'TonikCancellation?',
+        );
+        expect(
+          method.body?.accept(emitter).toString(),
+          '_getUser(cancellation: cancellation)',
         );
       });
 
@@ -142,7 +155,7 @@ void main() {
             .toString();
         expect(
           initializerCode,
-          '_getUser = GetUser(server.dio)',
+          '_getUser = GetUser(server.baseUrl, () => server.dio, )',
         );
       });
 
@@ -268,7 +281,9 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void, Response<Object?>>> getUser() async => _getUser();
+            Future<TonikResult<void, Response<Object?>>> getUser({
+              TonikCancellation? cancellation,
+            }) async => _getUser(cancellation: cancellation);
           ''';
 
           expect(
@@ -335,8 +350,9 @@ void main() {
         test('generates method with path parameter', () {
           final method = generatedClass.methods.first;
           expect(method.name, 'getUser');
-          expect(method.optionalParameters.length, 1);
+          expect(method.optionalParameters.length, 2);
           expect(method.optionalParameters.first.name, 'id');
+          expect(method.optionalParameters.last.name, 'cancellation');
           expect(
             method.optionalParameters.first.type?.accept(emitter).toString(),
             'String',
@@ -349,7 +365,10 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void, Response<Object?>>> getUser({required String id}) async => _getUser(id: id);
+            Future<TonikResult<void, Response<Object?>>> getUser({
+              required String id,
+              TonikCancellation? cancellation,
+            }) async => _getUser(id: id, cancellation: cancellation);
           ''';
 
           expect(
@@ -422,9 +441,10 @@ void main() {
         test('generates method with query parameters', () {
           final method = generatedClass.methods.first;
           expect(method.name, 'getUsers');
-          expect(method.optionalParameters.length, 2);
+          expect(method.optionalParameters.length, 3);
           expect(method.optionalParameters[0].name, 'limit');
           expect(method.optionalParameters[1].name, 'offset');
+          expect(method.optionalParameters[2].name, 'cancellation');
           expect(
             method.optionalParameters[0].type?.accept(emitter).toString(),
             'int?',
@@ -441,7 +461,15 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void, Response<Object?>>> getUsers({int? limit, int? offset}) async => _getUsers(limit: limit, offset: offset);
+            Future<TonikResult<void, Response<Object?>>> getUsers({
+              int? limit,
+              int? offset,
+              TonikCancellation? cancellation,
+            }) async => _getUsers(
+              limit: limit,
+              offset: offset,
+              cancellation: cancellation,
+            );
           ''';
 
           expect(
@@ -515,8 +543,9 @@ void main() {
         test('generates method with request body', () {
           final method = generatedClass.methods.first;
           expect(method.name, 'createUser');
-          expect(method.optionalParameters.length, 1);
+          expect(method.optionalParameters.length, 2);
           expect(method.optionalParameters.first.name, 'body');
+          expect(method.optionalParameters.last.name, 'cancellation');
           expect(
             method.optionalParameters.first.type?.accept(emitter).toString(),
             'CreateUserRequestBody',
@@ -531,7 +560,11 @@ void main() {
           const expectedMethod = '''
             Future<TonikResult<void, Response<Object?>>> createUser({
               required CreateUserRequestBody body,
-            }) async => _createUser(body: body);
+              TonikCancellation? cancellation,
+            }) async => _createUser(
+              body: body,
+              cancellation: cancellation,
+            );
           ''';
 
           expect(
@@ -592,8 +625,9 @@ void main() {
         test('generates method with aliased parameter', () {
           final method = generatedClass.methods.first;
           expect(method.name, 'getUser');
-          expect(method.optionalParameters.length, 1);
+          expect(method.optionalParameters.length, 2);
           expect(method.optionalParameters.first.name, 'userId');
+          expect(method.optionalParameters.last.name, 'cancellation');
           expect(
             method.optionalParameters.first.type?.accept(emitter).toString(),
             'String',
@@ -606,7 +640,13 @@ void main() {
           );
 
           const expectedMethod = '''
-            Future<TonikResult<void, Response<Object?>>> getUser({required String userId}) async => _getUser(userId: userId);
+            Future<TonikResult<void, Response<Object?>>> getUser({
+              required String userId,
+              TonikCancellation? cancellation,
+            }) async => _getUser(
+              userId: userId,
+              cancellation: cancellation,
+            );
           ''';
 
           expect(
@@ -1060,8 +1100,7 @@ void main() {
       });
 
       test(
-        'parameter doc reference uses renamed identifier on cancelToken '
-        'collision',
+        'parameter doc reference preserves an OpenAPI cancelToken identifier',
         () {
           final operation = Operation(
             operationId: 'getA',
@@ -1105,11 +1144,7 @@ void main() {
 
           expect(
             method.docs,
-            contains('/// [cancelTokenQuery] Caller-supplied cancel token id'),
-          );
-          expect(
-            method.docs.any((d) => d.startsWith('/// [cancelToken] ')),
-            isFalse,
+            contains('/// [cancelToken] Caller-supplied cancel token id'),
           );
         },
       );
@@ -1871,7 +1906,10 @@ void main() {
       expect(result.code, contains('class UsersApi'));
       const expectedMethod = '''
 _i3.Future<_i4.TonikResult<void, _i5.Response<_i3.Object?>>>
-getUser() async => _getUser();
+getUser({
+  _i4.TonikCancellation? cancellation,
+}) async =>
+    _getUser(cancellation: cancellation);
 ''';
       expect(
         collapseWhitespace(result.code),
@@ -2091,7 +2129,8 @@ getUser() async => _getUser();
           const expectedMethod = '''
 Future<TonikResult<void, Response<Object?>>> listThings({
   String region = ListThings.regionDefault,
-}) async => _listThings(region: region);
+  TonikCancellation? cancellation,
+}) async => _listThings(region: region, cancellation: cancellation);
 ''';
 
           expect(
@@ -2162,8 +2201,9 @@ Future<TonikResult<void, Response<Object?>>> listThings({
           );
           const expectedMethod =
               'Future<TonikResult<void,Response<Object?>>> '
-              'listThings({DateTime? since}) '
-              'async => _listThings(since: since);';
+              'listThings({DateTime? since, TonikCancellation? cancellation}) '
+              'async => _listThings( '
+              'since: since, cancellation: cancellation);';
           expect(
             collapseWhitespace(generatedCode),
             contains(collapseWhitespace(format(expectedMethod))),
