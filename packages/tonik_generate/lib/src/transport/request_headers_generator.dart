@@ -1,0 +1,562 @@
+import 'package:code_builder/code_builder.dart';
+import 'package:tonik_core/tonik_core.dart';
+import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/util/exception_code_generator.dart';
+import 'package:tonik_generate/src/util/form_entries_expression_builder.dart';
+import 'package:tonik_generate/src/util/map_property_value_expression_builder.dart';
+import 'package:tonik_generate/src/util/source_file_url.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
+import 'package:tonik_generate/src/util/to_simple_value_expression_generator.dart';
+import 'package:tonik_generate/src/util/type_reference_generator.dart';
+import 'package:tonik_util/tonik_util.dart';
+
+class GeneratedRequestHeaders {
+  const GeneratedRequestHeaders({
+    required this.statements,
+    required this.parameters,
+    required this.contentType,
+  });
+
+  final List<Code> statements;
+  final List<Parameter> parameters;
+  final Expression? contentType;
+}
+
+/// Builds backend-neutral generated header and cookie statements.
+class RequestHeadersGenerator {
+  const RequestHeadersGenerator({
+    required this.nameManager,
+    required this.package,
+    required this.headerValueType,
+    this.useImmutableCollections = false,
+  });
+
+  final NameManager nameManager;
+  final String package;
+  final Reference headerValueType;
+  final bool useImmutableCollections;
+
+  GeneratedRequestHeaders generate(
+    Operation operation,
+    List<({String normalizedName, RequestHeaderObject parameter})> headers,
+    List<({String normalizedName, CookieParameterObject parameter})>
+    cookieParameters,
+  ) {
+    final bodyStatements = <Code>[];
+    final parameters = <Parameter>[];
+
+    final contentType = _generateContentType(
+      operation.requestBody,
+      bodyStatements,
+      parameters,
+    );
+    _generateHeaders(
+      headers,
+      bodyStatements,
+      parameters,
+      operation,
+    );
+    _generateCookieHeader(
+      cookieParameters,
+      bodyStatements,
+      parameters,
+    );
+
+    return GeneratedRequestHeaders(
+      statements: bodyStatements,
+      parameters: parameters,
+      contentType: contentType,
+    );
+  }
+
+  Expression? _generateContentType(
+    RequestBody? requestBody,
+    List<Code> bodyStatements,
+    List<Parameter> parameters,
+  ) {
+    if (requestBody?.resolvedContent.isEmpty ?? true) {
+      return null;
+    }
+
+    if (requestBody!.contentCount == 1) {
+      final singleContent = requestBody.resolvedContent.first;
+      if (singleContent.contentType == ContentType.multipart) {
+        return literalNull;
+      }
+      if (requestBody.isRequired) {
+        return specLiteralString(singleContent.rawContentType);
+      }
+
+      // Optional bodies omit the Content-Type header when no body is sent.
+      parameters.add(
+        Parameter(
+          (b) => b
+            ..name = 'body'
+            ..type = typeReference(
+              singleContent.model,
+              nameManager,
+              package,
+              isNullableOverride: true,
+              useImmutableCollections: useImmutableCollections,
+            )
+            ..named = true
+            ..required = false,
+        ),
+      );
+      bodyStatements.add(
+        declareFinal(r'_$contentType')
+            .assign(
+              refer('body')
+                  .equalTo(literalNull)
+                  .conditional(
+                    literalNull,
+                    specLiteralString(singleContent.rawContentType),
+                  ),
+            )
+            .statement,
+      );
+      return refer(r'_$contentType');
+    }
+
+    final (baseName, subclassNames) = nameManager.requestBodyNames(requestBody);
+    final requestBodyUrl = sourceFileUrl(package, 'request_body', baseName);
+    parameters.add(
+      Parameter(
+        (b) => b
+          ..name = 'body'
+          ..type = TypeReference(
+            (b) => b
+              ..symbol = baseName
+              ..url = requestBodyUrl
+              ..isNullable = !requestBody.isRequired,
+          )
+          ..named = true
+          ..required = requestBody.isRequired,
+      ),
+    );
+
+    final cases = <Code>[];
+    for (final content in requestBody.resolvedContent) {
+      final className = subclassNames[content.rawContentType]!;
+      final caseCode = [
+        refer(className, requestBodyUrl).code,
+        const Code(' _ => '),
+        if (content.contentType == ContentType.multipart)
+          literalNull.code
+        else
+          specLiteralString(content.rawContentType).code,
+        const Code(',\n'),
+      ];
+      cases.addAll(caseCode);
+    }
+
+    // Optional bodies omit the Content-Type header.
+    if (!requestBody.isRequired) {
+      cases.add(const Code('null => null,\n'));
+    }
+
+    bodyStatements.add(
+      declareFinal(r'_$contentType')
+          .assign(
+            CodeExpression(
+              Block.of([
+                const Code('switch (body) {'),
+                ...cases,
+                const Code('}'),
+              ]),
+            ),
+          )
+          .statement,
+    );
+    return refer(r'_$contentType');
+  }
+
+  void _generateHeaders(
+    List<({String normalizedName, RequestHeaderObject parameter})> headers,
+    List<Code> bodyStatements,
+    List<Parameter> parameters,
+    Operation operation,
+  ) {
+    // Accept header logic
+    final hasAcceptHeader = headers.any(
+      (h) => h.parameter.rawName.toLowerCase() == 'accept',
+    );
+    final acceptHeader = headers
+        .cast<({String normalizedName, RequestHeaderObject parameter})?>()
+        .firstWhere(
+          (h) => h?.parameter.rawName.toLowerCase() == 'accept',
+          orElse: () => null,
+        );
+    String? acceptParamName;
+    var acceptIsRequired = false;
+    if (acceptHeader != null) {
+      acceptParamName = acceptHeader.normalizedName;
+      acceptIsRequired = acceptHeader.parameter.isRequired;
+    }
+
+    // Collect all unique response content types
+    final contentTypes = <String>{};
+
+    for (final response in operation.responses.values) {
+      if (response is ResponseObject) {
+        for (final body in response.bodies) {
+          contentTypes.add(body.rawContentType);
+        }
+      }
+    }
+
+    final acceptValue = contentTypes.isNotEmpty
+        ? contentTypes.join(',')
+        : '*/*';
+
+    bodyStatements.add(
+      declareFinal(r'_$headers')
+          .assign(
+            literalMap(
+              {},
+              refer('String', 'dart:core'),
+              headerValueType,
+            ),
+          )
+          .statement,
+    );
+
+    // For required Accept header, always assign using encoder
+    if (hasAcceptHeader && acceptIsRequired) {
+      bodyStatements.add(
+        refer(r'_$headers')
+            .index(specLiteralString('Accept'))
+            .assign(
+              buildToSimpleHeaderParameterExpression(
+                acceptParamName!,
+                acceptHeader!.parameter,
+                explode: acceptHeader.parameter.explode,
+                allowEmpty: acceptHeader.parameter.allowEmptyValue,
+              ).expression,
+            )
+            .statement,
+      );
+    } else if (hasAcceptHeader && !acceptIsRequired) {
+      bodyStatements
+        ..add(Code('if ($acceptParamName != null) {'))
+        ..add(
+          refer(r'_$headers')
+              .index(specLiteralString('Accept'))
+              .assign(
+                buildToSimpleHeaderParameterExpression(
+                  acceptParamName!,
+                  acceptHeader!.parameter,
+                  explode: acceptHeader.parameter.explode,
+                  allowEmpty: acceptHeader.parameter.allowEmptyValue,
+                  isNullChecked: true,
+                ).expression,
+              )
+              .statement,
+        )
+        ..add(const Code('} else {'))
+        ..add(
+          refer(r'_$headers')
+              .index(literalString('Accept'))
+              .assign(specLiteralString(acceptValue))
+              .statement,
+        )
+        ..add(const Code('}'));
+    } else {
+      // No Accept header param, just assign default
+      bodyStatements.add(
+        refer(r'_$headers')
+            .index(literalString('Accept'))
+            .assign(specLiteralString(acceptValue))
+            .statement,
+      );
+    }
+
+    // Only add headerEncoder if there are user-defined headers
+    // (excluding Accept) or Accept needs encoding
+
+    for (final headerParam in headers) {
+      // Skip Accept header, already handled
+      if (headerParam.parameter.rawName.toLowerCase() == 'accept') {
+        parameters.add(
+          _generateHeaderParameter(
+            headerParam.normalizedName,
+            headerParam.parameter,
+          ),
+        );
+        continue;
+      }
+      final paramName = headerParam.normalizedName;
+      final resolvedParam = headerParam.parameter;
+
+      // For simple encoding, reject headers that are lists with
+      // complex elements
+      if (resolvedParam.encoding == HeaderParameterEncoding.simple &&
+          resolvedParam.model is ListModel &&
+          (resolvedParam.model as ListModel).content.encodingShape !=
+              EncodingShape.simple) {
+        if (resolvedParam.isRequired) {
+          // Required: immediately throw at runtime
+          bodyStatements.add(
+            generateEncodingExceptionExpression(
+              'Simple encoding does not support list with complex elements for'
+              ' header ${resolvedParam.rawName}',
+            ).statement,
+          );
+        } else {
+          // Optional: only throw if provided
+          bodyStatements.add(
+            Block.of([
+              Code('if ($paramName != null) {'),
+              generateEncodingExceptionExpression(
+                'Simple encoding does not support list with complex elements'
+                ' for header ${resolvedParam.rawName}',
+              ).statement,
+              const Code('}'),
+            ]),
+          );
+        }
+        parameters.add(_generateHeaderParameter(paramName, resolvedParam));
+        continue;
+      }
+
+      parameters.add(_generateHeaderParameter(paramName, resolvedParam));
+
+      if (!resolvedParam.isRequired) {
+        final headerAssignment = _generateHeaderAssignment(
+          paramName,
+          resolvedParam,
+          isNullChecked: true,
+        );
+        bodyStatements.add(
+          Block.of([
+            Code('if ($paramName != null) {'),
+            headerAssignment,
+            const Code('}'),
+          ]),
+        );
+      } else {
+        final headerAssignment = _generateHeaderAssignment(
+          paramName,
+          resolvedParam,
+        );
+        bodyStatements.add(headerAssignment);
+      }
+    }
+  }
+
+  /// Generates the Cookie header for cookie parameters.
+  ///
+  /// Cookies are encoded using form style (the only style valid for cookies
+  /// per OpenAPI 3.x) and concatenated as `name1=value1; name2=value2`.
+  void _generateCookieHeader(
+    List<({String normalizedName, CookieParameterObject parameter})>
+    cookieParameters,
+    List<Code> bodyStatements,
+    List<Parameter> parameters,
+  ) {
+    if (cookieParameters.isEmpty) {
+      return;
+    }
+
+    for (final cookie in cookieParameters) {
+      final paramType = typeReference(
+        cookie.parameter.model,
+        nameManager,
+        package,
+        isNullableOverride: !cookie.parameter.isRequired,
+        useImmutableCollections: useImmutableCollections,
+      );
+
+      parameters.add(
+        Parameter(
+          (b) => b
+            ..name = cookie.normalizedName
+            ..type = paramType
+            ..named = true
+            ..required = cookie.parameter.isRequired,
+        ),
+      );
+    }
+
+    final requiredCookies = cookieParameters
+        .where((c) => c.parameter.isRequired)
+        .toList();
+    final optionalCookies = cookieParameters
+        .where((c) => !c.parameter.isRequired)
+        .toList();
+
+    bodyStatements.add(
+      declareFinal(r'_$cookieParts')
+          .assign(
+            literalList(
+              [],
+              refer('String', 'dart:core'),
+            ),
+          )
+          .statement,
+    );
+
+    for (final cookie in requiredCookies) {
+      _addCookieEncodingStatement(cookie, bodyStatements);
+    }
+
+    for (final cookie in optionalCookies) {
+      bodyStatements.add(Code('if (${cookie.normalizedName} != null) {'));
+      _addCookieEncodingStatement(cookie, bodyStatements);
+      bodyStatements.add(const Code('}'));
+    }
+
+    bodyStatements
+      ..add(const Code(r'if (_$cookieParts.isNotEmpty) {'))
+      ..add(
+        refer(r'_$headers')
+            .index(specLiteralString('Cookie'))
+            .assign(
+              refer(r'_$cookieParts').property('join').call([
+                literalString('; '),
+              ]),
+            )
+            .statement,
+      )
+      ..add(const Code('}'));
+  }
+
+  void _addCookieEncodingStatement(
+    ({String normalizedName, CookieParameterObject parameter}) cookie,
+    List<Code> bodyStatements,
+  ) {
+    final model = cookie.parameter.model;
+    final rawName = cookie.parameter.rawName;
+    final paramName = cookie.normalizedName;
+    final explode = cookie.parameter.explode;
+
+    final resolved = model.resolved;
+    final isBinary =
+        resolved is BinaryModel ||
+        (resolved is ListModel && resolved.content.resolved is BinaryModel);
+    if (isBinary) {
+      bodyStatements.add(
+        generateEncodingExceptionExpression(
+          'Binary data cannot be form-encoded for cookie $rawName',
+        ).statement,
+      );
+      return;
+    }
+    if (resolved is NeverModel ||
+        (resolved is ListModel && resolved.content.resolved is NeverModel)) {
+      bodyStatements.add(
+        generateEncodingExceptionExpression(
+          'Cannot encode NeverModel - this type does not permit any value '
+          'for cookie $rawName',
+        ).statement,
+      );
+      return;
+    }
+
+    if (resolved is MapModel) {
+      final conversion = buildMapPropertyValueConversion(
+        refer(paramName),
+        resolved,
+        isNullable: false,
+        context: rawName,
+      );
+      if (conversion is UnsupportedMapPropertyValueConversion) {
+        bodyStatements.add(
+          generateEncodingExceptionExpression(
+            'Map with complex value types cannot be form-encoded '
+            'for cookie $rawName',
+            raw: true,
+          ).statement,
+        );
+        return;
+      }
+    }
+
+    if (isAnyModelFormValue(model)) {
+      final encodedValue =
+          refer(
+            'encodeAnyToForm',
+            'package:tonik_util/tonik_util.dart',
+          ).call(
+            [refer(paramName)],
+            {
+              'explode': literalBool(explode),
+              'allowEmpty': literalBool(true),
+            },
+          );
+      bodyStatements.add(
+        refer(r'_$cookieParts').property('add').call([
+          literalList([
+            specLiteralString('$rawName='),
+            encodedValue,
+          ]).property('join').call([]),
+        ]).statement,
+      );
+      return;
+    }
+
+    final entries = buildFormEntriesValueExpression(
+      refer(paramName),
+      model,
+      paramName: specLiteralString(rawName),
+      explode: literalBool(explode),
+      allowEmpty: literalBool(true),
+      mapContext: rawName,
+    );
+
+    if (entries == null) {
+      bodyStatements.add(
+        generateEncodingExceptionExpression(
+          'Unsupported model type for form-encoded cookie $rawName',
+        ).statement,
+      );
+      return;
+    }
+
+    bodyStatements.add(
+      refer(r'_$cookieParts').property('addAll').call([
+        entries.property('map').call([formEntryToWireString()]),
+      ]).statement,
+    );
+  }
+
+  Parameter _generateHeaderParameter(
+    String paramName,
+    RequestHeaderObject resolvedParam,
+  ) {
+    final parameterType = typeReference(
+      resolvedParam.model,
+      nameManager,
+      package,
+      isNullableOverride: !resolvedParam.isRequired,
+      useImmutableCollections: useImmutableCollections,
+    );
+
+    return Parameter(
+      (b) => b
+        ..name = paramName
+        ..type = parameterType
+        ..named = true
+        ..required = resolvedParam.isRequired,
+    );
+  }
+
+  Code _generateHeaderAssignment(
+    String paramName,
+    RequestHeaderObject resolvedParam, {
+    bool isNullChecked = false,
+  }) {
+    final valueExpression = buildToSimpleHeaderParameterExpression(
+      paramName,
+      resolvedParam,
+      explode: resolvedParam.explode,
+      allowEmpty: resolvedParam.allowEmptyValue,
+      isNullChecked: isNullChecked,
+    );
+
+    return refer(r'_$headers')
+        .index(specLiteralString(resolvedParam.rawName))
+        .assign(valueExpression.expression)
+        .statement;
+  }
+}

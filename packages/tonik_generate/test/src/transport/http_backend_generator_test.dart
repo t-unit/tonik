@@ -112,47 +112,74 @@ void close() {
     );
   });
 
-  test(
-    'resolves through the accessor before dispatch and maps closed access',
-    () {
-      final statements = generator.generateDispatchStatements(
-        plan: OperationRequestPlan(
-          method: HttpMethod.get,
-          uri: refer(r'_$uri'),
-          pathParameters: const [],
-          queryParameters: const [],
-          headers: const [],
-          cookies: const [],
-          contentType: null,
-          followRedirects: true,
-          maxRedirects: 5,
-          cancellation: refer('cancellation'),
-          response: ResponseRequirements(
-            expectsBytes: true,
-            statuses: const [],
-            contentTypes: const [],
-          ),
-          body: const AbsentBodyPlan(),
-        ),
-        responseVariable: r'_$response',
-        resultValueType: refer('void', 'dart:core'),
-      );
+  group('ordinary request dispatch', () {
+    for (final httpMethod in HttpMethod.values) {
+      test(
+        'emits and sends one abortable '
+        '${httpMethod.name.toUpperCase()} request',
+        () {
+          final followsRedirects = httpMethod != HttpMethod.trace;
+          final maxRedirects = httpMethod == HttpMethod.trace ? 2 : 5;
+          final statements = generator.generateDispatchStatements(
+            plan: OperationRequestPlan(
+              method: httpMethod,
+              uri: refer(r'_$uri'),
+              pathParameters: const [],
+              queryParameters: const [],
+              headers: const [],
+              cookies: const [],
+              contentType: null,
+              followRedirects: followsRedirects,
+              maxRedirects: maxRedirects,
+              cancellation: refer('cancellation'),
+              response: ResponseRequirements(
+                expectsBytes: true,
+                statuses: const [],
+                contentTypes: const [],
+              ),
+              body: const AbsentBodyPlan(),
+            ),
+            responseVariable: r'_$response',
+            resultValueType: refer('void', 'dart:core'),
+          );
 
-      final method = Method(
-        (b) => b
-          ..name = 'dispatch'
-          ..returns = TypeReference(
+          final generatedMethod = Method(
             (b) => b
-              ..symbol = 'Future'
-              ..url = 'dart:core'
-              ..types.add(refer('void', 'dart:core')),
-          )
-          ..modifier = MethodModifier.async
-          ..body = Block.of([statements]),
-      );
+              ..name = 'dispatch'
+              ..returns = TypeReference(
+                (b) => b
+                  ..symbol = 'Future'
+                  ..url = 'dart:core'
+                  ..types.add(
+                    TypeReference(
+                      (b) => b
+                        ..symbol = 'TonikResult'
+                        ..url = 'package:tonik_util/tonik_util.dart'
+                        ..types.addAll([
+                          refer('void', 'dart:core'),
+                          refer('Response', 'package:http/http.dart'),
+                        ]),
+                    ),
+                  ),
+              )
+              ..modifier = MethodModifier.async
+              ..body = Block.of([statements]),
+          );
 
-      const expectedMethod = r'''
-Future<void> dispatch() async {
+          final expectedMethod =
+              r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
   final Client _$client;
   try {
     _$client = _client();
@@ -165,18 +192,46 @@ Future<void> dispatch() async {
     );
   }
 
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'METHOD',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.followRedirects = FOLLOWS_REDIRECTS;
+    _$request.maxRedirects = MAX_REDIRECTS;
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
   throw UnsupportedError(
-    'The http transport backend does not support request dispatch yet.',
+    'The http transport backend does not support response normalization yet.',
   );
 }
-''';
+'''
+                  .replaceFirst('METHOD', httpMethod.name.toUpperCase())
+                  .replaceFirst('FOLLOWS_REDIRECTS', '$followsRedirects')
+                  .replaceFirst('MAX_REDIRECTS', '$maxRedirects');
 
-      expect(
-        collapseWhitespace(format('${method.accept(emitter)}')),
-        collapseWhitespace(format(expectedMethod)),
+          expect(
+            collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+            collapseWhitespace(format(expectedMethod)),
+          );
+        },
       );
-    },
-  );
+    }
+  });
 }
 
 String _asMethod(Method method, DartEmitter emitter) {
