@@ -67,15 +67,40 @@ Object? _data({required String body}) {
     );
   });
 
-  test('JSON encodes an object exactly once before UTF-8 encoding', () {
+  test('JSON encodes a nested order object exactly once', () {
+    final customer = _customerModel(context);
+    final lineItem = _lineItemModel(context);
     final method = generator.generateBodyMethod(
       _operation(
         context,
         requestBody: _body(
           context,
           model: ClassModel(
-            name: 'Payload',
-            properties: const [],
+            name: 'CreateOrderRequest',
+            properties: [
+              Property(
+                name: 'customer',
+                model: customer,
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+              Property(
+                name: 'lineItems',
+                model: ListModel(
+                  content: lineItem,
+                  context: context,
+                  examples: const [],
+                ),
+                isRequired: true,
+                isNullable: false,
+                isDeprecated: false,
+                examples: const [],
+                defaultValue: null,
+              ),
+            ],
             context: context,
             isDeprecated: false,
             examples: const [],
@@ -87,7 +112,7 @@ Object? _data({required String body}) {
     );
 
     const expected = '''
-Object? _data({required Payload body}) {
+Object? _data({required CreateOrderRequest body}) {
   return utf8.encode(jsonEncode(body.toJson()));
 }
 ''';
@@ -98,21 +123,23 @@ Object? _data({required Payload body}) {
     );
   });
 
-  test('JSON encodes a nested recursive map exactly once', () {
-    final tree = MapModel(
-      name: 'Tree',
-      valueModel: AnyModel(context: context),
-      context: context,
-      examples: const [],
-    );
-    tree.valueModel = tree;
+  test('JSON encodes grouped line items through a map and lists once', () {
+    final lineItem = _lineItemModel(context);
 
     final method = generator.generateBodyMethod(
       _operation(
         context,
         requestBody: _body(
           context,
-          model: tree,
+          model: MapModel(
+            valueModel: ListModel(
+              content: lineItem,
+              context: context,
+              examples: const [],
+            ),
+            context: context,
+            examples: const [],
+          ),
           contentType: ContentType.json,
           rawContentType: 'application/json',
         ),
@@ -120,19 +147,14 @@ Object? _data({required Payload body}) {
     );
 
     const expected = r'''
-Object? _data({required Tree body}) {
-  late final Object? Function(Object?) _$encodeTree;
-  _$encodeTree = (Object? raw) {
-    if (raw is! Tree) {
-      throw EncodingException(
-        'Cannot encode value as Tree (at \'sendPayload.body\'); got: '
-        '${raw.runtimeType}',
-      );
-    }
-    final v = raw;
-    return v.map((k, v) => MapEntry(k, _$encodeTree(v)));
-  };
-  return utf8.encode(jsonEncode(_$encodeTree(body)));
+Object? _data({required Map<String, List<LineItem>> body}) {
+  return utf8.encode(
+    jsonEncode(
+      body.map(
+        (k, v) => MapEntry(k, v.map((e) => e.toJson()).toList()),
+      ),
+    ),
+  );
 }
 ''';
 
@@ -355,4 +377,49 @@ RequestBodyObject _body(
       examples: const [],
     ),
   },
+);
+
+ClassModel _customerModel(Context context) => ClassModel(
+  name: 'Customer',
+  properties: [
+    Property(
+      name: 'id',
+      model: StringModel(context: context),
+      isRequired: true,
+      isNullable: false,
+      isDeprecated: false,
+      examples: const [],
+      defaultValue: null,
+    ),
+  ],
+  context: context,
+  isDeprecated: false,
+  examples: const [],
+);
+
+ClassModel _lineItemModel(Context context) => ClassModel(
+  name: 'LineItem',
+  properties: [
+    Property(
+      name: 'sku',
+      model: StringModel(context: context),
+      isRequired: true,
+      isNullable: false,
+      isDeprecated: false,
+      examples: const [],
+      defaultValue: null,
+    ),
+    Property(
+      name: 'quantity',
+      model: IntegerModel(context: context),
+      isRequired: true,
+      isNullable: false,
+      isDeprecated: false,
+      examples: const [],
+      defaultValue: null,
+    ),
+  ],
+  context: context,
+  isDeprecated: false,
+  examples: const [],
 );
