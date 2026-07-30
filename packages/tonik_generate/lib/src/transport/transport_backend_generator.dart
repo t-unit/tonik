@@ -67,6 +67,11 @@ abstract interface class TransportBackendGenerator {
 
   String get clientAdapterFieldName;
 
+  List<Expression> clientAdapterConstructorArguments({
+    required Expression baseUrl,
+    required Expression serverConfig,
+  });
+
   Class generateClientAdapter();
 
   Method generateBodyMethod({

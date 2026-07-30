@@ -192,8 +192,10 @@ class ServerGenerator {
                 refer(backendGenerator.clientAdapterFieldName)
                     .assign(
                       refer(backendGenerator.clientAdapterName).call([
-                        refer('baseUrl'),
-                        refer('serverConfig'),
+                        ...backendGenerator.clientAdapterConstructorArguments(
+                          baseUrl: refer('baseUrl'),
+                          serverConfig: refer('serverConfig'),
+                        ),
                       ]),
                     )
                     .code,
