@@ -113,61 +113,105 @@ void close() {
   });
 
   group('ordinary request dispatch', () {
-    for (final httpMethod in HttpMethod.values) {
-      test(
-        'emits and sends one abortable '
-        '${httpMethod.name.toUpperCase()} request',
-        () {
-          final followsRedirects = httpMethod != HttpMethod.trace;
-          final maxRedirects = httpMethod == HttpMethod.trace ? 2 : 5;
-          final statements = generator.generateDispatchStatements(
-            plan: OperationRequestPlan(
-              method: httpMethod,
-              uri: refer(r'_$uri'),
-              pathParameters: const [],
-              queryParameters: const [],
-              headers: const [],
-              cookies: const [],
-              contentType: null,
-              followRedirects: followsRedirects,
-              maxRedirects: maxRedirects,
-              cancellation: refer('cancellation'),
-              response: ResponseRequirements(
-                expectsBytes: true,
-                statuses: const [],
-                contentTypes: const [],
-              ),
-              body: const AbsentBodyPlan(),
-            ),
-            responseVariable: r'_$response',
-            resultValueType: refer('void', 'dart:core'),
-          );
+    test('emits and sends one abortable GET request', () {
+      _expectDispatch(
+        generator: generator,
+        emitter: emitter,
+        format: format,
+        method: HttpMethod.get,
+        followRedirects: true,
+        maxRedirects: 5,
+        expectedMethod: _expectedGetDispatch,
+      );
+    });
 
-          final generatedMethod = Method(
-            (b) => b
-              ..name = 'dispatch'
-              ..returns = TypeReference(
-                (b) => b
-                  ..symbol = 'Future'
-                  ..url = 'dart:core'
-                  ..types.add(
-                    TypeReference(
-                      (b) => b
-                        ..symbol = 'TonikResult'
-                        ..url = 'package:tonik_util/tonik_util.dart'
-                        ..types.addAll([
-                          refer('void', 'dart:core'),
-                          refer('Response', 'package:http/http.dart'),
-                        ]),
-                    ),
-                  ),
-              )
-              ..modifier = MethodModifier.async
-              ..body = Block.of([statements]),
-          );
+    test('emits and sends one abortable HEAD request', () {
+      _expectDispatch(
+        generator: generator,
+        emitter: emitter,
+        format: format,
+        method: HttpMethod.head,
+        followRedirects: true,
+        maxRedirects: 5,
+        expectedMethod: _expectedHeadDispatch,
+      );
+    });
 
-          final expectedMethod =
-              r'''
+    test('emits and sends one abortable POST request', () {
+      _expectDispatch(
+        generator: generator,
+        emitter: emitter,
+        format: format,
+        method: HttpMethod.post,
+        followRedirects: true,
+        maxRedirects: 5,
+        expectedMethod: _expectedPostDispatch,
+      );
+    });
+
+    test('emits and sends one abortable PUT request', () {
+      _expectDispatch(
+        generator: generator,
+        emitter: emitter,
+        format: format,
+        method: HttpMethod.put,
+        followRedirects: true,
+        maxRedirects: 5,
+        expectedMethod: _expectedPutDispatch,
+      );
+    });
+
+    test('emits and sends one abortable PATCH request', () {
+      _expectDispatch(
+        generator: generator,
+        emitter: emitter,
+        format: format,
+        method: HttpMethod.patch,
+        followRedirects: true,
+        maxRedirects: 5,
+        expectedMethod: _expectedPatchDispatch,
+      );
+    });
+
+    test('emits and sends one abortable DELETE request', () {
+      _expectDispatch(
+        generator: generator,
+        emitter: emitter,
+        format: format,
+        method: HttpMethod.delete,
+        followRedirects: true,
+        maxRedirects: 5,
+        expectedMethod: _expectedDeleteDispatch,
+      );
+    });
+
+    test('emits and sends one abortable OPTIONS request', () {
+      _expectDispatch(
+        generator: generator,
+        emitter: emitter,
+        format: format,
+        method: HttpMethod.options,
+        followRedirects: true,
+        maxRedirects: 5,
+        expectedMethod: _expectedOptionsDispatch,
+      );
+    });
+
+    test('emits and sends one abortable TRACE request', () {
+      _expectDispatch(
+        generator: generator,
+        emitter: emitter,
+        format: format,
+        method: HttpMethod.trace,
+        followRedirects: false,
+        maxRedirects: 2,
+        expectedMethod: _expectedTraceDispatch,
+      );
+    });
+  });
+}
+
+const _expectedGetDispatch = r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -195,13 +239,13 @@ Future<TonikResult<void, Response>> dispatch() async {
   late final AbortableRequest _$request;
   try {
     _$request = AbortableRequest(
-      'METHOD',
+      'GET',
       _$uri,
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = FOLLOWS_REDIRECTS;
-    _$request.maxRedirects = MAX_REDIRECTS;
+    _$request.followRedirects = true;
+    _$request.maxRedirects = 5;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -219,19 +263,445 @@ Future<TonikResult<void, Response>> dispatch() async {
     'The http transport backend does not support response normalization yet.',
   );
 }
-'''
-                  .replaceFirst('METHOD', httpMethod.name.toUpperCase())
-                  .replaceFirst('FOLLOWS_REDIRECTS', '$followsRedirects')
-                  .replaceFirst('MAX_REDIRECTS', '$maxRedirects');
+''';
 
-          expect(
-            collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
-            collapseWhitespace(format(expectedMethod)),
-          );
-        },
-      );
+const _expectedHeadDispatch = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'HEAD',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.followRedirects = true;
+    _$request.maxRedirects = 5;
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
     }
-  });
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+const _expectedPostDispatch = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'POST',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.followRedirects = true;
+    _$request.maxRedirects = 5;
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+const _expectedPutDispatch = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'PUT',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.followRedirects = true;
+    _$request.maxRedirects = 5;
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+const _expectedPatchDispatch = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'PATCH',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.followRedirects = true;
+    _$request.maxRedirects = 5;
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+const _expectedDeleteDispatch = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'DELETE',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.followRedirects = true;
+    _$request.maxRedirects = 5;
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+const _expectedOptionsDispatch = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'OPTIONS',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.followRedirects = true;
+    _$request.maxRedirects = 5;
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+const _expectedTraceDispatch = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'TRACE',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.followRedirects = false;
+    _$request.maxRedirects = 2;
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+void _expectDispatch({
+  required HttpBackendGenerator generator,
+  required DartEmitter emitter,
+  required String Function(String, {Object? uri}) format,
+  required HttpMethod method,
+  required bool followRedirects,
+  required int maxRedirects,
+  required String expectedMethod,
+}) {
+  final statements = generator.generateDispatchStatements(
+    plan: OperationRequestPlan(
+      method: method,
+      uri: refer(r'_$uri'),
+      pathParameters: const [],
+      queryParameters: const [],
+      headers: const [],
+      cookies: const [],
+      contentType: null,
+      followRedirects: followRedirects,
+      maxRedirects: maxRedirects,
+      cancellation: refer('cancellation'),
+      response: ResponseRequirements(
+        expectsBytes: true,
+        statuses: const [],
+        contentTypes: const [],
+      ),
+      body: const AbsentBodyPlan(),
+    ),
+    responseVariable: r'_$response',
+    resultValueType: refer('void', 'dart:core'),
+  );
+
+  final generatedMethod = Method(
+    (b) => b
+      ..name = 'dispatch'
+      ..returns = TypeReference(
+        (b) => b
+          ..symbol = 'Future'
+          ..url = 'dart:core'
+          ..types.add(
+            TypeReference(
+              (b) => b
+                ..symbol = 'TonikResult'
+                ..url = 'package:tonik_util/tonik_util.dart'
+                ..types.addAll([
+                  refer('void', 'dart:core'),
+                  refer('Response', 'package:http/http.dart'),
+                ]),
+            ),
+          ),
+      )
+      ..modifier = MethodModifier.async
+      ..body = Block.of([statements]),
+  );
+
+  expect(
+    collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+    collapseWhitespace(format(expectedMethod)),
+  );
 }
 
 String _asMethod(Method method, DartEmitter emitter) {
