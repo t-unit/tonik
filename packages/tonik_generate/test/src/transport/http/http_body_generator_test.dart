@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
@@ -5,6 +7,7 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/http/http_body_generator.dart';
+import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late HttpBodyGenerator generator;
@@ -146,7 +149,7 @@ Object? _data({required CreateOrderRequest body}) {
       ),
     );
 
-    const expected = r'''
+    const expected = '''
 Object? _data({required Map<String, List<LineItem>> body}) {
   return utf8.encode(
     jsonEncode(
@@ -241,20 +244,21 @@ Object? _data({String? body}) {
     );
   });
 
-  test('UTF-8 encodes ordered form entries without a map conversion', () {
-    final method = generator.generateBodyMethod(
-      _operation(
-        context,
-        requestBody: _body(
+  group('form-urlencoded bodies', () {
+    test('UTF-8 encodes a scalar without inventing a field name', () {
+      final method = generator.generateBodyMethod(
+        _operation(
           context,
-          model: StringModel(context: context),
-          contentType: ContentType.form,
-          rawContentType: 'application/x-www-form-urlencoded',
+          requestBody: _body(
+            context,
+            model: StringModel(context: context),
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+          ),
         ),
-      ),
-    );
+      );
 
-    const expected = r'''
+      const expected = r'''
 Object? _data({required String body}) {
   return utf8.encode(
     body
@@ -270,9 +274,195 @@ Object? _data({required String body}) {
 }
 ''';
 
-    expect(
-      collapseWhitespace(format('${method.accept(emitter)}')),
-      collapseWhitespace(format(expected)),
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('UTF-8 encodes a top-level array without collapsing entries', () {
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _body(
+            context,
+            model: ListModel(
+              content: StringModel(context: context),
+              context: context,
+              examples: const [],
+            ),
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+          ),
+        ),
+      );
+
+      const expected = r'''
+Object? _data({required List<String> body}) {
+  return utf8.encode(
+    body
+        .toForm(
+          '',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+        )
+        .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+        .join('&'),
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test(
+      'UTF-8 encodes an object with reserved and repeated field metadata',
+      () {
+        final form = _profileFormModel(context);
+        final method = generator.generateBodyMethod(
+          _operation(
+            context,
+            requestBody: _body(
+              context,
+              model: form.model,
+              contentType: ContentType.form,
+              rawContentType: 'application/x-www-form-urlencoded',
+              formEncoding: {
+                form.callback: const FieldEncoding(
+                  allowReserved: true,
+                  style: EncodingStyle.form,
+                  explode: true,
+                ),
+                form.tags: const FieldEncoding(
+                  allowReserved: false,
+                  style: EncodingStyle.form,
+                  explode: true,
+                ),
+              },
+            ),
+          ),
+        );
+
+        const expected = r'''
+Object? _data({required ProfileSubmission body}) {
+  return utf8.encode(
+    body
+        .toForm(
+          '',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+          fieldEncodings: <String, FormFieldEncoding>{
+            r'callback': const FormFieldEncoding(allowReserved: true),
+            r'tags': const FormFieldEncoding(explode: true),
+          },
+        )
+        .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+        .join('&'),
+  );
+}
+''';
+
+        expect(
+          collapseWhitespace(format('${method.accept(emitter)}')),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test('omits an optional object before applying field encodings', () {
+      final form = _profileFormModel(context);
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _body(
+            context,
+            model: form.model,
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+            isRequired: false,
+            formEncoding: {
+              form.callback: const FieldEncoding(
+                allowReserved: true,
+                style: EncodingStyle.form,
+                explode: true,
+              ),
+            },
+          ),
+        ),
+      );
+
+      const expected = r'''
+Object? _data({ProfileSubmission? body}) {
+  if (body == null) return null;
+  return utf8.encode(
+    body
+        .toForm(
+          '',
+          explode: true,
+          allowEmpty: true,
+          useQueryComponent: true,
+          fieldEncodings: <String, FormFieldEncoding>{
+            r'callback': const FormFieldEncoding(allowReserved: true),
+            r'tags': const FormFieldEncoding(explode: true),
+          },
+        )
+        .map((e) => e.name.isEmpty ? e.value : '${e.name}=${e.value}')
+        .join('&'),
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test(
+      'produces exact bytes for Unicode reserved empty and repeated values',
+      () {
+        final entries =
+            <String, PropertyValue>{
+              'display name': const PropertyValue.scalar('Zoë & Co'),
+              'callback': const PropertyValue.scalar(
+                'https://example.test/a/b?x=1&next=%2F',
+              ),
+              'tags': const PropertyValue.array(['red & blue', '', '雪']),
+              'note': const PropertyValue.scalar(''),
+            }.toForm(
+              '',
+              explode: true,
+              allowEmpty: true,
+              useQueryComponent: true,
+              fieldEncodings: const {
+                'callback': FormFieldEncoding(allowReserved: true),
+                'tags': FormFieldEncoding(explode: true),
+              },
+            );
+
+        final wireBody = entries
+            .map(
+              (entry) => entry.name.isEmpty
+                  ? entry.value
+                  : '${entry.name}=${entry.value}',
+            )
+            .join('&');
+        const expected =
+            'display+name=Zo%C3%AB+%26+Co'
+            '&callback=https://example.test/a/b?x%3D1%26next%3D%252F'
+            '&tags=red+%26+blue'
+            '&tags='
+            '&tags=%E9%9B%AA'
+            '&note=';
+
+        expect(wireBody, expected);
+        expect(utf8.encode(wireBody), utf8.encode(expected));
+      },
     );
   });
 
@@ -364,6 +554,7 @@ RequestBodyObject _body(
   required ContentType contentType,
   required String rawContentType,
   bool isRequired = true,
+  Map<Property, FieldEncoding>? formEncoding,
 }) => RequestBodyObject(
   name: 'payload',
   context: context,
@@ -375,8 +566,72 @@ RequestBodyObject _body(
       contentType: contentType,
       rawContentType: rawContentType,
       examples: const [],
+      formEncoding: formEncoding,
     ),
   },
+);
+
+typedef _ProfileForm = ({
+  ClassModel model,
+  Property callback,
+  Property tags,
+});
+
+_ProfileForm _profileFormModel(Context context) {
+  final displayName = _formProperty(
+    context,
+    name: 'display name',
+    model: StringModel(context: context),
+  );
+  final callback = _formProperty(
+    context,
+    name: 'callback',
+    model: StringModel(context: context),
+  );
+  final tags = _formProperty(
+    context,
+    name: 'tags',
+    model: ListModel(
+      content: StringModel(context: context),
+      context: context,
+      examples: const [],
+    ),
+  );
+  final note = _formProperty(
+    context,
+    name: 'note',
+    model: StringModel(context: context),
+    isRequired: false,
+    isNullable: true,
+  );
+
+  return (
+    model: ClassModel(
+      name: 'ProfileSubmission',
+      properties: [displayName, callback, tags, note],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+    ),
+    callback: callback,
+    tags: tags,
+  );
+}
+
+Property _formProperty(
+  Context context, {
+  required String name,
+  required Model model,
+  bool isRequired = true,
+  bool isNullable = false,
+}) => Property(
+  name: name,
+  model: model,
+  isRequired: isRequired,
+  isNullable: isNullable,
+  isDeprecated: false,
+  examples: const [],
+  defaultValue: null,
 );
 
 ClassModel _customerModel(Context context) => ClassModel(
