@@ -119,8 +119,6 @@ void close() {
         emitter: emitter,
         format: format,
         method: HttpMethod.get,
-        followRedirects: true,
-        maxRedirects: 5,
         expectedMethod: _expectedGetDispatch,
       );
     });
@@ -131,8 +129,6 @@ void close() {
         emitter: emitter,
         format: format,
         method: HttpMethod.head,
-        followRedirects: true,
-        maxRedirects: 5,
         expectedMethod: _expectedHeadDispatch,
       );
     });
@@ -143,8 +139,6 @@ void close() {
         emitter: emitter,
         format: format,
         method: HttpMethod.post,
-        followRedirects: true,
-        maxRedirects: 5,
         expectedMethod: _expectedPostDispatch,
       );
     });
@@ -155,8 +149,6 @@ void close() {
         emitter: emitter,
         format: format,
         method: HttpMethod.put,
-        followRedirects: true,
-        maxRedirects: 5,
         expectedMethod: _expectedPutDispatch,
       );
     });
@@ -167,8 +159,6 @@ void close() {
         emitter: emitter,
         format: format,
         method: HttpMethod.patch,
-        followRedirects: true,
-        maxRedirects: 5,
         expectedMethod: _expectedPatchDispatch,
       );
     });
@@ -179,8 +169,6 @@ void close() {
         emitter: emitter,
         format: format,
         method: HttpMethod.delete,
-        followRedirects: true,
-        maxRedirects: 5,
         expectedMethod: _expectedDeleteDispatch,
       );
     });
@@ -191,8 +179,6 @@ void close() {
         emitter: emitter,
         format: format,
         method: HttpMethod.options,
-        followRedirects: true,
-        maxRedirects: 5,
         expectedMethod: _expectedOptionsDispatch,
       );
     });
@@ -203,8 +189,6 @@ void close() {
         emitter: emitter,
         format: format,
         method: HttpMethod.trace,
-        followRedirects: false,
-        maxRedirects: 2,
         expectedMethod: _expectedTraceDispatch,
       );
     });
@@ -244,8 +228,6 @@ Future<TonikResult<void, Response>> dispatch() async {
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = true;
-    _$request.maxRedirects = 5;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -298,8 +280,6 @@ Future<TonikResult<void, Response>> dispatch() async {
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = true;
-    _$request.maxRedirects = 5;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -352,8 +332,6 @@ Future<TonikResult<void, Response>> dispatch() async {
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = true;
-    _$request.maxRedirects = 5;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -406,8 +384,6 @@ Future<TonikResult<void, Response>> dispatch() async {
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = true;
-    _$request.maxRedirects = 5;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -460,8 +436,6 @@ Future<TonikResult<void, Response>> dispatch() async {
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = true;
-    _$request.maxRedirects = 5;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -514,8 +488,6 @@ Future<TonikResult<void, Response>> dispatch() async {
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = true;
-    _$request.maxRedirects = 5;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -568,8 +540,6 @@ Future<TonikResult<void, Response>> dispatch() async {
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = true;
-    _$request.maxRedirects = 5;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -622,8 +592,6 @@ Future<TonikResult<void, Response>> dispatch() async {
       abortTrigger: cancellation?.whenCancelled,
     );
     _$request.headers.addAll(_$options);
-    _$request.followRedirects = false;
-    _$request.maxRedirects = 2;
     if (_$data != null) {
       _$request.bodyBytes = (_$data as List<int>);
     }
@@ -648,8 +616,6 @@ void _expectDispatch({
   required DartEmitter emitter,
   required String Function(String, {Object? uri}) format,
   required HttpMethod method,
-  required bool followRedirects,
-  required int maxRedirects,
   required String expectedMethod,
 }) {
   final statements = generator.generateDispatchStatements(
@@ -661,8 +627,6 @@ void _expectDispatch({
       headers: const [],
       cookies: const [],
       contentType: null,
-      followRedirects: followRedirects,
-      maxRedirects: maxRedirects,
       cancellation: refer('cancellation'),
       response: ResponseRequirements(
         expectsBytes: true,

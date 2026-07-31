@@ -346,14 +346,6 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         refer(request).property('headers').property('addAll').call([
           refer(r'_$options'),
         ]).statement,
-        refer(request)
-            .property('followRedirects')
-            .assign(literalBool(plan.followRedirects))
-            .statement,
-        refer(request)
-            .property('maxRedirects')
-            .assign(literalNum(plan.maxRedirects))
-            .statement,
         Block.of([
           const Code(r'if (_$data != null) {'),
           refer(request)

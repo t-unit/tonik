@@ -17,8 +17,6 @@ void main() {
           headers: const [],
           cookies: const [],
           contentType: null,
-          followRedirects: true,
-          maxRedirects: 5,
           cancellation: refer('cancelToken'),
           response: ResponseRequirements(
             expectsBytes: true,
@@ -67,8 +65,6 @@ void main() {
         headers: [header],
         cookies: [cookie],
         contentType: literalString('application/json'),
-        followRedirects: false,
-        maxRedirects: 2,
         cancellation: refer('cancelToken'),
         response: ResponseRequirements(
           expectsBytes: true,
@@ -85,8 +81,6 @@ void main() {
       expect(plan.queryParameters, [same(query), same(query)]);
       expect(plan.headers.single, same(header));
       expect(plan.cookies.single, same(cookie));
-      expect(plan.followRedirects, isFalse);
-      expect(plan.maxRedirects, 2);
       expect(plan.body, isA<JsonBodyPlan>());
     });
 
@@ -109,8 +103,6 @@ void main() {
         headers: const [],
         cookies: const [],
         contentType: null,
-        followRedirects: true,
-        maxRedirects: 5,
         cancellation: refer('cancelToken'),
         response: response,
         body: const AbsentBodyPlan(),
