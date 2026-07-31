@@ -35,8 +35,6 @@ class OperationRequestPlanner {
           _cookieValue(normalizedName, parameter),
       ],
       contentType: _contentTypeExpression(requestBody, content),
-      followRedirects: true,
-      maxRedirects: 5,
       cancellation: refer('cancellation'),
       response: _responseRequirements(operation),
       body: _bodyPlan(requestBody, content),

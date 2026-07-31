@@ -16,8 +16,6 @@ class OperationRequestPlan {
     required List<RequestValuePlan> headers,
     required List<RequestValuePlan> cookies,
     required this.contentType,
-    required this.followRedirects,
-    required this.maxRedirects,
     required this.cancellation,
     required this.response,
     required this.body,
@@ -33,8 +31,6 @@ class OperationRequestPlan {
   final List<RequestValuePlan> headers;
   final List<RequestValuePlan> cookies;
   final Expression? contentType;
-  final bool followRedirects;
-  final int maxRedirects;
   final Expression cancellation;
   final ResponseRequirements response;
   final RequestBodyPlan body;
