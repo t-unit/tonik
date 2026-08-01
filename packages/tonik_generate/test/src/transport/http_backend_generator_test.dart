@@ -52,6 +52,11 @@ void main() {
         final getter = adapter.methods.singleWhere(
           (method) => method.name == 'client',
         );
+        final generatedMethod = getter.rebuild(
+          (builder) => builder
+            ..type = null
+            ..name = getter.name,
+        );
 
         const expectedMethod = r'''
 Client client() {
@@ -73,7 +78,7 @@ Client client() {
 ''';
 
         expect(
-          collapseWhitespace(format(_asMethod(getter, emitter))),
+          collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
           collapseWhitespace(format(expectedMethod)),
         );
       },
@@ -91,6 +96,12 @@ Client client() {
           'void',
         );
 
+        final generatedMethod = close.rebuild(
+          (builder) => builder
+            ..type = null
+            ..name = close.name,
+        );
+
         const expectedMethod = r'''
 void close() {
   if (_$isClosed) {
@@ -105,16 +116,15 @@ void close() {
 ''';
 
         expect(
-          collapseWhitespace(format(_asMethod(close, emitter))),
+          collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
           collapseWhitespace(format(expectedMethod)),
         );
       },
     );
   });
 
-  test(
-    'resolves through the accessor before dispatch and maps closed access',
-    () {
+  group('ordinary request dispatch', () {
+    test('emits and sends one abortable GET request', () {
       final statements = generator.generateDispatchStatements(
         plan: OperationRequestPlan(
           method: HttpMethod.get,
@@ -124,8 +134,6 @@ void close() {
           headers: const [],
           cookies: const [],
           contentType: null,
-          followRedirects: true,
-          maxRedirects: 5,
           cancellation: refer('cancellation'),
           response: ResponseRequirements(
             expectsBytes: true,
@@ -138,21 +146,42 @@ void close() {
         resultValueType: refer('void', 'dart:core'),
       );
 
-      final method = Method(
-        (b) => b
+      final generatedMethod = Method(
+        (builder) => builder
           ..name = 'dispatch'
           ..returns = TypeReference(
-            (b) => b
+            (builder) => builder
               ..symbol = 'Future'
               ..url = 'dart:core'
-              ..types.add(refer('void', 'dart:core')),
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
           )
           ..modifier = MethodModifier.async
           ..body = Block.of([statements]),
       );
 
       const expectedMethod = r'''
-Future<void> dispatch() async {
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
   final Client _$client;
   try {
     _$client = _client();
@@ -165,25 +194,758 @@ Future<void> dispatch() async {
     );
   }
 
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'GET',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
   throw UnsupportedError(
-    'The http transport backend does not support request dispatch yet.',
+    'The http transport backend does not support response normalization yet.',
   );
 }
 ''';
 
       expect(
-        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
         collapseWhitespace(format(expectedMethod)),
       );
-    },
+    });
+
+    test('emits and sends one abortable HEAD request', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.head,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: const AbsentBodyPlan(),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'HEAD',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
   );
 }
+''';
 
-String _asMethod(Method method, DartEmitter emitter) {
-  final wrapped = method.rebuild(
-    (builder) => builder
-      ..type = null
-      ..name = method.name,
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('emits and sends one abortable POST request', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.post,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: const AbsentBodyPlan(),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'POST',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
   );
-  return '${wrapped.accept(emitter)}';
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('emits and sends one abortable PUT request', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.put,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: const AbsentBodyPlan(),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'PUT',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('emits and sends one abortable PATCH request', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.patch,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: const AbsentBodyPlan(),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'PATCH',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('emits and sends one abortable DELETE request', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.delete,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: const AbsentBodyPlan(),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'DELETE',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('emits and sends one abortable OPTIONS request', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.options,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: const AbsentBodyPlan(),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'OPTIONS',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('emits and sends one abortable TRACE request', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.trace,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: const AbsentBodyPlan(),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableRequest _$request;
+  try {
+    _$request = AbortableRequest(
+      'TRACE',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    if (_$data != null) {
+      _$request.bodyBytes = (_$data as List<int>);
+    }
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+  });
 }
