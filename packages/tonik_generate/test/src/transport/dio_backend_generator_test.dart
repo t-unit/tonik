@@ -131,8 +131,6 @@ void close() {
           headers: const [],
           cookies: const [],
           contentType: null,
-          followRedirects: true,
-          maxRedirects: 5,
           cancellation: refer('cancellation'),
           response: ResponseRequirements(
             expectsBytes: true,

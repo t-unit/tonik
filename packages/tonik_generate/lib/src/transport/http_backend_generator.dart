@@ -1,6 +1,8 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
+import 'package:tonik_generate/src/transport/http/http_body_generator.dart';
+import 'package:tonik_generate/src/transport/http/http_headers_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 
@@ -30,8 +32,14 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   );
 
   @override
-  Reference get requestOptionsType => throw UnsupportedError(
-    'The http transport backend is not supported yet.',
+  Reference get requestOptionsType => TypeReference(
+    (b) => b
+      ..symbol = 'Map'
+      ..url = 'dart:core'
+      ..types.addAll([
+        refer('String', 'dart:core'),
+        refer('String', 'dart:core'),
+      ]),
   );
 
   @override
@@ -212,9 +220,11 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
     required NameManager nameManager,
     required String package,
     required bool useImmutableCollections,
-  }) => throw UnsupportedError(
-    'The http transport backend is not supported yet.',
-  );
+  }) => HttpBodyGenerator(
+    nameManager: nameManager,
+    package: package,
+    useImmutableCollections: useImmutableCollections,
+  ).generateBodyMethod(operation);
 
   @override
   Method generateOptionsMethod({
@@ -226,9 +236,11 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
     headers,
     required List<({String normalizedName, CookieParameterObject parameter})>
     cookies,
-  }) => throw UnsupportedError(
-    'The http transport backend is not supported yet.',
-  );
+  }) => HttpHeadersGenerator(
+    nameManager: nameManager,
+    package: package,
+    useImmutableCollections: useImmutableCollections,
+  ).generateHeadersMethod(operation, headers, cookies);
 
   @override
   Code generateDispatchStatements({
@@ -236,9 +248,54 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
     required String responseVariable,
     required Reference resultValueType,
   }) {
+    final cancellation = plan.cancellation;
     const resolvedClient = r'_$client';
+    const request = r'_$request';
+    final bodyBytesType = TypeReference(
+      (b) => b
+        ..symbol = 'List'
+        ..url = 'dart:core'
+        ..types.add(refer('int', 'dart:core')),
+    );
 
     return Block.of([
+      const Code('late final '),
+      nativeResponseType.code,
+      Code(' $responseVariable;'),
+      Block.of([
+        const Code('if ('),
+        cancellation.code,
+        const Code(' != null && '),
+        cancellation.property('isCancelled').code,
+        const Code(') {'),
+        declareFinal('exception')
+            .assign(
+              refer(
+                'RequestAbortedException',
+                'package:http/http.dart',
+              ).newInstance([plan.uri]),
+            )
+            .statement,
+        _resultClass('TonikError', resultValueType)
+            .call(
+              [refer('exception')],
+              {
+                'stackTrace': refer(
+                  'StackTrace',
+                  'dart:core',
+                ).property('current'),
+                'type': refer(
+                  'TonikErrorType.cancelled',
+                  'package:tonik_util/tonik_util.dart',
+                ),
+                'response': literalNull,
+              },
+            )
+            .returned
+            .statement,
+        const Code('}'),
+      ]),
+      const Code(''),
       const Code('final '),
       nativeClientType.code,
       const Code(' $resolvedClient;'),
@@ -266,11 +323,64 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
             .statement,
         const Code('}\n'),
       ]),
+      const Code('late final '),
+      refer('AbortableRequest', 'package:http/http.dart').code,
+      const Code(' $request;'),
+      Block.of([
+        const Code('try {'),
+        refer(request)
+            .assign(
+              refer(
+                'AbortableRequest',
+                'package:http/http.dart',
+              ).newInstance(
+                [literalString(plan.methodName), plan.uri],
+                {
+                  'abortTrigger': cancellation.nullSafeProperty(
+                    'whenCancelled',
+                  ),
+                },
+              ),
+            )
+            .statement,
+        refer(request).property('headers').property('addAll').call([
+          refer(r'_$options'),
+        ]).statement,
+        Block.of([
+          const Code(r'if (_$data != null) {'),
+          refer(request)
+              .property('bodyBytes')
+              .assign(refer(r'_$data').asA(bodyBytesType))
+              .statement,
+          const Code('}'),
+        ]),
+        const Code('} on '),
+        refer('Object', 'dart:core').code,
+        const Code(' catch (exception, stackTrace) {'),
+        _resultClass('TonikError', resultValueType)
+            .call(
+              [refer('exception')],
+              {
+                'stackTrace': refer('stackTrace'),
+                'type': refer(
+                  'TonikErrorType.encoding',
+                  'package:tonik_util/tonik_util.dart',
+                ),
+                'response': literalNull,
+              },
+            )
+            .returned
+            .statement,
+        const Code('}\n'),
+      ]),
+      refer(
+        resolvedClient,
+      ).property('send').call([refer(request)]).awaited.statement,
       refer('UnsupportedError', 'dart:core')
           .newInstance([
             literalString(
-              'The http transport backend does not support request dispatch '
-              'yet.',
+              'The http transport backend does not support response '
+              'normalization yet.',
             ),
           ])
           .thrown
