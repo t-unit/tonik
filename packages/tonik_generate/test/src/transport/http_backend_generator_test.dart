@@ -948,4 +948,364 @@ Future<TonikResult<void, Response>> dispatch() async {
       );
     });
   });
+
+  group('multipart request dispatch', () {
+    test('emits and sends one abortable multipart request', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.post,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: MultipartBodyPlan(
+            value: refer('body'),
+            rawContentType: 'multipart/form-data',
+            parts: const [],
+            isRequired: true,
+          ),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final AbortableMultipartRequest _$request;
+  try {
+    _$request = AbortableMultipartRequest(
+      'POST',
+      _$uri,
+      abortTrigger: cancellation?.whenCancelled,
+    );
+    _$request.headers.addAll(_$options);
+    _$request.files.addAll((_$data as List<MultipartFile>));
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test(
+      'uses an ordinary bodyless request when optional multipart is null',
+      () {
+        final statements = generator.generateDispatchStatements(
+          plan: OperationRequestPlan(
+            method: HttpMethod.post,
+            uri: refer(r'_$uri'),
+            pathParameters: const [],
+            queryParameters: const [],
+            headers: const [],
+            cookies: const [],
+            contentType: null,
+            cancellation: refer('cancellation'),
+            response: ResponseRequirements(
+              expectsBytes: true,
+              statuses: const [],
+              contentTypes: const [],
+            ),
+            body: MultipartBodyPlan(
+              value: refer('body'),
+              rawContentType: 'multipart/form-data',
+              parts: const [],
+              isRequired: false,
+            ),
+          ),
+          responseVariable: r'_$response',
+          resultValueType: refer('void', 'dart:core'),
+        );
+
+        final generatedMethod = Method(
+          (builder) => builder
+            ..name = 'dispatch'
+            ..returns = TypeReference(
+              (builder) => builder
+                ..symbol = 'Future'
+                ..url = 'dart:core'
+                ..types.add(
+                  TypeReference(
+                    (builder) => builder
+                      ..symbol = 'TonikResult'
+                      ..url = 'package:tonik_util/tonik_util.dart'
+                      ..types.addAll([
+                        refer('void', 'dart:core'),
+                        refer('Response', 'package:http/http.dart'),
+                      ]),
+                  ),
+                ),
+            )
+            ..modifier = MethodModifier.async
+            ..body = Block.of([statements]),
+        );
+
+        const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final BaseRequest _$request;
+  try {
+    if (_$data is List<MultipartFile>) {
+      final _$multipartRequest = AbortableMultipartRequest(
+        'POST',
+        _$uri,
+        abortTrigger: cancellation?.whenCancelled,
+      );
+      _$multipartRequest.files.addAll(_$data);
+      _$request = _$multipartRequest;
+    } else {
+      final _$ordinaryRequest = AbortableRequest(
+        'POST',
+        _$uri,
+        abortTrigger: cancellation?.whenCancelled,
+      );
+      if (_$data != null) {
+        _$ordinaryRequest.bodyBytes = (_$data as List<int>);
+      }
+      _$request = _$ordinaryRequest;
+    }
+    _$request.headers.addAll(_$options);
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+        expect(
+          collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      },
+    );
+
+    test('supports runtime selection between JSON and multipart bodies', () {
+      final statements = generator.generateDispatchStatements(
+        plan: OperationRequestPlan(
+          method: HttpMethod.post,
+          uri: refer(r'_$uri'),
+          pathParameters: const [],
+          queryParameters: const [],
+          headers: const [],
+          cookies: const [],
+          contentType: null,
+          cancellation: refer('cancellation'),
+          response: ResponseRequirements(
+            expectsBytes: true,
+            statuses: const [],
+            contentTypes: const [],
+          ),
+          body: BodySelectionPlan(
+            value: refer('body'),
+            variants: [
+              JsonBodyPlan(
+                value: refer('body'),
+                rawContentType: 'application/json',
+                isRequired: true,
+              ),
+              MultipartBodyPlan(
+                value: refer('body'),
+                rawContentType: 'multipart/form-data',
+                parts: const [],
+                isRequired: true,
+              ),
+            ],
+            isRequired: true,
+          ),
+        ),
+        responseVariable: r'_$response',
+        resultValueType: refer('void', 'dart:core'),
+      );
+
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'dispatch'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'Future'
+              ..url = 'dart:core'
+              ..types.add(
+                TypeReference(
+                  (builder) => builder
+                    ..symbol = 'TonikResult'
+                    ..url = 'package:tonik_util/tonik_util.dart'
+                    ..types.addAll([
+                      refer('void', 'dart:core'),
+                      refer('Response', 'package:http/http.dart'),
+                    ]),
+                ),
+              ),
+          )
+          ..modifier = MethodModifier.async
+          ..body = Block.of([statements]),
+      );
+
+      const expectedMethod = r'''
+Future<TonikResult<void, Response>> dispatch() async {
+  late final Response _$response;
+  if (cancellation != null && cancellation.isCancelled) {
+    final exception = RequestAbortedException(_$uri);
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: StackTrace.current,
+      type: TonikErrorType.cancelled,
+      response: null,
+    );
+  }
+
+  final Client _$client;
+  try {
+    _$client = _client();
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  late final BaseRequest _$request;
+  try {
+    if (_$data is List<MultipartFile>) {
+      final _$multipartRequest = AbortableMultipartRequest(
+        'POST',
+        _$uri,
+        abortTrigger: cancellation?.whenCancelled,
+      );
+      _$multipartRequest.files.addAll(_$data);
+      _$request = _$multipartRequest;
+    } else {
+      final _$ordinaryRequest = AbortableRequest(
+        'POST',
+        _$uri,
+        abortTrigger: cancellation?.whenCancelled,
+      );
+      if (_$data != null) {
+        _$ordinaryRequest.bodyBytes = (_$data as List<int>);
+      }
+      _$request = _$ordinaryRequest;
+    }
+    _$request.headers.addAll(_$options);
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.encoding,
+      response: null,
+    );
+  }
+
+  await _$client.send(_$request);
+  throw UnsupportedError(
+    'The http transport backend does not support response normalization yet.',
+  );
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+  });
 }
