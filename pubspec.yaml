@@ -27,6 +27,10 @@ dev_dependencies:
 
 melos:
   scripts:
+    setup-git-hooks:
+      run: ./scripts/install_git_hooks.sh
+      description: Configure the tracked Git hooks for this repository.
+
     test:
       run: |
         set -e

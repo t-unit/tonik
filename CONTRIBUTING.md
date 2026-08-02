@@ -11,8 +11,9 @@ Thanks for your interest in contributing!
 ## Setup
 
 ```bash
-fvm use              # optional, use pinned SDK
-melos bootstrap      # install dependencies for all packages
+fvm use                        # optional, use pinned SDK
+melos bootstrap                # install dependencies for all packages
+melos run setup-git-hooks      # enforce Conventional Commit subjects
 ```
 
 ## Common Commands
@@ -37,6 +38,14 @@ Code style and development patterns are documented in [.cursor/rules/](.cursor/r
 - Code organization patterns
 - Working with `code_builder`
 - Custom test matchers
+
+Non-merge commits must use a [Conventional Commit](https://www.conventionalcommits.org/) subject. The tracked `commit-msg` hook validates subjects after running `melos run setup-git-hooks`. Merge commits are exempt because Melos ignores them when generating changelogs.
+
+```text
+feat: add HTTP transport support
+fix(tonik_generate): preserve parameter names
+feat!: remove the legacy transport API
+```
 
 ## Pull Requests
 

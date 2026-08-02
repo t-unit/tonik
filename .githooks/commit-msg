@@ -1,0 +1,30 @@
+#!/bin/sh
+
+set -eu
+
+message_file=$1
+merge_head=$(git rev-parse --git-path MERGE_HEAD 2>/dev/null || true)
+
+if [ -n "$merge_head" ] && [ -f "$merge_head" ]; then
+  exit 0
+fi
+
+subject=$(sed -n '1p' "$message_file" | tr -d '\r')
+pattern='^(build|chore|ci|docs|feat|fix|perf|refactor|revert|style|test)(\([a-z0-9._/-]+\))?!?: .+'
+
+if printf '%s\n' "$subject" | grep -Eq "$pattern"; then
+  exit 0
+fi
+
+printf '%s\n' \
+  "Invalid commit subject: $subject" \
+  '' \
+  'Use a Conventional Commit subject, for example:' \
+  '  feat: add HTTP transport support' \
+  '  fix(tonik_generate): preserve parameter names' \
+  '  feat!: remove the legacy transport API' \
+  '' \
+  'Allowed types: build, chore, ci, docs, feat, fix, perf, refactor,' \
+  'revert, style, test.' >&2
+
+exit 1
