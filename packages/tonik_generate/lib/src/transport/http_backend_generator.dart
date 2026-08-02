@@ -257,6 +257,28 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         ..url = 'dart:core'
         ..types.add(refer('int', 'dart:core')),
     );
+    final multipartFilesType = TypeReference(
+      (b) => b
+        ..symbol = 'List'
+        ..url = 'dart:core'
+        ..types.add(refer('MultipartFile', 'package:http/http.dart')),
+    );
+    final isRequiredMultipart = switch (plan.body) {
+      MultipartBodyPlan(:final isRequired) => isRequired,
+      _ => false,
+    };
+    final canBeMultipart = switch (plan.body) {
+      MultipartBodyPlan() => true,
+      BodySelectionPlan(:final variants) => variants.any(
+        (variant) => variant is MultipartBodyPlan,
+      ),
+      _ => false,
+    };
+    final requestType = isRequiredMultipart
+        ? refer('AbortableMultipartRequest', 'package:http/http.dart')
+        : canBeMultipart
+        ? refer('BaseRequest', 'package:http/http.dart')
+        : refer('AbortableRequest', 'package:http/http.dart');
 
     return Block.of([
       const Code('late final '),
@@ -324,36 +346,46 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         const Code('}\n'),
       ]),
       const Code('late final '),
-      refer('AbortableRequest', 'package:http/http.dart').code,
+      requestType.code,
       const Code(' $request;'),
       Block.of([
         const Code('try {'),
-        refer(request)
-            .assign(
-              refer(
-                'AbortableRequest',
-                'package:http/http.dart',
-              ).newInstance(
-                [literalString(plan.methodName), plan.uri],
-                {
-                  'abortTrigger': cancellation.nullSafeProperty(
-                    'whenCancelled',
-                  ),
-                },
-              ),
-            )
-            .statement,
+        if (isRequiredMultipart)
+          ..._requiredMultipartRequestStatements(
+            plan: plan,
+            request: request,
+            cancellation: cancellation,
+          )
+        else if (canBeMultipart)
+          ..._selectedRequestStatements(
+            plan: plan,
+            request: request,
+            cancellation: cancellation,
+            bodyBytesType: bodyBytesType,
+            multipartFilesType: multipartFilesType,
+          )
+        else
+          ..._ordinaryRequestStatements(
+            plan: plan,
+            request: request,
+            cancellation: cancellation,
+          ),
         refer(request).property('headers').property('addAll').call([
           refer(r'_$options'),
         ]).statement,
-        Block.of([
-          const Code(r'if (_$data != null) {'),
-          refer(request)
-              .property('bodyBytes')
-              .assign(refer(r'_$data').asA(bodyBytesType))
-              .statement,
-          const Code('}'),
-        ]),
+        if (isRequiredMultipart)
+          refer(request).property('files').property('addAll').call([
+            refer(r'_$data').asA(multipartFilesType),
+          ]).statement
+        else if (!canBeMultipart)
+          Block.of([
+            const Code(r'if (_$data != null) {'),
+            refer(request)
+                .property('bodyBytes')
+                .assign(refer(r'_$data').asA(bodyBytesType))
+                .statement,
+            const Code('}'),
+          ]),
         const Code('} on '),
         refer('Object', 'dart:core').code,
         const Code(' catch (exception, stackTrace) {'),
@@ -386,6 +418,109 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
           .thrown
           .statement,
     ]);
+  }
+
+  List<Code> _requiredMultipartRequestStatements({
+    required OperationRequestPlan plan,
+    required String request,
+    required Expression cancellation,
+  }) => [
+    refer(request)
+        .assign(
+          refer(
+            'AbortableMultipartRequest',
+            'package:http/http.dart',
+          ).newInstance(
+            [literalString(plan.methodName), plan.uri],
+            {
+              'abortTrigger': cancellation.nullSafeProperty('whenCancelled'),
+            },
+          ),
+        )
+        .statement,
+  ];
+
+  List<Code> _ordinaryRequestStatements({
+    required OperationRequestPlan plan,
+    required String request,
+    required Expression cancellation,
+  }) => [
+    refer(request)
+        .assign(
+          refer(
+            'AbortableRequest',
+            'package:http/http.dart',
+          ).newInstance(
+            [literalString(plan.methodName), plan.uri],
+            {
+              'abortTrigger': cancellation.nullSafeProperty('whenCancelled'),
+            },
+          ),
+        )
+        .statement,
+  ];
+
+  List<Code> _selectedRequestStatements({
+    required OperationRequestPlan plan,
+    required String request,
+    required Expression cancellation,
+    required TypeReference bodyBytesType,
+    required TypeReference multipartFilesType,
+  }) {
+    const multipartRequest = r'_$multipartRequest';
+    const ordinaryRequest = r'_$ordinaryRequest';
+    return [
+      Block.of([
+        const Code(r'if (_$data is '),
+        multipartFilesType.code,
+        const Code(') {'),
+        declareFinal(multipartRequest)
+            .assign(
+              refer(
+                'AbortableMultipartRequest',
+                'package:http/http.dart',
+              ).newInstance(
+                [literalString(plan.methodName), plan.uri],
+                {
+                  'abortTrigger': cancellation.nullSafeProperty(
+                    'whenCancelled',
+                  ),
+                },
+              ),
+            )
+            .statement,
+        refer(multipartRequest).property('files').property('addAll').call([
+          refer(r'_$data'),
+        ]).statement,
+        refer(request).assign(refer(multipartRequest)).statement,
+        const Code('} else {'),
+        declareFinal(ordinaryRequest)
+            .assign(
+              refer(
+                'AbortableRequest',
+                'package:http/http.dart',
+              ).newInstance(
+                [literalString(plan.methodName), plan.uri],
+                {
+                  'abortTrigger': cancellation.nullSafeProperty(
+                    'whenCancelled',
+                  ),
+                },
+              ),
+            )
+            .statement,
+        Block.of([
+          const Code(r'if (_$data != null) {'),
+          refer(ordinaryRequest)
+              .property('bodyBytes')
+              .assign(refer(r'_$data').asA(bodyBytesType))
+              .statement,
+          const Code('}'),
+        ]),
+        refer(request).assign(refer(ordinaryRequest)).statement,
+        const Code('}'),
+      ]),
+    ];
   }
 
   Reference _resultClass(String symbol, Reference resultValueType) {

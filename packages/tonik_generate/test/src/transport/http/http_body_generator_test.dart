@@ -530,6 +530,437 @@ Object? _data({required Payload body}) {
       collapseWhitespace(format(expected)),
     );
   });
+
+  test('lowers a runtime-selected JSON or multipart body', () {
+    final value = _formProperty(
+      context,
+      name: 'value',
+      model: StringModel(context: context),
+    );
+    final upload = ClassModel(
+      name: 'Upload',
+      properties: [value],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+    );
+    final requestBody = RequestBodyObject(
+      name: 'payload',
+      context: context,
+      description: null,
+      isRequired: true,
+      content: {
+        RequestContent(
+          model: StringModel(context: context),
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          examples: const [],
+        ),
+        RequestContent(
+          model: upload,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          examples: const [],
+        ),
+      },
+    );
+    final method = generator.generateBodyMethod(
+      _operation(context, requestBody: requestBody),
+    );
+
+    const expected = r'''
+Future<Object?> _data({required Payload body}) async {
+  return switch (body) {
+    final PayloadJson value => utf8.encode(jsonEncode(value.value)),
+    final PayloadFormData value => await () async {
+      final _$multipartFiles = <MultipartFile>[];
+      _$multipartFiles.add(
+        MultipartFile.fromBytes(
+          r'value',
+          utf8.encode(value.value.value),
+          contentType: MediaType.parse(r'text/plain'),
+        ),
+      );
+      return _$multipartFiles;
+    }(),
+  };
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
+  group('multipart bodies', () {
+    test(
+      'emits ordered duplicate-preserving scalar JSON and file parts',
+      () {
+        final metadata = ClassModel(
+          name: 'Metadata',
+          properties: [
+            _formProperty(
+              context,
+              name: 'id',
+              model: StringModel(context: context),
+            ),
+          ],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        );
+        final text = _formProperty(
+          context,
+          name: 'item',
+          model: StringModel(context: context),
+        );
+        final json = _formProperty(
+          context,
+          name: 'metadata',
+          model: metadata,
+        );
+        final file = _formProperty(
+          context,
+          name: 'item',
+          model: BinaryModel(context: context),
+        );
+        final optionalText = _formProperty(
+          context,
+          name: 'note',
+          model: StringModel(context: context),
+          isRequired: false,
+          isNullable: true,
+        );
+        final upload = ClassModel(
+          name: 'Upload',
+          properties: [text, json, file, optionalText],
+          context: context,
+          isDeprecated: false,
+          examples: const [],
+        );
+
+        final method = generator.generateBodyMethod(
+          _operation(
+            context,
+            requestBody: _body(
+              context,
+              model: upload,
+              contentType: ContentType.multipart,
+              rawContentType: 'multipart/form-data',
+              multipartEncoding: {
+                text: const PartEncoding(
+                  contentType: ContentType.text,
+                  rawContentType: 'text/plain; charset=iso-8859-1',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
+                json: const PartEncoding(
+                  contentType: ContentType.json,
+                  rawContentType: 'application/json',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
+                file: const PartEncoding(
+                  contentType: ContentType.bytes,
+                  rawContentType: 'image/png',
+                  headers: null,
+                  style: null,
+                  explode: null,
+                  allowReserved: null,
+                ),
+              },
+            ),
+          ),
+        );
+
+        const expected = r'''
+Future<Object?> _data({required Upload body}) async {
+  final _$multipartFiles = <MultipartFile>[];
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'item',
+      latin1.encode(body.item),
+      contentType: MediaType.parse(r'text/plain; charset=iso-8859-1'),
+    ),
+  );
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'metadata',
+      utf8.encode(jsonEncode(body.metadata.toJson())),
+      contentType: MediaType.parse(r'application/json'),
+    ),
+  );
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'item',
+      body.item2.toBytes(),
+      filename: body.item2.fileName ?? r'item',
+      contentType: MediaType.parse(r'image/png'),
+    ),
+  );
+  if (body.note != null) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'note',
+        utf8.encode(body.note!),
+        contentType: MediaType.parse(r'text/plain'),
+      ),
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+
+        expect(
+          collapseWhitespace(format('${method.accept(emitter)}')),
+          collapseWhitespace(format(expected)),
+        );
+      },
+    );
+
+    test('emits repeated scalar and file parts in collection order', () {
+      final tags = _formProperty(
+        context,
+        name: 'tag',
+        model: ListModel(
+          content: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+      );
+      final files = _formProperty(
+        context,
+        name: 'file',
+        model: ListModel(
+          content: BinaryModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+      );
+      final upload = ClassModel(
+        name: 'BatchUpload',
+        properties: [tags, files],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _body(
+            context,
+            model: upload,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+          ),
+        ),
+      );
+
+      const expected = r'''
+Future<Object?> _data({required BatchUpload body}) async {
+  final _$multipartFiles = <MultipartFile>[];
+  for (final item in body.tag) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'tag',
+        utf8.encode(item),
+        contentType: MediaType.parse(r'text/plain'),
+      ),
+    );
+  }
+  for (final item in body.file) {
+    _$multipartFiles.add(
+      MultipartFile.fromBytes(
+        r'file',
+        item.toBytes(),
+        filename: item.fileName ?? r'file',
+        contentType: MediaType.parse(r'application/octet-stream'),
+      ),
+    );
+  }
+  return _$multipartFiles;
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('omits an optional multipart body without emitting an empty part', () {
+      final upload = ClassModel(
+        name: 'OptionalUpload',
+        properties: [
+          _formProperty(
+            context,
+            name: 'value',
+            model: StringModel(context: context),
+          ),
+        ],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _body(
+            context,
+            model: upload,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            isRequired: false,
+          ),
+        ),
+      );
+
+      const expected = r'''
+Future<Object?> _data({OptionalUpload? body}) async {
+  if (body == null) return null;
+  final _$multipartFiles = <MultipartFile>[];
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      utf8.encode(body.value),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );
+  return _$multipartFiles;
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('emits an encoding failure for an unsupported part charset', () {
+      final value = _formProperty(
+        context,
+        name: 'value',
+        model: StringModel(context: context),
+      );
+      final upload = ClassModel(
+        name: 'UnsupportedTextUpload',
+        properties: [value],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _body(
+            context,
+            model: upload,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            multipartEncoding: {
+              value: const PartEncoding(
+                contentType: ContentType.text,
+                rawContentType: 'text/plain; charset=utf-16',
+                headers: null,
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            },
+          ),
+        ),
+      );
+
+      const expected = r'''
+Future<Object?> _data({required UnsupportedTextUpload body}) async {
+  final _$multipartFiles = <MultipartFile>[];
+  throw EncodingException('Unsupported multipart text encoding: utf-16.');
+  return _$multipartFiles;
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('adds required per-part header parameters to the body method', () {
+      final value = _formProperty(
+        context,
+        name: 'value',
+        model: StringModel(context: context),
+      );
+      final upload = ClassModel(
+        name: 'HeaderUpload',
+        properties: [value],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _body(
+            context,
+            model: upload,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            multipartEncoding: {
+              value: PartEncoding(
+                contentType: null,
+                rawContentType: null,
+                headers: {
+                  'X-Trace': ResponseHeaderObject(
+                    name: 'X-Trace',
+                    description: null,
+                    isRequired: true,
+                    isDeprecated: false,
+                    explode: false,
+                    model: IntegerModel(context: context),
+                    context: context,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            },
+          ),
+        ),
+      );
+
+      const expected = r'''
+Future<Object?> _data({
+  required HeaderUpload body,
+  required int valueTrace,
+}) async {
+  final _$multipartFiles = <MultipartFile>[];
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      utf8.encode(body.value),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );
+  return _$multipartFiles;
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+  });
 }
 
 Operation _operation(Context context, {RequestBody? requestBody}) => Operation(
@@ -555,6 +986,7 @@ RequestBodyObject _body(
   required String rawContentType,
   bool isRequired = true,
   Map<Property, FieldEncoding>? formEncoding,
+  Map<Property, PartEncoding>? multipartEncoding,
 }) => RequestBodyObject(
   name: 'payload',
   context: context,
@@ -567,6 +999,7 @@ RequestBodyObject _body(
       rawContentType: rawContentType,
       examples: const [],
       formEncoding: formEncoding,
+      multipartEncoding: multipartEncoding,
     ),
   },
 );
