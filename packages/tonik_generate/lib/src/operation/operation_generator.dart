@@ -394,11 +394,11 @@ class OperationGenerator {
         type: refer('Object?', 'dart:core'),
         late: true,
       ).statement,
-      declareFinal(
-        r'_$options',
-        type: backendGenerator.requestOptionsType,
-        late: true,
-      ).statement,
+      Block.of([
+        const Code('late final '),
+        backendGenerator.requestOptionsType.code,
+        const Code(r' _$options;'),
+      ]),
       Block.of([
         const Code('try {'),
         declareFinal(r'_$baseUri')
