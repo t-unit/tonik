@@ -5,6 +5,7 @@ import 'package:tonik_generate/src/transport/http/http_body_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_headers_generator.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
+import 'package:tonik_generate/src/util/spec_literal_string.dart';
 
 final class HttpBackendGenerator implements TransportBackendGenerator {
   const HttpBackendGenerator();
@@ -57,25 +58,21 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   );
 
   @override
-  Expression responseStatusCode(Expression response) => throw UnsupportedError(
-    'The http transport backend is not supported yet.',
-  );
+  Expression responseStatusCode(Expression response) =>
+      response.property('statusCode');
 
   @override
-  Expression responseContentType(Expression response) => throw UnsupportedError(
-    'The http transport backend is not supported yet.',
-  );
+  Expression responseContentType(Expression response) =>
+      response.property('headers').index(literalString('content-type'));
 
   @override
-  Expression responseBodyBytes(Expression response) => throw UnsupportedError(
-    'The http transport backend is not supported yet.',
-  );
+  Expression responseBodyBytes(Expression response) =>
+      response.property('bodyBytes');
 
   @override
-  Expression responseHeaderValues(Expression response, String name) =>
-      throw UnsupportedError(
-        'The http transport backend is not supported yet.',
-      );
+  Expression responseHeaderValues(Expression response, String name) => response
+      .property('headersSplitValues')
+      .index(specLiteralString(name.toLowerCase()));
 
   @override
   Reference get serverConfigType => TypeReference(
@@ -405,20 +402,131 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
             .statement,
         const Code('}\n'),
       ]),
-      refer(
-        resolvedClient,
-      ).property('send').call([refer(request)]).awaited.statement,
-      refer('UnsupportedError', 'dart:core')
-          .newInstance([
-            literalString(
-              'The http transport backend does not support response '
-              'normalization yet.',
-            ),
-          ])
-          .thrown
-          .statement,
+      const Code('final '),
+      refer('StreamedResponse', 'package:http/http.dart').code,
+      const Code(r' _$streamedResponse;'),
+      Block.of([
+        const Code('try {'),
+        refer(r'_$streamedResponse')
+            .assign(
+              refer(
+                resolvedClient,
+              ).property('send').call([refer(request)]).awaited,
+            )
+            .statement,
+        const Code('} on '),
+        refer('RequestAbortedException', 'package:http/http.dart').code,
+        const Code(' catch (exception, stackTrace) {'),
+        _resultClass('TonikError', resultValueType)
+            .call(
+              [refer('exception')],
+              {
+                'stackTrace': refer('stackTrace'),
+                'type': _requestAbortErrorType(cancellation),
+                'response': literalNull,
+              },
+            )
+            .returned
+            .statement,
+        const Code('} on '),
+        refer('ClientException', 'package:http/http.dart').code,
+        const Code(' catch (exception, stackTrace) {'),
+        _transportErrorReturn(
+          resultValueType,
+          type: refer(
+            'TonikErrorType.network',
+            'package:tonik_util/tonik_util.dart',
+          ),
+        ),
+        const Code('} on '),
+        refer('TimeoutException', 'dart:async').code,
+        const Code(' catch (exception, stackTrace) {'),
+        _transportErrorReturn(
+          resultValueType,
+          type: refer(
+            'TonikErrorType.network',
+            'package:tonik_util/tonik_util.dart',
+          ),
+        ),
+        const Code('} on '),
+        refer('Object', 'dart:core').code,
+        const Code(' catch (exception, stackTrace) {'),
+        _transportErrorReturn(
+          resultValueType,
+          type: refer(
+            'TonikErrorType.other',
+            'package:tonik_util/tonik_util.dart',
+          ),
+        ),
+        const Code('}\n'),
+      ]),
+      Block.of([
+        const Code('try {'),
+        refer(responseVariable)
+            .assign(
+              refer('Response', 'package:http/http.dart')
+                  .property('fromStream')
+                  .call([refer(r'_$streamedResponse')])
+                  .awaited,
+            )
+            .statement,
+        const Code('} on '),
+        refer('RequestAbortedException', 'package:http/http.dart').code,
+        const Code(' catch (exception, stackTrace) {'),
+        _resultClass('TonikError', resultValueType)
+            .call(
+              [refer('exception')],
+              {
+                'stackTrace': refer('stackTrace'),
+                'type': _requestAbortErrorType(cancellation),
+                'response': literalNull,
+              },
+            )
+            .returned
+            .statement,
+        const Code('} on '),
+        refer('Object', 'dart:core').code,
+        const Code(' catch (exception, stackTrace) {'),
+        _transportErrorReturn(
+          resultValueType,
+          type: refer(
+            'TonikErrorType.network',
+            'package:tonik_util/tonik_util.dart',
+          ),
+        ),
+        const Code('}\n'),
+      ]),
     ]);
   }
+
+  Code _transportErrorReturn(
+    Reference resultValueType, {
+    required Expression type,
+  }) => _resultClass('TonikError', resultValueType)
+      .call(
+        [refer('exception')],
+        {
+          'stackTrace': refer('stackTrace'),
+          'type': type,
+          'response': literalNull,
+        },
+      )
+      .returned
+      .statement;
+
+  Expression _requestAbortErrorType(Expression cancellation) => cancellation
+      .nullSafeProperty('isCancelled')
+      .ifNullThen(literalFalse)
+      .conditional(
+        refer(
+          'TonikErrorType.cancelled',
+          'package:tonik_util/tonik_util.dart',
+        ),
+        refer(
+          'TonikErrorType.network',
+          'package:tonik_util/tonik_util.dart',
+        ),
+      );
 
   List<Code> _requiredMultipartRequestStatements({
     required OperationRequestPlan plan,
