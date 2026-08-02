@@ -84,7 +84,10 @@ Code _buildPart(
     BinaryModel() || Base64Model() => _addFilePart(
       rawName,
       value,
-      rawContentType: encoding?.rawContentType ?? 'application/octet-stream',
+      rawContentType: _rawContentType(
+        encoding,
+        'application/octet-stream',
+      ),
     ),
     ListModel() => _buildListParts(
       rawName,
@@ -100,7 +103,7 @@ Code _buildPart(
     StringModel() => _addTextPart(
       rawName,
       value,
-      rawContentType: encoding?.rawContentType ?? 'text/plain',
+      rawContentType: _rawContentType(encoding, 'text/plain'),
     ),
     AnyModel() => _addTextPart(
       rawName,
@@ -110,28 +113,25 @@ Code _buildPart(
           'package:tonik_util/tonik_util.dart',
         ).call([value]),
       ]),
-      rawContentType: encoding?.rawContentType ?? 'application/json',
+      rawContentType: _rawContentType(encoding, 'application/json'),
     ),
     MapModel() => _addTextPart(
       rawName,
       refer('jsonEncode', 'dart:convert').call([value]),
-      rawContentType: encoding?.rawContentType ?? 'application/json',
+      rawContentType: _rawContentType(encoding, 'application/json'),
     ),
-    ClassModel() ||
-    AllOfModel() ||
-    OneOfModel() ||
-    AnyOfModel() => _addTextPart(
+    ClassModel() || CompositeModel() => _addTextPart(
       rawName,
       refer(
         'jsonEncode',
         'dart:convert',
       ).call([value.property('toJson').call([])]),
-      rawContentType: encoding?.rawContentType ?? 'application/json',
+      rawContentType: _rawContentType(encoding, 'application/json'),
     ),
     EnumModel() => _addTextPart(
       rawName,
       _enumText(value, resolved, encoding?.contentType),
-      rawContentType: encoding?.rawContentType ?? 'text/plain',
+      rawContentType: _rawContentType(encoding, 'text/plain'),
     ),
     DateTimeModel() => _addTextPart(
       rawName,
@@ -140,27 +140,16 @@ Code _buildPart(
         encoding?.contentType,
         method: 'toTimeZonedIso8601String',
       ),
-      rawContentType: encoding?.rawContentType ?? 'text/plain',
+      rawContentType: _rawContentType(encoding, 'text/plain'),
     ),
-    IntegerModel() ||
-    DoubleModel() ||
-    NumberModel() ||
-    BooleanModel() ||
-    DateModel() ||
-    DecimalModel() ||
-    UriModel() => _addTextPart(
+    PrimitiveModel() => _addTextPart(
       rawName,
       _primitiveText(value, encoding?.contentType, method: 'toString'),
-      rawContentType: encoding?.rawContentType ?? 'text/plain',
+      rawContentType: _rawContentType(encoding, 'text/plain'),
     ),
-    AliasModel() => _buildPart(
-      resolved,
-      rawName,
-      value,
-      encoding: encoding,
-    ),
-    _ => generateEncodingExceptionExpression(
-      'Unsupported model type for multipart encoding.',
+    NamedModel() => generateEncodingExceptionExpression(
+      "Cannot encode cyclic AliasModel property '$rawName'.",
+      raw: true,
     ).statement,
   };
 }
@@ -180,6 +169,14 @@ Code _buildListParts(
     ).statement;
   }
 
+  if (content is AliasModel) {
+    return generateEncodingExceptionExpression(
+      'Cannot encode cyclic AliasModel list items for multipart property '
+      "'$rawName'.",
+      raw: true,
+    ).statement;
+  }
+
   if (content is BinaryModel || content is Base64Model) {
     return Block.of([
       const Code('for (final item in '),
@@ -188,7 +185,10 @@ Code _buildListParts(
       _addFilePart(
         rawName,
         refer('item'),
-        rawContentType: encoding?.rawContentType ?? 'application/octet-stream',
+        rawContentType: _rawContentType(
+          encoding,
+          'application/octet-stream',
+        ),
       ),
       const Code('}'),
     ]);
@@ -212,7 +212,7 @@ Code _buildListParts(
       refer('jsonEncode', 'dart:convert').call([
         _jsonListValue(value, content),
       ]),
-      rawContentType: encoding?.rawContentType ?? 'application/json',
+      rawContentType: _rawContentType(encoding, 'application/json'),
     );
   }
 
@@ -237,7 +237,7 @@ Code _buildListParts(
       _addTextPart(
         rawName,
         refer('jsonEncode', 'dart:convert').call([itemJson]),
-        rawContentType: encoding?.rawContentType ?? 'application/json',
+        rawContentType: _rawContentType(encoding, 'application/json'),
       ),
       const Code('}'),
     ]);
@@ -254,7 +254,7 @@ Code _buildListParts(
     return _addTextPart(
       rawName,
       serialized,
-      rawContentType: encoding?.rawContentType ?? 'text/plain',
+      rawContentType: _rawContentType(encoding, 'text/plain'),
     );
   }
 
@@ -265,7 +265,7 @@ Code _buildListParts(
     _addTextPart(
       rawName,
       _listItemText(refer('item'), content, encoding?.contentType),
-      rawContentType: encoding?.rawContentType ?? 'text/plain',
+      rawContentType: _rawContentType(encoding, 'text/plain'),
     ),
     const Code('}'),
   ]);
@@ -351,16 +351,12 @@ Expression _listItemText(
     contentType,
     method: 'toTimeZonedIso8601String',
   ),
-  IntegerModel() ||
-  DoubleModel() ||
-  NumberModel() ||
-  BooleanModel() ||
-  DateModel() ||
-  DecimalModel() ||
-  UriModel() => _primitiveText(value, contentType, method: 'toString'),
-  AliasModel() => _listItemText(value, model.resolved, contentType),
+  PrimitiveModel() => _primitiveText(value, contentType, method: 'toString'),
   _ => value.property('toString').call([]),
 };
+
+String _rawContentType(PartEncoding? encoding, String fallback) =>
+    encoding?.rawContentType ?? fallback;
 
 Expression _primitiveText(
   Expression value,

@@ -531,6 +531,68 @@ Object? _data({required Payload body}) {
     );
   });
 
+  test('lowers a runtime-selected JSON or multipart body', () {
+    final value = _formProperty(
+      context,
+      name: 'value',
+      model: StringModel(context: context),
+    );
+    final upload = ClassModel(
+      name: 'Upload',
+      properties: [value],
+      context: context,
+      isDeprecated: false,
+      examples: const [],
+    );
+    final requestBody = RequestBodyObject(
+      name: 'payload',
+      context: context,
+      description: null,
+      isRequired: true,
+      content: {
+        RequestContent(
+          model: StringModel(context: context),
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          examples: const [],
+        ),
+        RequestContent(
+          model: upload,
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          examples: const [],
+        ),
+      },
+    );
+    final method = generator.generateBodyMethod(
+      _operation(context, requestBody: requestBody),
+    );
+
+    const expected = r'''
+Future<Object?> _data({required Payload body}) async {
+  return switch (body) {
+    final PayloadJson value => utf8.encode(jsonEncode(value.value)),
+    final PayloadFormData value => await () async {
+      final _$multipartFiles = <MultipartFile>[];
+      _$multipartFiles.add(
+        MultipartFile.fromBytes(
+          r'value',
+          utf8.encode(value.value.value),
+          contentType: MediaType.parse(r'text/plain'),
+        ),
+      );
+      return _$multipartFiles;
+    }(),
+  };
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${method.accept(emitter)}')),
+      collapseWhitespace(format(expected)),
+    );
+  });
+
   group('multipart bodies', () {
     test(
       'emits ordered duplicate-preserving scalar JSON and file parts',
@@ -819,6 +881,76 @@ Future<Object?> _data({OptionalUpload? body}) async {
 Future<Object?> _data({required UnsupportedTextUpload body}) async {
   final _$multipartFiles = <MultipartFile>[];
   throw EncodingException('Unsupported multipart text encoding: utf-16.');
+  return _$multipartFiles;
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${method.accept(emitter)}')),
+        collapseWhitespace(format(expected)),
+      );
+    });
+
+    test('adds required per-part header parameters to the body method', () {
+      final value = _formProperty(
+        context,
+        name: 'value',
+        model: StringModel(context: context),
+      );
+      final upload = ClassModel(
+        name: 'HeaderUpload',
+        properties: [value],
+        context: context,
+        isDeprecated: false,
+        examples: const [],
+      );
+      final method = generator.generateBodyMethod(
+        _operation(
+          context,
+          requestBody: _body(
+            context,
+            model: upload,
+            contentType: ContentType.multipart,
+            rawContentType: 'multipart/form-data',
+            multipartEncoding: {
+              value: PartEncoding(
+                contentType: null,
+                rawContentType: null,
+                headers: {
+                  'X-Trace': ResponseHeaderObject(
+                    name: 'X-Trace',
+                    description: null,
+                    isRequired: true,
+                    isDeprecated: false,
+                    explode: false,
+                    model: IntegerModel(context: context),
+                    context: context,
+                    encoding: ResponseHeaderEncoding.simple,
+                    examples: const [],
+                  ),
+                },
+                style: null,
+                explode: null,
+                allowReserved: null,
+              ),
+            },
+          ),
+        ),
+      );
+
+      const expected = r'''
+Future<Object?> _data({
+  required HeaderUpload body,
+  required int valueTrace,
+}) async {
+  final _$multipartFiles = <MultipartFile>[];
+  _$multipartFiles.add(
+    MultipartFile.fromBytes(
+      r'value',
+      utf8.encode(body.value),
+      contentType: MediaType.parse(r'text/plain'),
+    ),
+  );
   return _$multipartFiles;
 }
 ''';
