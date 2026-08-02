@@ -1,5 +1,6 @@
 import 'package:code_builder/code_builder.dart';
 import 'package:dart_style/dart_style.dart';
+import 'package:http/http.dart' as http;
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/transport/http_backend_generator.dart';
@@ -11,6 +12,144 @@ void main() {
   final format = DartFormatter(
     languageVersion: DartFormatter.latestLanguageVersion,
   ).format;
+
+  const expectedResponseDispatchSuffix = r'''
+  final StreamedResponse _$streamedResponse;
+  try {
+    _$streamedResponse = await _$client.send(_$request);
+  } on RequestAbortedException catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: cancellation?.isCancelled ?? false
+          ? TonikErrorType.cancelled
+          : TonikErrorType.network,
+      response: null,
+    );
+  } on ClientException catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  } on TimeoutException catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  try {
+    _$response = await Response.fromStream(_$streamedResponse);
+  } on RequestAbortedException catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: cancellation?.isCancelled ?? false
+          ? TonikErrorType.cancelled
+          : TonikErrorType.network,
+      response: null,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
+}
+''';
+
+  group('response accessors', () {
+    test('reads completed native response inputs', () {
+      final response = refer('response');
+      final generatedMethod = Method(
+        (builder) => builder
+          ..name = 'responseInputs'
+          ..returns = TypeReference(
+            (builder) => builder
+              ..symbol = 'List'
+              ..url = 'dart:core'
+              ..types.add(refer('Object?', 'dart:core')),
+          )
+          ..requiredParameters.add(
+            Parameter(
+              (builder) => builder
+                ..name = 'response'
+                ..type = refer('Response', 'package:http/http.dart'),
+            ),
+          )
+          ..lambda = false
+          ..body = Block.of([
+            const Code('return <Object?>['),
+            generator.responseStatusCode(response).code,
+            const Code(','),
+            generator.responseContentType(response).code,
+            const Code(','),
+            generator.responseBodyBytes(response).code,
+            const Code(','),
+            generator.responseHeaderValues(response, 'X-Rate-Limit').code,
+            const Code(',];'),
+          ]),
+      );
+
+      const expectedMethod = '''
+List<Object?> responseInputs(Response response) {
+  return <Object?>[
+    response.statusCode,
+    response.headers['content-type'],
+    response.bodyBytes,
+    response.headersSplitValues[r'x-rate-limit'],
+  ];
+}
+''';
+
+      expect(
+        collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+        collapseWhitespace(format(expectedMethod)),
+      );
+    });
+
+    test('uses the package http split-header fidelity boundary', () {
+      final response = http.Response.bytes(
+        const [],
+        200,
+        headers: {
+          'x-values': 'first, second',
+          'set-cookie':
+              'id=one; Expires=Wed, 21 Oct 2015 07:28:00 GMT,session=two; Path=/',
+        },
+      );
+
+      expect(response.headersSplitValues['x-values'], ['first', 'second']);
+      expect(response.headersSplitValues['set-cookie'], [
+        'id=one; Expires=Wed, 21 Oct 2015 07:28:00 GMT',
+        'session=two; Path=/',
+      ]);
+    });
+
+    test('documents ambiguous comma-containing single header values', () {
+      final response = http.Response.bytes(
+        const [],
+        200,
+        headers: const {'x-display-name': 'last, first'},
+      );
+
+      expect(response.headers['x-display-name'], 'last, first');
+      expect(response.headersSplitValues['x-display-name'], ['last', 'first']);
+    });
+  });
 
   group('http client adapter', () {
     late Class adapter;
@@ -214,10 +353,60 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
+  final StreamedResponse _$streamedResponse;
+  try {
+    _$streamedResponse = await _$client.send(_$request);
+  } on RequestAbortedException catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: cancellation?.isCancelled ?? false
+          ? TonikErrorType.cancelled
+          : TonikErrorType.network,
+      response: null,
+    );
+  } on ClientException catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  } on TimeoutException catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.other,
+      response: null,
+    );
+  }
+
+  try {
+    _$response = await Response.fromStream(_$streamedResponse);
+  } on RequestAbortedException catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: cancellation?.isCancelled ?? false
+          ? TonikErrorType.cancelled
+          : TonikErrorType.network,
+      response: null,
+    );
+  } on Object catch (exception, stackTrace) {
+    return TonikError<void, Response>(
+      exception,
+      stackTrace: stackTrace,
+      type: TonikErrorType.network,
+      response: null,
+    );
+  }
 }
 ''';
 
@@ -272,7 +461,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -317,12 +507,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -375,7 +561,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -420,12 +607,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -478,7 +661,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -523,12 +707,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -581,7 +761,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -626,12 +807,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -684,7 +861,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -729,12 +907,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -787,7 +961,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -832,12 +1007,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -890,7 +1061,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -935,12 +1107,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -1000,7 +1168,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -1043,12 +1212,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -1108,7 +1273,8 @@ Future<TonikResult<void, Response>> dispatch() async {
             ..body = Block.of([statements]),
         );
 
-        const expectedMethod = r'''
+        const expectedMethod =
+            r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -1164,12 +1330,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+            expectedResponseDispatchSuffix;
 
         expect(
           collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
@@ -1239,7 +1401,8 @@ Future<TonikResult<void, Response>> dispatch() async {
           ..body = Block.of([statements]),
       );
 
-      const expectedMethod = r'''
+      const expectedMethod =
+          r'''
 Future<TonikResult<void, Response>> dispatch() async {
   late final Response _$response;
   if (cancellation != null && cancellation.isCancelled) {
@@ -1295,12 +1458,8 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  await _$client.send(_$request);
-  throw UnsupportedError(
-    'The http transport backend does not support response normalization yet.',
-  );
-}
-''';
+''' +
+          expectedResponseDispatchSuffix;
 
       expect(
         collapseWhitespace(format('${generatedMethod.accept(emitter)}')),

@@ -7,6 +7,7 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/operation/parse_generator.dart';
 import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
+import 'package:tonik_generate/src/transport/http_backend_generator.dart';
 import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 
 void main() {
@@ -4995,5 +4996,144 @@ Tree _parseResponse(Response<List<int>> response) {
         );
       },
     );
+
+    group('http response normalization', () {
+      late ParseGenerator httpGenerator;
+
+      setUp(() {
+        httpGenerator = ParseGenerator(
+          nameManager: nameManager,
+          package: package,
+          backendGenerator: const HttpBackendGenerator(),
+        );
+      });
+
+      test('selects status and media type and decodes native body bytes', () {
+        final operation = Operation(
+          operationId: 'httpJsonResponse',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/http-json',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 200): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        final method = httpGenerator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+String _parseResponse(Response response) {
+  final _$mediaType = extractMediaType(response.headers['content-type']);
+  switch ((response.statusCode, _$mediaType)) {
+    case (200, r'application/json'):
+      final _$json = decodeResponseJson<Object?>(response.bodyBytes);
+      final _$body = _$json.decodeJsonString();
+      return _$body;
+    default:
+      final _$content =
+          response.headers['content-type'] ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+      );
+  }
+}
+''';
+
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
+      test('decodes typed headers from lower-cased split values', () {
+        final operation = Operation(
+          operationId: 'httpHeaderResponse',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/http-header',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const ExplicitResponseStatus(statusCode: 204): ResponseObject(
+              name: null,
+              context: context,
+              headers: {
+                'X-Rate-Limit': ResponseHeaderObject(
+                  name: 'X-Rate-Limit',
+                  context: context,
+                  description: '',
+                  isRequired: true,
+                  isDeprecated: false,
+                  model: IntegerModel(context: context),
+                  explode: false,
+                  encoding: ResponseHeaderEncoding.simple,
+                  examples: const [],
+                ),
+              },
+              description: '',
+              bodies: const {},
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        final method = httpGenerator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+AnonymousResponse _parseResponse(Response response) {
+  final _$mediaType = extractMediaType(response.headers['content-type']);
+  switch ((response.statusCode, _$mediaType)) {
+    case (204, _):
+      return AnonymousResponse(
+        xRateLimit:
+            (response.headersSplitValues[r'x-rate-limit']?.join(','))
+                .decodeSimpleInt(context: r'X-Rate-Limit'),
+      );
+    default:
+      final _$content =
+          response.headers['content-type'] ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+      );
+  }
+}
+''';
+
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+    });
   });
 }
