@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:shopify_api/shopify_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -19,12 +18,8 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -38,8 +33,8 @@ void main() {
 
       final result = await api.getProducts();
 
-      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = result as TonikSuccess<void, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -51,8 +46,8 @@ void main() {
 
       final result = await api.getProducts();
 
-      expect(result, isA<TonikError<void, Response<Object?>>>());
-      final error = result as TonikError<void, Response<Object?>>;
+      expect(result, isTonikError);
+      final error = requireError(result);
       expect(error.type, TonikErrorType.decoding);
     });
   });
@@ -65,8 +60,8 @@ void main() {
 
       final result = await api.getCustomers();
 
-      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = result as TonikSuccess<void, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -82,8 +77,8 @@ void main() {
 
       final result = await api.createProducts();
 
-      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = result as TonikSuccess<void, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -102,8 +97,8 @@ void main() {
 
       final result = await api.deleteProductsParamProductId(productId: '123');
 
-      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = result as TonikSuccess<void, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       expect(success.response.requestOptions.method, 'DELETE');

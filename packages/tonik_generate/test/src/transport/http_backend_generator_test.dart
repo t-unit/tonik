@@ -16,6 +16,14 @@ void main() {
   const expectedResponseDispatchSuffix = r'''
   final StreamedResponse _$streamedResponse;
   try {
+    for (final value in _$request.headers.values) {
+      final invalid = value.codeUnits.any(
+        (unit) => unit < 32 && unit != 9 || unit == 127,
+      );
+      if (invalid) {
+        throw ClientException('Invalid HTTP header value.', _$request.url);
+      }
+    }
     _$streamedResponse = await _$client.send(_$request);
   } on RequestAbortedException catch (exception, stackTrace) {
     return TonikError<void, Response>(
@@ -110,7 +118,9 @@ List<Object?> responseInputs(Response response) {
     response.statusCode,
     response.headers['content-type'],
     response.bodyBytes,
-    response.headersSplitValues[r'x-rate-limit'],
+    (response.headers[r'x-rate-limit'] == null
+        ? null
+        : <String>[response.headers[r'x-rate-limit']!]),
   ];
 }
 ''';
@@ -355,6 +365,14 @@ Future<TonikResult<void, Response>> dispatch() async {
 
   final StreamedResponse _$streamedResponse;
   try {
+    for (final value in _$request.headers.values) {
+      final invalid = value.codeUnits.any(
+        (unit) => unit < 32 && unit != 9 || unit == 127,
+      );
+      if (invalid) {
+        throw ClientException('Invalid HTTP header value.', _$request.url);
+      }
+    }
     _$streamedResponse = await _$client.send(_$request);
   } on RequestAbortedException catch (exception, stackTrace) {
     return TonikError<void, Response>(
@@ -1194,9 +1212,9 @@ Future<TonikResult<void, Response>> dispatch() async {
     );
   }
 
-  late final AbortableMultipartRequest _$request;
+  late final _TonikMultipartRequest _$request;
   try {
-    _$request = AbortableMultipartRequest(
+    _$request = _TonikMultipartRequest(
       'POST',
       _$uri,
       abortTrigger: cancellation?.whenCancelled,
@@ -1302,7 +1320,7 @@ Future<TonikResult<void, Response>> dispatch() async {
   late final BaseRequest _$request;
   try {
     if (_$data is List<MultipartFile>) {
-      final _$multipartRequest = AbortableMultipartRequest(
+      final _$multipartRequest = _TonikMultipartRequest(
         'POST',
         _$uri,
         abortTrigger: cancellation?.whenCancelled,
@@ -1430,7 +1448,7 @@ Future<TonikResult<void, Response>> dispatch() async {
   late final BaseRequest _$request;
   try {
     if (_$data is List<MultipartFile>) {
-      final _$multipartRequest = AbortableMultipartRequest(
+      final _$multipartRequest = _TonikMultipartRequest(
         'POST',
         _$uri,
         abortTrigger: cancellation?.whenCancelled,

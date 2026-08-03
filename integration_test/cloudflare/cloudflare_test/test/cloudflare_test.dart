@@ -1,8 +1,6 @@
 import 'package:cloudflare_api/cloudflare_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -19,12 +17,8 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -40,11 +34,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<AccountsListAccountsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<AccountsListAccountsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<AccountsListAccountsResponse200>());
 
@@ -59,11 +51,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<AccountsListAccountsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<AccountsListAccountsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<AccountsListAccountsResponse4XX>());
     });
@@ -77,9 +67,8 @@ void main() {
 
       final result = await api.zonesGet();
 
-      expect(result, isA<TonikSuccess<ZonesGetResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<ZonesGetResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<ZonesGetResponse200>());
 
@@ -92,9 +81,8 @@ void main() {
 
       final result = await api.zonesGet();
 
-      expect(result, isA<TonikSuccess<ZonesGetResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<ZonesGetResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<ZonesGetResponse4XX>());
     });

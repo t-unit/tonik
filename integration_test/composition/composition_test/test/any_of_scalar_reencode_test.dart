@@ -1,8 +1,6 @@
 import 'package:composition_api/composition_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return CompositionApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Body': responseBody},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Body': responseBody},
         ),
       ),
     );
@@ -33,8 +27,7 @@ void main() {
     final result = await api.echoAnyOfDateTimeOrString(
       body: const AnyOfDateTimeOrString(string: ''),
     );
-    return (result as TonikSuccess<AnyOfDateTimeOrString, Response<Object?>>)
-        .value;
+    return requireSuccess(result).value;
   }
 
   group('AnyOfDateTimeOrString [date-time, string]', () {

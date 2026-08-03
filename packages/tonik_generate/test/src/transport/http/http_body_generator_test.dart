@@ -244,6 +244,32 @@ Object? _data({String? body}) {
     );
   });
 
+  test('directly encodes a promoted optional nullable model', () {
+    final method = generator.generateBodyMethod(
+      _operation(
+        context,
+        requestBody: _body(
+          context,
+          model: ClassModel(
+            name: 'NullablePayload',
+            properties: const [],
+            context: context,
+            isDeprecated: false,
+            isNullable: true,
+            examples: const [],
+          ),
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          isRequired: false,
+        ),
+      ),
+    );
+
+    final source = format('${method.accept(emitter)}');
+    expect(source, contains('jsonEncode(body.toJson())'));
+    expect(source, isNot(contains('body?.toJson()')));
+  });
+
   group('form-urlencoded bodies', () {
     test('UTF-8 encodes a scalar without inventing a field name', () {
       final method = generator.generateBodyMethod(
@@ -593,6 +619,50 @@ Future<Object?> _data({required Payload body}) async {
     );
   });
 
+  test('does not bind an unused unsupported multipart variant', () {
+    final requestBody = RequestBodyObject(
+      name: 'payload',
+      context: context,
+      description: null,
+      isRequired: true,
+      content: {
+        RequestContent(
+          model: StringModel(context: context),
+          contentType: ContentType.json,
+          rawContentType: 'application/json',
+          examples: const [],
+        ),
+        RequestContent(
+          model: AllOfModel(
+            name: 'UnsupportedUpload',
+            models: {
+              ClassModel(
+                name: 'UploadMember',
+                properties: const [],
+                context: context,
+                isDeprecated: false,
+                examples: const [],
+              ),
+            },
+            context: context,
+            isDeprecated: false,
+            examples: const [],
+          ),
+          contentType: ContentType.multipart,
+          rawContentType: 'multipart/form-data',
+          examples: const [],
+        ),
+      },
+    );
+    final method = generator.generateBodyMethod(
+      _operation(context, requestBody: requestBody),
+    );
+
+    final source = format('${method.accept(emitter)}');
+    expect(source, contains('final PayloadFormData _ =>'));
+    expect(source, isNot(contains('final PayloadFormData value =>')));
+  });
+
   group('multipart bodies', () {
     test(
       'emits ordered duplicate-preserving scalar JSON and file parts',
@@ -767,10 +837,11 @@ Future<Object?> _data({required BatchUpload body}) async {
   final _$multipartFiles = <MultipartFile>[];
   for (final item in body.tag) {
     _$multipartFiles.add(
-      MultipartFile.fromBytes(
+      _TonikMultipartFile.fromBytes(
         r'tag',
         utf8.encode(item),
         contentType: MediaType.parse(r'text/plain'),
+        isPlainField: true,
       ),
     );
   }
@@ -944,11 +1015,17 @@ Future<Object?> _data({
   required int valueTrace,
 }) async {
   final _$multipartFiles = <MultipartFile>[];
+  final _$valueHeaders = <String, String>{};
+  _$valueHeaders[r'X-Trace'] = valueTrace.toSimple(
+    explode: false,
+    allowEmpty: true,
+  );
   _$multipartFiles.add(
-    MultipartFile.fromBytes(
+    _TonikMultipartFile.fromBytes(
       r'value',
       utf8.encode(body.value),
       contentType: MediaType.parse(r'text/plain'),
+      partHeaders: _$valueHeaders,
     ),
   );
   return _$multipartFiles;

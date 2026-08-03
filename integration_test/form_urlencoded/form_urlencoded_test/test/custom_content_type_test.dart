@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:form_urlencoded_api/form_urlencoded_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -22,19 +20,16 @@ void main() {
 
       final response = await api.postCustomForm(body: form);
 
-      expect(response, isA<TonikSuccess<CustomForm, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final requestOptions =
-          (response as TonikSuccess<CustomForm, Response<Object?>>)
-              .response
-              .requestOptions;
+      final requestOptions = requireSuccess(response).response.requestOptions;
       final contentType = requestOptions.headers['content-type'];
       expect(contentType, 'application/vnd.custom-form');
 
-      final requestData = response.response.requestOptions.data;
+      final requestData = requireSuccess(response).response.requestOptions.data;
       expect(requestData, 'field1=test+data&field2=999');
 
-      final data = response.value;
+      final data = requireSuccess(response).value;
       expect(data.field1, 'custom value');
       expect(data.field2, 100);
     });
@@ -44,16 +39,12 @@ void main() {
 
       final response = await api.postCustomForm(body: form);
 
-      expect(response, isA<TonikSuccess<CustomForm, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final requestData =
-          (response as TonikSuccess<CustomForm, Response<Object?>>)
-              .response
-              .requestOptions
-              .data;
+      final requestData = requireSuccess(response).response.requestOptions.data;
       expect(requestData, 'field1=first+second+third&field2=50');
 
-      final data = response.value;
+      final data = requireSuccess(response).value;
       expect(data.field1, 'custom value');
     });
   });

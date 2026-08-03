@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:music_streaming_api/music_streaming_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return AlbumsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -36,10 +30,9 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<GetAnAlbumResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          response as TonikSuccess<GetAnAlbumResponse, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetAnAlbumResponse200>());
 
@@ -209,10 +202,9 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<GetAnAlbumResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          response as TonikSuccess<GetAnAlbumResponse, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<GetAnAlbumResponse401>());
 
@@ -230,10 +222,9 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<GetAnAlbumResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          response as TonikSuccess<GetAnAlbumResponse, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<GetAnAlbumResponse403>());
 
@@ -251,10 +242,9 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<GetAnAlbumResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          response as TonikSuccess<GetAnAlbumResponse, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 429);
       expect(success.value, isA<GetAnAlbumResponse429>());
 

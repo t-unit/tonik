@@ -89,6 +89,40 @@ Map<String, String> _options({String? body}) {
     );
   });
 
+  test('sets a required multi-content type without a nullable guard', () {
+    final method = generator.generateHeadersMethod(
+      _operation(
+        context,
+        requestBody: RequestBodyObject(
+          name: 'payload',
+          context: context,
+          description: null,
+          isRequired: true,
+          content: {
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.json,
+              rawContentType: 'application/json',
+              examples: const [],
+            ),
+            RequestContent(
+              model: StringModel(context: context),
+              contentType: ContentType.text,
+              rawContentType: 'text/plain',
+              examples: const [],
+            ),
+          },
+        ),
+      ),
+      const [],
+      const [],
+    );
+
+    final source = format('${method.accept(emitter)}');
+    expect(source, contains(r"_$headers[r'Content-Type'] = _$contentType;"));
+    expect(source, isNot(contains(r'if (_$contentType != null)')));
+  });
+
   test('preserves encoded headers and multiple cookies', () {
     final header = RequestHeaderObject(
       name: 'X-Trace',

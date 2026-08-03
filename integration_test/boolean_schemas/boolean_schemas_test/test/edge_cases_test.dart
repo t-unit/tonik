@@ -1,8 +1,6 @@
 import 'package:boolean_schemas_api/boolean_schemas_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return BooleanSchemasApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -34,7 +28,7 @@ void main() {
       const original = ObjectWithAny(name: 'null-edge-case', anyData: null);
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -54,7 +48,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -74,7 +68,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -108,8 +102,7 @@ void main() {
         );
 
         final result = await api.echoJsonAny(body: original);
-        final success =
-            result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+        final success = requireSuccess(result);
         expect(success.response.statusCode, 200);
         expect(
           success.response.requestOptions.data,
@@ -163,7 +156,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -181,7 +174,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -204,7 +197,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.data,
@@ -224,7 +217,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -243,7 +236,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -259,7 +252,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -274,7 +267,7 @@ void main() {
       );
 
       final result = await api.echoJsonAny(body: original);
-      final success = result as TonikSuccess<ObjectWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;

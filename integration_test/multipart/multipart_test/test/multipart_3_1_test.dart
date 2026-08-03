@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
 import 'package:multipart_3_1_api/multipart_3_1_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -15,7 +14,9 @@ void main() {
     imposterServer = await setupImposterServer();
     baseUrl = 'http://localhost:${imposterServer.port}';
 
-    api = Multipart31Api(CustomServer(baseUrl: baseUrl));
+    api = Multipart31Api(
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
+    );
   });
 
   group(
@@ -34,12 +35,11 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
 
-          final success =
-              response as TonikSuccess<GenericResponse, Response<Object?>>;
-          final formData = success.response.requestOptions.data as FormData;
+          final success = requireSuccess(response);
+          final formData = success.response.requestOptions.data as TestFormData;
 
           // Style-based primitives fall back to text/plain and go into files.
           expect(formData.files.any((e) => e.key == 'name'), isTrue);
@@ -64,11 +64,10 @@ void main() {
 
       final response = await api.postPipeDelimited(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
+      final success = requireSuccess(response);
+      final formData = success.response.requestOptions.data as TestFormData;
 
       // With style: pipeDelimited and explode: false, the array should be
       // serialized as a single field with pipe-separated values.
@@ -89,11 +88,10 @@ void main() {
 
       final response = await api.postFormNonExploded(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
+      final success = requireSuccess(response);
+      final formData = success.response.requestOptions.data as TestFormData;
       final tagEntries = formData.fields
           .where((entry) => entry.key == 'tags')
           .toList();
@@ -110,11 +108,10 @@ void main() {
 
       final response = await api.postFormNonExploded(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
+      final success = requireSuccess(response);
+      final formData = success.response.requestOptions.data as TestFormData;
 
       expect(formData.fields.where((entry) => entry.key == 'tags'), isEmpty);
       expect(formData.files.where((entry) => entry.key == 'tags'), isEmpty);
@@ -127,11 +124,10 @@ void main() {
 
       final response = await api.postFormNonExploded(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
+      final success = requireSuccess(response);
+      final formData = success.response.requestOptions.data as TestFormData;
       final tagEntries = formData.fields
           .where((entry) => entry.key == 'tags')
           .toList();
@@ -154,16 +150,15 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
 
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
+        final success = requireSuccess(response);
 
         // Per RFC 7578 §4.3 and OAS 3.x default: when no style/explode/
         // allowReserved are set on an array property, each element is sent
         // as a separate form field with the same name (repeated fields).
-        final formData = success.response.requestOptions.data as FormData;
+        final formData = success.response.requestOptions.data as TestFormData;
 
         final valueEntries = formData.fields
             .where((e) => e.key == 'values')
@@ -189,12 +184,11 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
 
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
-        final formData = success.response.requestOptions.data as FormData;
+        final success = requireSuccess(response);
+        final formData = success.response.requestOptions.data as TestFormData;
 
         // deepObject sends separate form fields with bracket-notation names.
         expect(formData.fields.any((e) => e.key == 'address[city]'), isTrue);
@@ -234,12 +228,11 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
 
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
-        final formData = success.response.requestOptions.data as FormData;
+        final success = requireSuccess(response);
+        final formData = success.response.requestOptions.data as TestFormData;
 
         expect(formData.fields.any((e) => e.key == 'profile[name]'), isTrue);
         expect(formData.fields.any((e) => e.key == 'profile[age]'), isTrue);
@@ -276,10 +269,9 @@ void main() {
 
       final response = await api.postDeepObjectTypes(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
+      final success = requireSuccess(response);
       final profileValue =
           success.response.headers['x-profile-value']?.first ?? '';
 
@@ -294,11 +286,10 @@ void main() {
 
       final response = await api.postDeepObjectOptional(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
+      final success = requireSuccess(response);
+      final formData = success.response.requestOptions.data as TestFormData;
 
       expect(formData.fields.any((e) => e.key == 'shipping[city]'), isTrue);
       expect(formData.fields.any((e) => e.key == 'billing[city]'), isFalse);
@@ -317,11 +308,10 @@ void main() {
 
       final response = await api.postDeepObjectOptional(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
+      final success = requireSuccess(response);
+      final formData = success.response.requestOptions.data as TestFormData;
 
       expect(formData.fields.any((e) => e.key == 'shipping[city]'), isTrue);
       expect(formData.fields.any((e) => e.key == 'billing[city]'), isTrue);
@@ -347,12 +337,11 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
 
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
-        final formData = success.response.requestOptions.data as FormData;
+        final success = requireSuccess(response);
+        final formData = success.response.requestOptions.data as TestFormData;
 
         // The address field is a file part (not a plain field) because it
         // carries a Content-Type of application/x-www-form-urlencoded.
@@ -386,11 +375,10 @@ void main() {
 
       final response = await api.postBasic31(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
+      final success = requireSuccess(response);
+      final formData = success.response.requestOptions.data as TestFormData;
 
       // Scalar fields go to files with explicit Content-Type.
       expect(formData.files.any((e) => e.key == 'name'), isTrue);
@@ -416,12 +404,11 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
 
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
-        final formData = success.response.requestOptions.data as FormData;
+        final success = requireSuccess(response);
+        final formData = success.response.requestOptions.data as TestFormData;
 
         // Both fields go to files.
         expect(formData.files.any((e) => e.key == 'label'), isTrue);
@@ -458,12 +445,11 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
 
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
-        final formData = success.response.requestOptions.data as FormData;
+        final success = requireSuccess(response);
+        final formData = success.response.requestOptions.data as TestFormData;
 
         // The data field goes to files (JSON-encoded as application/json).
         expect(formData.files.any((e) => e.key == 'data'), isTrue);
@@ -492,11 +478,10 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
 
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
+        final success = requireSuccess(response);
 
         expect(success.response.headers['x-has-data']?.first, 'true');
         expect(success.response.headers['x-data-value']?.first, '42');

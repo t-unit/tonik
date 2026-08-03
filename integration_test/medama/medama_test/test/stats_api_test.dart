@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:medama_api/medama_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return StatsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -38,9 +32,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/summary',
@@ -55,9 +47,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -69,9 +59,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -86,9 +74,7 @@ void main() {
           previous: true,
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['previous'], 'true');
       });
@@ -101,9 +87,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['previous'], 'false');
       });
@@ -117,9 +101,7 @@ void main() {
           interval: WebsiteHostnameSummaryParametersModel.day,
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['interval'], 'day');
       });
@@ -134,9 +116,7 @@ void main() {
           start: startDate,
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['start'], isNotNull);
       });
@@ -151,9 +131,7 @@ void main() {
           end: endDate,
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['end'], isNotNull);
       });
@@ -167,9 +145,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['previous'], 'false');
         expect(uri.queryParameters.containsKey('interval'), isFalse);
@@ -191,14 +167,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSummaryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdSummaryResponse200>());
         },
@@ -212,9 +183,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdSummaryResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -227,9 +196,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdSummaryResponse200;
         expect(response200.body.body, isA<StatsSummary>());
       });
@@ -242,9 +209,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdSummaryResponse200;
         expect(response200.body.body.current, isA<StatsSummaryCurrentModel>());
       });
@@ -263,14 +228,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSummaryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdSummaryResponse400>());
         },
@@ -284,9 +244,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response400 = success.value as GetWebsiteIdSummaryResponse400;
         expect(response400.body, isA<BadRequestError>());
         expect(
@@ -309,14 +267,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSummaryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdSummaryResponse401>());
         },
@@ -334,14 +287,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSummaryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdSummaryResponse404>());
         },
@@ -359,14 +307,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSummaryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSummaryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdSummaryResponse500>());
         },
@@ -384,9 +327,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/pages',
@@ -401,9 +342,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -415,9 +354,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -432,9 +369,7 @@ void main() {
           summary: true,
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['summary'], 'true');
       });
@@ -448,9 +383,7 @@ void main() {
           limit: 50,
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['limit'], '50');
       });
@@ -464,9 +397,7 @@ void main() {
           offset: 10,
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['offset'], '10');
       });
@@ -483,11 +414,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetWebsiteIdPagesResponse200>());
       });
@@ -500,9 +429,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdPagesResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -515,9 +442,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdPagesResponse200;
         expect(response200.body.body, isA<StatsPages>());
       });
@@ -534,11 +459,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetWebsiteIdPagesResponse400>());
       });
@@ -553,11 +476,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetWebsiteIdPagesResponse401>());
       });
@@ -572,11 +493,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetWebsiteIdPagesResponse404>());
       });
@@ -591,11 +510,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdPagesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetWebsiteIdPagesResponse500>());
       });
@@ -612,9 +529,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/time',
@@ -629,9 +544,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -643,9 +556,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -661,11 +572,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetWebsiteIdTimeResponse200>());
       });
@@ -678,9 +587,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdTimeResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -693,9 +600,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdTimeResponse200;
         expect(response200.body.body, isA<StatsTime>());
       });
@@ -712,11 +617,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetWebsiteIdTimeResponse400>());
       });
@@ -731,11 +634,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetWebsiteIdTimeResponse401>());
       });
@@ -750,11 +651,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetWebsiteIdTimeResponse404>());
       });
@@ -769,11 +668,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdTimeResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetWebsiteIdTimeResponse500>());
       });
@@ -790,12 +687,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdReferrersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/referrers',
@@ -810,12 +702,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdReferrersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -827,12 +714,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdReferrersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -847,12 +729,7 @@ void main() {
           grouped: false,
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdReferrersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['grouped'], 'false');
       });
@@ -871,16 +748,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdReferrersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdReferrersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdReferrersResponse200>());
         },
@@ -894,12 +764,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdReferrersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdReferrersResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -912,12 +777,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdReferrersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdReferrersResponse200;
         expect(response200.body.body, isA<StatsReferrers>());
       });
@@ -936,16 +796,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdReferrersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdReferrersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdReferrersResponse400>());
         },
@@ -963,16 +816,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdReferrersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdReferrersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdReferrersResponse401>());
         },
@@ -990,16 +836,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdReferrersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdReferrersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdReferrersResponse403>());
         },
@@ -1017,16 +856,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdReferrersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdReferrersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdReferrersResponse404>());
         },
@@ -1044,16 +876,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdReferrersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdReferrersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdReferrersResponse500>());
         },
@@ -1071,9 +896,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/sources',
@@ -1088,9 +911,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -1102,9 +923,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -1122,14 +941,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSourcesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdSourcesResponse200>());
         },
@@ -1143,9 +957,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdSourcesResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -1158,9 +970,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdSourcesResponse200;
         expect(response200.body.body, isA<StatsUtmSources>());
       });
@@ -1179,14 +989,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSourcesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdSourcesResponse400>());
         },
@@ -1204,14 +1009,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSourcesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdSourcesResponse401>());
         },
@@ -1229,14 +1029,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSourcesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdSourcesResponse403>());
         },
@@ -1254,14 +1049,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSourcesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdSourcesResponse404>());
         },
@@ -1279,14 +1069,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdSourcesResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdSourcesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdSourcesResponse500>());
         },
@@ -1304,9 +1089,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/mediums',
@@ -1321,9 +1104,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -1335,9 +1116,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -1355,14 +1134,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdMediumsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdMediumsResponse200>());
         },
@@ -1376,9 +1150,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdMediumsResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -1391,9 +1163,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdMediumsResponse200;
         expect(response200.body.body, isA<StatsUtmMediums>());
       });
@@ -1412,14 +1182,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdMediumsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdMediumsResponse400>());
         },
@@ -1437,14 +1202,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdMediumsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdMediumsResponse401>());
         },
@@ -1462,14 +1222,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdMediumsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdMediumsResponse403>());
         },
@@ -1487,14 +1242,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdMediumsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdMediumsResponse404>());
         },
@@ -1512,14 +1262,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdMediumsResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdMediumsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdMediumsResponse500>());
         },
@@ -1537,12 +1282,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdCampaignsResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/campaigns',
@@ -1557,12 +1297,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdCampaignsResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -1574,12 +1309,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdCampaignsResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -1597,16 +1327,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdCampaignsResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCampaignsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse200>());
         },
@@ -1620,12 +1343,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdCampaignsResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdCampaignsResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -1638,12 +1356,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdCampaignsResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdCampaignsResponse200;
         expect(response200.body.body, isA<StatsUtmCampaigns>());
       });
@@ -1662,16 +1375,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdCampaignsResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCampaignsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse400>());
         },
@@ -1689,16 +1395,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdCampaignsResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCampaignsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse401>());
         },
@@ -1716,16 +1415,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdCampaignsResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCampaignsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse403>());
         },
@@ -1743,16 +1435,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdCampaignsResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCampaignsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse404>());
         },
@@ -1770,16 +1455,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdCampaignsResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCampaignsResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdCampaignsResponse500>());
         },
@@ -1797,12 +1475,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdBrowsersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/browsers',
@@ -1817,12 +1490,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdBrowsersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -1834,12 +1502,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdBrowsersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -1857,16 +1520,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdBrowsersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdBrowsersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse200>());
         },
@@ -1880,12 +1536,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdBrowsersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdBrowsersResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -1898,12 +1549,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdBrowsersResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdBrowsersResponse200;
         expect(response200.body.body, isA<StatsBrowsers>());
       });
@@ -1922,16 +1568,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdBrowsersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdBrowsersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse400>());
         },
@@ -1949,16 +1588,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdBrowsersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdBrowsersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse401>());
         },
@@ -1976,16 +1608,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdBrowsersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdBrowsersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse403>());
         },
@@ -2003,16 +1628,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdBrowsersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdBrowsersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse404>());
         },
@@ -2030,16 +1648,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdBrowsersResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdBrowsersResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdBrowsersResponse500>());
         },
@@ -2057,8 +1668,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/os',
@@ -2073,8 +1683,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -2086,8 +1695,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -2103,10 +1711,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetWebsiteIdOsResponse200>());
       });
@@ -2119,8 +1726,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdOsResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -2133,8 +1739,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdOsResponse200;
         expect(response200.body.body, isA<StatsOs>());
       });
@@ -2151,10 +1756,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetWebsiteIdOsResponse400>());
       });
@@ -2169,10 +1773,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 401);
         expect(success.value, isA<GetWebsiteIdOsResponse401>());
       });
@@ -2187,10 +1790,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 403);
         expect(success.value, isA<GetWebsiteIdOsResponse403>());
       });
@@ -2205,10 +1807,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<GetWebsiteIdOsResponse404>());
       });
@@ -2223,10 +1824,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetWebsiteIdOsResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetWebsiteIdOsResponse500>());
       });
@@ -2243,9 +1843,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/devices',
@@ -2260,9 +1858,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -2274,9 +1870,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -2294,14 +1888,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdDeviceResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdDeviceResponse200>());
         },
@@ -2315,9 +1904,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdDeviceResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -2330,9 +1917,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdDeviceResponse200;
         expect(response200.body.body, isA<StatsDevices>());
       });
@@ -2351,14 +1936,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdDeviceResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdDeviceResponse400>());
         },
@@ -2376,14 +1956,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdDeviceResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdDeviceResponse401>());
         },
@@ -2401,14 +1976,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdDeviceResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdDeviceResponse403>());
         },
@@ -2426,14 +1996,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdDeviceResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdDeviceResponse404>());
         },
@@ -2451,14 +2016,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdDeviceResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdDeviceResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdDeviceResponse500>());
         },
@@ -2476,9 +2036,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/countries',
@@ -2493,9 +2051,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -2507,9 +2063,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -2527,14 +2081,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCountryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdCountryResponse200>());
         },
@@ -2548,9 +2097,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdCountryResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -2563,9 +2110,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdCountryResponse200;
         expect(response200.body.body, isA<StatsCountries>());
       });
@@ -2584,14 +2129,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCountryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdCountryResponse400>());
         },
@@ -2609,14 +2149,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCountryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdCountryResponse401>());
         },
@@ -2634,14 +2169,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCountryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdCountryResponse403>());
         },
@@ -2659,14 +2189,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCountryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdCountryResponse404>());
         },
@@ -2684,14 +2209,9 @@ void main() {
 
           expect(
             response,
-            isA<TonikSuccess<GetWebsiteIdCountryResponse, Response<Object?>>>(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdCountryResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdCountryResponse500>());
         },
@@ -2709,12 +2229,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdLanguageResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.uri.path,
           '/website/example.com/languages',
@@ -2729,12 +2244,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdLanguageResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -2746,12 +2256,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdLanguageResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -2766,12 +2271,7 @@ void main() {
           locale: true,
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdLanguageResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final uri = success.response.requestOptions.uri;
         expect(uri.queryParameters['locale'], 'true');
       });
@@ -2790,16 +2290,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdLanguageResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdLanguageResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdLanguageResponse200>());
         },
@@ -2813,12 +2306,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdLanguageResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdLanguageResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -2831,12 +2319,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdLanguageResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdLanguageResponse200;
         expect(response200.body.body, isA<StatsLanguages>());
       });
@@ -2855,16 +2338,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdLanguageResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdLanguageResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdLanguageResponse400>());
         },
@@ -2882,16 +2358,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdLanguageResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdLanguageResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdLanguageResponse401>());
         },
@@ -2909,16 +2378,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdLanguageResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdLanguageResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdLanguageResponse403>());
         },
@@ -2936,16 +2398,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdLanguageResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdLanguageResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdLanguageResponse404>());
         },
@@ -2963,16 +2418,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdLanguageResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdLanguageResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdLanguageResponse500>());
         },
@@ -2990,12 +2438,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdPropertiesResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(
           success.response.requestOptions.path,
           '$baseUrl/website/example.com/properties',
@@ -3010,12 +2453,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdPropertiesResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.method, 'GET');
       });
 
@@ -3027,12 +2465,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdPropertiesResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.data, isNull);
       });
     });
@@ -3050,16 +2483,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdPropertiesResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdPropertiesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 200);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse200>());
         },
@@ -3073,12 +2499,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdPropertiesResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdPropertiesResponse200;
         expect(response200.body.xApiCommit, isA<String?>());
       });
@@ -3091,12 +2512,7 @@ void main() {
           hostname: 'example.com',
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  GetWebsiteIdPropertiesResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         final response200 = success.value as GetWebsiteIdPropertiesResponse200;
         expect(response200.body.body, isA<StatsProperties>());
       });
@@ -3115,16 +2531,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdPropertiesResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdPropertiesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 400);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse400>());
         },
@@ -3142,16 +2551,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdPropertiesResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdPropertiesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 401);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse401>());
         },
@@ -3169,16 +2571,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdPropertiesResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdPropertiesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 403);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse403>());
         },
@@ -3196,16 +2591,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdPropertiesResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdPropertiesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 404);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse404>());
         },
@@ -3223,16 +2611,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<GetWebsiteIdPropertiesResponse, Response<Object?>>
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    GetWebsiteIdPropertiesResponse,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
           expect(success.response.statusCode, 500);
           expect(success.value, isA<GetWebsiteIdPropertiesResponse500>());
         },

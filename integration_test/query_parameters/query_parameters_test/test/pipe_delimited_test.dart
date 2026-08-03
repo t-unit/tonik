@@ -1,5 +1,4 @@
 import 'package:big_decimal/big_decimal.dart';
-import 'package:dio/dio.dart';
 import 'package:query_parameters_api/query_parameters_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -18,12 +17,8 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -36,10 +31,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -49,10 +44,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -62,10 +57,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -75,10 +70,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -88,10 +83,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -103,10 +98,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -118,10 +113,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -133,10 +128,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -148,8 +143,8 @@ void main() {
         $class: const Class(name: 'test', age: 1),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'class=name%7Ctest%7Cage%7C1',
@@ -168,10 +163,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'nested objects have no flat parameter representation',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -181,10 +176,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -194,8 +189,8 @@ void main() {
         classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'classAlias=name%7Ctest%7Cage%7C1',
@@ -210,10 +205,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -223,8 +218,8 @@ void main() {
         anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'anyOfComplex=name%7Ctest%7Cage%7C1',
@@ -239,10 +234,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -254,8 +249,8 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'oneOfComplex=value%7Ctest%7Camount%7C1',
@@ -270,10 +265,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -286,8 +281,8 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'allOfComplex=name%7Ctest%7Cage%7C1%7Cvalue%7Ctest%7Camount%7C1',
@@ -304,10 +299,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -323,10 +318,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -338,10 +333,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -353,10 +348,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -368,10 +363,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -383,10 +378,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -398,10 +393,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -415,10 +410,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -430,10 +425,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -448,10 +443,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -462,8 +457,8 @@ void main() {
       final response = await api.testPipeDelimitedList(
         listString: ['test', 'test2', 'white pipe', 'special&&chars'],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listString=test%7Ctest2%7Cwhite%20pipe%7Cspecial%26%26chars',
@@ -475,8 +470,8 @@ void main() {
       final response = await api.testPipeDelimitedList(
         listNullableString: ['a b/c', null, 'd'],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listNullableString=a%20b%2Fc%7C%7Cd',
@@ -491,8 +486,8 @@ void main() {
           const OneOfPrimitiveString('test2'),
         ],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listOneOfPrimitive=white%20space%7Ctest2',
@@ -508,8 +503,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -522,8 +517,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -536,8 +531,8 @@ void main() {
           const PipeDelimitedListParametersArrayOneOfModelInt(5),
         ],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listOneOfComplexMixed=3%7C4%7C5',
@@ -553,8 +548,8 @@ void main() {
           PipeDelimitedListParametersArrayModel.lowPriority,
         ],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listEnum=high%20priority%7Curgent%7Clow%20priority',
@@ -566,8 +561,8 @@ void main() {
       final response = await api.testPipeDelimitedList(
         listString: const [],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.requestOptions.uri.query, '');
     });
 
@@ -577,8 +572,8 @@ void main() {
         listString: const [],
         listOneOfPrimitive: [const OneOfPrimitiveString('test')],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listOneOfPrimitive=test',
@@ -592,8 +587,8 @@ void main() {
       final response = await api.testPipeDelimitedListExplode(
         listString: ['test', 'test2'],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listString=test&listString=test2',
@@ -605,8 +600,8 @@ void main() {
       final response = await api.testPipeDelimitedListExplode(
         listOneOfPrimitive: [const OneOfPrimitiveString('white space')],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listOneOfPrimitive=white%20space',
@@ -622,8 +617,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -636,8 +631,8 @@ void main() {
           PipeDelimitedListExplodeParametersArrayModel.lowPriority,
         ],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'listEnum=high%20priority&listEnum=urgent&listEnum=low%20priority',
@@ -649,8 +644,8 @@ void main() {
       final response = await api.testPipeDelimitedListExplode(
         listString: const [],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.requestOptions.uri.query, '');
     });
   });
@@ -664,10 +659,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -679,10 +674,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -694,10 +689,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -705,8 +700,8 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedPrimitive();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.requestOptions.uri.query, '');
     });
 
@@ -714,8 +709,8 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedPrimitive();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.requestOptions.uri.query, '');
     });
   });
@@ -729,10 +724,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -740,8 +735,8 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testPipeDelimitedComplex();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.requestOptions.uri.query, '');
     });
 
@@ -760,10 +755,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'parameter cannot be pipeDelimited-encoded',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -775,8 +770,8 @@ void main() {
         freeFormMap: const {'k1': 'v1', 'k2': 'v2'},
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'freeFormMap=k1%7Cv1%7Ck2%7Cv2',
@@ -789,8 +784,8 @@ void main() {
         aliasList: const ['a', 'b', 'c'],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'aliasList=a%7Cb%7Cc',
@@ -803,8 +798,8 @@ void main() {
         mixedComposite: const StringOrClassClass(Class(name: 'test', age: 1)),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         'mixedComposite=name%7Ctest%7Cage%7C1',
@@ -817,8 +812,8 @@ void main() {
         mixedComposite: const StringOrClassString('hello'),
       );
 
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
   });

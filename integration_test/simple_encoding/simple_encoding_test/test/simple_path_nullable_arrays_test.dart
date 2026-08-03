@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,9 +15,7 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(BaseOptions(headers: {'X-Response-Status': '200'})),
-        ),
+        serverConfig: testServerConfig(headers: {'X-Response-Status': '200'}),
       ),
     );
   }
@@ -33,8 +29,8 @@ void main() {
           values: ['hello world', 'foo/bar', null],
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(
           success.response.requestOptions.uri.path,
@@ -49,8 +45,8 @@ void main() {
         values: [1, null, 2],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,

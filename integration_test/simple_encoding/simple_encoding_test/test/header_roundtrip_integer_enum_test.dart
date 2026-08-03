@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -37,19 +31,9 @@ void main() {
 
       expect(
         response,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripIntegerEnumGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripIntegerEnumGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(success.response.requestOptions.headers['x-priority'], '1');
@@ -64,19 +48,9 @@ void main() {
 
       expect(
         response,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripIntegerEnumGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripIntegerEnumGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
       expect(success.response.requestOptions.headers['x-priority'], '2');
@@ -91,19 +65,9 @@ void main() {
 
       expect(
         response,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripIntegerEnumGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripIntegerEnumGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
       expect(success.response.requestOptions.headers['x-priority'], '3');
@@ -118,19 +82,9 @@ void main() {
 
       expect(
         response,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripIntegerEnumGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripIntegerEnumGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
       expect(success.response.requestOptions.headers['x-priority'], '4');
@@ -145,19 +99,9 @@ void main() {
 
       expect(
         response,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripIntegerEnumGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripIntegerEnumGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
 
       expect(success.response.statusCode, 200);
       expect(success.response.requestOptions.headers['x-priority'], '5');

@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:binary_models_api/binary_models_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -19,12 +18,8 @@ void main() {
     return FilesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -36,9 +31,8 @@ void main() {
 
       final result = await filesApi.getFile(id: 'test-file');
 
-      expect(result, isA<TonikSuccess<GetFileResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<GetFileResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetFileResponse200>());
@@ -52,8 +46,7 @@ void main() {
       final filesApi = buildFilesApi(responseStatus: '404');
 
       final result = await filesApi.getFile(id: 'nonexistent');
-      final success =
-          result as TonikSuccess<GetFileResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetFileResponse404>());
@@ -74,8 +67,7 @@ void main() {
         id: 'new-file',
         body: TonikFileBytes(testData),
       );
-      final success =
-          result as TonikSuccess<UploadFileResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 201);
       expect(success.value, isA<UploadFileResponse201>());
@@ -94,8 +86,7 @@ void main() {
         id: 'invalid',
         body: TonikFileBytes(testData),
       );
-      final success =
-          result as TonikSuccess<UploadFileResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 400);
       expect(success.value, isA<UploadFileResponse400>());

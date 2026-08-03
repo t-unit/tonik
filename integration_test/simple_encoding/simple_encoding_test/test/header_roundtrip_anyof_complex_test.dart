@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -43,19 +37,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
 
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
@@ -75,19 +59,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
 
         // Header field-values are transmitted literally: the space survives.
         expect(
@@ -106,19 +80,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
 
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
@@ -138,19 +102,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
 
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
@@ -168,19 +122,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'number,0',
@@ -197,19 +141,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Flexible-Object'],
           'number,-99',
@@ -228,19 +162,9 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripAnyofComplexGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripAnyofComplexGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
           expect(
             success.response.requestOptions.headers['X-Flexible-Object'],
             isNull,
@@ -258,27 +182,18 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig.clientFactory(
-              () => Dio(
-                BaseOptions(
-                  headers: {
-                    'X-Response-Status': '200',
-                    'X-Flexible-Object': 'name,x%2Fy 50%',
-                  },
-                ),
-              ),
+            serverConfig: testServerConfig(
+              headers: {
+                'X-Response-Status': '200',
+                'X-Flexible-Object': 'name,x%2Fy 50%',
+              },
             ),
           ),
         );
 
         final result = await injected.testHeaderRoundtripAnyOfComplex.call();
 
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class1, isNotNull);
         expect(success.value.xFlexibleObject!.class1!.name, 'x%2Fy 50%');

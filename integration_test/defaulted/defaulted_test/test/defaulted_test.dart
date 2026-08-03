@@ -2,32 +2,17 @@ import 'package:defaulted_api/defaulted_api.dart';
 import 'package:defaulted_api/src/operation/get_thing.dart';
 import 'package:defaulted_api/src/operation/list_subscriptions.dart';
 import 'package:defaulted_api/src/operation/list_things.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
+import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
-Dio _newDio({required void Function(RequestOptions) onRequest}) {
-  final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
-  dio.interceptors.add(
-    InterceptorsWrapper(
-      onRequest: (options, handler) {
-        onRequest(options);
-        handler.reject(
-          DioException(
-            requestOptions: options,
-            type: DioExceptionType.cancel,
-          ),
-        );
-      },
-    ),
-  );
-  return dio;
-}
-
-DefaultApi _api(Dio dio) => DefaultApi(
+DefaultApi _api(TestRequestRecorder recorder) => DefaultApi(
   CustomServer(
     baseUrl: 'http://localhost',
-    serverConfig: ServerConfig.client(dio),
+    serverConfig: testServerConfig(
+      recorder: recorder,
+      response: const TestResponseStub(),
+    ),
   ),
 );
 
@@ -409,12 +394,11 @@ void main() {
     test(
       'omitted query/header/cookie parameters serialise the default values',
       () async {
-        RequestOptions? captured;
-        final dio = _newDio(onRequest: (o) => captured = o);
+        final recorder = TestRequestRecorder();
 
-        await _api(dio).listThings();
+        await _api(recorder).listThings();
 
-        final options = captured!;
+        final options = recorder.request!;
         final uri = options.uri;
 
         expect(uri.queryParameters['region'], 'us');
@@ -431,29 +415,27 @@ void main() {
     test(
       'omitted path parameter substitutes the default into the URL template',
       () async {
-        RequestOptions? captured;
-        final dio = _newDio(onRequest: (o) => captured = o);
+        final recorder = TestRequestRecorder();
 
-        await _api(dio).getThing();
+        await _api(recorder).getThing();
 
-        expect(captured!.uri.path, endsWith('/things/x'));
+        expect(recorder.request!.uri.path, endsWith('/things/x'));
       },
     );
   });
 
   group('API client methods with explicit args override defaults', () {
     test('explicit query/header/cookie values replace the defaults', () async {
-      RequestOptions? captured;
-      final dio = _newDio(onRequest: (o) => captured = o);
+      final recorder = TestRequestRecorder();
 
-      await _api(dio).listThings(
+      await _api(recorder).listThings(
         region: 'eu',
         page: 7,
         retries: 9,
         tracking: true,
       );
 
-      final options = captured!;
+      final options = recorder.request!;
       final uri = options.uri;
 
       expect(uri.queryParameters['region'], 'eu');
@@ -463,12 +445,11 @@ void main() {
     });
 
     test('explicit path value replaces the default in the URL', () async {
-      RequestOptions? captured;
-      final dio = _newDio(onRequest: (o) => captured = o);
+      final recorder = TestRequestRecorder();
 
-      await _api(dio).getThing(id: 'custom');
+      await _api(recorder).getThing(id: 'custom');
 
-      expect(captured!.uri.path, endsWith('/things/custom'));
+      expect(recorder.request!.uri.path, endsWith('/things/custom'));
     });
   });
 
@@ -529,22 +510,20 @@ void main() {
     test(
       'omitted enum query parameter serialises the default variant on the wire',
       () async {
-        RequestOptions? captured;
-        final dio = _newDio(onRequest: (o) => captured = o);
+        final recorder = TestRequestRecorder();
 
-        await _api(dio).listSubscriptions();
+        await _api(recorder).listSubscriptions();
 
-        expect(captured!.uri.queryParameters['status'], 'active');
+        expect(recorder.request!.uri.queryParameters['status'], 'active');
       },
     );
 
     test('explicit enum value replaces the default on the wire', () async {
-      RequestOptions? captured;
-      final dio = _newDio(onRequest: (o) => captured = o);
+      final recorder = TestRequestRecorder();
 
-      await _api(dio).listSubscriptions(status: Status.archived);
+      await _api(recorder).listSubscriptions(status: Status.archived);
 
-      expect(captured!.uri.queryParameters['status'], 'archived');
+      expect(recorder.request!.uri.queryParameters['status'], 'archived');
     });
   });
 
@@ -553,26 +532,24 @@ void main() {
       'omitted enum header parameter serialises the default variant on the '
       'wire',
       () async {
-        RequestOptions? captured;
-        final dio = _newDio(onRequest: (o) => captured = o);
+        final recorder = TestRequestRecorder();
 
-        await _api(dio).listSubscriptions();
+        await _api(recorder).listSubscriptions();
 
-        expect(captured!.headers['X-Mode'], 'auto');
+        expect(recorder.request!.headers['X-Mode'], 'auto');
       },
     );
 
     test(
       'explicit enum header value replaces the default on the wire',
       () async {
-        RequestOptions? captured;
-        final dio = _newDio(onRequest: (o) => captured = o);
+        final recorder = TestRequestRecorder();
 
         await _api(
-          dio,
+          recorder,
         ).listSubscriptions(mode: SubscriptionsParametersModel2.manual);
 
-        expect(captured!.headers['X-Mode'], 'manual');
+        expect(recorder.request!.headers['X-Mode'], 'manual');
       },
     );
   });

@@ -1,8 +1,6 @@
 import 'package:composition_api/composition_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,9 +15,7 @@ void main() {
     return CompositionApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(BaseOptions(headers: {'X-Response-Body': '"hello"'})),
-        ),
+        serverConfig: testServerConfig(headers: {'X-Response-Body': '"hello"'}),
       ),
     );
   }
@@ -28,7 +24,7 @@ void main() {
     test('omits Content-Type when body is not provided', () async {
       final result = await buildApi().echoOneOfPrimitive();
 
-      final success = result as TonikSuccess<OneOfPrimitive, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.requestOptions.headers['content-type'], isNull);
     });
 
@@ -37,7 +33,7 @@ void main() {
         body: const OneOfPrimitiveString('hello'),
       );
 
-      final success = result as TonikSuccess<OneOfPrimitive, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(
         success.response.requestOptions.headers['content-type'],
         'application/json',

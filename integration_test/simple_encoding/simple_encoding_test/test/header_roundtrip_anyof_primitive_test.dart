@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -43,19 +37,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofPrimitiveGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           'hello',
@@ -71,19 +55,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofPrimitiveGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
 
         // Header field-values are transmitted literally: the space survives.
         expect(
@@ -101,19 +75,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofPrimitiveGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
 
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
@@ -132,19 +96,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofPrimitiveGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           '42',
@@ -162,19 +116,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofPrimitiveGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           '0',
@@ -190,19 +134,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofPrimitiveGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           '-123',
@@ -220,19 +154,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofPrimitiveGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           'true',
@@ -248,19 +172,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofPrimitiveGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Flexible-Value'],
           'false',
@@ -278,19 +192,9 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripAnyofPrimitiveGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripAnyofPrimitiveGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
           expect(
             success.response.requestOptions.headers['X-Flexible-Value'],
             isNull,
@@ -308,27 +212,18 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig.clientFactory(
-              () => Dio(
-                BaseOptions(
-                  headers: {
-                    'X-Response-Status': '200',
-                    'X-Flexible-Value': 'a%2Fb 50%',
-                  },
-                ),
-              ),
+            serverConfig: testServerConfig(
+              headers: {
+                'X-Response-Status': '200',
+                'X-Flexible-Value': 'a%2Fb 50%',
+              },
             ),
           ),
         );
 
         final result = await injected.testHeaderRoundtripAnyOfPrimitive.call();
 
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofPrimitiveGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.value.xFlexibleValue, isNotNull);
         expect(success.value.xFlexibleValue!.string, 'a%2Fb 50%');
       });

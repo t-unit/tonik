@@ -1,5 +1,4 @@
 import 'package:big_decimal/big_decimal.dart';
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -14,16 +13,12 @@ void main() {
     baseUrl = 'http://localhost:${imposterServer.port}/v1';
   });
 
-  SimpleEncodingApi buildApi({Map<String, dynamic> rawHeaders = const {}}) {
+  SimpleEncodingApi buildApi({Map<String, String> rawHeaders = const {}}) {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': '200', ...rawHeaders},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': '200', ...rawHeaders},
         ),
       ),
     );
@@ -35,12 +30,7 @@ void main() {
         final api = buildApi();
         final response = await api.testHeaderRoundtripPrimitives(string: value);
 
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.headers['x-string'], value);
       });
     }
@@ -51,12 +41,7 @@ void main() {
       final api = buildApi(rawHeaders: {'X-String': '50%'});
       final response = await api.testHeaderRoundtripPrimitives();
 
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripPrimitivesGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
       expect(success.value.xString, '50%');
     });
 
@@ -64,12 +49,7 @@ void main() {
       final api = buildApi(rawHeaders: {'X-String': '75%2Fdone'});
       final response = await api.testHeaderRoundtripPrimitives();
 
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripPrimitivesGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
       expect(success.value.xString, '75%2Fdone');
     });
 
@@ -77,12 +57,7 @@ void main() {
       final api = buildApi(rawHeaders: {'X-String': 'a%20b'});
       final response = await api.testHeaderRoundtripPrimitives();
 
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripPrimitivesGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
       expect(success.value.xString, 'a%20b');
     });
   });
@@ -96,12 +71,7 @@ void main() {
         fileData: TonikFileBytes(bytes),
       );
 
-      final success =
-          response
-              as TonikSuccess<
-                HeadersRoundtripBase64Get200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
       final wire = success.response.requestOptions.headers['x-file-data'];
       expect(wire, '+/+/AA==');
       expect(success.value.xFileData?.toBytes(), bytes);
@@ -124,7 +94,7 @@ void main() {
         $enum: StatusEnum.active,
       );
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.path,
         '/v1/primitive/1/1.0/1/a%20b%2Fc%25d/true/'
@@ -149,12 +119,7 @@ void main() {
         final control = await api.testHeaderRoundtripPrimitives(string: 'ab');
         expect(
           control,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
 
         final response = await api.testHeaderRoundtripPrimitives(
@@ -163,19 +128,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikError<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            response
-                as TonikError<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final error = requireError(response);
         // Rejection is transport-provided (Dio refuses control chars), not
         // a Tonik guard.
         expect(error.type, TonikErrorType.network);

@@ -1,5 +1,4 @@
 import 'package:boolean_schemas_api/boolean_schemas_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -17,12 +16,8 @@ void main() {
     return BooleanSchemasApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -32,9 +27,7 @@ void main() {
     test('getQueryListAny with string values (explode=true)', () async {
       final api = buildApi();
       final result = await api.getQueryListAny(anyValues: ['a', 'b', 'c']);
-      final success =
-          result
-              as TonikSuccess<QueryListAnyGet200BodyModel, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.query,
@@ -45,9 +38,7 @@ void main() {
     test('getQueryListAny with numeric values', () async {
       final api = buildApi();
       final result = await api.getQueryListAny(anyValues: [1, 2, 3]);
-      final success =
-          result
-              as TonikSuccess<QueryListAnyGet200BodyModel, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.query,
@@ -60,9 +51,7 @@ void main() {
       final result = await api.getQueryListAny(
         anyValues: ['string', 42, true],
       );
-      final success =
-          result
-              as TonikSuccess<QueryListAnyGet200BodyModel, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.query,
@@ -77,12 +66,7 @@ void main() {
         final result = await api.getQueryListAnyNoExplode(
           anyValues: ['x', 'y', 'z'],
         );
-        final success =
-            result
-                as TonikSuccess<
-                  QueryListAnyNoExplodeGet200BodyModel,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.response.statusCode, 200);
         expect(
           success.response.requestOptions.uri.query,
@@ -103,11 +87,9 @@ void main() {
         );
         expect(
           result,
-          isA<TonikError<QueryListAnyGet200BodyModel, Response<Object?>>>(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<QueryListAnyGet200BodyModel, Response<Object?>>;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
         expect(error.type, TonikErrorType.encoding);
       },
@@ -124,11 +106,9 @@ void main() {
         );
         expect(
           result,
-          isA<TonikError<QueryListAnyGet200BodyModel, Response<Object?>>>(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<QueryListAnyGet200BodyModel, Response<Object?>>;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -145,19 +125,9 @@ void main() {
         // spaceDelimited style is not supported for arrays of AnyModel
         expect(
           result,
-          isA<
-            TonikError<
-              QuerySpaceDelimitedListAnyGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QuerySpaceDelimitedListAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -174,19 +144,9 @@ void main() {
         // pipeDelimited style is not supported for arrays of AnyModel
         expect(
           result,
-          isA<
-            TonikError<
-              QueryPipeDelimitedListAnyGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QueryPipeDelimitedListAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -198,16 +158,9 @@ void main() {
       final result = await api.getPathListAny(anyValues: ['a', 'b', 'c']);
       expect(
         result,
-        isA<
-          TonikError<PathListAnyAnyValuesGet200BodyModel, Response<Object?>>
-        >(),
+        isTonikError,
       );
-      final error =
-          result
-              as TonikError<
-                PathListAnyAnyValuesGet200BodyModel,
-                Response<Object?>
-              >;
+      final error = requireError(result);
       expect(error.error, isA<EncodingException>());
       expect(error.type, TonikErrorType.encoding);
     });
@@ -217,19 +170,9 @@ void main() {
       final result = await api.getPathListAnyExplode(anyValues: ['x', 'y']);
       expect(
         result,
-        isA<
-          TonikError<
-            PathListAnyExplodeAnyValuesGet200BodyModel,
-            Response<Object?>
-          >
-        >(),
+        isTonikError,
       );
-      final error =
-          result
-              as TonikError<
-                PathListAnyExplodeAnyValuesGet200BodyModel,
-                Response<Object?>
-              >;
+      final error = requireError(result);
       expect(error.error, isA<EncodingException>());
       expect(error.type, TonikErrorType.encoding);
     });
@@ -239,12 +182,7 @@ void main() {
     test('getPathLabelListAny with string values', () async {
       final api = buildApi();
       final result = await api.getPathLabelListAny(anyValues: ['a', 'b', 'c']);
-      final success =
-          result
-              as TonikSuccess<
-                PathLabelListAnyAnyValuesGet200BodyModel,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
@@ -255,12 +193,7 @@ void main() {
     test('getPathLabelListAny with numeric values', () async {
       final api = buildApi();
       final result = await api.getPathLabelListAny(anyValues: [10, 20]);
-      final success =
-          result
-              as TonikSuccess<
-                PathLabelListAnyAnyValuesGet200BodyModel,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
@@ -273,12 +206,7 @@ void main() {
       final result = await api.getPathLabelListAnyExplode(
         anyValues: ['foo', 'bar'],
       );
-      final success =
-          result
-              as TonikSuccess<
-                PathLabelListAnyExplodeAnyValuesGet200BodyModel,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
@@ -297,19 +225,9 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikError<
-              PathLabelListAnyAnyValuesGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  PathLabelListAnyAnyValuesGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -319,12 +237,7 @@ void main() {
     test('getPathMatrixListAny with string values', () async {
       final api = buildApi();
       final result = await api.getPathMatrixListAny(anyValues: ['a', 'b']);
-      final success =
-          result
-              as TonikSuccess<
-                PathMatrixListAnyAnyValuesGet200BodyModel,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
@@ -335,12 +248,7 @@ void main() {
     test('getPathMatrixListAny with numeric values', () async {
       final api = buildApi();
       final result = await api.getPathMatrixListAny(anyValues: [1, 2, 3]);
-      final success =
-          result
-              as TonikSuccess<
-                PathMatrixListAnyAnyValuesGet200BodyModel,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
@@ -353,12 +261,7 @@ void main() {
       final result = await api.getPathMatrixListAnyExplode(
         anyValues: ['x', 'y'],
       );
-      final success =
-          result
-              as TonikSuccess<
-                PathMatrixListAnyExplodeAnyValuesGet200BodyModel,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.response.requestOptions.uri.path,
@@ -377,19 +280,9 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikError<
-              PathMatrixListAnyAnyValuesGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  PathMatrixListAnyAnyValuesGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -401,10 +294,9 @@ void main() {
       final result = await api.getHeaderListAny(anyValues: ['a', 'b', 'c']);
       expect(
         result,
-        isA<TonikError<HeaderListAnyGet200BodyModel, Response<Object?>>>(),
+        isTonikError,
       );
-      final error =
-          result as TonikError<HeaderListAnyGet200BodyModel, Response<Object?>>;
+      final error = requireError(result);
       expect(error.error, isA<EncodingException>());
       expect(error.type, TonikErrorType.encoding);
     });
@@ -416,16 +308,9 @@ void main() {
       );
       expect(
         result,
-        isA<
-          TonikError<HeaderListAnyExplodeGet200BodyModel, Response<Object?>>
-        >(),
+        isTonikError,
       );
-      final error =
-          result
-              as TonikError<
-                HeaderListAnyExplodeGet200BodyModel,
-                Response<Object?>
-              >;
+      final error = requireError(result);
       expect(error.error, isA<EncodingException>());
       expect(error.type, TonikErrorType.encoding);
     });
@@ -443,16 +328,9 @@ void main() {
         final result = await api.getQueryObjectWithListAny(filter: filter);
         expect(
           result,
-          isA<
-            TonikError<QueryObjectWithListAnyGet200BodyModel, Response<Object?>>
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QueryObjectWithListAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -468,19 +346,9 @@ void main() {
         final result = await api.getQueryDeepObjectWithListAny(filter: filter);
         expect(
           result,
-          isA<
-            TonikError<
-              QueryDeepObjectObjectWithListAnyGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QueryDeepObjectObjectWithListAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -499,11 +367,9 @@ void main() {
         final result = await api.postFormListAny(body: body);
         expect(
           result,
-          isA<TonikError<FormListAnyPost200BodyModel, Response<Object?>>>(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<FormListAnyPost200BodyModel, Response<Object?>>;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );

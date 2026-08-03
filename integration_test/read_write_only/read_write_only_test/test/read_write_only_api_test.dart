@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:read_write_only_api/read_write_only_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -17,12 +16,8 @@ void main() {
     return ReadWriteOnlyApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -42,7 +37,7 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<User, Response<Object?>>;
+        final success = requireSuccess(response);
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -67,7 +62,7 @@ void main() {
           ),
         );
 
-        final success = response as TonikSuccess<User, Response<Object?>>;
+        final success = requireSuccess(response);
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -85,7 +80,7 @@ void main() {
 
         final response = await api.getUser(userId: 42);
 
-        final success = response as TonikSuccess<User, Response<Object?>>;
+        final success = requireSuccess(response);
         final user = success.value;
 
         // readOnly and normal properties are parsed from the response.
@@ -102,7 +97,7 @@ void main() {
 
         final response = await api.getUser(userId: 99);
 
-        final success = response as TonikSuccess<User, Response<Object?>>;
+        final success = requireSuccess(response);
         final user = success.value;
 
         expect(user.id, 99);
@@ -567,8 +562,7 @@ void main() {
 
         final response = await api.getSentNotification();
 
-        final success =
-            response as TonikSuccess<ReadOnlyNotification, Response<Object?>>;
+        final success = requireSuccess(response);
         final notification = success.value;
 
         expect(notification, isA<ReadOnlyNotificationNotificationEmail>());
@@ -653,12 +647,7 @@ void main() {
         ),
       );
 
-      final success =
-          response
-              as TonikSuccess<
-                NotificationsSendPost200BodyModel,
-                Response<Object?>
-              >;
+      final success = requireSuccess(response);
       final requestBody =
           success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -733,8 +722,7 @@ void main() {
 
       final response = await api.getServerInfo();
 
-      final success =
-          response as TonikSuccess<ReadOnlyServerInfo, Response<Object?>>;
+      final success = requireSuccess(response);
       final info = success.value;
 
       expect(info.serverIdentity?.serverId, 'srv-001');
@@ -807,9 +795,7 @@ void main() {
         ),
       );
 
-      final success =
-          response
-              as TonikSuccess<BulkCommandPost200BodyModel, Response<Object?>>;
+      final success = requireSuccess(response);
       final requestBody =
           success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -913,8 +899,7 @@ void main() {
 
         final response = await api.getSensorReading();
 
-        final success =
-            response as TonikSuccess<ReadOnlySensorReading, Response<Object?>>;
+        final success = requireSuccess(response);
         final reading = success.value;
 
         expect(reading.temperatureReading, isNotNull);
@@ -1005,9 +990,7 @@ void main() {
         ),
       );
 
-      final success =
-          response
-              as TonikSuccess<DeviceCommandPost200BodyModel, Response<Object?>>;
+      final success = requireSuccess(response);
       final requestBody =
           success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -1040,8 +1023,7 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<AuditedWidget, Response<Object?>>;
+        final success = requireSuccess(response);
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 

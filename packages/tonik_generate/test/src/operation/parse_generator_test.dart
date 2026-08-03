@@ -5068,6 +5068,67 @@ String _parseResponse(Response response) {
         );
       });
 
+      test('omits nullable guard for native non-null status ranges', () {
+        final operation = Operation(
+          operationId: 'httpRangeResponse',
+          context: context,
+          summary: '',
+          description: '',
+          tags: const {},
+          isDeprecated: false,
+          path: '/http-range',
+          method: HttpMethod.get,
+          headers: const {},
+          queryParameters: const {},
+          pathParameters: const {},
+          cookieParameters: const {},
+          responses: {
+            const RangeResponseStatus(min: 200, max: 299): ResponseObject(
+              name: null,
+              context: context,
+              headers: const {},
+              description: '',
+              bodies: {
+                ResponseBody(
+                  model: StringModel(context: context),
+                  rawContentType: 'application/json',
+                  contentType: ContentType.json,
+                  examples: const [],
+                ),
+              },
+            ),
+          },
+          securitySchemes: const {},
+        );
+
+        final method = httpGenerator.generateParseResponseMethod(operation);
+        const expectedMethod = r'''
+String _parseResponse(Response response) {
+  final _$mediaType = extractMediaType(response.headers['content-type']);
+  switch ((response.statusCode, _$mediaType)) {
+    case (var status, r'application/json')
+        when status >= 200 && status <= 299:
+      final _$json = decodeResponseJson<Object?>(response.bodyBytes);
+      final _$body = _$json.decodeJsonString();
+      return _$body;
+    default:
+      final _$content =
+          response.headers['content-type'] ?? 'not specified';
+      final _$matched = _$mediaType ?? 'none';
+      final _$status = response.statusCode;
+      throw ResponseDecodingException(
+        'Unexpected content type: ${_$content} (matched as: ${_$matched}) for status code: ${_$status}',
+      );
+  }
+}
+''';
+
+        expect(
+          collapseWhitespace(format(method.accept(emitter).toString())),
+          collapseWhitespace(format(expectedMethod)),
+        );
+      });
+
       test('decodes typed headers from lower-cased split values', () {
         final operation = Operation(
           operationId: 'httpHeaderResponse',
@@ -5114,7 +5175,10 @@ AnonymousResponse _parseResponse(Response response) {
     case (204, _):
       return AnonymousResponse(
         xRateLimit:
-            (response.headersSplitValues[r'x-rate-limit']?.join(','))
+            ((response.headers[r'x-rate-limit'] == null
+                    ? null
+                    : <String>[response.headers[r'x-rate-limit']!])
+                ?.join(','))
                 .decodeSimpleInt(context: r'X-Rate-Limit'),
       );
     default:

@@ -229,6 +229,67 @@ Future<void> dispatch() async {
       );
     },
   );
+
+  test('reads completed Dio response status, headers, and raw bytes', () {
+    final response = refer('response');
+    final generatedMethod = Method(
+      (builder) => builder
+        ..name = 'responseInputs'
+        ..returns = TypeReference(
+          (builder) => builder
+            ..symbol = 'List'
+            ..url = 'dart:core'
+            ..types.add(refer('Object?', 'dart:core')),
+        )
+        ..requiredParameters.add(
+          Parameter(
+            (builder) => builder
+              ..name = 'response'
+              ..type = TypeReference(
+                (builder) => builder
+                  ..symbol = 'Response'
+                  ..url = 'package:dio/dio.dart'
+                  ..types.add(
+                    TypeReference(
+                      (builder) => builder
+                        ..symbol = 'List'
+                        ..url = 'dart:core'
+                        ..types.add(refer('int', 'dart:core')),
+                    ),
+                  ),
+              ),
+          ),
+        )
+        ..lambda = false
+        ..body = Block.of([
+          const Code('return <Object?>['),
+          generator.responseStatusCode(response).code,
+          const Code(','),
+          generator.responseContentType(response).code,
+          const Code(','),
+          generator.responseBodyBytes(response).code,
+          const Code(','),
+          generator.responseHeaderValues(response, 'X-Rate-Limit').code,
+          const Code(',];'),
+        ]),
+    );
+
+    const expectedMethod = '''
+List<Object?> responseInputs(Response<List<int>> response) {
+  return <Object?>[
+    response.statusCode,
+    response.headers.value('content-type'),
+    response.data,
+    response.headers[r'X-Rate-Limit'],
+  ];
+}
+''';
+
+    expect(
+      collapseWhitespace(format('${generatedMethod.accept(emitter)}')),
+      collapseWhitespace(format(expectedMethod)),
+    );
+  });
 }
 
 String _asMethod(Method method, DartEmitter emitter) {

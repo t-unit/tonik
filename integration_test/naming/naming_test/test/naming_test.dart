@@ -1,6 +1,5 @@
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
 import 'package:naming_api/src/api_client/default_api2.dart';
 import 'package:naming_api/src/model/camel_case_collider.dart';
 import 'package:naming_api/src/model/dollar_holder.dart';
@@ -21,6 +20,7 @@ import 'package:naming_api/src/model/user_model.dart';
 import 'package:naming_api/src/model/weird_property_names.dart';
 import 'package:naming_api/src/server/server.dart';
 import 'package:test/test.dart';
+import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
@@ -144,8 +144,8 @@ void main() {
           cancellation: TonikCancellation(),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.uri.queryParameters['cancelToken'],
@@ -164,8 +164,8 @@ void main() {
           cancellation: TonikCancellation(),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.path,
@@ -184,8 +184,8 @@ void main() {
           cancellation: TonikCancellation(),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.headers['cancelToken'],
@@ -204,8 +204,8 @@ void main() {
           cancellation: TonikCancellation(),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.headers['Cookie'],
@@ -224,8 +224,8 @@ void main() {
           cancellation: TonikCancellation(),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.uri.queryParameters['Cancel-Token'],
@@ -245,8 +245,8 @@ void main() {
           cancellation: TonikCancellation(),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.requestOptions.cancelToken, isNotNull);
         expect(
           success.response.requestOptions.uri.queryParameters['cancelToken'],
@@ -321,27 +321,13 @@ void main() {
 
   group('call parameter collision', () {
     test(r'uses $call in Dart and call on the wire', () async {
-      final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
-      Uri? capturedUri;
-      dio.interceptors.add(
-        InterceptorsWrapper(
-          onRequest: (options, handler) {
-            capturedUri = options.uri;
-            handler.reject(
-              DioException(
-                requestOptions: options,
-                type: DioExceptionType.cancel,
-              ),
-            );
-          },
-        ),
-      );
+      final recorder = TestRequestRecorder();
 
-      await _apiForDio(dio, 'http://localhost').getWithCallQuery(
+      await _apiForDio(recorder, 'http://localhost').getWithCallQuery(
         $call: 'invoke',
       );
 
-      expect(capturedUri?.queryParameters, {'call': 'invoke'});
+      expect(recorder.request!.uri.queryParameters, {'call': 'invoke'});
     });
   });
 
@@ -416,23 +402,9 @@ void main() {
       'tokenQuery2, tokenQuery3 — and tokenQuery3 still serialises under the '
       'wire key "token"',
       () async {
-        final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
-        Uri? capturedUri;
-        dio.interceptors.add(
-          InterceptorsWrapper(
-            onRequest: (options, handler) {
-              capturedUri = options.uri;
-              handler.reject(
-                DioException(
-                  requestOptions: options,
-                  type: DioExceptionType.cancel,
-                ),
-              );
-            },
-          ),
-        );
+        final recorder = TestRequestRecorder();
 
-        final api = _apiForDio(dio, 'http://localhost');
+        final api = _apiForDio(recorder, 'http://localhost');
 
         // The named-arg call site IS the compile-time check on Dart names:
         // if any of the four were renamed, this wouldn't compile.
@@ -443,8 +415,7 @@ void main() {
           tokenQuery3: 'C',
         );
 
-        expect(capturedUri, isNotNull);
-        final uri = capturedUri!;
+        final uri = recorder.request!.uri;
 
         expect(
           uri.path,
@@ -488,23 +459,9 @@ void main() {
         'exposes three distinct Dart parameter names — idPath2, idQuery, '
         'idPath — and each serialises under its declared wire key',
         () async {
-          final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
-          Uri? capturedUri;
-          dio.interceptors.add(
-            InterceptorsWrapper(
-              onRequest: (options, handler) {
-                capturedUri = options.uri;
-                handler.reject(
-                  DioException(
-                    requestOptions: options,
-                    type: DioExceptionType.cancel,
-                  ),
-                );
-              },
-            ),
-          );
+          final recorder = TestRequestRecorder();
 
-          final api = _apiForDio(dio, 'http://localhost');
+          final api = _apiForDio(recorder, 'http://localhost');
 
           await api.getParamSuffixCollision(
             idPath2: 'P',
@@ -512,8 +469,7 @@ void main() {
             idPath: true,
           );
 
-          expect(capturedUri, isNotNull);
-          final uri = capturedUri!;
+          final uri = recorder.request!.uri;
 
           expect(uri.path, contains('/param-suffix-collision/P'));
 
@@ -545,31 +501,16 @@ void main() {
 
   group('hostile but valid query parameter names', () {
     test('uses valid Dart names while preserving the wire names', () async {
-      final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
-      Uri? capturedUri;
-      dio.interceptors.add(
-        InterceptorsWrapper(
-          onRequest: (options, handler) {
-            capturedUri = options.uri;
-            handler.reject(
-              DioException(
-                requestOptions: options,
-                type: DioExceptionType.cancel,
-              ),
-            );
-          },
-        ),
-      );
+      final recorder = TestRequestRecorder();
 
-      await _apiForDio(dio, 'http://localhost').getHostileQueryNames(
+      await _apiForDio(recorder, 'http://localhost').getHostileQueryNames(
         parameter: 'love',
         parameter2: 'cache-buster',
         expand: 'customer',
         metaLessThanFieldGreaterThanLessThanOperatorGreaterThan: 'value',
       );
 
-      expect(capturedUri, isNotNull);
-      expect(capturedUri!.queryParameters, {
+      expect(recorder.request!.uri.queryParameters, {
         '❤️': 'love',
         '_': 'cache-buster',
         'expand[]': 'customer',
@@ -600,23 +541,12 @@ void main() {
 
   group('multipart header name collisions', () {
     test('uses every distinct argument for its original wire header', () async {
-      final dio = Dio(BaseOptions(baseUrl: 'http://localhost'));
-      RequestOptions? capturedRequest;
-      dio.interceptors.add(
-        InterceptorsWrapper(
-          onRequest: (options, handler) {
-            capturedRequest = options;
-            handler.reject(
-              DioException(
-                requestOptions: options,
-                type: DioExceptionType.cancel,
-              ),
-            );
-          },
-        ),
-      );
+      final recorder = TestRequestRecorder();
 
-      await _apiForDio(dio, 'http://localhost').postMultipartNameCollisions(
+      await _apiForDio(
+        recorder,
+        'http://localhost',
+      ).postMultipartNameCollisions(
         body: MultipartNameCollisionForm(
           file: TonikFileBytes(Uint8List.fromList([1, 2, 3])),
         ),
@@ -626,42 +556,30 @@ void main() {
         fileTraceIdPartHeader2: 'third-header',
       );
 
-      expect(capturedRequest, isNotNull);
-      expect(capturedRequest!.uri.queryParameters, {
+      final request = recorder.request!;
+      expect(request.uri.queryParameters, {
         'file_custom': 'query-value',
       });
-      final formData = capturedRequest!.data as FormData;
+      final formData = request.data as TestFormData;
       final headers = formData.files.single.value.headers;
-      expect(headers, {
-        'X-Trace-Id': ['first-header'],
-        'Trace-Id': ['second-header'],
-        'Trace_Id': ['third-header'],
-      });
+      expect(headers.map, hasLength(3));
+      expect(headers['X-Trace-Id'], ['first-header']);
+      expect(headers['Trace-Id'], ['second-header']);
+      expect(headers['Trace_Id'], ['third-header']);
     });
   });
 }
 
-DefaultApi2 _apiForDio(Dio dio, String baseUrl) {
+DefaultApi2 _apiForDio(TestRequestRecorder recorder, String baseUrl) {
   return DefaultApi2(
     CustomServer(
       baseUrl: baseUrl,
-      serverConfig: ServerConfig<Dio>.client(dio),
+      serverConfig: testServerConfig(
+        recorder: recorder,
+        response: const TestResponseStub(statusCode: 200),
+      ),
     ),
   );
 }
 
-Dio _successfulDio() => Dio()..httpClientAdapter = _SuccessAdapter();
-
-class _SuccessAdapter implements HttpClientAdapter {
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) async {
-    return ResponseBody.fromString('', 200);
-  }
-
-  @override
-  void close({bool force = false}) {}
-}
+TestRequestRecorder _successfulDio() => TestRequestRecorder();

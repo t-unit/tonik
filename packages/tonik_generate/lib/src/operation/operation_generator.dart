@@ -61,7 +61,10 @@ class OperationGenerator {
     final fileName = nameManager.fileNameForClass(className);
 
     final library = Library(
-      (b) => b..body.add(generateClass(operation, className)),
+      (b) => b.body.addAll([
+        ...backendGenerator.generateOperationSupport(operation),
+        generateClass(operation, className),
+      ]),
     );
 
     final emitter = DartEmitter(

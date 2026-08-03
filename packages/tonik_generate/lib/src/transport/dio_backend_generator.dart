@@ -66,6 +66,9 @@ final class DioBackendGenerator implements TransportBackendGenerator {
   );
 
   @override
+  bool get responseStatusCodeIsNullable => true;
+
+  @override
   Expression responseStatusCode(Expression response) =>
       response.property('statusCode');
 
@@ -450,6 +453,9 @@ final class DioBackendGenerator implements TransportBackendGenerator {
         ]),
     );
   }
+
+  @override
+  Iterable<Spec> generateOperationSupport(Operation operation) => const [];
 
   Reference _resultClass(String symbol, Reference resultValueType) {
     return TypeReference(

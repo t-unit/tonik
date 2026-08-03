@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:stripe_api/stripe_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -19,12 +17,8 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -40,10 +34,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetBalanceResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetBalanceResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetBalanceResponse200>());
 
@@ -58,10 +51,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetBalanceResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetBalanceResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<GetBalanceResponseDefault>());
     });
@@ -77,10 +69,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetCustomersResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetCustomersResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetCustomersResponse200>());
 
@@ -96,10 +87,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetCustomersResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetCustomersResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<GetCustomersResponseDefault>());
     });
@@ -115,11 +105,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetCustomersCustomerResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<GetCustomersCustomerResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetCustomersCustomerResponse200>());
 
@@ -134,11 +122,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetCustomersCustomerResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<GetCustomersCustomerResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetCustomersCustomerResponseDefault>());
     });
@@ -154,10 +140,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostCustomersResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostCustomersResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostCustomersResponse200>());
 
@@ -172,10 +157,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostCustomersResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostCustomersResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<PostCustomersResponseDefault>());
     });
@@ -193,14 +177,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteCustomersCustomerResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                DeleteCustomersCustomerResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<DeleteCustomersCustomerResponse200>());
 
@@ -218,14 +197,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteCustomersCustomerResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                DeleteCustomersCustomerResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<DeleteCustomersCustomerResponseDefault>());
     });
@@ -241,10 +215,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetChargesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetChargesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetChargesResponse200>());
 
@@ -260,10 +233,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetChargesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetChargesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<GetChargesResponseDefault>());
     });
@@ -281,14 +253,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetPaymentIntentsIntentResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetPaymentIntentsIntentResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPaymentIntentsIntentResponse200>());
 
@@ -305,14 +272,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetPaymentIntentsIntentResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetPaymentIntentsIntentResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetPaymentIntentsIntentResponseDefault>());
     });
@@ -328,10 +290,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostRefundsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostRefundsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostRefundsResponse200>());
 
@@ -346,10 +307,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostRefundsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostRefundsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<PostRefundsResponseDefault>());
     });

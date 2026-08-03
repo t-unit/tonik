@@ -1,7 +1,6 @@
 import 'dart:typed_data';
 
 import 'package:binary_models_api/binary_models_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -19,12 +18,8 @@ void main() {
     return ContentMediaTypeApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -98,7 +93,7 @@ void main() {
       final result = await api.uploadContentMediaTypeImage(
         body: imageEncodedData,
       );
-      final success = result as TonikSuccess<UploadResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 201);
       expect(success.value.id, isNotEmpty);
@@ -108,12 +103,7 @@ void main() {
       final api = buildApi(responseStatus: '200');
 
       final result = await api.getContentMediaTypeImage(id: 'img-123');
-      final success =
-          result
-              as TonikSuccess<
-                GetContentMediaTypeImageResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetContentMediaTypeImageResponse200>());
@@ -180,7 +170,7 @@ void main() {
       final result = await api.uploadContentMediaTypeText(
         body: textEncodedData,
       );
-      final success = result as TonikSuccess<UploadResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 201);
       expect(success.value.id, isNotEmpty);
@@ -190,12 +180,7 @@ void main() {
       final api = buildApi(responseStatus: '200');
 
       final result = await api.getContentMediaTypeText(id: 'txt-123');
-      final success =
-          result
-              as TonikSuccess<
-                GetContentMediaTypeTextResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetContentMediaTypeTextResponse200>());
@@ -262,7 +247,7 @@ void main() {
       final result = await api.uploadContentMediaTypeUnconfigured(
         body: unconfiguredData,
       );
-      final success = result as TonikSuccess<UploadResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 201);
       expect(success.value.id, isNotEmpty);
@@ -272,12 +257,7 @@ void main() {
       final api = buildApi(responseStatus: '200');
 
       final result = await api.getContentMediaTypeUnconfigured(id: 'unc-123');
-      final success =
-          result
-              as TonikSuccess<
-                GetContentMediaTypeUnconfiguredResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetContentMediaTypeUnconfiguredResponse200>());

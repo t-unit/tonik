@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -19,12 +18,8 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -38,8 +33,8 @@ void main() {
 
       final result = await api.totemUsersMobileApiGetCurrentUser();
 
-      expect(result, isA<TonikSuccess<UserSchema, Response<Object?>>>());
-      final success = result as TonikSuccess<UserSchema, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -51,8 +46,8 @@ void main() {
 
       final result = await api.totemUsersMobileApiGetCurrentUser();
 
-      expect(result, isA<TonikError<UserSchema, Response<Object?>>>());
-      final error = result as TonikError<UserSchema, Response<Object?>>;
+      expect(result, isTonikError);
+      final error = requireError(result);
       expect(error.type, TonikErrorType.decoding);
     });
   });
@@ -67,9 +62,8 @@ void main() {
         userSlug: 'test-user',
       );
 
-      expect(result, isA<TonikSuccess<PublicUserSchema, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<PublicUserSchema, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -83,8 +77,8 @@ void main() {
         userSlug: 'nonexistent',
       );
 
-      expect(result, isA<TonikError<PublicUserSchema, Response<Object?>>>());
-      final error = result as TonikError<PublicUserSchema, Response<Object?>>;
+      expect(result, isTonikError);
+      final error = requireError(result);
       expect(error.type, TonikErrorType.decoding);
     });
   });
@@ -99,11 +93,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PagedMobileSpaceDetailSchema, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<PagedMobileSpaceDetailSchema, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -121,10 +113,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PagedBlogPostListSchema, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PagedBlogPostListSchema, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final uri = success.response.requestOptions.uri;
@@ -141,11 +132,10 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PagedBlogPostListSchema, Response<Object?>>>(),
+        isTonikSuccess,
       );
 
-      final success =
-          result as TonikSuccess<PagedBlogPostListSchema, Response<Object?>>;
+      final success = requireSuccess(result);
       final uri = success.response.requestOptions.uri;
       expect(uri.queryParameters['limit'], '10');
       expect(uri.queryParameters['offset'], '20');
@@ -160,8 +150,8 @@ void main() {
 
       final result = await api.totemUsersMobileApiDeleteCurrentUser();
 
-      expect(result, isA<TonikSuccess<bool, Response<Object?>>>());
-      final success = result as TonikSuccess<bool, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       expect(success.response.requestOptions.method, 'DELETE');

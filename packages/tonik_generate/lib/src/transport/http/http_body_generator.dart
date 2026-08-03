@@ -39,6 +39,9 @@ class HttpBodyGenerator {
     final helperContext = InlineHelperContext(nameManager: nameManager);
     final inlineHelpers = <InlineHelper>[];
     final isRequired = requestBody.isRequired;
+    final multipartHeaderParameters = extractOperationMultipartHeaderParamInfo(
+      operation,
+    );
 
     if (content.length > 1) {
       final (baseName, subclassNames) = nameManager.requestBodyNames(
@@ -59,11 +62,13 @@ class HttpBodyGenerator {
                 helperContext: helperContext,
               );
         if (built != null) inlineHelpers.addAll(built.inlineFunctions);
+        final usesMultipartValue =
+            isMultipart && item.model.resolved is ClassModel;
         cases.add(
           Block.of([
             const Code('final '),
             refer(variantName, requestBodyUrl).code,
-            const Code(' value => '),
+            Code(usesMultipartValue || !isMultipart ? ' value => ' : ' _ => '),
             if (isMultipart)
               Method(
                 (builder) => builder
@@ -73,6 +78,7 @@ class HttpBodyGenerator {
                     buildHttpMultipartBodyStatements(
                       item,
                       'value.value',
+                      headerParameters: multipartHeaderParameters,
                     ),
                   ),
               ).closure.call([]).awaited.code
@@ -87,7 +93,7 @@ class HttpBodyGenerator {
         cases.add(const Code('null => null,'));
       }
 
-      final multipartHeaderParameters = _multipartHeaderParameters(operation);
+      final multipartMethodParameters = _multipartHeaderParameters(operation);
       final hasMultipart = content.any(
         (item) => item.contentType == ContentType.multipart,
       );
@@ -116,7 +122,7 @@ class HttpBodyGenerator {
                 ..required = isRequired,
             ),
           )
-          ..optionalParameters.addAll(multipartHeaderParameters)
+          ..optionalParameters.addAll(multipartMethodParameters)
           ..modifier = hasMultipart ? MethodModifier.async : null
           ..lambda = false
           ..body = Block.of([
@@ -130,7 +136,7 @@ class HttpBodyGenerator {
 
     final item = content.single;
     if (item.contentType == ContentType.multipart) {
-      final multipartHeaderParameters = _multipartHeaderParameters(operation);
+      final multipartMethodParameters = _multipartHeaderParameters(operation);
       return Method(
         (b) => b
           ..name = '_data'
@@ -155,12 +161,16 @@ class HttpBodyGenerator {
                 ..required = isRequired,
             ),
           )
-          ..optionalParameters.addAll(multipartHeaderParameters)
+          ..optionalParameters.addAll(multipartMethodParameters)
           ..modifier = MethodModifier.async
           ..lambda = false
           ..body = Block.of([
             if (!isRequired) const Code('if (body == null) return null;'),
-            ...buildHttpMultipartBodyStatements(item, 'body'),
+            ...buildHttpMultipartBodyStatements(
+              item,
+              'body',
+              headerParameters: multipartHeaderParameters,
+            ),
           ]),
       );
     }
@@ -169,6 +179,7 @@ class HttpBodyGenerator {
       content: item,
       valueName: 'body',
       helperContext: helperContext,
+      receiverIsPromoted: !isRequired,
     );
     inlineHelpers.addAll(built.inlineFunctions);
 
@@ -207,6 +218,7 @@ class HttpBodyGenerator {
     required RequestContent content,
     required String valueName,
     required InlineHelperContext helperContext,
+    bool receiverIsPromoted = false,
   }) {
     final value = refer(valueName);
     switch (content.contentType) {
@@ -227,6 +239,7 @@ class HttpBodyGenerator {
           helperContext: helperContext,
           contextClass: operation.operationId,
           contextProperty: 'body',
+          receiverIsPromoted: receiverIsPromoted,
         );
         return BuiltExpression(
           body: refer('utf8', 'dart:convert').property('encode').call([

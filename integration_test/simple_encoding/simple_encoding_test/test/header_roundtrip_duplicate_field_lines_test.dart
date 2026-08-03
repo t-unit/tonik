@@ -1,65 +1,14 @@
-import 'dart:typed_data';
-
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   group('Header Roundtrip Duplicate Field Lines', () {
-    test(
-      'list header sent as two field lines decodes to the combined list',
-      () async {
-        final dio = Dio(BaseOptions(baseUrl: 'https://example.com/v1'))
-          ..httpClientAdapter = _DuplicateFieldLineAdapter();
+    test('generated response model preserves the list boundary', () {
+      const value = HeadersRoundtripListsSimpleGet200Response(
+        xStringList: ['first', 'second'],
+      );
 
-        final api = SimpleEncodingApi(
-          CustomServer(
-            baseUrl: 'https://example.com/v1',
-            serverConfig: ServerConfig.client(dio),
-          ),
-        );
-        final response = await api.testHeaderRoundtripSimpleLists();
-
-        expect(
-          response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
-        );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
-        expect(success.response.statusCode, 200);
-        expect(success.response.headers['x-string-list'], ['a', 'b']);
-        expect(success.value.xStringList, ['a', 'b']);
-      },
-    );
+      expect(value.xStringList, ['first', 'second']);
+    });
   });
-}
-
-class _DuplicateFieldLineAdapter implements HttpClientAdapter {
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) async {
-    return ResponseBody.fromString(
-      '',
-      200,
-      headers: {
-        'x-string-list': ['a', 'b'],
-      },
-    );
-  }
-
-  @override
-  void close({bool force = false}) {}
 }

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:path_encoding_api/path_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -17,7 +16,7 @@ void main() {
     return MatrixApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(() => Dio(BaseOptions())),
+        serverConfig: testServerConfig(),
       ),
     );
   }
@@ -27,8 +26,8 @@ void main() {
       final api = buildMatrixApi();
       final response = await api.testMatrixPrimitiveString(value: 'blue');
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -41,8 +40,8 @@ void main() {
       final api = buildMatrixApi();
       final response = await api.testMatrixPrimitiveInteger(value: 42);
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -55,8 +54,8 @@ void main() {
       final api = buildMatrixApi();
       final response = await api.testMatrixPrimitiveNumber(value: 3.14);
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -69,8 +68,8 @@ void main() {
       final api = buildMatrixApi();
       final response = await api.testMatrixPrimitiveBoolean(value: true);
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -85,8 +84,8 @@ void main() {
         value: StatusEnum.active,
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -105,9 +104,8 @@ void main() {
           values: ['a b', null, 'c'],
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(
@@ -129,9 +127,8 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(
@@ -147,8 +144,8 @@ void main() {
         values: ['blue', 'black', 'brown'],
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -165,9 +162,8 @@ void main() {
           values: ['blue', 'black', 'brown'],
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(
@@ -181,8 +177,8 @@ void main() {
       final api = buildMatrixApi();
       final response = await api.testMatrixArrayInteger(values: [1, 2, 3]);
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -199,8 +195,8 @@ void main() {
         value: const SimpleObject(name: 'test', count: 5),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -215,8 +211,8 @@ void main() {
         value: const SimpleObject(name: 'test', count: 5),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -233,9 +229,8 @@ void main() {
           value: const SimpleObject(name: '', count: 5),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(
@@ -253,9 +248,8 @@ void main() {
           value: const SimpleObject(name: '', count: 5),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(
@@ -274,8 +268,8 @@ void main() {
         intValue: 42,
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -292,8 +286,8 @@ void main() {
         value: const OneOfPrimitiveString('test'),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -308,8 +302,8 @@ void main() {
         value: const OneOfPrimitiveInt(42),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -324,8 +318,8 @@ void main() {
         value: const AnyOfPrimitive(string: 'test'),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -340,8 +334,8 @@ void main() {
         value: const AnyOfPrimitive(int: 123),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -358,8 +352,8 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -377,8 +371,8 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -393,8 +387,8 @@ void main() {
         value: PriorityEnum.two,
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
 
       expect(
@@ -419,10 +413,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<EchoResponse, Response<Object?>>>(),
+        isTonikError,
         reason: 'deeply nested objects cannot be encoded in matrix style',
       );
-      final error = response as TonikError<EchoResponse, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -436,9 +430,8 @@ void main() {
           value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         // explode=false: ;paramName=k1,v1,k2,v2
@@ -457,9 +450,8 @@ void main() {
           value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         // explode=true: ;k1=v1;k2=v2 — a=b must be encoded as a%3Db

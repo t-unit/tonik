@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -45,19 +39,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofPrimitivesGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofPrimitivesGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(
         success.response.requestOptions.headers['X-Merged-Object'],
@@ -81,19 +65,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofPrimitivesGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofPrimitivesGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel2.id, 'onlyId');
     });
@@ -108,19 +82,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofPrimitivesGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofPrimitivesGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, 99);
     });
@@ -135,19 +99,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofPrimitivesGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofPrimitivesGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.value.xMergedObject, isNotNull);
       expect(success.value.xMergedObject!.allOfPrimitiveModel.count, -5);
       expect(success.value.xMergedObject!.allOfPrimitiveModel2.id, 'neg');
@@ -161,19 +115,9 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripAllofPrimitivesGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripAllofPrimitivesGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
           expect(
             success.response.requestOptions.headers['X-Merged-Object'],
             isNull,

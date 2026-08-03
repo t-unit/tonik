@@ -2,7 +2,6 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:binary_models_api/binary_models_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -20,12 +19,8 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -49,12 +44,7 @@ void main() {
       final result = await contentEncodedApi.uploadContentEncodedData(
         body: contentEncodedData,
       );
-      final success =
-          result
-              as TonikSuccess<
-                UploadContentEncodedDataResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 201);
       expect(success.value, isA<UploadContentEncodedDataResponse201>());
@@ -125,12 +115,7 @@ void main() {
       final result = await contentEncodedApi.uploadContentEncodedData(
         body: contentEncodedData,
       );
-      final success =
-          result
-              as TonikSuccess<
-                UploadContentEncodedDataResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 400);
       expect(success.value, isA<UploadContentEncodedDataResponse400>());
@@ -147,9 +132,7 @@ void main() {
       final contentEncodedApi = buildContentEncodedApi(responseStatus: '200');
 
       final result = await contentEncodedApi.getContentEncodedData(id: 'abc');
-      final success =
-          result
-              as TonikSuccess<GetContentEncodedDataResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetContentEncodedDataResponse200>());
@@ -167,9 +150,7 @@ void main() {
       final contentEncodedApi = buildContentEncodedApi(responseStatus: '404');
 
       final result = await contentEncodedApi.getContentEncodedData(id: 'xyz');
-      final success =
-          result
-              as TonikSuccess<GetContentEncodedDataResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetContentEncodedDataResponse404>());

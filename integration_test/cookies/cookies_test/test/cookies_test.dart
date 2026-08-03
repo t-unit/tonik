@@ -1,6 +1,5 @@
 import 'package:big_decimal/big_decimal.dart';
 import 'package:cookies_api/cookies_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -18,63 +17,55 @@ void main() {
     return CookiesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
   }
 
-  String? getCookieHeader(TonikResult<void, Response<Object?>> response) {
-    if (response is TonikSuccess<void, Response<Object?>>) {
-      return response.response.requestOptions.headers['Cookie'] as String?;
-    }
-    return null;
-  }
+  String? getCookieHeader<T>(TestSuccess<T> success) =>
+      success.response.requestOptions.headers['Cookie'] as String?;
 
   group('simple primitive cookies', () {
     test('string cookie', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: 'abc123');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'sessionId=abc123');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=abc123');
     });
 
     test('integer cookie', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleIntegerCookie(userId: 42);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'userId=42');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'userId=42');
     });
 
     test('boolean cookie - true', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleBooleanCookie(rememberMe: true);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'rememberMe=true');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'rememberMe=true');
     });
 
     test('boolean cookie - false', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleBooleanCookie(rememberMe: false);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'rememberMe=false');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'rememberMe=false');
     });
 
     test('number cookie', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleNumberCookie(score: 98.5);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'score=98.5');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'score=98.5');
     });
   });
 
@@ -83,17 +74,17 @@ void main() {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testOptionalCookie(trackingId: 'track123');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'trackingId=track123');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'trackingId=track123');
     });
 
     test('optional cookie when not provided', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testOptionalCookie();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // No Cookie header should be set when no cookies are provided.
-      expect(getCookieHeader(response), isNull);
+      expect(getCookieHeader(requireSuccess(response)), isNull);
     });
   });
 
@@ -105,8 +96,8 @@ void main() {
         userId: 42,
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, contains('sessionId=session123'));
       expect(cookie, contains('userId=42'));
       expect(cookie, contains('; '));
@@ -120,8 +111,8 @@ void main() {
         preferences: 'dark-mode',
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, contains('sessionId=session123'));
       expect(cookie, contains('userId=42'));
       expect(cookie, contains('preferences=dark-mode'));
@@ -134,8 +125,8 @@ void main() {
         userId: 42,
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, isNot(contains('preferences=')));
     });
   });
@@ -148,8 +139,8 @@ void main() {
         csrfToken: 'csrf456',
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, contains('authToken=auth123'));
       expect(cookie, contains('csrfToken=csrf456'));
       expect(cookie, isNot(contains('locale=')));
@@ -165,8 +156,8 @@ void main() {
         darkMode: true,
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, contains('authToken=auth123'));
       expect(cookie, contains('csrfToken=csrf456'));
       expect(cookie, contains('locale=en-US'));
@@ -181,8 +172,8 @@ void main() {
         darkMode: false,
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, contains('authToken=auth123'));
       expect(cookie, contains('csrfToken=csrf456'));
       expect(cookie, isNot(contains('locale=')));
@@ -195,24 +186,24 @@ void main() {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testEnumCookie(theme: ThemeEnum.light);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'theme=light');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'theme=light');
     });
 
     test('enum cookie - dark', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testEnumCookie(theme: ThemeEnum.dark);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'theme=dark');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'theme=dark');
     });
 
     test('enum cookie - system', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testEnumCookie(theme: ThemeEnum.system);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'theme=system');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'theme=system');
     });
   });
 
@@ -223,81 +214,90 @@ void main() {
         sessionId: 'hello world',
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // Spaces should be percent-encoded in form style.
-      expect(getCookieHeader(response), 'sessionId=hello%20world');
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'sessionId=hello%20world',
+      );
     });
 
     test('cookie value with equals sign', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: 'a=b');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // Equals sign must be percent-encoded to avoid ambiguity.
-      expect(getCookieHeader(response), 'sessionId=a%3Db');
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=a%3Db');
     });
 
     test('cookie value with ampersand', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: 'a&b');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // Ampersand should be percent-encoded.
-      expect(getCookieHeader(response), 'sessionId=a%26b');
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=a%26b');
     });
 
     test('cookie value with multiple special characters', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: 'a=b&c=d');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // All special characters should be percent-encoded.
-      expect(getCookieHeader(response), 'sessionId=a%3Db%26c%3Dd');
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'sessionId=a%3Db%26c%3Dd',
+      );
     });
 
     test('cookie value with semicolon', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: 'a;b');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // Semicolon must be encoded to avoid cookie separator ambiguity.
-      expect(getCookieHeader(response), 'sessionId=a%3Bb');
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=a%3Bb');
     });
 
     test('cookie value with unicode', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: 'héllo');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // UTF-8 encoded: é = 0xC3 0xA9 = %C3%A9.
-      expect(getCookieHeader(response), 'sessionId=h%C3%A9llo');
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=h%C3%A9llo');
     });
 
     test('cookie value with emoji', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: 'hi👋');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // UTF-8 encoded: 👋 = F0 9F 91 8B = %F0%9F%91%8B.
-      expect(getCookieHeader(response), 'sessionId=hi%F0%9F%91%8B');
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'sessionId=hi%F0%9F%91%8B',
+      );
     });
 
     test('cookie value with percent sign', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: '100%');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // Percent sign must be encoded to avoid decoding ambiguity.
-      expect(getCookieHeader(response), 'sessionId=100%25');
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=100%25');
     });
 
     test('cookie value with plus sign', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testSimpleStringCookie(sessionId: 'a+b');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // Plus sign should be percent-encoded in form style.
-      expect(getCookieHeader(response), 'sessionId=a%2Bb');
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=a%2Bb');
     });
   });
 
@@ -309,10 +309,10 @@ void main() {
         filter: 'active',
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'sessionId=session123');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=session123');
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.uri.query,
         contains('filter=active'),
@@ -326,10 +326,10 @@ void main() {
         requestId: 'req-456',
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'sessionId=session123');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'sessionId=session123');
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(
         success.response.requestOptions.headers['X-Request-Id'],
         'req-456',
@@ -343,10 +343,10 @@ void main() {
         authToken: 'token456',
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'authToken=token456');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'authToken=token456');
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.response.requestOptions.path, contains('/123'));
     });
   });
@@ -357,8 +357,8 @@ void main() {
       final dateTime = DateTime.utc(2024, 6, 15, 10, 30);
       final response = await api.testDateTimeCookie(lastVisit: dateTime);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, isNotNull);
       expect(cookie, startsWith('lastVisit='));
       // Should be ISO 8601 format, URL-encoded.
@@ -370,8 +370,8 @@ void main() {
       final date = Date(2024, 6, 15);
       final response = await api.testDateCookie(birthDate: date);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'birthDate=2024-06-15');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'birthDate=2024-06-15');
     });
   });
 
@@ -381,8 +381,8 @@ void main() {
       final uri = Uri.parse('https://example.com/callback?foo=bar');
       final response = await api.testUriCookie(returnUrl: uri);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, isNotNull);
       expect(cookie, startsWith('returnUrl='));
       // URI should be encoded.
@@ -396,8 +396,8 @@ void main() {
       final amount = BigDecimal.parse('123.456');
       final response = await api.testDecimalCookie(amount: amount);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'amount=123.456');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'amount=123.456');
     });
   });
 
@@ -406,16 +406,19 @@ void main() {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testNullableCookie(optionalValue: 'present');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'optionalValue=present');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'optionalValue=present',
+      );
     });
 
     test('nullable cookie without value', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testNullableCookie();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), isNull);
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), isNull);
     });
   });
 
@@ -424,8 +427,11 @@ void main() {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testRefCookie(session: 'ref-session-123');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'session=ref-session-123');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'session=ref-session-123',
+      );
     });
   });
 
@@ -441,8 +447,8 @@ void main() {
         datetimeVal: DateTime.utc(2024, 6, 15, 10, 30),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final cookie = getCookieHeader(response);
+      expect(response, isTonikSuccess);
+      final cookie = getCookieHeader(requireSuccess(response));
       expect(cookie, isNotNull);
       expect(cookie, contains('stringVal=test'));
       expect(cookie, contains('intVal=42'));
@@ -458,8 +464,11 @@ void main() {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testArrayCookie(tags: ['a', 'b', 'c']);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'tags=a; tags=b; tags=c');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'tags=a; tags=b; tags=c',
+      );
     });
 
     test('array of strings with special characters', () async {
@@ -468,10 +477,10 @@ void main() {
         tags: ['hello world', 'a=b', 'special&chars'],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // Values should be URL-encoded.
       expect(
-        getCookieHeader(response),
+        getCookieHeader(requireSuccess(response)),
         'tags=hello%20world; tags=a%3Db; tags=special%26chars',
       );
     });
@@ -480,24 +489,27 @@ void main() {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testArrayCookie(tags: []);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), isNull);
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), isNull);
     });
 
     test('array of integers cookie', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testArrayIntegerCookie(ids: [1, 2, 3, 100]);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'ids=1; ids=2; ids=3; ids=100');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'ids=1; ids=2; ids=3; ids=100',
+      );
     });
 
     test('single element array cookie', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testArrayIntegerCookie(ids: [42]);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'ids=42');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'ids=42');
     });
   });
 
@@ -508,8 +520,8 @@ void main() {
         user: const UserObject(id: 1, name: 'John'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'id=1; name=John');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'id=1; name=John');
     });
 
     test('object cookie with special characters in values', () async {
@@ -518,8 +530,11 @@ void main() {
         user: const UserObject(id: 42, name: 'John Doe'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'id=42; name=John%20Doe');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'id=42; name=John%20Doe',
+      );
     });
   });
 
@@ -530,8 +545,8 @@ void main() {
         session: const PartialSession(id: '42'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'session=id,42');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'session=id,42');
     });
 
     test(
@@ -542,8 +557,11 @@ void main() {
           session: const PartialSession(id: '42', theme: ''),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        expect(getCookieHeader(response), 'session=id,42,theme,');
+        expect(response, isTonikSuccess);
+        expect(
+          getCookieHeader(requireSuccess(response)),
+          'session=id,42,theme,',
+        );
       },
     );
   });
@@ -555,8 +573,11 @@ void main() {
         identifier: const OneOfIdentifierString('test-value'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'identifier=test-value');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'identifier=test-value',
+      );
     });
 
     test('oneOf cookie with integer variant', () async {
@@ -565,8 +586,8 @@ void main() {
         identifier: const OneOfIdentifierInt(12345),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'identifier=12345');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'identifier=12345');
     });
 
     test('anyOf cookie with string variant', () async {
@@ -575,8 +596,8 @@ void main() {
         value: const AnyOfValue(string: 'test-value'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'value=test-value');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'value=test-value');
     });
 
     test('anyOf cookie with integer variant', () async {
@@ -585,8 +606,8 @@ void main() {
         value: const AnyOfValue(int: 42),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'value=42');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'value=42');
     });
 
     test('allOf cookie encodes successfully', () async {
@@ -598,9 +619,9 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       // AllOf encodes all properties (form style, explode: true).
-      expect(getCookieHeader(response), 'id=1; name=Test');
+      expect(getCookieHeader(requireSuccess(response)), 'id=1; name=Test');
     });
   });
 
@@ -611,8 +632,11 @@ void main() {
         labels: {'color': 'blue', 'size': 'large'},
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'color=blue; size=large');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'color=blue; size=large',
+      );
     });
 
     test('map with integer values', () async {
@@ -621,24 +645,27 @@ void main() {
         prefs: {'volume': 80, 'brightness': 50},
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'volume=80; brightness=50');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'volume=80; brightness=50',
+      );
     });
 
     test('map with single entry', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testMapIntegerCookie(prefs: {'volume': 80});
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'volume=80');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'volume=80');
     });
 
     test('empty map', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testMapIntegerCookie(prefs: {});
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), isNull);
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), isNull);
     });
 
     test('optional map when provided', () async {
@@ -647,16 +674,16 @@ void main() {
         settings: {'timeout': 30},
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'timeout=30');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'timeout=30');
     });
 
     test('optional map when not provided', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testOptionalMapCookie();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), isNull);
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), isNull);
     });
   });
 
@@ -670,8 +697,8 @@ void main() {
       );
 
       // Nested objects are not supported in form encoding.
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
       expect(error.error, isA<EncodingException>());
     });
@@ -682,24 +709,27 @@ void main() {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testAnyCookie(data: 'hello');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'data=hello');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'data=hello');
     });
 
     test('required AnyModel cookie with integer value', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testAnyCookie(data: 42);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'data=42');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'data=42');
     });
 
     test('array of AnyModel cookie', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testArrayAnyCookie(items: ['a', 1, true]);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'items=a; items=1; items=true');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'items=a; items=1; items=true',
+      );
     });
   });
 
@@ -710,16 +740,22 @@ void main() {
         flags: [true, false, true],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'flags=true; flags=false; flags=true');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'flags=true; flags=false; flags=true',
+      );
     });
 
     test('nested alias to list of integers encodes as form list', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testAliasIntListCookie(numbers: [1, 2, 3]);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'numbers=1; numbers=2; numbers=3');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'numbers=1; numbers=2; numbers=3',
+      );
     });
 
     test('alias to list of strings', () async {
@@ -728,8 +764,11 @@ void main() {
         names: ['alice', 'bob', 'carol'],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'names=alice; names=bob; names=carol');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'names=alice; names=bob; names=carol',
+      );
     });
 
     test('optional alias to list of integers when provided', () async {
@@ -738,16 +777,19 @@ void main() {
         numbers: [10, 20],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'numbers=10; numbers=20');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'numbers=10; numbers=20',
+      );
     });
 
     test('optional alias to list of integers when not provided', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testOptionalAliasIntListCookie();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), isNull);
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), isNull);
     });
 
     test('alias to map of integers', () async {
@@ -756,16 +798,19 @@ void main() {
         prefs: {'volume': 80, 'brightness': 50},
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'volume=80; brightness=50');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'volume=80; brightness=50',
+      );
     });
 
     test('alias to AnyModel scalar', () async {
       final api = buildCookiesApi(responseStatus: '204');
       final response = await api.testAliasAnyCookie(data: 'hello');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'data=hello');
+      expect(response, isTonikSuccess);
+      expect(getCookieHeader(requireSuccess(response)), 'data=hello');
     });
 
     test('alias to list of AnyModel', () async {
@@ -774,8 +819,11 @@ void main() {
         items: ['a', 1, true],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(getCookieHeader(response), 'items=a; items=1; items=true');
+      expect(response, isTonikSuccess);
+      expect(
+        getCookieHeader(requireSuccess(response)),
+        'items=a; items=1; items=true',
+      );
     });
   });
 
@@ -790,9 +838,9 @@ void main() {
         ],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
       expect(
-        getCookieHeader(response),
+        getCookieHeader(requireSuccess(response)),
         'binaryToken=aGk%3D; binaryTokens=YQ%3D%3D; binaryTokens=YmM%3D',
       );
     });
@@ -805,8 +853,8 @@ void main() {
         binaryData: const TonikFileBytes([1, 2, 3]),
       );
 
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
       expect(error.error, isA<EncodingException>());
       expect(
@@ -824,8 +872,8 @@ void main() {
         ],
       );
 
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
       expect(error.error, isA<EncodingException>());
       expect(

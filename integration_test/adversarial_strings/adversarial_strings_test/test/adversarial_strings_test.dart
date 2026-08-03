@@ -1,12 +1,9 @@
-import 'dart:async';
 import 'dart:convert';
-import 'dart:typed_data';
 
 import 'package:adversarial_strings_api/adversarial_strings_api.dart';
 import 'package:big_decimal/big_decimal.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
-import 'package:tonik_util/tonik_util.dart';
+import 'package:test_helpers/test_helpers.dart';
 
 void main() {
   group('static server URL with single quote', () {
@@ -283,78 +280,78 @@ void main() {
 
   group('root JSON string request bodies', () {
     test('alias body is sent as a quoted JSON string', () async {
-      final adapter = _CapturingAdapter();
+      final recorder = TestRequestRecorder();
 
-      await _api(adapter).sendRootAlias(body: 'alias-body');
+      await _api(recorder).sendRootAlias(body: 'alias-body');
 
-      expect(adapter.capturedBodyAsString, '"alias-body"');
-      expect(jsonDecode(adapter.capturedBodyAsString), 'alias-body');
+      expect(recorder.request!.bodyText, '"alias-body"');
+      expect(jsonDecode(recorder.request!.bodyText!), 'alias-body');
     });
 
     test('oneOf string variant is sent as a quoted JSON string', () async {
-      final adapter = _CapturingAdapter();
+      final recorder = TestRequestRecorder();
 
-      await _api(adapter).sendRootOneOf(
+      await _api(recorder).sendRootOneOf(
         body: const RootStringOneOfString('one-of-body'),
       );
 
-      expect(adapter.capturedBodyAsString, '"one-of-body"');
-      expect(jsonDecode(adapter.capturedBodyAsString), 'one-of-body');
+      expect(recorder.request!.bodyText, '"one-of-body"');
+      expect(jsonDecode(recorder.request!.bodyText!), 'one-of-body');
     });
 
     test('oneOf integer variant is sent as a JSON number', () async {
-      final adapter = _CapturingAdapter();
+      final recorder = TestRequestRecorder();
 
-      await _api(adapter).sendRootOneOf(
+      await _api(recorder).sendRootOneOf(
         body: const RootStringOneOfInt(7),
       );
 
-      expect(adapter.capturedBodyAsString, '7');
-      expect(jsonDecode(adapter.capturedBodyAsString), 7);
+      expect(recorder.request!.bodyText, '7');
+      expect(jsonDecode(recorder.request!.bodyText!), 7);
     });
 
     test('oneOf bool variant is sent as a JSON boolean', () async {
-      final adapter = _CapturingAdapter();
+      final recorder = TestRequestRecorder();
 
-      await _api(adapter).sendRootOneOf(
+      await _api(recorder).sendRootOneOf(
         body: const RootStringOneOfBool(true),
       );
 
-      expect(adapter.capturedBodyAsString, 'true');
-      expect(jsonDecode(adapter.capturedBodyAsString), isTrue);
+      expect(recorder.request!.bodyText, 'true');
+      expect(jsonDecode(recorder.request!.bodyText!), isTrue);
     });
 
     test('anyOf string variant is sent as a quoted JSON string', () async {
-      final adapter = _CapturingAdapter();
+      final recorder = TestRequestRecorder();
 
-      await _api(adapter).sendRootAnyOf(
+      await _api(recorder).sendRootAnyOf(
         body: const RootStringAnyOf(string: 'any-of-body'),
       );
 
-      expect(adapter.capturedBodyAsString, '"any-of-body"');
-      expect(jsonDecode(adapter.capturedBodyAsString), 'any-of-body');
+      expect(recorder.request!.bodyText, '"any-of-body"');
+      expect(jsonDecode(recorder.request!.bodyText!), 'any-of-body');
     });
 
     test('anyOf bool variant is sent as a JSON boolean', () async {
-      final adapter = _CapturingAdapter();
+      final recorder = TestRequestRecorder();
 
-      await _api(adapter).sendRootAnyOf(
+      await _api(recorder).sendRootAnyOf(
         body: const RootStringAnyOf(bool: true),
       );
 
-      expect(adapter.capturedBodyAsString, 'true');
-      expect(jsonDecode(adapter.capturedBodyAsString), isTrue);
+      expect(recorder.request!.bodyText, 'true');
+      expect(jsonDecode(recorder.request!.bodyText!), isTrue);
     });
 
     test('oneOf decimal variant is sent as a quoted JSON string', () async {
-      final adapter = _CapturingAdapter();
+      final recorder = TestRequestRecorder();
 
-      await _api(adapter).sendRootDecimalOneOf(
+      await _api(recorder).sendRootDecimalOneOf(
         body: RootDecimalOneOfDecimal(BigDecimal.parse('12.34')),
       );
 
-      expect(adapter.capturedBodyAsString, '"12.34"');
-      expect(jsonDecode(adapter.capturedBodyAsString), '12.34');
+      expect(recorder.request!.bodyText, '"12.34"');
+      expect(jsonDecode(recorder.request!.bodyText!), '12.34');
     });
   });
 
@@ -380,37 +377,12 @@ void main() {
   });
 }
 
-AdversarialApi _api(_CapturingAdapter adapter) => AdversarialApi(
+AdversarialApi _api(TestRequestRecorder recorder) => AdversarialApi(
   CustomServer(
     baseUrl: 'https://example.com',
-    serverConfig: ServerConfig.client(_capturingDio(adapter)),
+    serverConfig: testServerConfig(
+      recorder: recorder,
+      response: const TestResponseStub(),
+    ),
   ),
 );
-
-Dio _capturingDio(_CapturingAdapter adapter) {
-  return Dio(BaseOptions(baseUrl: 'https://example.com'))
-    ..httpClientAdapter = adapter;
-}
-
-class _CapturingAdapter implements HttpClientAdapter {
-  List<int>? capturedBody;
-
-  String get capturedBodyAsString => utf8.decode(capturedBody!);
-
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) async {
-    final chunks = requestStream == null
-        ? const <Uint8List>[]
-        : await requestStream.toList();
-    capturedBody = chunks.expand((chunk) => chunk).toList();
-
-    return ResponseBody.fromString('', 204);
-  }
-
-  @override
-  void close({bool force = false}) {}
-}

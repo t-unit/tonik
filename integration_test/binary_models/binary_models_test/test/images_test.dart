@@ -1,5 +1,4 @@
 import 'package:binary_models_api/binary_models_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -17,12 +16,8 @@ void main() {
     return ImagesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -33,8 +28,7 @@ void main() {
       final imagesApi = buildImagesApi(responseStatus: '200');
 
       final result = await imagesApi.getImage(id: 'test-image');
-      final success =
-          result as TonikSuccess<GetImageResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetImageResponse200>());
@@ -56,8 +50,7 @@ void main() {
       final imagesApi = buildImagesApi(responseStatus: '404');
 
       final result = await imagesApi.getImage(id: 'nonexistent');
-      final success =
-          result as TonikSuccess<GetImageResponse, Response<Object?>>;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetImageResponse404>());

@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -17,13 +16,8 @@ void main() {
     return TypeArraysApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
-        ),
+        serverConfig:
+            testServerConfig(headers: {'X-Response-Status': responseStatus}),
       ),
     );
   }
@@ -33,18 +27,11 @@ void main() {
       final api = buildApi();
       final result = await api.health();
 
-      if (result is TonikError<HealthGet200BodyModel, Response<Object?>>) {
-        final error = result;
-        print('Error type: ${error.type}');
-        print('Error: ${error.error}');
-      }
-
       expect(
         result,
-        isA<TonikSuccess<HealthGet200BodyModel, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value.status, 'ok');
     });
@@ -56,8 +43,8 @@ void main() {
 
       final result = await api.getNullableWidget();
 
-      expect(result, isA<TonikSuccess<NullableWidget, Response<Object?>>>());
-      final success = result as TonikSuccess<NullableWidget, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.value, isNull);
     });
   });
@@ -74,9 +61,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final requestData =
@@ -108,9 +94,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -140,9 +125,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -174,9 +158,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -208,9 +191,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -243,9 +225,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -276,9 +257,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -308,9 +288,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -340,9 +319,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -370,9 +348,8 @@ void main() {
 
       final result = await api.testSimpleTypes(body: input);
 
-      expect(result, isA<TonikSuccess<SimpleTypeArrays, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<SimpleTypeArrays, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final output = success.value;
@@ -404,10 +381,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<NullableTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<NullableTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -458,10 +434,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<NullableTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<NullableTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -498,10 +473,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<NullableTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<NullableTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -533,10 +507,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<NullableTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<NullableTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -569,10 +542,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<NullableTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<NullableTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -605,10 +577,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<NullableTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<NullableTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -641,10 +612,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<NullableTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<NullableTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -670,8 +640,8 @@ void main() {
 
       final result = await api.testTopLevelTypeArray(param: 'test-param');
 
-      expect(result, isA<TonikSuccess<StringOrNumber, Response<Object?>>>());
-      final success = result as TonikSuccess<StringOrNumber, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       expect(success.response.requestOptions.uri.path, '/top-level/test-param');
@@ -698,10 +668,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<CompositionWithTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<CompositionWithTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final requestData =
@@ -746,10 +715,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<CompositionWithTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<CompositionWithTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -791,10 +759,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<CompositionWithTypeArrays, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<CompositionWithTypeArrays, Response<Object?>>;
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -817,8 +784,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -845,8 +812,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -870,8 +837,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -898,8 +865,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -926,8 +893,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -957,8 +924,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -990,8 +957,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -1023,8 +990,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -1053,8 +1020,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -1074,8 +1041,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -1103,8 +1070,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -1132,8 +1099,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final output = success.value;
@@ -1156,8 +1123,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final requestData =
           success.response.requestOptions.data as Map<String, dynamic>;
@@ -1180,8 +1147,8 @@ void main() {
 
         final result = await api.testEdgeCases(body: input);
 
-        expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-        final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+        expect(result, isTonikSuccess);
+        final success = requireSuccess(result);
 
         final requestData =
             success.response.requestOptions.data as Map<String, dynamic>;
@@ -1207,8 +1174,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final output = success.value;
       expect(output.arrayOfNullableInts, [1, null, 3]);
@@ -1225,8 +1192,8 @@ void main() {
 
       final result = await api.testEdgeCases(body: input);
 
-      expect(result, isA<TonikSuccess<EdgeCases, Response<Object?>>>());
-      final success = result as TonikSuccess<EdgeCases, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       final output = success.value;
       expect(output.arrayOfNullableDates, [

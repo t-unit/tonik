@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -48,22 +42,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNestedAllofInOneofGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripNestedAllofInOneofGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
 
         final headerValue =
-            success.response.requestOptions.headers['X-Nested-Value'] as String;
+            success.response.requestOptions.headers['X-Nested-Value']
+                as String?;
         expect(headerValue, contains('name,test'));
         expect(headerValue, contains('number,42'));
         expect(
@@ -88,19 +73,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNestedAllofInOneofGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripNestedAllofInOneofGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.value.xNestedValue,
           isA<NestedAllOfInOneOfAllOfComplex>(),
@@ -120,19 +95,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNestedAllofInOneofGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripNestedAllofInOneofGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'simple-string',
@@ -151,19 +116,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNestedAllofInOneofGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripNestedAllofInOneofGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.response.requestOptions.headers['X-Nested-Value'],
           'test-value',
@@ -179,19 +134,9 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripNestedAllofInOneofGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripNestedAllofInOneofGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
           expect(
             success.response.requestOptions.headers['X-Nested-Value'],
             isNull,

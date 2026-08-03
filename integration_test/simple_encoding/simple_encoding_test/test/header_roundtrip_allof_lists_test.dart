@@ -1,10 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
-
-typedef _R = HeadersRoundtripAllofListsGet200Response;
 
 void main() {
   late ImposterServer imposterServer;
@@ -19,12 +16,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -48,8 +41,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikError<_R, Response<Object?>>>());
-      final error = result as TonikError<_R, Response<Object?>>;
+      expect(result, isTonikError);
+      final error = requireError(result);
       expect(error.type, TonikErrorType.decoding);
     });
 
@@ -63,8 +56,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikSuccess<_R, Response<Object?>>>());
-      final success = result as TonikSuccess<_R, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       expect(success.value.xListComposite, isNotNull);
       expect(
@@ -81,8 +74,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikSuccess<_R, Response<Object?>>>());
-      final success = result as TonikSuccess<_R, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       expect(success.value.xListComposite, isNotNull);
       expect(
@@ -102,8 +95,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikError<_R, Response<Object?>>>());
-      final error = result as TonikError<_R, Response<Object?>>;
+      expect(result, isTonikError);
+      final error = requireError(result);
       expect(error.type, TonikErrorType.decoding);
     });
 
@@ -113,8 +106,8 @@ void main() {
         () async {
           final result = await api.testHeaderRoundtripAllOfLists.call();
 
-          expect(result, isA<TonikSuccess<_R, Response<Object?>>>());
-          final success = result as TonikSuccess<_R, Response<Object?>>;
+          expect(result, isTonikSuccess);
+          final success = requireSuccess(result);
 
           expect(
             success.response.requestOptions.headers['X-List-Composite'],

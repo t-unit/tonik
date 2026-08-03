@@ -3,6 +3,7 @@ import 'package:dart_style/dart_style.dart';
 import 'package:test/test.dart';
 import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
+import 'package:tonik_generate/src/util/core_prefixed_allocator.dart';
 
 void main() {
   final context = Context.initial();
@@ -171,6 +172,53 @@ Object? test() {
       );
     });
 
+    test('qualifies collection checks for form-encoded maps', () {
+      final property = _property(
+        context,
+        MapModel(
+          valueModel: StringModel(context: context),
+          context: context,
+          examples: const [],
+        ),
+      );
+      final content = _content(
+        context,
+        [property],
+        encodings: {
+          property: _encoding(
+            contentType: ContentType.form,
+            rawContentType: 'application/x-www-form-urlencoded',
+          ),
+        },
+      );
+      final library = Library(
+        (builder) => builder.body.add(
+          Method(
+            (builder) => builder
+              ..name = 'test'
+              ..returns = refer('Object?', 'dart:core')
+              ..body = Block.of(
+                buildHttpMultipartBodyStatements(content, 'body'),
+              ),
+          ),
+        ),
+      );
+      final source =
+          '${library.accept(
+            DartEmitter(
+              allocator: CorePrefixedAllocator(),
+              useNullSafetySyntax: true,
+            ),
+          )}';
+
+      expect(
+        collapseWhitespace(source),
+        contains(
+          RegExp(r'value is _i\d+\.Map \|\| value is _i\d+\.List'),
+        ),
+      );
+    });
+
     for (final entry in <({String name, Model model})>[
       (
         name: 'class',
@@ -231,6 +279,32 @@ Object? test() {
         );
       });
     }
+
+    test('emits deepObject members as marked plain fields', () {
+      expectPropertyCode(
+        _classModel(context, 'Nested'),
+        r'''
+  for (final entry in body.value.toDeepObject(
+    r'value',
+    explode: true,
+    allowEmpty: true,
+  )) {
+    _$multipartFiles.add(
+      _TonikMultipartFile.fromBytes(
+        entry.name,
+        utf8.encode(entry.value),
+        contentType: MediaType.parse(r'application/x-www-form-urlencoded'),
+        isPlainField: true,
+      ),
+    );
+  }''',
+        encoding: _encoding(
+          style: EncodingStyle.deepObject,
+          explode: true,
+          allowReserved: false,
+        ),
+      );
+    });
 
     test('uses plain and JSON encodings for string enums', () {
       final model = _stringEnum(context);
@@ -485,10 +559,11 @@ Object? test() {
         r'''
   for (final item in body.value) {
     _$multipartFiles.add(
-      MultipartFile.fromBytes(
-        r'value',
-        utf8.encode(item.toString()),
-        contentType: MediaType.parse(r'text/plain'),
+        _TonikMultipartFile.fromBytes(
+          r'value',
+          utf8.encode(item.toString()),
+          contentType: MediaType.parse(r'text/plain'),
+          isPlainField: true,
       ),
     );
   }''',
@@ -545,14 +620,41 @@ Object? test() {
         _list(context, StringModel(context: context)),
         r'''
   _$multipartFiles.add(
-    MultipartFile.fromBytes(
+    _TonikMultipartFile.fromBytes(
       r'value',
       utf8.encode(body.value.toSimple(explode: false, allowEmpty: true)),
       contentType: MediaType.parse(r'text/plain'),
+      isPlainField: true,
     ),
   );''',
         encoding: _encoding(
           style: EncodingStyle.form,
+          explode: false,
+          allowReserved: false,
+        ),
+      );
+    });
+
+    test('uses pipeDelimited serialization for a non-exploded array', () {
+      expectPropertyCode(
+        _list(context, StringModel(context: context)),
+        r'''
+  for (final item in body.value.toPipeDelimited(
+    explode: false,
+    allowEmpty: true,
+    alreadyEncoded: true,
+  )) {
+    _$multipartFiles.add(
+      _TonikMultipartFile.fromBytes(
+        r'value',
+        utf8.encode(item),
+        contentType: MediaType.parse(r'text/plain'),
+        isPlainField: true,
+      ),
+    );
+  }''',
+        encoding: _encoding(
+          style: EncodingStyle.pipeDelimited,
           explode: false,
           allowReserved: false,
         ),
@@ -594,10 +696,11 @@ Object? test() {
           '''
   for (final item in body.value) {
     _\$multipartFiles.add(
-      MultipartFile.fromBytes(
+      _TonikMultipartFile.fromBytes(
         r'value',
         utf8.encode(${entry.encodedItem}),
         contentType: MediaType.parse(r'text/plain'),
+        isPlainField: true,
       ),
     );
   }''',

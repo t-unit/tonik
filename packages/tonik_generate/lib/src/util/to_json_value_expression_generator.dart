@@ -29,6 +29,7 @@ BuiltExpression buildToJsonPropertyExpression(
   String? contextClass,
   String? contextProperty,
   bool forceNonNullReceiver = false,
+  bool receiverIsPromoted = false,
   bool useImmutableCollections = false,
 }) {
   final model = property.model;
@@ -44,6 +45,7 @@ BuiltExpression buildToJsonPropertyExpression(
     contextClass: contextClass,
     contextProperty: contextProperty,
     forceNonNullReceiver: forceNonNullReceiver,
+    receiverIsPromoted: receiverIsPromoted,
     useImmutableCollections: useImmutableCollections,
   );
 }
@@ -156,11 +158,13 @@ BuiltExpression _buildSerializationExpression(
   String? contextClass,
   String? contextProperty,
   bool forceNonNullReceiver = false,
+  bool receiverIsPromoted = false,
   bool useImmutableCollections = false,
 }) {
   final directReceiver = forceNonNullReceiver ? receiver.nullChecked : receiver;
   final useNullAware =
       !forceNonNullReceiver &&
+      !receiverIsPromoted &&
       (isNullable ||
           (model is EnumModel && model.isNullable) ||
           model.isEffectivelyNullable);
@@ -218,7 +222,7 @@ BuiltExpression _buildSerializationExpression(
       return _handleListExpression(
         receiver,
         model,
-        isNullable,
+        !receiverIsPromoted && isNullable,
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
@@ -231,7 +235,7 @@ BuiltExpression _buildSerializationExpression(
       return _handleMapExpression(
         receiver,
         model,
-        isNullable || model.isNullable,
+        !receiverIsPromoted && (isNullable || model.isNullable),
         nameManager: nameManager,
         package: package,
         helperContext: helperContext,
@@ -251,6 +255,7 @@ BuiltExpression _buildSerializationExpression(
         contextClass: contextClass,
         contextProperty: contextProperty,
         forceNonNullReceiver: forceNonNullReceiver,
+        receiverIsPromoted: receiverIsPromoted,
         useImmutableCollections: useImmutableCollections,
       );
     case PrimitiveModel():

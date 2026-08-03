@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,9 +15,7 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(BaseOptions(headers: {'X-Response-Status': '200'})),
-        ),
+        serverConfig: testServerConfig(headers: {'X-Response-Status': '200'}),
       ),
     );
   }
@@ -35,19 +31,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(
           success.response.requestOptions.headers['x-nullable-string-list'],
@@ -65,24 +51,9 @@ void main() {
         );
 
         // The request encodes the null element as an empty string.
-        final dioResponse = switch (response) {
-          TonikSuccess<
-            HeadersRoundtripListsNullableGet200Response,
-            Response<Object?>
-          >(
-            :final response,
-          ) =>
-            response,
-          TonikError<
-            HeadersRoundtripListsNullableGet200Response,
-            Response<Object?>
-          >(
-            :final response,
-          ) =>
-            response,
-        };
+        final error = requireError(response);
         expect(
-          dioResponse?.requestOptions.headers['x-nullable-integer-list'],
+          error.response?.requestOptions.headers['x-nullable-integer-list'],
           '1,,2',
         );
 
@@ -91,12 +62,7 @@ void main() {
         // docs/uri_encoding_limitations.md.
         expect(
           response,
-          isA<
-            TonikError<
-              HeadersRoundtripListsNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
       },
     );
@@ -109,27 +75,18 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig.clientFactory(
-              () => Dio(
-                BaseOptions(
-                  headers: {
-                    'X-Response-Status': '200',
-                    'X-Nullable-String-List': 'a%2Fb,,50%',
-                  },
-                ),
-              ),
+            serverConfig: testServerConfig(
+              headers: {
+                'X-Response-Status': '200',
+                'X-Nullable-String-List': 'a%2Fb,,50%',
+              },
             ),
           ),
         );
 
         final response = await injected.testHeaderRoundtripNullableLists();
 
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.value.xNullableStringList, ['a%2Fb', null, '50%']);
       });
     });

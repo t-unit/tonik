@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:multipart_api/multipart_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -13,7 +11,9 @@ void main() {
     imposterServer = await setupImposterServer();
     baseUrl = 'http://localhost:${imposterServer.port}';
 
-    api = CustomApi(CustomServer(baseUrl: baseUrl));
+    api = CustomApi(
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
+    );
   });
 
   group('Custom content type mapped to multipart', () {
@@ -22,17 +22,16 @@ void main() {
 
       final response = await api.postCustomMultipart(body: form);
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
+      final success = requireSuccess(response);
       final requestData = success.response.requestOptions.data;
 
       // The body should be FormData because the custom content type is
       // mapped to multipart serialization via tonik.yaml contentTypes.
-      expect(requestData, isA<FormData>());
+      expect(requestData, isA<TestFormData>());
 
-      final formData = requestData as FormData;
+      final formData = requestData as TestFormData;
       // Scalar fields use formData.files with explicit Content-Type.
       expect(formData.files.any((e) => e.key == 'field1'), isTrue);
       expect(formData.files.any((e) => e.key == 'field2'), isTrue);
@@ -51,11 +50,10 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
 
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
+        final success = requireSuccess(response);
 
         // Known limitation: Dio replaces content type with
         // multipart/form-data; boundary=... when body is FormData.

@@ -1,10 +1,8 @@
 import 'dart:convert';
 
-import 'package:dio/dio.dart';
 import 'package:structured_syntax_suffix_api/structured_syntax_suffix_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -24,8 +22,8 @@ void main() {
     () async {
       final result = await buildApi().getWidget();
 
-      expect(result, isA<TonikSuccess<Widget, Response<Object?>>>());
-      final success = result as TonikSuccess<Widget, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value.id, 42);
@@ -38,8 +36,8 @@ void main() {
     () async {
       final result = await buildApi().getProblem();
 
-      expect(result, isA<TonikSuccess<Widget, Response<Object?>>>());
-      final success = result as TonikSuccess<Widget, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value.id, 7);
@@ -52,8 +50,8 @@ void main() {
     () async {
       final result = await buildApi().getApplicationWildcard();
 
-      expect(result, isA<TonikSuccess<TonikFile, Response<Object?>>>());
-      final success = result as TonikSuccess<TonikFile, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(
@@ -66,8 +64,8 @@ void main() {
   test('*/* response matches text/plain and returns bytes', () async {
     final result = await buildApi().getCatchAllWildcard();
 
-    expect(result, isA<TonikSuccess<TonikFile, Response<Object?>>>());
-    final success = result as TonikSuccess<TonikFile, Response<Object?>>;
+    expect(result, isTonikSuccess);
+    final success = requireSuccess(result);
 
     expect(success.response.statusCode, 200);
     expect(utf8.decode(success.value.toBytes()), 'catch-all wildcard response');
