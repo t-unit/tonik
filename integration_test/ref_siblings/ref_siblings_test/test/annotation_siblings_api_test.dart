@@ -155,6 +155,9 @@ void main() {
         );
 
         final success = requireSuccess(response);
+        // expected to be deprecated
+        // ignore: deprecated_member_use
+        expect(success.value, isA<LegacyUser>());
         expect(
           success.response.requestOptions.path,
           '$baseUrl/annotation/deprecated-user',
@@ -172,6 +175,9 @@ void main() {
         );
 
         final success = requireSuccess(response);
+        // expected to be deprecated
+        // ignore: deprecated_member_use
+        expect(success.value, isA<LegacyUser>());
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -193,7 +199,9 @@ void main() {
 
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
-        expect(success.value, isA<User>());
+        // expected to be deprecated
+        // ignore: deprecated_member_use
+        expect(success.value, isA<LegacyUser>());
       });
 
       test('roundtrip preserves all values', () async {
@@ -207,6 +215,9 @@ void main() {
         final response = await api.createDeprecatedUser(body: original);
 
         final success = requireSuccess(response);
+        // expected to be deprecated
+        // ignore: deprecated_member_use
+        expect(success.value, isA<LegacyUser>());
         expect(success.value, original);
       });
     });
@@ -222,6 +233,9 @@ void main() {
         );
 
         final success = requireSuccess(response);
+        // expected to be deprecated
+        // ignore: deprecated_member_use
+        expect(success.value, isA<OldItem>());
         expect(
           success.response.requestOptions.path,
           '$baseUrl/annotation/described-deprecated',
@@ -236,6 +250,9 @@ void main() {
         );
 
         final success = requireSuccess(response);
+        // expected to be deprecated
+        // ignore: deprecated_member_use
+        expect(success.value, isA<OldItem>());
         final requestBody =
             success.response.requestOptions.data as Map<String, dynamic>;
 
@@ -254,7 +271,9 @@ void main() {
 
         expect(response, isTonikSuccess);
         final success = requireSuccess(response);
-        expect(success.value, isA<Item>());
+        // expected to be deprecated
+        // ignore: deprecated_member_use
+        expect(success.value, isA<OldItem>());
       });
 
       test('roundtrip preserves all values', () async {
@@ -267,6 +286,9 @@ void main() {
         );
 
         final success = requireSuccess(response);
+        // expected to be deprecated
+        // ignore: deprecated_member_use
+        expect(success.value, isA<OldItem>());
         expect(success.value, original);
       });
     });
