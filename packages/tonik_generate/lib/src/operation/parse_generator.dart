@@ -165,15 +165,12 @@ class ParseGenerator {
           [?mediaTypeGuard],
         );
       case RangeResponseStatus():
-        final nullableGuard = backendGenerator.responseStatusCodeIsNullable
-            ? 'status != null && '
-            : '';
         return _caseWithGuards(
           'case (var status, $contentTypePattern)',
           [
             Code(
-              '$nullableGuard'
-              'status >= ${status.min} && status <= ${status.max}',
+              'status != null '
+              '&& status >= ${status.min} && status <= ${status.max}',
             ),
             ?mediaTypeGuard,
           ],

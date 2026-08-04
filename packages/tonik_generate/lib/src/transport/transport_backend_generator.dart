@@ -42,8 +42,6 @@ abstract interface class TransportBackendGenerator {
 
   Parameter get cancellationParameter;
 
-  bool get responseStatusCodeIsNullable;
-
   Expression responseStatusCode(Expression response);
 
   Expression responseContentType(Expression response);
@@ -75,8 +73,6 @@ abstract interface class TransportBackendGenerator {
   });
 
   Class generateClientAdapter();
-
-  Iterable<Spec> generateOperationSupport(Operation operation);
 
   Method generateBodyMethod({
     required Operation operation,

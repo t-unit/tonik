@@ -6,7 +6,6 @@ import 'package:tonik_generate/src/naming/name_generator.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/server/server_generator.dart';
 import 'package:tonik_generate/src/transport/dio_backend_generator.dart';
-import 'package:tonik_generate/src/transport/http_backend_generator.dart';
 
 void main() {
   late ServerGenerator generator;
@@ -229,37 +228,6 @@ void main() {
         collapseWhitespace(format(expectedClass)),
       );
     });
-  });
-
-  test('reserves both native client getter names for every backend', () {
-    const servers = [
-      Server(
-        url: 'https://example.com/{dio}/{client}',
-        variables: [
-          ServerVariable(name: 'dio', defaultValue: 'dio-value'),
-          ServerVariable(name: 'client', defaultValue: 'client-value'),
-        ],
-      ),
-    ];
-
-    for (final backend in [
-      const DioBackendGenerator(),
-      const HttpBackendGenerator(),
-    ]) {
-      final manager = NameManager(
-        generator: NameGenerator(),
-        stableModelSorter: StableModelSorter(),
-      );
-      final backendServer = ServerGenerator(
-        nameManager: manager,
-        backendGenerator: backend,
-      ).generateClasses(servers)[1];
-
-      expect(
-        backendServer.fields.map((field) => field.name),
-        [r'$dio', r'$client'],
-      );
-    }
   });
 
   group('ServerGenerator with multiple variables', () {

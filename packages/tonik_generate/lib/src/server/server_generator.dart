@@ -308,8 +308,7 @@ class ServerGenerator {
                 {
                   'baseUrl',
                   'serverConfig',
-                  'dio',
-                  'client',
+                  backendGenerator.clientGetterName,
                   'close',
                 }.contains(normalized)
                 ? '\$$normalized'

@@ -3,9 +3,6 @@ import 'package:tonik_core/tonik_core.dart';
 import 'package:tonik_generate/src/naming/name_manager.dart';
 import 'package:tonik_generate/src/transport/http/http_body_generator.dart';
 import 'package:tonik_generate/src/transport/http/http_headers_generator.dart';
-import 'package:tonik_generate/src/transport/http/http_multipart_generator.dart';
-import 'package:tonik_generate/src/transport/http/http_multipart_support_generator.dart';
-import 'package:tonik_generate/src/transport/multipart_header_plan.dart';
 import 'package:tonik_generate/src/transport/operation_request_plan.dart';
 import 'package:tonik_generate/src/transport/transport_backend_generator.dart';
 import 'package:tonik_generate/src/util/spec_literal_string.dart';
@@ -61,9 +58,6 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   );
 
   @override
-  bool get responseStatusCodeIsNullable => false;
-
-  @override
   Expression responseStatusCode(Expression response) =>
       response.property('statusCode');
 
@@ -76,18 +70,9 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
       response.property('bodyBytes');
 
   @override
-  Expression responseHeaderValues(Expression response, String name) {
-    final value = response
-        .property('headers')
-        .index(specLiteralString(name.toLowerCase()));
-    return value
-        .equalTo(literalNull)
-        .conditional(
-          literalNull,
-          literalList([value.nullChecked], refer('String', 'dart:core')),
-        )
-        .parenthesized;
-  }
+  Expression responseHeaderValues(Expression response, String name) => response
+      .property('headersSplitValues')
+      .index(specLiteralString(name.toLowerCase()));
 
   @override
   Reference get serverConfigType => TypeReference(
@@ -227,29 +212,6 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
   }
 
   @override
-  Iterable<Spec> generateOperationSupport(Operation operation) {
-    final hasMultipart =
-        operation.requestBody?.resolvedContent.any(
-          (content) => content.contentType == ContentType.multipart,
-        ) ??
-        false;
-    if (!hasMultipart) return const [];
-
-    final multipartContents = operation.requestBody!.resolvedContent.where(
-      (content) => content.contentType == ContentType.multipart,
-    );
-    final includesPartHeaders = extractOperationMultipartHeaderParamInfo(
-      operation,
-    ).any((header) => header.rawHeaderName.toLowerCase() != 'content-type');
-    return buildHttpMultipartSupport(
-      includesPartHeaders: includesPartHeaders,
-      includesPlainFields: multipartContents.any(
-        httpMultipartContentHasPlainFields,
-      ),
-    );
-  }
-
-  @override
   Method generateBodyMethod({
     required Operation operation,
     required NameManager nameManager,
@@ -310,7 +272,7 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
       _ => false,
     };
     final requestType = isRequiredMultipart
-        ? refer('_TonikMultipartRequest')
+        ? refer('AbortableMultipartRequest', 'package:http/http.dart')
         : canBeMultipart
         ? refer('BaseRequest', 'package:http/http.dart')
         : refer('AbortableRequest', 'package:http/http.dart');
@@ -445,7 +407,6 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
       const Code(r' _$streamedResponse;'),
       Block.of([
         const Code('try {'),
-        ..._headerValidationStatements(request),
         refer(r'_$streamedResponse')
             .assign(
               refer(
@@ -538,25 +499,6 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
     ]);
   }
 
-  List<Code> _headerValidationStatements(String request) => [
-    const Code('for (final value in '),
-    refer(request).property('headers').property('values').code,
-    const Code(') {'),
-    const Code('final invalid = value.codeUnits.any('),
-    const Code('(unit) => unit < 32 && unit != 9 || unit == 127,'),
-    const Code(');'),
-    const Code('if (invalid) {'),
-    refer('ClientException', 'package:http/http.dart')
-        .newInstance([
-          literalString('Invalid HTTP header value.'),
-          refer(request).property('url'),
-        ])
-        .thrown
-        .statement,
-    const Code('}'),
-    const Code('}'),
-  ];
-
   Code _transportErrorReturn(
     Reference resultValueType, {
     required Expression type,
@@ -594,7 +536,8 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
     refer(request)
         .assign(
           refer(
-            '_TonikMultipartRequest',
+            'AbortableMultipartRequest',
+            'package:http/http.dart',
           ).newInstance(
             [literalString(plan.methodName), plan.uri],
             {
@@ -642,7 +585,8 @@ final class HttpBackendGenerator implements TransportBackendGenerator {
         declareFinal(multipartRequest)
             .assign(
               refer(
-                '_TonikMultipartRequest',
+                'AbortableMultipartRequest',
+                'package:http/http.dart',
               ).newInstance(
                 [literalString(plan.methodName), plan.uri],
                 {
