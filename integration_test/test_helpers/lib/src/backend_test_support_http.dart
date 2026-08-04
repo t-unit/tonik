@@ -31,7 +31,9 @@ final class _HeaderClient extends http.BaseClient {
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) async {
-    request.headers.addAll(_headers);
+    for (final entry in _headers.entries) {
+      request.headers.putIfAbsent(entry.key, () => entry.value);
+    }
     final captured = await _captureRequest(request);
     final outbound = captured.outbound;
     _requestSnapshots[outbound] = captured.snapshot;
@@ -61,7 +63,7 @@ final Expando<TestRequestOptions> _requestSnapshots =
 
 TestResponse httpTestResponse(http.Response response) => TestResponse(
       statusCode: response.statusCode,
-      headers: TestHeaders(response.headers),
+      headers: TestHeaders(response.headersSplitValues),
       data: response.bodyBytes,
       requestOptions: response.request == null
           ? _requestOptions(null)

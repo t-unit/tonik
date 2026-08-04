@@ -28,7 +28,10 @@ void main() {
       final recorder = TestRequestRecorder();
       final server = _HttpServer(
         serverConfig: testServerConfig(
-          headers: {'X-Test': 'http'},
+          headers: {
+            'X-Test': 'configured',
+            'X-Default': 'configured',
+          },
           recorder: recorder,
           response: const TestResponseStub(),
         ),
@@ -36,10 +39,14 @@ void main() {
       final client = server.serverConfig.clientFactory!();
       addTearDown(client.close);
 
-      await client.get(Uri.parse('https://example.com/http'));
+      await client.get(
+        Uri.parse('https://example.com/http'),
+        headers: {'X-Test': 'operation'},
+      );
 
       expect(recorder.request?.uri, Uri.parse('https://example.com/http'));
-      expect(recorder.request?.headers['X-Test'], 'http');
+      expect(recorder.request?.headers['X-Test'], 'operation');
+      expect(recorder.request?.headers['X-Default'], 'configured');
     });
   });
 
@@ -75,7 +82,16 @@ void main() {
       );
       final result = TonikSuccess<String, http.Response>(
         'http-value',
-        http.Response.bytes([1, 2, 3], 202, request: request),
+        http.Response.bytes(
+          [1, 2, 3],
+          202,
+          request: request,
+          headers: {
+            'x-values': 'first, second',
+            'set-cookie': 'id=one; Expires=Wed, 21 Oct 2015 07:28:00 GMT,'
+                'session=two; Path=/',
+          },
+        ),
       );
 
       final success = requireSuccess(result);
@@ -85,6 +101,11 @@ void main() {
       expect(success.response.requestOptions.uri, request.url);
       expect(success.response.requestOptions.method, 'POST');
       expect(success.response.data, [1, 2, 3]);
+      expect(success.response.headers['x-values'], ['first', 'second']);
+      expect(success.response.headers['set-cookie'], [
+        'id=one; Expires=Wed, 21 Oct 2015 07:28:00 GMT',
+        'session=two; Path=/',
+      ]);
     });
   });
 }

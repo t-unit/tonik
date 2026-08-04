@@ -5,6 +5,7 @@ List<Spec> buildHttpMultipartSupport({
   required bool includesPartHeaders,
   required bool includesPlainFields,
 }) => [
+  _multipartBoundaryMethod(),
   if (includesPartHeaders || includesPlainFields)
     _multipartFileClass(
       includesPartHeaders: includesPartHeaders,
@@ -15,6 +16,58 @@ List<Spec> buildHttpMultipartSupport({
     includesPlainFields: includesPlainFields,
   ),
 ];
+
+Method _multipartBoundaryMethod() => Method(
+  (builder) => builder
+    ..name = '_createMultipartBoundary'
+    ..returns = refer('String', 'dart:core')
+    ..body = Block.of([
+      declareFinal('random')
+          .assign(refer('Random', 'dart:math').property('secure').call([]))
+          .statement,
+      declareFinal('bytes')
+          .assign(
+            refer('List', 'dart:core').property('generate').call([
+              literalNum(32),
+              Method(
+                (method) => method
+                  ..lambda = true
+                  ..requiredParameters.add(
+                    Parameter((parameter) => parameter..name = '_'),
+                  )
+                  ..body = refer(
+                    'random',
+                  ).property('nextInt').call([literalNum(256)]).code,
+              ).closure,
+            ]),
+          )
+          .statement,
+      declareFinal('suffix')
+          .assign(
+            refer('bytes')
+                .property('map')
+                .call([
+                  Method(
+                    (method) => method
+                      ..lambda = true
+                      ..requiredParameters.add(
+                        Parameter((parameter) => parameter..name = 'byte'),
+                      )
+                      ..body = refer('byte')
+                          .property('toRadixString')
+                          .call([literalNum(16)])
+                          .property('padLeft')
+                          .call([literalNum(2), literalString('0')])
+                          .code,
+                  ).closure,
+                ])
+                .property('join')
+                .call([]),
+          )
+          .statement,
+      const Code(r"return 'tonik-$suffix';"),
+    ]),
+);
 
 Class _multipartFileClass({
   required bool includesPartHeaders,
@@ -152,14 +205,7 @@ Class _multipartRequestClass({
           ..name = '_boundary'
           ..modifier = FieldModifier.final$
           ..type = refer('String', 'dart:core')
-          ..assignment = Block.of([
-            const Code(r"'tonik-${"),
-            refer(
-              'DateTime',
-              'dart:core',
-            ).property('now').call([]).property('microsecondsSinceEpoch').code,
-            const Code("}'"),
-          ]),
+          ..assignment = refer('_createMultipartBoundary').call([]).code,
       ),
     ])
     ..constructors.add(

@@ -100,7 +100,7 @@ void main() {
       expect(tagEntries.single.value, 'a,b,c');
       expect(formData.files.where((entry) => entry.key == 'tags'), isEmpty);
       expect(success.response.headers['x-has-tags']?.first, 'true');
-      expect(success.response.headers['x-param-tags']?.first, 'a,b,c');
+      expect(success.response.headers['x-param-tags']?.join(','), 'a,b,c');
     });
 
     test('omits the optional array when it is null', () async {
