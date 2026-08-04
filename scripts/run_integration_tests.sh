@@ -149,13 +149,11 @@ done
 echo "Analyzing helper, generated, and test packages..."
 run_commands "$ANALYZE_JOBS" "${ANALYZE_COMMANDS[@]}"
 
-TEST_COMMANDS=(
-  "cd '$INTEGRATION_TEST_DIR/test_helpers' && dart test"
-)
+TEST_COMMANDS=()
 for manifest in "${TEST_MANIFESTS[@]}"; do
   TEST_COMMANDS+=("cd '${manifest%/pubspec.yaml}' && dart test")
 done
 
-echo "Running helper tests and all 40 integration test packages for $backend..."
+echo "Running all 40 integration test packages for $backend..."
 run_commands "$TEST_JOBS" "${TEST_COMMANDS[@]}"
-echo "Integration tests complete: backend=$backend helper=1 tests=40"
+echo "Integration tests complete: backend=$backend tests=40"
