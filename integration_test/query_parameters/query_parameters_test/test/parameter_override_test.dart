@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:query_parameters_api/query_parameters_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -34,10 +28,11 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testParameterOverride(status: 'active');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'status=active');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'status=active');
     },
   );
 }

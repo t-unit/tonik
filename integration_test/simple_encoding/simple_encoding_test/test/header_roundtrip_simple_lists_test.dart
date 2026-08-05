@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -38,23 +32,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-string-list'],
+          recordedRequest.headers['x-string-list'],
           'hello',
         );
         expect(success.value.xStringList, ['hello']);
@@ -68,22 +53,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-string-list'],
+          recordedRequest.headers['x-string-list'],
           'apple,banana,cherry',
         );
 
@@ -98,19 +74,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xStringList, ['hello world', 'foo@bar']);
       });
@@ -125,22 +91,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-integer-list'], '42');
+        expect(recordedRequest.headers['x-integer-list'], '42');
         expect(success.value.xIntegerList, [42]);
       });
 
@@ -152,22 +109,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-integer-list'],
+          recordedRequest.headers['x-integer-list'],
           '1,2,3,4,5',
         );
         expect(success.value.xIntegerList, [1, 2, 3, 4, 5]);
@@ -181,22 +129,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-integer-list'],
+          recordedRequest.headers['x-integer-list'],
           '-10,0,10',
         );
         expect(success.value.xIntegerList, [-10, 0, 10]);
@@ -212,23 +151,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-number-list'],
+          recordedRequest.headers['x-number-list'],
           '3.14',
         );
         expect(success.value.xNumberList, [3.14]);
@@ -242,22 +172,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-number-list'],
+          recordedRequest.headers['x-number-list'],
           '1.1,2.2,3.3',
         );
         expect(success.value.xNumberList, [1.1, 2.2, 3.3]);
@@ -271,19 +192,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xNumberList, [1, 2.5, 3]);
       });
@@ -298,23 +209,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-boolean-list'],
+          recordedRequest.headers['x-boolean-list'],
           'true',
         );
         expect(success.value.xBooleanList, [true]);
@@ -328,22 +230,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-boolean-list'],
+          recordedRequest.headers['x-boolean-list'],
           'true,false,true',
         );
         expect(success.value.xBooleanList, [true, false, true]);
@@ -357,22 +250,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-boolean-list'],
+          recordedRequest.headers['x-boolean-list'],
           'false,false',
         );
         expect(success.value.xBooleanList, [false, false]);
@@ -391,21 +275,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
-        final requestHeaders = success.response.requestOptions.headers;
+        final recordedRequest = await imposterServer.takeRequest();
+        final requestHeaders = recordedRequest.headers;
         expect(requestHeaders['x-string-list'], 'a,b,c');
         expect(requestHeaders['x-integer-list'], '1,2,3');
         expect(requestHeaders['x-number-list'], '1.5,2.5,3.5');
@@ -424,19 +299,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         // All values should be null when no headers are sent
@@ -454,19 +319,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripListsSimpleGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xStringList, ['test']);
         expect(success.value.xIntegerList, isNull);
@@ -483,27 +338,18 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig.clientFactory(
-              () => Dio(
-                BaseOptions(
-                  headers: {
-                    'X-Response-Status': '200',
-                    'X-String-List': 'a%2Fb,50%,c d',
-                  },
-                ),
-              ),
+            serverConfig: testServerConfig(
+              headers: {
+                'X-Response-Status': '200',
+                'X-String-List': 'a%2Fb,50%,c d',
+              },
             ),
           ),
         );
 
         final response = await injected.testHeaderRoundtripSimpleLists();
 
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripListsSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.value.xStringList, ['a%2Fb', '50%', 'c d']);
       });
     });

@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:nullable_bodies_api/nullable_bodies_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return NullableBodiesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Winner': nullBody ? 'null' : 'alice'},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Winner': nullBody ? 'null' : 'alice'},
         ),
       ),
     );
@@ -34,7 +28,7 @@ void main() {
 
       final response = await api.getWinnerInline();
 
-      final success = response as TonikSuccess<String?, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.value, isNull);
     });
 
@@ -43,7 +37,7 @@ void main() {
 
       final response = await api.getWinnerInline();
 
-      final success = response as TonikSuccess<String?, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.value, 'alice');
     });
   });
@@ -54,7 +48,7 @@ void main() {
 
       final response = await api.getWinnerRef();
 
-      final success = response as TonikSuccess<String?, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.value, isNull);
     });
 
@@ -63,7 +57,7 @@ void main() {
 
       final response = await api.getWinnerRef();
 
-      final success = response as TonikSuccess<String?, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.value, 'alice');
     });
   });

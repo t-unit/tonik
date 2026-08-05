@@ -1,8 +1,6 @@
 import 'package:allow_reserved_api/allow_reserved_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -37,10 +31,11 @@ void main() {
         reservedObject: const ReservedListObject(tags: listValues),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'reservedObject=tags,a/b:c?d@e;f,g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
       );
     });
@@ -53,10 +48,11 @@ void main() {
           notReservedObject: const ReservedListObject(tags: listValues),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'notReservedObject=tags,a%2Fb%3Ac%3Fd%40e%3Bf,'
           'g%26h%3Di%2Bj%20k%23l%5Bm%5Dn',
         );

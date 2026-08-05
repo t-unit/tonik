@@ -1,5 +1,4 @@
 import 'package:boolean_schemas_api/boolean_schemas_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -17,12 +16,8 @@ void main() {
     return BooleanSchemasApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -32,35 +27,35 @@ void main() {
     test('getQueryAny with string value (explode=true)', () async {
       final api = buildApi();
       final result = await api.getQueryAny(anyValue: 'query-test');
-      final success = result as TonikSuccess<dynamic, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
     });
 
     test('getQueryAny with number value', () async {
       final api = buildApi();
       final result = await api.getQueryAny(anyValue: 42);
-      final success = result as TonikSuccess<dynamic, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
     });
 
     test('getQueryAny with boolean value', () async {
       final api = buildApi();
       final result = await api.getQueryAny(anyValue: false);
-      final success = result as TonikSuccess<dynamic, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
     });
 
     test('getQueryAnyNoExplode with string value (explode=false)', () async {
       final api = buildApi();
       final result = await api.getQueryAnyNoExplode(anyValue: 'no-explode');
-      final success = result as TonikSuccess<dynamic, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
     });
 
     test('getQueryAnyNoExplode with number value', () async {
       final api = buildApi();
       final result = await api.getQueryAnyNoExplode(anyValue: 999);
-      final success = result as TonikSuccess<dynamic, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
     });
 
@@ -75,9 +70,10 @@ void main() {
             'c&d': 'v2',
           },
         );
-        final success = result as TonikSuccess<dynamic, Response<Object?>>;
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=first%20name,Jane,a%2Cb,v1,c%26d,v2',
         );
       },
@@ -86,8 +82,9 @@ void main() {
     test('getQueryAny with empty list value omits the parameter', () async {
       final api = buildApi();
       final result = await api.getQueryAny(anyValue: const <dynamic>[]);
-      final success = result as TonikSuccess<dynamic, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, '');
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test(
@@ -97,8 +94,9 @@ void main() {
         final result = await api.getQueryAnyNoExplode(
           anyValue: const <dynamic>[],
         );
-        final success = result as TonikSuccess<dynamic, Response<Object?>>;
-        expect(success.response.requestOptions.uri.query, '');
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, '');
       },
     );
 
@@ -109,8 +107,9 @@ void main() {
         final result = await api.getQueryAny(
           anyValue: <dynamic>['a', 'b', 'c'],
         );
-        final success = result as TonikSuccess<dynamic, Response<Object?>>;
-        expect(success.response.requestOptions.uri.query, 'anyValue=a,b,c');
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, 'anyValue=a,b,c');
       },
     );
   });
@@ -125,16 +124,9 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikError<QuerySpaceDelimitedAnyGet200BodyModel, Response<Object?>>
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QuerySpaceDelimitedAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -148,21 +140,12 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikSuccess<
-              QuerySpaceDelimitedAnyGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  QuerySpaceDelimitedAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=a%20b%20c',
         );
       },
@@ -177,21 +160,12 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikSuccess<
-              QuerySpaceDelimitedAnyGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  QuerySpaceDelimitedAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=a%201%20b%202',
         );
       },
@@ -206,19 +180,9 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikError<
-              QuerySpaceDelimitedAnyExplodeGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QuerySpaceDelimitedAnyExplodeGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -232,19 +196,9 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikError<
-              QuerySpaceDelimitedAnyExplodeGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QuerySpaceDelimitedAnyExplodeGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -260,16 +214,9 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikError<QueryPipeDelimitedAnyGet200BodyModel, Response<Object?>>
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QueryPipeDelimitedAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -283,21 +230,12 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikSuccess<
-              QueryPipeDelimitedAnyGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  QueryPipeDelimitedAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=one%7Ctwo%7Cthree',
         );
       },
@@ -312,21 +250,12 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikSuccess<
-              QueryPipeDelimitedAnyGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  QueryPipeDelimitedAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'anyValue=a%7C1%7Cb%7C2',
         );
       },
@@ -341,19 +270,9 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikError<
-              QueryPipeDelimitedAnyExplodeGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QueryPipeDelimitedAnyExplodeGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -367,19 +286,9 @@ void main() {
         );
         expect(
           result,
-          isA<
-            TonikError<
-              QueryPipeDelimitedAnyExplodeGet200BodyModel,
-              Response<Object?>
-            >
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QueryPipeDelimitedAnyExplodeGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );
@@ -391,7 +300,7 @@ void main() {
       final result = await api.getQueryDeepObjectAny(
         anyValue: {'nested': 'value'},
       );
-      final success = result as TonikSuccess<dynamic, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
     });
 
@@ -402,16 +311,9 @@ void main() {
         final result = await api.getQueryDeepObjectAny(anyValue: 'deep-object');
         expect(
           result,
-          isA<
-            TonikError<QueryDeepObjectAnyGet200BodyModel, Response<Object?>>
-          >(),
+          isTonikError,
         );
-        final error =
-            result
-                as TonikError<
-                  QueryDeepObjectAnyGet200BodyModel,
-                  Response<Object?>
-                >;
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
       },
     );

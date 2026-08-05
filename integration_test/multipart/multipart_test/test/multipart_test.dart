@@ -1,10 +1,12 @@
+import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:dio/dio.dart';
 import 'package:multipart_api/multipart_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
+
+import 'multipart_wire.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -14,8 +16,9 @@ void main() {
   setUpAll(() async {
     imposterServer = await setupImposterServer();
     baseUrl = 'http://localhost:${imposterServer.port}';
-
-    api = MultipartApi(CustomServer(baseUrl: baseUrl));
+    api = MultipartApi(
+      CustomServer(baseUrl: baseUrl, serverConfig: testServerConfig()),
+    );
   });
 
   group('Simple fields', () {
@@ -23,39 +26,17 @@ void main() {
       const form = SimpleFields(name: 'John Doe', age: 30, active: true);
 
       final response = await api.postSimpleFields(body: form);
+      final success = requireSuccess(response);
 
-      expect(
-        response,
-        isA<TonikSuccess<SimpleFieldsResponse, Response<Object?>>>(),
-      );
-
-      final success =
-          response as TonikSuccess<SimpleFieldsResponse, Response<Object?>>;
-      final requestData = success.response.requestOptions.data;
-      expect(requestData, isA<FormData>());
-
-      final formData = requestData as FormData;
-
-      // Verify fields are present in files (scalar parts now use
-      // MultipartFile.fromString with explicit Content-Type).
-      expect(formData.files.any((e) => e.key == 'name'), isTrue);
-      expect(formData.files.any((e) => e.key == 'age'), isTrue);
-      expect(formData.files.any((e) => e.key == 'active'), isTrue);
-
-      // Verify server received the form params.
       expect(success.response.headers['x-has-name']?.first, 'true');
       expect(success.response.headers['x-has-age']?.first, 'true');
       expect(success.response.headers['x-has-active']?.first, 'true');
-
-      // Verify server read correct values.
       expect(success.response.headers['x-param-name']?.first, 'John Doe');
       expect(success.response.headers['x-param-age']?.first, '30');
       expect(success.response.headers['x-param-active']?.first, 'true');
-
-      // Verify response body decoded.
       expect(success.value.name, 'John Doe');
       expect(success.value.age, 30);
-      expect(success.value.active, true);
+      expect(success.value.active, isTrue);
     });
   });
 
@@ -67,29 +48,24 @@ void main() {
         description: 'test file',
       );
 
-      final response = await api.postBinaryUpload(body: form);
-
-      expect(response, isA<TonikSuccess<UploadResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<UploadResponse, Response<Object?>>;
-      final requestData = success.response.requestOptions.data;
-      expect(requestData, isA<FormData>());
-
-      final formData = requestData as FormData;
-
-      // Both fields go into files (binary as bytes, text as MultipartFile).
-      expect(formData.files.any((e) => e.key == 'file'), isTrue);
-      expect(formData.files.any((e) => e.key == 'description'), isTrue);
-
-      // Server sees the description text field in formParams.
+      final response = requireSuccess(await api.postBinaryUpload(body: form));
+      expect(response.response.headers['x-has-description']?.first, 'true');
       expect(
-        success.response.headers['x-has-description']?.first,
-        'true',
-      );
-      expect(
-        success.response.headers['x-param-description']?.first,
+        response.response.headers['x-param-description']?.first,
         'test file',
+      );
+
+      final server = await RawRequestServer.start();
+      await _rawApi(server).postBinaryUpload(body: form);
+      final wire = MultipartWire(await server.takeRequest());
+
+      expect(wire.parts.map((part) => part.name), ['file', 'description']);
+      expect(wire.single('file').contentType, 'application/octet-stream');
+      expect(wire.single('file').bodyBytes, fileBytes);
+      expect(wire.single('description').bodyText, 'test file');
+      expect(
+        wire.single('description').contentType,
+        startsWith('text/plain'),
       );
     });
   });
@@ -101,57 +77,38 @@ void main() {
       (Status.pending, 'pending'),
     ]) {
       test('serializes $expected in a multipart field', () async {
-        final form = EnumForm(status: status);
-
-        final response = await api.postEnumField(body: form);
-
-        expect(
-          response,
-          isA<TonikSuccess<StatusResponse, Response<Object?>>>(),
+        final response = requireSuccess(
+          await api.postEnumField(body: EnumForm(status: status)),
         );
 
-        final success =
-            response as TonikSuccess<StatusResponse, Response<Object?>>;
-        final formData = success.response.requestOptions.data as FormData;
-
-        // Enum fields go to files with explicit Content-Type.
-        expect(formData.files.any((e) => e.key == 'status'), isTrue);
-
-        expect(success.response.headers['x-has-status']?.first, 'true');
-        expect(success.response.headers['x-param-status']?.first, expected);
+        expect(response.response.headers['x-has-status']?.first, 'true');
+        expect(
+          response.response.headers['x-param-status']?.first,
+          expected,
+        );
       });
     }
   });
 
   group('Complex object', () {
     test('JSON-encodes a nested object property', () async {
-      const profile = Profile(firstName: 'John', lastName: 'Doe');
-      const form = ComplexForm(label: 'test', profile: profile);
+      const form = ComplexForm(
+        label: 'test',
+        profile: Profile(firstName: 'John', lastName: 'Doe'),
+      );
 
-      final response = await api.postComplexObject(body: form);
+      final response = requireSuccess(
+        await api.postComplexObject(body: form),
+      );
 
-      expect(response, isA<TonikSuccess<ComplexResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<ComplexResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      // Label and profile go to files (scalar with explicit Content-Type,
-      // and JSON-encoded complex object respectively).
-      expect(formData.files.any((e) => e.key == 'label'), isTrue);
-      expect(formData.files.any((e) => e.key == 'profile'), isTrue);
-
-      // Server received both fields.
-      expect(success.response.headers['x-has-label']?.first, 'true');
-      expect(success.response.headers['x-has-profile']?.first, 'true');
-
-      // Profile value contains JSON property names.
+      expect(response.response.headers['x-has-label']?.first, 'true');
+      expect(response.response.headers['x-has-profile']?.first, 'true');
       expect(
-        success.response.headers['x-profile-contains-firstname']?.first,
+        response.response.headers['x-profile-contains-firstname']?.first,
         'true',
       );
       expect(
-        success.response.headers['x-profile-contains-lastname']?.first,
+        response.response.headers['x-profile-contains-lastname']?.first,
         'true',
       );
     });
@@ -161,38 +118,22 @@ void main() {
     test(
       'serializes arrays as repeated form fields (one field per element)',
       () async {
-        const form = ArrayForm(
-          tags: ['dart', 'flutter', 'openapi'],
-          priorities: [Priority.high, Priority.low],
+        final server = await RawRequestServer.start();
+
+        await _rawApi(server).postArrayFields(
+          body: const ArrayForm(
+            tags: ['dart', 'flutter', 'openapi'],
+            priorities: [Priority.high, Priority.low],
+          ),
         );
 
-        final response = await api.postArrayFields(body: form);
-
-        expect(response, isA<TonikSuccess<ArrayResponse, Response<Object?>>>());
-
-        final success =
-            response as TonikSuccess<ArrayResponse, Response<Object?>>;
-
-        // Per RFC 7578 §4.3 and OAS 3.x default: each array element is sent
-        // as a separate form field with the same name (repeated fields),
-        // not as a single JSON-encoded blob.
-        final formData = success.response.requestOptions.data as FormData;
-
-        final tagEntries = formData.fields
-            .where((e) => e.key == 'tags')
-            .toList();
-        expect(tagEntries, hasLength(3));
+        final wire = MultipartWire(await server.takeRequest());
         expect(
-          tagEntries.map((e) => e.value).toList(),
+          wire.named('tags').map((part) => part.bodyText),
           ['dart', 'flutter', 'openapi'],
         );
-
-        final priorityEntries = formData.fields
-            .where((e) => e.key == 'priorities')
-            .toList();
-        expect(priorityEntries, hasLength(2));
         expect(
-          priorityEntries.map((e) => e.value).toList(),
+          wire.named('priorities').map((part) => part.bodyText),
           ['high', 'low'],
         );
       },
@@ -203,65 +144,27 @@ void main() {
     test(
       'enum values with special characters are JSON-encoded, not URI-encoded',
       () async {
-        // The Category enum has values like "science & tech" that contain
-        // special characters. When encoded as application/json in a multipart
-        // part, they should appear as raw strings in the JSON array, not
-        // percent-encoded (e.g., "science & tech", NOT "science%20%26%20tech").
+        final server = await RawRequestServer.start();
 
-        // Capture the request body before Dio sends it by using an interceptor.
-        String? capturedBody;
-        final capturingApi = MultipartApi(
-          CustomServer(
-            baseUrl: baseUrl,
-            serverConfig: ServerConfig.clientFactory(
-              () => Dio()
-                ..interceptors.add(
-                  InterceptorsWrapper(
-                    onRequest: (options, handler) {
-                      final data = options.data;
-                      if (data is FormData) {
-                        // Clone the file to read its content
-                        // without consuming it.
-                        final file = data.files
-                            .firstWhere((e) => e.key == 'categories')
-                            .value;
-                        capturedBody = file.filename;
-                        // Also capture via clone for content inspection.
-                        final clone = file.clone();
-                        clone.finalize().listen(
-                          (chunk) {
-                            capturedBody = String.fromCharCodes(chunk);
-                          },
-                        );
-                      }
-                      handler.next(options);
-                    },
-                  ),
-                ),
-            ),
+        await _rawApi(server).postCategoryArrayFields(
+          body: const CategoryArrayForm(
+            categories: [
+              Category.scienceAmpersandTech,
+              Category.artsAmpersandCrafts,
+            ],
           ),
         );
 
-        const form = CategoryArrayForm(
-          categories: [
-            Category.scienceAmpersandTech,
-            Category.artsAmpersandCrafts,
-          ],
+        final part = MultipartWire(await server.takeRequest()).single(
+          'categories',
         );
-
-        await capturingApi.postCategoryArrayFields(body: form);
-
-        // Wait for the async stream listener to complete.
-        await Future<void>.delayed(const Duration(milliseconds: 100));
-
-        // The JSON content should contain raw enum values, not URI-encoded.
-        // Correct:   ["science & tech","arts & crafts"]
-        // Bug gives: ["science%20%26%20tech","arts%20%26%20crafts"]
-        expect(capturedBody, isNotNull);
-        expect(capturedBody, contains('science & tech'));
-        expect(capturedBody, contains('arts & crafts'));
-        expect(capturedBody, isNot(contains('%26')));
-        expect(capturedBody, isNot(contains('%20')));
+        expect(part.contentType, startsWith('application/json'));
+        expect(jsonDecode(part.bodyText), [
+          'science & tech',
+          'arts & crafts',
+        ]);
+        expect(part.bodyText, isNot(contains('%26')));
+        expect(part.bodyText, isNot(contains('%20')));
       },
     );
   });
@@ -270,28 +173,18 @@ void main() {
     test('sends only required fields when optional are null', () async {
       const form = MixedRequiredForm(requiredField: 'hello');
 
-      final response = await api.postMixedRequired(body: form);
-
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      // Required field is present in files with explicit Content-Type.
-      expect(formData.files.any((e) => e.key == 'requiredField'), isTrue);
-
-      // Optional fields should be absent.
-      expect(formData.files.any((e) => e.key == 'optionalField'), isFalse);
-      expect(formData.files.any((e) => e.key == 'optionalFile'), isFalse);
-
-      // Server saw required, but not optional.
-      expect(success.response.headers['x-has-required']?.first, 'true');
-      expect(success.response.headers['x-has-optional']?.first, 'false');
-      expect(
-        success.response.headers['x-has-optionalfile']?.first,
-        'false',
+      final response = requireSuccess(
+        await api.postMixedRequired(body: form),
       );
+      expect(response.response.headers['x-has-required']?.first, 'true');
+      expect(response.response.headers['x-has-optional']?.first, 'false');
+      expect(response.response.headers['x-has-optionalfile']?.first, 'false');
+
+      final server = await RawRequestServer.start();
+      await _rawApi(server).postMixedRequired(body: form);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.parts.map((part) => part.name), ['requiredField']);
+      expect(wire.single('requiredField').bodyText, 'hello');
     });
 
     test('sends all fields when optional are provided', () async {
@@ -302,22 +195,23 @@ void main() {
         optionalFile: TonikFileBytes(fileBytes),
       );
 
-      final response = await api.postMixedRequired(body: form);
+      final response = requireSuccess(
+        await api.postMixedRequired(body: form),
+      );
+      expect(response.response.headers['x-has-required']?.first, 'true');
+      expect(response.response.headers['x-has-optional']?.first, 'true');
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      // All scalar fields go to files with explicit Content-Type.
-      expect(formData.files.any((e) => e.key == 'requiredField'), isTrue);
-      expect(formData.files.any((e) => e.key == 'optionalField'), isTrue);
-      expect(formData.files.any((e) => e.key == 'optionalFile'), isTrue);
-
-      // Server saw all text parts (binary file not in formParams).
-      expect(success.response.headers['x-has-required']?.first, 'true');
-      expect(success.response.headers['x-has-optional']?.first, 'true');
+      final server = await RawRequestServer.start();
+      await _rawApi(server).postMixedRequired(body: form);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.parts.map((part) => part.name), [
+        'requiredField',
+        'optionalField',
+        'optionalFile',
+      ]);
+      expect(wire.single('requiredField').bodyText, 'hello');
+      expect(wire.single('optionalField').bodyText, 'world');
+      expect(wire.single('optionalFile').bodyBytes, fileBytes);
     });
   });
 
@@ -325,53 +219,49 @@ void main() {
     test('applies explicit contentType encoding override', () async {
       const form = EncodingOverrideForm(data: 'plain text value', label: 'x');
 
-      final response = await api.postEncodingOverride(body: form);
+      final response = requireSuccess(
+        await api.postEncodingOverride(body: form),
+      );
+      expect(response.response.headers['x-has-data']?.first, 'true');
+      expect(response.response.headers['x-has-label']?.first, 'true');
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      final allKeys = [
-        ...formData.fields.map((e) => e.key),
-        ...formData.files.map((e) => e.key),
-      ];
-      expect(allKeys, contains('data'));
-      expect(allKeys, contains('label'));
-
-      // Server received both fields.
-      expect(success.response.headers['x-has-data']?.first, 'true');
-      expect(success.response.headers['x-has-label']?.first, 'true');
+      final server = await RawRequestServer.start();
+      await _rawApi(server).postEncodingOverride(body: form);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('data').bodyText, 'plain text value');
+      expect(wire.single('data').contentType, startsWith('text/plain'));
+      expect(wire.single('label').bodyText, 'x');
     });
   });
 
   group('Multiple files', () {
     test('uploads multiple binary files in an array field', () async {
-      final file1 = Uint8List.fromList([1, 2, 3]);
-      final file2 = Uint8List.fromList([4, 5, 6]);
-      final file3 = Uint8List.fromList([7, 8, 9]);
-      final form = MultipleFilesForm(
-        files: [
-          TonikFileBytes(file1),
-          TonikFileBytes(file2),
-          TonikFileBytes(file3),
-        ],
+      final server = await RawRequestServer.start();
+      final files = [
+        TonikFileBytes(Uint8List.fromList([1, 2, 3]), fileName: 'one.bin'),
+        TonikFileBytes(Uint8List.fromList([4, 5, 6]), fileName: 'two.bin'),
+        TonikFileBytes(Uint8List.fromList([7, 8, 9]), fileName: 'three.bin'),
+      ];
+
+      await _rawApi(server).postMultipleFiles(
+        body: MultipleFilesForm(files: files),
       );
 
-      final response = await api.postMultipleFiles(body: form);
-
-      expect(response, isA<TonikSuccess<FilesResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<FilesResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      // Per RFC 7578 §4.3, each file is a separate part with the same name.
-      final fileEntries = formData.files
-          .where((e) => e.key == 'files')
-          .toList();
-      expect(fileEntries, hasLength(3));
+      final parts = MultipartWire(await server.takeRequest()).named('files');
+      expect(parts.map((part) => part.filename), [
+        'one.bin',
+        'two.bin',
+        'three.bin',
+      ]);
+      expect(
+        parts.map((part) => part.contentType),
+        everyElement('application/octet-stream'),
+      );
+      expect(parts.map((part) => part.bodyBytes), [
+        [1, 2, 3],
+        [4, 5, 6],
+        [7, 8, 9],
+      ]);
     });
   });
 
@@ -381,11 +271,11 @@ void main() {
       () async {
         final response = await api.getMultipartResponse();
 
-        // The generator should produce a ResponseDecodingException because
-        // decoding multipart/form-data responses is not supported.
-        expect(response, isA<TonikError<SimpleFields, Response<Object?>>>());
-        final error = response as TonikError<SimpleFields, Response<Object?>>;
-        expect(error.error, isA<ResponseDecodingException>());
+        expect(response, isTonikError);
+        expect(
+          requireError(response).error,
+          isA<ResponseDecodingException>(),
+        );
       },
     );
   });
@@ -394,69 +284,50 @@ void main() {
     test(
       'sends required and optional per-part headers on multipart fields',
       () async {
+        final server = await RawRequestServer.start();
         final fileBytes = Uint8List.fromList([10, 20, 30]);
-        final form = HeaderPartsForm(
-          description: 'test desc',
-          file: TonikFileBytes(fileBytes),
-        );
 
-        final response = await api.postWithHeaders(
-          body: form,
+        await _rawApi(server).postWithHeaders(
+          body: HeaderPartsForm(
+            description: 'test desc',
+            file: TonikFileBytes(fileBytes),
+          ),
           descriptionPartMeta: 'meta-value',
           fileFileHash: 'abc123',
           fileFileTag: 'tag-value',
         );
 
+        final wire = MultipartWire(await server.takeRequest());
+        expect(wire.single('description').bodyText, 'test desc');
         expect(
-          response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          wire.single('description').header('x-part-meta'),
+          'meta-value',
         );
-
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
-
-        // Both fields should be sent as MultipartFile (per-part headers promote
-        // text fields from formData.fields to formData.files).
-        final formData = success.response.requestOptions.data as FormData;
-        expect(
-          formData.files.where((e) => e.key == 'description').toList(),
-          isNotEmpty,
-        );
-        expect(
-          formData.files.where((e) => e.key == 'file').toList(),
-          isNotEmpty,
-        );
+        expect(wire.single('file').bodyBytes, fileBytes);
+        expect(wire.single('file').header('x-file-hash'), 'abc123');
+        expect(wire.single('file').header('x-file-tag'), 'tag-value');
       },
     );
 
     test('omits optional X-File-Tag header when not provided', () async {
-      final fileBytes = Uint8List.fromList([10, 20, 30]);
-      final form = HeaderPartsForm(
-        description: 'test desc',
-        file: TonikFileBytes(fileBytes),
-      );
+      final server = await RawRequestServer.start();
 
-      final response = await api.postWithHeaders(
-        body: form,
+      await _rawApi(server).postWithHeaders(
+        body: HeaderPartsForm(
+          description: 'test desc',
+          file: TonikFileBytes(Uint8List.fromList([10, 20, 30])),
+        ),
         descriptionPartMeta: 'meta-value',
         fileFileHash: 'abc123',
       );
 
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      // Both parts are still sent even without the optional header.
+      final wire = MultipartWire(await server.takeRequest());
       expect(
-        formData.files.where((e) => e.key == 'description').toList(),
-        isNotEmpty,
+        wire.single('description').header('x-part-meta'),
+        'meta-value',
       );
-      expect(
-        formData.files.where((e) => e.key == 'file').toList(),
-        isNotEmpty,
-      );
+      expect(wire.single('file').header('x-file-hash'), 'abc123');
+      expect(wire.single('file').header('x-file-tag'), isNull);
     });
   });
 
@@ -464,88 +335,62 @@ void main() {
     test(
       'sends format:byte as binary part, not a readable text field',
       () async {
+        final server = await RawRequestServer.start();
         final fileBytes = Uint8List.fromList([0xDE, 0xAD, 0xBE, 0xEF]);
-        final form = ByteForm(
-          label: 'test-label',
-          data: TonikFileBytes(fileBytes),
+
+        await _rawApi(server).postByteField(
+          body: ByteForm(
+            label: 'test-label',
+            data: TonikFileBytes(fileBytes),
+          ),
         );
 
-        final response = await api.postByteField(body: form);
-
-        expect(
-          response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
-        );
-
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
-        final formData = success.response.requestOptions.data as FormData;
-
-        // Both fields go to files.
-        expect(formData.files.any((e) => e.key == 'label'), isTrue);
-        expect(formData.files.any((e) => e.key == 'data'), isTrue);
-
-        // The text label is readable by the server as a form param.
-        expect(success.response.headers['x-has-label']?.first, 'true');
-        expect(
-          success.response.headers['x-param-label']?.first,
-          'test-label',
-        );
-
-        // The format:byte field is sent as application/octet-stream binary —
-        // the server cannot read it as a text form param. If it showed up in
-        // formParams it would mean the old text/plain (StringModel) behavior
-        // was used instead of the correct Base64Model behavior.
-        expect(success.response.headers['x-has-data']?.first, 'false');
+        final wire = MultipartWire(await server.takeRequest());
+        expect(wire.single('label').bodyText, 'test-label');
+        expect(wire.single('label').contentType, startsWith('text/plain'));
+        expect(wire.single('data').contentType, 'application/octet-stream');
+        expect(wire.single('data').bodyBytes, fileBytes);
       },
     );
   });
 
   group('anyOf model in multipart', () {
     test('sends anyOf enum variant as JSON-encoded multipart part', () async {
+      final server = await RawRequestServer.start();
       final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
 
-      final form = AnyOfModelForm(
-        file: TonikFileBytes(fileBytes, fileName: 'test.bin'),
-        model: const AnyOfModelChoice(
-          modelType: ModelType.whisper1,
+      await _rawApi(server).postAnyOfModel(
+        body: AnyOfModelForm(
+          file: TonikFileBytes(fileBytes, fileName: 'test.bin'),
+          model: const AnyOfModelChoice(modelType: ModelType.whisper1),
         ),
       );
 
-      final response = await api.postAnyOfModel(body: form);
-
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      // Binary file should be in files list.
-      expect(formData.files.any((e) => e.key == 'file'), isTrue);
-      // Model should be JSON-encoded as a multipart file part.
-      expect(formData.files.any((e) => e.key == 'model'), isTrue);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('file').filename, 'test.bin');
+      expect(wire.single('file').bodyBytes, fileBytes);
+      expect(wire.single('model').contentType, startsWith('application/json'));
+      expect(jsonDecode(wire.single('model').bodyText), 'whisper-1');
     });
 
     test('sends anyOf string variant as JSON-encoded multipart part', () async {
-      final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
+      final server = await RawRequestServer.start();
 
-      final form = AnyOfModelForm(
-        file: TonikFileBytes(fileBytes, fileName: 'test.bin'),
-        model: const AnyOfModelChoice(
-          string: 'custom-model-name',
+      await _rawApi(server).postAnyOfModel(
+        body: AnyOfModelForm(
+          file: TonikFileBytes(
+            Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]),
+            fileName: 'test.bin',
+          ),
+          model: const AnyOfModelChoice(string: 'custom-model-name'),
         ),
       );
 
-      final response = await api.postAnyOfModel(body: form);
-
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      expect(formData.files.any((e) => e.key == 'file'), isTrue);
-      expect(formData.files.any((e) => e.key == 'model'), isTrue);
+      final model = MultipartWire(
+        await server.takeRequest(),
+      ).single('model');
+      expect(model.contentType, startsWith('application/json'));
+      expect(jsonDecode(model.bodyText), 'custom-model-name');
     });
   });
 
@@ -556,43 +401,36 @@ void main() {
         metadata: {'env': 'production', 'version': '2.1'},
       );
 
-      final response = await api.postMapField(body: form);
-
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      // Name field present.
-      expect(formData.files.any((e) => e.key == 'name'), isTrue);
-      expect(success.response.headers['x-param-name']?.first, 'test-resource');
-
-      // Metadata map field is present as a JSON-encoded file part.
-      expect(formData.files.any((e) => e.key == 'metadata'), isTrue);
-
-      // Server confirms the metadata arrived as valid JSON.
+      final response = requireSuccess(await api.postMapField(body: form));
       expect(
-        success.response.headers['x-metadata-is-json']?.first,
-        'true',
+        response.response.headers['x-param-name']?.first,
+        'test-resource',
       );
+      expect(response.response.headers['x-has-metadata']?.first, 'true');
+      expect(response.response.headers['x-metadata-is-json']?.first, 'true');
+
+      final server = await RawRequestServer.start();
+      await _rawApi(server).postMapField(body: form);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.single('name').bodyText, 'test-resource');
+      expect(
+        wire.single('metadata').contentType,
+        startsWith('application/json'),
+      );
+      expect(jsonDecode(wire.single('metadata').bodyText), {
+        'env': 'production',
+        'version': '2.1',
+      });
     });
 
     test('omits optional map field when null', () async {
-      const form = MapFieldForm(name: 'no-metadata');
-
-      final response = await api.postMapField(body: form);
-
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-
-      // Metadata field should be absent.
-      expect(
-        success.response.headers['x-has-metadata']?.first,
-        'false',
+      final response = requireSuccess(
+        await api.postMapField(
+          body: const MapFieldForm(name: 'no-metadata'),
+        ),
       );
+
+      expect(response.response.headers['x-has-metadata']?.first, 'false');
     });
   });
 
@@ -600,192 +438,136 @@ void main() {
     test(
       'sends binary + string + number + bool + enum + array + object',
       () async {
+        final server = await RawRequestServer.start();
         final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
 
-        final form = KitchenSinkForm(
-          file: TonikFileBytes(fileBytes, fileName: 'image.png'),
-          name: 'test-file',
-          temperature: 0.7,
-          active: true,
-          status: Status.active,
-          tags: const ['alpha', 'beta', 'gamma'],
-          metadata: const Profile(firstName: 'John', lastName: 'Doe'),
+        await _rawApi(server).postKitchenSink(
+          body: KitchenSinkForm(
+            file: TonikFileBytes(fileBytes, fileName: 'image.png'),
+            name: 'test-file',
+            temperature: 0.7,
+            active: true,
+            status: Status.active,
+            tags: const ['alpha', 'beta', 'gamma'],
+            metadata: const Profile(firstName: 'John', lastName: 'Doe'),
+          ),
         );
 
-        final response = await api.postKitchenSink(body: form);
-
+        final wire = MultipartWire(await server.takeRequest());
+        final file = wire.single('file');
+        expect(file.filename, 'image.png');
         expect(
-          response,
-          isA<TonikSuccess<GenericResponse, Response<Object?>>>(),
+          file.contentType,
+          anyOf('image/png', 'application/octet-stream'),
         );
-
-        final success =
-            response as TonikSuccess<GenericResponse, Response<Object?>>;
-        final formData = success.response.requestOptions.data as FormData;
-
-        // Binary file in files.
-        expect(formData.files.any((e) => e.key == 'file'), isTrue);
-
-        // String field in files (text/plain).
-        expect(formData.files.any((e) => e.key == 'name'), isTrue);
-        expect(success.response.headers['x-param-name']?.first, 'test-file');
-
-        // Number field in files (text/plain).
-        expect(formData.files.any((e) => e.key == 'temperature'), isTrue);
-
-        // Boolean field in files (text/plain).
-        expect(formData.files.any((e) => e.key == 'active'), isTrue);
-
-        // Enum field in files.
-        expect(formData.files.any((e) => e.key == 'status'), isTrue);
-
-        // Array of strings as repeated form fields.
-        final tagFields = formData.fields
-            .where((e) => e.key == 'tags')
-            .toList();
-        expect(tagFields, hasLength(3));
-        expect(tagFields[0].value, 'alpha');
-        expect(tagFields[1].value, 'beta');
-        expect(tagFields[2].value, 'gamma');
-
-        // Complex object as JSON-encoded file part.
-        expect(formData.files.any((e) => e.key == 'metadata'), isTrue);
+        expect(file.bodyBytes, fileBytes);
+        expect(wire.single('name').bodyText, 'test-file');
+        expect(wire.single('temperature').bodyText, '0.7');
+        expect(wire.single('active').bodyText, 'true');
+        expect(wire.single('status').bodyText, 'active');
+        expect(
+          wire.named('tags').map((part) => part.bodyText),
+          ['alpha', 'beta', 'gamma'],
+        );
+        expect(
+          wire.single('metadata').contentType,
+          startsWith('application/json'),
+        );
+        expect(jsonDecode(wire.single('metadata').bodyText), {
+          'firstName': 'John',
+          'lastName': 'Doe',
+        });
       },
     );
 
     test('sends only required fields, omits optional', () async {
-      final fileBytes = Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]);
+      final server = await RawRequestServer.start();
 
-      final form = KitchenSinkForm(
-        file: TonikFileBytes(fileBytes, fileName: 'image.png'),
-        name: 'test-file',
+      await _rawApi(server).postKitchenSink(
+        body: KitchenSinkForm(
+          file: TonikFileBytes(
+            Uint8List.fromList([0x89, 0x50, 0x4E, 0x47]),
+            fileName: 'image.png',
+          ),
+          name: 'test-file',
+        ),
       );
 
-      final response = await api.postKitchenSink(body: form);
-
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final formData = success.response.requestOptions.data as FormData;
-
-      // Required fields present.
-      expect(formData.files.any((e) => e.key == 'file'), isTrue);
-      expect(formData.files.any((e) => e.key == 'name'), isTrue);
-
-      // Optional fields absent.
-      expect(
-        formData.files.any((e) => e.key == 'temperature'),
-        isFalse,
-      );
-      expect(formData.files.any((e) => e.key == 'active'), isFalse);
-      expect(formData.files.any((e) => e.key == 'status'), isFalse);
-      expect(formData.fields.any((e) => e.key == 'tags'), isFalse);
-      expect(formData.files.any((e) => e.key == 'metadata'), isFalse);
+      final wire = MultipartWire(await server.takeRequest());
+      expect(wire.parts.map((part) => part.name), ['file', 'name']);
     });
   });
 
   group('Multiple response content types', () {
     test('handles JSON response at 200', () async {
-      const form = SimpleFields(name: 'test', age: 1, active: true);
-
-      // Default imposter returns JSON (no X-Want-Binary header).
-      final response = await api.postMultiResponse(body: form);
-
-      expect(
-        response,
-        isA<
-          TonikSuccess<MultipartMultiResponsePost200Response, Response<Object?>>
-        >(),
-      );
-      final success =
-          response
-              as TonikSuccess<
-                MultipartMultiResponsePost200Response,
-                Response<Object?>
-              >;
-      expect(success.response.statusCode, 200);
-      expect(success.value, isA<MultipartMultiResponsePost200ResponseJson>());
-    });
-
-    test('handles binary response at 200', () async {
-      const form = SimpleFields(name: 'test', age: 1, active: true);
-
-      // Use a separate API instance with X-Want-Binary header.
-      final binaryApi = MultipartApi(
-        CustomServer(
-          baseUrl: baseUrl,
-          serverConfig: ServerConfig.clientFactory(
-            () => Dio(
-              BaseOptions(
-                headers: {'X-Want-Binary': 'true'},
-              ),
-            ),
-          ),
+      final response = requireSuccess(
+        await api.postMultiResponse(
+          body: const SimpleFields(name: 'test', age: 1, active: true),
         ),
       );
 
-      final response = await binaryApi.postMultiResponse(body: form);
+      expect(response.response.statusCode, 200);
+      expect(response.value, isA<MultipartMultiResponsePost200ResponseJson>());
+    });
 
-      expect(
-        response,
-        isA<
-          TonikSuccess<MultipartMultiResponsePost200Response, Response<Object?>>
-        >(),
+    test('handles binary response at 200', () async {
+      final binaryApi = MultipartApi(
+        CustomServer(
+          baseUrl: baseUrl,
+          serverConfig: testServerConfig(headers: {'X-Want-Binary': 'true'}),
+        ),
       );
-      final success =
-          response
-              as TonikSuccess<
-                MultipartMultiResponsePost200Response,
-                Response<Object?>
-              >;
-      expect(success.response.statusCode, 200);
+
+      final response = requireSuccess(
+        await binaryApi.postMultiResponse(
+          body: const SimpleFields(name: 'test', age: 1, active: true),
+        ),
+      );
+
+      expect(response.response.statusCode, 200);
       expect(
-        success.value,
+        response.value,
         isA<MultipartMultiResponsePost200ResponseOctetStream>(),
       );
-      final octetSuccess =
-          success.value as MultipartMultiResponsePost200ResponseOctetStream;
-      expect(octetSuccess.body, isA<TonikFile>());
+      final binary =
+          response.value as MultipartMultiResponsePost200ResponseOctetStream;
+      expect(binary.body, isA<TonikFile>());
     });
   });
 
   group('Recursive array', () {
     test('posts the form when the recursive array field is omitted', () async {
-      const form = RecursiveArrayForm(name: 'root');
+      final response = requireSuccess(
+        await api.postRecursiveArray(
+          body: const RecursiveArrayForm(name: 'root'),
+        ),
+      );
 
-      final response = await api.postRecursiveArray(body: form);
-
-      expect(response, isA<TonikSuccess<GenericResponse, Response<Object?>>>());
-
-      final success =
-          response as TonikSuccess<GenericResponse, Response<Object?>>;
-      final requestData = success.response.requestOptions.data;
-      expect(requestData, isA<FormData>());
-
-      final formData = requestData as FormData;
-      expect(formData.files.any((e) => e.key == 'name'), isTrue);
-      expect(formData.files.any((e) => e.key == 'tree'), isFalse);
-
-      expect(success.response.headers['x-has-name']?.first, 'true');
-      expect(success.response.headers['x-param-name']?.first, 'root');
-      expect(success.value.success, true);
+      expect(response.response.headers['x-has-name']?.first, 'true');
+      expect(response.response.headers['x-has-tree']?.first, 'false');
+      expect(response.response.headers['x-param-name']?.first, 'root');
+      expect(response.value.success, isTrue);
     });
 
     test(
       'returns encoding error when the recursive array field is set',
       () async {
-        const form = RecursiveArrayForm(name: 'root', tree: [<Object?>[]]);
+        final response = await api.postRecursiveArray(
+          body: const RecursiveArrayForm(name: 'root', tree: [<Object?>[]]),
+        );
 
-        final response = await api.postRecursiveArray(body: form);
-
-        expect(response, isA<TonikError<GenericResponse, Response<Object?>>>());
-
-        final error =
-            response as TonikError<GenericResponse, Response<Object?>>;
+        expect(response, isTonikError);
+        final error = requireError(response);
         expect(error.type, TonikErrorType.encoding);
         expect(error.error, isA<EncodingException>());
       },
     );
   });
 }
+
+MultipartApi _rawApi(RawRequestServer server) => MultipartApi(
+  CustomServer(
+    baseUrl: server.baseUrl,
+    serverConfig: testServerConfig(),
+  ),
+);

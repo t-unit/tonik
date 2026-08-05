@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:dio/dio.dart';
 import 'package:medama_api/medama_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -29,12 +28,8 @@ void main() {
     return EventApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Charset-Case': responseCharsetCase},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Charset-Case': responseCharsetCase},
         ),
       ),
     );
@@ -45,8 +40,7 @@ void main() {
       test('decodes ${testCase.name}', () async {
         final response = await buildEventApi(testCase.id).getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetEventPingResponse200;
         expect(success.response.data, _fixtureBytes[testCase.fixture]);
         expect(response200.body.body, testCase.expected);
@@ -59,8 +53,7 @@ void main() {
       test('reports ${testCase.name} as a decoding error', () async {
         final response = await buildEventApi(testCase.id).getEventPing();
 
-        final error =
-            response as TonikError<GetEventPingResponse, Response<Object?>>;
+        final error = requireError(response);
         expect(error.type, TonikErrorType.decoding);
         expect(error.response?.data, _fixtureBytes[testCase.fixture]);
         expect(

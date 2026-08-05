@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:petstore_filtering_api/petstore_filtering_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return AnimalsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -43,7 +37,7 @@ void main() {
           ),
         ),
       );
-      final success = pet as TonikSuccess<CreatePetResponse, Response<Object?>>;
+      final success = requireSuccess(pet);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<CreatePetResponse200>());
     });
@@ -52,8 +46,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pet = await petApi.getPetById(animalId: 1);
-      final success =
-          pet as TonikSuccess<GetPetByIdResponse, Response<Object?>>;
+      final success = requireSuccess(pet);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPetByIdResponse200>());
     });
@@ -62,8 +55,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final pets = await petApi.searchPetsByTags(filterTags: ['tag1', 'tag2']);
-      final success =
-          pets as TonikSuccess<SearchPetsByTagsResponse, Response<Object?>>;
+      final success = requireSuccess(pets);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<SearchPetsByTagsResponse200>());
     });
@@ -72,8 +64,7 @@ void main() {
       final petApi = buildPetApi(responseStatus: '200');
 
       final result = await petApi.removePet(petId: 1);
-      final success =
-          result as TonikSuccess<RemovePetResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RemovePetResponse200>());
     });
@@ -84,12 +75,8 @@ void main() {
       return AccountsApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig.clientFactory(
-            () => Dio(
-              BaseOptions(
-                headers: {'X-Response-Status': responseStatus},
-              ),
-            ),
+          serverConfig: testServerConfig(
+            headers: {'X-Response-Status': responseStatus},
           ),
         ),
       );
@@ -112,8 +99,7 @@ void main() {
           ),
         ),
       );
-      final success =
-          user as TonikSuccess<CreateUserResponse, Response<Object?>>;
+      final success = requireSuccess(user);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<CreateUserResponse200>());
     });
@@ -122,8 +108,7 @@ void main() {
       final userApi = buildUserApi(responseStatus: '200');
 
       final user = await userApi.fetchUserByName(username: 'testUser');
-      final success =
-          user as TonikSuccess<FetchUserByNameResponse, Response<Object?>>;
+      final success = requireSuccess(user);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FetchUserByNameResponse200>());
     });
@@ -135,8 +120,7 @@ void main() {
         loginName: 'testUser',
         loginPassword: 'password123',
       );
-      final success =
-          result as TonikSuccess<AuthenticateUserResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<AuthenticateUserResponse200>());
     });

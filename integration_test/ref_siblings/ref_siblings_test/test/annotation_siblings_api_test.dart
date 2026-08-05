@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
+
 import 'package:ref_siblings_api/ref_siblings_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +17,8 @@ void main() {
     return AnnotationSiblingsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -34,9 +30,9 @@ void main() {
 
       final response = await api.health();
 
-      final success =
-          response as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
-      expect(success.response.requestOptions.path, '$baseUrl/health');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.toString(), '$baseUrl/health');
     });
 
     test('request method is GET', () async {
@@ -44,9 +40,9 @@ void main() {
 
       final response = await api.health();
 
-      final success =
-          response as TonikSuccess<HealthGet200BodyModel, Response<Object?>>;
-      expect(success.response.requestOptions.method, 'GET');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.method, 'GET');
     });
   });
 
@@ -59,10 +55,10 @@ void main() {
           body: const Pet(name: 'Fluffy'),
         );
 
-        final success =
-            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/annotation/described-pet',
         );
       });
@@ -74,9 +70,9 @@ void main() {
           body: const Pet(name: 'Fluffy'),
         );
 
-        final success =
-            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('encodes Pet properties correctly', () async {
@@ -86,10 +82,10 @@ void main() {
           body: const Pet(name: 'Max', age: 5),
         );
 
-        final success =
-            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Max');
         expect(requestBody['age'], 5);
@@ -102,10 +98,10 @@ void main() {
           body: const Pet(name: 'Solo'),
         );
 
-        final success =
-            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['name'], 'Solo');
         expect(requestBody.containsKey('age'), isFalse);
@@ -122,10 +118,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<DescribedPetAlias, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<Pet>());
       });
@@ -137,8 +132,7 @@ void main() {
           body: const Pet(name: 'Charlie', age: 3),
         );
 
-        final success =
-            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.value.name, 'Charlie');
         expect(success.value.age, 3);
       });
@@ -150,8 +144,7 @@ void main() {
 
         final response = await api.createDescribedPet(body: original);
 
-        final success =
-            response as TonikSuccess<DescribedPetAlias, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.value, original);
       });
     });
@@ -169,11 +162,13 @@ void main() {
           ),
         );
 
+        final success = requireSuccess(response);
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<LegacyUser, Response<Object?>>;
+        expect(success.value, isA<LegacyUser>());
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/annotation/deprecated-user',
         );
       });
@@ -188,11 +183,13 @@ void main() {
           ),
         );
 
+        final success = requireSuccess(response);
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<LegacyUser, Response<Object?>>;
+        expect(success.value, isA<LegacyUser>());
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['username'], 'admin');
         expect(requestBody['email'], 'admin@example.com');
@@ -210,13 +207,11 @@ void main() {
           ),
         );
 
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         // expected to be deprecated
         // ignore: deprecated_member_use
-        expect(response, isA<TonikSuccess<LegacyUser, Response<Object?>>>());
-        // expected to be deprecated
-        // ignore: deprecated_member_use
-        final success = response as TonikSuccess<LegacyUser, Response<Object?>>;
-        expect(success.value, isA<User>());
+        expect(success.value, isA<LegacyUser>());
       });
 
       test('roundtrip preserves all values', () async {
@@ -229,9 +224,10 @@ void main() {
 
         final response = await api.createDeprecatedUser(body: original);
 
+        final success = requireSuccess(response);
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<LegacyUser, Response<Object?>>;
+        expect(success.value, isA<LegacyUser>());
         expect(success.value, original);
       });
     });
@@ -246,11 +242,13 @@ void main() {
           body: const Item(id: 1, title: 'Test Item'),
         );
 
+        final success = requireSuccess(response);
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<OldItem, Response<Object?>>;
+        expect(success.value, isA<OldItem>());
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/annotation/described-deprecated',
         );
       });
@@ -262,11 +260,13 @@ void main() {
           body: const Item(id: 123, title: 'Widget'),
         );
 
+        final success = requireSuccess(response);
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<OldItem, Response<Object?>>;
+        expect(success.value, isA<OldItem>());
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['id'], 123);
         expect(requestBody['title'], 'Widget');
@@ -281,13 +281,11 @@ void main() {
           body: const Item(id: 100, title: 'Test'),
         );
 
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         // expected to be deprecated
         // ignore: deprecated_member_use
-        expect(response, isA<TonikSuccess<OldItem, Response<Object?>>>());
-        // expected to be deprecated
-        // ignore: deprecated_member_use
-        final success = response as TonikSuccess<OldItem, Response<Object?>>;
-        expect(success.value, isA<Item>());
+        expect(success.value, isA<OldItem>());
       });
 
       test('roundtrip preserves all values', () async {
@@ -299,9 +297,10 @@ void main() {
           body: original,
         );
 
+        final success = requireSuccess(response);
         // expected to be deprecated
         // ignore: deprecated_member_use
-        final success = response as TonikSuccess<OldItem, Response<Object?>>;
+        expect(success.value, isA<OldItem>());
         expect(success.value, original);
       });
     });

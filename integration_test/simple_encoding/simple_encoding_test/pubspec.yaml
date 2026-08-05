@@ -8,7 +8,6 @@ environment:
 
 dependencies:
   big_decimal: ^0.7.0
-  dio: ^5.8.0
   path: ^1.9.1
   simple_encoding_api:
     path: ../simple_encoding_api

@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
+
 import 'package:ref_siblings_api/ref_siblings_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +17,8 @@ void main() {
     return NullableSiblingsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -39,11 +35,10 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/nullable/optional-pet',
         );
       });
@@ -57,10 +52,9 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('encodes requiredPet as nested object', () async {
@@ -72,11 +66,10 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody['requiredPet'], isA<Map<String, dynamic>>());
         final requiredPet = requestBody['requiredPet'] as Map<String, dynamic>;
@@ -94,11 +87,10 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody.containsKey('optionalPet'), isTrue);
         final optionalPet = requestBody['optionalPet'] as Map<String, dynamic>;
@@ -115,11 +107,10 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody.containsKey('optionalPet'), isFalse);
       });
@@ -137,11 +128,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<ContainerWithOptionalPet, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
       });
 
@@ -154,9 +143,7 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.value.requiredPet.name, 'Echo');
         expect(success.value.requiredPet.age, 5);
       });
@@ -171,9 +158,7 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.value.optionalPet, isNotNull);
         expect(success.value.optionalPet!.name, 'Optional');
         expect(success.value.optionalPet!.age, 3);
@@ -188,9 +173,7 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.value.optionalPet, isNull);
       });
 
@@ -204,9 +187,7 @@ void main() {
 
         final response = await api.createOptionalPet(body: original);
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.value, original);
       });
 
@@ -219,9 +200,7 @@ void main() {
 
         final response = await api.createOptionalPet(body: original);
 
-        final success =
-            response
-                as TonikSuccess<ContainerWithOptionalPet, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.value, original);
       });
     });
@@ -236,14 +215,10 @@ void main() {
           body: const ContainerWithDescribedOptionalPet(),
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  ContainerWithDescribedOptionalPet,
-                  Response<Object?>
-                >;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/nullable/described-optional',
         );
       });
@@ -257,14 +232,10 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  ContainerWithDescribedOptionalPet,
-                  Response<Object?>
-                >;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody.containsKey('pet'), isTrue);
         final pet = requestBody['pet'] as Map<String, dynamic>;
@@ -279,14 +250,10 @@ void main() {
           body: const ContainerWithDescribedOptionalPet(),
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  ContainerWithDescribedOptionalPet,
-                  Response<Object?>
-                >;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
 
         expect(requestBody.containsKey('pet'), isFalse);
       });
@@ -302,12 +269,7 @@ void main() {
           ),
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  ContainerWithDescribedOptionalPet,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.value.pet, isNotNull);
         expect(success.value.pet!.name, 'Mittens');
         expect(success.value.pet!.age, 3);
@@ -320,12 +282,7 @@ void main() {
           body: const ContainerWithDescribedOptionalPet(),
         );
 
-        final success =
-            response
-                as TonikSuccess<
-                  ContainerWithDescribedOptionalPet,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.value.pet, isNull);
       });
 
@@ -338,12 +295,7 @@ void main() {
 
         final response = await api.createDescribedOptionalPet(body: original);
 
-        final success =
-            response
-                as TonikSuccess<
-                  ContainerWithDescribedOptionalPet,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.value, original);
       });
     });

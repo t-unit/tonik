@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:form_urlencoded_api/form_urlencoded_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -29,29 +27,17 @@ void main() {
 
       expect(
         response,
-        isA<
-          TonikSuccess<
-            FormMultiContentRequestPost200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final contentType =
-          (response
-                  as TonikSuccess<
-                    FormMultiContentRequestPost200Response,
-                    Response<Object?>
-                  >)
-              .response
-              .requestOptions
-              .headers['content-type'];
+      final contentType = recordedRequest.headers['content-type'];
       expect(contentType, 'application/x-www-form-urlencoded');
 
-      final requestData = response.response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(requestData, 'name=Form+User&age=25');
 
-      final data = response.value;
+      final data = requireSuccess(response).value;
       expect(
         data,
         isA<FormMultiContentRequestPost200ResponseXWwwFormUrlencoded>(),
@@ -70,20 +56,9 @@ void main() {
 
       expect(
         response,
-        isA<
-          TonikSuccess<
-            FormMultiContentResponseGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final data =
-          (response
-                  as TonikSuccess<
-                    FormMultiContentResponseGet200Response,
-                    Response<Object?>
-                  >)
-              .value;
+      final data = requireSuccess(response).value;
       expect(
         data,
         isA<FormMultiContentResponseGet200ResponseXWwwFormUrlencoded>(),
@@ -114,29 +89,20 @@ void main() {
 
       expect(
         response,
-        isA<
-          TonikSuccess<FormMultiContentBothPost200Response, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final contentType =
-          (response
-                  as TonikSuccess<
-                    FormMultiContentBothPost200Response,
-                    Response<Object?>
-                  >)
-              .response
-              .requestOptions
-              .headers['content-type'];
+      final contentType = recordedRequest.headers['content-type'];
       expect(contentType, 'application/x-www-form-urlencoded');
 
-      final requestData = response.response.requestOptions.data;
+      final requestData = recordedRequest.body;
       expect(
         requestData,
         '''stringValue=form+to+form&intValue=100&doubleValue=2.71&boolValue=false&dateValue=2024-06-15T14%3A30%3A00.000Z''',
       );
 
-      final data = response.value;
+      final data = requireSuccess(response).value;
       expect(
         data,
         isA<FormMultiContentBothPost200ResponseXWwwFormUrlencoded>(),

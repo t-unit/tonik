@@ -1,8 +1,6 @@
 import 'package:composition_api/composition_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return CompositionApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Body': responseBody},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Body': responseBody},
         ),
       ),
     );
@@ -33,7 +27,7 @@ void main() {
     final result = await api.echoOneOfScalarMix(
       body: const OneOfScalarMixInt(0),
     );
-    return (result as TonikSuccess<OneOfScalarMix, Response<Object?>>).value;
+    return requireSuccess(result).value;
   }
 
   Future<OneOfDateTimeOrString> decodeDateTimeOrString(
@@ -43,8 +37,7 @@ void main() {
     final result = await api.echoOneOfDateTimeOrString(
       body: const OneOfDateTimeOrStringString(''),
     );
-    return (result as TonikSuccess<OneOfDateTimeOrString, Response<Object?>>)
-        .value;
+    return requireSuccess(result).value;
   }
 
   Future<OneOfBase64OrString> decodeBase64OrString(String responseBody) async {
@@ -52,8 +45,7 @@ void main() {
     final result = await api.echoOneOfBase64OrString(
       body: const OneOfBase64OrStringString(''),
     );
-    return (result as TonikSuccess<OneOfBase64OrString, Response<Object?>>)
-        .value;
+    return requireSuccess(result).value;
   }
 
   group('OneOfScalarMix [integer, double, decimal, string] routes each JSON '

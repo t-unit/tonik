@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:path_encoding_api/path_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -23,20 +22,22 @@ void main() {
     return SimpleApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(() => Dio(BaseOptions())),
+        serverConfig: testServerConfig(),
       ),
     );
   }
 
   void expectEncodingError(
-    TonikResult<EchoResponse, Response<Object?>> response, {
+    Object response, {
     required String parameterName,
   }) {
-    expect(response, isA<TonikError<EchoResponse, Response<Object?>>>());
-    final error = response as TonikError<EchoResponse, Response<Object?>>;
-    expect(error.type, TonikErrorType.encoding);
-    expect(error.error, isA<EncodingException>());
-    final exception = error.error as EncodingException;
+    final (error, type) = switch (response) {
+      TonikError(:final error, :final type) => (error, type),
+      _ => fail('Expected TonikError, got $response.'),
+    };
+    expect(type, TonikErrorType.encoding);
+    expect(error, isA<EncodingException>());
+    final exception = error as EncodingException;
     expect(
       exception.message.contains('path parameter $parameterName'),
       isTrue,

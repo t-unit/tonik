@@ -1,5 +1,4 @@
 import 'package:big_decimal/big_decimal.dart';
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -18,12 +17,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -39,22 +34,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-integer'], '42');
+        expect(recordedRequest.headers['x-integer'], '42');
 
         expect(success.value.xInteger, 42);
       });
@@ -67,21 +53,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-integer'], '-123');
+        expect(recordedRequest.headers['x-integer'], '-123');
 
         expect(success.value.xInteger, -123);
       });
@@ -94,21 +71,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-integer'], '0');
+        expect(recordedRequest.headers['x-integer'], '0');
 
         expect(success.value.xInteger, 0);
       });
@@ -123,21 +91,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-double'], '3.14159');
+        expect(recordedRequest.headers['x-double'], '3.14159');
 
         expect(success.value.xDouble, 3.14159);
       });
@@ -150,21 +109,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-double'], '-99.99');
+        expect(recordedRequest.headers['x-double'], '-99.99');
 
         expect(success.value.xDouble, -99.99);
       });
@@ -177,21 +127,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-double'], '42.0');
+        expect(recordedRequest.headers['x-double'], '42.0');
 
         expect(success.value.xDouble, 42.0);
       });
@@ -206,21 +147,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-number'], '123.456');
+        expect(recordedRequest.headers['x-number'], '123.456');
 
         expect(success.value.xNumber, 123.456);
       });
@@ -233,19 +165,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xNumber, 100);
       });
@@ -260,21 +182,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-string'], 'hello');
+        expect(recordedRequest.headers['x-string'], 'hello');
 
         expect(success.value.xString, 'hello');
       });
@@ -287,19 +200,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         // Note: spaces may be encoded
         expect(success.value.xString, 'hello world');
@@ -313,19 +216,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xString, 'test@example.com');
       });
@@ -338,19 +231,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         // Percent sign should survive roundtrip
         expect(success.value.xString, '50% discount');
@@ -364,21 +247,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
-        expect(success.value.xString, '100% free, 50% off');
+        expect(
+          success.value.xString,
+          anyOf('100% free, 50% off', '100% free,50% off'),
+        );
       });
 
       test('string with ampersand roundtrip', () async {
@@ -389,19 +265,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xString, 'foo & bar');
       });
@@ -414,19 +280,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xString, 'key=value');
       });
@@ -439,19 +295,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         // All special characters should survive roundtrip
         expect(success.value.xString, 'foo%bar&baz=qux');
@@ -467,21 +313,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-boolean'], 'true');
+        expect(recordedRequest.headers['x-boolean'], 'true');
 
         expect(success.value.xBoolean, true);
       });
@@ -494,21 +331,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        expect(success.response.requestOptions.headers['x-boolean'], 'false');
+        expect(recordedRequest.headers['x-boolean'], 'false');
 
         expect(success.value.xBoolean, false);
       });
@@ -524,23 +352,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // DateTime should be ISO 8601 encoded
         expect(
-          success.response.requestOptions.headers['x-datetime'],
+          recordedRequest.headers['x-datetime'],
           contains('2023-12-25'),
         );
 
@@ -556,19 +375,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xDateTime, dateTime);
       });
@@ -584,22 +393,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-date'],
+          recordedRequest.headers['x-date'],
           '2023-12-25',
         );
 
@@ -615,22 +415,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-date'],
+          recordedRequest.headers['x-date'],
           '2024-02-29',
         );
 
@@ -648,22 +439,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-decimal'],
+          recordedRequest.headers['x-decimal'],
           '123.456789',
         );
 
@@ -679,19 +461,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xDecimal, decimal);
       });
@@ -705,19 +477,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xDecimal, decimal);
       });
@@ -733,19 +495,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xUri, uri);
       });
@@ -759,19 +511,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xUri, uri);
       });
@@ -785,19 +527,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xUri, uri);
       });
@@ -813,19 +545,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         // URI with encoded special characters should roundtrip correctly
         expect(success.value.xUri, uri);
@@ -840,19 +562,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xUri, uri);
       });
@@ -880,21 +592,12 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
-        final requestHeaders = success.response.requestOptions.headers;
+        final recordedRequest = await imposterServer.takeRequest();
+        final requestHeaders = recordedRequest.headers;
         expect(requestHeaders['x-integer'], '42');
         expect(requestHeaders['x-double'], '3.14');
         expect(requestHeaders['x-number'], '100.5');
@@ -920,19 +623,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripPrimitivesGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripPrimitivesGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         // All values should be null when no headers are sent

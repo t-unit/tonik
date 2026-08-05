@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -43,21 +37,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofMixedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofMixedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           'hello',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -73,21 +58,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofMixedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofMixedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           '42',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -103,21 +79,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofMixedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofMixedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           'true',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -131,21 +98,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofMixedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofMixedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           'false',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -163,22 +121,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofMixedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofMixedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Mixed-Value'],
+          recordedRequest.headers['x-mixed-value'],
           'name,test,value,42',
         );
         expect(success.value.xMixedValue, isNotNull);
@@ -196,19 +145,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofMixedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofMixedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.value.xMixedValue, isNotNull);
         expect(success.value.xMixedValue!.simpleObject, isNotNull);
         expect(success.value.xMixedValue!.simpleObject!.name, 'onlyName');
@@ -223,19 +162,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofMixedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofMixedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.value.xMixedValue, isNotNull);
         expect(success.value.xMixedValue!.simpleObject, isNotNull);
         expect(success.value.xMixedValue!.simpleObject!.value, 99);
@@ -250,21 +179,12 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripAnyofMixedGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripAnyofMixedGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Mixed-Value'],
+            recordedRequest.headers['x-mixed-value'],
             isNull,
           );
           expect(success.value.xMixedValue, isNull);

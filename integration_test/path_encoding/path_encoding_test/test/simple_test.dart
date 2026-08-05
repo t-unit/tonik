@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:path_encoding_api/path_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -17,7 +16,7 @@ void main() {
     return SimpleApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(() => Dio(BaseOptions())),
+        serverConfig: testServerConfig(),
       ),
     );
   }
@@ -29,11 +28,12 @@ void main() {
         m: const {'k': 'v'},
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/simple/encode-suffix/map-string/k,v.json',
       );
     });
@@ -44,11 +44,12 @@ void main() {
         m: const {'k': 'v'},
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/simple/encode-suffix/map-string-explode/k=v.json',
       );
     });
@@ -67,13 +68,13 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/array/nullable-base64/AQID,,BAUG',
         );
       },
@@ -89,14 +90,14 @@ void main() {
           value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // explode=false: k1,v1,k2,v2
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/special-keys/my.field,hello,a%3Db,42',
         );
       },
@@ -110,14 +111,14 @@ void main() {
           value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // explode=true: k1=v1,k2=v2 — a=b must be encoded as a%3Db
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/special-keys/explode/my.field=hello,a%3Db=42',
         );
       },
@@ -131,13 +132,13 @@ void main() {
           value: const SpecialKeyObject(myField: '', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/special-keys/my.field,,a%3Db,42',
         );
       },
@@ -151,13 +152,13 @@ void main() {
           value: const SpecialKeyObject(myField: '', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/simple/special-keys/explode/my.field,a%3Db=42',
         );
       },

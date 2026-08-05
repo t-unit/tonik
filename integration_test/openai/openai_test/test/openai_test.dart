@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:openai_full_api/openai_full_api.dart' hide Response;
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -18,10 +16,8 @@ void main() {
   CustomServer buildServer({required String responseStatus}) {
     return CustomServer(
       baseUrl: baseUrl,
-      serverConfig: ServerConfig.clientFactory(
-        () => Dio(
-          BaseOptions(headers: {'X-Response-Status': responseStatus}),
-        ),
+      serverConfig: testServerConfig(
+        headers: {'X-Response-Status': responseStatus},
       ),
     );
   }
@@ -36,13 +32,13 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListModelsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<ListModelsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/models');
     });
   });
@@ -55,11 +51,12 @@ void main() {
 
       final result = await api.retrieveModel(model: 'gpt-4o');
 
-      expect(result, isA<TonikSuccess<Model, Response<Object?>>>());
-      final success = result as TonikSuccess<Model, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/models/gpt-4o');
     });
   });
@@ -74,18 +71,18 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteModelResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<DeleteModelResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/models/ft%3Agpt-4o%3Aorg%3Asuffix%3Aid',
       );
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
   });
 
@@ -108,13 +105,13 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<CreateEmbeddingResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<CreateEmbeddingResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/embeddings');
     });
   });
@@ -135,13 +132,13 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<CreateModerationResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<CreateModerationResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/moderations');
     });
   });
@@ -176,21 +173,17 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ChatCompletionsPost200Response, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                ChatCompletionsPost200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.value,
         isA<ChatCompletionsPost200ResponseJson>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/chat/completions');
     });
   });
@@ -203,12 +196,12 @@ void main() {
 
       final result = await api.listFiles(purpose: 'fine-tune', limit: 10);
 
-      expect(result, isA<TonikSuccess<ListFilesResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<ListFilesResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files');
       expect(uri.queryParameters['purpose'], 'fine-tune');
       expect(uri.queryParameters['limit'], '10');
@@ -219,12 +212,12 @@ void main() {
 
       final result = await api.listFiles();
 
-      expect(result, isA<TonikSuccess<ListFilesResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<ListFilesResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files');
       expect(uri.queryParameters['limit'], '10000');
       expect(uri.queryParameters['order'], 'desc');
@@ -241,11 +234,12 @@ void main() {
 
       final result = await api.retrieveBatch(batchId: 'batch_abc123');
 
-      expect(result, isA<TonikSuccess<Batch, Response<Object?>>>());
-      final success = result as TonikSuccess<Batch, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/batches/batch_abc123');
     });
   });
@@ -264,17 +258,13 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListFineTuningJobEventsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                ListFineTuningJobEventsResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/fine_tuning/jobs/ftjob-abc123/events',
@@ -294,19 +284,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<ListFineTuningJobEventsResponse, Response<Object?>>
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  ListFineTuningJobEventsResponse,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final uri = success.response.requestOptions.uri;
+        final uri = recordedRequest.uri;
         expect(
           uri.path,
           '/v1/fine_tuning/jobs/ftjob-abc123/events',
@@ -327,11 +311,12 @@ void main() {
         fineTuningJobId: 'ftjob-abc123',
       );
 
-      expect(result, isA<TonikSuccess<FineTuningJob, Response<Object?>>>());
-      final success = result as TonikSuccess<FineTuningJob, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/fine_tuning/jobs/ftjob-abc123/cancel',

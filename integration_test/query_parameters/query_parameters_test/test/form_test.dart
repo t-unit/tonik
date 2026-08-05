@@ -1,5 +1,4 @@
 import 'package:big_decimal/big_decimal.dart';
-import 'package:dio/dio.dart';
 import 'package:query_parameters_api/query_parameters_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -18,12 +17,8 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -34,30 +29,33 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(integer: 1);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'integer=1');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'integer=1');
     });
 
     test('double', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(double: 1);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'double=1.0');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'double=1.0');
     });
 
     test('number percent-encodes plus in a positive exponent', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(number: 6.022e23);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      final uri = success.response.requestOptions.uri;
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      final uri = recordedRequest.uri;
       expect(uri.query, 'number=6.022e%2B23');
       expect(uri.queryParameters['number'], '6.022e+23');
     });
@@ -66,40 +64,44 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(number: 1.0);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'number=1.0');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'number=1.0');
     });
 
     test('string', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(string: 'test');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'string=test');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'string=test');
     });
 
     test('empty string sends the name with an empty value', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(string: '');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'string=');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'string=');
     });
 
     test('boolean', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(boolean: true);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'boolean=true');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'boolean=true');
     });
 
     test('datetime', () async {
@@ -108,11 +110,12 @@ void main() {
         datetime: DateTime.utc(2000),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'datetime=2000-01-01T00%3A00%3A00.000Z',
       );
     });
@@ -121,10 +124,11 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(date: Date(2000, 6, 15));
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'date=2000-06-15');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'date=2000-06-15');
     });
 
     test('decimal', () async {
@@ -133,10 +137,11 @@ void main() {
         decimal: BigDecimal.parse('1.000'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
+      expect(response, isTonikSuccess);
 
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'decimal=1.000');
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'decimal=1.000');
     });
   });
 
@@ -147,10 +152,11 @@ void main() {
         $class: const Class(name: 'test', age: 1),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'class=name,test,age,1',
       );
     });
@@ -169,10 +175,11 @@ void main() {
           ),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'reservedKeys=first%20name,Jane,last%20name,Doe,a%2Cb,v1,c%26d,v2,'
           'p%2520q,v3',
         );
@@ -191,10 +198,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'nested data not supported in form encoding',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -202,9 +209,10 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex($enum: Enum.value1);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'enum=value1');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'enum=value1');
     });
 
     test('classAlias', () async {
@@ -213,10 +221,11 @@ void main() {
         classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'classAlias=name,test,age,1',
       );
     });
@@ -227,9 +236,10 @@ void main() {
         anyOfPrimitive: const AnyOfPrimitive(string: 'test'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'anyOfPrimitive=test');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'anyOfPrimitive=test');
     });
 
     test('anyOfComplex', () async {
@@ -238,10 +248,11 @@ void main() {
         anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'anyOfComplex=name,test,age,1',
       );
     });
@@ -252,9 +263,10 @@ void main() {
         oneOfPrimitive: const OneOfPrimitiveString('test'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'oneOfPrimitive=test');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'oneOfPrimitive=test');
     });
 
     test('oneOfComplex', () async {
@@ -265,10 +277,11 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'oneOfComplex=value,test,amount,1',
       );
     });
@@ -279,9 +292,10 @@ void main() {
         allOfPrimitive: const AllOfPrimitive(string: '1', int: 1),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'allOfPrimitive=1');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'allOfPrimitive=1');
     });
 
     test('allOfComplex', () async {
@@ -293,10 +307,11 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'allOfComplex=name,test,age,1,value,test,amount,1',
       );
     });
@@ -313,10 +328,11 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'simpleCompositeList=tags,a%2Cb,7',
       );
     });
@@ -329,10 +345,11 @@ void main() {
         $class: const Class(name: 'test', age: 1),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'name=test&age=1',
       );
     });
@@ -349,10 +366,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'nested data not supported in form encoding',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -360,9 +377,10 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplexExplode($enum: Enum.value1);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'enum=value1');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'enum=value1');
     });
 
     test('classAlias', () async {
@@ -371,10 +389,11 @@ void main() {
         classAlias: const ClassAlias(name: 'test', age: 1),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'name=test&age=1',
       );
     });
@@ -385,9 +404,10 @@ void main() {
         anyOfPrimitive: const AnyOfPrimitive(string: 'test'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'anyOfPrimitive=test');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'anyOfPrimitive=test');
     });
 
     test('anyOfComplex', () async {
@@ -396,10 +416,11 @@ void main() {
         anyOfComplex: const AnyOfComplex($class: Class(name: 'test', age: 1)),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'name=test&age=1',
       );
     });
@@ -410,9 +431,10 @@ void main() {
         oneOfPrimitive: const OneOfPrimitiveString('test'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'oneOfPrimitive=test');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'oneOfPrimitive=test');
     });
 
     test('oneOfComplex', () async {
@@ -423,10 +445,11 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'value=test&amount=1',
       );
     });
@@ -437,9 +460,10 @@ void main() {
         allOfPrimitive: const AllOfPrimitive(string: '1', int: 1),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'allOfPrimitive=1');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'allOfPrimitive=1');
     });
 
     test('allOfComplex', () async {
@@ -451,10 +475,11 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'name=test&age=1&value=test&amount=1',
       );
     });
@@ -466,10 +491,11 @@ void main() {
       final response = await api.testFormList(
         listString: ['test', 'test2', 'white space', 'special&&chars'],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listString=test,test2,white%20space,special%26%26chars',
       );
     });
@@ -479,10 +505,11 @@ void main() {
       final response = await api.testFormList(
         listOneOfPrimitive: [const OneOfPrimitiveString('test')],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listOneOfPrimitive=test',
       );
     });
@@ -496,8 +523,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -510,8 +537,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -520,10 +547,11 @@ void main() {
       final response = await api.testFormList(
         listOneOfComplexMixed: [const FormListParametersArrayOneOfModelInt(1)],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listOneOfComplexMixed=1',
       );
     });
@@ -535,10 +563,11 @@ void main() {
         final response = await api.testFormList(
           listNullableString: ['hello world', 'foo/bar', null],
         );
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'listNullableString=hello%20world,foo%2Fbar,',
         );
       },
@@ -549,10 +578,11 @@ void main() {
       final response = await api.testFormList(
         listNullableInteger: [1, null, 2],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listNullableInteger=1,,2',
       );
     });
@@ -560,9 +590,10 @@ void main() {
     test('empty array is the only param and drops the whole query', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormList(listString: const []);
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, '');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('empty array is dropped while a populated param remains', () async {
@@ -571,10 +602,11 @@ void main() {
         listString: const [],
         listNullableInteger: [1, 2],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listNullableInteger=1,2',
       );
     });
@@ -586,10 +618,11 @@ void main() {
       final response = await api.testFormListExplode(
         listString: ['test', 'test2'],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listString=test&listString=test2',
       );
     });
@@ -602,10 +635,11 @@ void main() {
           const OneOfPrimitiveString('test2'),
         ],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listOneOfPrimitive=test&listOneOfPrimitive=test2',
       );
     });
@@ -619,8 +653,8 @@ void main() {
           ),
         ],
       );
-      expect(response, isA<TonikError<void, Response<Object?>>>());
-      final error = response as TonikError<void, Response<Object?>>;
+      expect(response, isTonikError);
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
 
@@ -631,10 +665,11 @@ void main() {
         final response = await api.testFormListExplode(
           listNullableString: ['hello world', 'foo/bar', null],
         );
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'listNullableString=hello%20world&listNullableString=foo%2Fbar'
           '&listNullableString=',
         );
@@ -646,10 +681,11 @@ void main() {
       final response = await api.testFormListExplode(
         listNullableInteger: [1, null, 2],
       );
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'listNullableInteger=1&listNullableInteger=&listNullableInteger=2',
       );
     });
@@ -657,9 +693,10 @@ void main() {
     test('empty array drops the whole query', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormListExplode(listString: const []);
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, '');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
   });
 
@@ -670,10 +707,11 @@ void main() {
         uri: Uri.parse('https://example.com/path?query=value'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'uri=https%3A%2F%2Fexample.com%2Fpath%3Fquery%3Dvalue',
       );
     });
@@ -684,18 +722,20 @@ void main() {
         integerEnum: PriorityEnum.two,
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'integerEnum=2');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'integerEnum=2');
     });
 
     test('nullableString with value', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(nullableString: 'test');
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'nullableString=test');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'nullableString=test');
     });
 
     test(
@@ -704,9 +744,10 @@ void main() {
         final api = buildQueryApi(responseStatus: '204');
         final response = await api.testFormPrimitive(nullableString: '');
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
-        expect(success.response.requestOptions.uri.query, 'nullableString=');
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, 'nullableString=');
       },
     );
 
@@ -714,27 +755,30 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, '');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('nullableInteger with value', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive(nullableInteger: 42);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'nullableInteger=42');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'nullableInteger=42');
     });
 
     test('nullableInteger with null', () async {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormPrimitive();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, '');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
   });
 
@@ -743,9 +787,10 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex(integerEnum: PriorityEnum.one);
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'integerEnum=1');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'integerEnum=1');
     });
 
     test('nullableClass with value', () async {
@@ -754,10 +799,11 @@ void main() {
         nullableClass: const NullableClass(name: 'test', age: 25),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'nullableClass=name,test,age,25',
       );
     });
@@ -766,9 +812,10 @@ void main() {
       final api = buildQueryApi(responseStatus: '204');
       final response = await api.testFormComplex();
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, '');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test('deeplyNestedClass', () async {
@@ -786,10 +833,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'deeply nested data not supported in form encoding',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -801,9 +848,10 @@ void main() {
         integerEnum: PriorityEnum.three,
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, 'integerEnum=3');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'integerEnum=3');
     });
 
     test('nullableClass with value', () async {
@@ -812,10 +860,11 @@ void main() {
         nullableClass: const NullableClass(name: 'test'),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'name=test',
       );
     });
@@ -826,9 +875,10 @@ void main() {
         allOptionalFilter: const AllOptionalFilter(),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
-      expect(success.response.requestOptions.uri.query, '');
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, '');
     });
 
     test(
@@ -840,9 +890,10 @@ void main() {
           integerEnum: PriorityEnum.three,
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
-        expect(success.response.requestOptions.uri.query, 'integerEnum=3');
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, 'integerEnum=3');
       },
     );
 
@@ -861,10 +912,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<void, Response<Object?>>>(),
+        isTonikError,
         reason: 'deeply nested data not supported in form encoding',
       );
-      final error = response as TonikError<void, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
   });

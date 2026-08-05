@@ -1,8 +1,6 @@
 import 'package:allow_reserved_api/allow_reserved_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -37,10 +31,11 @@ void main() {
           reserved: ReservedChoice.gAmpersandHEqualsIPlusJ,
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'reserved=g%26h%3Di%2Bj',
         );
       },
@@ -52,10 +47,11 @@ void main() {
         notReserved: ReservedChoice.gAmpersandHEqualsIPlusJ,
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'notReserved=g%26h%3Di%2Bj',
       );
     });
@@ -73,10 +69,11 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'reservedList=a/b:c,g%26h%3Di%2Bj',
         );
       },
@@ -91,10 +88,11 @@ void main() {
         ],
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'notReservedList=a%2Fb%3Ac,g%26h%3Di%2Bj',
       );
     });

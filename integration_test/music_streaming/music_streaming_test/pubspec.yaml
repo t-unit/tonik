@@ -7,7 +7,6 @@ environment:
   sdk: '>=3.10.0 <4.0.0'
 
 dependencies:
-  dio: ^5.8.0
   music_streaming_api:
     path: ../music_streaming_api
   path: ^1.9.1

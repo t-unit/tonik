@@ -1,3 +1,11 @@
+def tonikRecordedRequest = [
+    uri: context.request.uri,
+    method: context.request.method,
+    normalisedHeaders: context.request.normalisedHeaders,
+    body: context.request.body,
+]
+stores.open('tonik').save('last', tonikRecordedRequest)
+
 // Tests drive the exact response body (e.g. a whole-number double like 42.0)
 // through the X-Response-Body header so they can assert how the client decodes
 // numeric JSON forms that jsonDecode materializes as a Dart double.

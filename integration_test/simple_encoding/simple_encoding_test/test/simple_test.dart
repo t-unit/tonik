@@ -1,5 +1,4 @@
 import 'package:big_decimal/big_decimal.dart';
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -18,12 +17,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -35,11 +30,12 @@ void main() {
       flexibleValue: const FlexibleValue(string: 'string'),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/anyof/string',
     );
   });
@@ -50,11 +46,12 @@ void main() {
       flexibleValue: const FlexibleValue(int: 1),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/anyof/1',
     );
   });
@@ -67,11 +64,12 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/anyof/name,John%20Doe,value,-1',
     );
   });
@@ -92,11 +90,12 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/anyof-composite/type,person,first_name,John,last_name,Doe,age,30,birth_date,1970-01-01',
     );
   });
@@ -109,11 +108,12 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/anyof-composite/test-value',
     );
   });
@@ -128,11 +128,12 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/anyof-composite/name,Test%20Object,value,42',
     );
   });
@@ -156,11 +157,12 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/anyof-composite/name,Composite%20Test,description,Testing%20composite%20entity,created_at,1970-01-01T14%3A30%3A00.000Z,specific_field,specific-value',
     );
   });
@@ -180,11 +182,12 @@ void main() {
       $enum: StatusEnum.active,
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/primitive/1/1.0/23/string/true/1970-01-01T00%3A00%3A00.000Z/2000-01-01/23/https%3A%2F%2Fexample.com/active',
     );
   });
@@ -210,11 +213,12 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/complex/id,987,score,123.45,rating,123.45,username,john_doe,is_verified,true,created_at,1970-01-01T14%3A30%3A00.000Z,birth_date,92000-01-01,balance,123.45,website,https%3A%2F%2Fexample.com,email,john.doe%40example.com,full_name,John%20Doe,age,30,status,active,priority,1',
     );
   });
@@ -236,11 +240,12 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/allof/name,John%20Doe,description,lalala%20lululu,created_at,1970-01-01T14%3A30%3A00.000Z,specific_field,John%20Doe',
     );
   });
@@ -257,8 +262,8 @@ void main() {
       ],
     );
 
-    expect(response, isA<TonikError<void, Response<Object?>>>());
-    final error = response as TonikError<void, Response<Object?>>;
+    expect(response, isTonikError);
+    final error = requireError(response);
     expect(error.error, isA<EncodingException>());
   });
 
@@ -270,15 +275,16 @@ void main() {
       timestamp: DateTime.utc(1970, 1, 1, 14, 30),
     );
 
-    expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-    final success = response as TonikSuccess<void, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
+    final recordedRequest = await imposterServer.takeRequest();
     expect(
-      success.response.requestOptions.uri.path,
+      recordedRequest.uri.path,
       '/v1/aliases/11/John%20Doe',
     );
     expect(
-      success.response.requestOptions.headers['x-timestamp'],
+      recordedRequest.headers['x-timestamp'],
       '1970-01-01T14:30:00.000Z',
     );
   });

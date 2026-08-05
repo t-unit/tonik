@@ -1,5 +1,4 @@
 import 'package:boolean_schemas_api/boolean_schemas_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -17,12 +16,8 @@ void main() {
     return BooleanSchemasApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -38,7 +33,7 @@ void main() {
       );
 
       final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -62,8 +57,8 @@ void main() {
 
         final result = await api.echoFormAny(body: original);
 
-        expect(result, isA<TonikError<FormWithAny, Response<Object?>>>());
-        final error = result as TonikError<FormWithAny, Response<Object?>>;
+        expect(result, isTonikError);
+        final error = requireError(result);
         expect(error.error, isA<EncodingException>());
         expect(error.type, TonikErrorType.encoding);
       },
@@ -78,7 +73,7 @@ void main() {
       );
 
       final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -94,7 +89,7 @@ void main() {
       );
 
       final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;
@@ -110,7 +105,7 @@ void main() {
       );
 
       final result = await api.echoFormAny(body: original);
-      final success = result as TonikSuccess<FormWithAny, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;

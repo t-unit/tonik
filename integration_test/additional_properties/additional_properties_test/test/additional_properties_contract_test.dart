@@ -1,84 +1,85 @@
-import 'dart:typed_data';
-
 import 'package:additional_properties_api/additional_properties_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
+import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
 
 void main() {
+  late ImposterServer imposterServer;
+  late String baseUrl;
+
+  setUpAll(() async {
+    imposterServer = await setupImposterServer();
+    baseUrl = 'http://localhost:${imposterServer.port}/v1';
+  });
+
   group('pure-map operation wire encoding', () {
     test('form omits null while preserving empty and scalar values', () async {
-      final adapter = _CapturingAdapter();
-      final result = await _api(adapter).encodePureMapForm(
+      final result = await _api(baseUrl).encodePureMapForm(
         values: const {'gone': null, 'empty': '', 'count': 7},
       );
 
-      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
-      expect(adapter.requestOptions!.uri.query, 'empty=&count=7');
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
+      expect(recordedRequest.uri.query, 'empty=&count=7');
     });
 
     test(
       'form allowReserved preserves map keys and values when collapsed',
       () async {
-        final adapter = _CapturingAdapter();
-        final result =
-            await _api(
-              adapter,
-            ).encodePureMapFormAllowReservedCollapsed(
+        final result = await _api(baseUrl)
+            .encodePureMapFormAllowReservedCollapsed(
               values: const {'a:b': 'c:d'},
             );
 
-        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
-        expect(adapter.requestOptions!.uri.query, 'values=a:b,c:d');
+        expect(result, isTonikSuccess);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, 'values=a:b,c:d');
       },
     );
 
     test(
       'form allowReserved preserves map keys and values when exploded',
       () async {
-        final adapter = _CapturingAdapter();
-        final result =
-            await _api(
-              adapter,
-            ).encodePureMapFormAllowReservedExploded(
+        final result = await _api(baseUrl)
+            .encodePureMapFormAllowReservedExploded(
               values: const {'a:b': 'c:d'},
             );
 
-        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
-        expect(adapter.requestOptions!.uri.query, 'a:b=c:d');
+        expect(result, isTonikSuccess);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.uri.query, 'a:b=c:d');
       },
     );
 
     test(
       'deepObject omits null while preserving empty and scalar values',
       () async {
-        final adapter = _CapturingAdapter();
-        final result = await _api(adapter).encodePureMapDeepObject(
+        final result = await _api(baseUrl).encodePureMapDeepObject(
           values: const {'gone': null, 'empty': '', 'count': 7},
         );
 
-        expect(result, isA<TonikSuccess<void, Response<Object?>>>());
+        expect(result, isTonikSuccess);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          adapter.requestOptions!.uri.query,
+          recordedRequest.uri.query,
           'values%5Bempty%5D=&values%5Bcount%5D=7',
         );
       },
     );
 
     test('form rejects nested values before network I/O', () async {
-      final adapter = _CapturingAdapter();
-      final result = await _api(adapter).encodePureMapForm(
+      final result = await _api(baseUrl).encodePureMapForm(
         values: const {
           'nested': {'value': 1},
         },
       );
 
-      expect(result, isA<TonikError<void, Response<Object?>>>());
+      expect(result, isTonikError);
       expect(
-        (result as TonikError<void, Response<Object?>>).type,
+        requireError(result).type,
         TonikErrorType.encoding,
       );
-      expect(adapter.requestOptions, isNull);
+      await expectLater(imposterServer.takeRequest(), throwsStateError);
     });
   });
 
@@ -573,32 +574,9 @@ void main() {
   });
 }
 
-AdditionalPropertiesApi _api(_CapturingAdapter adapter) =>
-    AdditionalPropertiesApi(
-      CustomServer(
-        baseUrl: 'https://example.com',
-        serverConfig: ServerConfig.client(_capturingDio(adapter)),
-      ),
-    );
-
-Dio _capturingDio(_CapturingAdapter adapter) {
-  return Dio(BaseOptions(baseUrl: 'https://example.com'))
-    ..httpClientAdapter = adapter;
-}
-
-class _CapturingAdapter implements HttpClientAdapter {
-  RequestOptions? requestOptions;
-
-  @override
-  Future<ResponseBody> fetch(
-    RequestOptions options,
-    Stream<Uint8List>? requestStream,
-    Future<void>? cancelFuture,
-  ) async {
-    requestOptions = options;
-    return ResponseBody.fromString('', 204);
-  }
-
-  @override
-  void close({bool force = false}) {}
-}
+AdditionalPropertiesApi _api(String baseUrl) => AdditionalPropertiesApi(
+  CustomServer(
+    baseUrl: baseUrl,
+    serverConfig: testServerConfig(),
+  ),
+);

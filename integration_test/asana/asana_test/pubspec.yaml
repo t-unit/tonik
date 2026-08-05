@@ -9,7 +9,6 @@ environment:
 dependencies:
   asana_api:
     path: ../asana_api
-  dio: ^5.8.0
   path: ^1.9.1
   tonik_util: ^0.1.0
 

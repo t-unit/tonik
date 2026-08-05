@@ -10,6 +10,16 @@ import 'package:test/test.dart';
 /// serial collector shave seconds off boot for these short-lived servers.
 const _fastStartJvmArgs = ['-XX:TieredStopAtLevel=1', '-XX:+UseSerialGC'];
 
+/// A request observed by Imposter at the HTTP server boundary.
+final class RecordedRequest {
+  const RecordedRequest(this.uri, this.method, this.headers, this.body);
+
+  final Uri uri;
+  final String method;
+  final Map<String, String> headers;
+  final String? body;
+}
+
 /// Manages the lifecycle of an Imposter mock server for integration
 /// tests.
 class ImposterServer {
@@ -20,6 +30,70 @@ class ImposterServer {
   Completer<void> _readyCompleter = Completer<void>();
 
   int get port => _port;
+
+  /// Returns and removes the last request recorded by the Imposter fixture.
+  Future<RecordedRequest> takeRequest() async {
+    final storeUri = Uri.parse(
+      'http://localhost:$_port/system/store/tonik/last',
+    );
+    final client = HttpClient();
+    try {
+      final getRequest = await client.getUrl(storeUri);
+      final getResponse = await getRequest.close();
+      final payload = await utf8.decoder.bind(getResponse).join();
+      if (getResponse.statusCode != HttpStatus.ok) {
+        throw StateError(
+          'Unable to read the recorded request: '
+          '${getResponse.statusCode} $payload',
+        );
+      }
+
+      final deleteRequest = await client.deleteUrl(storeUri);
+      final deleteResponse = await deleteRequest.close();
+      await deleteResponse.drain<void>();
+      if (deleteResponse.statusCode < HttpStatus.ok ||
+          deleteResponse.statusCode >= HttpStatus.multipleChoices) {
+        throw StateError(
+          'Unable to delete the recorded request: '
+          '${deleteResponse.statusCode}',
+        );
+      }
+
+      final decoded = jsonDecode(payload);
+      if (decoded is! Map<String, dynamic>) {
+        throw FormatException(
+            'Recorded request is not a JSON object.', payload);
+      }
+      final uri = decoded['uri'];
+      final method = decoded['method'];
+      final rawHeaders = decoded['normalisedHeaders'];
+      final body = decoded['body'];
+      if (uri is! String ||
+          method is! String ||
+          rawHeaders is! Map<String, dynamic> ||
+          body is! String?) {
+        throw FormatException(
+          'Recorded request has an unexpected shape.',
+          payload,
+        );
+      }
+
+      return RecordedRequest(
+        Uri.parse(uri),
+        method,
+        Map.unmodifiable({
+          for (final entry in rawHeaders.entries)
+            entry.key.toLowerCase(): switch (entry.value) {
+              Iterable<Object?> values => values.join(','),
+              final value => '$value',
+            },
+        }),
+        body,
+      );
+    } finally {
+      client.close(force: true);
+    }
+  }
 
   /// Finds an available port by binding to port 0 and immediately closing.
   static Future<int> _findAvailablePort() async {

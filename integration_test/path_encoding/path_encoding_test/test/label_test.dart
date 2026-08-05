@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:path_encoding_api/path_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -17,7 +16,7 @@ void main() {
     return LabelApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(() => Dio(BaseOptions())),
+        serverConfig: testServerConfig(),
       ),
     );
   }
@@ -27,12 +26,13 @@ void main() {
       final api = buildLabelApi();
       final response = await api.testLabelPrimitiveString(value: 'blue');
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/primitive/string/.blue',
       );
     });
@@ -41,12 +41,13 @@ void main() {
       final api = buildLabelApi();
       final response = await api.testLabelPrimitiveInteger(value: 42);
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/primitive/integer/.42',
       );
     });
@@ -55,12 +56,13 @@ void main() {
       final api = buildLabelApi();
       final response = await api.testLabelPrimitiveNumber(value: 3.14);
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/primitive/number/.3.14',
       );
     });
@@ -69,12 +71,13 @@ void main() {
       final api = buildLabelApi();
       final response = await api.testLabelPrimitiveBoolean(value: true);
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/primitive/boolean/.true',
       );
     });
@@ -85,12 +88,13 @@ void main() {
         value: StatusEnum.active,
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/primitive/enum/.active',
       );
     });
@@ -105,13 +109,13 @@ void main() {
           values: ['a b', null, 'c'],
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/label/array/nullable-string/.a%20b,,c',
         );
       },
@@ -129,13 +133,13 @@ void main() {
           ],
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/label/array/nullable-base64/.AQID,,BAUG',
         );
       },
@@ -147,12 +151,13 @@ void main() {
         values: ['blue', 'black', 'brown'],
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/array/string/.blue,black,brown',
       );
     });
@@ -163,12 +168,13 @@ void main() {
         values: ['blue', 'black', 'brown'],
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/array/string/explode/.blue.black.brown',
       );
     });
@@ -177,12 +183,13 @@ void main() {
       final api = buildLabelApi();
       final response = await api.testLabelArrayInteger(values: [1, 2, 3]);
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/array/integer/.1,2,3',
       );
     });
@@ -195,12 +202,13 @@ void main() {
         value: const SimpleObject(name: 'test', count: 5),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/object/.name,test,count,5',
       );
     });
@@ -211,12 +219,13 @@ void main() {
         value: const SimpleObject(name: 'test', count: 5),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/object/explode/.name=test.count=5',
       );
     });
@@ -229,13 +238,13 @@ void main() {
           value: const SimpleObject(name: '', count: 5),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/label/object/.name,,count,5',
         );
       },
@@ -249,13 +258,13 @@ void main() {
           value: const SimpleObject(name: '', count: 5),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/label/object/explode/.name.count=5',
         );
       },
@@ -272,13 +281,13 @@ void main() {
           ),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/label/object/composite-list/.tags,a%2Cb,7',
         );
       },
@@ -293,12 +302,13 @@ void main() {
         intValue: 42,
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/combined/.hello/.42',
       );
     });
@@ -311,12 +321,13 @@ void main() {
         value: const OneOfPrimitiveString('test'),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/composite/oneOfPrimitive/.test',
       );
     });
@@ -327,12 +338,13 @@ void main() {
         value: const OneOfPrimitiveInt(42),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/composite/oneOfPrimitive/.42',
       );
     });
@@ -343,12 +355,13 @@ void main() {
         value: const AnyOfPrimitive(string: 'test'),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/composite/anyOfPrimitive/.test',
       );
     });
@@ -359,12 +372,13 @@ void main() {
         value: const AnyOfPrimitive(int: 123),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/composite/anyOfPrimitive/.123',
       );
     });
@@ -377,12 +391,13 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/composite/oneOfComplex/.name,foo,count,10',
       );
     });
@@ -396,12 +411,13 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/composite/allOfSimple/.name,bar,count,20,extra,bonus',
       );
     });
@@ -412,12 +428,13 @@ void main() {
         value: PriorityEnum.two,
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/label/primitive/integerEnum/.2',
       );
     });
@@ -438,10 +455,10 @@ void main() {
 
       expect(
         response,
-        isA<TonikError<EchoResponse, Response<Object?>>>(),
+        isTonikError,
         reason: 'deeply nested objects cannot be encoded in label style',
       );
-      final error = response as TonikError<EchoResponse, Response<Object?>>;
+      final error = requireError(response);
       expect(error.type, TonikErrorType.encoding);
     });
   });
@@ -455,14 +472,14 @@ void main() {
           value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         // my.field is unreserved so not encoded; a=b becomes a%3Db
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/label/special-keys/.my.field,hello,a%3Db,42',
         );
       },
@@ -476,15 +493,15 @@ void main() {
           value: const SpecialKeyObject(myField: 'hello', aEqualsB: 42),
         );
 
-        expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-        final success =
-            response as TonikSuccess<EchoResponse, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // With explode=true, each key=value is dot-prefixed
         // a=b key must be encoded as a%3Db to avoid ambiguity
         expect(
-          success.response.requestOptions.uri.path,
+          recordedRequest.uri.path,
           '/v1/label/special-keys/explode/.my.field=hello.a%3Db=42',
         );
       },

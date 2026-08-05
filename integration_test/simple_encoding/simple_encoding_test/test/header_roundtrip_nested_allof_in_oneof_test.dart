@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -48,22 +42,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNestedAllofInOneofGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripNestedAllofInOneofGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
-        final headerValue =
-            success.response.requestOptions.headers['X-Nested-Value'] as String;
+        final headerValue = recordedRequest.headers['x-nested-value'];
         expect(headerValue, contains('name,test'));
         expect(headerValue, contains('number,42'));
         expect(
@@ -88,19 +72,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNestedAllofInOneofGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripNestedAllofInOneofGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(
           success.value.xNestedValue,
           isA<NestedAllOfInOneOfAllOfComplex>(),
@@ -120,21 +94,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNestedAllofInOneofGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripNestedAllofInOneofGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           'simple-string',
         );
 
@@ -151,21 +116,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNestedAllofInOneofGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripNestedAllofInOneofGet200Response,
-                  Response<Object?>
-                >;
+        requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Nested-Value'],
+          recordedRequest.headers['x-nested-value'],
           'test-value',
         );
       });
@@ -179,21 +135,12 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripNestedAllofInOneofGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripNestedAllofInOneofGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Nested-Value'],
+            recordedRequest.headers['x-nested-value'],
             isNull,
           );
           expect(success.value.xNestedValue, isNull);

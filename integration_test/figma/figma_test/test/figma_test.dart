@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:figma_api/figma_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -19,12 +17,8 @@ void main() {
     return ActivityLogsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -34,12 +28,8 @@ void main() {
     return PaymentsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -49,12 +39,8 @@ void main() {
     return WebhooksApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -64,12 +50,8 @@ void main() {
     return DevResourcesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -81,12 +63,8 @@ void main() {
     return LibraryAnalyticsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -98,12 +76,8 @@ void main() {
     return CommentReactionsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -123,14 +97,14 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetActivityLogsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetActivityLogsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetActivityLogsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/activity_logs');
       expect(uri.queryParameters['events'], 'login,logout');
       expect(uri.queryParameters['limit'], '10');
@@ -147,13 +121,13 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetActivityLogsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetActivityLogsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.value, isA<GetActivityLogsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.queryParameters['start_time'], '1700000000');
       expect(uri.queryParameters['end_time'], '1700086400');
     });
@@ -165,10 +139,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetActivityLogsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetActivityLogsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<GetActivityLogsResponse403>());
     });
@@ -180,10 +153,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetActivityLogsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetActivityLogsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 429);
       expect(success.value, isA<GetActivityLogsResponse429>());
     });
@@ -201,14 +173,14 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetPaymentsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetPaymentsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetPaymentsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/payments');
       expect(uri.queryParameters['plugin_payment_token'], 'tok_abc123');
     });
@@ -223,13 +195,13 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetPaymentsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetPaymentsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.value, isA<GetPaymentsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.queryParameters['user_id'], 'user_42');
       expect(uri.queryParameters['plugin_id'], 'plugin_99');
     });
@@ -245,13 +217,13 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetPaymentsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetPaymentsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.value, isA<GetPaymentsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.queryParameters['community_file_id'], 'cf_abc');
       expect(uri.queryParameters['widget_id'], 'wdg_xyz');
     });
@@ -263,10 +235,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetPaymentsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetPaymentsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<GetPaymentsResponse401>());
     });
@@ -284,14 +255,14 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetWebhookRequestsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetWebhookRequestsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetWebhookRequestsResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v2/webhooks/wh_12345/requests');
     });
 
@@ -302,10 +273,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetWebhookRequestsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetWebhookRequestsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetWebhookRequestsResponse404>());
     });
@@ -317,10 +287,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetWebhookRequestsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetWebhookRequestsResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<GetWebhookRequestsResponse403>());
     });
@@ -346,10 +315,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostWebhookResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostWebhookResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostWebhookResponse200>());
 
@@ -358,9 +326,10 @@ void main() {
       expect(value.id, isA<String>());
       expect(value.eventType, isA<WebhookV2Event>());
       expect(value.status, isA<WebhookV2Status>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.uri.path, '/v2/webhooks');
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.uri.path, '/v2/webhooks');
+      expect(recordedRequest.method, 'POST');
     });
 
     test('postWebhook 200 with paused status', () async {
@@ -379,10 +348,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostWebhookResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostWebhookResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.value, isA<PostWebhookResponse200>());
     });
 
@@ -401,10 +369,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostWebhookResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostWebhookResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<PostWebhookResponse400>());
     });
@@ -429,19 +396,19 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PutWebhookResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PutWebhookResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PutWebhookResponse200>());
 
       final value = (success.value as PutWebhookResponse200).body;
       expect(value, isA<WebhookV2>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v2/webhooks/wh_update_1');
-      expect(success.response.requestOptions.method, 'PUT');
+      expect(recordedRequest.method, 'PUT');
     });
 
     test('putWebhook 404', () async {
@@ -458,10 +425,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PutWebhookResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PutWebhookResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<PutWebhookResponse404>());
     });
@@ -480,16 +446,16 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteDevResourceResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<DeleteDevResourceResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<DeleteDevResourceResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files/file_abc/dev_resources/dr_123');
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
 
     test('deleteDevResource 404', () async {
@@ -502,10 +468,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteDevResourceResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<DeleteDevResourceResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<DeleteDevResourceResponse404>());
     });
@@ -520,10 +485,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteDevResourceResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<DeleteDevResourceResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<DeleteDevResourceResponse401>());
     });
@@ -556,15 +520,15 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostDevResourcesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostDevResourcesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PostDevResourcesResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.uri.path, '/v1/dev_resources');
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.uri.path, '/v1/dev_resources');
+      expect(recordedRequest.method, 'POST');
     });
 
     test('postDevResources 400', () async {
@@ -585,10 +549,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PostDevResourcesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PostDevResourcesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 400);
       expect(success.value, isA<PostDevResourcesResponse400>());
     });
@@ -614,15 +577,15 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PutDevResourcesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PutDevResourcesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<PutDevResourcesResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      expect(success.response.requestOptions.uri.path, '/v1/dev_resources');
-      expect(success.response.requestOptions.method, 'PUT');
+      expect(recordedRequest.uri.path, '/v1/dev_resources');
+      expect(recordedRequest.method, 'PUT');
     });
 
     test('putDevResources 403', () async {
@@ -638,10 +601,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<PutDevResourcesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<PutDevResourcesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<PutDevResourcesResponse403>());
     });
@@ -663,26 +625,17 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            GetLibraryAnalyticsComponentActionsResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetLibraryAnalyticsComponentActionsResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.value,
         isA<GetLibraryAnalyticsComponentActionsResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/analytics/libraries/lib_file_1/component/actions',
@@ -703,26 +656,17 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            GetLibraryAnalyticsComponentActionsResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetLibraryAnalyticsComponentActionsResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(
         success.value,
         isA<GetLibraryAnalyticsComponentActionsResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.queryParameters['group_by'],
+        recordedRequest.uri.queryParameters['group_by'],
         'team',
       );
     });
@@ -739,21 +683,12 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            GetLibraryAnalyticsComponentActionsResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetLibraryAnalyticsComponentActionsResponse,
-                Response<Object?>
-              >;
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.queryParameters['cursor'],
+        recordedRequest.uri.queryParameters['cursor'],
         'next_page_token_abc',
       );
     });
@@ -769,19 +704,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            GetLibraryAnalyticsComponentActionsResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetLibraryAnalyticsComponentActionsResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 403);
       expect(
         success.value,
@@ -804,26 +729,17 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            GetLibraryAnalyticsVariableUsagesResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetLibraryAnalyticsVariableUsagesResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(
         success.value,
         isA<GetLibraryAnalyticsVariableUsagesResponse200>(),
       );
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/v1/analytics/libraries/var_lib_file/variable/usages',
@@ -841,21 +757,12 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            GetLibraryAnalyticsVariableUsagesResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetLibraryAnalyticsVariableUsagesResponse,
-                Response<Object?>
-              >;
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.queryParameters['group_by'],
+        recordedRequest.uri.queryParameters['group_by'],
         'file',
       );
     });
@@ -871,19 +778,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            GetLibraryAnalyticsVariableUsagesResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                GetLibraryAnalyticsVariableUsagesResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(
         success.value,
@@ -906,18 +803,17 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteCommentReactionResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<DeleteCommentReactionResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<DeleteCommentReactionResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files/file_xyz/comments/comment_42/reactions');
       expect(uri.queryParameters['emoji'], ':thumbsup:');
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
 
     test('deleteCommentReaction 404', () async {
@@ -931,11 +827,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteCommentReactionResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<DeleteCommentReactionResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<DeleteCommentReactionResponse404>());
     });
@@ -951,11 +845,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<DeleteCommentReactionResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<DeleteCommentReactionResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<DeleteCommentReactionResponse403>());
     });
@@ -968,13 +860,7 @@ void main() {
       final api = VariablesApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig.clientFactory(
-            () => Dio(
-              BaseOptions(
-                headers: {'X-Response-Status': '200'},
-              ),
-            ),
-          ),
+          serverConfig: testServerConfig(headers: {'X-Response-Status': '200'}),
         ),
       );
 
@@ -982,14 +868,14 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetLocalVariablesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetLocalVariablesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<GetLocalVariablesResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/v1/files/vars_file_1/variables/local');
     });
 
@@ -997,13 +883,7 @@ void main() {
       final api = VariablesApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig.clientFactory(
-            () => Dio(
-              BaseOptions(
-                headers: {'X-Response-Status': '403'},
-              ),
-            ),
-          ),
+          serverConfig: testServerConfig(headers: {'X-Response-Status': '403'}),
         ),
       );
 
@@ -1011,10 +891,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetLocalVariablesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetLocalVariablesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 403);
       expect(success.value, isA<GetLocalVariablesResponse403>());
     });
@@ -1023,13 +902,7 @@ void main() {
       final api = VariablesApi(
         CustomServer(
           baseUrl: baseUrl,
-          serverConfig: ServerConfig.clientFactory(
-            () => Dio(
-              BaseOptions(
-                headers: {'X-Response-Status': '404'},
-              ),
-            ),
-          ),
+          serverConfig: testServerConfig(headers: {'X-Response-Status': '404'}),
         ),
       );
 
@@ -1037,10 +910,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<GetLocalVariablesResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<GetLocalVariablesResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetLocalVariablesResponse404>());
     });

@@ -1,5 +1,4 @@
 import 'package:binary_models_api/binary_models_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -17,12 +16,8 @@ void main() {
     return FilesApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -36,16 +31,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                BinaryMultiContentTypeGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<BinaryMultiContentTypeGet200ResponseJson>());
@@ -65,16 +53,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<BinaryMultiContentTypeGet200Response, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                BinaryMultiContentTypeGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(
@@ -98,16 +79,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<BinaryWithHeadersIdGet200Response, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                BinaryWithHeadersIdGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.response.statusCode, 200);
       expect(success.value, isA<BinaryWithHeadersIdGet200Response>());

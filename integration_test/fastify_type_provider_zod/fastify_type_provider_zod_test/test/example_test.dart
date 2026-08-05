@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:fastify_type_provider_zod_api/fastify_type_provider_zod_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -38,8 +32,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<ExampleDto, Response<Object?>>>());
-    final success = response as TonikSuccess<ExampleDto, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
 
     final data = success.value;
@@ -62,8 +56,8 @@ void main() {
       ),
     );
 
-    expect(response, isA<TonikSuccess<ExampleDto, Response<Object?>>>());
-    final success = response as TonikSuccess<ExampleDto, Response<Object?>>;
+    expect(response, isTonikSuccess);
+    final success = requireSuccess(response);
     expect(success.response.statusCode, 200);
 
     final data = success.value;

@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -43,21 +37,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofEnumGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofEnumGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Enum-Union'],
+          recordedRequest.headers['x-enum-union'],
           'active',
         );
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
@@ -72,21 +57,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofEnumGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofEnumGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Enum-Union'],
+          recordedRequest.headers['x-enum-union'],
           'inactive',
         );
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
@@ -101,21 +77,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofEnumGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofEnumGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Enum-Union'],
+          recordedRequest.headers['x-enum-union'],
           'pending',
         );
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
@@ -130,21 +97,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofEnumGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofEnumGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Enum-Union'],
+          recordedRequest.headers['x-enum-union'],
           'archived',
         );
         expect(success.value.xEnumUnion, isA<OneOfEnumStatusEnum>());
@@ -161,21 +119,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofEnumGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofEnumGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Enum-Union'],
+          recordedRequest.headers['x-enum-union'],
           '1',
         );
 
@@ -193,21 +142,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofEnumGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofEnumGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Enum-Union'],
+          recordedRequest.headers['x-enum-union'],
           '2',
         );
         expect(success.value.xEnumUnion, isA<OneOfEnumPriorityEnum>());
@@ -222,21 +162,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofEnumGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofEnumGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Enum-Union'],
+          recordedRequest.headers['x-enum-union'],
           '5',
         );
         expect(success.value.xEnumUnion, isA<OneOfEnumPriorityEnum>());
@@ -253,21 +184,12 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripOneofEnumGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripOneofEnumGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Enum-Union'],
+            recordedRequest.headers['x-enum-union'],
             isNull,
           );
           expect(success.value.xEnumUnion, isNull);

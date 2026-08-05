@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:query_parameters_api/query_parameters_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -17,12 +16,8 @@ void main() {
     return QueryApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -39,10 +34,11 @@ void main() {
           ),
         );
 
-        expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-        final success = response as TonikSuccess<void, Response<Object?>>;
+        expect(response, isTonikSuccess);
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.uri.query,
+          recordedRequest.uri.query,
           'signature=3q2%2B7w%3D%3D',
         );
       },
@@ -57,10 +53,11 @@ void main() {
         ),
       );
 
-      expect(response, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = response as TonikSuccess<void, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      requireSuccess(response);
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.query,
+        recordedRequest.uri.query,
         'signature=3q2%2B7w%3D%3D&label=',
       );
     });

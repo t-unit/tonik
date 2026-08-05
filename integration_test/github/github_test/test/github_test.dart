@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:github_api/github_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -18,12 +16,8 @@ void main() {
   CustomServer buildServer({required String responseStatus}) {
     return CustomServer(
       baseUrl: baseUrl,
-      serverConfig: ServerConfig.clientFactory(
-        () => Dio(
-          BaseOptions(
-            headers: {'X-Response-Status': responseStatus},
-          ),
-        ),
+      serverConfig: testServerConfig(
+        headers: {'X-Response-Status': responseStatus},
       ),
     );
   }
@@ -36,11 +30,12 @@ void main() {
 
       final result = await api.metaroot();
 
-      expect(result, isA<TonikSuccess<Root, Response<Object?>>>());
-      final success = result as TonikSuccess<Root, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/');
     });
   });
@@ -53,13 +48,13 @@ void main() {
 
       final result = await api.metaget();
 
-      expect(result, isA<TonikSuccess<MetagetResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<MetagetResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<MetagetResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/meta');
     });
   });
@@ -74,14 +69,14 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<RateLimitgetResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<RateLimitgetResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<RateLimitgetResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/rate_limit');
     });
 
@@ -92,10 +87,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<RateLimitgetResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<RateLimitgetResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<RateLimitgetResponse404>());
     });
@@ -111,14 +105,14 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<UsersgetByUsernameResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/users/octocat');
     });
 
@@ -129,10 +123,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<UsersgetByUsernameResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<UsersgetByUsernameResponse404>());
     });
@@ -151,7 +144,7 @@ void main() {
         repo: 'hello-world',
       );
 
-      expect(result, isA<TonikSuccess<ReposgetResponse, Response<Object?>>>());
+      expect(result, isTonikSuccess);
     });
 
     test('reposget 404', () async {
@@ -162,9 +155,8 @@ void main() {
         repo: 'nonexistent',
       );
 
-      expect(result, isA<TonikSuccess<ReposgetResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<ReposgetResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<ReposgetResponse404>());
     });
@@ -184,7 +176,7 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<IssueslistForRepoResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
     });
 
@@ -198,10 +190,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<IssueslistForRepoResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result as TonikSuccess<IssueslistForRepoResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<IssueslistForRepoResponse404>());
     });
@@ -220,7 +211,7 @@ void main() {
         issueNumber: 1,
       );
 
-      expect(result, isA<TonikSuccess<IssuesgetResponse, Response<Object?>>>());
+      expect(result, isTonikSuccess);
     });
 
     test('issuesget 404', () async {
@@ -232,9 +223,8 @@ void main() {
         issueNumber: 999,
       );
 
-      expect(result, isA<TonikSuccess<IssuesgetResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<IssuesgetResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<IssuesgetResponse404>());
     });

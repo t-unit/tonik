@@ -1,5 +1,4 @@
 import 'package:composition_api/composition_api.dart';
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -17,12 +16,8 @@ void main() {
     return CompositionApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Body': responseBody},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Body': responseBody},
         ),
       ),
     );
@@ -33,12 +28,7 @@ void main() {
       final api = buildApi('null');
       final result = await api.getStandaloneNull();
 
-      final success =
-          result
-              as TonikSuccess<
-                StandaloneNullEchoGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.value.body, isNull);
       expect(success.value.xNullHeader, isNull);
     });
@@ -47,7 +37,7 @@ void main() {
       final api = buildApi('{}');
       final result = await api.getStandaloneNull();
 
-      final error = result as TonikError<dynamic, Response<Object?>>;
+      final error = requireError(result);
       expect(error.type, TonikErrorType.decoding);
     });
   });

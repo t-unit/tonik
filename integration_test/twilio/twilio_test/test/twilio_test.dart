@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
 import 'package:tonik_util/tonik_util.dart';
@@ -19,12 +18,8 @@ void main() {
     return Api20100401AccountApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -34,12 +29,8 @@ void main() {
     return Api20100401MessageApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -49,12 +40,8 @@ void main() {
     return Api20100401CallApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -64,12 +51,8 @@ void main() {
     return Api20100401BalanceApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -85,19 +68,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<$20100401AccountsJsonGet200Response, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                $20100401AccountsJsonGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts.json');
     });
 
@@ -108,18 +85,12 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<$20100401AccountsJsonGet200Response, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                $20100401AccountsJsonGet200Response,
-                Response<Object?>
-              >;
+      requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts.json');
       expect(uri.queryParameters['PageSize'], '10');
     });
@@ -131,16 +102,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikError<$20100401AccountsJsonGet200Response, Response<Object?>>
-        >(),
+        isTonikError,
       );
-      final error =
-          result
-              as TonikError<
-                $20100401AccountsJsonGet200Response,
-                Response<Object?>
-              >;
+      final error = requireError(result);
       expect(error.type, TonikErrorType.decoding);
     });
   });
@@ -155,22 +119,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            $20100401AccountsSidJsonGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                $20100401AccountsSidJsonGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts/AC_test123.json');
     });
 
@@ -181,9 +136,7 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikError<$20100401AccountsSidJsonGet200Response, Response<Object?>>
-        >(),
+        isTonikError,
       );
     });
   });
@@ -198,21 +151,15 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<$20100401AccountsJsonPost201Response, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                $20100401AccountsJsonPost201Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts.json');
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.method, 'POST');
     });
   });
 
@@ -226,22 +173,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            $20100401AccountsAccountSidMessagesJsonGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                $20100401AccountsAccountSidMessagesJsonGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts/AC_mock/Messages.json');
     });
   });
@@ -256,26 +194,17 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            $20100401AccountsAccountSidMessagesJsonPost201Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                $20100401AccountsAccountSidMessagesJsonPost201Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
+      final recordedRequest = await imposterServer.takeRequest();
 
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/2010-04-01/Accounts/AC_mock/Messages.json',
       );
-      expect(success.response.requestOptions.method, 'POST');
+      expect(recordedRequest.method, 'POST');
     });
   });
 
@@ -289,22 +218,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            $20100401AccountsAccountSidCallsJsonGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                $20100401AccountsAccountSidCallsJsonGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts/AC_mock/Calls.json');
     });
   });
@@ -319,22 +239,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            $20100401AccountsAccountSidBalanceJsonGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                $20100401AccountsAccountSidBalanceJsonGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/2010-04-01/Accounts/AC_mock/Balance.json');
     });
   });
@@ -350,16 +261,17 @@ void main() {
         sid: 'SM_delete_me',
       );
 
-      expect(result, isA<TonikSuccess<void, Response<Object?>>>());
-      final success = result as TonikSuccess<void, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 204);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(
         uri.path,
         '/2010-04-01/Accounts/AC_mock/Messages/SM_delete_me.json',
       );
-      expect(success.response.requestOptions.method, 'DELETE');
+      expect(recordedRequest.method, 'DELETE');
     });
   });
 }

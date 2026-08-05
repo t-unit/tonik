@@ -10,7 +10,6 @@ dependencies:
   big_decimal: ^0.7.0
   cookies_api:
     path: ../cookies_api
-  dio: ^5.8.0
   path: ^1.9.1
   tonik_util: ^0.4.1
 

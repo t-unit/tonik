@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -50,23 +44,12 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofSimpleGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofSimpleGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final headerValue =
-          success.response.requestOptions.headers['X-Composite-Entity']
-              as String;
+      final headerValue = recordedRequest.headers['x-composite-entity'];
       expect(headerValue, contains('name,TestEntity'));
       expect(headerValue, contains('specific_field,specific-value'));
       expect(headerValue, contains('created_at,'));
@@ -98,19 +81,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofSimpleGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofSimpleGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.value.xCompositeEntity, isNotNull);
       expect(success.value.xCompositeEntity!.baseEntity.name, 'FullEntity');
@@ -138,19 +111,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofSimpleGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofSimpleGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.value.xCompositeEntity, isNotNull);
       expect(
@@ -167,22 +130,13 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripAllofSimpleGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripAllofSimpleGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
 
           expect(
-            success.response.requestOptions.headers['X-Composite-Entity'],
+            recordedRequest.headers['x-composite-entity'],
             isNull,
           );
 
@@ -202,27 +156,18 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig.clientFactory(
-              () => Dio(
-                BaseOptions(
-                  headers: {
-                    'X-Response-Status': '200',
-                    'X-Composite-Entity': literal,
-                  },
-                ),
-              ),
+            serverConfig: testServerConfig(
+              headers: {
+                'X-Response-Status': '200',
+                'X-Composite-Entity': literal,
+              },
             ),
           ),
         );
 
         final result = await injected.testHeaderRoundtripAllOfSimple.call();
 
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAllofSimpleGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.value.xCompositeEntity, isNotNull);
         expect(success.value.xCompositeEntity!.baseEntity.name, 'x%2Fy 50%');
         expect(

@@ -1,5 +1,4 @@
 import 'package:big_decimal/big_decimal.dart';
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -18,12 +17,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -44,19 +39,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofDiscriminatedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(success.value.xEntity, isA<EntityTypePersonEntity>());
@@ -85,19 +70,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofDiscriminatedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(success.value.xEntity, isA<EntityTypePersonEntity>());
@@ -123,19 +98,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofDiscriminatedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
 
         expect(success.value.xEntity, isA<EntityTypePersonEntity>());
         final entity = success.value.xEntity! as EntityTypePersonEntity;
@@ -158,19 +123,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofDiscriminatedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(success.value.xEntity, isA<EntityTypeCompanyEntity>());
@@ -198,19 +153,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofDiscriminatedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(success.value.xEntity, isA<EntityTypeCompanyEntity>());
@@ -240,19 +185,9 @@ void main() {
 
           expect(
             response,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripOneofDiscriminatedGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              response
-                  as TonikSuccess<
-                    HeadersRoundtripOneofDiscriminatedGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(response);
 
           expect(success.value.xEntity, isA<EntityTypeCompanyEntity>());
           final entity = success.value.xEntity! as EntityTypeCompanyEntity;
@@ -287,19 +222,9 @@ void main() {
           // SystemEntity's schema includes a nested 'config' object.
           expect(
             response,
-            isA<
-              TonikError<
-                HeadersRoundtripOneofDiscriminatedGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikError,
           );
-          final error =
-              response
-                  as TonikError<
-                    HeadersRoundtripOneofDiscriminatedGet200Response,
-                    Response<Object?>
-                  >;
+          final error = requireError(response);
           expect(error.error, isA<EncodingException>());
         },
       );
@@ -324,19 +249,9 @@ void main() {
           // so simple encoding is not supported for this type.
           expect(
             response,
-            isA<
-              TonikError<
-                HeadersRoundtripOneofDiscriminatedGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikError,
           );
-          final error =
-              response
-                  as TonikError<
-                    HeadersRoundtripOneofDiscriminatedGet200Response,
-                    Response<Object?>
-                  >;
+          final error = requireError(response);
           expect(error.error, isA<EncodingException>());
         },
       );
@@ -361,8 +276,8 @@ void main() {
 
         // Simple encoding does not support nested objects.
         // We expect an error for this test.
-        expect(response, isA<TonikError<void, Response<Object?>>>());
-        final error = response as TonikError<void, Response<Object?>>;
+        expect(response, isTonikError);
+        final error = requireError(response);
         expect(error.error, isA<EncodingException>());
       });
     });
@@ -385,19 +300,9 @@ void main() {
               );
           expect(
             personResponse,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripOneofDiscriminatedGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final personSuccess =
-              personResponse
-                  as TonikSuccess<
-                    HeadersRoundtripOneofDiscriminatedGet200Response,
-                    Response<Object?>
-                  >;
+          final personSuccess = requireSuccess(personResponse);
           expect(personSuccess.value.xEntity, isA<EntityTypePersonEntity>());
 
           // Test company
@@ -412,19 +317,9 @@ void main() {
               );
           expect(
             companyResponse,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripOneofDiscriminatedGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final companySuccess =
-              companyResponse
-                  as TonikSuccess<
-                    HeadersRoundtripOneofDiscriminatedGet200Response,
-                    Response<Object?>
-                  >;
+          final companySuccess = requireSuccess(companyResponse);
           expect(companySuccess.value.xEntity, isA<EntityTypeCompanyEntity>());
         },
       );
@@ -447,12 +342,7 @@ void main() {
               );
           expect(
             systemResponse,
-            isA<
-              TonikError<
-                HeadersRoundtripOneofDiscriminatedGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikError,
           );
         },
       );
@@ -473,23 +363,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofDiscriminatedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response,
-                  Response<Object?>
-                >;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Verify the header contains the discriminator and fields
-        final requestHeader =
-            success.response.requestOptions.headers['x-entity'] as String;
+        final requestHeader = recordedRequest.headers['x-entity'];
         expect(requestHeader, contains('type'));
         expect(requestHeader, contains('person'));
         expect(requestHeader, contains('first_name'));
@@ -512,23 +392,13 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofDiscriminatedGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripOneofDiscriminatedGet200Response,
-                  Response<Object?>
-                >;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Verify the header contains the discriminator and fields
-        final requestHeader =
-            success.response.requestOptions.headers['x-entity'] as String;
+        final requestHeader = recordedRequest.headers['x-entity'];
         expect(requestHeader, contains('type'));
         expect(requestHeader, contains('company'));
         expect(requestHeader, contains('company_name'));

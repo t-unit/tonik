@@ -1,4 +1,3 @@
-import 'package:dio/dio.dart';
 import 'package:gov_api/gov_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
@@ -17,12 +16,8 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -36,10 +31,9 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FindFormsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          response as TonikSuccess<FindFormsResponse, Response<Object?>>;
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<FindFormsResponse200>());
 
@@ -89,10 +83,9 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FindFormsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          response as TonikSuccess<FindFormsResponse, Response<Object?>>;
+      final success = requireSuccess(response);
 
       expect(success.response.statusCode, 401);
       expect(success.value, isA<FindFormsResponse401>());
@@ -111,10 +104,9 @@ void main() {
 
       expect(
         response,
-        isA<TonikSuccess<FindFormsResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          response as TonikSuccess<FindFormsResponse, Response<Object?>>;
+      final success = requireSuccess(response);
 
       expect(success.response.statusCode, 429);
       expect(success.value, isA<FindFormsResponse429>());
@@ -128,7 +120,7 @@ void main() {
 
       final response = await defaultApi.findForms();
 
-      expect(response, isA<TonikError<FindFormsResponse, Response<Object?>>>());
+      expect(response, isTonikError);
     });
   });
 }

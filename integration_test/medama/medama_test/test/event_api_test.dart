@@ -1,8 +1,8 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
+
 import 'package:medama_api/medama_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +17,8 @@ void main() {
     return EventApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -44,10 +40,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           '$baseUrl/event/hit',
         );
       });
@@ -66,9 +62,9 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
-        expect(success.response.requestOptions.method, 'POST');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'POST');
       });
 
       test('content-type header is application/json', () async {
@@ -85,10 +81,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.contentType,
+          recordedRequest.headers['content-type'],
           'application/json',
         );
       });
@@ -109,10 +105,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['e'], 'load');
       });
 
@@ -130,10 +126,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['b'], 'my-beacon-12345');
       });
 
@@ -151,10 +147,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['u'], 'https://example.com/page?query=test&foo=bar');
       });
 
@@ -172,10 +168,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['p'], true);
       });
 
@@ -193,10 +189,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['p'], false);
       });
 
@@ -214,10 +210,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['q'], true);
       });
 
@@ -236,10 +232,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['r'], 'https://google.com/search?q=test');
       });
 
@@ -257,10 +253,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('r'), isFalse);
       });
 
@@ -279,10 +275,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['t'], 'America/New_York');
       });
 
@@ -301,10 +297,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('d'), isTrue);
       });
 
@@ -322,10 +318,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['u'], contains('example.com'));
       });
     });
@@ -340,10 +336,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['e'], 'unload');
       });
 
@@ -356,10 +352,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['b'], 'unload-beacon-xyz');
       });
 
@@ -372,10 +368,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['m'], 45000);
       });
 
@@ -388,10 +384,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['m'], 1);
       });
 
@@ -405,10 +401,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['m'], 3600000);
       });
     });
@@ -423,10 +419,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['e'], 'custom');
       });
 
@@ -439,10 +435,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['g'], 'shop.example.com');
       });
 
@@ -455,10 +451,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('d'), isTrue);
         final dValue = requestBody['d'];
         expect(dValue, isA<Map<dynamic, dynamic>>());
@@ -478,10 +474,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody['b'], 'optional-beacon-id');
       });
 
@@ -494,10 +490,10 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         final requestBody =
-            success.response.requestOptions.data as Map<String, dynamic>;
+            jsonDecode(recordedRequest.body!) as Map<String, dynamic>;
         expect(requestBody.containsKey('b'), isFalse);
       });
     });
@@ -519,10 +515,10 @@ void main() {
               'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['User-Agent'],
+          recordedRequest.headers['user-agent'],
           'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
         );
       });
@@ -542,10 +538,10 @@ void main() {
           acceptLanguage: 'en-US,en;q=0.9,de;q=0.8',
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['Accept-Language'],
+          recordedRequest.headers['accept-language'],
           'en-US,en;q=0.9,de;q=0.8',
         );
       });
@@ -566,14 +562,14 @@ void main() {
           acceptLanguage: 'fr-FR',
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['User-Agent'],
+          recordedRequest.headers['user-agent'],
           'TestBrowser/1.0',
         );
         expect(
-          success.response.requestOptions.headers['Accept-Language'],
+          recordedRequest.headers['accept-language'],
           'fr-FR',
         );
       });
@@ -593,10 +589,10 @@ void main() {
           acceptLanguage: 'en-US,en;q=0.9,zh-CN;q=0.8,*;q=0.5',
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['Accept-Language'],
+          recordedRequest.headers['accept-language'],
           'en-US,en;q=0.9,zh-CN;q=0.8,*;q=0.5',
         );
       });
@@ -619,10 +615,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<PostEventHitResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 204);
         expect(success.value, isA<PostEventHitResponse204>());
       });
@@ -641,8 +636,7 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         // 204 No Content should have empty body
         final responseData = success.response.data as List<int>?;
         expect(responseData == null || responseData.isEmpty, isTrue);
@@ -666,10 +660,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<PostEventHitResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<PostEventHitResponse400>());
       });
@@ -688,8 +681,7 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response400 = success.value as PostEventHitResponse400;
 
         expect(response400.body, isA<BadRequestError>());
@@ -719,10 +711,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<PostEventHitResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 404);
         expect(success.value, isA<PostEventHitResponse404>());
       });
@@ -741,8 +732,7 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response404 = success.value as PostEventHitResponse404;
 
         expect(response404.body, isA<NotFoundError>());
@@ -769,10 +759,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<PostEventHitResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<PostEventHitResponse500>());
       });
@@ -791,8 +780,7 @@ void main() {
           ),
         );
 
-        final success =
-            response as TonikSuccess<PostEventHitResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response500 = success.value as PostEventHitResponse500;
 
         expect(response500.body, isA<InternalServerError>());
@@ -813,10 +801,10 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.path,
+          recordedRequest.uri.toString(),
           startsWith('$baseUrl/event/ping'),
         );
       });
@@ -826,9 +814,9 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
-        expect(success.response.requestOptions.method, 'GET');
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        expect(recordedRequest.method, 'GET');
       });
     });
 
@@ -840,9 +828,9 @@ void main() {
           u: 'https://example.com/page',
         );
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters['u'], 'https://example.com/page');
       });
 
@@ -853,9 +841,9 @@ void main() {
           u: 'https://example.com/page?param=value&other=test',
         );
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(
           uri.queryParameters['u'],
           'https://example.com/page?param=value&other=test',
@@ -867,9 +855,9 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         expect(uri.queryParameters.containsKey('u'), isFalse);
       });
 
@@ -880,9 +868,9 @@ void main() {
           u: 'https://example.com/search?q=hello world&lang=日本語',
         );
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
-        final uri = success.response.requestOptions.uri;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
+        final uri = recordedRequest.uri;
         // The value should be properly encoded in the URL
         expect(uri.queryParameters['u'], contains('example.com'));
       });
@@ -896,10 +884,10 @@ void main() {
           ifModifiedSince: 'Wed, 21 Oct 2015 07:28:00 GMT',
         );
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['If-Modified-Since'],
+          recordedRequest.headers['if-modified-since'],
           'Wed, 21 Oct 2015 07:28:00 GMT',
         );
       });
@@ -909,10 +897,10 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        requireSuccess(response);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers.containsKey(
+          recordedRequest.headers.containsKey(
             'If-Modified-Since',
           ),
           isFalse,
@@ -928,10 +916,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetEventPingResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
         expect(success.value, isA<GetEventPingResponse200>());
       });
@@ -941,8 +928,7 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetEventPingResponse200;
         expect(response200.body.body, isA<String>());
       });
@@ -952,8 +938,7 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetEventPingResponse200;
         expect(response200.body.cacheControl, isA<String>());
       });
@@ -963,8 +948,7 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response200 = success.value as GetEventPingResponse200;
         expect(response200.body.lastModified, isA<String>());
       });
@@ -978,10 +962,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetEventPingResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 400);
         expect(success.value, isA<GetEventPingResponse400>());
       });
@@ -991,8 +974,7 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response400 = success.value as GetEventPingResponse400;
 
         expect(response400.body, isA<BadRequestError>());
@@ -1013,10 +995,9 @@ void main() {
 
         expect(
           response,
-          isA<TonikSuccess<GetEventPingResponse, Response<Object?>>>(),
+          isTonikSuccess,
         );
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 500);
         expect(success.value, isA<GetEventPingResponse500>());
       });
@@ -1026,8 +1007,7 @@ void main() {
 
         final response = await api.getEventPing();
 
-        final success =
-            response as TonikSuccess<GetEventPingResponse, Response<Object?>>;
+        final success = requireSuccess(response);
         final response500 = success.value as GetEventPingResponse500;
 
         expect(response500.body, isA<InternalServerError>());

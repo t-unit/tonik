@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -38,23 +32,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-string'],
+          recordedRequest.headers['x-nullable-string'],
           'hello',
         );
         expect(success.value.xNullableString, 'hello');
@@ -66,24 +51,15 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Null should not be sent as header
         expect(
-          success.response.requestOptions.headers['x-nullable-string'],
+          recordedRequest.headers['x-nullable-string'],
           isNull,
         );
         expect(success.value.xNullableString, isNull);
@@ -99,23 +75,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-integer'],
+          recordedRequest.headers['x-nullable-integer'],
           '42',
         );
         expect(success.value.xNullableInteger, 42);
@@ -127,23 +94,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-integer'],
+          recordedRequest.headers['x-nullable-integer'],
           isNull,
         );
         expect(success.value.xNullableInteger, isNull);
@@ -159,23 +117,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-object'],
+          recordedRequest.headers['x-nullable-object'],
           'name,test,count,5',
         );
         expect(success.value.xNullableObject?.name, 'test');
@@ -188,23 +137,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-object'],
+          recordedRequest.headers['x-nullable-object'],
           isNull,
         );
         expect(success.value.xNullableObject, isNull);
@@ -222,23 +162,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-enum'],
+          recordedRequest.headers['x-nullable-enum'],
           'active',
         );
         expect(
@@ -253,23 +184,14 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['x-nullable-enum'],
+          recordedRequest.headers['x-nullable-enum'],
           isNull,
         );
         expect(success.value.xNullableEnum, isNull);
@@ -290,19 +212,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(success.value.xNullableString, 'hello');
@@ -320,19 +232,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(success.value.xNullableString, isNull);
@@ -350,19 +252,9 @@ void main() {
 
         expect(
           response,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripNullableGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            response
-                as TonikSuccess<
-                  HeadersRoundtripNullableGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(response);
         expect(success.response.statusCode, 200);
 
         expect(success.value.xNullableString, 'partial');

@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -43,22 +37,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'name,test',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -75,23 +60,14 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Header field-values are transmitted literally: the space survives.
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'name,hello world',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -106,22 +82,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'name,',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -138,22 +105,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'number,42',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -168,21 +126,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'number,0',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -197,21 +146,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAnyofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Flexible-Object'],
+          recordedRequest.headers['x-flexible-object'],
           'number,-99',
         );
         expect(success.value.xFlexibleObject, isNotNull);
@@ -228,21 +168,12 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripAnyofComplexGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripAnyofComplexGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
           expect(
-            success.response.requestOptions.headers['X-Flexible-Object'],
+            recordedRequest.headers['x-flexible-object'],
             isNull,
           );
           expect(success.value.xFlexibleObject, isNull);
@@ -258,27 +189,18 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig.clientFactory(
-              () => Dio(
-                BaseOptions(
-                  headers: {
-                    'X-Response-Status': '200',
-                    'X-Flexible-Object': 'name,x%2Fy 50%',
-                  },
-                ),
-              ),
+            serverConfig: testServerConfig(
+              headers: {
+                'X-Response-Status': '200',
+                'X-Flexible-Object': 'name,x%2Fy 50%',
+              },
             ),
           ),
         );
 
         final result = await injected.testHeaderRoundtripAnyOfComplex.call();
 
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAnyofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.value.xFlexibleObject, isNotNull);
         expect(success.value.xFlexibleObject!.class1, isNotNull);
         expect(success.value.xFlexibleObject!.class1!.name, 'x%2Fy 50%');

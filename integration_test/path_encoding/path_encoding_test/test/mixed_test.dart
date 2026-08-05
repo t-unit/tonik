@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:path_encoding_api/path_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,7 +15,7 @@ void main() {
     return LabelApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(() => Dio(BaseOptions())),
+        serverConfig: testServerConfig(),
       ),
     );
   }
@@ -30,13 +28,14 @@ void main() {
         matrixValue: 'world',
       );
 
-      expect(response, isA<TonikSuccess<EchoResponse, Response<Object?>>>());
-      final success = response as TonikSuccess<EchoResponse, Response<Object?>>;
+      expect(response, isTonikSuccess);
+      final success = requireSuccess(response);
       expect(success.response.statusCode, 200);
       // First param (label): .hello
       // Second param (matrix): ;matrixValue=world
+      final recordedRequest = await imposterServer.takeRequest();
       expect(
-        success.response.requestOptions.uri.path,
+        recordedRequest.uri.path,
         '/v1/mixed/.hello/;matrixValue=world',
       );
     });

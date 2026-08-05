@@ -13,7 +13,7 @@ void main() {
       final files = operationDir
           .listSync()
           .whereType<File>()
-          .map((f) => path.basename(f.path))
+          .map((file) => path.basename(file.path))
           .toList();
 
       expect(
@@ -32,7 +32,7 @@ void main() {
         final files = operationDir
             .listSync()
             .whereType<File>()
-            .map((f) => path.basename(f.path))
+            .map((file) => path.basename(file.path))
             .toList();
 
         expect(
@@ -48,7 +48,7 @@ void main() {
       final files = modelDir
           .listSync()
           .whereType<File>()
-          .map((f) => path.basename(f.path))
+          .map((file) => path.basename(file.path))
           .toList();
 
       expect(
@@ -71,7 +71,6 @@ void main() {
           isNot(contains('legacyFilter')),
           reason: 'legacyFilter parameter should be excluded',
         );
-
         expect(
           content,
           contains('String? name'),
@@ -91,7 +90,6 @@ void main() {
         isNot(contains('shipDate')),
         reason: 'shipDate property should be excluded',
       );
-
       expect(
         content,
         contains('deliveryDate'),
@@ -106,30 +104,28 @@ void main() {
       final files = operationDir
           .listSync()
           .whereType<File>()
-          .map((f) => path.basename(f.path))
+          .map((file) => path.basename(file.path))
           .toList();
 
       expect(files, contains('get_active_pets.dart'));
       expect(files, contains('search_pets.dart'));
       expect(files, contains('place_order.dart'));
       expect(files, contains('create_user.dart'));
-
-      expect(files.length, 4, reason: 'Should have exactly 4 operations');
+      expect(files, hasLength(4));
     });
 
-    test('Generated models should only include non-deprecated ones', () {
+    test('Generated models should exclude deprecated schemas', () {
       final modelDir = Directory('../petstore_deprecation_api/lib/src/model');
       final files = modelDir
           .listSync()
           .whereType<File>()
-          .map((f) => path.basename(f.path))
+          .map((file) => path.basename(file.path))
           .toList();
 
       expect(files, contains('active_pet.dart'));
       expect(files, contains('category.dart'));
       expect(files, contains('order.dart'));
       expect(files, contains('user.dart'));
-
       expect(files, isNot(contains('legacy_pet.dart')));
     });
   });

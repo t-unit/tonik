@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -45,22 +39,12 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofEnumsGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofEnumsGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final headerValue =
-          success.response.requestOptions.headers['X-Enum-Composite'] as String;
+      final headerValue = recordedRequest.headers['x-enum-composite'];
       expect(headerValue, contains('priority,3'));
       expect(headerValue, contains('status,active'));
 
@@ -85,19 +69,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofEnumsGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofEnumsGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.value.xEnumComposite, isNotNull);
       expect(
@@ -116,19 +90,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            HeadersRoundtripAllofEnumsGet200Response,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                HeadersRoundtripAllofEnumsGet200Response,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
 
       expect(success.value.xEnumComposite, isNotNull);
       expect(
@@ -149,19 +113,9 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripAllofEnumsGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripAllofEnumsGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
 
         expect(success.value.xEnumComposite, isNotNull);
         expect(
@@ -183,22 +137,13 @@ void main() {
 
           expect(
             result,
-            isA<
-              TonikSuccess<
-                HeadersRoundtripAllofEnumsGet200Response,
-                Response<Object?>
-              >
-            >(),
+            isTonikSuccess,
           );
-          final success =
-              result
-                  as TonikSuccess<
-                    HeadersRoundtripAllofEnumsGet200Response,
-                    Response<Object?>
-                  >;
+          final success = requireSuccess(result);
+          final recordedRequest = await imposterServer.takeRequest();
 
           expect(
-            success.response.requestOptions.headers['X-Enum-Composite'],
+            recordedRequest.headers['x-enum-composite'],
             isNull,
           );
 

@@ -1,9 +1,7 @@
-import 'package:dio/dio.dart';
 import 'package:fast_immutable_collections/fast_immutable_collections.dart';
 import 'package:immutable_collections_api/immutable_collections_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -18,12 +16,8 @@ void main() {
     return ItemsApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -34,9 +28,8 @@ void main() {
       final api = buildApi(responseStatus: '200');
       final result = await api.getItem(id: 1);
 
-      expect(result, isA<TonikSuccess<GetItemResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<GetItemResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final value = success.value;
@@ -55,9 +48,8 @@ void main() {
       final api = buildApi(responseStatus: '404');
       final result = await api.getItem(id: 999);
 
-      expect(result, isA<TonikSuccess<GetItemResponse, Response<Object?>>>());
-      final success =
-          result as TonikSuccess<GetItemResponse, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 404);
       expect(success.value, isA<GetItemResponse404>());
     });
@@ -79,8 +71,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikSuccess<Item, Response<Object?>>>());
-      final success = result as TonikSuccess<Item, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 201);
 
       final body = success.value;
@@ -106,8 +98,8 @@ void main() {
         ),
       );
 
-      expect(result, isA<TonikSuccess<NestedList, Response<Object?>>>());
-      final success = result as TonikSuccess<NestedList, Response<Object?>>;
+      expect(result, isTonikSuccess);
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
 
       final body = success.value;

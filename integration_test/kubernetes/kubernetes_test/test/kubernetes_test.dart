@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:kubernetes_api/kubernetes_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -19,12 +17,8 @@ void main() {
     return DefaultApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -40,15 +34,14 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
       expect(success.value, isA<ListCoreV1NamespaceResponse200>());
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/v1/namespaces');
     });
 
@@ -59,11 +52,9 @@ void main() {
 
       expect(
         result,
-        isA<TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>>(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<ListCoreV1NamespaceResponse, Response<Object?>>;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
       expect(success.value, isA<ListCoreV1NamespaceResponse401>());
     });
@@ -79,22 +70,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            ListCoreV1ConfigMapForAllNamespacesResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                ListCoreV1ConfigMapForAllNamespacesResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/v1/configmaps');
     });
   });
@@ -109,19 +91,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<ListCoreV1PodForAllNamespacesResponse, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                ListCoreV1PodForAllNamespacesResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/v1/pods');
     });
   });
@@ -136,22 +112,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<
-            ListCoreV1ServiceForAllNamespacesResponse,
-            Response<Object?>
-          >
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                ListCoreV1ServiceForAllNamespacesResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/v1/services');
     });
   });
@@ -168,19 +135,13 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<ListCoreV1NamespacedConfigMapResponse, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                ListCoreV1NamespacedConfigMapResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 200);
+      final recordedRequest = await imposterServer.takeRequest();
 
-      final uri = success.response.requestOptions.uri;
+      final uri = recordedRequest.uri;
       expect(uri.path, '/api/v1/namespaces/default/configmaps');
     });
 
@@ -193,16 +154,9 @@ void main() {
 
       expect(
         result,
-        isA<
-          TonikSuccess<ListCoreV1NamespacedConfigMapResponse, Response<Object?>>
-        >(),
+        isTonikSuccess,
       );
-      final success =
-          result
-              as TonikSuccess<
-                ListCoreV1NamespacedConfigMapResponse,
-                Response<Object?>
-              >;
+      final success = requireSuccess(result);
       expect(success.response.statusCode, 401);
     });
   });

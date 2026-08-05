@@ -1,8 +1,6 @@
-import 'package:dio/dio.dart';
 import 'package:simple_encoding_api/simple_encoding_api.dart';
 import 'package:test/test.dart';
 import 'package:test_helpers/test_helpers.dart';
-import 'package:tonik_util/tonik_util.dart';
 
 void main() {
   late ImposterServer imposterServer;
@@ -17,12 +15,8 @@ void main() {
     return SimpleEncodingApi(
       CustomServer(
         baseUrl: baseUrl,
-        serverConfig: ServerConfig.clientFactory(
-          () => Dio(
-            BaseOptions(
-              headers: {'X-Response-Status': responseStatus},
-            ),
-          ),
+        serverConfig: testServerConfig(
+          headers: {'X-Response-Status': responseStatus},
         ),
       ),
     );
@@ -43,22 +37,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           'name,test',
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
@@ -75,23 +60,14 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         // Header field-values are transmitted literally: the space survives.
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           'name,hello world',
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
@@ -108,22 +84,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           "name,O'Brien",
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
@@ -138,22 +105,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           'name,',
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
@@ -170,22 +128,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           'number,42',
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
@@ -200,21 +149,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           'number,0',
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
@@ -229,21 +169,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           'number,-123',
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
@@ -258,21 +189,12 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           'number,9999999',
         );
         expect(success.value.xComplexUnion, isA<OneOfComplexClass2>());
@@ -287,22 +209,13 @@ void main() {
 
         expect(
           result,
-          isA<
-            TonikSuccess<
-              HeadersRoundtripOneofComplexGet200Response,
-              Response<Object?>
-            >
-          >(),
+          isTonikSuccess,
         );
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
+        final recordedRequest = await imposterServer.takeRequest();
 
         expect(
-          success.response.requestOptions.headers['X-Complex-Union'],
+          recordedRequest.headers['x-complex-union'],
           isNull,
         );
         expect(success.value.xComplexUnion, isNull);
@@ -317,27 +230,18 @@ void main() {
         final injected = SimpleEncodingApi(
           CustomServer(
             baseUrl: baseUrl,
-            serverConfig: ServerConfig.clientFactory(
-              () => Dio(
-                BaseOptions(
-                  headers: {
-                    'X-Response-Status': '200',
-                    'X-Complex-Union': 'name,x%2Fy 50%',
-                  },
-                ),
-              ),
+            serverConfig: testServerConfig(
+              headers: {
+                'X-Response-Status': '200',
+                'X-Complex-Union': 'name,x%2Fy 50%',
+              },
             ),
           ),
         );
 
         final result = await injected.testHeaderRoundtripOneOfComplex.call();
 
-        final success =
-            result
-                as TonikSuccess<
-                  HeadersRoundtripOneofComplexGet200Response,
-                  Response<Object?>
-                >;
+        final success = requireSuccess(result);
         expect(success.value.xComplexUnion, isA<OneOfComplexClass1>());
         final class1 = success.value.xComplexUnion! as OneOfComplexClass1;
         expect(class1.value.name, 'x%2Fy 50%');
